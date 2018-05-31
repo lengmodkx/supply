@@ -1,7 +1,7 @@
 package com.art1001.supply.shiro.filter;
 
+import com.art1001.supply.model.user.UserEntity;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.user.model.UserEntity;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
