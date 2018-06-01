@@ -146,9 +146,9 @@ public class ShiroConfig {
         filtersMap.put("perm",new PermissionFilter());
         filtersMap.put("roleFilter",new RoleFilter());
         filtersMap.put("baseUrl",new URLFilter());
-        SslFilter sslFilter = new SslFilter();
-        sslFilter.setPort(8443);
-        filtersMap.put("ssl",sslFilter);
+//        SslFilter sslFilter = new SslFilter();
+//        sslFilter.setPort(8443);
+//        filtersMap.put("ssl",sslFilter);
         filter.setFilters(filtersMap);
         return filter;
     }

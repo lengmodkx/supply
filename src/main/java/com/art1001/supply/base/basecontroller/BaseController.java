@@ -1,7 +1,6 @@
 package com.art1001.supply.base.basecontroller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -10,8 +9,9 @@ import org.slf4j.LoggerFactory;
  * 2016年7月12日 下午3:02:14
  *
  */
+@Slf4j
 public abstract class BaseController {
-	
-	Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
+	private static final long serialVersionUID = 1000L;
+
 }

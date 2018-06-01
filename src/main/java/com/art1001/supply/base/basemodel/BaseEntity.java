@@ -18,11 +18,6 @@ public abstract class BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	/*
-	 * id
-	 */
-	protected Long id;
-
-
+	public Long id;
 	
 }
