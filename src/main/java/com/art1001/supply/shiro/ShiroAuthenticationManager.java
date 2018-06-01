@@ -1,8 +1,8 @@
 package com.art1001.supply.shiro;
 
-import com.art1001.supply.user.model.UserEntity;
-import com.art1001.supply.user.model.UserSessionEntity;
-import com.art1001.supply.user.service.UserSessionService;
+import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.model.user.UserSessionEntity;
+import com.art1001.supply.service.user.UserSessionService;
 import com.art1001.supply.util.SpringContextUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;

@@ -1,11 +1,12 @@
 package com.art1001.supply.shiro;
 
-import com.art1001.supply.resource.mapper.ResourceMapper;
-import com.art1001.supply.resource.model.ResourceEntity;
+
+import com.art1001.supply.mapper.resource.ResourceMapper;
+import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.model.resource.ResourceEntity;
+import com.art1001.supply.model.user.UserEntity;
 import com.art1001.supply.shiro.filter.ShiroUtils;
 import com.art1001.supply.shiro.util.MyByteSource;
-import com.art1001.supply.user.mapper.UserMapper;
-import com.art1001.supply.user.model.UserEntity;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
