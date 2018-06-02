@@ -27,6 +27,8 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -36,9 +38,28 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Bean("jedisPoolConfig")
+    public JedisPoolConfig jedisPoolConfig(){
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(600);
+        config.setMaxIdle(300);
+        config.setTimeBetweenEvictionRunsMillis(30000);
+        config.setMinEvictableIdleTimeMillis(30000);
+        config.setSoftMinEvictableIdleTimeMillis(30000);
+        config.setTestOnBorrow(true);
+        return config;
+    }
+
+    @Bean("jedisPool")
+    public JedisPool jedisPool(){
+        return new JedisPool(jedisPoolConfig(),"localhost");
+    }
+
     @Bean("redisManager")
     public RedisManager redisManager(){
-        return new RedisManager();
+        RedisManager redisManager = new RedisManager();
+        redisManager.setJedisPool(jedisPool());
+        return redisManager;
     }
 
 

@@ -1,3 +1,9 @@
+
+/js/**=anon
+/templates/**=anon
+/assets/**=anon
+/css/**=anon
+
 /logout.html=anon
 /register.html=anon
 /captcha.html=anon

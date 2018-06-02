@@ -18,22 +18,15 @@ import java.util.*;
 
 public class RedisManager {
 
-	@Value("${spring.redis.host}")
-	private String host;
-
-	@Value("${spring.redis.port}")
-	private int port;
-
-	@Value("${spring.redis.password}")
-	private String password;
-
-	@Value("${spring.redis.database}")
-	private int database;
+	private JedisPool jedisPool;
 
 
 	private JedisPool getJedisPool() {
-    	JedisPoolConfig config = new JedisPoolConfig();
-		return new JedisPool(config,host,port,10000,password,database);
+		return jedisPool;
+	}
+
+	public void setJedisPool(JedisPool jedisPool) {
+		this.jedisPool = jedisPool;
 	}
 
 	public Jedis getJedis() throws JedisConnectionException {
