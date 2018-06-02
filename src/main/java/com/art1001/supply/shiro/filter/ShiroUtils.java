@@ -34,7 +34,7 @@ public class ShiroUtils {
 	/*
 	 * 没有权限提醒
 	 */
-	public static final String UNAUTHORIZED = "/denied.jsp";
+	public static final String UNAUTHORIZED = "/denied.html";
 	/*
 	 * 存储在session中用户信息的名称
 	 */

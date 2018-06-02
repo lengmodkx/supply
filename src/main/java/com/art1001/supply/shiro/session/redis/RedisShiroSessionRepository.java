@@ -1,15 +1,14 @@
 package com.art1001.supply.shiro.session.redis;
 
 import com.art1001.supply.redis.RedisManager;
+import com.art1001.supply.service.user.impl.UserSessionServiceImpl;
 import com.art1001.supply.shiro.session.SessionStatus;
 import com.art1001.supply.shiro.session.ShiroSessionRepository;
-import com.art1001.supply.user.service.impl.UserSessionServiceImpl;
 import com.art1001.supply.util.SerializeUtil;
 import org.apache.shiro.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Collection;
 

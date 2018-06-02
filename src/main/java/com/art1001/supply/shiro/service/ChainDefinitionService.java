@@ -113,7 +113,7 @@ public interface ChainDefinitionService {
 	 * 从配置文件读取固定的权限信息
 	 * @return
 	 *
-	 * @author wjggwm
+	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:34
 	 */
 	public Map<String, String> initChainDefinitionsMap();
@@ -123,7 +123,7 @@ public interface ChainDefinitionService {
 	 * 从配置文件读取固定的权限信息
 	 * @return
 	 *
-	 * @author wjggwm
+	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:34
 	 */
 	public String initFilterChainDefinitions();
@@ -133,7 +133,7 @@ public interface ChainDefinitionService {
 	 * 重新设置权限
 	 * <br/>在重新设置了权限等信息时调用该方法
 	 * 
-	 * @author wjggwm
+	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:39
 	 */
 	public void reloadFilterChainDefinitions();
