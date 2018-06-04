@@ -75,7 +75,7 @@ public class ShiroConfig {
         //hashAlgorithmName必须的，没有默认值。可以有MD5或者SHA-1，如果对密码安全有更高要求可以用SHA-256或者更高。
         //这里使用MD5 storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
         //hashIterations迭代次数，默认值是1。
-        LimitRetryCredentialsMatcher limitRetryCredentialsMatcher = new LimitRetryCredentialsMatcher(redisManager(),cacheManager());
+        LimitRetryCredentialsMatcher limitRetryCredentialsMatcher = new LimitRetryCredentialsMatcher(cacheManager());
         limitRetryCredentialsMatcher.setHashAlgorithmName("MD5");
         limitRetryCredentialsMatcher.setHashIterations(2);
         limitRetryCredentialsMatcher.setStoredCredentialsHexEncoded(false);

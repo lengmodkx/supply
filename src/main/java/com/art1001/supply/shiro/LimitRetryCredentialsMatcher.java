@@ -11,6 +11,8 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 /**
  * 
@@ -22,41 +24,28 @@ import org.apache.shiro.cache.CacheManager;
  */
 public class LimitRetryCredentialsMatcher extends HashedCredentialsMatcher {
     
-	private Cache<String, Integer> passwordRetryCache;
+	private Cache<String, AtomicInteger> passwordRetryCache;
 
-	private RedisManager redisManager;
-
-    public LimitRetryCredentialsMatcher(RedisManager redisManager,CacheManager cacheManager) {
-        this.redisManager =redisManager;
+    public LimitRetryCredentialsMatcher(CacheManager cacheManager) {
         passwordRetryCache = cacheManager.getCache("passwordRetryCache");
     }
 
     @Override
-    public boolean doCredentialsMatch(AuthenticationToken token,
-        AuthenticationInfo info) {
+    public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         String username = token.getPrincipal().toString();
         // 尝试登录次数+1
-        int retryCount = passwordRetryCache.get(username);
+        AtomicInteger retryCount = passwordRetryCache.get(username);
 
-        
-        if(retryCount >= 5)
-        {
-        	throw new LockedAccountException();
-        }else if (++retryCount >= 5) {
-            // 如果尝试登录次数大于5
-            throw new ExcessiveAttemptsException();
+        // 查看缓存中的尝试次数
+        if (retryCount == null) {
+            retryCount = new AtomicInteger(0);
+            passwordRetryCache.put(username, retryCount);
         }
-        
-        if(passwordRetryCache instanceof RedisShiroCache)
-        {
-        	try {
-				redisManager.saveValueByKey(RedisShiroCache.DB_INDEX, ((RedisShiroCache<String, Integer>)passwordRetryCache).generateCacheKey(username).getBytes(), SerializeUtil.serialize(retryCount), 600);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-        }else
-        {
-        	passwordRetryCache.put(username, retryCount);
+
+        if(retryCount.incrementAndGet() > 5) {
+        	throw new ExcessiveAttemptsException();
+        }else{
+            passwordRetryCache.put(username, retryCount);
         }
 
         boolean matches = super.doCredentialsMatch(token, info);
