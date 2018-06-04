@@ -26,7 +26,10 @@ public class LimitRetryCredentialsMatcher extends HashedCredentialsMatcher {
     
 	private Cache<String, AtomicInteger> passwordRetryCache;
 
-    public LimitRetryCredentialsMatcher(CacheManager cacheManager) {
+    private RedisManager redisManager;
+
+    public LimitRetryCredentialsMatcher(RedisManager redisManager ,CacheManager cacheManager) {
+        this.redisManager =redisManager;
         passwordRetryCache = cacheManager.getCache("passwordRetryCache");
     }
 
@@ -39,13 +42,20 @@ public class LimitRetryCredentialsMatcher extends HashedCredentialsMatcher {
         // 查看缓存中的尝试次数
         if (retryCount == null) {
             retryCount = new AtomicInteger(0);
-            passwordRetryCache.put(username, retryCount);
+            if(passwordRetryCache instanceof RedisShiroCache) {
+                redisManager.saveValueByKey(RedisShiroCache.DB_INDEX, ((RedisShiroCache<String, AtomicInteger>) passwordRetryCache).generateCacheKey(username).getBytes(), SerializeUtil.serialize(retryCount), 600);
+            }
+        }
+        if(retryCount.intValue() >= 5)
+        {
+            throw new LockedAccountException();
+        }else if (retryCount.incrementAndGet() >= 5) {
+            // 如果尝试登录次数大于5
+            throw new ExcessiveAttemptsException();
         }
 
-        if(retryCount.incrementAndGet() > 5) {
-        	throw new ExcessiveAttemptsException();
-        }else{
-            passwordRetryCache.put(username, retryCount);
+        if(passwordRetryCache instanceof RedisShiroCache) {
+            redisManager.saveValueByKey(RedisShiroCache.DB_INDEX, ((RedisShiroCache<String, AtomicInteger>)passwordRetryCache).generateCacheKey(username).getBytes(), SerializeUtil.serialize(retryCount), 600);
         }
 
         boolean matches = super.doCredentialsMatch(token, info);
