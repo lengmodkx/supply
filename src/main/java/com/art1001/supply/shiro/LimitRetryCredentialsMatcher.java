@@ -50,6 +50,9 @@ public class LimitRetryCredentialsMatcher extends HashedCredentialsMatcher {
         {
             throw new LockedAccountException();
         }else if (retryCount.incrementAndGet() >= 5) {
+            if(passwordRetryCache instanceof RedisShiroCache) {
+                redisManager.saveValueByKey(RedisShiroCache.DB_INDEX, ((RedisShiroCache<String, AtomicInteger>)passwordRetryCache).generateCacheKey(username).getBytes(), SerializeUtil.serialize(retryCount), 600);
+            }
             // 如果尝试登录次数大于5
             throw new ExcessiveAttemptsException();
         }
