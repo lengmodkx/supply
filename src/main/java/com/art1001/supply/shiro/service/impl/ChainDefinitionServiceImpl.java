@@ -34,7 +34,7 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 	
 	@Resource
 	private ShiroFilterFactoryBean shiroFilterFactoryBean;
-	
+
 	/*
 	 * 回车换行符
 	 */
@@ -85,9 +85,7 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.webside.shiro.manager.ShiroService#initChainDefinitionsMap()
-	 */
+
 	@Override
 	public Map<String, String> initChainDefinitionsMap() {
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();

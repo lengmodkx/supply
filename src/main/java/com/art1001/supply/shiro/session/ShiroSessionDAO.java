@@ -6,6 +6,7 @@ import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -99,7 +99,7 @@ public class ShiroConfig {
         return myDBRealm;
     }
 
-    @Bean
+    @Bean("shiroSessionDAO")
     public ShiroSessionDAO shiroSessionDAO(){
         RedisShiroSessionRepository shiroSessionRepository = new RedisShiroSessionRepository();
         shiroSessionRepository.setRedisManager(redisManager());
@@ -160,7 +160,8 @@ public class ShiroConfig {
         filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());
 
         Map<String,Filter> filtersMap = new HashMap<>();
-        filtersMap.put("kickout",new KickoutSessionFilter());
+        KickoutSessionFilter kickoutSessionFilter = new KickoutSessionFilter();
+        filtersMap.put("kickout",kickoutSessionFilter);
         filtersMap.put("kickoutAuth",new KickoutAuthFilter());
         filtersMap.put("login",new LoginFilter());
         filtersMap.put("remember",new RememberMeFilter());

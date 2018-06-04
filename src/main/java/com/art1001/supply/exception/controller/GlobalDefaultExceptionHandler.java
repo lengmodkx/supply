@@ -20,7 +20,7 @@ import java.io.IOException;
  * 2016年7月12日 下午3:14:17
  *
  */
-@EnableWebMvc
+//@EnableWebMvc
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
