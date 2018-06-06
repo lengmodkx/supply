@@ -2,7 +2,7 @@ package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.RoleMapper;
-import com.art1001.supply.model.role.RoleEntity;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;

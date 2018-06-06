@@ -3,7 +3,7 @@
  */
 package com.art1001.supply.service.user;
 
-import com.art1001.supply.model.user.UserSessionEntity;
+import com.art1001.supply.entity.user.UserSessionEntity;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 

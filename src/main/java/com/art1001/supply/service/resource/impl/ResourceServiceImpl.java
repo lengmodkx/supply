@@ -2,8 +2,8 @@ package com.art1001.supply.service.resource.impl;
 
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.resource.ResourceMapper;
-import com.art1001.supply.model.resource.ResourceEntity;
-import com.art1001.supply.model.role.RoleEntity;
+import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.RoleService;

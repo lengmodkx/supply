@@ -24,7 +24,7 @@
 		s_update_time
 	</sql>
 
-	<resultMap id="resourceMap" type="com.art1001.supply.model.resource.ResourceEntity">
+	<resultMap id="resourceMap" type="com.art1001.supply.entity.resource.ResourceEntity">
 		<id property="id" column="s_id"/>
 		<result property="parentId" column="s_parent_id"/>
 		<result property="name" column="s_name"/>
@@ -174,7 +174,7 @@
 		</where>
 	</select>
 	
-	<insert id="insert" parameterType="com.art1001.supply.model.resource.ResourceEntity" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.art1001.supply.entity.resource.ResourceEntity" useGeneratedKeys="true" keyProperty="id">
 		insert ignore into tb_resource (
 		<if test="parentId neq null">
 			s_parent_id,
@@ -221,7 +221,7 @@
 		where t1.s_id = ${id}
 	</select>
 	
-	<update id="update" parameterType="com.art1001.supply.model.resource.ResourceEntity" flushCache="true">
+	<update id="update" parameterType="com.art1001.supply.entity.resource.ResourceEntity" flushCache="true">
 		update tb_resource set
 		<choose>
 			<when test="parentId eq null">s_parent_id = null,</when>

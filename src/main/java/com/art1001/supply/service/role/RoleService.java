@@ -1,7 +1,7 @@
 package com.art1001.supply.service.role;
 
 
-import com.art1001.supply.model.role.RoleEntity;
+import com.art1001.supply.entity.role.RoleEntity;
 
 import java.util.List;
 import java.util.Map;

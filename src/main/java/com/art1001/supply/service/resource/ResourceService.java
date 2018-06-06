@@ -2,7 +2,7 @@ package com.art1001.supply.service.resource;
 
 
 
-import com.art1001.supply.model.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceEntity;
 
 import java.util.List;
 import java.util.Map;

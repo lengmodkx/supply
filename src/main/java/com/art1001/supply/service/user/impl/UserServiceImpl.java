@@ -2,7 +2,7 @@ package com.art1001.supply.service.user.impl;
 
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;

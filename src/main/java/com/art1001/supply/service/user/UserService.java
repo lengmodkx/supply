@@ -3,7 +3,7 @@ package com.art1001.supply.service.user;
 
 
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.user.UserEntity;
 
 import java.util.List;
 import java.util.Map;

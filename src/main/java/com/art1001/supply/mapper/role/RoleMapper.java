@@ -2,7 +2,7 @@ package com.art1001.supply.mapper.role;
 
 
 import com.art1001.supply.mapper.base.BaseMapper;
-import com.art1001.supply.model.role.RoleEntity;
+import com.art1001.supply.entity.role.RoleEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

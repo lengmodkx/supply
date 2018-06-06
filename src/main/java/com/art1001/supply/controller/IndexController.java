@@ -1,9 +1,8 @@
 package com.art1001.supply.controller;
 
 import com.art1001.supply.controller.base.BaseController;
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.util.ShiroMD5Util;
-import jdk.nashorn.internal.runtime.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
