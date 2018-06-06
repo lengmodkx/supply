@@ -1,6 +1,6 @@
 package com.art1001.supply.shiro.filter;
 
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import org.apache.shiro.web.filter.AccessControlFilter;
 

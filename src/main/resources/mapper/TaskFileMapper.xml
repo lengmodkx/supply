@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.task.TaskFileMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskFile">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="binding_id" property="bindingId" jdbcType="VARCHAR" />
+		<result column="other_id" property="otherId" jdbcType="VARCHAR" />
+		<result column="other_type" property="otherType" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+						id,
+				binding_id,
+				other_id,
+				other_type,
+				create_time,
+				update_time
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findTaskFilePagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_task_file
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+		
+	</select>
+	
+	<select id="findTaskFileAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.task.TaskFile">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_task_file
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+	</select>
+	
+	<select id="findTaskFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_task_file c where id = #{id}
+
+	</select>
+	
+	<delete id="deleteTaskFileById" parameterType="java.lang.String">
+		delete from
+		prm_task_file where id = #{id}
+	</delete>
+	
+	<insert id="saveTaskFile" parameterType="com.art1001.supply.entity.task.TaskFile">
+
+		insert into prm_task_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+			id,
+			</if>
+			<if test="bindingId != null and bindingId != ''">
+			binding_id,
+			</if>
+			<if test="otherId != null and otherId != ''">
+			other_id,
+			</if>
+			<if test="otherType != null and otherType != ''">
+			other_type,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+			<if test="updateTime != null ">
+			update_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="bindingId != null and bindingId != ''">
+				#{bindingId},
+			</if>
+			<if test="otherId != null and otherId != ''">
+				#{otherId},
+			</if>
+			<if test="otherType != null and otherType != ''">
+				#{otherType},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateTaskFile" parameterType="com.art1001.supply.entity.task.TaskFile">
+
+		update prm_task_file
+		<set>
+			<if test="bindingId != null and bindingId != ''">
+				binding_id = #{bindingId},
+			</if>
+			<if test="otherId != null and otherId != ''">
+				other_id = #{otherId},
+			</if>
+			<if test="otherType != null and otherType != ''">
+				other_type = #{otherType},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null ">
+				update_time = #{updateTime},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>

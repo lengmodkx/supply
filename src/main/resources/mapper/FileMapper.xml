@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.file.FileMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
+		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
+		<result column="catalog" property="catalog" jdbcType="INTEGER" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
+		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+						file_id,
+				file_name,
+				file_url,
+				project_id,
+				task_id,
+				member_id,
+				member_name,
+				member_img,
+				catalog,
+				size,
+				parent_id,
+				file_del,
+				tag_id,
+				create_time,
+				update_time
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findFilePagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_file
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+		
+	</select>
+	
+	<select id="findFileAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.file.File">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_file
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+	</select>
+	
+	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_file c where id = #{id}
+
+	</select>
+	
+	<delete id="deleteFileById" parameterType="java.lang.String">
+		delete from
+		prm_file where id = #{id}
+	</delete>
+	
+	<insert id="saveFile" parameterType="com.art1001.supply.entity.file.File">
+
+		insert into prm_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="fileId != null and fileId != ''">
+			file_id,
+			</if>
+			<if test="fileName != null and fileName != ''">
+			file_name,
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+			file_url,
+			</if>
+			<if test="projectId != null and projectId != ''">
+			project_id,
+			</if>
+			<if test="taskId != null and taskId != ''">
+			task_id,
+			</if>
+			<if test="memberId != null and memberId != ''">
+			member_id,
+			</if>
+			<if test="memberName != null and memberName != ''">
+			member_name,
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+			member_img,
+			</if>
+			<if test="catalog != null ">
+			catalog,
+			</if>
+			<if test="size != null and size != ''">
+			size,
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+			parent_id,
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+			file_del,
+			</if>
+			<if test="tagId != null and tagId != ''">
+			tag_id,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+			<if test="updateTime != null ">
+			update_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="fileId != null and fileId != ''">
+				#{fileId},
+			</if>
+			<if test="fileName != null and fileName != ''">
+				#{fileName},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				#{fileUrl},
+			</if>
+			<if test="projectId != null and projectId != ''">
+				#{projectId},
+			</if>
+			<if test="taskId != null and taskId != ''">
+				#{taskId},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				#{memberName},
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+				#{memberImg},
+			</if>
+			<if test="catalog != null ">
+				#{catalog},
+			</if>
+			<if test="size != null and size != ''">
+				#{size},
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+				#{parent.id},
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+				#{fileDel},
+			</if>
+			<if test="tagId != null and tagId != ''">
+				#{tagId},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateFile" parameterType="com.art1001.supply.entity.file.File">
+
+		update prm_file
+		<set>
+			<if test="fileId != null and fileId != ''">
+				file_id = #{fileId},
+			</if>
+			<if test="fileName != null and fileName != ''">
+				file_name = #{fileName},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				file_url = #{fileUrl},
+			</if>
+			<if test="projectId != null and projectId != ''">
+				project_id = #{projectId},
+			</if>
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				member_id = #{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				member_name = #{memberName},
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+				member_img = #{memberImg},
+			</if>
+			<if test="catalog != null ">
+				catalog = #{catalog},
+			</if>
+			<if test="size != null and size != ''">
+				size = #{size},
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+				parent_id = #{parent.id},
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+				file_del = #{fileDel},
+			</if>
+			<if test="tagId != null and tagId != ''">
+				tag_id = #{tagId},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null ">
+				update_time = #{updateTime},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>

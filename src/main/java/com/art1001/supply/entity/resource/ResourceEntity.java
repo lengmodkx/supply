@@ -1,10 +1,10 @@
-package com.art1001.supply.model.resource;
+package com.art1001.supply.entity.resource;
 
-import com.art1001.supply.model.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +20,10 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Alias("resourceEntity")
-public class ResourceEntity extends BaseEntity {
+public class ResourceEntity implements Serializable {
+
+	public Long id;
+
 	/**
 	 * 
 	 */

@@ -1,11 +1,12 @@
-package com.art1001.supply.model.role;
+package com.art1001.supply.entity.role;
 
-import com.art1001.supply.model.base.BaseEntity;
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.base.BaseEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -20,12 +21,15 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Alias("roleEntity")
-public class RoleEntity extends BaseEntity {
+public class RoleEntity implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public Long id;
+
 	/*
 	 * 角色名
 	 */

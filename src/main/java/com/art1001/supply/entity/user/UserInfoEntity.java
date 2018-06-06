@@ -1,6 +1,6 @@
-package com.art1001.supply.model.user;
+package com.art1001.supply.entity.user;
 
-import com.art1001.supply.model.base.BaseEntity;
+import com.art1001.supply.entity.base.BaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
@@ -18,7 +18,9 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @Alias("userInfoEntity")
-public class UserInfoEntity extends BaseEntity {
+public class UserInfoEntity {
+
+	public Long id;
 
 	/**
 	 * 
@@ -49,8 +51,4 @@ public class UserInfoEntity extends BaseEntity {
 	 */
 	private Date createTime;
 
-
-	
-	
-	
 }

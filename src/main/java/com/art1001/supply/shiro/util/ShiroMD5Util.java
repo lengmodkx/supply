@@ -1,6 +1,6 @@
 package com.art1001.supply.shiro.util;
 
-import com.art1001.supply.model.user.UserEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 

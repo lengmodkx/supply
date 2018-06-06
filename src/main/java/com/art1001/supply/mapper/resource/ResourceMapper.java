@@ -1,7 +1,7 @@
 package com.art1001.supply.mapper.resource;
 
 import com.art1001.supply.mapper.base.BaseMapper;
-import com.art1001.supply.model.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
