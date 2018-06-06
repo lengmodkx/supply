@@ -25,8 +25,6 @@ public interface BaseMapper<T,ID extends Serializable> {
  
      int deleteById(@Param("id") ID id);
 
-     int deleteById(@Param("id") String id);
-
      int update(T t);
 
      T find(Map<String, Object> parameter);
