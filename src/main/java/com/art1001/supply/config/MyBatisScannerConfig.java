@@ -13,7 +13,7 @@ public class MyBatisScannerConfig {
     @Bean
     public MapperScannerConfigurer MapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-        mapperScannerConfigurer.setBasePackage("com.art1001.supply");
+        mapperScannerConfigurer.setBasePackage("com.art1001.supply.mapper");
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         return mapperScannerConfigurer;
     }

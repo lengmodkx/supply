@@ -1,6 +1,7 @@
 package com.art1001.supply.service.user.impl;
 
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
@@ -18,17 +19,14 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
 
 	@Resource
 	private UserMapper userMapper;
-	
+
 	@Resource
 	private EmailUtil emailUtil;
-	
-	
-	//这句必须要加上。不然会报空指针异常，因为在实际调用的时候不是BaseMapper调用，而是具体的mapper，这里为userMapper
-	@Autowired
-	public void setBaseMapper() {
-		super.setBaseMapper(userMapper);
+
+	protected UserServiceImpl(UserMapper userMapper) {
+		super(userMapper);
 	}
-	
+
 	/**
 	 * 重写用户插入，逻辑：
 	 * 1、插入用户
@@ -61,7 +59,7 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
 			throw new ServiceException(e);
 		}
 	}
-	
+
 
 	/**
 	 * 重写用户更新逻辑：
@@ -93,7 +91,7 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
 			throw new ServiceException(e);
 		}
 	}
-	
+
 	/**
 	 * 重写用户删除逻辑：
 	 * 1、删除用户和角色的对应关系
@@ -128,11 +126,11 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
 			throw new ServiceException(e);
 		}
 	}
-	
+
 	@Override
 	public int updatePassword(UserEntity userEntity, String password) throws ServiceException{
 		try
-		{ 
+		{
 			int cnt = updateOnly(userEntity);
 			//发送邮件
 			emailUtil.send126Mail(userEntity.getAccountName(), "系统密码重置", "您好，您的密码已重置，新密码是:" + password);
@@ -143,5 +141,5 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
 		}
 	}
 
-	
+
 }

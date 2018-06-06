@@ -59,16 +59,6 @@ public interface BaseService<T, ID extends Serializable> {
 
 	/**
 	 * 
-	 * 根据id删除
-	 * 
-	 * @param id
-	 *            id
-	 * @return int 返回影响的行数
-	 */
-	 int deleteById(String id);
-
-	/**
-	 * 
 	 * 更新对象
 	 * 
 	 * @param t
@@ -97,15 +87,6 @@ public interface BaseService<T, ID extends Serializable> {
 	 */
 	 T findById(ID id);
 
-	/**
-	 * 
-	 * 根据id查询对象
-	 * 
-	 * @param id
-	 *            id
-	 * @return T 返回查询的对象
-	 */
-	 T findById(String id);
 
 	/**
 	 * 

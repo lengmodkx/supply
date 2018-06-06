@@ -125,7 +125,9 @@ public class ShiroConfig {
         SimpleCookie simpleCookie = new SimpleCookie("SUPPLY-SID");
         sessionManager.setSessionIdCookie(simpleCookie);
         ArrayList<SessionListener> arrayList = new ArrayList<>();
-        arrayList.add(new ShiroSessionListener());
+        ShiroSessionListener sessionListener = new ShiroSessionListener();
+
+        arrayList.add(sessionListener);
         sessionManager.setSessionListeners(arrayList);
         return sessionManager;
     }
@@ -173,19 +175,6 @@ public class ShiroConfig {
 //        filtersMap.put("ssl",sslFilter);
         filter.setFilters(filtersMap);
         return filter;
-    }
-
-
-    @Bean("lifecycleBeanPostProcessor")
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
-    }
-
-    @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator proxyCreator = new DefaultAdvisorAutoProxyCreator();
-        proxyCreator.setProxyTargetClass(true);
-        return proxyCreator;
     }
 
     @Bean

@@ -4,16 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.util.ShiroMD5Util;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,11 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
-@Scope("prototype")
 @Slf4j
 public class IndexController extends BaseController {
 
@@ -36,6 +31,9 @@ public class IndexController extends BaseController {
 
     @Resource
     private UserService userService;
+
+    @Resource(name = "fileService1")
+    private FileService fileService;
 
     @GetMapping("/")
     public String index() {
@@ -171,11 +169,7 @@ public class IndexController extends BaseController {
     }
 
     public static void main(String[] args) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setAccountName("admin");
-        userEntity.setPassword("admin");
-        String md5 = ShiroMD5Util.Md5(userEntity);
-        System.out.println(md5);
+
     }
 
 }

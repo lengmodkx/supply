@@ -3,7 +3,6 @@ package com.art1001.supply.mapper.role;
 
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.role.RoleEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Mapper
 public interface RoleMapper extends BaseMapper<RoleEntity, Long> {
 	
 	/**

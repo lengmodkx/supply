@@ -27,8 +27,7 @@ import java.util.*;
 @Service
 public class UserSessionServiceImpl implements UserSessionService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserSessionServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserSessionServiceImpl.class);
 
 	/**
 	 * session status
@@ -36,7 +35,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 	public static final String SESSION_STATUS = "webside_session_status";
 
 	@Resource
-	ShiroSessionDAO shiroSessionDao;
+	private ShiroSessionDAO shiroSessionDao;
 
 	/**
 	 * 获取所有的有效Session用户
@@ -155,7 +154,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 		boolean flag = true;
 		try {
 			String[] sessionIds = null;
-			if (sessionId.indexOf(",") == -1) {
+			if (!sessionId.contains(",")) {
 				sessionIds = new String[] { sessionId };
 			} else {
 				sessionIds = sessionId.split(",");

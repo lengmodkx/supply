@@ -15,11 +15,12 @@ import javax.annotation.Resource;
  * @author wangyafeng
  * 2016年12月13日 下午2:49:29
  */
-@Component
 public class ShiroSessionListener implements SessionListener {
 
-	@Resource
+    @Resource
     private ShiroSessionRepository shiroSessionRepository;
+
+
 
     /**
      * session会话开始
