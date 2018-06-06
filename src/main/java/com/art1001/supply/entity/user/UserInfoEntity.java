@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @Alias("userInfoEntity")
-public class UserInfoEntity {
+public class UserInfoEntity implements Serializable {
 
 	public Long id;
 

@@ -105,7 +105,7 @@ public class AbstractService<T, ID extends Serializable> implements BaseService<
 
 	@Override
 	public T findById(String id) {
-		return baseMapper.findById(id);
+		return baseMapper.findById((ID) id);
 	}
 
 	@Override
