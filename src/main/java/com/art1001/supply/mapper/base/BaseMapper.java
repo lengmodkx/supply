@@ -33,7 +33,6 @@ public interface BaseMapper<T,ID extends Serializable> {
 
      T findById(@Param("id") ID id);
 
-     T findById(@Param("id") String id);
 
      T findByName(@Param("name") String name);
  
