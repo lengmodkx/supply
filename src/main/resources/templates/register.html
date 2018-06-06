@@ -1,24 +1,116 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
     <title>注册</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/layui/css/layui.css}" href="../static/lib/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" href="../static/css/loginAndRegister.css">
 </head>
 <body>
-<form id="loginForm">
-    <input type="text" name="username" title="用户名"><br>
-    <input type="password" name="password" title="密码">
-    <a href="javascript:void(0)" id="loginBtn">登陆</a>
-</form>
+<div class="login-box">
+    <h1>5D管理系统-项目协同管理</h1>
+    <form id="loginForm">
+        <div class="phone-num-box">
+            <input class="phone-num boxsizing" type="text" name="" >
+            <span>手机号</span>
+        </div>
+        <div class="user-name-box">
+            <input class="user-name boxsizing" type="text" name="accountName" >
+            <span>昵称</span>
+        </div>
+        <div class="pwd-box">
+            <input class="pwd boxsizing" type="password" name="password" >
+            <span>密码</span>
+            <img class="seepwd" src="../static/image/seepwd.png" th:href="@{/image/seepwd.png}">
+        </div>
+        <div class="pic-code-box">
+            <input class="write-pic-code boxsizing" type="text" name="" >
+            <span>验证码</span>
+            <img src="" class="pic-code">
+            <img src="../static/image/change-one.png" th:href="@{/image/change-one.png}" title="换一张" class="change-one">
+        </div>
+        <div class="sms-code-box">
+            <input class="write-sms-code boxsizing" type="text" name="" >
+            <span>短信验证</span>
+            <div class="get-sms-code">获取验证码</div>
+        </div>
+        <div class="cant-login boxsizing">
+            <p class="no-register">已有账号， <a href="#">去登陆</a></p>
+
+        </div>
+        <input type="submit"  id="registerBtn" value="注册">
+    </form>
+    <p class="fonts"><span></span> 第三方账号登录 <span></span></p>
+    <div class="qq-weixin boxsizing">
+        <i class="weixin layui-icon layui-icon-login-wechat" style="color: #00C929;font-size: 100px"></i>
+        <i class="qq weixin layui-icon layui-icon-login-qq" style="color: #37474F;font-size: 100px"></i>
+    </div>
+</div>
+>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script>
+
     $(function () {
-        $("#loginBtn").click(function () {
-            var params = $("#loginForm").serialize();
-            $.post("/login", params, function (data) {
-                console.log(data);
-            })
+        //点击显示隐藏密码
+        $(".seepwd").click(function () {
+            if($(".pwd").attr("type")=="password"){
+                $(".pwd").attr("type","text")
+            }else {
+                $(".pwd").attr("type","password")
+            }
         });
+
+        //点击发送验证码，按钮倒计时
+        !(function () {
+            var n=60;
+            var isSend =false;
+            $(".get-sms-code").click(function () {
+                if(isSend){
+                    return;
+                }else {
+                    getCode()
+                }
+
+            });
+            function getCode() {
+
+                isSend =true;
+                var timer= setInterval(function () {
+                    n--;
+                    $(".get-sms-code").html(n +'秒后重新发送');
+                    if (n ===0){
+                        clearInterval(timer);
+                        canClick()
+                    }
+                },1000);
+                if(isSend){
+                    $(".get-sms-code").onclick="";
+                    $(".get-sms-code").css("background-color","#9B9B9B");
+                    $(".get-sms-code").html("60秒后重新发送")
+                }
+            }
+            function  canClick() {
+                isSend =false;
+                n=60;
+                $(".get-sms-code").html('获取验证码');
+                $(".get-sms-code").onclick="getCode";
+                $(".get-sms-code").css("background-color","#017ECA")
+            }
+        })()
+
+
+
+
+
+
+
+        // $("#loginBtn").click(function () {
+        //     var params = $("#loginForm").serialize();
+        //     $.post("/login", params, function (data) {
+        //         console.log(data);
+        //     })
+        // });
     })
 </script>
 </body>

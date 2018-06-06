@@ -1,0 +1,155 @@
+html,body{
+    background-color: #FEFCFC;
+}
+.login-box{
+    width: 515px;
+    margin: 0 auto;
+    margin-top: 200px;
+}
+.login-box h1{
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    font-size: 32px;
+}
+.user-name-box,.pwd-box,.phone-num-box{
+    width: 100%;
+    height: 48px;
+    position: relative;
+    margin-top: 36px;
+}
+.user-name-box span,.pwd-box span,.phone-num-box span,.pic-code-box span,.sms-code-box span{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: 100%;
+    text-align: center;
+    font-size: 16px;
+    line-height: 48px;
+}
+.user-name,.pwd,.phone-num{
+    width: 100%;
+    height: 100%;
+    border: 1px solid #D5D5D5;
+    padding: 5px 0 5px 70px;
+}
+.pwd-box img{
+    position: absolute;
+    cursor: pointer;
+    right: 5px;
+    top: 9px;
+    width: 30px;
+    height: 30px;
+}
+.cant-login{
+    width: 100%;
+    height: 45px;
+    margin-top: 36px;
+}
+.no-register{
+    float: left;
+    font-size: 12px;
+    width: 160px;
+}
+.no-register a{
+    color: #017ECA;
+}
+.forget-pwd{
+    float: right;
+    color: #D8D7D7;
+    font-size: 12px;
+}
+#loginBtn,#registerBtn{
+    width: 515px;
+    height: 60px;
+    background-color: #017ECA;
+    text-align: center;
+    line-height: 60px;
+    font-size: 22px;
+    color: white;
+    display: block;
+    border-radius: 5px;
+    border: none;
+    outline-style: none;
+    cursor: pointer;
+}
+.fonts{
+    width: 515px;
+    height: 25px;
+    margin-top: 70px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 16px;
+    overflow: hidden;
+}
+.fonts span{
+    width: 12px;
+    height: 12px;
+    background-color: #017ECA;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 6px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.qq-weixin{
+    width: 100%;
+    height: 108px;
+    padding: 0 70px;
+    margin-top: 55px;
+}
+.qq-weixin i{
+    cursor: pointer;
+}
+.qq-weixin .weixin{
+    float: left;
+
+}
+.qq-weixin .qq{
+    float: right;
+}
+
+/*注册*/
+.pic-code-box,.sms-code-box{
+    width: 100%;
+    height: 48px;
+    position: relative;
+    margin-top: 36px;
+}
+.pic-code-box input,.sms-code-box input{
+    width: 342px;
+    height: 100%;
+    border: 1px solid #D5D5D5;
+    padding: 5px 0 5px 70px;
+}
+.pic-code{
+  position: absolute;
+    top: 0;
+    right: 50px;
+    width: 112px;
+    height: 48px;
+    background-color: rebeccapurple;
+}
+.change-one{
+    width: 40px;
+    height: 45px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+.get-sms-code{
+    width: 160px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: center;
+    line-height: 48px;
+    background-color: #017ECA;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
