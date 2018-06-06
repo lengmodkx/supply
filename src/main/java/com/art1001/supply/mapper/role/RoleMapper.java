@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.role;
 
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.role.RoleEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
+@Mapper
 public interface RoleMapper extends BaseMapper<RoleEntity, Long> {
 	
 	/**
@@ -58,5 +60,5 @@ public interface RoleMapper extends BaseMapper<RoleEntity, Long> {
 	 * @data 2017年1月6日 下午2:35:16
 	 */
 	List<Long> findUserIdByRoleId(@Param(value = "roleId") Integer roleId);
-	
+
 }

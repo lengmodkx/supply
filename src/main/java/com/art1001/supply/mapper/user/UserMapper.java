@@ -1,5 +1,6 @@
 package com.art1001.supply.mapper.user;
 
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -45,4 +46,5 @@ public interface UserMapper extends BaseMapper<UserEntity, Long> {
 	 * @return
 	 */
 	public int updateUserInfo(UserEntity userEntity);
+
 }

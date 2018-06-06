@@ -59,62 +59,6 @@ public class RoleEntity implements Serializable {
 	 */
 	private List<UserEntity> userList;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public List<UserEntity> getUserList() {
-		return userList;
-	}
-
-	public void setUserList(List<UserEntity> userList) {
-		this.userList = userList;
-	}
-
 	@Override
 	public String toString() {
 		return "RoleEntity [id=" + id + ", name=" + name + ", key=" + key + ", status="
