@@ -33,7 +33,7 @@ public class UserEntity implements Serializable {
 	 */
 	private String userName;
 	/*
-	 * 这里账户名称统一使用邮箱
+	 * 这里账户名称统一使用邮箱/手机号
 	 */
 	private String accountName;
 	/*

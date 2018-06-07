@@ -4,21 +4,31 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.service.user.UserSessionService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
+import com.google.code.kaptcha.Constants;
+import com.google.code.kaptcha.Producer;
+import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Date;
 
 @Controller
@@ -31,20 +41,15 @@ public class IndexController extends BaseController {
     @Resource
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/home.html")
     public String index() {
-        return "demo";
-    }
-
-    @GetMapping("/imageCode")
-    public void getImageCodee() {
-
+        return "home";
     }
 
     /**
      * 跳转到登陆页面
      */
-    @GetMapping("/login")
+    @GetMapping("/login.html")
     public String login() {
         return "login";
     }
@@ -52,7 +57,7 @@ public class IndexController extends BaseController {
     /**
      * 跳转到注册
      */
-    @GetMapping("/register")
+    @GetMapping("/register.html")
     public String register() {
         return "register";
     }
@@ -165,8 +170,96 @@ public class IndexController extends BaseController {
         return jsonObject;
     }
 
-    public static void main(String[] args) {
+    /**
+     * 用户退出
+     * @return	视图信息
+     */
+    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    public String logout() {
+        //这里执行退出系统之前需要清理数据的操作
 
+        // 注销登录
+        ShiroAuthenticationManager.logout();
+        return "redirect:/login.html";
+    }
+
+
+    /**
+     * 获取图形验证码
+     */
+    @GetMapping("/captcha")
+    public void getImageCode(HttpServletResponse response) {
+        ServletOutputStream out = null;
+        try {
+            response.setDateHeader("Expires", 0);
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+            response.setHeader("Pragma", "no-cache");
+            response.setContentType("image/jpeg");
+            Producer producer = new DefaultKaptcha();
+            String capText = producer.createText();
+            //将验证码存入shiro 登录用户的session
+            ShiroAuthenticationManager.setSessionAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
+            BufferedImage image = producer.createImage(capText);
+            out = response.getOutputStream();
+            ImageIO.write(image, "jpg", out);
+            out.flush();
+        }catch(IOException e)
+        {
+            throw new SystemException(e);
+        } finally {
+            try {
+                if(null != out)
+                {
+                    out.close();
+                }
+            } catch (IOException e) {
+                log.error("关闭输出流异常:", e);
+            }
+        }
+    }
+
+    @PostMapping("/code")
+    @ResponseBody
+    public JSONObject code(@RequestParam String accountName,@RequestParam String captcha){
+        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        JSONObject jsonObject = new JSONObject();
+        if(StringUtils.isEmpty(accountName)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请输入用户名！");
+            return jsonObject;
+        }
+
+        if (StringUtils.isEmpty(captcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请输入验证码！");
+            return jsonObject;
+        }
+
+        if(kaptcha.equalsIgnoreCase(captcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","验证码输入错误！");
+            return jsonObject;
+        }
+
+        Integer valid = NumberUtils.getRandomInt(99999);
+        //通过邮箱发送验证码
+        if(RegexUtils.checkEmail(accountName)){
+            try {
+                EmailUtil emailUtil = new EmailUtil();
+                emailUtil.send126Mail("","",String.valueOf(valid));
+            }catch (Exception e){
+                throw new SystemException(e);
+            }
+        }
+
+        //通过短信发送验证码
+        if(RegexUtils.checkMobile(accountName)){
+            SendSmsUtils sendSmsUtils = new SendSmsUtils();
+            sendSmsUtils.sendSms(accountName,String.valueOf(valid));
+
+        }
+        return jsonObject;
     }
 
 }

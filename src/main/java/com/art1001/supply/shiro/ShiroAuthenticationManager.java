@@ -8,7 +8,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,7 @@ import java.util.List;
  *
  */
 public class ShiroAuthenticationManager {
+
 	/*
 	 * 用户权限管理
 	 */
@@ -150,7 +154,7 @@ public class ShiroAuthenticationManager {
 			return ;
 		}
 		List<SimplePrincipalCollection> result = userSessionService.getSimplePrincipalCollectionByUserId(userIds);
-		
+
 		for (SimplePrincipalCollection simplePrincipalCollection : result) {
 			myDBRealm.clearCachedAuthorizationInfo(simplePrincipalCollection);
 		}

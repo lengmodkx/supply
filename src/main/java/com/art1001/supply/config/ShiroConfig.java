@@ -38,8 +38,9 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    @Bean("jedisPoolConfig")
-    public JedisPoolConfig jedisPoolConfig(){
+    @Bean("redisManager")
+    public RedisManager redisManager(){
+        RedisManager redisManager = new RedisManager();
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(600);
         config.setMaxIdle(300);
@@ -47,18 +48,8 @@ public class ShiroConfig {
         config.setMinEvictableIdleTimeMillis(30000);
         config.setSoftMinEvictableIdleTimeMillis(30000);
         config.setTestOnBorrow(true);
-        return config;
-    }
-
-    @Bean("jedisPool")
-    public JedisPool jedisPool(){
-        return new JedisPool(jedisPoolConfig(),"localhost");
-    }
-
-    @Bean("redisManager")
-    public RedisManager redisManager(){
-        RedisManager redisManager = new RedisManager();
-        redisManager.setJedisPool(jedisPool());
+        JedisPool jedisPool = new JedisPool(config, "localhost");
+        redisManager.setJedisPool(jedisPool);
         return redisManager;
     }
 
@@ -126,7 +117,6 @@ public class ShiroConfig {
         sessionManager.setSessionIdCookie(simpleCookie);
         ArrayList<SessionListener> arrayList = new ArrayList<>();
         ShiroSessionListener sessionListener = new ShiroSessionListener();
-
         arrayList.add(sessionListener);
         sessionManager.setSessionListeners(arrayList);
         return sessionManager;
