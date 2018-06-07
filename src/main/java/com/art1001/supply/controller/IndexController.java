@@ -139,6 +139,7 @@ public class IndexController extends BaseController {
         //设置创建者姓名
         userEntity.setCreatorName(userEntity.getUserName());
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
+        userEntity.setAccountName(userEntity.getUserName());
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
         UserEntity user = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
         //设置添加用户的密码和加密盐
