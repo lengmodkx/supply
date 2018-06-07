@@ -2,21 +2,21 @@ html,body{
     background-color: #FEFCFC;
 }
 .login-box{
-    width: 515px;
+    width: 30%;
     margin: 0 auto;
-    margin-top: 200px;
+    margin-top: 1%;
 }
 .login-box h1{
     width: 100%;
-    height: 80px;
+    height: 50px;
     text-align: center;
     font-size: 32px;
 }
 .user-name-box,.pwd-box,.phone-num-box{
     width: 100%;
-    height: 48px;
+    height: 38px;
     position: relative;
-    margin-top: 36px;
+    margin-top: 30px;
 }
 .user-name-box span,.pwd-box span,.phone-num-box span,.pic-code-box span,.sms-code-box span{
     position: absolute;
@@ -26,7 +26,7 @@ html,body{
     height: 100%;
     text-align: center;
     font-size: 16px;
-    line-height: 48px;
+    line-height: 38px;
 }
 .user-name,.pwd,.phone-num{
     width: 100%;
@@ -45,7 +45,7 @@ html,body{
 .cant-login{
     width: 100%;
     height: 45px;
-    margin-top: 36px;
+    margin-top: 30px;
 }
 .no-register{
     float: left;
@@ -61,11 +61,11 @@ html,body{
     font-size: 12px;
 }
 #loginBtn,#registerBtn{
-    width: 515px;
-    height: 60px;
+    width: 100%;
+    height: 40px;
     background-color: #017ECA;
     text-align: center;
-    line-height: 60px;
+    line-height: 40px;
     font-size: 22px;
     color: white;
     display: block;
@@ -75,9 +75,9 @@ html,body{
     cursor: pointer;
 }
 .fonts{
-    width: 515px;
+    width: 100%;
     height: 25px;
-    margin-top: 70px;
+    margin-top: 20px;
     text-align: center;
     line-height: 25px;
     font-size: 16px;
@@ -95,9 +95,9 @@ html,body{
 }
 .qq-weixin{
     width: 100%;
-    height: 108px;
+    height: 80px;
     padding: 0 70px;
-    margin-top: 55px;
+    margin-top: 20px;
 }
 .qq-weixin i{
     cursor: pointer;
@@ -113,43 +113,50 @@ html,body{
 /*注册*/
 .pic-code-box,.sms-code-box{
     width: 100%;
-    height: 48px;
+    height: 38px;
     position: relative;
-    margin-top: 36px;
+    margin-top: 30px;
 }
 .pic-code-box input,.sms-code-box input{
-    width: 342px;
-    height: 100%;
+    width: 60%;
     border: 1px solid #D5D5D5;
-    padding: 5px 0 5px 70px;
 }
 .pic-code{
   position: absolute;
     top: 0;
-    right: 50px;
-    width: 112px;
-    height: 48px;
-    background-color: rebeccapurple;
+    right: 0;
+    width: 35%;
+    height: 38px;
+    cursor: pointer;
 }
 .change-one{
-    width: 40px;
-    height: 45px;
+    width: 15%;
+    height: 38px;
     position: absolute;
     right: 0;
     top: 0;
     cursor: pointer;
 }
 .get-sms-code{
-    width: 160px;
-    height: 100%;
+    width: 35%;
+    height: 38px;
     position: absolute;
     right: 0;
     top: 0;
     text-align: center;
-    line-height: 48px;
+    line-height: 38px;
     background-color: #017ECA;
     color: white;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
+}
+@media screen and (max-width: 1466px){
+    .user-name-box, .pwd-box, .phone-num-box{
+        margin-top: 22px;
+    }
+    .pic-code-box, .sms-code-box{
+        margin-top: 22px;
+    }
+
 }

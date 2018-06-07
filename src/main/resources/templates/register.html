@@ -9,57 +9,76 @@
 </head>
 <body>
 <div class="login-box">
-    <h1>5D管理系统-项目协同管理</h1>
+    <h1>5D管理系统</h1>
     <form id="loginForm">
         <div class="phone-num-box">
-            <input class="phone-num boxsizing" type="text" name="" >
-            <span>手机号</span>
-        </div>
-        <div class="user-name-box">
-            <input class="user-name boxsizing" type="text" name="accountName" >
-            <span>昵称</span>
+            <input type="text" name="num" required lay-verify="required" placeholder="手机号或邮箱" autocomplete="off" class="layui-input phoneOrEmail">
         </div>
         <div class="pwd-box">
-            <input class="pwd boxsizing" type="password" name="password" >
-            <span>密码</span>
-            <img class="seepwd" src="../static/image/seepwd.png" th:href="@{/image/seepwd.png}">
+            <input type="password" name="title" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
+            <!--<img class="seepwd" src="../static/image/seepwd.png" th:href="@{/image/seepwd.png}">-->
         </div>
         <div class="pic-code-box">
-            <input class="write-pic-code boxsizing" type="text" name="" >
-            <span>验证码</span>
+            <input type="text" name="title" required lay-verify="required" placeholder="验证码" autocomplete="off" class="layui-input">
             <img src="" class="pic-code">
-            <img src="../static/image/change-one.png" th:href="@{/image/change-one.png}" title="换一张" class="change-one">
+            <!--<img src="../static/image/change-one.png" th:href="@{/image/change-one.png}" title="换一张" class="change-one">-->
         </div>
-        <div class="sms-code-box">
-            <input class="write-sms-code boxsizing" type="text" name="" >
-            <span>短信验证</span>
-            <div class="get-sms-code">获取验证码</div>
+        <div class="user-name-box">
+            <input type="text" name="title" required lay-verify="required" placeholder="昵称" autocomplete="off" class="layui-input">
         </div>
         <div class="cant-login boxsizing">
             <p class="no-register">已有账号， <a href="#">去登陆</a></p>
 
         </div>
-        <input type="submit"  id="registerBtn" value="注册">
+        <div type="submit"  id="registerBtn" >注册</div>
     </form>
     <p class="fonts"><span></span> 第三方账号登录 <span></span></p>
     <div class="qq-weixin boxsizing">
-        <i class="weixin layui-icon layui-icon-login-wechat" style="color: #00C929;font-size: 100px"></i>
-        <i class="qq weixin layui-icon layui-icon-login-qq" style="color: #37474F;font-size: 100px"></i>
+        <i class="weixin layui-icon layui-icon-login-wechat" style="color: #00C929;font-size: 70px"></i>
+        <i class="qq weixin layui-icon layui-icon-login-qq" style="color: #37474F;font-size: 70px"></i>
     </div>
 </div>
->
+
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/lib/layui/layui.js}" src="../static/lib/layui/layui.js"></script>
 <script>
+//弹出层函数
+function layerTips(fonts){
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        // layer.open({
+        //     type: 0,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        //     title: false, //标题
+        //     area: ['300px', '130px'], //弹出层大小
+        //     shadeClose: false, //点击遮罩关闭
+        //     anim: 6,  //动画 0-6
+        //     offset: '100px', //弹框位置 top100；水平居中
+        //     shade: 0,
+        //     btn: '确定',    //显示确定按钮
+        //     btnAlign: 'c', //确定按钮居中对齐
+        //     closeBtn:0,
+        //     content: '<p style="text-align: center">' + fonts + '</p>'
+        // });
+        layer.alert(fonts, {
+            title: false,
+            anim: 6,
+            btnAlign: 'c',
+            shade: 0,
+            closeBtn:0,
+
+        });
+    });
+}
 
     $(function () {
         //点击显示隐藏密码
-        $(".seepwd").click(function () {
-            if($(".pwd").attr("type")=="password"){
-                $(".pwd").attr("type","text")
-            }else {
-                $(".pwd").attr("type","password")
-            }
-        });
+        // $(".seepwd").click(function () {
+        //     if($(".pwd").attr("type")=="password"){
+        //         $(".pwd").attr("type","text")
+        //     }else {
+        //         $(".pwd").attr("type","password")
+        //     }
+        // });
 
         //点击发送验证码，按钮倒计时
         !(function () {
@@ -100,7 +119,32 @@
         })()
 
 
+//点击注册按钮
+        var regsj=/^1\d{10}$/;
+        var regyx=/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+        $("#registerBtn").click(function () {
+            console.log($(".phoneOrEmail").val())
+            var phoneNum = regsj.test($(".phoneOrEmail").val());
+            var email=regyx.test($(".phoneOrEmail").val());
+            if (!phoneNum||!email){
+                layerTips("请输入正确的手机号或邮箱");
+                return false
 
+            } else {
+                $.ajax({
+                    type:"POST",
+                    url:"",
+                    data:{
+
+                    },
+                    dataType:"json",
+                    success:function (data) {
+
+                    }
+                })
+            }
+
+        })
 
 
 
