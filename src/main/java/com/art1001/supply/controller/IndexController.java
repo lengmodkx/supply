@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.crypto.EndecryptUtils;
@@ -31,9 +30,6 @@ public class IndexController extends BaseController {
 
     @Resource
     private UserService userService;
-
-    @Resource(name = "fileService1")
-    private FileService fileService;
 
     @GetMapping("/")
     public String index() {
