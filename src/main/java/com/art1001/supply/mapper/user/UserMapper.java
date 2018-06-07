@@ -45,4 +45,5 @@ public interface UserMapper extends BaseMapper<UserEntity, Long> {
 	 * @return
 	 */
 	public int updateUserInfo(UserEntity userEntity);
+
 }

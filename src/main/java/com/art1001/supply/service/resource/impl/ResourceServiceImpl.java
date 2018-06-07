@@ -1,6 +1,7 @@
 package com.art1001.supply.service.resource.impl;
 
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.RoleEntity;
@@ -25,10 +26,8 @@ public class ResourceServiceImpl extends AbstractService<ResourceEntity, Long>
 	@Resource
 	private RoleService roleService;
 
-	// 这句必须要加上。不然会报空指针异常，因为在实际调用的时候不是BaseMapper调用，而是具体的mapper，这里为resourceMapper
-	@Autowired
-	public void setBaseMapper() {
-		super.setBaseMapper(resourceMapper);
+	protected ResourceServiceImpl(ResourceMapper resourceMapper) {
+		super(resourceMapper);
 	}
 
 	@Override

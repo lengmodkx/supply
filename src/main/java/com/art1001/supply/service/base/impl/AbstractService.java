@@ -20,8 +20,12 @@ import java.util.Map;
 public class AbstractService<T, ID extends Serializable> implements BaseService<T, ID> {
 
 	private BaseMapper<T, ID> baseMapper;
-	
-	public void setBaseMapper(BaseMapper<T, ID> baseMapper) {
+
+	protected void setBaseMapper(BaseMapper<T, ID> baseMapper) {
+		this.baseMapper = baseMapper;
+	}
+
+	protected AbstractService(BaseMapper<T, ID> baseMapper){
 		this.baseMapper = baseMapper;
 	}
 
@@ -58,16 +62,6 @@ public class AbstractService<T, ID extends Serializable> implements BaseService<
 		}
 	}
 
-	@Override
-	public int deleteById(String id) {
-		try
-		{
-			return baseMapper.deleteById(id);
-		}catch(Exception e)
-		{
-			throw new ServiceException(e);
-		}
-	}
 
 	@Override
 	public int update(T t) {
@@ -100,11 +94,6 @@ public class AbstractService<T, ID extends Serializable> implements BaseService<
 
 	@Override
 	public T findById(ID id) {
-		return baseMapper.findById(id);
-	}
-
-	@Override
-	public T findById(String id) {
 		return baseMapper.findById(id);
 	}
 

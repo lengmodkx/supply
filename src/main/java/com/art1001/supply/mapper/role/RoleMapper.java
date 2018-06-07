@@ -58,5 +58,5 @@ public interface RoleMapper extends BaseMapper<RoleEntity, Long> {
 	 * @data 2017年1月6日 下午2:35:16
 	 */
 	List<Long> findUserIdByRoleId(@Param(value = "roleId") Integer roleId);
-	
+
 }

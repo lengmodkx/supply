@@ -70,9 +70,5 @@ public class BaseEntity {
 	public static final Integer DEL_FLAG_DELETE = 1;
 	/** 审核 */
 	public static final Integer DEL_FLAG_AUDIT = 2;
-	/**
-	 * 城市运营商
-	 */
-	private String operatorId;
 
 }

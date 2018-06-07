@@ -6,9 +6,9 @@ import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +16,11 @@ import java.util.Map;
 @Service
 public class RoleServiceImpl extends AbstractService<RoleEntity, Long> implements RoleService {
 
-	@Autowired
+	@Resource
 	private RoleMapper roleMapper;
 
-	// 这句必须要加上。不然会报空指针异常，因为在实际调用的时候不是BaseMapper调用，而是具体的mapper，这里为userMapper
-	@Autowired
-	public void setBaseMapper() {
-		super.setBaseMapper(roleMapper);
+	protected RoleServiceImpl(RoleMapper roleMapper) {
+		super(roleMapper);
 	}
 
 	@Override
@@ -51,10 +49,10 @@ public class RoleServiceImpl extends AbstractService<RoleEntity, Long> implement
 					flag = true;
 				}
 			}
-			
+
 			List<Long> userIds = roleMapper.findUserIdByRoleId(id);
 			ShiroAuthenticationManager.clearUserAuthByUserId(userIds);
-			
+
 			return flag;
 		} catch (Exception e) {
 			throw new ServiceException(e);

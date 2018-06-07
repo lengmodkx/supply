@@ -12,7 +12,7 @@ import com.art1001.supply.entity.base.Pager;
 /**
  * fileServiceImpl
  */
-@Service
+@Service("fileService1")
 public class FileServiceImpl implements FileService {
 
 	/** fileMapper接口*/
