@@ -76,7 +76,7 @@ public class UserEntity implements Serializable {
 	/*
 	 * 个人资料信息
 	 */
-	private UserInfoEntity userInfo;
+	private UserInfoEntity userInfo = new UserInfoEntity();
 	/*
 	 * 前端列表页使用
 	 */
