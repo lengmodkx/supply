@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.user;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import com.art1001.supply.entity.role.RoleEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
