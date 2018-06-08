@@ -310,5 +310,23 @@
 		WHERE task_id = #{taskId}
 
 	</update>
+
+	<!-- 此条sql 用来处理任务 移入回收站/恢复任务的功能 -->
+	<update id="moveToRecycleBin">
+		update prm_task
+		<set>
+			<if test="task_del != null and task_del != '' ">
+				<if test="task_del == 1">
+					task_del = 0
+				</if>
+				<if test="task_del == 0">
+					task_del = 1
+				</if>
+			</if>
+		</set>
+		<where>
+			task_id = #{taskId}
+		</where>
+	</update>
 	
 </mapper>

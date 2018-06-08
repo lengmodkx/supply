@@ -35,10 +35,10 @@ public interface TaskService {
 
 	/**
 	 * 修改task数据
-	 * 
+	 *
 	 * @param task
 	 */
-	public void updateTask(Task task);
+	public int updateTask(Task task);
 
 	/**
 	 * 保存task数据
@@ -53,5 +53,12 @@ public interface TaskService {
 	 * @return
 	 */
 	public List<Task> findTaskAllList();
-	
+
+	/**
+	 * 任务 (移入回收站/回复)
+	 * @param taskId 当前任务id
+	 * @param taskDel 当前任务是否已经在回收站
+	 * @return
+	 */
+	int moveToRecycleBin(String taskId, String taskDel);
 }

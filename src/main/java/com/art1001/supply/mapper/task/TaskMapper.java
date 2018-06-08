@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * taskmapper接口
@@ -39,7 +40,7 @@ public interface TaskMapper {
 	 * 
 	 * @param task
 	 */
-	void updateTask(Task task);
+	int updateTask(Task task);
 
 	/**
 	 * 保存task数据
@@ -55,4 +56,11 @@ public interface TaskMapper {
 	 */
 	List<Task> findTaskAllList();
 
+	/**
+	 * 移入回收站/恢复任务
+	 * @param taskId 任务id
+	 * @param taskDel 任务是否在回收站
+	 * @return
+	 */
+    int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel);
 }

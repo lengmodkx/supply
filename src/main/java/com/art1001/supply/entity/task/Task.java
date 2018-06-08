@@ -34,11 +34,12 @@ public class Task extends BaseEntity implements Serializable {
 	/**
 	 * 开始时间
 	 */
-
+	private Long startTime;
 
 	/**
 	 * 结束时间
 	 */
+	private Long endTime;
 
 
 	/**
@@ -129,9 +130,11 @@ public class Task extends BaseEntity implements Serializable {
 	 * 创建时间
 	 */
 
+	private Long createTime;
 
 	/**
 	 * 更新时间
 	 */
+	private Long updateTime;
 
 }
