@@ -102,13 +102,15 @@
                 if(phoneNum||email){
                     var params = $("#registerForm").serialize();
                     console.log(params);
+
                     $.post("/register", params, function (data) {
                         if(data.result===1){//注册成功跳转到登陆界面
-
+                            layer.msg(data.msg,{icon: 1});
+                            window.location.href = "/login.html";
                         }else{
-                            layer.alert(data.msg,{icon: 5});
+                            changeCaptcha();
+                            layer.msg(data.msg,{icon: 5});
                         }
-                        changeCaptcha();
                     })
                 }else{
                     console.log("xxx");
