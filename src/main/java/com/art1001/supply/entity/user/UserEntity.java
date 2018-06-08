@@ -21,7 +21,7 @@ import java.util.Date;
 @Alias("userEntity")
 public class UserEntity implements Serializable {
 
-	public Long id;
+	public String id;
 
 	/**
 	 * 

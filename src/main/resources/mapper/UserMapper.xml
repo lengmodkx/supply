@@ -133,7 +133,7 @@
 		where u.u_account_name = #{name}
 	</select>
 	
-	<select id="findById" parameterType="long" resultMap="userMap" flushCache="true" useCache="true">
+	<select id="findById" parameterType="String" resultMap="userMap" flushCache="true" useCache="true">
 		SELECT u.u_id,
 		u.u_name,
 		u.u_account_name,
@@ -191,6 +191,7 @@
 	
 	<insert id="insert" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="id">
 		insert ignore into tb_user (
+			u_id,
 			u_name,
 			u_account_name,
 			u_password,
@@ -200,6 +201,7 @@
 			u_create_time
 			)   
 		values (
+			#{id},
 			#{userName},
 			#{accountName},
 			#{password},

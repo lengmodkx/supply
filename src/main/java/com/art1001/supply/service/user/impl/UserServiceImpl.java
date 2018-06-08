@@ -9,6 +9,7 @@ import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.EmailUtil;
+import com.art1001.supply.util.IdGen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,8 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
     @Override
     public int insert(UserEntity userEntity, String password) {
         try {
+            // 生成用户id
+            userEntity.setId(IdGen.uuid());
             if (userMapper.insert(userEntity) == 1) {
                 if (userMapper.insertUserRole(userEntity) == 1) {
                     userEntity.getUserInfo().setId(userEntity.getId());

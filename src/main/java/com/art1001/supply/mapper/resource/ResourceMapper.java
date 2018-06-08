@@ -19,7 +19,7 @@ public interface ResourceMapper extends BaseMapper<ResourceEntity, Long> {
 	 * @param userId
 	 * @return
 	 */
-	public List<ResourceEntity> findResourcesByUserId(@Param(value = "userId") int userId);
+	public List<ResourceEntity> findResourcesByUserId(@Param(value = "userId") String userId);
 
 	/**
 	 * 自定义方法

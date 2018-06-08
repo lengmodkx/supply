@@ -65,9 +65,9 @@ public class UserSessionServiceImpl implements UserSessionService {
 	 */
 	@Override
 	public List<SimplePrincipalCollection> getSimplePrincipalCollectionByUserId(
-			Long... userIds) {
+			String... userIds) {
 		// 把userIds 转成Set，好判断
-		Set<Long> idset = new TreeSet<Long>(Arrays.asList(userIds));
+		Set<String> idset = new TreeSet<String>(Arrays.asList(userIds));
 		// 获取所有session
 		Collection<Session> sessions = shiroSessionDao.getActiveSessions();
 		// 定义返回

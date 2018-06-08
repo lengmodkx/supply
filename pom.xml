@@ -25,6 +25,7 @@
         <shiro.version>1.4.0</shiro.version>
         <jedis.version>2.9.0</jedis.version>
         <redisson.version>3.7.0</redisson.version>
+        <pagehelper.version>5.0.3</pagehelper.version>
     </properties>
 
     <dependencies>
@@ -140,15 +141,14 @@
             <version>${redisson.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>${pagehelper.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jodd</groupId>
             <artifactId>jodd-props</artifactId>
             <version>3.7.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
         </dependency>
 
         <dependency>

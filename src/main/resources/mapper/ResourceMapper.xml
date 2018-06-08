@@ -43,12 +43,12 @@
 		<result property="selected" column="s_selected"/>
 	</resultMap>
 	
-	<select id="findResourcesByUserId" parameterType="int" resultMap="resourceMap" flushCache="true" useCache="true">
+	<select id="findResourcesByUserId" parameterType="String" resultMap="resourceMap" flushCache="true" useCache="true">
 		SELECT s.* FROM tb_resource s, tb_resources_role sr, tb_role r, tb_role_user ru
 		WHERE s.s_id = sr.s_id AND sr.r_id = r.r_id AND r.r_id = ru.r_id AND ru.u_id=${userId}
 	</select>
 	
-	<select id="findResourcesMenuByUserId" parameterType="int" resultMap="resourceMap" flushCache="true" useCache="true">
+	<select id="findResourcesMenuByUserId" parameterType="String" resultMap="resourceMap" flushCache="true" useCache="true">
 		SELECT s.* FROM tb_resource s, tb_resources_role sr, tb_role r, tb_role_user ru
 		WHERE s.s_id = sr.s_id AND sr.r_id = r.r_id AND r.r_id = ru.r_id AND s.s_type =0 AND ru.u_id=${userId}
 	</select>

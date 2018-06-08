@@ -13,7 +13,7 @@ public interface ResourceService {
 	 * @param userId
 	 * @return
 	 */
-	public List<ResourceEntity> findResourcesByUserId(int userId);
+	public List<ResourceEntity> findResourcesByUserId(String userId);
 
 	/**
 	 * 自定义方法

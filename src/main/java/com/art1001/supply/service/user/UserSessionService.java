@@ -37,7 +37,7 @@ public interface UserSessionService {
 	 * @author wjggwm
 	 * @data 2016年12月30日 下午5:22:21
 	 */
-	public List<SimplePrincipalCollection> getSimplePrincipalCollectionByUserId(Long... userIds);
+	public List<SimplePrincipalCollection> getSimplePrincipalCollectionByUserId(String... userIds);
 	
 	/**
 	 * 

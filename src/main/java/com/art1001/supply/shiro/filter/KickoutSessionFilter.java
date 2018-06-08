@@ -90,24 +90,24 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		}
 		
 		//从缓存获取用户-Session信息 <UserId,SessionId>
-		LinkedHashMap<Long, Serializable> infoMap = null;
+		LinkedHashMap<String, Serializable> infoMap = null;
 		
 		Cache cache = cacheManager.getCache(ShiroUtils.ONLINE_USER);
 		if(cache instanceof RedisShiroCache)
 		{
 			RedisShiroCache redisCache = (RedisShiroCache)cache;
-			infoMap = (LinkedHashMap<Long, Serializable>)redisCache.get(ShiroUtils.ONLINE_USER, LinkedHashMap.class);
+			infoMap = (LinkedHashMap<String, Serializable>)redisCache.get(ShiroUtils.ONLINE_USER, LinkedHashMap.class);
 		}else if(cache instanceof EhcacheShiroCache)
 		{
 			EhcacheShiroCache ehCache = (EhcacheShiroCache)cache;
-			infoMap = (LinkedHashMap<Long, Serializable>)ehCache.get(ShiroUtils.ONLINE_USER);
+			infoMap = (LinkedHashMap<String, Serializable>)ehCache.get(ShiroUtils.ONLINE_USER);
 		}
 		
 		//如果不存在，创建一个新的
-		infoMap = null == infoMap ? new LinkedHashMap<Long, Serializable>() : infoMap;
+		infoMap = null == infoMap ? new LinkedHashMap<String, Serializable>() : infoMap;
 		
 		//获取tokenId
-		Long userId = ShiroAuthenticationManager.getUserId();
+		String userId = ShiroAuthenticationManager.getUserId();
 		
 		//如果已经包含当前Session，并且是同一个用户则跳过
 		if(infoMap.containsKey(userId) && infoMap.containsValue(sessionId)){

@@ -66,7 +66,7 @@ public class ShiroAuthenticationManager {
 	 * 
 	 * @return
 	 */
-	public static Long getUserId() {
+	public static String getUserId() {
 		return getUserEntity() == null ? null : getUserEntity().getId();
 	}
 	
@@ -148,7 +148,7 @@ public class ShiroAuthenticationManager {
 	 * @author wjggwm
 	 * @data 2017年1月5日 下午6:07:45
 	 */
-	public static void clearUserAuthByUserId(Long...userIds){
+	public static void clearUserAuthByUserId(String...userIds){
 		
 		if(null == userIds || userIds.length == 0)	{
 			return ;
@@ -173,7 +173,7 @@ public class ShiroAuthenticationManager {
 		if(null == userIds || userIds.size() == 0){
 			return ;
 		}
-		clearUserAuthByUserId(userIds.toArray(new Long[0]));
+		clearUserAuthByUserId(userIds.toArray(new String[0]));
 	}
 	
 	/**
@@ -185,11 +185,11 @@ public class ShiroAuthenticationManager {
 	 */
 	public static void clearAllUserAuth() {
 		List<UserSessionEntity> list = userSessionService.getAllUser();
-		List<Long> userIds = new ArrayList<Long>();
+		List<String> userIds = new ArrayList<String>();
 		list.forEach(user -> {
 			userIds.add(user.getId());
 		});
-		clearUserAuthByUserId(userIds.toArray(new Long[0]));
+		clearUserAuthByUserId(userIds.toArray(new String[0]));
 	}
 	
 

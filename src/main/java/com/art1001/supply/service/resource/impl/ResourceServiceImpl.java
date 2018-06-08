@@ -29,7 +29,7 @@ public class ResourceServiceImpl extends AbstractService<ResourceEntity, Long>
 	}
 
 	@Override
-	public List<ResourceEntity> findResourcesByUserId(int userId) {
+	public List<ResourceEntity> findResourcesByUserId(String userId) {
 		return resourceMapper.findResourcesByUserId(userId);
 	}
 

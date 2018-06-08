@@ -45,7 +45,7 @@ public class MyDBRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 		UserEntity user = ShiroAuthenticationManager.getUserEntity();
 		if (user != null) {
-			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getId().intValue());
+			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getId());
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			//根据用户ID查询角色（role），放入到Authorization里。
