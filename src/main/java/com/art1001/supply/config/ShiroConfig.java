@@ -114,6 +114,9 @@ public class ShiroConfig {
         sessionManager.setSessionIdCookie(simpleCookie);
         ArrayList<SessionListener> arrayList = new ArrayList<>();
         ShiroSessionListener sessionListener = new ShiroSessionListener();
+        RedisShiroSessionRepository shiroSessionRepository = new RedisShiroSessionRepository();
+        shiroSessionRepository.setRedisManager(redisManager());
+        sessionListener.setShiroSessionRepository(shiroSessionRepository);
         arrayList.add(sessionListener);
         sessionManager.setSessionListeners(arrayList);
         return sessionManager;
@@ -130,6 +133,7 @@ public class ShiroConfig {
         CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
         SimpleCookie simpleCookie = new SimpleCookie("SUPPLY-SID");
         simpleCookie.setMaxAge(604800);
+        simpleCookie.setHttpOnly(true);
         rememberMeManager.setCipherKey(Base64.decode("GsHaWo4m1eNbE0kNSMULhg=="));
         rememberMeManager.setCookie(simpleCookie);
         securityManager.setRememberMeManager(rememberMeManager);
