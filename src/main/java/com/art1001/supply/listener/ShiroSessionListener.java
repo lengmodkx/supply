@@ -4,9 +4,6 @@ package com.art1001.supply.listener;
 import com.art1001.supply.shiro.session.ShiroSessionRepository;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * 
@@ -17,10 +14,11 @@ import javax.annotation.Resource;
  */
 public class ShiroSessionListener implements SessionListener {
 
-    @Resource
     private ShiroSessionRepository shiroSessionRepository;
 
-
+    public void setShiroSessionRepository(ShiroSessionRepository shiroSessionRepository) {
+        this.shiroSessionRepository = shiroSessionRepository;
+    }
 
     /**
      * session会话开始

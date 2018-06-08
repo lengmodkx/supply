@@ -14,6 +14,9 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
+import com.sun.org.glassfish.external.probe.provider.annotations.ProbeParam;
+import jodd.props.Props;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -40,6 +43,9 @@ public class IndexController extends BaseController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private Producer captchaProducer;
 
     @GetMapping("/home.html")
     public String index() {
@@ -135,16 +141,35 @@ public class IndexController extends BaseController {
     /**
      * 用户注册
      *
+     * @param captcha 图形验证码
      * @param userEntity 用户实体
      */
     @PostMapping("/register")
     @ResponseBody
-    public JSONObject register(UserEntity userEntity) {
+    public JSONObject register(
+            @RequestParam String captcha,
+            UserEntity userEntity,
+            HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
+        // 得到是哪个页面跳转的登陆
+        String refer = request.getHeader("REFERER");
+        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        if(StringUtils.isEmpty(captcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请输入验证码");
+            return jsonObject;
+        }
+
+        if(!captcha.equalsIgnoreCase(kaptcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","验证码填写错误");
+            return jsonObject;
+        }
+
         //设置创建者姓名
-        userEntity.setCreatorName(userEntity.getUserName());
+        userEntity.setCreatorName(userEntity.getAccountName());
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
-        userEntity.setAccountName(userEntity.getUserName());
+        userEntity.setAccountName(userEntity.getAccountName());
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
         UserEntity user = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
         //设置添加用户的密码和加密盐
@@ -161,9 +186,10 @@ public class IndexController extends BaseController {
             userService.insert(userEntity, userEntity.getPassword());
             jsonObject.put("result", 1);
             jsonObject.put("msg", "注册成功");
+            jsonObject.put("refer", refer);
         } catch (Exception e) {
             log.error("注册失败, {}", e);
-            jsonObject.put("result", 1);
+            jsonObject.put("result", 0);
             jsonObject.put("msg", "注册失败");
         }
 
@@ -187,7 +213,7 @@ public class IndexController extends BaseController {
     /**
      * 获取图形验证码
      */
-    @GetMapping("/captcha")
+    @GetMapping("/captcha.html")
     public void getImageCode(HttpServletResponse response) {
         ServletOutputStream out = null;
         try {
@@ -196,11 +222,10 @@ public class IndexController extends BaseController {
             response.addHeader("Cache-Control", "post-check=0, pre-check=0");
             response.setHeader("Pragma", "no-cache");
             response.setContentType("image/jpeg");
-            Producer producer = new DefaultKaptcha();
-            String capText = producer.createText();
+            String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
             ShiroAuthenticationManager.setSessionAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
-            BufferedImage image = producer.createImage(capText);
+            BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
             out.flush();
@@ -236,7 +261,7 @@ public class IndexController extends BaseController {
             return jsonObject;
         }
 
-        if(kaptcha.equalsIgnoreCase(captcha)){
+        if(!kaptcha.equalsIgnoreCase(captcha)){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码输入错误！");
             return jsonObject;

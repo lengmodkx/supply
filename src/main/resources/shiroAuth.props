@@ -1,6 +1,6 @@
 /resources/static/**=anon
-#/logout.html=anon
-#/register.html=anon
+/logout.html=anon
+/register.html=anon
 #/captcha.html=anon
 #/login.html=anon
 #/denied.jsp=anon

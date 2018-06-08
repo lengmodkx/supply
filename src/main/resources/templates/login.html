@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>登陆</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/lib/layui/css/layui.css}" href="../static/lib/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/loginAndRegister.css}" href="../static/css/loginAndRegister.css">
 </head>
 <body>
 <div class="login-box" style="margin-top: 100px">
     <h1>5D管理系统</h1>
-    <form id="loginform">
+    <form id="loginform" class="layui-form">
         <div class="user-name-box">
             <input type="text" name="accountName" required lay-verify="required" placeholder="手机号或邮箱" autocomplete="off" class="layui-input">
         </div>
@@ -18,26 +18,36 @@
             <input type="password" name="password" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
         </div>
         <div class="cant-login boxsizing">
-            <p class="no-register">还没有注册？ <a href="#">注册新账号</a></p>
+            <p class="no-register">还没有注册？ <a href="/register.html">注册新账号</a></p>
             <a href="#" class="forget-pwd">忘记密码</a>
         </div>
-        <div id="login" class="layui-btn layui-btn-fluid" style="background-color: #017ECA">登录</div>
+        <button id="login" lay-submit class="layui-btn layui-btn-fluid" lay-filter="Login" style="background-color: #017ECA">登录</button>
     </form>
-    <p class="fonts"><span></span> 第三方账号登录 <span></span></p>
-    <div class="qq-weixin boxsizing">
-        <i class="weixin layui-icon layui-icon-login-wechat" style="color: #00C929;font-size: 50px"></i>
-        <i class="qq weixin layui-icon layui-icon-login-qq" style="color: #37474F;font-size: 50px"></i>
+    <div style="display: none">
+        <p class="fonts"><span></span> 第三方账号登录 <span></span></p>
+        <div class="qq-weixin boxsizing">
+            <i class="weixin layui-icon layui-icon-login-wechat" style="color: #00C929;font-size: 50px"></i>
+            <i class="qq weixin layui-icon layui-icon-login-qq" style="color: #37474F;font-size: 50px"></i>
+        </div>
     </div>
+
 </div>
 
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
+
     $(function () {
-        $("#login").click(function () {
-            var params = $("#loginform").serialize();
-            $.post("/login", params, function (data) {
-                console.log(data);
-            })
+        layui.use('form', function(){
+            var form = layui.form;
+            //监听提交
+            form.on('submit(Login)', function(){
+                var params = $("#loginform").serialize();
+                $.post("/login", params, function (data) {
+                    console.log(data);
+                });
+                return false;
+            });
         });
     })
 </script>
