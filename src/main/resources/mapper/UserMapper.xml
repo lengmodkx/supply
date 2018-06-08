@@ -61,6 +61,10 @@
 			<result property="createTime" column="u_create_time"/>
 		</association>
 	</resultMap>
+
+	<select id="findCount" resultType="java.lang.Integer">
+		select count(0) from tb_user
+	</select>
 	
 	<select id="queryListByPage" parameterType="map" resultMap="userMap" flushCache="true" useCache="true">
 		<!-- 
@@ -103,6 +107,7 @@
 			</if>
 		</where>
 		order by u_id DESC
+		limit #{start}, #{pageSize}
 	</select>
 	
 	<select id="findByName" parameterType="String" resultMap="userMap" flushCache="true" useCache="true">

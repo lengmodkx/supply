@@ -2,6 +2,7 @@ package com.art1001.supply.service.user;
 
 
 
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.entity.user.UserEntity;
 
@@ -25,5 +26,14 @@ public interface UserService {
 	public int updatePassword(UserEntity userEntity, String password) throws ServiceException;
     
     public int deleteBatchById(List<Long> userIds);
-    
+
+	/**
+	 * 分页查询用户
+	 */
+	List<UserEntity> findListPager(Pager pager);
+
+	/**
+	 * 获取总条数
+	 */
+	int findCount();
 }

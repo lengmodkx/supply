@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user.impl;
 
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -119,6 +120,16 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
         } catch (Exception e) {
             throw new ServiceException(e);
         }
+    }
+
+    @Override
+    public List<UserEntity> findListPager(Pager pager) {
+        return userMapper.findListPager(pager);
+    }
+
+    @Override
+    public int findCount() {
+        return userMapper.findCount();
     }
 
 

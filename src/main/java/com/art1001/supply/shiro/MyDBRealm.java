@@ -1,9 +1,9 @@
 package com.art1001.supply.shiro;
 
 
+import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.filter.ShiroUtils;
 import com.art1001.supply.shiro.util.MyByteSource;

@@ -1,7 +1,5 @@
 package com.art1001.supply.service.resource;
 
-
-
 import com.art1001.supply.entity.resource.ResourceEntity;
 
 import java.util.List;

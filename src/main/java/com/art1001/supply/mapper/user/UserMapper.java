@@ -1,5 +1,6 @@
 package com.art1001.supply.mapper.user;
 
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -46,4 +47,10 @@ public interface UserMapper extends BaseMapper<UserEntity, Long> {
 	 */
 	public int updateUserInfo(UserEntity userEntity);
 
+	/**
+	 * 分页查询用户列表
+	 */
+    List<UserEntity> findListPager(Pager pager);
+
+	int findCount();
 }
