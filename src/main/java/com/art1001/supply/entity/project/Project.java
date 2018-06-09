@@ -39,7 +39,7 @@ public class Project extends BaseEntity implements Serializable {
     private Long endTime;
 
     /**
-     * project_cover
+     * 项目封面
      */
     private String projectCover;
 
@@ -57,5 +57,18 @@ public class Project extends BaseEntity implements Serializable {
      * 状态
      */
     private Integer projectStatus;
+    /**
+     * 项目是否公开，0私有，1公开
+     */
+    private Integer isPublic;
 
+    /**
+     * 项目菜单标题（可调整顺序）
+     */
+    private String projectMenu;
+
+    /**
+     * 项目是否开启推送提醒
+     */
+    private Integer projectRemind;
 }

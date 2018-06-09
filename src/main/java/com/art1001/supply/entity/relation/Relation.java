@@ -28,7 +28,7 @@ public class Relation extends BaseEntity implements Serializable {
 	/**
 	 * 父级id
 	 */
-	private String parent;
+	private String parentId;
 
 
 	/**

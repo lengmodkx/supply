@@ -1,0 +1,321 @@
+html,body{
+    background-color: #FEFCFC;
+    min-width: 100%;
+}
+
+.content{
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 25px;
+}
+.model{
+    width: 280px;
+    margin-right: 20px;
+    min-height: 500px;
+    background-color: #EEEEEE;
+    float: left;
+    padding: 15px 10px;
+}
+.model:nth-of-type(6){
+    margin-right: 0;
+}
+.model-title{
+    width: 100%;
+    height: 30px;
+    font-size: 14px;
+    color: #B5B5B5;
+    position: relative;
+}
+/*点击下箭头出现的内容 开始*/
+.lbmenu{
+    width: 250px;
+    height: 150px;
+    position: absolute;
+    right: -120px;
+    bottom: -140px;
+    background-color: white;
+    z-index: 50;
+    box-shadow: 0 0 15px #C4C4C4;
+    border-radius: 5px;
+    display: none;
+}
+.lbmenu-title{
+    width: 210px;
+    margin: 0 20px;
+    position: relative;
+    height: 44px;
+}
+.lbmenu-title p{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 44px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #383838;
+}
+.lbmenu-close{
+    position: absolute;
+    right: 0px;
+    top: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.lbmenu-close:hover{
+    color: #80BEE4 !important;
+}
+.lbmenu-add,.lbmenu-remove{
+    width: 100%;
+    height: 40px;
+    border-top: 1px solid #e5e5e5;
+    padding: 5px 0;
+}
+.lbmenu-add-content{
+    width: 100%;
+    height: 100%;
+    color: gray;
+    font-size: 14px;
+    text-indent: 2em;
+    line-height: 40px;
+    cursor: pointer;
+}
+.lbmenu-add-content:hover{
+    background-color: #f5f5f5;
+}
+/*点击下箭头出现的内容 结束*/
+.add-new-model{
+    float: right;
+    cursor: pointer;
+}
+.assignment{
+    width: 100%;
+    background-color: white;
+    margin-bottom: 20px;
+    position: relative;
+}
+.line{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #a6a6a6;
+    opacity: 0;
+    transition: all 218ms ease-in;
+}
+.assignment:hover .line{
+    width: 6px;
+    opacity: 1;
+}
+.assignment-top-box{
+    width: 100%;
+    padding: 6px 10px 6px 7px;
+    overflow: hidden;
+}
+.is-sure{
+    width: 14px;
+    height: 14px;
+    border: 1px solid #D3D3D3;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    float: left;
+    margin-top: 3px;
+}
+.assignment-title{
+    font-size: 14px;
+    line-height: 24px;
+    margin-left: 8px;
+    float: left;
+    width: 70%;
+}
+.assignment-tx{
+    float: right;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+.assignment-bottom-box{
+    width: 100%;
+    height: 34px;
+    position: relative;
+}
+.timer{
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    background-color: #80BEE4;
+    padding: 0 5px;
+    margin-left: 30px;
+    color: white;
+    display: inline-block;
+    border-radius: 2px;
+}
+.dates{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 38px;
+    height: 15px;
+    font-size: 12px;
+    background-color: #F8F8F8;
+    text-align: center;
+    color: #BDBDBD;
+}
+/*添加任务按钮*/
+.add-assignment{
+    width: 100%;
+    height: 43px;
+    background-color: white;
+    cursor: pointer;
+
+}
+.add-icon{
+    margin-left: 12px;
+    line-height: 43px;
+    float: left;
+}
+.add-assignment span{
+    font-size: 16px;
+    color: #80BEE4;
+    margin-left: 10px;
+    line-height: 43px;
+    float: left;
+}
+/*添加任务界面*/
+.new-assignment{
+    width: 100%;
+    padding: 12px;
+    background-color: white;
+    margin-top: 20px;
+}
+.rw-content{
+    width: 100%;
+    height: 60px;
+    padding: 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    line-height: 20px;
+}
+.create-people{
+    width: 100%;
+    height: 40px;
+    margin-top: 5px;
+    padding: 8px 0;
+}
+.one-people{
+    height: 100%;
+    float: left;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid white;
+}
+.one-people:hover{
+    background-color: #f5f5f5;
+    border-radius: 24px;
+    border: 1px solid #f5f5f5;
+}
+.one-people:hover .remove-pople{
+    display: block;
+}
+.one-people img{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+    float: left;
+}
+.one-people span{
+    float: left;
+    line-height: 24px;
+    margin-right: 8px;
+}
+.remove-pople{
+    position: absolute;
+    right: -7px;
+    top: -5px;
+    display: none;
+}
+.remove-pople:hover{
+    color: #3da8f5 !important;
+}
+.add-people{
+    width: 100%;
+    height: 40px;
+    padding: 8px 0;
+}
+.add-people span{
+    float: left;
+    color: gray;
+}
+.add-people span:nth-of-type(1){
+    width: 24px;
+    height: 24px;
+    margin: 0 8px;
+    line-height: 16px;
+    font-weight: 800;
+}
+.add-people-click{
+    line-height: 24px;
+    cursor: pointer;
+}
+.add-people-click:hover{
+    color: #3da8f5;
+}
+.heng-line{
+    width: 100%;
+    height: 1px;
+    background-color: #E5E5E5;
+}
+.cyz{
+    width: 100%;
+    height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: gray;
+    line-height: 20px;
+    margin-top: 10px;
+}
+.work-people{
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.one-work-people{
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 1px solid white;
+    margin-right: 8px;
+    float: left;
+    border-radius: 50%;
+}
+.one-work-people:hover{
+    border: 1px solid #3da8f5;
+}
+.one-work-people:hover .remove-work-people{
+   display: block;
+}
+.work-people img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.remove-work-people{
+    position: absolute;
+    right: -5px;
+    top: -4px;
+    cursor: pointer;
+    display: none;
+}
+.add-work-people{
+    float: left;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+.add-work-people img{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}

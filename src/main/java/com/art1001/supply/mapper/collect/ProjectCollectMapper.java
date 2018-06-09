@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.ProjectCollect;
+import com.art1001.supply.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -55,4 +56,6 @@ public interface ProjectCollectMapper {
 	 */
 	List<ProjectCollect> findProjectCollectAllList();
 
+
+	List<Project> findProjectByMemberId(String memberId);
 }

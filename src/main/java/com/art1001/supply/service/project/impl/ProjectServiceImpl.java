@@ -7,6 +7,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 
 /**
@@ -67,6 +68,7 @@ public class ProjectServiceImpl implements ProjectService {
 	 */
 	@Override
 	public void saveProject(Project project){
+		project.setProjectId(IdGen.uuid());
 		projectMapper.saveProject(project);
 	}
 	/**
@@ -78,5 +80,16 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<Project> findProjectAllList(){
 		return projectMapper.findProjectAllList();
 	}
-	
+
+	/**
+	 * 获取项目创建人的项目
+	 *
+	 * @return
+	 */
+	@Override
+	public List<Project> findProjectByMemberId(String memberId) {
+		return projectMapper.findProjectByMemberId(memberId);
+	}
+
+
 }

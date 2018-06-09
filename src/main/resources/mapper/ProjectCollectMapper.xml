@@ -12,7 +12,40 @@
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="collect_status" property="collectStatus" jdbcType="INTEGER" />
 	</resultMap>
-    
+	<resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="start_time" property="startTime" jdbcType="BIGINT" />
+		<result column="end_time" property="endTime" jdbcType="BIGINT" />
+		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
+		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
+		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
+		<result column="project_status" property="projectStatus" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="project_menu" property="projectMenu" jdbcType="VARCHAR" />
+		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List1">
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_menu,
+		project_remind
+	</sql>
+
 	<sql id="Base_Column_List">
 						id,
 				member_id,
@@ -164,5 +197,16 @@
 		WHERE id = #{id}
 
 	</update>
-	
+
+	<select id="findProjectByMemberId" resultMap="BaseResultMap1" parameterType="java.lang.String">
+
+		SELECT
+		<include refid="Base_Column_List1" />
+		FROM
+		prm_project
+		LEFT JOIN prm_project_collect ON prm_project.project_id = prm_project_collect.project_id
+		WHERE
+		prm_project_collect.member_id = #{memberId} and project_del = 0
+	</select>
+
 </mapper>

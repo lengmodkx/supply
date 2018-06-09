@@ -2,6 +2,8 @@ package com.art1001.supply.entity.project;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -32,12 +34,6 @@ public class ProjectMember extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 任务id
-	 */
-	private String taskId;
-
-
-	/**
 	 * 用户名
 	 */
 	private String memberName;
@@ -52,7 +48,7 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	/**
 	 * 手机号
 	 */
-	private Integer memberPhono;
+	private Integer memberPhone;
 
 
 	/**
@@ -60,5 +56,5 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	 */
 	private String memberEmail;
 
-
+	private Project project;
 }

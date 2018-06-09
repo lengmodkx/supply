@@ -5,7 +5,7 @@ html,body{
 .header{
     width: 90%;
     height: 50px;
-    margin: 0 auto;
+    padding: 0 5%;
     background-color: white;
     line-height: 50px;
     position: relative;
@@ -37,7 +37,7 @@ html,body{
     width: 60px;
     height: 40px;
     top: 5px;
-    right: 0;
+    right: 5%;
 
 }
 .head-photo{
@@ -58,6 +58,7 @@ html,body{
     right: 0;
     background-color: white;
     display: none;
+    z-index: 60;
 }
 .vertical-nav li{
     width: 100%;
@@ -115,7 +116,7 @@ html,body{
     margin-top: 20px;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%;
     background-origin: content-box;
     cursor: pointer;
     transition: margin-top 0.5s;
@@ -131,6 +132,7 @@ html,body{
     height: 100%;
     padding: 8% 8% 8% 10%;
     position: relative;
+    overflow: hidden;
 }
 .describe h3{
     width: 100%;
@@ -205,4 +207,60 @@ html,body{
     margin: 0 auto;
     display: block;
     margin-top: 50px;
+}
+/*创建新项目弹出层的样式*/
+.newobj{
+    width: 400px;
+    height: 400px;
+    background-color: white;
+    padding: 15px;
+}
+.newobj-title{
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #EBEBEB;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+}
+.newobj-title img{
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-right: 12px;
+    margin-top: 10px;
+}
+.bigimg{
+    width: 120px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.p{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    color: #017ECA;
+    text-align: center;
+}
+.obj-form input{
+    width: 100%;
+    height: 40px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border: 0 none;
+    background-color: #EEEEEE;
+    border-radius: 5px;
+}
+.creat-ok{
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    background-color: #017ECA;
+    color: white;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 16px;
 }

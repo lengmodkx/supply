@@ -1,6 +1,7 @@
 package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -78,5 +79,10 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 	public List<ProjectMember> findProjectMemberAllList(){
 		return projectMemberMapper.findProjectMemberAllList();
 	}
-	
+
+	@Override
+	public List<Project> findProjectByMemberId(String memberId,Integer projectDel) {
+		return projectMemberMapper.findProjectByMemberId(memberId,projectDel);
+	}
+
 }

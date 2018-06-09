@@ -5,19 +5,21 @@
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.relation.Relation">
 		<result column="relation_id" property="relationId" jdbcType="VARCHAR" />
 		<result column="relation_name" property="relationName" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="lable" property="lable" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						relation_id,
+				relation_id,
 				relation_name,
 				parent_id,
 				project_id,
 				create_time,
-				update_time
+				update_time,
+				lable
 	</sql>
 
 	<sql id="whereStatement">
@@ -80,7 +82,7 @@
 			<if test="relationName != null and relationName != ''">
 			relation_name,
 			</if>
-			<if test="parent.id != null and parent.id != ''">
+			<if test="parentId != null and parentId != ''">
 			parent_id,
 			</if>
 			<if test="projectId != null and projectId != ''">
@@ -92,6 +94,9 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="lable != null ">
+				lable,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -102,8 +107,8 @@
 			<if test="relationName != null and relationName != ''">
 				#{relationName},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				#{parent.id},
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
 			</if>
 			<if test="projectId != null and projectId != ''">
 				#{projectId},
@@ -113,6 +118,9 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="lable != null ">
+				lable,
 			</if>
 		</trim>
 
@@ -128,8 +136,8 @@
 			<if test="relationName != null and relationName != ''">
 				relation_name = #{relationName},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				parent_id = #{parent.id},
+			<if test="parentId != null and parentId != ''">
+				parent_id = #{parentId},
 			</if>
 			<if test="projectId != null and projectId != ''">
 				project_id = #{projectId},
@@ -139,6 +147,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="lable != null ">
+				lable = #{lable},
 			</if>
 		</set>
 
