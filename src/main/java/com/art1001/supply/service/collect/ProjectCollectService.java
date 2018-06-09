@@ -2,13 +2,13 @@ package com.art1001.supply.service.collect;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.collect.Collect;
+import com.art1001.supply.entity.collect.ProjectCollect;
 
 
 /**
  * collectService接口
  */
-public interface CollectService {
+public interface ProjectCollectService {
 
 	/**
 	 * 查询分页collect数据
@@ -16,7 +16,7 @@ public interface CollectService {
 	 * @param pager 分页对象
 	 * @return
 	 */
-	public List<Collect> findCollectPagerList(Pager pager);
+	public List<ProjectCollect> findProjectCollectPagerList(Pager pager);
 
 	/**
 	 * 通过id获取单条collect数据
@@ -24,34 +24,34 @@ public interface CollectService {
 	 * @param id
 	 * @return
 	 */
-	public Collect findCollectById(String id);
+	public ProjectCollect findProjectCollectById(String id);
 
 	/**
 	 * 通过id删除collect数据
 	 * 
 	 * @param id
 	 */
-	public void deleteCollectById(String id);
+	public void deleteProjectCollectById(String id);
 
 	/**
 	 * 修改collect数据
 	 * 
-	 * @param Collect
+	 * @param projectCollect
 	 */
-	public void updateCollect(Collect Collect);
+	public void updateProjectCollect(ProjectCollect projectCollect);
 
 	/**
 	 * 保存collect数据
 	 * 
-	 * @param Collect
+	 * @param projectCollect
 	 */
-	public void saveCollect(Collect Collect);
+	public void saveProjectCollect(ProjectCollect projectCollect);
 
 	/**
 	 * 获取所有collect数据
 	 * 
 	 * @return
 	 */
-	public List<Collect> findCollectAllList();
+	public List<ProjectCollect> findProjectCollectAllList();
 	
 }

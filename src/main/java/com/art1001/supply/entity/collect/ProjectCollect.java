@@ -8,7 +8,7 @@ import lombok.Data;
  * collectEntity
  */
 @Data
-public class Collect extends BaseEntity implements Serializable {
+public class ProjectCollect extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -22,7 +22,7 @@ public class Collect extends BaseEntity implements Serializable {
 	/**
 	 * 用户id
 	 */
-	private String userId;
+	private String memberId;
 
 
 	/**
@@ -30,14 +30,21 @@ public class Collect extends BaseEntity implements Serializable {
 	 */
 	private String projectId;
 
+	/**
+	 * 用户头像
+	 */
+	private String memberImg;
+
 
 	/**
-	 * create_time
+	 * 用户名
 	 */
+	private String memberName;
 
 
 	/**
-	 * update_time
+	 * 是否收藏，0不收藏，1收藏
 	 */
+	private Integer collectStatus;
 
 }
