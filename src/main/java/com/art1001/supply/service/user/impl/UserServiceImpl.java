@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class UserServiceImpl extends AbstractService<UserEntity, Long> implements UserService {
+public class UserServiceImpl extends AbstractService<UserEntity, String> implements UserService {
 
     @Resource
     private UserMapper userMapper;
@@ -90,7 +90,7 @@ public class UserServiceImpl extends AbstractService<UserEntity, Long> implement
      * 2、删除用户
      */
     @Override
-    public int deleteBatchById(List<Long> userIds) {
+    public int deleteBatchById(List<String> userIds) {
         try {
             int result = userMapper.deleteBatchUserRole(userIds);
             if (result == userIds.size()) {

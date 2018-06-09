@@ -17,7 +17,7 @@ public interface UserService {
 	
 	public int insert(UserEntity userEntity, String password);
 	
-	public UserEntity findById(Long id);
+	public UserEntity findById(String id);
 
 	public int update(UserEntity userEntity);
 	
@@ -25,7 +25,7 @@ public interface UserService {
 	
 	public int updatePassword(UserEntity userEntity, String password) throws ServiceException;
     
-    public int deleteBatchById(List<Long> userIds);
+    public int deleteBatchById(List<String> userIds);
 
 	/**
 	 * 分页查询用户

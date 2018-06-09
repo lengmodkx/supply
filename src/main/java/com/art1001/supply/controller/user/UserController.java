@@ -2,19 +2,24 @@ package com.art1001.supply.controller.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +60,60 @@ public class UserController {
             e.printStackTrace();
             jsonObject.put("result", 0);
             jsonObject.put("msg", "获取失败");
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("/uploadImage")
+    @ResponseBody
+    public JSONObject uploadImage(
+            @RequestParam MultipartFile file,
+            HttpServletRequest request
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Map<String, Object> map = FileUtils.ossfileUpload(file, Constants.MEMBER_IMAGE_URL, request, "images");
+           if ((Boolean) map.get("success")) {
+               // 成功
+               jsonObject.put("result", 1);
+               jsonObject.put("data", Constants.OSS_URL + map.get("result") + "/" + map.get("filename"));
+               jsonObject.put("msg", "上传成功");
+           } else {
+               // 失败
+               jsonObject.put("result", 0);
+               jsonObject.put("data", null);
+               jsonObject.put("msg", map.get("result"));
+           }
+        } catch (Exception e) {
+            log.error("上传头像异常, {}", e);
+            // 失败
+            jsonObject.put("result", 0);
+            jsonObject.put("data", null);
+            jsonObject.put("msg", "上传失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 修改个人信息
+     */
+    @PostMapping("/updateUserInfo")
+    public JSONObject updateUserInfo(UserInfoEntity userInfoEntity) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //获取当前session中的用户
+            String userId = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("id"));
+            UserEntity userEntity = userService.findById(userId);
+            userEntity.setId(userId);
+            // 设置用户信息
+            userEntity.setUserInfo(userInfoEntity);
+            userService.update(userEntity);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "更新成功");
+        } catch (Exception e) {
+            log.error("修改信息失败, {}", e);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "更新成功");
         }
         return jsonObject;
     }

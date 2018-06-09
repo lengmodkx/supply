@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface UserMapper extends BaseMapper<UserEntity, Long> {
+public interface UserMapper extends BaseMapper<UserEntity, String> {
 	
 	/**
 	 * 添加用户和角色对应关系
@@ -31,7 +31,7 @@ public interface UserMapper extends BaseMapper<UserEntity, Long> {
 	 * @param userIds
 	 * @return
 	 */
-	public int deleteBatchUserRole(List<Long> userIds);
+	public int deleteBatchUserRole(List<String> userIds);
 	
 	/**
 	 * 添加用户个人资料信息
