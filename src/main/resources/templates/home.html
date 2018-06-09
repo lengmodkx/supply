@@ -81,7 +81,7 @@
                     <p th:text="${}">描述描述</p>
                 </div>
             </li>
-            <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring  ">
+            <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring  " id="create-obj">
                 <div class="special-li boxsizing">
                     <img class="add" src="../static/image/add.png" th:src="@{/image/add.png}">
                     <img class="addnow" src="../static/image/adds.png" th:src="@{/image/adds.png}">
@@ -171,7 +171,58 @@
             $(".content-nav li a").eq(i).addClass("selected");
             $(".content-list").hide();
             $(".content-list").eq(i).show()
+        });
+        //点击创建新项目
+        $(".special-li").click(function () {
+            newWork();
         })
-    })
+    });
+
+    var index;
+    //点击创建新项目的弹出框
+    function newWork(){
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            index=layer.open({
+                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area:['400px','420px'],
+                shadeClose: true, //点击遮罩关闭
+                anim: 1,  //动画 0-6
+                content: mydiv
+            });
+        });
+    }
+    //点击完成创建按钮
+    $("html").on("click",".creat-ok",function(){
+        layer.close(index);
+        $("#create-obj").before('<li class=" layui-col-md3 layui-anim layui-anim-scaleSpring" style="background-image: url(\'../static/image/bj.jpg\')"  th:style="\'background:url(\' + @{/image/bj.jpg} + \');\'">\n' +
+            '                <div class="describe boxsizing">\n' +
+            '                    <h3>\n' +
+            '                        <div class="describe-title" th:text="${}">  ' +$(".obj-name").val()+ '  </div>\n' +
+            '                        <span class="tools">\n' +
+            '                        <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>\n' +
+            '                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>\n' +
+            '                        </span>\n' +
+            '                    </h3>\n' +
+            '                    <p th:text="${}"> ' + $(".obj-je").val() + ' </p>\n' +
+            '                </div>\n' +
+            '            </li>')
+        // 高度随屏幕大小变化
+        $(".content-list li").css("height",parseInt($(".content-list li").css("width"))*0.68 +'px' );
+    });
+    var mydiv='<div class="newobj boxsizing">\n' +
+        '    <div class="newobj-title">\n' +
+        '        创建项目\n' +
+        '        <img src="../static/image/close.png" >\n' +
+        '    </div>\n' +
+        '    <img class="bigimg" src="../static/image/creatobj.png" >\n' +
+        '    <p class="p">为不同的事业创建项目吧</p>\n' +
+        '    <form class="obj-form" action="">\n' +
+        '        <input class="boxsizing obj-name" type="text" placeholder="项目名称">\n' +
+        '        <input class="boxsizing obj-je" type="text" placeholder="项目简介">\n' +
+        '        <div class="creat-ok">完成创建</div>\n' +
+        '    </form>\n' +
+        '</div>'
 </script>
 </html>
