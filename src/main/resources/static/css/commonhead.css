@@ -1,0 +1,161 @@
+/*头部*/
+.header{
+    width: 90%;
+    height: 50px;
+   padding: 0 5%;
+    background-color: white;
+    line-height: 50px;
+    position: relative;
+}
+.head-left{
+    font-size: 16px;
+    float: left;
+}
+.header-middle{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -150px;
+}
+.search-input{
+    width: 300px;
+    height: 35px;
+    margin-top: 7px;
+    padding-left: 35px;
+    background-color: #EEEEEE;
+    border-radius: 5px;
+}
+.search{
+    position: absolute;
+    left: 5px;
+    top: 7px;
+    line-height: 35px;
+}
+.head-right{
+    float: right;
+    line-height: 40px;
+}
+/*右侧头像和下拉栏*/
+.head-photo-wrap{
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    top: 5px;
+    right: 5%;
+    z-index: 50;
+
+}
+.head-photo{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    float: right;
+    cursor: pointer;
+}
+.head-photo-wrap:hover .vertical-nav{
+    display: block;
+}
+.vertical-nav{
+    width: 230px;
+    height: 345px;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    display: none;
+}
+.vertical-nav li{
+    width: 100%;
+    height: 30px;
+    margin-top: 25px;
+    padding-left: 60px;
+    position: relative;
+    line-height: 30px;
+    font-size: 12px;
+}
+.vertical-nav li:hover span{
+    display: block;
+}
+.vertical-nav li span{
+    width:0px;
+    height:0px;
+    border-bottom: 11px solid #4A90E2;
+    border-right:6px solid transparent;
+    border-top:5px solid transparent;
+    border-left:6px solid transparent;
+    position: absolute;
+    top: 5px;
+    left: 26px;
+    display: none;
+}
+/*顶部*/
+.toper-wrap{
+    width: 100%;
+    padding: 0 2.5%;
+    height: 50px;
+    box-shadow: 0 5px 3px #F1F0F0;
+    line-height: 50px;
+    position: relative;
+}
+.toper-left{
+    height: 100%;
+    float: left;
+    line-height: 50px;
+}
+.toper-left>a{
+    color: #393939;
+    font-size: 16px;
+    margin: 0 5px;
+}
+.toper-left>a:hover{
+    color: #017ECA;
+}
+.toper-right{
+    float: right;
+    height: 100%;
+}
+.toper-right span{
+    cursor: pointer;
+    color: #393939;
+    font-size: 16px;
+}
+.toper-right span:nth-of-type(1){
+    margin-right: 20px;
+}
+.toper-right span:hover{
+    color: #017ECA;
+}
+.toper-nav{
+    width: 470px;
+    height: 100%;
+   position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -235px;
+}
+.toper-nav li{
+    float: left;
+    margin-right: 34px;
+    height: 48px;
+    font-size: 16px;
+}
+.toper-nav li:nth-of-type(1){
+    margin-right: 10px;
+}
+.toper-nav li:hover{
+   border-bottom: 2px solid #017ECA;
+}
+.toper-nav li:hover a{
+    color: #017ECA;
+}
+.toper-nav ul>div{
+    float: left;
+    width: 30px;
+    height: 100%;
+    margin-right: 20px;
+    cursor: pointer;
+}
+.toper-nav ul>div span{
+    font-size: 20px;
+    color: #C3C2C2;
+}
