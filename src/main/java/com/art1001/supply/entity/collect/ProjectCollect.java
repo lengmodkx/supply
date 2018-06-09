@@ -2,6 +2,8 @@ package com.art1001.supply.entity.collect;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.art1001.supply.entity.project.Project;
 import lombok.Data;
 
 /**
@@ -47,4 +49,6 @@ public class ProjectCollect extends BaseEntity implements Serializable {
 	 */
 	private Integer collectStatus;
 
+
+	private Project project;
 }

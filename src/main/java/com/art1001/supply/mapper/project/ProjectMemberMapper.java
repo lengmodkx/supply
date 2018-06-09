@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.project;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -54,5 +55,7 @@ public interface ProjectMemberMapper {
 	 * @return
 	 */
 	List<ProjectMember> findProjectMemberAllList();
+
+	List<Project> findProjectByMemberId(String memberId,Integer projectDel);
 
 }

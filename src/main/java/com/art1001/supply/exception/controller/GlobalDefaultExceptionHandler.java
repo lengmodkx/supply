@@ -1,4 +1,5 @@
 package com.art1001.supply.exception.controller;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import org.slf4j.Logger;
@@ -77,11 +78,13 @@ public class GlobalDefaultExceptionHandler {
 	 * @throws IOException	异常信息
 	 */
 	@ExceptionHandler(AjaxException.class)
-	public void operateExpAjax(AjaxException ex, HttpServletResponse response)
-			throws IOException {
+	public JSONObject operateExpAjax(AjaxException ex) {
 		logger.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台，用于页面的提示
-		response.getWriter().write("抱歉,系统异常,请稍后再试!");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg","操作失败");
+		jsonObject.put("result",0);
+		return jsonObject;
 	}
 
 }

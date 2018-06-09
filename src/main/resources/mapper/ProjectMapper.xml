@@ -14,20 +14,26 @@
 		<result column="project_status" property="projectStatus" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="project_menu" property="projectMenu" jdbcType="VARCHAR" />
+		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						project_id,
-				project_name,
-				member_id,
-				start_time,
-				end_time,
-				project_cover,
-				project_des,
-				project_del,
-				project_status,
-				create_time,
-				update_time
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_menu,
+		project_remind
 	</sql>
 
 	<sql id="whereStatement">
@@ -41,7 +47,7 @@
 	<select id="findProjectPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
-		select * from prm_project
+		select <include refid="Base_Column_List" /> from prm_project
 		<include refid="whereStatement" />
 		
 		<if test="orderBy == 0">
@@ -117,6 +123,16 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="isPublic != null ">
+				is_public,
+			</if>
+			<if test="projectMenu != null and projectMenu != ''">
+				project_menu,
+			</if>
+
+			<if test="projecctRemind != null ">
+				project_remind,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -153,6 +169,17 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+
+			<if test="isPublic != null ">
+				#{isPublic},
+			</if>
+			<if test="projectMenu != null and projectMenu != ''">
+				#{projectMenu},
+			</if>
+
+			<if test="projecctRemind != null ">
+				#{projecctRemind},
 			</if>
 		</trim>
 
@@ -195,10 +222,28 @@
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
+			<if test="isPublic != null ">
+				is_public = #{isPublic},
+			</if>
+			<if test="projectMenu != null and projectMenu != ''">
+				project_menu = #{projectMenu},
+			</if>
+
+			<if test="projecctRemind != null ">
+				projecct_remind = #{projecctRemind},
+			</if>
 		</set>
 
 		WHERE project_id = #{projectId}
 
 	</update>
-	
+
+
+	<select id="findProjectByMemberId" resultMap="BaseResultMap"
+			parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_project where project_del = 0
+		order by create_time asc
+	</select>
 </mapper>

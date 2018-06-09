@@ -6,23 +6,55 @@
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="member_phono" property="memberPhono" jdbcType="INTEGER" />
+		<result column="member_phone" property="memberPhone" jdbcType="INTEGER" />
 		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
-    
+
+    <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="BIGINT" />
+        <result column="end_time" property="endTime" jdbcType="BIGINT" />
+        <result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
+        <result column="project_des" property="projectDes" jdbcType="VARCHAR" />
+        <result column="project_del" property="projectDel" jdbcType="INTEGER" />
+        <result column="project_status" property="projectStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+        <result column="is_public" property="isPublic" jdbcType="INTEGER" />
+        <result column="project_menu" property="projectMenu" jdbcType="VARCHAR" />
+        <result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List1">
+        project_id,
+        project_name,
+        member_id,
+        start_time,
+        end_time,
+        project_cover,
+        project_des,
+        project_del,
+        project_status,
+        create_time,
+        update_time,
+        is_public,
+        project_menu,
+        project_remind
+    </sql>
+
 	<sql id="Base_Column_List">
 						id,
 				project_id,
 				member_id,
-				task_id,
 				member_name,
 				member_img,
-				member_phono,
+				member_phone,
 				member_email,
 				create_time,
 				update_time
@@ -91,17 +123,14 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="taskId != null and taskId != ''">
-			task_id,
-			</if>
 			<if test="memberName != null and memberName != ''">
 			member_name,
 			</if>
 			<if test="memberImg != null and memberImg != ''">
 			member_img,
 			</if>
-			<if test="memberPhono != null ">
-			member_phono,
+			<if test="memberPhone != null ">
+				member_phone,
 			</if>
 			<if test="memberEmail != null and memberEmail != ''">
 			member_email,
@@ -125,17 +154,14 @@
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
 			</if>
-			<if test="taskId != null and taskId != ''">
-				#{taskId},
-			</if>
 			<if test="memberName != null and memberName != ''">
 				#{memberName},
 			</if>
 			<if test="memberImg != null and memberImg != ''">
 				#{memberImg},
 			</if>
-			<if test="memberPhono != null ">
-				#{memberPhono},
+			<if test="memberPhone != null ">
+				#{memberPhone},
 			</if>
 			<if test="memberEmail != null and memberEmail != ''">
 				#{memberEmail},
@@ -160,17 +186,14 @@
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
 			</if>
-			<if test="taskId != null and taskId != ''">
-				task_id = #{taskId},
-			</if>
 			<if test="memberName != null and memberName != ''">
 				member_name = #{memberName},
 			</if>
 			<if test="memberImg != null and memberImg != ''">
 				member_img = #{memberImg},
 			</if>
-			<if test="memberPhono != null ">
-				member_phono = #{memberPhono},
+			<if test="memberPhone != null ">
+				member_phone = #{memberPhone},
 			</if>
 			<if test="memberEmail != null and memberEmail != ''">
 				member_email = #{memberEmail},
@@ -186,5 +209,16 @@
 		WHERE id = #{id}
 
 	</update>
-	
+
+	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
+
+        SELECT
+        <include refid="Base_Column_List1" />
+        FROM
+        prm_project
+        LEFT JOIN prm_project_member ON prm_project.project_id = prm_project_member.project_id
+        WHERE
+        prm_project_member.member_id = #{memberId} and project_del = #{projectDel}
+	</select>
+
 </mapper>

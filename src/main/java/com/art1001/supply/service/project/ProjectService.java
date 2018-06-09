@@ -53,5 +53,7 @@ public interface ProjectService {
 	 * @return
 	 */
 	public List<Project> findProjectAllList();
-	
+
+
+	List<Project> findProjectByMemberId(String memberId);
 }

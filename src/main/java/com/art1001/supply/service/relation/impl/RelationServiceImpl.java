@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -67,6 +68,7 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void saveRelation(Relation relation){
+		relation.setRelationId(IdGen.uuid());
 		relationMapper.saveRelation(relation);
 	}
 	/**

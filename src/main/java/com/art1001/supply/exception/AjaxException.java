@@ -13,23 +13,23 @@ public class AjaxException extends RuntimeException{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	AjaxException() {
+	public AjaxException() {
 		super();
 	}
 
-	AjaxException(String message) {
+	public AjaxException(String message) {
 		super(message);
 	}
 
-	AjaxException(Throwable cause) {
+	public AjaxException(Throwable cause) {
 		super(cause);
 	}
 
-	AjaxException(String message, Throwable cause) {
+	public AjaxException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	AjaxException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public AjaxException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     	super(message, cause, enableSuppression, writableStackTrace);
     }
 }

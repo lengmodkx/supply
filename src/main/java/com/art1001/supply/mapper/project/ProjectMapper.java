@@ -55,4 +55,11 @@ public interface ProjectMapper {
 	 */
 	List<Project> findProjectAllList();
 
+
+	/**
+	 * 获取项目创建人的项目
+	 *
+	 * @return
+	 */
+	List<Project> findProjectByMemberId(String memberId);
 }

@@ -3,6 +3,7 @@ package com.art1001.supply.service.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.ProjectCollect;
+import com.art1001.supply.entity.project.Project;
 
 
 /**
@@ -53,5 +54,7 @@ public interface ProjectCollectService {
 	 * @return
 	 */
 	public List<ProjectCollect> findProjectCollectAllList();
+
+	List<Project> findProjectByMemberId(String memberId);
 	
 }
