@@ -3,11 +3,14 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 
 /**
  * 任务控制器，关于任务的操作
@@ -25,8 +29,13 @@ import javax.annotation.Resource;
 @Slf4j
 public class TaskController {
 
+    /** 任务逻辑层接口 */
     @Resource
     private TaskService taskService;
+
+    /** 标签逻辑层接口 */
+    @Resource
+    private TagService tagService;
 
     /**
      * 添加新任务
@@ -35,31 +44,22 @@ public class TaskController {
      * @param task 任务实体信息
      * @return
      */
-    @PostMapping("addTask")
+    @PostMapping("saveTask")
     @ResponseBody
-    public JSONObject addTask(
+    public JSONObject saveTask(
                               @RequestParam String [] memberId,
                               @RequestParam Project project,
                               @RequestParam Task task
     ){
         JSONObject jsonObject = new JSONObject();
-        String id = "";
         try {
-            //获取当前session中的用户,如果有用户则为该任务的创建人
-            id = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("id"));
-            if(id == null || id.equals("")){
-                jsonObject.put("msg","用户登陆超时，请重新登陆！");
-                jsonObject.put("result","0");
-                return jsonObject;
-            }
-            task.setMemberId(id);
             //保存任务信息到数据库
             taskService.saveTask(memberId,project,task);
             jsonObject.put("msg","添加任务成功!");
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
-            log.error("当前任务保存失败!  用户:" + id + "{}",e);
+            log.error("当前任务保存失败!{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -124,10 +124,9 @@ public class TaskController {
 
     /**
      * 更细项目信息 包括以下
-     * 1.任务状态(完成 / 重做)
-     * 2.修改任务内容丶优先级丶重复性
-     * 3.修改任务备注
-     * 4.修改任务的执行者
+     * 1.修改任务内容丶优先级丶重复性
+     * 2.修改任务备注
+     * 3.修改任务的执行者
      *
      * @param task 任务的实体信息
      */
@@ -205,21 +204,14 @@ public class TaskController {
 
     /**
      * 更新任务时间( 开始 / 结束 / 提醒)
-     * @param startTime 任务开始时间
-     * @param endTime 任务结束时间
-     * @param taskId 任务id
-     * @param remindTime 任务提醒时间
+     * @param task 包含时间的实体信息
      */
     @PostMapping("updateTaskTime")
-    public JSONObject updateTaskTime(@RequestParam String startTime,
-                                     @RequestParam String endTime,
-                                     @RequestParam String remindTime,
-                                     @RequestParam String taskId
-    ){
+    public JSONObject updateTaskTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
-            int result = taskService.updateTaskTime(taskId,startTime,endTime,remindTime);
+            int result = taskService.updateTaskTime(task);
             if(result >1){
                 jsonObject.put("msg","时间更新成功!");
                 jsonObject.put("result","1");
@@ -228,7 +220,7 @@ public class TaskController {
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("任务状态修改失败! 任务id: {},\t 修改前任务开始时间:{}\t 修改前任务结束时间:{}\t修改任务提醒时间{},{}",taskId,startTime,endTime,remindTime,e);
+            log.error("任务时间信息更新失败{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -247,6 +239,32 @@ public class TaskController {
             jsonObject.put("result",result);
         } catch (Exception e){
             log.error("查询失败! 当前菜单id:{},{}",taskMenuId,e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 给当前任务设置标签
+     * @param oldTags 该任务更新标签之前的标签信息
+     * @param tag 标签名称
+     * @param taskId 当前任务id
+     * @return
+     */
+    @PostMapping("addTags")
+    public JSONObject addTags(String[] oldTags,Tag tag,@RequestParam String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = tagService.saveTag(tag,oldTags,taskId);
+            if(result > 0){
+                jsonObject.put("msg","标签添加成功!");
+                jsonObject.put("result",result);
+            } else{
+                jsonObject.put("msg","标签添加失败!");
+                jsonObject.put("result",result);
+            }
+        } catch (Exception e){
+            log.error("保存失败,标签名称为:{},{}",tag.getTagName(),e);
             throw new AjaxException(e);
         }
         return jsonObject;

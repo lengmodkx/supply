@@ -305,12 +305,10 @@
 	</update>
 
 	<!-- 查询指定id的人员信息 -->
-	<select id="findManyUserById">
-
+	<select id="findManyUserById" resultType="com.art1001.supply.entity.user.UserEntity">
 		select u_id id,u_name userName from tb_user where u_id in
 		<foreach collection="array" item = "u_id" open="(" separator="," close=")">
 			#{u_id}
 		</foreach>
-
 	</select>
 </mapper>

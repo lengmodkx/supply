@@ -71,12 +71,10 @@ public interface TaskService {
 
 	/**
 	 * 设定任务的时间(开始 / 结束)
-	 * @param startTime 任务开始时间
-	 * @param endTime 任务结束时间
-	 * @param remindTime 任务提醒时间
+	 * @param task 任务的时间信息
 	 * @return
 	 */
-	int updateTaskTime(String taskId, String startTime, String endTime, String remindTime);
+	int updateTaskTime(Task task);
 
 	/**
 	 * 根据分组id 查询该菜单下有没有任务

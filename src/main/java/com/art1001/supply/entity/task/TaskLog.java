@@ -53,5 +53,5 @@ public class TaskLog extends BaseEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
-
+	private Long createTime;
 }

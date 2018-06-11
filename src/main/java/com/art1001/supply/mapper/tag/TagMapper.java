@@ -46,7 +46,7 @@ public interface TagMapper {
 	 * 
 	 * @param tag
 	 */
-	void saveTag(Tag tag);
+	int saveTag(Tag tag);
 
 	/**
 	 * 获取所有tag数据
