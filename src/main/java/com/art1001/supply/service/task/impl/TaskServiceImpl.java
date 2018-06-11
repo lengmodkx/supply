@@ -2,11 +2,18 @@ package com.art1001.supply.service.task.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.task.TaskMapper;
+import com.art1001.supply.mapper.task.TaskMemberMapper;
+import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
@@ -21,6 +28,18 @@ public class TaskServiceImpl implements TaskService {
 	/** taskMapper接口*/
 	@Resource
 	private TaskMapper taskMapper;
+
+	/** userMapper接口 */
+	@Resource
+    private UserMapper userMapper;
+
+	/** taskMemberMapper接口 */
+	@Resource
+    private TaskMemberMapper taskMemberMapper;
+
+	/** taskMemberService 接口*/
+	@Resource
+    private TaskMemberService taskMemberService;
 	
 	/**
 	 * 重写方法
@@ -69,41 +88,20 @@ public class TaskServiceImpl implements TaskService {
 	/**
 	 * 重写方法
 	 * 将添加的任务信息保存至数据库
-     * @param startTime 任务开始时间
-     * @param endTime 任务结束时间
-     * @param remindTime 任务提醒时间
-     * @param repetitionTime 任务重复时间
+     * @param memberId 该任务的参与者
+     * @param project 当前项目的实体信息
      * @param task task信息
      */
 	@Override
-	public void saveTask(String startTime, String endTime, String remindTime,String repetitionTime,Task task) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	public void saveTask(String[] memberId, Project project, Task task) {
+        //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
+        taskMemberService.saveManyTaskeMmber(memberId,task.getMemberId());
         //设置该任务的id
         task.setTaskId(IdGen.uuid());
+        //初始创建任务设置为父任务
+        task.setParentId("0");
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
-        try{
-            //设置任务的开始时间
-            if (startTime != null && startTime != "") {
-                task.setStartTime(format.parse(startTime).getTime());
-            }
-            //设置任务结束时间
-            if (endTime != null && endTime != "") {
-                task.setEndTime(format.parse(endTime).getTime());
-            }
-            //设置任务提醒时间
-            if (remindTime != null && remindTime != "") {
-                task.setRemindTime(format.parse(remindTime).getTime());
-            }
-            //设置任务重复时间
-            if(repetitionTime != null && repetitionTime != ""){
-                task.setRepetitionTime(format.parse(repetitionTime).getTime());
-            }
-        } catch (ParseException e){
-            e.printStackTrace();
-        }
-//        //初始创建任务设置为父任务
-//        task.setParentId("0");
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //设置该任务的初始状态

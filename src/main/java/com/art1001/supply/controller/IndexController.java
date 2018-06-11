@@ -42,7 +42,7 @@ public class IndexController extends BaseController {
     @Resource
     private Producer captchaProducer;
 
-    @GetMapping("/home.html")
+    @RequestMapping("/home.html")
     public String index() {
         return "home";
     }

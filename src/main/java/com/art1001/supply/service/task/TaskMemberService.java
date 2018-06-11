@@ -53,5 +53,8 @@ public interface TaskMemberService {
 	 * @return
 	 */
 	public List<TaskMember> findTaskMemberAllList();
+
+
+	public void saveManyTaskeMmber(String[] memberId,String uId);
 	
 }

@@ -55,4 +55,10 @@ public interface TaskMemberMapper {
 	 */
 	List<TaskMember> findTaskMemberAllList();
 
+	/**
+	 * 保存多条任务和参与者关系的数据
+	 * @param taskMembers
+	 * @return
+	 */
+    int saveManyTaskMember(List<TaskMember> taskMembers);
 }

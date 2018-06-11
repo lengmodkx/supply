@@ -25,6 +25,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="remind_time" property="remindTime" jdbcType="BIGINT"/>
+		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -49,7 +50,8 @@
 				task_del,
 				create_time,
 				update_time,
-				remind_time
+				remind_time,
+				repetition_time
 	</sql>
 
 	<sql id="whereStatement">
@@ -377,4 +379,5 @@
 	<select id="findTaskByMenuId">
 		select count(task_id) from prm_task where task_menu_id = #{taskMenuId}
 	</select>
+
 </mapper>

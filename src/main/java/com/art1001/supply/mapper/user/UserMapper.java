@@ -53,4 +53,11 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
     List<UserEntity> findListPager(Pager pager);
 
 	int findCount();
+
+	/**
+	 * 查询多个指定id的用户
+	 * @param memberId 用户id的数组
+	 * @return
+	 */
+    List<UserEntity> findManyUserById(String[] memberId);
 }

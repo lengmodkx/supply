@@ -303,5 +303,14 @@
 		u_address = #{userInfo.address}
 		where u_id = ${userInfo.id}
 	</update>
-	
+
+	<!-- 查询指定id的人员信息 -->
+	<select id="findManyUserById">
+
+		select u_id id,u_name userName from tb_user where u_id in
+		<foreach collection="array" item = "u_id" open="(" separator="," close=")">
+			#{u_id}
+		</foreach>
+
+	</select>
 </mapper>

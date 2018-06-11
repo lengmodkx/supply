@@ -60,7 +60,7 @@ public interface TaskMapper {
 	 * 移入回收站/恢复任务
 	 * @param taskId 任务id
 	 * @param taskDel 任务是否在回收站
-	 * @param l
+	 * @param updateTime 更新时间
 	 * @return
 	 */
     int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel, @Param("updateTime") long updateTime);

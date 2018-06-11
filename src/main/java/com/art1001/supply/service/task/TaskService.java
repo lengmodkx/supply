@@ -2,6 +2,7 @@ package com.art1001.supply.service.task;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 
 
@@ -42,14 +43,9 @@ public interface TaskService {
 
 	/**
 	 * 保存task数据
-	 *
-	 * @param time
-	 * @param startTime
-	 * @param endTime
-	 * @param remindTime
-	 * @param task
+	 * @param task 其他信息
 	 */
-	public void saveTask(String startTime, String endTime, String remindTime,String repetitionTime,Task task);
+	public void saveTask(String[] memberId,Project project,Task task);
 
 	/**
 	 * 获取所有task数据
@@ -88,4 +84,5 @@ public interface TaskService {
 	 * @return
 	 */
 	int findTaskByMenuId(String taskMenuId);
+
 }
