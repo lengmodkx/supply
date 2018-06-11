@@ -139,7 +139,7 @@
 			tag_id,
 			</if>
 			<if test="level != null ">
-			level,
+			`level`,
 			</if>
 			<if test="parentId != null and parentId != ''">
 			parent_id,
@@ -154,7 +154,7 @@
 			task_type,
 			</if>
 			<if test="taskMenuId != null and taskMenuId != ''">
-			task_Menu_id,
+			task_menu_id,
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 			task_status,
