@@ -28,10 +28,10 @@ public interface TaskService {
 
 	/**
 	 * 通过taskId删除task数据
-	 * 
-	 * @param taskId
-	 */
-	public void deleteTaskByTaskId(String taskId);
+	 *
+     * @param taskId
+     */
+	public int deleteTaskByTaskId(String taskId);
 
 	/**
 	 * 修改task数据
@@ -42,10 +42,13 @@ public interface TaskService {
 
 	/**
 	 * 保存task数据
-	 * 
+	 *
+	 * @param startTime
+	 * @param endTime
+	 * @param remindTime
 	 * @param task
 	 */
-	public void saveTask(Task task);
+	public void saveTask(String startTime, String endTime, String remindTime, Task task);
 
 	/**
 	 * 获取所有task数据
@@ -61,4 +64,20 @@ public interface TaskService {
 	 * @return
 	 */
 	int moveToRecycleBin(String taskId, String taskDel);
+
+	/**
+	 * 修改当前任务状态（完成/未完成）
+	 * @param taskId 任务id
+	 * @return
+	 */
+	int changeTaskStatus(String taskId,String taskStatus);
+
+	/**
+	 * 设定任务的时间(开始 / 结束)
+	 * @param startTime 任务开始时间
+	 * @param endTime 任务结束时间
+	 * @param remindTime 任务提醒时间
+	 * @return
+	 */
+	int updateTaskTime(String taskId, String startTime, String endTime, String remindTime);
 }

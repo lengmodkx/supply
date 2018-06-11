@@ -29,11 +29,11 @@ public interface TaskMapper {
 	Task findTaskByTaskId(String taskId);
 
 	/**
+	 * 删除任务
 	 * 通过taskId删除task数据
-	 * 
-	 * @param taskId
+	 * @param taskId 任务id
 	 */
-	void deleteTaskByTaskId(String taskId);
+	int deleteTaskByTaskId(String taskId);
 
 	/**
 	 * 修改task数据
@@ -60,7 +60,16 @@ public interface TaskMapper {
 	 * 移入回收站/恢复任务
 	 * @param taskId 任务id
 	 * @param taskDel 任务是否在回收站
+	 * @param l
 	 * @return
 	 */
-    int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel);
+    int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel, @Param("updateTime") long updateTime);
+
+	/**
+	 * 修改当前任务状态
+	 * @param taskId 当前任务id
+	 * @param updateTime 当前时间毫秒数
+     * @return
+	 */
+	int changeTaskStatus(@Param("taskId") String taskId, @Param("taskStatus") String taskStatus, @Param("updateTime") long updateTime);
 }
