@@ -103,7 +103,7 @@ public class Task extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 任务分组id
+	 * 任务菜单id
 	 */
 	private String taskMenuId;
 

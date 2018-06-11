@@ -72,4 +72,11 @@ public interface TaskMapper {
      * @return
 	 */
 	int changeTaskStatus(@Param("taskId") String taskId, @Param("taskStatus") String taskStatus, @Param("updateTime") long updateTime);
+
+	/**
+	 * 判断当前菜单有没有任务
+	 * @param taskMenuId 菜单id
+	 * @return
+	 */
+    int findTaskByMenuId(String taskMenuId);
 }

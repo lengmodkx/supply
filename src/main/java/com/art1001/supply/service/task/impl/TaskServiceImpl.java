@@ -178,4 +178,14 @@ public class TaskServiceImpl implements TaskService {
         return 0;
     }
 
+    /**
+     * 判断当前菜单有没有任务
+     * @param taskMenuId 菜单id
+     * @return
+     */
+    @Override
+    public int findTaskByMenuId(String taskMenuId) {
+        return taskMapper.findTaskByMenuId(taskMenuId);
+    }
+
 }

@@ -372,4 +372,9 @@
 			task_id = #{taskId}
 		</where>
 	</update>
+
+	<!-- 判断当前菜单有没有任务 -->
+	<select id="findTaskByMenuId">
+		select count(task_id) from prm_task where task_menu_id = #{taskMenuId}
+	</select>
 </mapper>

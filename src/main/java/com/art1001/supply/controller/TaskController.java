@@ -237,4 +237,20 @@ public class TaskController {
         return jsonObject;
     }
 
+    /**
+     * 根据分组id 查询该菜单下有没有任务
+     * @param taskMenuId 分组id
+     * @return
+     */
+    public JSONObject findTaskByMenuId(@RequestParam String taskMenuId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            int result = taskService.findTaskByMenuId(taskMenuId);
+            jsonObject.put("result",result);
+        } catch (Exception e){
+            log.error("查询失败! 当前菜单id:{},{}",taskMenuId,e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }
