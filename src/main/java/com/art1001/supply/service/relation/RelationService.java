@@ -53,5 +53,11 @@ public interface RelationService {
 	 * @return
 	 */
 	public List<Relation> findRelationAllList();
+
+	/**
+	 * 根据分组删除分组下的所有菜单
+	 * @param relationId
+	 */
+	void deletenMenuByRelationId(String relationId);
 	
 }

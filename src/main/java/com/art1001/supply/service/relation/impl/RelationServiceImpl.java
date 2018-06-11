@@ -80,5 +80,14 @@ public class RelationServiceImpl implements RelationService {
 	public List<Relation> findRelationAllList(){
 		return relationMapper.findRelationAllList();
 	}
-	
+
+	/**
+	 * 根据分组删除分组下的所有菜单
+	 * @param relationId 分组id
+	 */
+	@Override
+	public void deletenMenuByRelationId(String relationId) {
+		relationMapper.deletenMenuByRelationId(relationId);
+	}
+
 }

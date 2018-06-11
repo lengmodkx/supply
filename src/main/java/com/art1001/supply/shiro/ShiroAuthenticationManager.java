@@ -58,7 +58,13 @@ public class ShiroAuthenticationManager {
 	 * @return
 	 */
 	public static UserEntity getUserEntity() {
-		return (UserEntity) SecurityUtils.getSubject().getPrincipal();
+		try {
+			Object p = SecurityUtils.getSubject().getPrincipal();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	/**

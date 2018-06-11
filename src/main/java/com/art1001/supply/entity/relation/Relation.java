@@ -36,14 +36,14 @@ public class Relation extends BaseEntity implements Serializable {
 	 */
 	private String projectId;
 
+	/**
+	 * 标识是分组还是菜单
+	 */
+	private Integer lable;
 
 	/**
-	 * 创建时间
+	 * 删除分组/菜单 0不删除，1删除
 	 */
-
-
-	/**
-	 * 更新时间
-	 */
+	private Integer relationDel;
 
 }

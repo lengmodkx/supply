@@ -10,6 +10,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="lable" property="lable" jdbcType="INTEGER" />
+		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -19,7 +20,8 @@
 				project_id,
 				create_time,
 				update_time,
-				lable
+				lable,
+				relation_del
 	</sql>
 
 	<sql id="whereStatement">
@@ -97,6 +99,9 @@
 			<if test="lable != null ">
 				lable,
 			</if>
+			<if test="relationDel != null ">
+				relation_del,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -120,7 +125,10 @@
 				#{updateTime},
 			</if>
 			<if test="lable != null ">
-				lable,
+				#{lable},
+			</if>
+			<if test="relationDel != null ">
+				#{relation_del},
 			</if>
 		</trim>
 
@@ -151,10 +159,20 @@
 			<if test="lable != null ">
 				lable = #{lable},
 			</if>
+			<if test="relationDel != null ">
+				relation_del = #{relationDel},
+			</if>
 		</set>
 
 		WHERE relation_id = #{relationId}
 
 	</update>
-	
+
+
+	<delete id="deletenMenuByRelationId" parameterType="java.lang.String">
+		delete from
+			prm_relation where parent_id = #{relationId}
+	</delete>
+
+
 </mapper>

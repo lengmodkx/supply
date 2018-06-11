@@ -92,11 +92,10 @@ public class ProjectController {
      * 添加项目
      * @param projectName 项目名称
      * @param projectDes 项目描述
-     * @param projectCover 项目封面
      * @return
      */
     @PostMapping("/addProject")
-    public JSONObject addProject(@RequestParam String projectName, @RequestParam String projectDes, @RequestParam String projectCover){
+    public JSONObject addProject(@RequestParam String projectName, @RequestParam String projectDes){
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(projectName)){
             jsonObject.put("result",0);
@@ -112,34 +111,34 @@ public class ProjectController {
 
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-            Project project = new Project();
-            project.setProjectName(projectName);
-            project.setProjectDes(projectDes);
-            project.setProjectCover(projectCover);
-            project.setProjectDel(0);
-            project.setCreateTime(System.currentTimeMillis());
-            project.setIsPublic(0);
-            project.setProjectRemind(0);
-            project.setProjectMenu("[{任务},{分享},{文件},{日程},{统计},{群聊}]");
-            project.setMemberId(userId);
-            project.setProjectStatus(0);
-            projectService.saveProject(project);
-
-            //初始化分组
-            Relation relation = new Relation();
-            relation.setRelationName("任务");
-            relation.setProjectId(project.getProjectId());
-            relationService.saveRelation(relation);
-
-            //初始化菜单
-            String[] menus  = new String[]{"待处理","进行中","已完成"};
-            for (String menu:menus) {
-                Relation relation1 = new Relation();
-                relation1.setProjectId(project.getProjectId());
-                relation1.setRelationName(menu);
-                relation1.setParentId(relation.getRelationId());
-                relationService.saveRelation(relation1);
-            }
+//            Project project = new Project();
+//            project.setProjectName(projectName);
+//            project.setProjectDes(projectDes);
+//            project.setProjectCover("");
+//            project.setProjectDel(0);
+//            project.setCreateTime(System.currentTimeMillis());
+//            project.setIsPublic(0);
+//            project.setProjectRemind(0);
+//            project.setProjectMenu("[{任务},{分享},{文件},{日程},{统计},{群聊}]");
+//            project.setMemberId(userId);
+//            project.setProjectStatus(0);
+//            projectService.saveProject(project);
+//
+//            //初始化分组
+//            Relation relation = new Relation();
+//            relation.setRelationName("任务");
+//            relation.setProjectId(project.getProjectId());
+//            relationService.saveRelation(relation);
+//
+//            //初始化菜单
+//            String[] menus  = new String[]{"待处理","进行中","已完成"};
+//            for (String menu:menus) {
+//                Relation relation1 = new Relation();
+//                relation1.setProjectId(project.getProjectId());
+//                relation1.setRelationName(menu);
+//                relation1.setParentId(relation.getRelationId());
+//                relationService.saveRelation(relation1);
+//            }
 
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
