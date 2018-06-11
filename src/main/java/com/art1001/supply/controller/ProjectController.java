@@ -10,7 +10,6 @@ import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,9 +38,6 @@ public class ProjectController {
 
     @Resource
     private ProjectCollectService projectCollectService;
-
-    @Resource
-    private UserService userService;
 
     @Resource
     private RelationService relationService;
@@ -179,7 +175,7 @@ public class ProjectController {
      * @param projectId 项目id
      * @return
      */
-    @PostMapping("/updateProject")
+    @PostMapping("/delProject")
     public JSONObject delProject(@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
 
