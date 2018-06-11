@@ -81,7 +81,7 @@ public class Task extends BaseEntity implements Serializable {
 	/**
 	 * 父级id
 	 */
-	private String parent;
+	private String parentId;
 
 
 	/**
@@ -105,7 +105,7 @@ public class Task extends BaseEntity implements Serializable {
 	/**
 	 * 任务分组id
 	 */
-	private String taskGroupId;
+	private String taskMenuId;
 
 
 	/**
@@ -136,5 +136,15 @@ public class Task extends BaseEntity implements Serializable {
 	 * 更新时间
 	 */
 	private Long updateTime;
+
+	/**
+	 * 提醒时间
+	 */
+	private Long remindTime;
+
+	/**
+	 * 自定义重复时间
+	 */
+	private Long repetitionTime;
 
 }
