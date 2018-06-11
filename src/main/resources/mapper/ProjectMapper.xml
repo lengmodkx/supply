@@ -130,7 +130,7 @@
 				project_menu,
 			</if>
 
-			<if test="projecctRemind != null ">
+			<if test="projectRemind != null ">
 				project_remind,
 			</if>
 		</trim>
@@ -178,8 +178,8 @@
 				#{projectMenu},
 			</if>
 
-			<if test="projecctRemind != null ">
-				#{projecctRemind},
+			<if test="projectRemind != null ">
+				#{projectRemind},
 			</if>
 		</trim>
 
@@ -229,8 +229,8 @@
 				project_menu = #{projectMenu},
 			</if>
 
-			<if test="projecctRemind != null ">
-				projecct_remind = #{projecctRemind},
+			<if test="projectRemind != null ">
+				projecct_remind = #{projectRemind},
 			</if>
 		</set>
 

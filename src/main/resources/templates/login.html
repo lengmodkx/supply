@@ -44,7 +44,11 @@
             form.on('submit(Login)', function(){
                 var params = $("#loginform").serialize();
                 $.post("/login", params, function (data) {
-                    console.log(data);
+                    if(data.result===1){
+                        window.location.href = "/home.html";
+                    }else{
+                        layer.msg(data.msg,{icon:5});
+                    }
                 });
                 return false;
             });
