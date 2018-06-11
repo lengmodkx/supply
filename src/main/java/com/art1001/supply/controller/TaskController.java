@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -12,10 +13,7 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,6 +21,7 @@ import javax.annotation.Resource;
  * 任务控制器，关于任务的操作
  */
 @Controller
+@RequestMapping("task")
 @Slf4j
 public class TaskController {
 
@@ -31,20 +30,17 @@ public class TaskController {
 
     /**
      * 添加新任务
-     * @param startTime 任务开始时间
-     * @param endTime 任务结束时间
-     * @param remindTime 任务提醒时间
-     * @param repetitionTime 任务重复时间
+     * @param memberId 该任务的成员id数组
+     * @param project 得到当前项目的实体信息
      * @param task 任务实体信息
      * @return
      */
     @PostMapping("addTask")
     @ResponseBody
-    public JSONObject addTask(@RequestParam String startTime,
-                              @RequestParam String endTime,
-                              @RequestParam String remindTime,
-                              @RequestParam String repetitionTime,
-                              Task task
+    public JSONObject addTask(
+                              @RequestParam String [] memberId,
+                              @RequestParam Project project,
+                              @RequestParam Task task
     ){
         JSONObject jsonObject = new JSONObject();
         String id = "";
@@ -58,7 +54,7 @@ public class TaskController {
             }
             task.setMemberId(id);
             //保存任务信息到数据库
-            taskService.saveTask(startTime,endTime,remindTime,repetitionTime,task);
+            taskService.saveTask(memberId,project,task);
             jsonObject.put("msg","添加任务成功!");
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -186,7 +182,7 @@ public class TaskController {
      * @param taskId 当前任务id
      * @param taskStatus 当前任务状态
      */
-    @PostMapping
+    @PostMapping("changeTaskStatus")
     @ResponseBody
     public JSONObject changeTaskStatus(@RequestParam String taskId,@RequestParam String taskStatus){
         JSONObject jsonObject = new JSONObject();
@@ -214,6 +210,7 @@ public class TaskController {
      * @param taskId 任务id
      * @param remindTime 任务提醒时间
      */
+    @PostMapping("updateTaskTime")
     public JSONObject updateTaskTime(@RequestParam String startTime,
                                      @RequestParam String endTime,
                                      @RequestParam String remindTime,
@@ -242,6 +239,7 @@ public class TaskController {
      * @param taskMenuId 分组id
      * @return
      */
+    @PostMapping("findTaskByMenuId")
     public JSONObject findTaskByMenuId(@RequestParam String taskMenuId){
         JSONObject jsonObject = new JSONObject();
         try{
