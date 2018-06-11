@@ -81,4 +81,11 @@ public interface TaskService {
 	 * @return
 	 */
 	int updateTaskTime(String taskId, String startTime, String endTime, String remindTime);
+
+	/**
+	 * 根据分组id 查询该菜单下有没有任务
+	 * @param taskMenuId 菜单id
+	 * @return
+	 */
+	int findTaskByMenuId(String taskMenuId);
 }
