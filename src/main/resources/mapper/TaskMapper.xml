@@ -151,8 +151,8 @@
 			<if test="taskType != null and taskType != ''">
 			task_type,
 			</if>
-			<if test="taskGroupId != null and taskGroupId != ''">
-			task_group_id,
+			<if test="taskMenuId != null and taskMenuId != ''">
+			task_Menu_id,
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 			task_status,
@@ -171,6 +171,9 @@
 			</if>
 			<if test="remindTime != null">
 			remind_time,
+			</if>
+			<if test="repetitionTime != null">
+			repetition_Time,
 			</if>
 		</trim>
 
@@ -221,8 +224,8 @@
 			<if test="taskType != null and taskType != ''">
 				#{taskType},
 			</if>
-			<if test="taskGroupId != null and taskGroupId != ''">
-				#{taskGroupId},
+			<if test="taskMenuId != null and taskMenuId != ''">
+				#{taskMenuId},
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 				${taskStatus},
@@ -241,6 +244,9 @@
 			</if>
 			<if test="remindTime != null">
 				#{remindTime},
+			</if>
+			<if test="repetitionTime != null">
+				#{repetitionTime},
 			</if>
 		</trim>
 
@@ -295,8 +301,8 @@
 			<if test="taskType != null and taskType != ''">
 				task_type = #{taskType},
 			</if>
-			<if test="taskGroupId != null and taskGroupId != ''">
-				task_group_id = #{taskGroupId},
+			<if test="taskMenuId != null and taskMenuId != ''">
+				task_menu_id = #{taskMenuId},
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 				task_status = #{taskStatus},
@@ -314,7 +320,10 @@
 				update_time = #{updateTime},
 			</if>
 			<if test="remindTime != null">
-				remind_time =#{remindTime},
+				remind_time = #{remindTime},
+			</if>
+			<if test="repetitionTime != null">
+				repetitionTime = #{repetition_Time},
 			</if>
 		</set>
 

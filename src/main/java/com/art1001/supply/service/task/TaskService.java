@@ -43,12 +43,13 @@ public interface TaskService {
 	/**
 	 * 保存task数据
 	 *
+	 * @param time
 	 * @param startTime
 	 * @param endTime
 	 * @param remindTime
 	 * @param task
 	 */
-	public void saveTask(String startTime, String endTime, String remindTime, Task task);
+	public void saveTask(String startTime, String endTime, String remindTime,String repetitionTime,Task task);
 
 	/**
 	 * 获取所有task数据

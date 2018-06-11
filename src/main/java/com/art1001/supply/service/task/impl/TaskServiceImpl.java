@@ -2,13 +2,10 @@ package com.art1001.supply.service.task.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
@@ -55,7 +52,7 @@ public class TaskServiceImpl implements TaskService {
      */
 	@Override
 	public int deleteTaskByTaskId(String taskId){
-			return taskMapper.deleteTaskByTaskId(taskId);
+        return taskMapper.deleteTaskByTaskId(taskId);
     }
 
 	/**
@@ -75,10 +72,11 @@ public class TaskServiceImpl implements TaskService {
      * @param startTime 任务开始时间
      * @param endTime 任务结束时间
      * @param remindTime 任务提醒时间
+     * @param repetitionTime 任务重复时间
      * @param task task信息
      */
 	@Override
-	public void saveTask(String startTime, String endTime, String remindTime, Task task) {
+	public void saveTask(String startTime, String endTime, String remindTime,String repetitionTime,Task task) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         //设置该任务的id
         task.setTaskId(IdGen.uuid());
@@ -94,16 +92,20 @@ public class TaskServiceImpl implements TaskService {
                 task.setEndTime(format.parse(endTime).getTime());
             }
             //设置任务提醒时间
-            if (startTime != null && startTime != "") {
+            if (remindTime != null && remindTime != "") {
                 task.setRemindTime(format.parse(remindTime).getTime());
+            }
+            //设置任务重复时间
+            if(repetitionTime != null && repetitionTime != ""){
+                task.setRepetitionTime(format.parse(repetitionTime).getTime());
             }
         } catch (ParseException e){
             e.printStackTrace();
         }
+//        //初始创建任务设置为父任务
+//        task.setParentId("0");
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //设置任务是否重复
-        //task.setRepeat();
         //设置该任务的初始状态
         task.setTaskStatus("1");
         //设置该任务是否删除 0 未删除 1 已删除

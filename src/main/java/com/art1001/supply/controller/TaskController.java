@@ -31,12 +31,21 @@ public class TaskController {
 
     /**
      * 添加新任务
+     * @param startTime 任务开始时间
+     * @param endTime 任务结束时间
+     * @param remindTime 任务提醒时间
+     * @param repetitionTime 任务重复时间
      * @param task 任务实体信息
      * @return
      */
     @PostMapping("addTask")
     @ResponseBody
-    public JSONObject addTask(@RequestParam String startTime,@RequestParam String endTime,@RequestParam String remindTime,Task task){
+    public JSONObject addTask(@RequestParam String startTime,
+                              @RequestParam String endTime,
+                              @RequestParam String remindTime,
+                              @RequestParam String repetitionTime,
+                              Task task
+    ){
         JSONObject jsonObject = new JSONObject();
         String id = "";
         try {
@@ -49,7 +58,7 @@ public class TaskController {
             }
             task.setMemberId(id);
             //保存任务信息到数据库
-            taskService.saveTask(startTime,endTime,remindTime,task);
+            taskService.saveTask(startTime,endTime,remindTime,repetitionTime,task);
             jsonObject.put("msg","添加任务成功!");
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -80,7 +89,7 @@ public class TaskController {
                 jsonObject.put("msg","任务移动失败！");
             }
         } catch (Exception e){
-            log.error("当前任务移动失败!  任务id：{}\t 该任务初始组为:{}, {}", task.getTagId(),task.getTaskGroupId(),e);
+            log.error("当前任务移动失败!  任务id：{}\t 该任务初始组为:{}, {}", task.getTagId(),task.getTaskMenuId(),e);
             jsonObject.put("result", 0);
             jsonObject.put("msg","系统异常,移动失败！");
             throw new AjaxException(e);

@@ -105,7 +105,7 @@ public class Task extends BaseEntity implements Serializable {
 	/**
 	 * 任务分组id
 	 */
-	private String taskGroupId;
+	private String taskMenuId;
 
 
 	/**
@@ -141,5 +141,10 @@ public class Task extends BaseEntity implements Serializable {
 	 * 提醒时间
 	 */
 	private Long remindTime;
+
+	/**
+	 * 自定义重复时间
+	 */
+	private Long repetitionTime;
 
 }
