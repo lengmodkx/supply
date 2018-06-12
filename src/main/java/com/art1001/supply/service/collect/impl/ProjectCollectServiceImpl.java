@@ -7,6 +7,7 @@ import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.mapper.collect.ProjectCollectMapper;
 import com.art1001.supply.service.collect.ProjectCollectService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -68,6 +69,7 @@ public class ProjectCollectServiceImpl implements ProjectCollectService {
 	 */
 	@Override
 	public void saveProjectCollect(ProjectCollect projectCollect){
+	    projectCollect.setId(IdGen.uuid());
 		projectCollectMapper.saveProjectCollect(projectCollect);
 	}
 	/**
@@ -83,6 +85,16 @@ public class ProjectCollectServiceImpl implements ProjectCollectService {
 	@Override
 	public List<Project> findProjectByMemberId(String memberId) {
 		return projectCollectMapper.findProjectByMemberId(memberId);
+	}
+
+	@Override
+	public int findCollectByProjectId(String projectId) {
+		return projectCollectMapper.findCollectByProjectId(projectId);
+	}
+
+	@Override
+	public void deleteCollectByProjectId(String projectId) {
+		projectCollectMapper.deleteCollectByProjectId(projectId);
 	}
 
 }

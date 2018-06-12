@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -19,10 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -165,6 +163,8 @@ public class ProjectController {
             projectMember.setMemberId(userEntity.getId());
             projectMember.setMemberName(userEntity.getAccountName());
             projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+            projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+            projectMember.setMemberImg(userEntity.getUserInfo().getImage());
             projectMemberService.saveProjectMember(projectMember);
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
@@ -217,4 +217,44 @@ public class ProjectController {
 
         return jsonObject;
     }
+
+    @PostMapping("/updateProjectMember")
+    public void updateProjectMember(@RequestParam String memberIds){
+
+    }
+
+
+    /**
+     * 项目收藏/取消收藏
+     * @param projectId
+     */
+    @PostMapping("/collectProject")
+    @ResponseBody
+    public JSONObject collectProject(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            int collect = projectCollectService.findCollectByProjectId(projectId);
+            //如果等于0，说明收藏表不存在项目的收藏，此时插入
+            if(collect==0){
+                ProjectCollect projectCollect = new ProjectCollect();
+                projectCollect.setProjectId(projectId);
+                projectCollect.setMemberId(userEntity.getId());
+                projectCollect.setMemberImg(userEntity.getUserInfo().getImage());
+                projectCollect.setCreateTime(System.currentTimeMillis());
+                projectCollectService.saveProjectCollect(projectCollect);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","收藏成功");
+            }else{
+                //收藏表存在该项目，则取消收藏，删除收藏表的项目
+                projectCollectService.deleteCollectByProjectId(projectId);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","取消收藏成功");
+            }
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 }

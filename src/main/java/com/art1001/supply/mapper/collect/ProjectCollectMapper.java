@@ -58,4 +58,8 @@ public interface ProjectCollectMapper {
 
 
 	List<Project> findProjectByMemberId(String memberId);
+
+	int findCollectByProjectId(String projectId);
+
+	void deleteCollectByProjectId(String projectId);
 }

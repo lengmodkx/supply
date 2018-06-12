@@ -55,6 +55,20 @@ public interface ProjectCollectService {
 	 */
 	public List<ProjectCollect> findProjectCollectAllList();
 
+	/**
+	 * 根据用户id查询项目
+	 * @param memberId
+	 * @return
+	 */
 	List<Project> findProjectByMemberId(String memberId);
-	
+
+	/**
+	 * 根据项目id查询项目是否存在
+	 * @param projectId
+	 * @return
+	 */
+	int findCollectByProjectId(String projectId);
+
+	void deleteCollectByProjectId(String projectId);
+
 }

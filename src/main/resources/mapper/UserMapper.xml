@@ -26,6 +26,7 @@
 		u_birthday,
 		u_telephone,
 		u_email,
+		u_mail,
 		u_address,
 		u_create_time
 	</sql>
