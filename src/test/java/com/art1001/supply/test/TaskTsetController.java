@@ -1,15 +1,16 @@
 package com.art1001.supply.test;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskLog;
-import com.art1001.supply.entity.task.TaskMember;
-import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.*;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
+import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import org.junit.Test;
 
@@ -32,6 +33,9 @@ public class TaskTsetController extends TestBase{
 
     @Resource
     private TaskLogService taskLogService;
+
+    @Resource
+    private TaskMemberService taskMemberService;
 
     /**
      * 添加任务的测试方法
@@ -89,17 +93,19 @@ public class TaskTsetController extends TestBase{
         oldTaskMenuVO.setTaskMenuId("1");
         oldTaskMenuVO.setTaskMenuName("菜单A");
         TaskMenuVO newTaskMenuVO = new TaskMenuVO();
-       // newTaskMenuVO.setProjectId("2");
-       // newTaskMenuVO.setProjectName("项目B");
-        //newTaskMenuVO.setTaskGroupId("2");
-        //newTaskMenuVO.setTaskGroupName("分组B");
+        newTaskMenuVO.setProjectId("2");
+        newTaskMenuVO.setProjectName("项目B");
+        newTaskMenuVO.setTaskGroupId("2");
+        newTaskMenuVO.setTaskGroupName("分组B");
         newTaskMenuVO.setTaskMenuId("2");
         newTaskMenuVO.setTaskMenuName("菜单B");
 
        try {
             //修改该任务的任务组编号
-            int result = taskService.mobileTask(t,oldTaskMenuVO,newTaskMenuVO);
-        } catch (ServiceException e){
+           TaskLogVO taskLogVO = taskService.mobileTask(t, oldTaskMenuVO, newTaskMenuVO);
+           System.out.println(taskLogVO.getResult());
+           System.out.println(taskLogVO.getContent());
+       } catch (ServiceException e){
            System.out.println(e.getMessage());
         }
         return ;
@@ -114,7 +120,7 @@ public class TaskTsetController extends TestBase{
         String taskId = "11111";
         String taskDel = "1";
         try {
-            int result = taskService.moveToRecycleBin(taskId, taskDel);
+            //int result = taskService.moveToRecycleBin(taskId, taskDel);
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
@@ -143,8 +149,8 @@ public class TaskTsetController extends TestBase{
         String taskId = "11111";
         String taskStatus = "1";
         try {
-            int result = taskService.changeTaskStatus(taskId,taskStatus);
-            System.out.println(result);
+            //int result = taskService.changeTaskStatus(taskId,taskStatus);
+           // System.out.println(result);
         } catch (ServiceException e){
             System.out.println(e.getMessage());
         }
@@ -207,12 +213,20 @@ public class TaskTsetController extends TestBase{
         tag.setTagName("121212");
         try {
             int result = tagService.saveTag(tag,oldTags,taskId);
-
-
-
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    @Test
+    public void addRaly(){
+        Task task = new Task();
+        File file = new File();
+        Share share = new Share();
+        Schedule schedule = new Schedule();
+        TaskMember taskMember = new TaskMember();
+        String taskId = "1";
+        TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
     }
 
 
