@@ -18,7 +18,7 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="executor" property="executor" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
-		<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
+		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
 		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
 		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
@@ -44,7 +44,7 @@
 				member_id,
 				executor,
 				task_type,
-				task_group_id,
+				task_menu_id,
 				task_status,
 				task_code,
 				task_del,
@@ -378,6 +378,16 @@
 	<!-- 判断当前菜单有没有任务 -->
 	<select id="findTaskByMenuId">
 		select count(task_id) from prm_task where task_menu_id = #{taskMenuId}
+	</select>
+
+	<!-- 根据任务id数组查找出任务 -->
+	<select id="findManyTask" resultMap="BaseResultMap">
+		select
+	  	<include refid="Base_Column_List"></include>
+		from prm_task where task_id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
 	</select>
 
 </mapper>

@@ -94,7 +94,17 @@ public interface TaskService {
 	TaskLogVO mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
 
 	/**
-	 *
+	 * 保存任务操作日志
+	 * @param task 任务实体信息
+	 * @param content 日志内容
+	 * @return
 	 */
 	TaskLogVO saveTaskLog(Task task,String content);
+
+	/**
+	 * 根据任务id数组,查找出多个任务
+	 * @param taskId 任务id数组
+	 * @return
+	 */
+	List<Task> findManyTask(String[] taskId);
 }

@@ -13,6 +13,13 @@ import org.apache.ibatis.annotations.Param;
 public interface TaskMapper {
 
 	/**
+	 * 根据任务id数组查找多个任务
+	 * @param taskId 任务id数组
+	 * @return
+	 */
+	List<Task> findManyTask(String[] taskId);
+
+    /**
 	 * 查询分页task数据
 	 * 
 	 * @param pager 分页对象

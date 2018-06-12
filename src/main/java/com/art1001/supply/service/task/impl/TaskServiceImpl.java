@@ -289,4 +289,9 @@ public class TaskServiceImpl implements TaskService {
         return taskLogVO;
     }
 
+    @Override
+    public List<Task> findManyTask(String[] taskId) {
+        return taskMapper.findManyTask(taskId);
+    }
+
 }
