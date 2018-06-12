@@ -2,6 +2,7 @@ package com.art1001.supply.service.task;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.TaskLog;
+import com.art1001.supply.entity.task.TaskLogVO;
 
 import java.util.List;
 
@@ -53,5 +54,11 @@ public interface TaskLogService {
 	 * @return
 	 */
 	public List<TaskLog> findTaskLogAllList();
-	
+
+	/**
+	 * 根据id查询日志的内容
+	 * @param id 日志的id
+	 * @return
+	 */
+	TaskLogVO findTaskLogContentById(String id);
 }

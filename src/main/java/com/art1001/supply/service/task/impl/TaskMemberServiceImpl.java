@@ -5,11 +5,19 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLog;
+import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.task.TaskMemberService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
@@ -28,7 +36,11 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	/** userService 接口*/
 	@Resource
 	private UserService userService;
-	
+
+	/** taskService 接口*/
+	@Resource
+	private TaskService taskService;
+
 	/**
 	 * 查询分页taskMember数据
 	 * 
@@ -70,14 +82,36 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	public void updateTaskMember(TaskMember taskMember){
 		taskMemberMapper.updateTaskMember(taskMember);
 	}
+
 	/**
 	 * 保存taskMember数据
 	 * 
-	 * @param taskMember
+	 * @param
 	 */
-	@Override
-	public void saveTaskMember(TaskMember taskMember){
-		taskMemberMapper.saveTaskMember(taskMember);
+//	@Override
+	public TaskLogVO saveTaskMember(Task task, File file, Share share, Schedule schedule) {
+//		String content = "";
+//		int result = taskMemberMapper.saveTaskMember(taskMember);
+//		Task task = new Task();
+//		//关联任务
+//		if(taskMember.getPublicType() != null && taskMember.getPublicType().equals("1")){
+//			content = TaskLogFunction.N.getName();
+//		}
+//		//关联分享
+//		if(taskMember.getPublicType() != null && taskMember.getPublicType().equals("2")){
+//			content = TaskLogFunction.A1.getName();
+//		}
+//		//关联日程
+//		if(taskMember.getPublicType() != null && taskMember.getPublicType().equals("3")){
+//			content = TaskLogFunction.A2.getName();
+//		}
+//		//关联文件
+//		if(taskMember.getPublicType() != null && taskMember.getPublicType().equals("4")){
+//			content = TaskLogFunction.A3.getName();
+//		}
+//		content +
+//		taskService.saveTaskLog(task,);
+		return null;
 	}
 	/**
 	 * 获取所有taskMember数据
@@ -109,8 +143,6 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setMemberId(userEntity.getId());
 			//设置这条关系的创建时间
 			taskMember.setCreateTime(System.currentTimeMillis());
-			//设置关联类型 (1.任务 2.分享 3.日程 4.文件)
-			taskMember.setPublicType("1");
 			//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
 			if(userEntity.getId().equals(uid)){
 				taskMember.setType("3");

@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 
 
@@ -40,13 +41,13 @@ public interface TaskService {
 	 *
 	 * @param task
 	 */
-	public int updateTask(Task task);
+	public TaskLogVO updateTask(Task task);
 
 	/**
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public void saveTask(String[] memberId,Project project,Task task);
+	public TaskLogVO saveTask(String[] memberId,Project project,Task task);
 
 	/**
 	 * 获取所有task数据
@@ -61,21 +62,21 @@ public interface TaskService {
 	 * @param taskDel 当前任务是否已经在回收站
 	 * @return
 	 */
-	int moveToRecycleBin(String taskId, String taskDel);
+	TaskLogVO moveToRecycleBin(String taskId, String taskDel);
 
 	/**
 	 * 修改当前任务状态（完成/未完成）
 	 * @param taskId 任务id
 	 * @return
 	 */
-	int changeTaskStatus(String taskId,String taskStatus);
+	TaskLogVO changeTaskStatus(String taskId,String taskStatus);
 
 	/**
 	 * 设定任务的时间(开始 / 结束)
 	 * @param task 任务的时间信息
 	 * @return
 	 */
-	int updateTaskTime(Task task);
+	TaskLogVO updateTaskTime(Task task);
 
 	/**
 	 * 根据分组id 查询该菜单下有没有任务
@@ -90,5 +91,10 @@ public interface TaskService {
 	 * @param taskMenuVO 当前任务所在的 菜单,分组,项目 的信息
 	 * @return
 	 */
-	int mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
+	TaskLogVO mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
+
+	/**
+	 *
+	 */
+	TaskLogVO saveTaskLog(Task task,String content);
 }
