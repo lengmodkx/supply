@@ -43,6 +43,10 @@ public class UserInfoEntity implements Serializable {
 	 * 邮箱
 	 */
 	private String email;
+	/**
+	 * 头像Url
+	 */
+	private String image;
 	/*
 	 * 联系地址
 	 */
