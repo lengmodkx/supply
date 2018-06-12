@@ -274,7 +274,6 @@ public class TaskServiceImpl implements TaskService {
     public TaskLogVO saveTaskLog(Task task,String content){
         TaskLog taskLog = new TaskLog();
         taskLog.setId(IdGen.uuid());
-        taskLog.setMemberId(task.getMemberId());
         taskLog.setMemberName("admin");
         taskLog.setMemberId("4");
         //暂时不用

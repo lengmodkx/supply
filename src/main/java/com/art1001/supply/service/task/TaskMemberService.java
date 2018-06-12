@@ -50,7 +50,7 @@ public interface TaskMemberService {
 	 * 
 	 * @param taskMember
 	 */
-	public TaskLogVO saveTaskMember(Task task, File file, Share share,Schedule schedule);
+	public TaskLogVO saveTaskMember(Task task, File file, Share share,Schedule schedule,TaskMember taskMember,String taskId);
 
 	/**
 	 * 获取所有taskMember数据

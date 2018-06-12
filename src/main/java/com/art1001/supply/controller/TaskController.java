@@ -293,9 +293,46 @@ public class TaskController {
 //    }
 
 
-    public JSONObject addTaskRely(@RequestParam Task task, @RequestParam File file, @RequestParam Share share, @RequestParam Schedule schedule){
+    /**
+     * 给当前任务添加依赖关系
+     * @param task 关联任务的实体信息
+     * @param file 关联文件的实体信息
+     * @param share 关联分享的实体信息
+     * @param schedule 关联日程的实体信息
+     * @param taskMember 关联关系信息
+     * @param taskId 当前被操作的任务uid
+     * @return
+     */
+    public JSONObject addTaskRely(@RequestParam Task task,
+                                  @RequestParam File file,
+                                  @RequestParam Share share,
+                                  @RequestParam Schedule schedule,
+                                  @RequestParam TaskMember taskMember,
+                                  @RequestParam String taskId
+    ){
         JSONObject jsonObject = new JSONObject();
-        TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule);
+        try{
+            TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
+            if(taskLogVO.getResult() >0){
+                jsonObject.put("msg","关联成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            }
+        } catch (Exception e){
+            log.error("系统异常,关联失败! 当前任务id {},{}",taskId,e);
+            throw new AjaxException(e);
+        }
         return jsonObject;
+    }
+
+    public JSONObject removeTaskRely(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+        } catch (Exception e){
+            log.error("");
+            throw new AjaxException(e);
+        }
+        return null;
     }
 }

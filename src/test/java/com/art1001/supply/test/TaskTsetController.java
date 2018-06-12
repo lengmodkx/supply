@@ -220,10 +220,11 @@ public class TaskTsetController extends TestBase{
 
     @Test
     public void addRaly(){
-        Task task = new Task();
+        Task task = null;
         File file = new File();
-        Share share = new Share();
-        Schedule schedule = new Schedule();
+        file.setFileName("何少华");
+        Schedule schedule = null;
+        Share share = null;
         TaskMember taskMember = new TaskMember();
         String taskId = "1";
         TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
