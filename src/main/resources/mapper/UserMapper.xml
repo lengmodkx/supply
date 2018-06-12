@@ -129,8 +129,14 @@
 		r.r_status,
 		r.r_description,
 		r.r_create_time,
-		r.r_update_time
-		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id 
+		r.r_update_time,
+		i.u_sex,
+		i.u_birthday,
+		i.u_image,
+		i.u_telephone,
+		i.u_email,
+		i.u_address
+		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name = #{name}
 	</select>
 	
@@ -303,7 +309,7 @@
 		u_birthday = #{userInfo.birthday},
 		u_telephone = #{userInfo.telephone},
 		u_email = #{userInfo.email},
-		u_email = #{userInfo.image},
+		u_image = #{userInfo.image},
 		u_address = #{userInfo.address}
 		where u_id = ${userInfo.id}
 	</update>
