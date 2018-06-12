@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -15,6 +16,7 @@ import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,16 +69,17 @@ public class TaskController {
 
     /**
      * 任务移动
-     * @param task 包含该任务的id、当前组id、欲移动到任务组id
+     * @param task 包含该任务的id、当前菜单id、当前分组id、当前项目id
+     * @param taskMenuVO 包含任务的菜单,分组的模型实体类
      * @return
      */
     @PostMapping("mobileTask")
     @ResponseBody
-    public JSONObject mobileTask(Task task){
+    public JSONObject mobileTask(@RequestParam Task task, @RequestParam TaskMenuVO oldTaskMenuVO, @RequestParam TaskMenuVO newTaskMenuVO){
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
-            int result = taskService.updateTask(task);
+            int result = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
             if(result > 0){
                 jsonObject.put("result", 1);
                 jsonObject.put("msg","任务移动成功！");

@@ -6,7 +6,6 @@ package com.art1001.supply.enums;
  * @date 2018/6/11 16:36
  */
 public enum TaskLogFunction {
-
     A("移除了执行者"),
     B("移除了参与者"),
     C("添加了参与者"),
@@ -27,15 +26,21 @@ public enum TaskLogFunction {
     R("创建了任务"),
     S("完成了任务"),
     T("更新了内容"),
-    U("指派给了");
+    U("指派给了"),
+    V("将任务从"),
+    W("移动到了"),
+    X("将任务移动到了");
 
     private String name;
-
     private TaskLogFunction(String name){
         this.name = name;
     }
 
     public String getName(){
         return this.name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 }

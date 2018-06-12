@@ -10,8 +10,10 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskMember;
+import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.mapper.task.TaskLogMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -44,6 +46,7 @@ public class TaskServiceImpl implements TaskService {
 	/** TaskLogService接口 */
 	@Resource
     private TaskLogService taskLogService;
+
 	
 	/**
 	 * 重写方法
@@ -101,9 +104,6 @@ public class TaskServiceImpl implements TaskService {
         }
         if(task.getExecutor() != null && task.getExecutor() != ""){
             content = TaskLogFunction.U.getName();
-        }
-        if(task.getTaskMenuId() != null && task.getTaskMenuId() != ""){
-            //content = TaskLogFunction
         }
         int result = taskMapper.updateTask(task);
         taskLogService.saveTaskLog(getTaskLog(task,content));
@@ -222,6 +222,37 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int findTaskByMenuId(String taskMenuId) {
         return taskMapper.findTaskByMenuId(taskMenuId);
+    }
+
+    /**
+     * 移动任务至 ( 项目、分组、菜单 )
+     * @param task 任务的信息
+     * @param oldTaskMenuVO 移动前该任务的位置信息
+     * @param newTaskMenuVO 将要移动该任务到的位置信息
+     * @return
+     */
+    @Override
+    public int mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
+        int result = updateTask(task);
+        String content = "";
+        //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
+        //或者如果分组id不为空说明该任务要移至其他分组,所以 分组id,菜单id,肯定不为空
+        if((newTaskMenuVO.getProjectId() != null && newTaskMenuVO.getProjectId() != "") || (newTaskMenuVO.getTaskGroupId() != null && newTaskMenuVO.getTaskGroupId() != "")){
+            //拼接任务操作日志内容的字符串
+            content = TaskLogFunction.V.getName() + " " + oldTaskMenuVO.getTaskGroupName() + "/" + oldTaskMenuVO.getTaskMenuName() +" "+  TaskLogFunction.W.getName() + " " + newTaskMenuVO.getTaskGroupName() + "/" + newTaskMenuVO.getTaskMenuName();
+            //保存日志信息
+            taskLogService.saveTaskLog(getTaskLog(task,content));
+            return result;
+        }
+        //如果任务的菜单信息不为空 说明该任务要移至其他的任务菜单
+        if(newTaskMenuVO.getTaskMenuId() != null && newTaskMenuVO.getTaskMenuId() != ""){
+            //拼接任务操作日志内容的字符串
+            content = TaskLogFunction.X.getName() + " " + newTaskMenuVO.getTaskMenuName();
+            //保存日志信息
+            taskLogService.saveTaskLog(getTaskLog(task,content));
+            return result;
+        }
+        return result;
     }
 
     /**

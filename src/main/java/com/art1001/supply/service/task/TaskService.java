@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
 
 
 /**
@@ -83,4 +84,11 @@ public interface TaskService {
 	 */
 	int findTaskByMenuId(String taskMenuId);
 
+	/**
+	 * 移动任务
+	 * @param task 任务的信息
+	 * @param taskMenuVO 当前任务所在的 菜单,分组,项目 的信息
+	 * @return
+	 */
+	int mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
 }

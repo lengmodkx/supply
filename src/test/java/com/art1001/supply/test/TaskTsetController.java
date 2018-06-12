@@ -2,13 +2,19 @@ package com.art1001.supply.test;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskMember;
+import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskService;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author heshaohua
@@ -20,6 +26,12 @@ public class TaskTsetController extends TestBase{
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private TagService tagService;
+
+    @Resource
+    private TaskLogService taskLogService;
 
     /**
      * 添加任务的测试方法
@@ -69,9 +81,24 @@ public class TaskTsetController extends TestBase{
        Task t = new Task();
        t.setTaskId("11111");
        t.setTaskMenuId("1");
+       TaskMenuVO oldTaskMenuVO = new TaskMenuVO();
+        oldTaskMenuVO.setProjectId("1");
+        oldTaskMenuVO.setProjectName("项目A");
+        oldTaskMenuVO.setTaskGroupId("1");
+        oldTaskMenuVO.setTaskGroupName("分组A");
+        oldTaskMenuVO.setTaskMenuId("1");
+        oldTaskMenuVO.setTaskMenuName("菜单A");
+        TaskMenuVO newTaskMenuVO = new TaskMenuVO();
+       // newTaskMenuVO.setProjectId("2");
+       // newTaskMenuVO.setProjectName("项目B");
+        //newTaskMenuVO.setTaskGroupId("2");
+        //newTaskMenuVO.setTaskGroupName("分组B");
+        newTaskMenuVO.setTaskMenuId("2");
+        newTaskMenuVO.setTaskMenuName("菜单B");
+
        try {
             //修改该任务的任务组编号
-            int result = taskService.updateTask(t);
+            int result = taskService.mobileTask(t,oldTaskMenuVO,newTaskMenuVO);
         } catch (ServiceException e){
            System.out.println(e.getMessage());
         }
@@ -95,7 +122,6 @@ public class TaskTsetController extends TestBase{
 
     /**
      * 永久删除任务的测试方法
-     * @param taskId 要删除的任务id
      */
     @Test
     public void delTask(){
@@ -111,8 +137,6 @@ public class TaskTsetController extends TestBase{
 
     /**
      * 完成任务(2=完成 1=未完成)
-     * @param taskId 当前任务id
-     * @param taskStatus 当前任务状态
      */
     @Test
     public void changeTaskStatus(){
@@ -128,7 +152,6 @@ public class TaskTsetController extends TestBase{
 
     /**
      * 修改该任务信息的测试方法
-     * @param task 需要任务的实体信息
      */
     @Test
     public void updateTask(){
@@ -142,10 +165,6 @@ public class TaskTsetController extends TestBase{
 
     /**
      * 更新任务时间( 开始 / 结束 / 提醒)
-     * @param startTime 任务开始时间
-     * @param endTime 任务结束时间
-     * @param taskId 任务id
-     * @param remindTime 任务提醒时间
      */
     @Test
     public void updateTaskTime(){
@@ -154,7 +173,7 @@ public class TaskTsetController extends TestBase{
         String taskId = "11111";
         String remindTime = "2018-6-9";
         try {
-            int result = taskService.updateTaskTime(taskId,startTime,endTime,remindTime);
+            //int result = taskService.updateTaskTime(taskId,startTime,endTime,remindTime);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -166,17 +185,35 @@ public class TaskTsetController extends TestBase{
         Project project = new Project();
         project.setProjectName("A项目");
         project.setStartTime(System.currentTimeMillis());
-        String[] memberId = {"4","21","33333"};
+        String[] memberId = {"4","21"};
         String id = "11111";
         try {
             task.setMemberId(id);
             //保存任务信息到数据库
             taskService.saveTask(memberId,project,task);
+            List<TaskLog> taskLogAllList = taskLogService.findTaskLogAllList();
+            for (TaskLog log: taskLogAllList) {
+                System.out.println(log.getContent());
+            }
+        } catch (Exception e){
+        }
+    }
+
+    @Test
+    public void addTags(){
+        String taskId = "11111";
+        String[] oldTags = {"1","2"};
+        Tag tag = new Tag();
+        tag.setTagName("121212");
+        try {
+            int result = tagService.saveTag(tag,oldTags,taskId);
+
+
+
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
-
 
 
 }
