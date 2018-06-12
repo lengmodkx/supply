@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * projectMembermapper接口
@@ -56,6 +57,6 @@ public interface ProjectMemberMapper {
 	 */
 	List<ProjectMember> findProjectMemberAllList();
 
-	List<Project> findProjectByMemberId(String memberId,Integer projectDel);
+	List<Project> findProjectByMemberId(@Param("memberId") String memberId, @Param("projectDel") Integer projectDel);
 
 }

@@ -153,5 +153,11 @@
 		WHERE id = #{id}
 
 	</update>
+	<!-- 查询该日志的content -->
+	<select id="findTaskLogContentById" resultType="com.art1001.supply.entity.task.TaskLogVO" parameterType="java.lang.String">
+
+		select content,create_time createTime from prm_task_log where id = #{id}
+
+	</select>
 	
 </mapper>

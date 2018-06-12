@@ -32,20 +32,20 @@
     </resultMap>
 
     <sql id="Base_Column_List1">
-        project_id,
-        project_name,
-        member_id,
-        start_time,
-        end_time,
-        project_cover,
-        project_des,
-        project_del,
-        project_status,
-        create_time,
-        update_time,
-        is_public,
-        project_menu,
-        project_remind
+		prm_project.project_id,
+		prm_project.project_name,
+		prm_project.member_id,
+		prm_project.start_time,
+		prm_project.end_time,
+		prm_project.project_cover,
+		prm_project.project_des,
+		prm_project.project_del,
+		prm_project.project_status,
+		prm_project.create_time,
+		prm_project.update_time,
+		prm_project.is_public,
+		prm_project.project_menu,
+		prm_project.project_remind
     </sql>
 
 	<sql id="Base_Column_List">

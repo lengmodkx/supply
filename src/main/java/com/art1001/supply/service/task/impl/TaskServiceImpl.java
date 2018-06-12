@@ -7,10 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskLog;
-import com.art1001.supply.entity.task.TaskMember;
-import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.task.TaskLogMapper;
@@ -87,27 +84,34 @@ public class TaskServiceImpl implements TaskService {
 	 * @param task 任务信息
 	 */
 	@Override
-	public int updateTask(Task task){
+	public TaskLogVO updateTask(Task task){
 	    String content = "";
+	    TaskLogVO taskLogVO = new TaskLogVO();
+	    //任务更新时间
         task.setUpdateTime(System.currentTimeMillis());
+        //更新项目内容
         if(task.getTaskName() != null && task.getTaskName() != ""){
-            content = TaskLogFunction.T.getName();
+            taskLogVO = saveTaskLog(task,TaskLogFunction.T.getName());
         }
+        //更新项目优先级
         if(task.getPriority() != null && task.getPriority() != ""){
-            content = TaskLogFunction.F.getName();
+            taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName());
         }
+        //更新项目重复规则
         if((task.getRepeat() != "" && task.getRepeat() != null) || (task.getRepetitionTime() != null)){
-            content = TaskLogFunction.D.getName();
+            taskLogVO = saveTaskLog(task,TaskLogFunction.D.getName());
         }
+        //更新项目备注
         if(task.getRemarks() != null && task.getRemarks() != null){
-            content = TaskLogFunction.E.getName();
+            taskLogVO = saveTaskLog(task,TaskLogFunction.E.getName());
         }
+        //更新项目执行者
         if(task.getExecutor() != null && task.getExecutor() != ""){
-            content = TaskLogFunction.U.getName();
+            taskLogVO = saveTaskLog(task,TaskLogFunction.U.getName());
         }
         int result = taskMapper.updateTask(task);
-        taskLogService.saveTaskLog(getTaskLog(task,content));
-        return result;
+        taskLogVO.setResult(result);
+        return taskLogVO;
 	}
 
 	/**
@@ -118,7 +122,7 @@ public class TaskServiceImpl implements TaskService {
      * @param task task信息
      */
 	@Override
-	public void saveTask(String[] memberId, Project project, Task task) {
+	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
         //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
         taskMemberService.saveManyTaskeMmber(memberId,task.getMemberId());
         //获取当前登录用户的id
@@ -139,8 +143,8 @@ public class TaskServiceImpl implements TaskService {
         //保存任务信息
         taskMapper.saveTask(task);
         //拿到TaskLog对象并且保存
-        taskLogService.saveTaskLog(getTaskLog(task,TaskLogFunction.R.getName()));
-	}
+        return saveTaskLog(task, TaskLogFunction.R.getName());
+    }
 
 	/**
 	 * 重写方法
@@ -160,17 +164,19 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int moveToRecycleBin(String taskId, String taskDel) {
+    public TaskLogVO moveToRecycleBin(String taskId, String taskDel) {
         int result = taskMapper.moveToRecycleBin(taskId,taskDel,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
+        TaskLogVO taskLogVO = new TaskLogVO();
         //如果任务状态为0 日志打印内容为 xxx把任务移入了回收站 否则   xxx恢复了任务
         if(taskDel == "0"){
-            taskLogService.saveTaskLog(getTaskLog(task,TaskLogFunction.P.getName()));
+            taskLogVO = saveTaskLog(task,TaskLogFunction.P.getName());
         } else{
-            taskLogService.saveTaskLog(getTaskLog(task,TaskLogFunction.O.getName()));
+            taskLogVO = saveTaskLog(task,TaskLogFunction.O.getName());
         }
-        return result;
+        taskLogVO.setResult(result);
+        return taskLogVO;
     }
 
 	/**
@@ -180,18 +186,21 @@ public class TaskServiceImpl implements TaskService {
 	 * @return
 	 */
 	@Override
-	public int changeTaskStatus(String taskId,String taskStatus) {
+	public TaskLogVO changeTaskStatus(String taskId,String taskStatus) {
 	    //修改任务状态
 	    int result = taskMapper.changeTaskStatus(taskId,taskStatus,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
         //如果当前状态为未完成  则 日志记录为 完成任务 否则为 重做任务
         if(taskStatus == "1"){
-	        taskLogService.saveTaskLog(getTaskLog(task,TaskLogFunction.S.getName()));
+            TaskLogVO taskLogVO = saveTaskLog(task, TaskLogFunction.S.getName());
+            taskLogVO.setResult(result);
+            return taskLogVO;
         } else{
-            taskLogService.saveTaskLog(getTaskLog(task,TaskLogFunction.Q.getName()));
+            TaskLogVO taskLogVO = saveTaskLog(task, TaskLogFunction.S.getName());
+            taskLogVO.setResult(result);
+	        return taskLogVO;
         }
-	    return result;
 	}
 
     /**
@@ -201,7 +210,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int updateTaskTime(Task task) {
+    public TaskLogVO updateTaskTime(Task task) {
         String content = "";
         if(task.getStartTime() != null){
             content = TaskLogFunction.M.getName();
@@ -210,8 +219,9 @@ public class TaskServiceImpl implements TaskService {
             content = TaskLogFunction.L.getName();
         }
         int result =  taskMapper.updateTask(task);
-        taskLogService.saveTaskLog(getTaskLog(task,content));
-        return result;
+        TaskLogVO taskLogVO = saveTaskLog(task, content);
+        taskLogVO.setResult(result);
+        return taskLogVO;
     }
 
     /**
@@ -232,8 +242,8 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
-        int result = updateTask(task);
+    public TaskLogVO mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
+        int result = taskMapper.updateTask(task);
         String content = "";
         //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
         //或者如果分组id不为空说明该任务要移至其他分组,所以 分组id,菜单id,肯定不为空
@@ -241,24 +251,27 @@ public class TaskServiceImpl implements TaskService {
             //拼接任务操作日志内容的字符串
             content = TaskLogFunction.V.getName() + " " + oldTaskMenuVO.getTaskGroupName() + "/" + oldTaskMenuVO.getTaskMenuName() +" "+  TaskLogFunction.W.getName() + " " + newTaskMenuVO.getTaskGroupName() + "/" + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
-            taskLogService.saveTaskLog(getTaskLog(task,content));
-            return result;
+            TaskLogVO taskLogVO = saveTaskLog(task, content);
+            taskLogVO.setResult(result);
+            return taskLogVO;
         }
         //如果任务的菜单信息不为空 说明该任务要移至其他的任务菜单
         if(newTaskMenuVO.getTaskMenuId() != null && newTaskMenuVO.getTaskMenuId() != ""){
             //拼接任务操作日志内容的字符串
             content = TaskLogFunction.X.getName() + " " + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
-            taskLogService.saveTaskLog(getTaskLog(task,content));
-            return result;
+            TaskLogVO taskLogVO = saveTaskLog(task, content);
+            taskLogVO.setResult(result);
+            return taskLogVO;
         }
-        return result;
+            return null;
     }
 
     /**
      * 返回日志实体对象
      */
-    public TaskLog getTaskLog(Task task,String content){
+    @Override
+    public TaskLogVO saveTaskLog(Task task,String content){
         TaskLog taskLog = new TaskLog();
         taskLog.setId(IdGen.uuid());
         taskLog.setMemberId(task.getMemberId());
@@ -272,7 +285,9 @@ public class TaskServiceImpl implements TaskService {
         taskLog.setTaskId(task.getTaskId());
         taskLog.setContent("admin " + content);
         taskLog.setCreateTime(System.currentTimeMillis());
-        return taskLog;
+        taskLogService.saveTaskLog(taskLog);
+        TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
+        return taskLogVO;
     }
 
 }

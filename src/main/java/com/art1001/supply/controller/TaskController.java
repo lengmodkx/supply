@@ -2,20 +2,24 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +43,10 @@ public class TaskController {
     @Resource
     private TagService tagService;
 
+    /** 任务关系表逻辑层接口 */
+    @Resource
+    private TaskMemberService taskMemberService;
+
     /**
      * 添加新任务
      * @param memberId 该任务的成员id数组
@@ -56,8 +64,12 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
-            taskService.saveTask(memberId,project,task);
-            jsonObject.put("msg","添加任务成功!");
+            TaskLogVO taskLogVO = taskService.saveTask(memberId,project,task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","添加任务成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            }
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
@@ -69,8 +81,9 @@ public class TaskController {
 
     /**
      * 任务移动
-     * @param task 包含该任务的id、当前菜单id、当前分组id、当前项目id
-     * @param taskMenuVO 包含任务的菜单,分组的模型实体类
+     * @param task 包含该任务的id
+     * @param newTaskMenuVO 要移动到的 项目id,名称 分组id,名称 菜单id,名称
+     * @param oldTaskMenuVO 移动之前的 项目id,名称 分组id,名称 菜单id,名称
      * @return
      */
     @PostMapping("mobileTask")
@@ -79,10 +92,11 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
-            int result = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
-            if(result > 0){
+            TaskLogVO taskLogVO = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
+            if(taskLogVO.getResult() > 0){
                 jsonObject.put("result", 1);
                 jsonObject.put("msg","任务移动成功！");
+                jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("result", 0);
                 jsonObject.put("msg","任务移动失败！");
@@ -108,10 +122,11 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //将任务移入回收站
-            int result = taskService.moveToRecycleBin(taskId, taskDel);
-            if (result > 0) {
+            TaskLogVO taskLogVO = taskService.moveToRecycleBin(taskId, taskDel);
+            if (taskLogVO.getResult() > 0) {
                 jsonObject.put("msg", "操作成功！");
                 jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
             } else {
                 jsonObject.put("msg", "操作失败！");
                 jsonObject.put("result","0");
@@ -130,7 +145,6 @@ public class TaskController {
      * 1.修改任务内容丶优先级丶重复性
      * 2.修改任务备注
      * 3.修改任务的执行者
-     *
      * @param task 任务的实体信息
      */
     @PostMapping("upateTaskInfo")
@@ -138,13 +152,14 @@ public class TaskController {
     public JSONObject updateTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = taskService.updateTask(task);
-            if(result > 0){
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","更新成功!");
-                jsonObject.put("result",result);
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","更新失败!");
-                jsonObject.put("result",result);
+                jsonObject.put("result","0");
             }
         } catch (Exception e){
             log.error("系统异常,操作失败! 当前任务:{},{}",task.getTaskId(),e);
@@ -190,10 +205,11 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //改变任务状态
-            int result = taskService.changeTaskStatus(taskId,taskStatus);
-            if(result >1){
+            TaskLogVO taskLogVO = taskService.changeTaskStatus(taskId,taskStatus);
+            if(taskLogVO.getResult() >1){
                 jsonObject.put("msg","修改成功!");
                 jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","修改失败!");
                 jsonObject.put("result","0");
@@ -210,14 +226,16 @@ public class TaskController {
      * @param task 包含时间的实体信息
      */
     @PostMapping("updateTaskTime")
+    @ResponseBody
     public JSONObject updateTaskTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
-            int result = taskService.updateTaskTime(task);
-            if(result >1){
+            TaskLogVO taskLogVO = taskService.updateTaskTime(task);
+            if(taskLogVO.getResult() > 1){
                 jsonObject.put("msg","时间更新成功!");
                 jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","时间更新失败!");
                 jsonObject.put("result","0");
@@ -230,11 +248,12 @@ public class TaskController {
     }
 
     /**
-     * 根据分组id 查询该菜单下有没有任务
+     * 根据菜单id 查询该菜单下有没有任务
      * @param taskMenuId 分组id
      * @return
      */
     @PostMapping("findTaskByMenuId")
+    @ResponseBody
     public JSONObject findTaskByMenuId(@RequestParam String taskMenuId){
         JSONObject jsonObject = new JSONObject();
         try{
@@ -247,29 +266,36 @@ public class TaskController {
         return jsonObject;
     }
 
-    /**
-     * 给当前任务设置标签
-     * @param oldTags 该任务更新标签之前的标签信息
-     * @param tag 标签名称
-     * @param taskId 当前任务id
-     * @return
-     */
-    @PostMapping("addTags")
-    public JSONObject addTags(String[] oldTags,Tag tag,@RequestParam String taskId){
+//    /**
+//     * 给当前任务设置标签
+//     * @param oldTags 该任务更新标签之前的标签信息
+//     * @param tag 标签名称
+//     * @param taskId 当前任务id
+//     * @return
+//     */
+//    @PostMapping("addTags")
+//    public JSONObject addTags(String[] oldTags,Tag tag,@RequestParam String taskId){
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            int result = tagService.saveTag(tag,oldTags,taskId);
+//            if(result > 0){
+//                jsonObject.put("msg","标签添加成功!");
+//                jsonObject.put("result",result);
+//            } else{
+//                jsonObject.put("msg","标签添加失败!");
+//                jsonObject.put("result",result);
+//            }
+//        } catch (Exception e){
+//            log.error("保存失败,标签名称为:{},{}",tag.getTagName(),e);
+//            throw new AjaxException(e);
+//        }
+//        return jsonObject;
+//    }
+
+
+    public JSONObject addTaskRely(@RequestParam Task task, @RequestParam File file, @RequestParam Share share, @RequestParam Schedule schedule){
         JSONObject jsonObject = new JSONObject();
-        try {
-            int result = tagService.saveTag(tag,oldTags,taskId);
-            if(result > 0){
-                jsonObject.put("msg","标签添加成功!");
-                jsonObject.put("result",result);
-            } else{
-                jsonObject.put("msg","标签添加失败!");
-                jsonObject.put("result",result);
-            }
-        } catch (Exception e){
-            log.error("保存失败,标签名称为:{},{}",tag.getTagName(),e);
-            throw new AjaxException(e);
-        }
+        TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule);
         return jsonObject;
     }
 }

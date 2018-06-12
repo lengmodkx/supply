@@ -45,7 +45,7 @@
                 var params = $("#loginform").serialize();
                 $.post("/login", params, function (data) {
                     if(data.result===1){
-                        window.location.href = "/home.html";
+                        window.location.href = "/project/home.html";
                     }else{
                         layer.msg(data.msg,{icon:5});
                     }

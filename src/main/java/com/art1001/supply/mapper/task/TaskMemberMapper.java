@@ -46,7 +46,7 @@ public interface TaskMemberMapper {
 	 * 
 	 * @param taskMember
 	 */
-	void saveTaskMember(TaskMember taskMember);
+	int saveTaskMember(TaskMember taskMember);
 
 	/**
 	 * 获取所有taskMember数据

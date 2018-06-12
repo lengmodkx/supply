@@ -2,6 +2,11 @@ package com.art1001.supply.service.task;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 
 
@@ -45,7 +50,7 @@ public interface TaskMemberService {
 	 * 
 	 * @param taskMember
 	 */
-	public void saveTaskMember(TaskMember taskMember);
+	public TaskLogVO saveTaskMember(Task task, File file, Share share,Schedule schedule);
 
 	/**
 	 * 获取所有taskMember数据

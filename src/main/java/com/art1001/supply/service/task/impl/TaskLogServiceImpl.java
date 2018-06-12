@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.TaskLog;
+import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.mapper.task.TaskLogMapper;
 import com.art1001.supply.service.task.TaskLogService;
 import org.springframework.stereotype.Service;
@@ -79,5 +80,10 @@ public class TaskLogServiceImpl implements TaskLogService {
 	public List<TaskLog> findTaskLogAllList(){
 		return taskLogMapper.findTaskLogAllList();
 	}
-	
+
+	@Override
+	public TaskLogVO findTaskLogContentById(String id) {
+		return taskLogMapper.findTaskLogContentById(id);
+	}
+
 }

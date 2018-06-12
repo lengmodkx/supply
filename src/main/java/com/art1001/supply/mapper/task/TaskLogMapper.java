@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.task;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.TaskLog;
+import com.art1001.supply.entity.task.TaskLogVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -56,4 +57,10 @@ public interface TaskLogMapper {
 	 */
 	List<TaskLog> findTaskLogAllList();
 
+	/**
+	 * 根据id获取该日志的内容
+	 * @param id 日志的id
+	 * @return
+	 */
+    TaskLogVO findTaskLogContentById(String id);
 }

@@ -29,7 +29,11 @@ public enum TaskLogFunction {
     U("指派给了"),
     V("将任务从"),
     W("移动到了"),
-    X("将任务移动到了");
+    X("将任务移动到了"),
+    Y("将此任务转为了顶级任务"),
+    A1("关联了分享"),
+    A2("关联了日程"),
+    A3("关联了文件");
 
     private String name;
     private TaskLogFunction(String name){
