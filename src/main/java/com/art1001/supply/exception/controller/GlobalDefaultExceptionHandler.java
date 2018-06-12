@@ -52,7 +52,7 @@ public class GlobalDefaultExceptionHandler {
 	@ExceptionHandler(SystemException.class)
 	public String operateSystemException(SystemException ex, HttpServletRequest request) {
 		logger.error(ex.getMessage(), ex);
-		return "/WEB-INF/view/error/error";
+		return "error/500";
 	}
 
 	/**

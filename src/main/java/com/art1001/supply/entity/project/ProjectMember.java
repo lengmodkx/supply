@@ -48,7 +48,7 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	/**
 	 * 手机号
 	 */
-	private Integer memberPhone;
+	private String memberPhone;
 
 
 	/**

@@ -3,8 +3,10 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.ProjectCollectService;
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -46,10 +49,21 @@ public class ProjectController {
 
     @RequestMapping("/home.html")
     public String home(Model model){
+
         try {
             String userId = ShiroAuthenticationManager.getUserId();
+            //我创建的任务
             List<Project> projects = projectService.findProjectByMemberId(userId);
             model.addAttribute("projects",projects);
+            //我参与的任务
+            List<Project> joinInproject = projectMemberService.findProjectByMemberId(userId, 0);
+            model.addAttribute("joinInproject",joinInproject);
+            //我收藏的项目
+            List<Project> collectrojects = projectCollectService.findProjectByMemberId(userId);
+            model.addAttribute("collectrojects",collectrojects);
+            //项目回收站
+            List<Project> delProjects = projectMemberService.findProjectByMemberId(userId,1);
+            model.addAttribute("delProjects",delProjects);
             return "home";
         }catch (Exception e){
             throw  new SystemException(e);
@@ -58,6 +72,7 @@ public class ProjectController {
 
 
     @RequestMapping("/projectList")
+    @ResponseBody
     public JSONObject projectList(@RequestParam Integer label){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -97,6 +112,7 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/addProject")
+    @ResponseBody
     public JSONObject addProject(@RequestParam String projectName, @RequestParam String projectDes){
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(projectName)){
@@ -113,38 +129,46 @@ public class ProjectController {
 
         try {
 
-            String userId = ShiroAuthenticationManager.getUserId();
-//            Project project = new Project();
-//            project.setProjectName(projectName);
-//            project.setProjectDes(projectDes);
-//            project.setProjectCover("");
-//            project.setProjectDel(0);
-//            project.setCreateTime(System.currentTimeMillis());
-//            project.setIsPublic(0);
-//            project.setProjectRemind(0);
-//            project.setProjectMenu("[{任务},{分享},{文件},{日程},{统计},{群聊}]");
-//            project.setMemberId(userId);
-//            project.setProjectStatus(0);
-//            projectService.saveProject(project);
-//
-//            //初始化分组
-//            Relation relation = new Relation();
-//            relation.setRelationName("任务");
-//            relation.setProjectId(project.getProjectId());
-//            relationService.saveRelation(relation);
-//
-//            //初始化菜单
-//            String[] menus  = new String[]{"待处理","进行中","已完成"};
-//            for (String menu:menus) {
-//                Relation relation1 = new Relation();
-//                relation1.setProjectId(project.getProjectId());
-//                relation1.setRelationName(menu);
-//                relation1.setParentId(relation.getRelationId());
-//                relationService.saveRelation(relation1);
-//            }
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            Project project = new Project();
+            project.setProjectName(projectName);
+            project.setProjectDes(projectDes);
+            project.setProjectCover("");
+            project.setProjectDel(0);
+            project.setCreateTime(System.currentTimeMillis());
+            project.setIsPublic(0);
+            project.setProjectRemind(0);
+            project.setProjectMenu("[{任务},{分享},{文件},{日程},{统计},{群聊}]");
+            project.setMemberId(userEntity.getId());
+            project.setProjectStatus(0);
+            projectService.saveProject(project);
 
+            //初始化分组
+            Relation relation = new Relation();
+            relation.setRelationName("任务");
+            relation.setProjectId(project.getProjectId());
+            relationService.saveRelation(relation);
+
+            //初始化菜单
+            String[] menus  = new String[]{"待处理","进行中","已完成"};
+            for (String menu:menus) {
+                Relation relation1 = new Relation();
+                relation1.setProjectId(project.getProjectId());
+                relation1.setRelationName(menu);
+                relation1.setParentId(relation.getRelationId());
+                relationService.saveRelation(relation1);
+            }
+
+            //往项目用户关联表插入数据
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setProjectId(project.getProjectId());
+            projectMember.setMemberId(userEntity.getId());
+            projectMember.setMemberName(userEntity.getAccountName());
+            projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+            projectMemberService.saveProjectMember(projectMember);
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
+            jsonObject.put("data",project);
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -158,6 +182,7 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/updateProject")
+    @ResponseBody
     public JSONObject updateProject(Project project){
         JSONObject jsonObject = new JSONObject();
 
@@ -178,6 +203,7 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/delProject")
+    @ResponseBody
     public JSONObject delProject(@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
 
