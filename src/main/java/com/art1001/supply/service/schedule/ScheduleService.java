@@ -53,5 +53,6 @@ public interface ScheduleService {
 	 * @return
 	 */
 	public List<Schedule> findScheduleAllList();
-	
+
+    List<Schedule> findByIds(String[] scheduleIds);
 }

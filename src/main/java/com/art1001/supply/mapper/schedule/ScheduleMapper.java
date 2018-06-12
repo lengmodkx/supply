@@ -55,4 +55,5 @@ public interface ScheduleMapper {
 	 */
 	List<Schedule> findScheduleAllList();
 
+    List<Schedule> findByIds(String[] scheduleIds);
 }

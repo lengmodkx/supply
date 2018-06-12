@@ -1,6 +1,8 @@
 package com.art1001.supply.service.tag;
 
 import java.util.List;
+import java.util.Map;
+
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.tag.Tag;
 
@@ -24,14 +26,14 @@ public interface TagService {
 	 * @param tagId
 	 * @return
 	 */
-	public Tag findTagByTagId(String tagId);
+	public Tag findTagByTagId(Long tagId);
 
 	/**
 	 * 通过tagId删除tag数据
 	 * 
 	 * @param tagId
 	 */
-	public void deleteTagByTagId(String tagId);
+	public void deleteTagByTagId(Long tagId);
 
 	/**
 	 * 修改tag数据
@@ -48,10 +50,36 @@ public interface TagService {
 	public int saveTag(Tag tag,String[] oldTags,String taskId);
 
 	/**
+	 * 保存tag数据
+	 *
+	 * @param tag
+	 */
+	public Long saveTag(Tag tag);
+
+	/**
 	 * 获取所有tag数据
 	 * 
 	 * @return
 	 */
 	public List<Tag> findTagAllList();
 
+	/**
+	 * 根据tag名称查询tag的数量  去重
+	 */
+	int findCountByTagName(String projectId, String tagName);
+
+	/**
+	 * 根据项目id查询tag列表
+	 */
+	List<Tag> findByProjectId(String projectId);
+
+	/**
+	 * 查询标签的关联项
+	 */
+	Map<String,Object> findByTag(Tag tag);
+
+	/**
+	 * 根据多个id查询标签
+	 */
+	List<Tag> findByIds(Integer[] idArr);
 }

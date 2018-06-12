@@ -78,5 +78,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 	public List<Schedule> findScheduleAllList(){
 		return scheduleMapper.findScheduleAllList();
 	}
-	
+
+	@Override
+	public List<Schedule> findByIds(String[] scheduleIds) {
+		return scheduleMapper.findByIds(scheduleIds);
+	}
+
 }

@@ -23,7 +23,7 @@
 				project_id,
 				start_time,
 				end_time,
-				repeat,
+				`repeat`,
 				remind,
 				address,
 				remarks,
@@ -74,6 +74,16 @@
 		<include refid="Base_Column_List" />
 		from prm_schedule c where id = #{id}
 
+	</select>
+	
+	<select id="findByIds" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from prm_schedule
+		where schedule_id in
+		<foreach collection="array" open="(" separator="," close=")" item="id" index="index">
+			#{id}
+		</foreach>
 	</select>
 	
 	<delete id="deleteScheduleById" parameterType="java.lang.String">

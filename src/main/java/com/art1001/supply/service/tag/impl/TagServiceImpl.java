@@ -1,14 +1,20 @@
 package com.art1001.supply.service.tag.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 
+import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.mapper.tag.TagMapper;
+import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -25,6 +31,9 @@ public class TagServiceImpl implements TagService {
 	/** 任务Service接口 */
 	@Resource
 	private TaskService taskService;
+
+	@Resource
+	private ScheduleService scheduleService;
 	
 	/**
 	 * 查询分页tag数据
@@ -44,7 +53,7 @@ public class TagServiceImpl implements TagService {
 	 * @return
 	 */
 	@Override 
-	public Tag findTagByTagId(String tagId){
+	public Tag findTagByTagId(Long tagId){
 		return tagMapper.findTagByTagId(tagId);
 	}
 
@@ -54,7 +63,7 @@ public class TagServiceImpl implements TagService {
 	 * @param tagId
 	 */
 	@Override
-	public void deleteTagByTagId(String tagId){
+	public void deleteTagByTagId(Long tagId){
 		tagMapper.deleteTagByTagId(tagId);
 	}
 
@@ -68,32 +77,22 @@ public class TagServiceImpl implements TagService {
 		tagMapper.updateTag(tag);
 	}
 
+	@Override
+	public int saveTag(Tag tag, String[] oldTags, String taskId) {
+		return 0;
+	}
+
 	/**
 	 * 保存tag数据
 	 *
      * @param tag 标签实体信息
      */
 	@Override
-	public int saveTag(Tag tag,String[] oldTags,String taskId){
-		//设置标签id
-		tag.setTagId(IdGen.uuid());
-		StringBuilder newTagName = new StringBuilder("");
-		//在原来的标签名字基础上添加新的标签名称
-		if(oldTags != null){
-			for (int i = 0; i < oldTags.length ; i++) {
-				newTagName.append(oldTags[i]);
-				newTagName.append(",");
-			}
-		}
-		newTagName.append(tag.getTagName());
-		Task task = new Task();
-		task.setTaskId(taskId);
-		//给该任务设置新标签名称
-		task.setTagId(newTagName.toString());
-		//更新任务标签
-		taskService.updateTask(task);
-		//保存标签至数据库
-		return tagMapper.saveTag(tag);
+	public Long saveTag(Tag tag){
+		tag.setCreateTime(System.currentTimeMillis());
+		tag.setUpdateTime(System.currentTimeMillis());
+		tagMapper.saveTag(tag);
+		return tag.getTagId();
     }
 	/**
 	 * 获取所有tag数据
@@ -104,5 +103,47 @@ public class TagServiceImpl implements TagService {
 	public List<Tag> findTagAllList(){
 		return tagMapper.findTagAllList();
 	}
-	
+
+	@Override
+	public int findCountByTagName(String projectId, String tagName) {
+		return tagMapper.findCountByTagName(projectId, tagName);
+	}
+
+	@Override
+	public List<Tag> findByProjectId(String projectId) {
+		return tagMapper.findByProjectId(projectId);
+	}
+
+	@Override
+	public Map<String, Object> findByTag(Tag tag) {
+		Map<String, Object> map = new HashMap<>();
+		// 取出任务id
+		String taskIds = tag.getTaskId();
+		if (StringUtils.isNoneEmpty(taskIds)) {
+			// TODO: 2018/6/12 查询任务
+			String[] taskIdArr = taskIds.split(",");
+			List<Task> taskList = taskService.findManyTask(taskIdArr);
+			map.put(Constants.TASK, taskList);
+		}
+		// 去除日程id
+		String scheduleIds = tag.getScheduleId();
+		if (StringUtils.isNoneEmpty(scheduleIds)) {
+			String[] scheduleIdArr = scheduleIds.split(",");
+			List<Schedule> scheduleList = scheduleService.findByIds(scheduleIdArr);
+			map.put(Constants.SCHEDULE, scheduleList);
+		}
+		// 取出分享id
+		String shareIds = tag.getShareId();
+		if (StringUtils.isNoneEmpty(shareIds)) {
+			// TODO: 2018/6/12 查询分享
+			String[] shareIdArr = shareIds.split(",");
+		}
+		return map;
+	}
+
+	@Override
+	public List<Tag> findByIds(Integer[] idArr) {
+		return tagMapper.findByIds(idArr);
+	}
+
 }
