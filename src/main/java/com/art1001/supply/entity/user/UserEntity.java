@@ -17,16 +17,9 @@ import java.util.Date;
  *
  */
 @Data
-@Accessors(chain = true)
-@Alias("userEntity")
 public class UserEntity implements Serializable {
 
 	public String id;
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	/*
 	 * 用户真实姓名

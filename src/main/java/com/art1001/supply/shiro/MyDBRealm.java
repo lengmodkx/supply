@@ -104,11 +104,11 @@ public class MyDBRealm extends AuthorizingRealm {
 			// 然后会自动进入这个类进行认证
 			// 交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得shiro自带的不好可以自定义实现
             authenticationInfo = new SimpleAuthenticationInfo(
-            		userEntity, // 用户对象
+					userEntity, // 用户对象
             		userEntity.getPassword(), // 密码
 					//ByteSource.Util.bytes(username + userEntity.getCredentialsSalt()),// salt=username+salt
             		new MyByteSource(username + userEntity.getCredentialsSalt()),
-					getName() // realm name
+					this.getName() // realm name
 			);
             //设置session属性
             ShiroAuthenticationManager.setSessionAttribute(ShiroUtils.USERSESSION, userEntity);
