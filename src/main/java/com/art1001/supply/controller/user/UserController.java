@@ -8,6 +8,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,9 +101,8 @@ public class UserController {
         JSONObject jsonObject = new JSONObject();
         try {
             //获取当前session中的用户
-            String userId = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute("id"));
+            String userId = ShiroAuthenticationManager.getUserEntity().getId();
             UserEntity userEntity = userService.findById(userId);
-            userEntity.setId(userId);
             // 设置用户信息
             userEntity.setUserInfo(userInfoEntity);
             userService.update(userEntity);
@@ -197,6 +195,19 @@ public class UserController {
             jsonObject.put("msg", "密码修改失败");
         }
         return jsonObject;
+    }
+
+    /**
+     * 忘记密码
+     *
+     * @param mobile 手机
+     * @param mobileCode 手机验证码
+     */
+    public void resetPassword(
+            @RequestParam String mobile,
+            @RequestParam String mobileCode
+    ) {
+
     }
 
 }

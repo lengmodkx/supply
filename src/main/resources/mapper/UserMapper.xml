@@ -57,6 +57,7 @@
 			<result property="birthday" column="u_birthday"/>
 			<result property="telephone" column="u_telephone"/>
 			<result property="email" column="u_email"/>
+			<result property="image" column="u_image"/>
 			<result property="address" column="u_address"/>
 			<result property="createTime" column="u_create_time"/>
 		</association>
@@ -156,6 +157,7 @@
 		i.u_birthday,
 		i.u_telephone,
 		i.u_email,
+		i.u_image,
 		i.u_address
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
 		where u.u_id = ${id}
@@ -288,6 +290,7 @@
 			#{userInfo.birthday},
 			#{userInfo.telephone},
 			#{userInfo.email},
+			#{userInfo.image},
 			#{userInfo.address},
 			#{userInfo.createTime}
 			)  
@@ -300,6 +303,7 @@
 		u_birthday = #{userInfo.birthday},
 		u_telephone = #{userInfo.telephone},
 		u_email = #{userInfo.email},
+		u_email = #{userInfo.image},
 		u_address = #{userInfo.address}
 		where u_id = ${userInfo.id}
 	</update>
