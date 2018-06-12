@@ -135,5 +135,15 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
         return userMapper.findCount();
     }
 
+    /**
+     * 根据用户id查询多条用户记录
+     * @param memberId 用户id的数组
+     * @return
+     */
+    @Override
+    public List<UserEntity> findManyUserById(String[] memberId) {
+        return userMapper.findManyUserById(memberId);
+    }
+
 
 }

@@ -42,10 +42,10 @@ public interface TagService {
 
 	/**
 	 * 保存tag数据
-	 * 
+	 *
 	 * @param tag
 	 */
-	public void saveTag(Tag tag);
+	public int saveTag(Tag tag,String[] oldTags,String taskId);
 
 	/**
 	 * 获取所有tag数据
@@ -53,5 +53,5 @@ public interface TagService {
 	 * @return
 	 */
 	public List<Tag> findTagAllList();
-	
+
 }

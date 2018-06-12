@@ -2,6 +2,7 @@ package com.art1001.supply.service.task.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.task.TaskMember;
@@ -9,6 +10,8 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.task.TaskMemberService;
+import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -22,8 +25,9 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	@Resource
 	private TaskMemberMapper taskMemberMapper;
 
+	/** userService 接口*/
 	@Resource
-	private UserMapper userMapper;
+	private UserService userService;
 	
 	/**
 	 * 查询分页taskMember数据
@@ -93,14 +97,16 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	@Override
 	public void saveManyTaskeMmber(String[] memberId,String uid) {
 		//查询该任务的参与者信息
-		List<UserEntity> userList = userMapper.findManyUserById(memberId);
+		List<UserEntity> userList = userService.findManyUserById(memberId);
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
 		for (UserEntity userEntity : userList){
 			TaskMember taskMember = new TaskMember();
+			//设置id
+			taskMember.setId(IdGen.uuid());
 			//设置参与者姓名
 			taskMember.setMemberName(userEntity.getUserName());
 			//设置参与者id
-			taskMember.setId(userEntity.getId());
+			taskMember.setMemberId(userEntity.getId());
 			//设置这条关系的创建时间
 			taskMember.setCreateTime(System.currentTimeMillis());
 			//设置关联类型 (1.任务 2.分享 3.日程 4.文件)
