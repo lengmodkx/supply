@@ -98,18 +98,77 @@
     </div>
     <div class="toper-right">
         <i class="layui-icon layui-icon-user" style="font-size: 16px; color: #017ECA;"></i>
-        <span>群组</span>
+        <span class="team">群组</span>
         <i class="layui-icon layui-icon-app" style="font-size: 16px; color: #017ECA;"></i>
-        <span>菜单</span>
+        <span class="menu">菜单</span>
     </div>
+    <!--点击菜单，出现 的项目菜单 区域-->
+    <div class="project-menu boxsizing" style="display: none">
+        <div class="menu-title">项目菜单<span class="close-menu">关闭</span></div>
+        <div class="menu-list menu-set">
+            <img src="../static/image/setting.png">
+            <span>项目设置</span>
+        </div>
+        <div class="menu-list menu-tag">
+            <img src="../static/image/biaoqian.png">
+            <span>标签</span>
+        </div>
+        <div class="menu-list menu-cj">
+            <img src="../static/image/chajian.png">
+            <span>应用与插件</span>
+        </div>
+        <div class="menu-list menu-more">
+            <img src="../static/image/gengduo.png">
+            <span>查看更多</span>
+        </div>
+        <div class="heng-line"></div>
+        <div class="menu-list menu-evolve" style="margin-top: 24px">
+            <img src="../static/image/jinzhan.png">
+            <span>项目进展</span>
+        </div>
+        <img src="" class="pro-evolve">
+        <div class="heng-line"></div>
+        <div class="menu-list menu-trends-title" style="margin-top: 24px">
+            <img src="../static/image/dongtai.png">
+            <span>项目动态</span>
+        </div>
+        <ul class="pro-trends boxsizing">
+            <li class="trends-list">
+                <div class="trends-list-left">
+                    <img class="who-trends-img" src="../static/image/add.png" >
+                </div>
+                <div class="trends-list-right">
+                    <span class="who-trends-name">谁谁谁</span>
+                    <span class="do-what">重做了任务：登录功能  DT-18</span>
+                    <p class="trends-time">17分钟前</p>
+                </div>
+            </li>
+            <li class="trends-list">
+                <div class="trends-list-left">
+                    <img class="who-trends-img" src="../static/image/add.png" >
+                </div>
+                <div class="trends-list-right">
+                    <span class="who-trends-name">谁谁谁</span>
+                    <span class="do-what">重做了任务：登录功能  DT-18</span>
+                    <p class="trends-time">17分钟前</p>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+
 </div>
 
 <!--内容区域-->
-<div class="content">
+<div class="content-wrap-wrap boxsizing">
+ <div class="content-wrap boxsizing">
+   <div class="content boxsizing">
+    <!--待处理-->
     <div class="model boxsizing">
+
         <div class="model-title">
             <span>待处理</span>
-            <i class="layui-icon layui-icon-down add-new-model" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
             <!--点击下箭头出现的内容-->
             <div class="lbmenu">
                 <div class="lbmenu-title">
@@ -131,9 +190,14 @@
             </div>
         </div>
         <!--任务列表-->
-        <div class="assignment">
+        <div class="ul-wrap layui-form">
+        <ul id="list1">
+        <li class="assignment ">
+            <div class="tags boxsizing">
+                <span class="one-tag">112</span>
+            </div>
             <div class="assignment-top-box boxsizing">
-                <span class="is-sure"></span>
+                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
                 <span class="assignment-title">设计修改任务界面</span>
                 <img class="assignment-tx" src="../static/image/add.png" >
             </div>
@@ -143,48 +207,304 @@
             </div>
             <!--//左边框线-->
             <div class="line"></div>
+        </li>
+            <li class="assignment">
+                <div class="assignment-top-box boxsizing">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                    <span class="assignment-title">设计修改任务界面</span>
+                    <img class="assignment-tx" src="../static/image/add.png" >
+                </div>
+                <div class="assignment-bottom-box">
+                    <span class="timer">今天9:00-明天</span>
+                    <span class="dates">dt-12</span>
+                </div>
+                <!--//左边框线-->
+                <div class="line"></div>
+            </li>
+            <li class="assignment">
+                <div class="assignment-top-box boxsizing">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                    <span class="assignment-title">设计修改任务界面</span>
+                    <img class="assignment-tx" src="../static/image/add.png" >
+                </div>
+                <div class="assignment-bottom-box">
+                    <span class="timer">今天9:00-明天</span>
+                    <span class="dates">dt-12</span>
+                </div>
+                <!--//左边框线-->
+                <div class="line"></div>
+            </li>
+            <li class="assignment">
+                <div class="assignment-top-box boxsizing">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                    <span class="assignment-title">设计修改任务界面</span>
+                    <img class="assignment-tx" src="../static/image/add.png" >
+                </div>
+                <div class="assignment-bottom-box">
+                    <span class="timer">今天9:00-明天</span>
+                    <span class="dates">dt-12</span>
+                </div>
+                <!--//左边框线-->
+                <div class="line"></div>
+            </li>
+        </ul>
         </div>
-
 <!--添加任务按钮-->
         <div class="add-assignment">
             <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
             <span>添加任务</span>
         </div>
- <!--添加任务界面-->
-        <div class="new-assignment boxsizing">
-            <textarea class="rw-content boxsizing" placeholder="任务内容"></textarea>
-            <div class="create-people boxsizing">
-                <div class="one-people">
-                    <img src="../static/image/add.png">
-                    <span>李健</span>
-                    <i class="layui-icon layui-icon-close-fill remove-pople" style="font-size: 14px; color: #a6a6a6;"></i>
+    </div>
+    <!--进行中-->
+    <div class="model boxsizing">
+        <div class="model-title">
+            <span>进行中</span>
+            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+            <!--点击下箭头出现的内容-->
+            <div class="lbmenu">
+                <div class="lbmenu-title">
+                    <p>菜单列表</p>
+                    <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+                </div>
+                <div class="lbmenu-add">
+                    <div class="lbmenu-add-content">
+                        <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                        在此处添加新列表
+                    </div>
+                </div>
+                <div class="lbmenu-remove">
+                    <div class="lbmenu-add-content">
+                        <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                        本列表所有任务移到回收站
+                    </div>
                 </div>
             </div>
-            <div class="add-people boxsizing">
-                <span>...</span>
-                <span class="add-people-click" >更多</span>
-            </div>
-            <div class="heng-line"></div>
-            <p class="cyz">参与者</p>
-            <div class="work-people boxsizing clearfix">
-                <div class="one-work-people">
-                    <img src="../static/image/add.png" >
-                    <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+        </div>
+        <!--任务列表-->
+        <div class="ul-wrap layui-form">
+        <ul id="list2">
+            <li class="assignment">
+                <div class="assignment-top-box boxsizing">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                    <span class="assignment-title">设计修改任务界面</span>
+                    <img class="assignment-tx" src="../static/image/add.png" >
                 </div>
-                <div class="add-work-people">
-                    <img src="../static/image/adds.png" >
+                <div class="assignment-bottom-box">
+                    <span class="timer">今天9:00-明天</span>
+                    <span class="dates">dt-12</span>
+                </div>
+                <!--//左边框线-->
+                <div class="line"></div>
+            </li>
+        </ul>
+        </div>
+        <!--添加任务按钮-->
+        <div class="add-assignment">
+            <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+            <span>添加任务</span>
+        </div>
+
+    </div>
+    <!--已完成-->
+    <div class="model boxsizing">
+        <div class="model-title">
+            <span>已完成</span>
+            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+            <!--点击下箭头出现的内容-->
+            <div class="lbmenu">
+                <div class="lbmenu-title">
+                    <p>菜单列表</p>
+                    <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+                </div>
+                <div class="lbmenu-add">
+                    <div class="lbmenu-add-content">
+                        <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                        在此处添加新列表
+                    </div>
+                </div>
+                <div class="lbmenu-remove">
+                    <div class="lbmenu-add-content">
+                        <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                        本列表所有任务移到回收站
+                    </div>
                 </div>
             </div>
-            <div class="heng-line"></div>
+        </div>
+        <!--任务列表-->
+        <div class="ul-wrap layui-form">
+        <ul id="list3">
+            <li class="assignment">
+                <div class="assignment-top-box boxsizing">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                    <span class="assignment-title">设计修改任务界面</span>
+                    <img class="assignment-tx" src="../static/image/add.png" >
+                </div>
+                <div class="assignment-bottom-box">
+                    <span class="timer">今天9:00-明天</span>
+                    <span class="dates">dt-12</span>
+                </div>
+                <!--//左边框线-->
+                <div class="line"></div>
+            </li>
+        </ul>
+        </div>
+        <!--添加任务按钮-->
+        <div class="add-assignment">
+            <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+            <span>添加任务</span>
+        </div>
+
+    </div>
+
+    <!--新建任务列表-->
+    <div class="creat-model boxsizing">
+        <div class="noclick-creat-model">
+            <i class="layui-icon layui-icon-add-circle" style="font-size: 22px; color: #AEAEAE;"></i>
+            <span>新建任务列表</span>
+        </div>
+        <div class="click-creat-model" style="display: none">
+            <input type="text" name="title"  placeholder="新建任务列表..." autocomplete="off" class="layui-input creat-model-input">
+            <div class="clearfix">
+                <div class="creat-model-ok layui-btn layui-btn-normal">保存</div>
+                <div class="creat-model-no">取消</div>
+            </div>
         </div>
     </div>
 
+
+
+
+   </div>
+ </div>
 </div>
 
 
 <div th:replace="common/common_foot :: foot"></div>
+<!--添加任务界面-->
+<div id="new-assignment" class="new-assignment boxsizing layui-form"  style="display: none">
+    <textarea name="" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
+    <div class="who-create">
+        <img src="../static/image/adds.png" >
+        <span>谁谁谁</span>
+    </div>
+    <div class="begin-time abox">
+        <img src="../static/image/begintime.png" >
+        <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
+    </div>
+    <div class="over-time abox">
+        <img src="../static/image/begintime.png" >
+        <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
+    </div>
+    <div class="no-repeat abox">
+        <img src="../static/image/norepeat.png" >
+        <select name="repeat" lay-verify="">
+            <option value="repeat-no">不重复</option>
+            <option value="repeat-day">每天重复</option>
+            <option value="repeat-week">每周重复</option>
+            <option value="repeat-mouth">每月重复</option>
+            <option value="repeat-year">每年重复</option>
+            <option value="repeat-workday">工作日重复</option>
+        </select>
+    </div>
+    <div class="no-remand abox">
+        <img src="../static/image/noremand.png" >
+        <select name="remand" lay-verify="">
+            <option value="remand-no">不提醒</option>
+            <option value="remand-over">任务截止时提醒</option>
+            <option value="remand-begin">任务开始时提醒</option>
+        </select>
+    </div>
+    <div class="pri layui-form">
+        <div class="layui-input-block">
+            <input type="radio" name="state" value="putong" title="普通" checked>
+            <input type="radio" name="state" value="jinji" title="紧急">
+            <input type="radio" name="state" value="veryjinji" title="非常紧急" >
+        </div>
+    </div>
+    <div class="add-bq abox">
+        <img src="../static/image/noremand.png" >
+        <input type="text" name="title"  placeholder="添加标签"  class="layui-input label" autocomplete="false">
+    </div>
+    <div class="heng-line"></div>
+    <p class="cyz">参与者</p>
+    <div class="work-people boxsizing clearfix">
+        <div class="one-work-people">
+            <img src="../static/image/add.png" >
+            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+        </div>
+        <div class="add-work-people">
+            <img src="../static/image/adds.png" >
+        </div>
+    </div>
+    <div class="heng-line"></div>
+    <div class="secret abox layui-form">
+        <img src="../static/image/suo.png" >
+        <span>隐私模式</span>
+        <div class="switch">
+            <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
+        </div>
+        <div class="who-can-see">所有成员可见</div>
+    </div>
+    <div class="layui-btn layui-btn-normal new-assignment-ok" >创建</div>
+
+</div>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
+<script th:src="@{/js/headcommon.js}" src="../static/js/headcommon.js"></script>
 </body>
 </html>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('switch(switch-filter)', function(data){
+        console.log(data.elem.checked); //开关是否开启，true或者false
+            if (data.elem.checked) {
+                $(".who-can-see").text("仅自己可见")
+            }else {
+                $(".who-can-see").text("所有成员可见")
+            }
+       });
+
+
+
+    });
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#beginTime', //指定元素
+            type:'datetime',
+            format:'yyyy年MM月dd日 HH时mm分ss秒'
+        });
+        laydate.render({
+            elem: '#overTime', //指定元素
+            type:'datetime',
+            format:'yyyy年MM月dd日 HH时mm分ss秒'
+        });
+    });
+
+    // 拖拽函数
+    Sortable.create(document.getElementById('list1'),{
+        group:"words",
+         animation: 150 //动画参数
+    });
+    Sortable.create(document.getElementById('list2'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+    Sortable.create(document.getElementById('list3'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+
+</script>
