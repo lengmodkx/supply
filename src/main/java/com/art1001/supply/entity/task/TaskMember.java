@@ -65,4 +65,9 @@ public class TaskMember extends BaseEntity implements Serializable {
 	 */
 	private Long updateTime;
 
+	/**
+	 * 当前操作的任务id
+	 */
+	private String currentTaskId;
+
 }

@@ -390,4 +390,8 @@
 		</foreach>
 	</select>
 
+	<select id="findTaskTagByTaskId" resultType="java.lang.String">
+		select tag_id from prm_task where task_id = #{taskId}
+	</select>
+
 </mapper>

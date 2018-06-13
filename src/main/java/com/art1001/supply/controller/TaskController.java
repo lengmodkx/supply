@@ -8,6 +8,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -266,31 +267,65 @@ public class TaskController {
         return jsonObject;
     }
 
-//    /**
-//     * 给当前任务设置标签
-//     * @param oldTags 该任务更新标签之前的标签信息
-//     * @param tag 标签名称
-//     * @param taskId 当前任务id
-//     * @return
-//     */
-//    @PostMapping("addTags")
-//    public JSONObject addTags(String[] oldTags,Tag tag,@RequestParam String taskId){
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            int result = tagService.saveTag(tag,oldTags,taskId);
-//            if(result > 0){
-//                jsonObject.put("msg","标签添加成功!");
-//                jsonObject.put("result",result);
-//            } else{
-//                jsonObject.put("msg","标签添加失败!");
-//                jsonObject.put("result",result);
-//            }
-//        } catch (Exception e){
-//            log.error("保存失败,标签名称为:{},{}",tag.getTagName(),e);
-//            throw new AjaxException(e);
-//        }
-//        return jsonObject;
-//    }
+    /**
+     * 给当前任务设置标签
+     * @param tag 标签名称
+     * @param taskId 当前任务id
+     * @param projectId 当前任务的id
+     * @return
+     */
+    @PostMapping("addTaskTags")
+    @ResponseBody
+    public JSONObject addTags(Tag tag,@RequestParam String taskId,@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //根据标签名称查询 当前存不存在数据库 如果存在直接绑定到当前任务,如果不存在则先插入标签 在绑定到当前任务
+            int countByTagName = tagService.findCountByTagName(projectId, tag.getTagName());
+            if(countByTagName == 0){
+                tag.setTagId(tagService.saveTag(tag));
+            }
+            //更新当前任务的标签信息
+            TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","标签添加成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","标签添加失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
+        } catch (Exception e){
+            log.error("保存失败,标签名称为:{},{}",tag.getTagName(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移除该任务上的标签
+     * @param tags 当前任务上绑定的所有标签对象数组
+     * @param tag 当前要被的标签对象
+     * @param taskId 当前任务uid
+     * @return
+     */
+    public JSONObject removeTaskTag(@RequestParam Tag[] tags,@RequestParam Tag tag,@RequestParam String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //更新该任务的标签信息
+            int result = taskService.removeTaskTag(tags,tag,taskId);
+            if(result > 0){
+                jsonObject.put("msg","标签移除成功!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","标签移除失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常，标签移除失败！ 当前任务id： {},{}",taskId,e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 
 
     /**
@@ -303,6 +338,8 @@ public class TaskController {
      * @param taskId 当前被操作的任务uid
      * @return
      */
+    @PostMapping("addTaskRely")
+    @ResponseBody
     public JSONObject addTaskRely(@RequestParam Task task,
                                   @RequestParam File file,
                                   @RequestParam Share share,
@@ -326,6 +363,18 @@ public class TaskController {
     }
 
 
+    /**
+     * 移除依赖关系
+     * @param task 关联的任务
+     * @param file 关联的文件
+     * @param share 关联的分享
+     * @param schedule 关联的日程
+     * @param taskId 当前任务的id
+     * @param taskRelyId  当前依赖的id
+     * @return
+     */
+    @PostMapping("removeTaskRely")
+    @ResponseBody
     public JSONObject removeTaskRely(@RequestParam Task task,
                                      @RequestParam File file,
                                      @RequestParam Share share,
@@ -347,6 +396,32 @@ public class TaskController {
             }
         } catch (Exception e){
             log.error("系统异常,关联关系删除失败!  任务关联id:{},{}",taskRelyId,e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 转子任务为顶级任务
+     * @param task 包含当前任务的 id、name
+     * @return
+     */
+    @PostMapping("turnToFatherLevel")
+    @ResponseBody
+    public JSONObject turnToFatherLevel(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.turnToFatherLevel(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","转换成功");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","转换失败");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统错误,任务转换失败! 当前任务id:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;

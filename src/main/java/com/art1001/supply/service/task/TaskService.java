@@ -3,6 +3,7 @@ package com.art1001.supply.service.task;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
@@ -107,4 +108,29 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Task> findManyTask(String[] taskId);
+
+	/**
+	 * 将任务转为顶级任务
+	 * @param task 包含任务的id,名称
+	 * @return
+	 */
+	TaskLogVO turnToFatherLevel(Task task);
+
+	/**
+	 * 给任务添加标签
+	 * @param tag 标签实体信息
+	 * @param taskId 当前任务的id
+	 * @param countByTagName 判断要绑定到任务上的标签是不是已经存在
+	 * @return
+	 */
+	TaskLogVO addTaskTags(Tag tag,String taskId,int countByTagName);
+
+	/**
+	 * 移除该任务上的标签
+	 * @param tags 当前任务上绑定的所有标签对象数组
+	 * @param tag 当前要被的标签对象
+	 * @param taskId 当前任务uid
+	 * @return
+	 */
+	int removeTaskTag(Tag[] tags, Tag tag, String taskId);
 }

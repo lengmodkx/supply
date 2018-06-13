@@ -47,13 +47,6 @@ public interface TagService {
 	 *
 	 * @param tag
 	 */
-	public int saveTag(Tag tag,String[] oldTags,String taskId);
-
-	/**
-	 * 保存tag数据
-	 *
-	 * @param tag
-	 */
 	public Long saveTag(Tag tag);
 
 	/**

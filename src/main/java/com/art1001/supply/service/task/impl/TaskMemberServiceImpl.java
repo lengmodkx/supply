@@ -158,6 +158,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		taskMember.setUpdateTime(System.currentTimeMillis());
 		//将关联信息保存至数据库
 		int result = taskMemberMapper.saveTaskMember(taskMember);
+		//给这条关联关系设置被操作的任务的id
+		taskMember.setCurrentTaskId(taskId);
 		//创建一个任务对象 用来封装当前被操作任务的信息
 		Task currentTask = new Task();
 		currentTask.setTaskId(taskId);
@@ -177,10 +179,10 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	/**
 	 * 保存任务和参与者的关系
 	 * @param memberId 参与者们的id
-	 * @param uid 当前操作用户的id 用来确认是否是该任务的创建人
+	 * @param task  (包含任务的创建人 用来确认是否是该任务的创建人) taskId 新创建的任务的id
 	 */
 	@Override
-	public void saveManyTaskeMmber(String[] memberId,String uid) {
+	public void saveManyTaskeMmber(String[] memberId,Task task) {
 		//查询该任务的参与者信息
 		List<UserEntity> userList = userService.findManyUserById(memberId);
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
@@ -194,8 +196,10 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setMemberId(userEntity.getId());
 			//设置这条关系的创建时间
 			taskMember.setCreateTime(System.currentTimeMillis());
+			//设置当前任务id
+			taskMember.setCurrentTaskId(task.getTaskId());
 			//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
-			if(userEntity.getId().equals(uid)){
+			if(userEntity.getId().equals(task.getMemberId())){
 				taskMember.setType("3");
 			} else{
 				//否则设置为参与者

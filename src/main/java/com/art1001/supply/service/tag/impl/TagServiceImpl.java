@@ -77,11 +77,6 @@ public class TagServiceImpl implements TagService {
 		tagMapper.updateTag(tag);
 	}
 
-	@Override
-	public int saveTag(Tag tag, String[] oldTags, String taskId) {
-		return 0;
-	}
-
 	/**
 	 * 保存tag数据
 	 *

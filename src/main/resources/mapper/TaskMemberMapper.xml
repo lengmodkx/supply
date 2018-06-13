@@ -10,6 +10,7 @@
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="current_task_id" property="currentTaskId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
@@ -17,11 +18,12 @@
 	<sql id="Base_Column_List">
 						id,
 				member_id,
+				current_task_id,
 				public_id,
 				public_type,
 				member_name,
 				member_img,
-				type,
+				`type`,
 				create_time,
 				update_time
 	</sql>
@@ -86,6 +88,9 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
+			<if test="currentTaskId != null and currentTaskId != ''">
+			current_task_id,
+			</if>
 			<if test="publicId != null and publicId != ''">
 			public_id,
 			</if>
@@ -99,7 +104,7 @@
 			member_img,
 			</if>
 			<if test="type != null and type != ''">
-			type,
+			`type`,
 			</if>
 			<if test="createTime != null ">
 			create_time,
@@ -116,6 +121,9 @@
 			</if>
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
+			</if>
+			<if test="currentTaskId != null and currentTaskId != ''">
+				#{currentTaskId},
 			</if>
 			<if test="publicId != null and publicId != ''">
 				#{publicId},
@@ -148,6 +156,9 @@
 		<set>
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
+			</if>
+			<if test="currentTaskId != null and currentTaskId != ''">
+				current_task_id = #{currentTaskId},
 			</if>
 			<if test="publicId != null and publicId != ''">
 				public_id = #{publicId},

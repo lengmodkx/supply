@@ -60,6 +60,6 @@ public interface TaskMemberService {
 	public List<TaskMember> findTaskMemberAllList();
 
 
-	public void saveManyTaskeMmber(String[] memberId,String uId);
+	public void saveManyTaskeMmber(String[] memberId,Task task);
 	
 }

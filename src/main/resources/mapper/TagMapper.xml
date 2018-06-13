@@ -82,7 +82,6 @@
 		SELECT COUNT(0) FROM prm_tag
 		WHERE
 		tag_name = #{tagName}
-		and project_id = #{projectId}
 	</select>
 
     <select id="findByProjectId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -105,12 +104,16 @@
     <delete id="deleteTagByTagId" parameterType="java.lang.Long">
 		delete from
 		prm_tag where tag_id = #{tagId}
+		and project_id = #{projectId}
 	</delete>
 
     <insert id="saveTag" keyProperty="tagId" useGeneratedKeys="true" parameterType="com.art1001.supply.entity.tag.Tag">
 
         insert into prm_tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagId != null and tagId != ''">
+                tag_id,
+            </if>
             <if test="tagName != null and tagName != ''">
                 tag_name,
             </if>
@@ -143,6 +146,9 @@
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagId != null and tagId != ''">
+                #{tagId},
+            </if>
             <if test="tagName != null and tagName != ''">
                 #{tagName},
             </if>

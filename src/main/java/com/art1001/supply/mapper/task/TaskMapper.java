@@ -86,4 +86,11 @@ public interface TaskMapper {
 	 * @return
 	 */
     int findTaskByMenuId(String taskMenuId);
+
+	/**
+	 * 根据任务id查找出该任务的所有标签
+	 * @param taskId 任务id
+	 * @return
+	 */
+	String findTaskTagByTaskId(String taskId);
 }

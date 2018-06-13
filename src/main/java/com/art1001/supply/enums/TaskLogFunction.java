@@ -37,7 +37,12 @@ public enum TaskLogFunction {
     A4("取消了关联分享"),
     A5("取消了关联日程"),
     A6("取消了关联文件"),
-    A7("取消了关联任务");
+    A7("取消了关联任务"),
+    A8("转换了子任务"),
+    A9("为任务"),
+    A10("创建了标签"),
+    A11("删除了标签");
+
 
     private String name;
     private TaskLogFunction(String name){

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -95,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
         }
         //更新项目优先级
         if(task.getPriority() != null && task.getPriority() != ""){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName());
+            taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName() + " " + task.getPriority());
         }
         //更新项目重复规则
         if((task.getRepeat() != "" && task.getRepeat() != null) || (task.getRepetitionTime() != null)){
@@ -123,8 +124,6 @@ public class TaskServiceImpl implements TaskService {
      */
 	@Override
 	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
-        //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
-        taskMemberService.saveManyTaskeMmber(memberId,task.getMemberId());
         //获取当前登录用户的id
         //String id = ShiroAuthenticationManager.getUserEntity().getId();
         task.setMemberId("4");
@@ -142,6 +141,8 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskDel(0);
         //保存任务信息
         taskMapper.saveTask(task);
+        //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
+        taskMemberService.saveManyTaskeMmber(memberId,task);
         //拿到TaskLog对象并且保存
         return saveTaskLog(task, TaskLogFunction.R.getName());
     }
@@ -243,6 +244,9 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
+        //设置更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        //更新任务信息
         int result = taskMapper.updateTask(task);
         String content = "";
         //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
@@ -289,9 +293,95 @@ public class TaskServiceImpl implements TaskService {
         return taskLogVO;
     }
 
+    /**
+     * 根据任务id 数组查询出多条任务信息
+     * @param taskId 任务id数组
+     * @return
+     */
     @Override
     public List<Task> findManyTask(String[] taskId) {
         return taskMapper.findManyTask(taskId);
+    }
+
+    /**
+     * 转换子任务为顶级任务
+     * @param task 包含任务的id,名称
+     * @return
+     */
+    @Override
+    public TaskLogVO turnToFatherLevel(Task task) {
+        //将任务的父级任务设置为0 (没有父级任务)
+        task.setParentId("0");
+        //设置更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        //更新任务信息
+        int result = taskMapper.updateTask(task);
+        StringBuilder content = new StringBuilder("");
+        //拼接日志内容
+        content.append(TaskLogFunction.A8.getName()).append(" ").append(task.getTaskName()).append(" ").append(TaskLogFunction.A9.getName());
+        //保存日志
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 绑定标签到当前任务
+     * @param tag 标签的实体信息
+     * @param taskId 当前任务的id
+     * @param countByTagName 判断要绑定到任务上的标签是不是已经存在
+     * @return
+     */
+    @Override
+    public TaskLogVO addTaskTags(Tag tag,String taskId,int countByTagName) {
+        //先查询出当前任务原有的标签id信息
+        String taskTag = taskMapper.findTaskTagByTaskId(taskId);
+        //将原有标签id和新添加的标签id拼接在一起存入数据库
+        StringBuilder newTaskTag = new StringBuilder();
+        newTaskTag.append(taskTag).append(tag.getTagId()).append(",");
+        Task task = new Task();
+        task.setTaskId(taskId);
+        //设置最后更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        task.setTagId(newTaskTag.toString());
+        //更新到数据库
+        int result = taskMapper.updateTask(task);
+        TaskLogVO taskLogVO = new TaskLogVO();
+        //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
+        if(countByTagName == 0){
+            //拼接任务操作日志内容
+            StringBuilder content = new StringBuilder("");
+            content.append(TaskLogFunction.A10.getName()).append(" ").append(tag.getTagName());
+            taskLogVO = saveTaskLog(task, content.toString());
+            taskLogVO.setResult(result);
+        }
+        return taskLogVO;
+    }
+
+    /**
+     * 移除该任务上的标签
+     * @param tags 当前任务上绑定的所有标签对象数组
+     * @param tag 当前要被的标签对象
+     * @param taskId 当前任务uid
+     * @return
+     */
+    @Override
+    public int removeTaskTag(Tag[] tags, Tag tag, String taskId) {
+        StringBuilder taskTagsId = new StringBuilder();
+        for (int i = 0; i < tags.length ; i++) {
+            if(tags[i].getTagId().equals(tag.getTagId())){
+                tags[i] = null;
+                continue;
+            }
+            taskTagsId.append(tags[i].getTagId()).append(",");
+        }
+        System.out.println(taskTagsId.toString());
+        Task task = new Task();
+        task.setTagId(taskTagsId.toString());
+        task.setTaskId(taskId);
+        task.setUpdateTime(System.currentTimeMillis());
+        int result = taskMapper.updateTask(task);
+        return result;
     }
 
 }

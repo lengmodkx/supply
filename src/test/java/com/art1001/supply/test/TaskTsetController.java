@@ -25,17 +25,17 @@ import java.util.List;
  **/
 public class TaskTsetController extends TestBase{
 
-//    @Resource
-//    private TaskService taskService;
+    @Resource
+   private TaskService taskService;
 //
-//    @Resource
-//    private TagService tagService;
+    @Resource
+    private TagService tagService;
 //
-//    @Resource
-//    private TaskLogService taskLogService;
-//
-//    @Resource
-//    private TaskMemberService taskMemberService;
+    @Resource
+   private TaskLogService taskLogService;
+
+   @Resource
+    private TaskMemberService taskMemberService;
 //
 //    /**
 //     * 添加任务的测试方法
@@ -218,17 +218,94 @@ public class TaskTsetController extends TestBase{
 //        }
 //    }
 //
-//    @Test
-//    public void addRaly(){
-//        Task task = null;
-//        File file = new File();
-//        file.setFileName("何少华");
-//        Schedule schedule = null;
-//        Share share = null;
-//        TaskMember taskMember = new TaskMember();
-//        String taskId = "1";
-//        TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
-//    }
+    @Test
+    public void addRaly(){
+        Task task = null;
+        File file = new File();
+        file.setFileName("何少华");
+        Schedule schedule = null;
+        Share share = null;
+        TaskMember taskMember = new TaskMember();
+        String taskId = "1";
+        TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
+        File file1 = taskLogVO.getFile();
+        System.out.println(file1.getFileName());
+
+    }
+
+    @Test
+    public void aa(){
+        Task task = null;
+        File file = new File();
+        file.setFileName("何少华");
+        Share share = null;
+        Schedule schedule = null;
+        String taskId = "11111";
+        String taskRelyId = "471e6fca915f4a62a6fca20aa96e5f93";
+        TaskLogVO taskLogVO = taskMemberService.deleteTaskMemberById(task, file, share, schedule, taskId, taskRelyId);
+        System.out.println(taskLogVO.getFile().getFileName());
+    }
+
+    @Test
+    public void turnToFatherLevel(){
+        Task task = new Task();
+        task.setParentId("11111");
+        task.setTaskId("22222");
+        task.setTaskName("测试任务");
+        try {
+            TaskLogVO taskLogVO = taskService.turnToFatherLevel(task);
+            System.out.println(taskLogVO.getContent());
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void addTags(){
+        Tag tag = new Tag();
+        tag.setTagId(System.currentTimeMillis());
+        tag.setTagName("测试标签C");
+        String projectId = "1";
+        String taskId = "11111";
+        try {
+            //根据标签名称查询 当前存不存在数据库 如果存在直接绑定到当前任务,如果不存在则先插入标签 在绑定到当前任务
+            int countByTagName = tagService.findCountByTagName(projectId, tag.getTagName());
+            if(countByTagName == 0){
+                tag.setTagId(System.currentTimeMillis());
+                tagService.saveTag(tag);
+            }
+            //更新当前任务的标签信息
+            TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
+            if(taskLogVO.getResult() > 0){
+
+            } else{
+
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void removeTaskTag(){
+        String taskId = "11111";
+        Tag tag = new Tag();
+        tag.setTagId(Long.valueOf("1528867589095"));
+        Tag tag1 = new Tag();
+        tag1.setTagId(Long.valueOf("1528867589095"));
+        //tag1.setTagName("测试标签A");
+        Tag tag2 = new Tag();
+        tag2.setTagId(Long.valueOf("1528867565210"));
+        //tag2.setTagName("测试标签B");
+        Tag tag3 = new Tag();
+        tag3.setTagId(Long.valueOf("1528867545131"));
+        //tag3.setTagName("测试标签C");
+        Tag[] tags = {tag1,tag2,tag3};
+        try {
+            int result = taskService.removeTaskTag(tags,tag,taskId);
+        } catch (Exception e){
+        }
+    }
 
 
 }
