@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * taskmapper接口
@@ -93,4 +94,20 @@ public interface TaskMapper {
 	 * @return
 	 */
 	String findTaskTagByTaskId(String taskId);
+
+	/**
+	 * 清空任务开始时间
+	 * @param task
+	 * @return
+	 */
+	@Update("update prm_task set start_time = null,update_time = #{updateTime} where task_id = #{taskId}")
+    int removeTaskStartTime(Task task);
+
+	/**
+	 * 清空任务结束时间
+	 * @param task
+	 * @return
+	 */
+	@Update("update prm_task set end_time = null,update_time = #{updateTime} where task_id = #{taskId}")
+	int removeTaskEndTime(Task task);
 }

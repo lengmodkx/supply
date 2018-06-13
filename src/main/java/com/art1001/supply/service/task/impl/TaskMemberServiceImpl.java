@@ -21,6 +21,7 @@ import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.stereotype.Service;
@@ -178,15 +179,13 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 
 	/**
 	 * 保存任务和参与者的关系
-	 * @param memberId 参与者们的id
+	 * @param member 参与者们的信息
 	 * @param task  (包含任务的创建人 用来确认是否是该任务的创建人) taskId 新创建的任务的id
 	 */
 	@Override
-	public void saveManyTaskeMmber(String[] memberId,Task task) {
-		//查询该任务的参与者信息
-		List<UserEntity> userList = userService.findManyUserById(memberId);
+	public void saveManyTaskeMmber(UserEntity[] member,Task task) {
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
-		for (UserEntity userEntity : userList){
+		for (UserEntity userEntity : member){
 			TaskMember taskMember = new TaskMember();
 			//设置id
 			taskMember.setId(IdGen.uuid());
@@ -198,6 +197,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setCreateTime(System.currentTimeMillis());
 			//设置当前任务id
 			taskMember.setCurrentTaskId(task.getTaskId());
+			//设置更新时间
+			taskMember.setUpdateTime(System.currentTimeMillis());
 			//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
 			if(userEntity.getId().equals(task.getMemberId())){
 				taskMember.setType("3");
@@ -210,7 +211,35 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			//将该关系对象 保存至数据库
 			taskMemberMapper.saveTaskMember(taskMember);
 		}
+	}
 
+    /**
+     * 循环向(任务-成员) 关系表中添加多条数据
+     * @param userEntity
+     * @param task
+     * @return
+     */
+	public int addManyMemberInfo(UserEntity[] userEntity,Task task){
+	    int result = 0;
+		for (int i = 0; i < userEntity.length ; i++) {
+			TaskMember taskMember = new TaskMember();
+			//设置id
+			taskMember.setId(IdGen.uuid());
+			//设置参与者姓名
+			taskMember.setMemberName(userEntity[i].getUserName());
+			//设置参与者id
+			taskMember.setMemberId(userEntity[i].getId());
+			//设置这条关系的创建时间
+			taskMember.setCreateTime(System.currentTimeMillis());
+			//设置当前任务id
+			taskMember.setCurrentTaskId(task.getTaskId());
+			//设置任务成员的角色
+            taskMember.setType("参与者");
+            //设置更新时间
+            taskMember.setUpdateTime(System.currentTimeMillis());
+            result += taskMemberMapper.saveTaskMember(taskMember);
+        }
+		return result;
 	}
 
 }

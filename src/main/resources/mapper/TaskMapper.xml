@@ -280,7 +280,7 @@
 				`remind` = #{remind},
 			</if>
 			<if test="remarks != null and remarks != ''">
-				`remarks` = #{remarks},
+				`remarks` = ${remarks},
 			</if>
 			<if test="priority != null and priority != ''">
 				`priority` = #{priority},
@@ -325,7 +325,7 @@
 				remind_time = #{remindTime},
 			</if>
 			<if test="repetitionTime != null">
-				repetitionTime = #{repetition_Time},
+				repetition_Time = #{repetitionTime},
 			</if>
 		</set>
 

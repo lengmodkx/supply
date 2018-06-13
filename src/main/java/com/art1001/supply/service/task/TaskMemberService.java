@@ -8,6 +8,7 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
+import com.art1001.supply.entity.user.UserEntity;
 
 
 /**
@@ -60,6 +61,7 @@ public interface TaskMemberService {
 	public List<TaskMember> findTaskMemberAllList();
 
 
-	public void saveManyTaskeMmber(String[] memberId,Task task);
+	public void saveManyTaskeMmber(UserEntity[] memberId, Task task);
+
 	
 }

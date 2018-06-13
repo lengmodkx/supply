@@ -90,23 +90,19 @@ public class TaskServiceImpl implements TaskService {
 	    TaskLogVO taskLogVO = new TaskLogVO();
 	    //任务更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //更新项目内容
+        //更新任务内容
         if(task.getTaskName() != null && task.getTaskName() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.T.getName());
         }
-        //更新项目优先级
+        //更新任务优先级
         if(task.getPriority() != null && task.getPriority() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName() + " " + task.getPriority());
         }
-        //更新项目重复规则
-        if((task.getRepeat() != "" && task.getRepeat() != null) || (task.getRepetitionTime() != null)){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.D.getName());
-        }
-        //更新项目备注
+        //更新任务备注
         if(task.getRemarks() != null && task.getRemarks() != null){
             taskLogVO = saveTaskLog(task,TaskLogFunction.E.getName());
         }
-        //更新项目执行者
+        //更新任务执行者
         if(task.getExecutor() != null && task.getExecutor() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.U.getName());
         }
@@ -123,7 +119,7 @@ public class TaskServiceImpl implements TaskService {
      * @param task task信息
      */
 	@Override
-	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
+	public TaskLogVO saveTask(UserEntity[] memberId, Project project, Task task) {
         //获取当前登录用户的id
         //String id = ShiroAuthenticationManager.getUserEntity().getId();
         task.setMemberId("4");
@@ -211,7 +207,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO updateTaskTime(Task task) {
+    public TaskLogVO updateTaskStartAndEndTime(Task task) {
         String content = "";
         if(task.getStartTime() != null){
             content = TaskLogFunction.M.getName();
@@ -383,5 +379,90 @@ public class TaskServiceImpl implements TaskService {
         int result = taskMapper.updateTask(task);
         return result;
     }
+
+    /**
+     * 更新任务的重复规则
+     * @param task 任务的实体信息
+     * @param object 时间重复周期的具体信息 (未设定)
+     * @return
+     */
+    @Override
+    public TaskLogVO updateTaskRepeat(Task task, Object object) {
+        //判断是不是自定义重复
+        if(!task.getRepeat().equals("自定义重复")){
+            //如果不是自定义重复删除该任务的自定义重复时间
+        }
+        task.setUpdateTime(System.currentTimeMillis());
+        int result = taskMapper.updateTask(task);
+        String content = TaskLogFunction.D.getName();
+        TaskLogVO taskLogVO = saveTaskLog(task, content);
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 更新任务的提醒时间
+     * @param task 任务实体信息
+     * @param userEntity 用户实体信息
+     * @return
+     */
+    @Override
+    public TaskLogVO updateTaskRemindTime(Task task, UserEntity userEntity) {
+        //判断是开始时提醒还是结束时提醒
+        if(task.getRemind().equals("任务截止时提醒")){
+           task.setRepetitionTime(task.getEndTime());
+        }
+        if(task.getRemind().equals("任务开始时提醒")){
+            task.setRepetitionTime(task.getStartTime());
+        }
+        task.setUpdateTime(System.currentTimeMillis());
+        String content = TaskLogFunction.M.getName();
+        int result = taskMapper.updateTask(task);
+        TaskLogVO taskLogVO = saveTaskLog(task, content);
+        taskLogVO.setResult(result);
+        return taskLogVO;
+        //UserEntity是要被提醒的成员信息(暂时先不用)
+    }
+
+    /**
+     * 清除任务的开始时间和结束时间
+     * @param task 任务的实体信息
+     * @return
+     */
+    @Override
+    public TaskLogVO removeTaskStartAndEndTime(Task task) {
+        StringBuilder content = new StringBuilder("");
+        int result = 0;
+        //设置最后更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        //如果开始时间不为空 则清空开始时间
+        if(task.getStartTime() != null){
+            result = taskMapper.removeTaskStartTime(task);
+            content.append(TaskLogFunction.J.getName());
+        }
+        //如果截止时间不为空 则清空截止时间
+        if(task.getEndTime() != null){
+            result = taskMapper.removeTaskEndTime(task);
+            content.append(TaskLogFunction.K.getName());
+        }
+        //保存操作日志
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 添加项目成员
+     * @param task 任务实体信息
+     * @param userEntity 多个用户的信息
+     * @return
+     */
+    @Override
+    public TaskLogVO addTaskMember(Task task, UserEntity[] userEntity) {
+        int result = taskMemberService.saveManyTaskeMmber(userEntity,task);
+
+        return null;
+    }
+
 
 }
