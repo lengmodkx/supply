@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
 </head>
 <body>
-<!--头部--><div th:include="template :: header"></div>
+<!--&lt;!&ndash;头部&ndash;&gt;<div th:include="template :: header"></div>-->
 <div class="header">
         <div class="head-left">5D管理系统-项目协同管理</div>
         <div class=" header-middle">
@@ -379,7 +379,7 @@
 </div>
 
 
-<div th:replace="common/common_foot :: foot"></div>
+<!--<div th:replace="common/common_foot :: foot"></div>-->
 <!--添加任务界面-->
 <div id="new-assignment" class="new-assignment boxsizing layui-form"  style="display: none">
     <textarea name="" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
