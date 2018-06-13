@@ -209,7 +209,7 @@
 		prm_project_collect.member_id = #{memberId} and project_del = 0
 	</select>
 
-	<select id="findCollectByProjectId" resultMap="java.lang.Integer" parameterType="java.lang.String">
+	<select id="findCollectByProjectId" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select count(project_id)
 		from prm_project_collect where project_id = #{projectId}
 

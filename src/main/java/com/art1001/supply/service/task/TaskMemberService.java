@@ -36,7 +36,7 @@ public interface TaskMemberService {
 	 * 
 	 * @param id
 	 */
-	public void deleteTaskMemberById(String id);
+	public TaskLogVO deleteTaskMemberById(Task task,File file,Share share,Schedule schedule,String taskId,String id);
 
 	/**
 	 * 修改taskMember数据

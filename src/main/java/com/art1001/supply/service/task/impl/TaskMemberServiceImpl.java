@@ -69,11 +69,43 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	/**
 	 * 通过id删除taskMember数据
 	 * 
-	 * @param id
+	 * @param taskMemberId 关联id
+	 * @param task 任务实体信息
+	 * @param file 文件实体信息
+	 * @param share 分享实体信息
+	 * @param schedule 日程实体信息
+	 * @param taskId 当前被操作的任务的id
 	 */
 	@Override
-	public void deleteTaskMemberById(String id){
-		taskMemberMapper.deleteTaskMemberById(id);
+	public TaskLogVO deleteTaskMemberById(Task task,File file,Share share,Schedule schedule,String taskId,String taskMemberId){
+		TaskLogVO taskLogVO = new TaskLogVO();
+		int result = taskMemberMapper.deleteTaskMemberById(taskMemberId);
+		Task currentTask = new Task();
+		currentTask.setTaskId(taskId);
+		StringBuilder content = new StringBuilder("");
+		//判断关联的是不是任务
+		if(task != null ){
+			content.append(TaskLogFunction.A7.getName()).append(" ");
+			taskLogVO.setTask(task);
+		}
+		//判断关联的是不是文件
+		if(file != null ){
+			content.append(TaskLogFunction.A6.getName()).append(" ");
+			taskLogVO.setFile(file);
+		}
+		//判断关联的是不是日程
+		if(schedule != null ){
+			content.append(TaskLogFunction.A5.getName()).append(" ");
+			taskLogVO.setSchedule(schedule);
+		}
+		//判断关联的是不是分享
+		if(share != null ){
+			content.append(TaskLogFunction.A1.getName()).append(" ");
+			taskLogVO.setShare(share);
+		}
+		taskService.saveTaskLog(currentTask,content.toString());
+		taskLogVO.setResult(result);
+		return taskLogVO;
 	}
 
 	/**

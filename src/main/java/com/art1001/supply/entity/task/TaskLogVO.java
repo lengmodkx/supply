@@ -1,5 +1,8 @@
 package com.art1001.supply.entity.task;
 
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import lombok.Data;
 
 /**
@@ -35,4 +38,25 @@ public class TaskLogVO {
      * 返回执行更新操作的结果
      */
     private int result;
+
+    /**
+     * 文件的实体信息
+     */
+    private File file;
+
+    /**
+     * 分享的实体信息
+     */
+    private Share share;
+
+    /**
+     * 任务的实体信息
+     */
+    private Task task;
+
+    /**
+     * 日程的实体信息
+     */
+    private Schedule schedule;
 }
+

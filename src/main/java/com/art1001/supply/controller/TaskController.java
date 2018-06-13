@@ -325,14 +325,30 @@ public class TaskController {
         return jsonObject;
     }
 
-    public JSONObject removeTaskRely(){
+
+    public JSONObject removeTaskRely(@RequestParam Task task,
+                                     @RequestParam File file,
+                                     @RequestParam Share share,
+                                     @RequestParam Schedule schedule,
+                                     @RequestParam String taskId,
+                                     @RequestParam String taskRelyId
+    ){
         JSONObject jsonObject = new JSONObject();
         try {
-
+            //删除关联关系
+            TaskLogVO taskLogVO = taskMemberService.deleteTaskMemberById(task, file, share, schedule, taskId, taskRelyId);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","删除成功");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","删除失败");
+                jsonObject.put("result","0");
+            }
         } catch (Exception e){
-            log.error("");
+            log.error("系统异常,关联关系删除失败!  任务关联id:{},{}",taskRelyId,e);
             throw new AjaxException(e);
         }
-        return null;
+        return jsonObject;
     }
 }

@@ -33,7 +33,11 @@ public enum TaskLogFunction {
     Y("将此任务转为了顶级任务"),
     A1("关联了分享"),
     A2("关联了日程"),
-    A3("关联了文件");
+    A3("关联了文件"),
+    A4("取消了关联分享"),
+    A5("取消了关联日程"),
+    A6("取消了关联文件"),
+    A7("取消了关联任务");
 
     private String name;
     private TaskLogFunction(String name){

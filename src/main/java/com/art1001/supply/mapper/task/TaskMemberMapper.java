@@ -29,10 +29,11 @@ public interface TaskMemberMapper {
 
 	/**
 	 * 通过id删除taskMember数据
-	 * 
-	 * @param id
-	 */
-	void deleteTaskMemberById(String id);
+	 *
+     * @param id
+	 * @return
+     */
+	int deleteTaskMemberById(String id);
 
 	/**
 	 * 修改taskMember数据
