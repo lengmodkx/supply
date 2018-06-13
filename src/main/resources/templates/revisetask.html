@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/revisetask.css">
+    <link rel="stylesheet" href="../static/css/mainpage.css">
+</head>
+<body>
+<div class="revise-task-wrap layui-form">
+<div class="revise-task boxsizing ">
+    <div class="revise-task-title">BIM5D过程管理平台～<span class="what-task">UI任务</span>～设计任务修改界面</div>
+    <div class="task-name">
+        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+        <span>设计修改任务界面</span>
+    </div>
+    <div class="who-and-time">
+        <img src="../static/image/adds.png" >
+        <span>谁谁谁</span>
+        <div class="time-wrap">
+            <input type="text" class="layui-input kaishi-time" id="beginTime" placeholder="设置开始时间">
+            <input type="text" class="layui-input jieshu-time" id="overTime" placeholder="设置截止时间">
+        </div>
+    </div>
+    <div class="no-repeat abox">
+        <img src="../static/image/norepeat.png" >
+         <select name="repeat" lay-verify="">
+         <option value="repeat-no">不重复</option>
+         <option value="repeat-day">每天重复</option>
+        <option value="repeat-week">每周重复</option>
+        <option value="repeat-mouth">每月重复</option>
+         <option value="repeat-year">每年重复</option>
+        <option value="repeat-workday">工作日重复</option>
+        </select>
+    </div>
+    <div class="no-remand abox">
+        <img src="../static/image/noremand.png" >
+        <select name="remand" lay-verify="">
+         <option value="remand-no">不提醒</option>
+        <option value="remand-over">任务截止时提醒</option>
+        <option value="remand-begin">任务开始时提醒</option>
+        </select>
+    </div>
+    <div class="heng-line"></div>
+    <div class="add-bz combox">
+        <img src="../static/image/beizhu.png" >
+        <span>备注</span>
+        <input type="text" name="title"  placeholder="待添加"  class="layui-input label" autocomplete="false">
+    </div>
+    <div class="yxj combox">
+        <img src="../static/image/yxj.png" >
+        <span>优先级</span>
+        <div class="layui-input-block">
+            <input type="radio" name="state" value="putong" title="普通" checked>
+            <input type="radio" name="state" value="jinji" title="紧急">
+            <input type="radio" name="state" value="veryjinji" title="非常紧急" >
+        </div>
+    </div>
+    <div class="add-tag combox">
+        <img src="../static/image/biaoqian.png" >
+        <span>标签</span>
+        <input type="text" name="title"  placeholder="添加标签"  class="layui-input label" autocomplete="false">
+    </div>
+    <div class="heng-line"></div>
+    <div class="child-task combox">
+        <img src="../static/image/zrw.png" >
+        <span>子任务</span>
+    </div>
+    <div class="add-child-task combox">
+        <img src="../static/image/adds.png" >
+        <span>添加子任务</span>
+    </div>
+    <div class="click-add-child-task common-add-style" >
+        <input type="text" name="title"  placeholder="子任务名称..." autocomplete="off" class="layui-input creat-model-input">
+        <div class="clearfix">
+            <div class="child-task-ok layui-btn layui-btn-normal common-ok-style">保存</div>
+            <div class="child-task-no common-no-style">取消</div>
+        </div>
+    </div>
+    <div class="guanlian combox">
+        <img src="../static/image/guanlian.png" >
+        <span>关联内容</span>
+    </div>
+    <div class="add-guanlian combox">
+        <img src="../static/image/adds.png" >
+        <span>添加关联</span>
+    </div>
+    <div class="heng-line"></div>
+    <p class="cyz">参与者</p>
+    <div class="work-people boxsizing clearfix">
+        <div class="one-work-people">
+            <img src="../static/image/add.png" >
+            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+        </div>
+        <div class="add-work-people">
+            <img src="../static/image/adds.png" >
+        </div>
+    </div>
+    <div class="heng-line"></div>
+    <div class="state">
+        <ul>
+            <li class="combox">
+                <img src="../static/image/dongtai.png" >
+                <span>谁谁谁 干了什么</span>
+                <div class="in-what-time">6月1日 12:00</div>
+            </li>
+            <li class="combox">
+                <img src="../static/image/dongtai.png" >
+                <span>谁谁谁 干了什么</span>
+                <div class="in-what-time">6月1日 12:00</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    <div class="publish boxsizing">
+        <textarea name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
+        <div class="fenge-line"></div>
+        <div class="publish-bottom">
+            <img src="../static/image/fujian.png" >
+            <div class="publish-btn ">发布</div>
+        </div>
+        <!--上传文件框-->
+        <div class="fujian-box boxsizing">
+            <div class="fujian-box-title boxsizing">
+                添加附件
+                <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+            </div>
+            <div class="zj-up">
+                <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                <span>直接上传</span>
+            </div>
+            <div class="xian"></div>
+            <div class="select-up">
+                <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                <span>从文件库选择</span>
+            </div>
+            <div class="xian"></div>
+            <div class="fujian-box-bottom boxsizing">
+                <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
+                <div class="add-fujian">添加</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+<script src="../static/js/jquery-2.2.4.min.js"></script>
+<script src="../static/layui/layui.js"></script>
+</html>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('switch(switch-filter)', function(data){
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            if (data.elem.checked) {
+                $(".who-can-see").text("仅自己可见")
+            }else {
+                $(".who-can-see").text("所有成员可见")
+            }
+        });
+
+
+
+    });
+</script>
