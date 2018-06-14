@@ -51,7 +51,7 @@ public class TaskController {
 
     /**
      * 添加新任务
-     * @param memberId 该任务的成员id数组
+     * @param userEntity 该任务的成员id数组
      * @param project 得到当前项目的实体信息
      * @param task 任务实体信息
      * @return
@@ -250,17 +250,16 @@ public class TaskController {
     }
 
     /**
-     * 完成任务(2=完成 1=未完成)
-     * @param taskId 当前任务id
-     * @param taskStatus 当前任务状态
+     * 完成任务 和重做任务
+     * @param task 当前任务信息
      */
-    @PostMapping("changeTaskStatus")
+    @PostMapping("resetAndCompleteTask")
     @ResponseBody
-    public JSONObject changeTaskStatus(@RequestParam String taskId,@RequestParam String taskStatus){
+    public JSONObject resetAndCompleteTask(@RequestParam Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //改变任务状态
-            TaskLogVO taskLogVO = taskService.changeTaskStatus(taskId,taskStatus);
+            TaskLogVO taskLogVO = taskService.resetAndCompleteTask(task);
             if(taskLogVO.getResult() >1){
                 jsonObject.put("msg","修改成功!");
                 jsonObject.put("result","1");
@@ -270,7 +269,7 @@ public class TaskController {
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("任务状态修改失败! 任务id: {}, \t 修改前状态:{},{}",taskId,taskStatus,e);
+            log.error("任务状态修改失败! 任务id: {}, \t 修改前状态:{},{}",task.getTaskId(),task.getTaskStatus(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -557,5 +556,109 @@ public class TaskController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 给当前任务点赞
+     * @param task 任务的实体信息
+     * @return
+     */
+    @PostMapping("clickFabulous")
+    @ResponseBody
+    public JSONObject clickFabulous(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = taskService.clickFabulous(task);
+            if(result > 0){
+                jsonObject.put("msg","成功!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常! 点赞失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 对当前任务取消赞
+     * @param task 当前任务信息
+     * @return
+     */
+    public JSONObject cancelFabulous(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = taskService.cancelFabulous(task);
+            if(result > 0){
+                jsonObject.put("msg","赞已取消!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","取消失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,取消赞失败! 当前任务id:{},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("addSubLevelTask")
+    @ResponseBody
+    public JSONObject addSubLevelTask(Task currentTask,Task subLevel,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //保存子任务信息至数据库
+            TaskLogVO taskLogVO = taskService.addSubLevelTasks(currentTask,subLevel,projectId);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","添加成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","添加失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常! 添加子级任务失败! 当前任务id: {},{}",currentTask.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 重做和完成子任务
+     * @param task
+     */
+    @PostMapping("resetAndCompleteSubLevelTask")
+    @ResponseBody
+    public JSONObject resetAndCompleteSubLevelTask(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.resetAndCompleteSubLevelTask(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","状态更新成功!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","状态更新失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常! 状态更新失败 当前任务id: {}{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    public void copyTask(@RequestParam Task task){
+        try {
+            TaskLogVO taskLogVO = taskService.copyTask(task);
+
+        } catch (Exception e){
+            log.error("");
+            throw new AjaxException(e);
+        }
     }
 }

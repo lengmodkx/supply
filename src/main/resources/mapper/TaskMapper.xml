@@ -14,7 +14,7 @@
 		<result column="priority" property="priority" jdbcType="VARCHAR" />
 		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER" />
-		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="executor" property="executor" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
@@ -235,7 +235,7 @@
 				#{taskMenuId},
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
-				${taskStatus},
+				#{taskStatus},
 			</if>
 			<if test="taskCode != null and taskCode != ''">
 				#{taskCode},
@@ -368,11 +368,14 @@
 		update prm_task
 		<set>
 			<if test="taskStatus != '' and taskStatus != null">
-				<if test="taskStatus == 1">
-					task_status = '2',
+				<if test="taskStatus == '未完成'.toString()">
+					task_status = '完成',
 				</if>
-				<if test="taskStatus == 2">
-					task_status = '1',
+				<if test="taskStatus == '重做'.toString()">
+					task_status = '完成',
+				</if>
+				<if test="taskStatus == '完成'.toString()">
+					task_status = '重新开始',
 				</if>
 			</if>
 			<if test="updateTime != null">
@@ -399,8 +402,16 @@
 		</foreach>
 	</select>
 
+	<!-- 查询某个任务的标签id -->
 	<select id="findTaskTagByTaskId" resultType="java.lang.String">
 		select tag_id from prm_task where task_id = #{taskId}
+	</select>
+
+	<!-- 查询某个任务的全部子任务信息 -->
+	<select id="findSubLevelTask" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where parent_id = #{taskId}
 	</select>
 
 </mapper>
