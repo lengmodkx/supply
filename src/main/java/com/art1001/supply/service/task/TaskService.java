@@ -7,6 +7,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.user.UserEntity;
 
 
 /**
@@ -48,7 +49,7 @@ public interface TaskService {
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public TaskLogVO saveTask(String[] memberId,Project project,Task task);
+	public TaskLogVO saveTask(UserEntity[] memberId,Project project,Task task);
 
 	/**
 	 * 获取所有task数据
@@ -77,7 +78,7 @@ public interface TaskService {
 	 * @param task 任务的时间信息
 	 * @return
 	 */
-	TaskLogVO updateTaskTime(Task task);
+	TaskLogVO updateTaskStartAndEndTime(Task task);
 
 	/**
 	 * 根据分组id 查询该菜单下有没有任务
@@ -133,4 +134,44 @@ public interface TaskService {
 	 * @return
 	 */
 	int removeTaskTag(Tag[] tags, Tag tag, String taskId);
+
+
+	/**
+	 * 更新任务的重复规则
+	 * @param task 任务的实体信息
+	 * @param object 时间重复周期的具体信息 (未设定)
+	 * @return
+	 */
+	TaskLogVO updateTaskRepeat(Task task, Object object);
+
+	/**
+	 * 更新任务提醒时间 和 指定提醒某个成员
+	 * @param task 任务实体信息
+	 * @param userEntity 用户实体信息
+	 * @return
+	 */
+	TaskLogVO updateTaskRemindTime(Task task, UserEntity userEntity);
+
+	/**
+	 * 清除任务的开始时间和结束时间
+	 * @param task 任务的实体信息
+	 * @return
+	 */
+	TaskLogVO removeTaskStartAndEndTime(Task task);
+
+	/**
+	 * 添加参与者
+	 * @param task 任务实体信息
+	 * @param userEntity 多个用户的信息
+	 * @return
+	 */
+	TaskLogVO addTaskMember(Task task, UserEntity[] userEntity);
+
+	/**
+	 * 移除项目成员
+	 * @param task 当前项目实体信息
+	 * @param userEntity 被移除的用户的信息
+	 * @return
+	 */
+	TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity);
 }

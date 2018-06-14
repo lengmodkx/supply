@@ -147,4 +147,9 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private Long repetitionTime;
 
+	/**
+	 * 任务得赞数
+	 */
+	private int fabulousCount;
+
 }

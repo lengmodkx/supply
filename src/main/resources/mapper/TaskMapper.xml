@@ -26,6 +26,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="remind_time" property="remindTime" jdbcType="BIGINT"/>
 		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
+		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -51,7 +52,8 @@
 				create_time,
 				update_time,
 				remind_time,
-				repetition_time
+				repetition_time,
+				fabulous_count
 	</sql>
 
 	<sql id="whereStatement">
@@ -177,6 +179,9 @@
 			<if test="repetitionTime != null">
 			repetition_Time,
 			</if>
+			<if test="fabulousCount != null">
+				fabulous_count,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -250,6 +255,9 @@
 			<if test="repetitionTime != null">
 				#{repetitionTime},
 			</if>
+			<if test="fabulousCount != null">
+				#{fabulousCount},
+			</if>
 		</trim>
 
 	</insert>
@@ -280,7 +288,7 @@
 				`remind` = #{remind},
 			</if>
 			<if test="remarks != null and remarks != ''">
-				`remarks` = #{remarks},
+				`remarks` = ${remarks},
 			</if>
 			<if test="priority != null and priority != ''">
 				`priority` = #{priority},
@@ -325,12 +333,13 @@
 				remind_time = #{remindTime},
 			</if>
 			<if test="repetitionTime != null">
-				repetitionTime = #{repetition_Time},
+				repetition_Time = #{repetitionTime},
+			</if>
+			<if test="fabulousCount != null">
+				fabulous_count = #{fabulousCount},
 			</if>
 		</set>
-
 		WHERE task_id = #{taskId}
-
 	</update>
 
 	<!-- 此条sql 用来处理任务 移入回收站/恢复任务的功能 -->

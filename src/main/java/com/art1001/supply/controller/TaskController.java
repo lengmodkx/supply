@@ -8,6 +8,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -58,14 +59,14 @@ public class TaskController {
     @PostMapping("saveTask")
     @ResponseBody
     public JSONObject saveTask(
-                              @RequestParam String [] memberId,
+                              @RequestParam UserEntity [] userEntity,
                               @RequestParam Project project,
                               @RequestParam Task task
     ){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
-            TaskLogVO taskLogVO = taskService.saveTask(memberId,project,task);
+            TaskLogVO taskLogVO = taskService.saveTask(userEntity,project,task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加任务成功!");
                 jsonObject.put("result","1");
@@ -75,6 +76,59 @@ public class TaskController {
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
             log.error("当前任务保存失败!{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 添加项目成员
+     * @param task
+     * @param userEntity
+     */
+    @PostMapping("addTaskMember")
+    @ResponseBody
+    public JSONObject addTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.addTaskMember(task,userEntity);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","添加成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","添加失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
+        } catch (Exception e){
+            log.error("系统异常,成员添加失败! 当前任务id:{},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移除任务-成员关系
+     * @param task 当前项目实体信息
+     * @param userEntity 被移除的用户的信息
+     * @return
+     */
+    @PostMapping("removeTaskMember")
+    @ResponseBody
+    public JSONObject removeTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.removeTaskMember(task,userEntity);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","任务参与者移除成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","任务参与者移除失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
+        } catch (Exception e){
+            log.error("移除任务成员失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -223,16 +277,43 @@ public class TaskController {
     }
 
     /**
-     * 更新任务时间( 开始 / 结束 / 提醒)
+     * 更新任务的重复规则
+     * @param task 任务的实体信息
+     * @param object 时间重复周期的具体信息 (未设定)
+     * @return
+     */
+    @PostMapping("updateTaskRepeat")
+    @ResponseBody
+    public JSONObject updateTaskRepeat(@RequestParam Task task,@RequestParam Object object){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTaskRepeat(task,object);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","重复规则设置成功");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","重复规则设置失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,重复规则更新失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return null;
+    }
+
+    /**
+     * 更新任务( 开始 / 结束 ) 时间
      * @param task 包含时间的实体信息
      */
-    @PostMapping("updateTaskTime")
+    @PostMapping("updateTaskStartAndEndTime")
     @ResponseBody
-    public JSONObject updateTaskTime(Task task){
+    public JSONObject updateTaskStartAndEndTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
-            TaskLogVO taskLogVO = taskService.updateTaskTime(task);
+            TaskLogVO taskLogVO = taskService.updateTaskStartAndEndTime(task);
             if(taskLogVO.getResult() > 1){
                 jsonObject.put("msg","时间更新成功!");
                 jsonObject.put("result","1");
@@ -248,6 +329,57 @@ public class TaskController {
         return jsonObject;
     }
 
+    /**
+     * 清除任务的开始时间和结束时间
+     * @param task 任务的实体信息
+     * @return
+     */
+    @PostMapping("removeTaskStartAndEndTime")
+    @ResponseBody
+    public JSONObject removeTaskStartAndEndTime(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.removeTaskStartAndEndTime(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","清空成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","清空失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,清除失败! 当前任务id:{},{} ",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更新任务的提醒时间
+     * @param task 任务实体信息
+     * @param userEntity 用户实体信息
+     * @return
+     */
+    @PostMapping("updateTaskRemindTime")
+    @ResponseBody
+    public JSONObject updateTaskRemindTime(@RequestParam Task task,@RequestParam UserEntity userEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTaskRemindTime(task,userEntity);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","设置成功！");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            }
+                jsonObject.put("msg","设置失败！");
+                jsonObject.put("result","0");
+        } catch (Exception e){
+            log.error("系统异常,设置提醒时间失败! 任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
     /**
      * 根据菜单id 查询该菜单下有没有任务
      * @param taskMenuId 分组id
