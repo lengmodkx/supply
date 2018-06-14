@@ -11,11 +11,13 @@
 <!--头部-->
 <div class="header">
     <div class="layui-row">
+
         <div class="layui-col-md4 layui-col-lg5 header-left">5D管理系统</div>
         <div class="layui-col-md4 layui-col-lg4 header-middle">
-            <input type="text"    class="layui-input search-input boxsizing">
+            <input type="text" class="layui-input search-input boxsizing">
             <i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>
         </div>
+
         <div class="layui-col-md4 layui-col-lg3 header-right">
             <span class="layui-breadcrumb" lay-separator="|">
                 <a href="">我的</a>
@@ -78,7 +80,7 @@
                         <span class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </span>
                         <span class="tools">
                         <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标" th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
                         </span>
                         <span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>
                     </div>
@@ -107,7 +109,7 @@
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
                         <span class="tools">
                         <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标" th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
                         </span>
                         <span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>
                     </div>
@@ -146,7 +148,6 @@
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
                         <span class="tools">
                         <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>
                         </span>
                     </div>
                     <p th:text="${project.projectDes}">描述描述</p>
@@ -159,7 +160,7 @@
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script>
+<script type="text/javascript">
     layui.use('element', function(){
         var element = layui.element;
 
@@ -169,9 +170,22 @@
         });
     });
 
+    //点击项目进入任务界面
     function projectClick(projectId){
         console.log(projectId);
     }
+
+    //点击收藏项目
+    function projectCollect(projectId){
+        $.post("/project/collectProject",projectId,function (data) {
+            if(data.result===1){
+                layer.msg(data.msg,{icon:1});
+            }else{
+                layer.msg(data.msg,{icon:5});
+            }
+        });
+    }
+
 
     $(function () {
         console.log($(".content-list li").css("width"));

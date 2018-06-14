@@ -2,8 +2,6 @@ package com.art1001.supply.entity.user;
 
 import com.art1001.supply.entity.role.RoleEntity;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -74,6 +72,11 @@ public class UserEntity implements Serializable {
 	 */
 	private String roleName;
 
+	//企业id
+	private String organizationId;
+	//部门id
+	private String partmentId;
+
 	public UserEntity() {
 
 	}
@@ -92,6 +95,8 @@ public class UserEntity implements Serializable {
 		this.role = userEntity.getRole();
 		this.userInfo = userEntity.getUserInfo();
 		this.roleName = userEntity.getRoleName();
+		this.organizationId = userEntity.getOrganizationId();
+		this.partmentId = userEntity.getPartmentId();
 	}
 
 

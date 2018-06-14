@@ -14,6 +14,7 @@ import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +47,8 @@ public class ProjectController {
     @Resource
     private RelationService relationService;
 
+    @Resource
+    private UserService userService;
     @RequestMapping("/home.html")
     public String home(Model model){
 
@@ -165,6 +169,8 @@ public class ProjectController {
             projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
             projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());
+            projectMember.setCreateTime(System.currentTimeMillis());
+            projectMember.setUpdateTime(System.currentTimeMillis());
             projectMemberService.saveProjectMember(projectMember);
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
@@ -210,7 +216,7 @@ public class ProjectController {
         try {
             projectService.deleteProjectByProjectId(projectId);
             jsonObject.put("result",1);
-            jsonObject.put("msg","项目更新成功");
+            jsonObject.put("msg","项目删除成功");
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -219,8 +225,38 @@ public class ProjectController {
     }
 
     @PostMapping("/updateProjectMember")
-    public void updateProjectMember(@RequestParam String memberIds){
+    @ResponseBody
+    public JSONObject updateProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
+        JSONObject jsonObject = new JSONObject();
+        try{
 
+            if(StringUtils.isEmpty(memberIds)){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","请选择组员");
+            }else{
+                String[] memberId = memberIds.split(",");
+                for (int i=0;i<memberId.length;i++){
+                    UserEntity userEntity = userService.findById(memberId[i]);
+                    ProjectMember projectMember = new ProjectMember();
+                    projectMember.setProjectId(projectId);
+                    projectMember.setMemberId(memberId[i]);
+                    projectMember.setMemberName(userEntity.getAccountName());
+                    projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+                    projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+                    projectMember.setMemberImg(userEntity.getUserInfo().getImage());
+                    projectMember.setCreateTime(System.currentTimeMillis());
+                    projectMember.setUpdateTime(System.currentTimeMillis());
+                    projectMemberService.saveProjectMember(projectMember);
+                }
+
+                jsonObject.put("result",1);
+                jsonObject.put("msg","添加成功");
+            }
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+
+        return jsonObject;
     }
 
 
@@ -256,5 +292,31 @@ public class ProjectController {
         }
         return jsonObject;
     }
+
+    /**
+     * 移除项目成员 支持单独删除和批量删除
+     */
+    @PostMapping("/delProjectMember")
+    @ResponseBody
+    public JSONObject delProjectMember(@RequestParam String id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(StringUtils.isEmpty(id)){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","请选择组员");
+            }else{
+                String[] ids = id.split(",");
+                for (int i=0;i<ids.length;i++){
+                    projectMemberService.deleteProjectMemberById(ids[i]);
+                }
+                jsonObject.put("result",0);
+                jsonObject.put("msg","删除成功");
+            }
+        }catch (Exception e){
+            throw  new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
 }
