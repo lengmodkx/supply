@@ -7,13 +7,12 @@
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="catalog" property="catalog" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
 		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -21,16 +20,15 @@
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						file_id,
+				file_id,
 				file_name,
 				file_url,
 				project_id,
-				task_id,
 				member_id,
 				member_name,
 				member_img,
-				catalog,
-				size,
+				`catalog`,
+				`size`,
 				parent_id,
 				file_del,
 				tag_id,
@@ -53,10 +51,10 @@
 		<include refid="whereStatement" />
 		
 		<if test="orderBy == 0">
-			order by id desc
+			order by file_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by id asc
+			order by file_id asc
 		</if>
 		
 	</select>
@@ -67,24 +65,36 @@
 		<include refid="Base_Column_List" />
 		from prm_file
 		<if test="orderBy == 0">
-			order by id desc
+			order by file_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by id asc
+			order by file_id asc
 		</if>
 	</select>
 	
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
-
 		select
 		<include refid="Base_Column_List" />
-		from prm_file c where id = #{id}
+		from prm_file c where file_id = #{fileId}
+	</select>
 
+	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM prm_file WHERE parent_id = #{parentId} AND file_name = #{fileName}
+	</select>
+
+	<select id="findChildFile" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from prm_file
+		where
+		project_id = #{projectId}
+		and parent_id = #{parentId}
+		and file_del = 0
 	</select>
 	
 	<delete id="deleteFileById" parameterType="java.lang.String">
 		delete from
-		prm_file where id = #{id}
+		prm_file where file_id = #{fileId}
 	</delete>
 	
 	<insert id="saveFile" parameterType="com.art1001.supply.entity.file.File">
@@ -104,9 +114,6 @@
 			<if test="projectId != null and projectId != ''">
 			project_id,
 			</if>
-			<if test="taskId != null and taskId != ''">
-			task_id,
-			</if>
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
@@ -122,7 +129,7 @@
 			<if test="size != null and size != ''">
 			size,
 			</if>
-			<if test="parent.id != null and parent.id != ''">
+			<if test="parentId != null and parentId != ''">
 			parent_id,
 			</if>
 			<if test="fileDel != null and fileDel != ''">
@@ -153,9 +160,6 @@
 			<if test="projectId != null and projectId != ''">
 				#{projectId},
 			</if>
-			<if test="taskId != null and taskId != ''">
-				#{taskId},
-			</if>
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
 			</if>
@@ -171,8 +175,8 @@
 			<if test="size != null and size != ''">
 				#{size},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				#{parent.id},
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
 			</if>
 			<if test="fileDel != null and fileDel != ''">
 				#{fileDel},
@@ -194,9 +198,6 @@
 
 		update prm_file
 		<set>
-			<if test="fileId != null and fileId != ''">
-				file_id = #{fileId},
-			</if>
 			<if test="fileName != null and fileName != ''">
 				file_name = #{fileName},
 			</if>
@@ -205,9 +206,6 @@
 			</if>
 			<if test="projectId != null and projectId != ''">
 				project_id = #{projectId},
-			</if>
-			<if test="taskId != null and taskId != ''">
-				task_id = #{taskId},
 			</if>
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
@@ -224,10 +222,10 @@
 			<if test="size != null and size != ''">
 				size = #{size},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				parent_id = #{parent.id},
+			<if test="parentId != null and parentId != ''">
+				parent_id = #{parentId},
 			</if>
-			<if test="fileDel != null and fileDel != ''">
+			<if test="fileDel != null">
 				file_del = #{fileDel},
 			</if>
 			<if test="tagId != null and tagId != ''">
@@ -241,7 +239,7 @@
 			</if>
 		</set>
 
-		WHERE id = #{id}
+		WHERE file_id = #{fileId}
 
 	</update>
 	

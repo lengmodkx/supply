@@ -88,7 +88,7 @@ public class TaskController {
      */
     @PostMapping("addTaskMember")
     @ResponseBody
-    public void addTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+    public JSONObject addTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.addTaskMember(task,userEntity);
@@ -104,6 +104,34 @@ public class TaskController {
             log.error("系统异常,成员添加失败! 当前任务id:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
+        return jsonObject;
+    }
+
+    /**
+     * 移除任务-成员关系
+     * @param task 当前项目实体信息
+     * @param userEntity 被移除的用户的信息
+     * @return
+     */
+    @PostMapping("removeTaskMember")
+    @ResponseBody
+    public JSONObject removeTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.removeTaskMember(task,userEntity);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","任务参与者移除成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","任务参与者移除失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
+        } catch (Exception e){
+            log.error("移除任务成员失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 
     /**

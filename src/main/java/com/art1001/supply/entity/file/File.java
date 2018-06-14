@@ -1,7 +1,9 @@
 package com.art1001.supply.entity.file;
 
 import com.art1001.supply.entity.base.BaseEntity;
+
 import java.io.Serializable;
+
 import lombok.Data;
 
 /**
@@ -9,85 +11,78 @@ import lombok.Data;
  */
 @Data
 public class File extends BaseEntity implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
 
-	/**
-	 * file_id
-	 */
-	private String fileId;
+    /**
+     * file_id
+     */
+    private String fileId;
 
 
-	/**
-	 * 文件名
-	 */
-	private String fileName;
+    /**
+     * 文件名
+     */
+    private String fileName;
 
 
-	/**
-	 * 文件路径
-	 */
-	private String fileUrl;
+    /**
+     * 文件路径
+     */
+    private String fileUrl;
 
 
-	/**
-	 * 关联的项目id
-	 */
-	private String projectId;
+    /**
+     * 关联的项目id
+     */
+    private String projectId;
+
+    /**
+     * 创建者
+     */
+    private String memberId;
 
 
-	/**
-	 * 关联的任务id
-	 */
-	private String taskId;
+    /**
+     * 用户名
+     */
+    private String memberName;
 
 
-	/**
-	 * 创建者
-	 */
-	private String memberId;
+    /**
+     * member_img
+     */
+    private String memberImg;
 
 
-	/**
-	 * 用户名
-	 */
-	private String memberName;
+    /**
+     * 是否目录
+     */
+    private Integer catalog;
 
 
-	/**
-	 * member_img
-	 */
-	private String memberImg;
+    /**
+     * 文件大小
+     */
+    private String size;
 
 
-	/**
-	 * 是否目录
-	 */
-	private Integer catalog;
+    /**
+     * 父级id
+     */
+    private String parentId;
 
 
-	/**
-	 * 文件大小
-	 */
-	private String size;
+    /**
+     * 是否删除
+     */
+    private Integer fileDel;
 
 
-	/**
-	 * 父级id
-	 */
-	private String parent;
-
-
-	/**
-	 * 是否删除
-	 */
-	private String fileDel;
-
-
-	/**
-	 * 标签id
-	 */
-	private String tagId;
+    /**
+     * 标签id
+     */
+    private String tagId;
 
 }

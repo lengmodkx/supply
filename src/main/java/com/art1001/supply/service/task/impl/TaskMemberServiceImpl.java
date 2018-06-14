@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -240,6 +241,30 @@ public class TaskMemberServiceImpl implements TaskMemberService {
             result += taskMemberMapper.saveTaskMember(taskMember);
         }
 		return result;
+	}
+
+    /**
+     * 通过任务id 成员id 删除 任务成员关系表的数据
+     * @param task 任务实体信息
+     * @param userEntity 多个成员信息
+     * @return
+     */
+	@Override
+	public TaskLogVO delTaskMemberByTaskIdAndMemberId(Task task, UserEntity[] userEntity) {
+        int result =0;
+        StringBuilder content = new StringBuilder(TaskLogFunction.A.getName()).append(" ");
+        //循环删除任务成员关系并且拼接日志字符串
+		for (int i = 0; i < userEntity.length; i++) {
+			result = taskMemberMapper.delTaskMemberByTaskIdAndMemberId(task,userEntity[i]);
+			if(i == userEntity.length - 1){
+				content.append(userEntity[i].getUserName());
+			} else{
+				content.append(userEntity[i].getUserName()).append(",");
+			}
+		}
+        TaskLogVO taskLogVO = taskService.saveTaskLog(task, content.toString());
+		taskLogVO.setResult(result);
+        return taskLogVO;
 	}
 
 }

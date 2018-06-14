@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * filemapper接口
@@ -55,4 +56,20 @@ public interface FileMapper {
 	 */
 	List<File> findFileAllList();
 
+	/**
+	 * 查询当前文件目录下的文件夹及文件
+	 *
+	 * @param projectId 关联项目id
+	 * @param parentId 父级id，顶级目录为 0
+	 * @return List<File>
+	 */
+	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId);
+
+	/**
+	 * 查新该目录下的名称是否存在
+	 *
+	 * @param parentId 父级id
+	 * @param fileName 目录名称
+	 */
+	int findByParentIdAndFileName(@Param("parentId") String parentId, @Param("fileName") String fileName);
 }

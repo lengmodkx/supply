@@ -166,4 +166,12 @@ public interface TaskService {
 	 * @return
 	 */
 	TaskLogVO addTaskMember(Task task, UserEntity[] userEntity);
+
+	/**
+	 * 移除项目成员
+	 * @param task 当前项目实体信息
+	 * @param userEntity 被移除的用户的信息
+	 * @return
+	 */
+	TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity);
 }

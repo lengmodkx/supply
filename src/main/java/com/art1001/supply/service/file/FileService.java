@@ -3,55 +3,78 @@ package com.art1001.supply.service.file;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.project.Project;
 
 
 /**
  * fileService接口
  */
-public interface FileService {
+ public interface FileService {
 
 	/**
 	 * 查询分页file数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
 	 */
-	public List<File> findFilePagerList(Pager pager);
+	 List<File> findFilePagerList(Pager pager);
 
 	/**
 	 * 通过id获取单条file数据
-	 * 
-	 * @param id
-	 * @return
 	 */
-	public File findFileById(String id);
+	 File findFileById(String id);
 
 	/**
 	 * 通过id删除file数据
-	 * 
-	 * @param id
 	 */
-	public void deleteFileById(String id);
+	 void deleteFileById(String id);
 
 	/**
 	 * 修改file数据
-	 * 
-	 * @param file
 	 */
-	public void updateFile(File file);
+	 void updateFile(File file);
 
 	/**
 	 * 保存file数据
-	 * 
-	 * @param file
 	 */
-	public void saveFile(File file);
+	 void saveFile(File file);
 
 	/**
 	 * 获取所有file数据
-	 * 
-	 * @return
 	 */
-	public List<File> findFileAllList();
-	
+	 List<File> findFileAllList();
+
+    /**
+     * 项目创建后初始化文件目录
+     */
+	void initProjectFolder(Project project);
+
+
+    /**
+     * 查新该目录下的名称是否存在
+     *
+     * @param parentId 父级id
+     * @param fileName 目录名称
+     */
+    int findByParentIdAndFileName(String parentId, String fileName);
+
+    /**
+     * 创建目录
+     *
+     * @param parentId 要创建的目录的父级id
+     * @param fileName 创建的目录名称
+     */
+	void createFolder(String parentId, String fileName);
+
+    /**
+     * 上传文件
+     */
+	File fileUpload();
+
+    /**
+     * 查询当前文件目录下的文件夹及文件
+     *
+     * @param projectId 关联项目id
+     * @param parentId 父级id，顶级目录为 0
+     * @return List<File>
+     */
+	List<File> findChildFile(String projectId, String parentId);
+
 }

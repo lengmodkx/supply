@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.partment.PartmentMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.partment.Partment">
+		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
+		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+		<result column="partment_logo" property="partmentLogo" jdbcType="VARCHAR" />
+		<result column="partment_name" property="partmentName" jdbcType="VARCHAR" />
+		<result column="partment_order" property="partmentOrder" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+						partment_id,
+				organization_id,
+				partment_logo,
+				partment_name,
+				partment_order,
+				create_time,
+				update_time
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findPartmentPagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_partment
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by partment_id desc
+		</if>
+		<if test="orderBy == 1">
+			order by partment_id asc
+		</if>
+		
+	</select>
+	
+	<select id="findPartmentAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.partment.Partment">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_partment
+		<if test="orderBy == 0">
+			order by partment_id desc
+		</if>
+		<if test="orderBy == 1">
+			order by partment_id asc
+		</if>
+	</select>
+	
+	<select id="findPartmentByPartmentId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_partment c where partment_id = #{partmentId}
+
+	</select>
+	
+	<delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
+		delete from
+		prm_partment where partment_id = #{partmentId}
+	</delete>
+	
+	<insert id="savePartment" parameterType="com.art1001.supply.entity.partment.Partment">
+
+		insert into prm_partment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="partmentId != null and partmentId != ''">
+			partment_id,
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+			organization_id,
+			</if>
+			<if test="partmentLogo != null and partmentLogo != ''">
+			partment_logo,
+			</if>
+			<if test="partmentName != null and partmentName != ''">
+			partment_name,
+			</if>
+			<if test="partmentOrder != null ">
+			partment_order,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+			<if test="updateTime != null ">
+			update_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="partmentId != null and partmentId != ''">
+				#{partmentId},
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+				#{organizationId},
+			</if>
+			<if test="partmentLogo != null and partmentLogo != ''">
+				#{partmentLogo},
+			</if>
+			<if test="partmentName != null and partmentName != ''">
+				#{partmentName},
+			</if>
+			<if test="partmentOrder != null ">
+				#{partmentOrder},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updatePartment" parameterType="com.art1001.supply.entity.partment.Partment">
+
+		update prm_partment
+		<set>
+			<if test="partmentId != null and partmentId != ''">
+				partment_id = #{partmentId},
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+				organization_id = #{organizationId},
+			</if>
+			<if test="partmentLogo != null and partmentLogo != ''">
+				partment_logo = #{partmentLogo},
+			</if>
+			<if test="partmentName != null and partmentName != ''">
+				partment_name = #{partmentName},
+			</if>
+			<if test="partmentOrder != null ">
+				partment_order = #{partmentOrder},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null ">
+				update_time = #{updateTime},
+			</if>
+		</set>
+
+		WHERE partment_id = #{partmentId}
+
+	</update>
+	
+</mapper>
