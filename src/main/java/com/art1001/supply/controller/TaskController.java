@@ -81,10 +81,25 @@ public class TaskController {
         return jsonObject;
     }
 
+    /**
+     * 添加项目成员
+     * @param task
+     * @param userEntity
+     */
+    @PostMapping("addTaskMember")
+    @ResponseBody
     public void addTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.addTaskMember(task,userEntity);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","添加成功!");
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","添加失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
         } catch (Exception e){
             log.error("系统异常,成员添加失败! 当前任务id:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);

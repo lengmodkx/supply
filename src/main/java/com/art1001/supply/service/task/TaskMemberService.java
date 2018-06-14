@@ -61,7 +61,20 @@ public interface TaskMemberService {
 	public List<TaskMember> findTaskMemberAllList();
 
 
-	public void saveManyTaskeMmber(UserEntity[] memberId, Task task);
+	/**
+	 * 在任务关系表里添加多条成员信息
+	 * @param member 多个成员信息
+	 * @param task 任务实体信息
+	 */
+	public void saveManyTaskeMmber(UserEntity[] member, Task task);
+
+	/**
+	 *
+	 * @param member 多个成员信息
+	 * @param task 任务实体信息
+	 * @return
+	 */
+	int addManyMemberInfo(UserEntity[] member, Task task);
 
 	
 }

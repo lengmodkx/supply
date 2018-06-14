@@ -459,9 +459,19 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO addTaskMember(Task task, UserEntity[] userEntity) {
-        int result = taskMemberService.saveManyTaskeMmber(userEntity,task);
-
-        return null;
+        int result = taskMemberService.addManyMemberInfo(userEntity,task);
+        StringBuilder content = new StringBuilder("");
+        content.append(TaskLogFunction.C.getName()).append(" ");
+        for (int i = 0; i < userEntity.length; i++) {
+            if(i == userEntity.length - 1){
+                content.append(userEntity[i].getUserName());
+            } else{
+                content.append(userEntity[i].getUserName()).append(",");
+            }
+        }
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
     }
 
 
