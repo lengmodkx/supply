@@ -263,3 +263,37 @@
     color: #CDCDCD;
     margin-top: 5px;
 }
+
+/*点击 我的 出现的顶部*/
+.my-toper{
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    background-color: #EEEEEE;
+    line-height: 50px;
+}
+.my-nav-wrap{
+    width: 380px;
+    height: 100%;
+    margin: 0 auto;
+}
+.my-nav-wrap li{
+    float: left;
+    line-height: 49px;
+    font-size: 14px;
+    margin-right: 50px;
+    cursor: pointer;
+}
+.my-nav-wrap li:hover{
+    color: #017ECA;
+    border-bottom: 1px solid #017ECA;
+}
+.my-nav-wrap li.now{
+    color: #017ECA;
+    border-bottom: 1px solid #017ECA;
+}
+.my-nav-wrap li:nth-last-child(1){
+    margin-right: 0;
+}

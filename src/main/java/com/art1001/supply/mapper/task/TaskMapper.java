@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
@@ -55,7 +56,7 @@ public interface TaskMapper {
 	 * 
 	 * @param task
 	 */
-	void saveTask(Task task);
+	int saveTask(Task task);
 
 	/**
 	 * 获取所有task数据
@@ -110,4 +111,11 @@ public interface TaskMapper {
 	 */
 	@Update("update prm_task set end_time = null,update_time = #{updateTime} where task_id = #{taskId}")
 	int removeTaskEndTime(Task task);
+
+	/**
+	 * 查找某个任务下的子任务
+	 * @param taskId 父任务id
+	 * @return
+	 */
+	List<Task> findSubLevelTask(String taskId);
 }

@@ -1,3 +1,5 @@
+
+
 // 火狐浏览器兼容
 function firefox() {
     if(isFirefox=navigator.userAgent.indexOf("Firefox")>0){
@@ -6,6 +8,64 @@ function firefox() {
 };
 
 $(function () {
+
+
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('switch(switch-filter)', function(data){
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            if (data.elem.checked) {
+                $(".who-can-see").text("仅自己可见")
+            }else {
+                $(".who-can-see").text("所有成员可见")
+            }
+        });
+
+
+
+    });
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#beginTime', //指定元素
+            type:'datetime',
+            format:'yyyy年MM月dd日 HH时mm分ss秒'
+        });
+        laydate.render({
+            elem: '#overTime', //指定元素
+            type:'datetime',
+            format:'yyyy年MM月dd日 HH时mm分ss秒'
+        });
+    });
+
+    // 拖拽函数
+    Sortable.create(document.getElementById('list1'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+    Sortable.create(document.getElementById('list2'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+    Sortable.create(document.getElementById('list3'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+
+
+
+
+
+
     firefox();
     //点击 任务列表顶部 下箭头，出现内容
     $("html").on("click",".add-new-model",function(){

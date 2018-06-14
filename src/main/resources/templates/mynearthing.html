@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css"  href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css"  href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/mynearthing.css">
+</head>
+<body>
+<div class="near-thing-box boxsizing">
+    <div class="thing-title">
+        <span>近期的事  + </span><span>1</span>
+    </div>
+    <div class="things layui-form">
+        <ul>
+            <li class="thing-list">
+                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                <span class="what-thing">设计项目主界面——项目名称</span>
+                <span class="dt">dt-12</span>
+                <span class="thing-what-date">6月10日 14:14</span>
+            </li>
+            <li class="thing-list">
+                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                <span class="what-thing">设计项目主界面——项目名称</span>
+                <span class="dt">dt-12</span>
+                <span class="thing-what-date">6月10日 14:14</span>
+            </li>
+        </ul>
+
+    </div>
+
+</div>
+
+</body>
+<script  src="../static/js/jquery-2.2.4.min.js"></script>
+<script  src="../static/layui/layui.js"></script>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('switch(switch-filter)', function(data){
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            if (data.elem.checked) {
+                $(".who-can-see").text("仅自己可见")
+            }else {
+                $(".who-can-see").text("所有成员可见")
+            }
+        });
+
+
+
+    });
+</script>
+</html>

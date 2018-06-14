@@ -14,4 +14,16 @@
 				task_id
 	</sql>
 
+    <!-- 用户赞后添加至该关系表 -->
+    <insert id="addFabulous">
+        insert into prm_fabulous (fabulous_id,member_id,task_id)
+        values(#{fabulousId},#{memberId},#{taskId});
+    </insert>
+
+    <!-- 判断用户有没有给当前任务点赞 -->
+    <select id="judgeFabulous" resultType="java.lang.Integer">
+        select count(0) from prm_fabulous where task_id = #{taskId} and member_id = #{memberId}
+    </select>
+
+
 </mapper>
