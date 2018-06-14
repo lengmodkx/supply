@@ -66,7 +66,7 @@ import com.art1001.supply.entity.project.Project;
     /**
      * 上传文件
      */
-	File fileUpload();
+	void uploadFile(File file);
 
     /**
      * 查询当前文件目录下的文件夹及文件
