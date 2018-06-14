@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css"  href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css"  href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/myfile.css">
+</head>
+<body>
+<div class="file-box boxsizing layui-form">
+    <div class="file-toper">
+        <span class="now">我创建的</span><span>我参与的</span>
+    </div>
+    <div class="file-title">
+            <div class="layui-row">
+                <div class="layui-col-md2 layui-col-lg-2 file-name">名称</div>
+                <div class="layui-col-md4 layui-col-lg-4 file-size">大小</div>
+                <div class="layui-col-md4 layui-col-lg-4 file-time">更新时间</div>
+                <div class="layui-col-md2 layui-col-lg-2 file-style">
+                    <img src="../static/image/jggpb.png" >
+                    <img src="../static/image/lpb.png" >
+                </div>
+            </div>
+    </div>
+    <!--没有文件-->
+    <div class="no-file" style="display: none">
+        <img src="../static/image/nofile.png" >
+        <p>目前还没有文件～</p>
+    </div>
+    <!--有文件-->
+    <div class="have-file">
+        <div class="layui-row">
+            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
+            <div class="layui-col-md4 layui-col-lg-4 file-size">2.3M</div>
+            <div class="layui-col-md4 layui-col-lg-4 file-time">6月1日</div>
+            <div class="layui-col-md2 layui-col-lg-2 file-operate">
+                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
+                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
+                <!--文件菜单 弹框-->
+                <div class="scheduling-menu boxsizing layui-form">
+                    <div class="scheduling-menu-title">日程菜单
+                        <img src="../static/image/close.png" >
+                    </div>
+                    <div class="menu-box edit-rc">
+                        <img src="../static/image/fzrc.png" >
+                        <span>复制文件</span>
+                    </div>
+                    <div class="menu-box edit-rc">
+                        <img src="../static/image/fzrclj.png" >
+                        <span>复制文件链接</span>
+                    </div>
+                    <div class="menu-box edit-rc">
+                        <img src="../static/image/gxrc.png" >
+                        <span>共享文件</span>
+                    </div>
+                    <div class="menu-box edit-rc">
+                        <img src="../static/image/scrc.png" >
+                        <span>收藏文件</span>
+                    </div>
+                    <div class="menu-box edit-rc">
+                        <img src="../static/image/hsz.png" >
+                        <span>移到回收站</span>
+                    </div>
+                    <div class="heng-line"></div>
+                    <div class="secret menu-box layui-form">
+                        <img src="../static/image/suo.png" >
+                        <span>隐私模式</span>
+                        <div class="switch">
+                            <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
+                        </div>
+                        <div class="who-can-see">所有成员可见</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+<script  src="../static/js/jquery-2.2.4.min.js"></script>
+<script  src="../static/layui/layui.js"></script>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        form.on('switch(switch-filter)', function(data){
+            console.log(data.elem.checked); //开关是否开启，true或者false
+            if (data.elem.checked) {
+                $(".who-can-see").text("仅自己可见")
+            }else {
+                $(".who-can-see").text("所有成员可见")
+            }
+        });
+
+
+
+    });
+</script>
+</html>

@@ -1,0 +1,73 @@
+
+.near-thing-box{
+    width: 60%;
+    min-height: 500px;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 0 46px;
+}
+.thing-title{
+    width: 100%;
+    height: 55px;
+    line-height: 55px;
+    font-size: 14px;
+    border-bottom: 1px solid #D5D5D5;
+}
+.things{
+    width: 100%;
+    margin-top: 16px;
+}
+.thing-list{
+    width: 100%;
+    height: 22px;
+    padding: 12px 6px;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+.thing-list:hover{
+    background-color: #EDEDED;
+}
+.thing-list .layui-form-checkbox[lay-skin=primary]{
+    float: left;
+}
+.thing-list .layui-form-checkbox[lay-skin=primary] i{
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-top: 2px;
+}
+.is-sure{
+    width: 16px;
+    height: 16px;
+    border: 1px solid #D3D3D3;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    float: left;
+
+}
+.what-thing{
+    float: left;
+    margin-left: 15px;
+    font-size: 14px;
+    line-height: 22px;
+}
+.dt{
+    width: 36px;
+    height: 16px;
+    background-color: #EDEDED;
+    font-size: 12px;
+    text-align: center;
+    line-height: 16px;
+    float: left;
+    margin-left: 15px;
+    margin-top: 4px;
+}
+.thing-what-date{
+    float: right;
+    line-height: 22px;
+    font-size: 14px;
+    margin-right: 10px;
+    color: #B3B3B3;
+}
