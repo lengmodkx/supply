@@ -459,9 +459,11 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO addTaskMember(Task task, UserEntity[] userEntity) {
+        //向任务成员表中添加数据
         int result = taskMemberService.addManyMemberInfo(userEntity,task);
         StringBuilder content = new StringBuilder("");
         content.append(TaskLogFunction.C.getName()).append(" ");
+        //循环用来拼接log日志字符串
         for (int i = 0; i < userEntity.length; i++) {
             if(i == userEntity.length - 1){
                 content.append(userEntity[i].getUserName());
@@ -472,6 +474,17 @@ public class TaskServiceImpl implements TaskService {
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
         return taskLogVO;
+    }
+
+    /**
+     * 移除任务-成员关系
+     * @param task 当前项目实体信息
+     * @param userEntity 被移除的用户的信息
+     * @return
+     */
+    @Override
+    public TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity) {
+        return taskMemberService.delTaskMemberByTaskIdAndMemberId(task,userEntity);
     }
 
 
