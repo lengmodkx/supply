@@ -10,5 +10,4 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("file")
 public class FileController {
 
-
 }
