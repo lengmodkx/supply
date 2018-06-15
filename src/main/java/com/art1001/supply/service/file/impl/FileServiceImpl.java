@@ -166,8 +166,23 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File fileUpload() {
-        return null;
+    public void uploadFile(File file) {
+		file.setFileId(IdGen.uuid());
+		// 获取用户信息
+		// TODO: 2018/6/14 在缓存中得到用户
+		// UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId("6cb972b67e8a4a3980fb9cd5d5a89cd2");
+		userEntity.setUserName("飞哥");
+		userEntity.getUserInfo().setImage("www.baudu.com/image");
+
+		file.setMemberId(userEntity.getId());
+		file.setMemberName(userEntity.getUserName());
+		file.setMemberImg(userEntity.getUserInfo().getImage());
+		file.setCatalog(0);
+		file.setCreateTime(System.currentTimeMillis());
+		file.setUpdateTime(System.currentTimeMillis());
+		fileMapper.saveFile(file);
     }
 
     @Override
