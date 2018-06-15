@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -67,6 +68,7 @@ public class PartmentServiceImpl implements PartmentService {
 	 */
 	@Override
 	public void savePartment(Partment partment){
+		partment.setPartmentId(IdGen.uuid());
 		partmentMapper.savePartment(partment);
 	}
 	/**

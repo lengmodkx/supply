@@ -149,6 +149,7 @@ public class ProjectController {
             Relation relation = new Relation();
             relation.setRelationName("任务");
             relation.setProjectId(project.getProjectId());
+            relation.setLable(0);
             relationService.saveRelation(relation);
 
             //初始化菜单
@@ -158,6 +159,7 @@ public class ProjectController {
                 relation1.setProjectId(project.getProjectId());
                 relation1.setRelationName(menu);
                 relation1.setParentId(relation.getRelationId());
+                relation1.setLable(1);
                 relationService.saveRelation(relation1);
             }
 

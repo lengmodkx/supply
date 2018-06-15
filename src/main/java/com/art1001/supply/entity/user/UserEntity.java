@@ -76,6 +76,8 @@ public class UserEntity implements Serializable {
 	private String organizationId;
 	//部门id
 	private String partmentId;
+	//企业员工账号是否被停用，0不是，1是
+	private Integer organizationLable;
 
 	public UserEntity() {
 

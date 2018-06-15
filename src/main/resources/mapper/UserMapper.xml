@@ -19,7 +19,8 @@
 		u_create_time,
 		u_update_time,
         u_organization_id,
-		u_partment_id
+		u_partment_id,
+		u_organization_lable
 	</sql>
 
 	<sql id="userInfoAttributes">
@@ -47,6 +48,7 @@
 		<result property="updateTime" column="u_update_time"/>
 		<result property="organizationId" column="u_organization_id"/>
 		<result property="partmentId" column="u_partment_id"/>
+		<result property="organizationLable" column="u_organization_lable"/>
 		<association property="role" column="id" javaType="com.art1001.supply.entity.role.RoleEntity">
 			<id property="id" column="r_id"/>
 			<result property="name" column="r_name"/>
@@ -96,6 +98,7 @@
 		u.u_update_time,
 		u.u_organization_id,
 		u.u_partment_id,
+		u.u_organization_lable,
 		r.r_id,
 		r.r_name,
 		r.r_key,
@@ -132,6 +135,7 @@
 		u.u_update_time,
 		u.u_organization_id,
 		u.u_partment_id,
+		u.u_organization_lable,
 		r.r_id,
 		r.r_name,
 		r.r_key,
@@ -163,6 +167,7 @@
 		u.u_update_time,
 		u.u_organization_id,
 		u.u_partment_id,
+		u.u_organization_lable,
 		r.r_id,
 		r.r_name,
 		r.r_key,
@@ -273,6 +278,9 @@
 			</if>
 			<if test="partmentId != null and partmentId != ''">
 				u_partment_id = ${partmentId},
+			</if>
+			<if test="organizationLable != null and organizationLable != ''">
+				u_organization_lable = ${organizationLable},
 			</if>
 		</set>
 		where u_id = ${id}
