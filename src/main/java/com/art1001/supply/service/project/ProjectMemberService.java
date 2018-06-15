@@ -3,6 +3,7 @@ package com.art1001.supply.service.project;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.user.UserInfoEntity;
 
 import java.util.List;
 
@@ -57,5 +58,5 @@ public interface ProjectMemberService {
 	public List<ProjectMember> findProjectMemberAllList();
 
 	List<Project> findProjectByMemberId(String memberId,Integer projectDel);
-	
+
 }

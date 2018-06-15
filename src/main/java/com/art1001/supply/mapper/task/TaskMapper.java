@@ -118,4 +118,11 @@ public interface TaskMapper {
 	 * @return
 	 */
 	List<Task> findSubLevelTask(String taskId);
+
+	/**
+	 * 更改当前任务的隐私模式
+	 * @param task
+	 * @return
+	 */
+    int SettingUpPrivacyPatterns(Task task);
 }

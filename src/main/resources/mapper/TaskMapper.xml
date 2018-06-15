@@ -27,6 +27,7 @@
 		<result column="remind_time" property="remindTime" jdbcType="BIGINT"/>
 		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -53,7 +54,8 @@
 				update_time,
 				remind_time,
 				repetition_time,
-				fabulous_count
+				fabulous_count,
+				privacy_pattern
 	</sql>
 
 	<sql id="whereStatement">
@@ -182,6 +184,10 @@
 			<if test="fabulousCount != null">
 				fabulous_count,
 			</if>
+			<if test="privacyPattern != null">
+				privacy_pattern,
+			</if>
+
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -257,6 +263,9 @@
 			</if>
 			<if test="fabulousCount != null">
 				#{fabulousCount},
+			</if>
+			<if test="privacy_pattern != null">
+				#{privacyPattern},
 			</if>
 		</trim>
 
@@ -338,6 +347,9 @@
 			<if test="fabulousCount != null">
 				fabulous_count = #{fabulousCount},
 			</if>
+			<if test="privacyPattern != null">
+				privacy_pattern = #{privacyPattern},
+			</if>
 		</set>
 		WHERE task_id = #{taskId}
 	</update>
@@ -413,5 +425,21 @@
 		<include refid="Base_Column_List"></include>
 		from prm_task where parent_id = #{taskId}
 	</select>
+
+	<!-- 更改当前任务的隐私模式 -->
+	<update id="SettingUpPrivacyPatterns">
+		update prm_task
+		<set>
+			<if test="privacyPattern == 0">
+				privacy_pattern = 1
+			</if>
+			<if test="privacyPattern == 1">
+				privacy_pattern = 0
+			</if>
+		</set>
+		<where>
+			task_id = #{taskId}
+		</where>
+	</update>
 
 </mapper>

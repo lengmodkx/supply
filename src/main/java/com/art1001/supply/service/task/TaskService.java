@@ -1,6 +1,8 @@
 package com.art1001.supply.service.task;
 
 import java.util.List;
+import java.util.Map;
+
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -8,6 +10,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 
 
 /**
@@ -197,7 +200,7 @@ public interface TaskService {
 	 * @param subLevel 子级任务信息
 	 * @return
 	 */
-	TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel,String projectId);
+	TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel);
 
 	/**
 	 * 完成子任务 和 重做子任务
@@ -212,4 +215,40 @@ public interface TaskService {
 	 * @param task 当前任务信息
 	 */
 	TaskLogVO copyTask(Task task);
+
+	/**
+	 * 收藏任务
+	 * @param task 任务实体信息
+	 * @return
+	 */
+	int collectTask(Task task);
+
+	/**
+	 * 判断当前登录用户有没有收藏该任务
+	 * @param task 当前用户的信息
+	 * @return
+	 */
+	boolean judgeCollectTask(Task task);
+
+	/**
+	 * 取消收藏的任务
+	 * @param task 任务的信息
+	 * @return
+	 */
+	int cancelCollectTask(Task task);
+
+	/**
+	 * 更改当前任务的隐私模式
+	 * @param task 任务的实体信息
+	 * @return
+	 */
+	int SettingUpPrivacyPatterns(Task task);
+
+	/**
+	 * 查询当前项目下的所有成员信息
+	 * @param projectId
+	 * @return
+	 */
+	List<UserEntity> findProjectAllMember(String projectId);
+
 }

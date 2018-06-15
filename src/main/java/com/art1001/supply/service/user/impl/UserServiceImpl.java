@@ -1,6 +1,8 @@
 package com.art1001.supply.service.user.impl;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl extends AbstractService<UserEntity, String> implements UserService {
@@ -143,6 +147,33 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     @Override
     public List<UserEntity> findManyUserById(String[] memberId) {
         return userMapper.findManyUserById(memberId);
+    }
+
+    /**
+     * 查询该项目下所有的成员信息
+     * @param projectId 项目编号
+     * @return
+     */
+    @Override
+    public List<UserEntity> findProjectAllMember(String projectId) {
+        return userMapper.findProjectAllMember(projectId);
+    }
+
+    /**
+     * 查询存在该任务的成员信息  和  不存在该任务中的成员信息
+     * @param task 任务实体信息
+     * @return
+     */
+    @Override
+    public Map<String, List<UserEntity>> findUserByIsExistTask(Task task) {
+        Map<String,List<UserEntity>> map = new HashMap<String,List<UserEntity>>(3);
+        //查询存在于该任务中的成员信息
+        List<UserEntity> existList = userMapper.findUserByExistTask(task);
+        //查询不存在于该任务中的成员信息
+        List<UserEntity> notExistList = userMapper.findUserByNotExistTask(task);
+        map.put("existList",existList);
+        map.put("notExistList",notExistList);
+        return map;
     }
 
 

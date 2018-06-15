@@ -346,4 +346,27 @@
 			#{u_id}
 		</foreach>
 	</select>
+
+	<!-- 查询指定项目下所有的成员信息 -->
+	<select id="findProjectAllMember" resultMap="userMap">
+		select
+		<include refid="userAttributes" ></include>
+		from tb_user where u_id in (select member_id from prm_project_member where project_id = #{projectId})
+	</select>
+
+	<!-- 查询存在该任务中的成员信息 -->
+	<select id="findUserByExistTask" resultMap="userMap">
+		select <include refid="userAttributes" ></include>
+		from tb_user where u_id in
+		(select member_id from prm_task_member where current_task_id = #{taskId} and  member_id in
+		 (select member_id from prm_project_member where project_id =  #{projectId}))
+	</select>
+
+	<!-- 查询不存在该任务中的成员信息 -->
+	<select id="findUserByNotExistTask" resultMap="userMap">
+		select <include refid="userAttributes" ></include>
+		from tb_user where u_id not in
+		(select member_id from prm_task_member where current_task_id = #{taskId} and  member_id in
+		(select member_id from prm_project_member where project_id =  #{projectId}))
+	</select>
 </mapper>

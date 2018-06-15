@@ -1,6 +1,8 @@
 package com.art1001.supply.mapper.user;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -60,4 +62,25 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
     List<UserEntity> findManyUserById(String[] memberId);
+
+	/**
+	 * 根据项目id 查询该项目下所有的用户信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<UserEntity> findProjectAllMember(String projectId);
+
+	/**
+	 * 查询存在于该任务中的成员信息
+	 * @param task
+	 * @return
+	 */
+	List<UserEntity> findUserByExistTask(Task task);
+
+	/**
+	 * 查询不存在于该任务中的成员信息
+	 * @param task
+	 * @return
+	 */
+	List<UserEntity> findUserByNotExistTask(Task task);
 }

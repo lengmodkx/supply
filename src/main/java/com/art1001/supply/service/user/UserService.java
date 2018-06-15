@@ -3,6 +3,8 @@ package com.art1001.supply.service.user;
 
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.entity.user.UserEntity;
 
@@ -43,4 +45,18 @@ public interface UserService {
 	 * @return
 	 */
     List<UserEntity> findManyUserById(String[] memberId);
+
+	/**
+	 * 根据项目id查找该项目下所有的成员信息
+	 * @param projectId 项目编号
+	 * @return
+	 */
+	List<UserEntity> findProjectAllMember(String projectId);
+
+	/**
+	 * 查询出项目下 存在该任务中的成员信息  和 不存在该任务中的成员信息
+	 * @param task 任务实体信息
+	 * @return
+	 */
+	public Map<String,List<UserEntity>> findUserByIsExistTask(Task task);
 }

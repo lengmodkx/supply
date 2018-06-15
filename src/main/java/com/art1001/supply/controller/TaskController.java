@@ -9,13 +9,16 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务控制器，关于任务的操作
@@ -48,6 +53,11 @@ public class TaskController {
     /** 任务关系表逻辑层接口 */
     @Resource
     private TaskMemberService taskMemberService;
+
+    /** 用户逻辑层接口 */
+    @Resource
+    private UserService userService;
+
 
     /**
      * 添加新任务
@@ -196,15 +206,12 @@ public class TaskController {
     }
 
     /**
-     * 更细项目信息 包括以下
-     * 1.修改任务内容丶优先级丶重复性
-     * 2.修改任务备注
-     * 3.修改任务的执行者
+     * 修改任务内容
      * @param task 任务的实体信息
      */
-    @PostMapping("upateTaskInfo")
+    @PostMapping("upateTaskContent")
     @ResponseBody
-    public JSONObject updateTask(Task task){
+    public JSONObject upateTaskContent(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.updateTask(task);
@@ -217,7 +224,85 @@ public class TaskController {
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("系统异常,操作失败! 当前任务:{},{}",task.getTaskId(),e);
+            log.error("系统异常,更新任务内容失败! 当前任务:{},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更改任务的执行者
+     * @param task 任务的实体信息
+     * @return
+     */
+    @PostMapping("upateTaskExecutor")
+    @ResponseBody
+    public JSONObject upateTaskExecutor(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","更新成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","更新失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,更改任务执行者失败! 当前任务:{},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更改任务的备注信息
+     * @param task
+     * @return
+     */
+    @PostMapping("upateTaskRemarks")
+    @ResponseBody
+    public JSONObject upateTaskRemarks(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","更新成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","更新失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,更新任务备注失败! 当前任务:{},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更改任务的优先级
+     * @param task 任务实体信息
+     * @return
+     */
+    @PostMapping("updateTaskPriority")
+    @ResponseBody
+    public JSONObject updateTaskPriority(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","更新成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","更新失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,更新任务优先级失败! 当前任务:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -435,8 +520,8 @@ public class TaskController {
     /**
      * 移除该任务上的标签
      * @param tags 当前任务上绑定的所有标签对象数组
-     * @param tag 当前要被的标签对象
-     * @param taskId 当前任务uid
+     * @param tag 当前要被移除的标签对象
+     * @param taskId 当前任务id
      * @return
      */
     public JSONObject removeTaskTag(@RequestParam Tag[] tags,@RequestParam Tag tag,@RequestParam String taskId){
@@ -588,6 +673,7 @@ public class TaskController {
      * @param task 当前任务信息
      * @return
      */
+    @PostMapping("cancelFabulous")
     public JSONObject cancelFabulous(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -606,13 +692,20 @@ public class TaskController {
         return jsonObject;
     }
 
+    /**
+     * 添加子任务
+     * @param currentTask 父任务信息
+     * @param subLevel 子任务信息
+     * @param projectId 当前项目id
+     * @return
+     */
     @PostMapping("addSubLevelTask")
     @ResponseBody
     public JSONObject addSubLevelTask(Task currentTask,Task subLevel,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存子任务信息至数据库
-            TaskLogVO taskLogVO = taskService.addSubLevelTasks(currentTask,subLevel,projectId);
+            TaskLogVO taskLogVO = taskService.addSubLevelTasks(currentTask,subLevel);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加成功!");
                 jsonObject.put("result","1");
@@ -652,13 +745,152 @@ public class TaskController {
         return jsonObject;
     }
 
-    public void copyTask(@RequestParam Task task){
+    /**
+     * 复制任务 及 子任务
+     * @param task 任务的实体信息
+     */
+    @PostMapping("copyTask")
+    @ResponseBody
+    public JSONObject copyTask(@RequestParam Task task){
+        JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.copyTask(task);
-
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","复制成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","复制失败!");
+                jsonObject.put("result","0");
+            }
         } catch (Exception e){
-            log.error("");
+            log.error("系统异常,复制任务失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
+        return jsonObject;
+    }
+
+    /**
+     * 收藏任务
+     * @param task
+     * @return
+     */
+    @PostMapping("collectTask")
+    @ResponseBody
+    public JSONObject collectTask(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = taskService.collectTask(task);
+            if(result > 0){
+                jsonObject.put("msg","收藏成功!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","收藏成功!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,任务收藏失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 取消收藏任务
+     * @param task 任务的信息
+     * @return
+     */
+    @PostMapping("cancelCollectTask")
+    @ResponseBody
+    public JSONObject cancelCollectTask(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = taskService.cancelCollectTask(task);
+            if(result > 0){
+                jsonObject.put("msg","取消收藏成功");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","取消收藏失败");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception  e){
+            log.error("系统异常,取消收藏失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 修改任务的隐私模式
+     * @param task 任务的实体信息
+     */
+    @PostMapping("settingUpPrivacyPatterns")
+    @ResponseBody
+    public JSONObject settingUpPrivacyPatterns(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = taskService.SettingUpPrivacyPatterns(task);
+            if(result > 0){
+                jsonObject.put("msg","修改成功!");
+                jsonObject.put("result","1");
+            } else{
+                jsonObject.put("msg","修改失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("更改隐私模式失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 根据任务id 查询任务的具体信息
+     * @param task 任务的信息
+     * @return
+     */
+    @PostMapping("findTaskById")
+    @ResponseBody
+    public JSONObject findTaskById(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //查询出此条任务的具体信息
+            Task taskById = taskService.findTaskByTaskId(task.getTaskId());
+            //判断当前用户有没有对该任务点赞
+            boolean isFabulous = taskService.judgeFabulous(task);
+            //判断当前用户有没有收藏该任务
+            boolean isCollect = taskService.judgeCollectTask(task);
+            //查询出项目下不存在与该任务中的成员信息
+            Map<String, List<UserEntity>> userByIsExistTask = userService.findUserByIsExistTask(task);
+            //返回数据
+            jsonObject.put("data",taskById);
+            jsonObject.put("isFabulous",isFabulous);
+            jsonObject.put("isCollect",isCollect);
+            jsonObject.put("existTaskUser",userByIsExistTask.get("existList"));
+            jsonObject.put("NotexistTaskUser",userByIsExistTask.get("notExistList"));
+        } catch (Exception e){
+            log.error("系统异常,获取数据失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 根据项目id 查询该项目下( 当前已经登录的用户除外 )的其他所有成员信息
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("findProjectAllMember")
+    @ResponseBody
+    public JSONObject findProjectAllMember(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<UserEntity> list = taskService.findProjectAllMember(projectId);
+            jsonObject.put("data",list);
+        } catch (Exception e){
+            log.error("系统异常,数据获取失败! 当前项目id: {},{}",projectId,e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 }

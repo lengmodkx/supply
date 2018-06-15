@@ -6,19 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.collect.TaskCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
-import com.art1001.supply.mapper.task.FabulousMapper;
-import com.art1001.supply.mapper.task.TaskLogMapper;
-import com.art1001.supply.mapper.task.TaskMapper;
-import com.art1001.supply.mapper.task.TaskMemberMapper;
+import com.art1001.supply.mapper.collect.TaskCollectMapper;
+import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.collect.TaskCollectService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,13 @@ public class TaskServiceImpl implements TaskService {
 	@Resource
     private FabulousMapper fabulousMapper;
 
+	/** TaskCollectService接口  */
+	@Resource
+    private TaskCollectService taskCollectService;
+
+    /** 用户逻辑层接口 */
+    @Resource
+    private UserService userService;
 	
 	/**
 	 * 重写方法
@@ -373,18 +383,24 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int removeTaskTag(Tag[] tags, Tag tag, String taskId) {
         StringBuilder taskTagsId = new StringBuilder();
+        //循环标签数组
         for (int i = 0; i < tags.length ; i++) {
+            //如果循环到的标签和要被删除的标签的信息一致时 清空该对象
             if(tags[i].getTagId().equals(tag.getTagId())){
                 tags[i] = null;
                 continue;
             }
+            //累加标签的id
             taskTagsId.append(tags[i].getTagId()).append(",");
         }
-        System.out.println(taskTagsId.toString());
         Task task = new Task();
+        //设置删除后的标签id
         task.setTagId(taskTagsId.toString());
+        //设置任务id
         task.setTaskId(taskId);
+        //设置更新时间
         task.setUpdateTime(System.currentTimeMillis());
+        //保存至数据库
         int result = taskMapper.updateTask(task);
         return result;
     }
@@ -528,6 +544,7 @@ public class TaskServiceImpl implements TaskService {
         //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         String member = "11111";
         int result = fabulousMapper.judgeFabulous(task.getTaskId(),member);
+        //如果已经给该任务点赞 返回 false 否则返回true
         if(result > 0){
             return false;
         } else{
@@ -545,6 +562,9 @@ public class TaskServiceImpl implements TaskService {
         //获取当前用户登录的id (暂时不用)
         //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         String memberId = "11111";
+        //这里要把当前任务的赞 - 1
+        task.setFabulousCount(task.getFabulousCount()-1);
+        taskMapper.updateTask(task);
         return fabulousMapper.cancelFabulous(task.getTaskId(),memberId);
     }
 
@@ -552,24 +572,21 @@ public class TaskServiceImpl implements TaskService {
      * 给当前任务添加子任务
      * @param currentTask 当前任务 信息
      * @param subLevel 子级任务信息
-     * @param projectId
      * @return
      */
     @Override
-    public TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel,String projectId) {
+    public TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel) {
         //获取当前登录用户的id
         //String id = ShiroAuthenticationManager.getUserEntity().getId();
         subLevel.setMemberId("11111");
         //设置是哪个项目的任务
-        subLevel.setProjectId(projectId);
+        subLevel.setProjectId(currentTask.getProjectId());
         //设置任务的层级
         subLevel.setLevel(2);
         //设置父任务id
         subLevel.setParentId(currentTask.getTaskId());
         //设置该任务的id
         subLevel.setTaskId(IdGen.uuid());
-        //设置任务的菜单
-        subLevel.setTaskMenuId(currentTask.getTaskMenuId());
         //设置该任务是否删除 0 未删除 1 已删除
         subLevel.setTaskDel(0);
         //设置该任务的创建时间
@@ -636,15 +653,13 @@ public class TaskServiceImpl implements TaskService {
         for (Task subLevelTask : subLevelTaskList) {
             //设置新的子任务id
             subLevelTask.setTaskId(IdGen.uuid());
-            //设置新的子任务id为新任务的id
+            //设置新的子任务id为新子任务的id
             subLevelTask.setParentId(task.getTaskId());
-            //设置子任务的项目id为新任务的项目id
+            //设置子任务的项目id为新子任务的项目id
             subLevelTask.setProjectId(task.getProjectId());
-            //设置子任务的菜单id为新任务的菜单id
-            subLevelTask.setTaskMenuId(task.getTaskMenuId());
-            //设置子任务的更新时间
+            //设置新子任务的更新时间
             subLevelTask.setUpdateTime(System.currentTimeMillis());
-            //设置任务的创建时间
+            //设置新子任务的创建时间
             subLevelTask.setCreateTime(System.currentTimeMillis());
             result += taskMapper.saveTask(subLevelTask);
         }
@@ -653,6 +668,95 @@ public class TaskServiceImpl implements TaskService {
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
         return taskLogVO;
+    }
+
+    /**
+     * 收藏任务
+     * @param task 任务实体信息
+     * @return
+     */
+    @Override
+    public int collectTask(Task task) {
+        TaskCollect taskCollect = new TaskCollect();
+        //设置收藏的id
+        taskCollect.setId(IdGen.uuid());
+        //暂时不用
+        //taskCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+        //taskCollect.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
+        //taskCollect.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
+        //设置收藏的项目的id
+        taskCollect.setProjectId(task.getProjectId());
+        //设置收藏的任务id
+        taskCollect.setTaskId(task.getTaskId());
+        //设置这条收藏的创建时间
+        taskCollect.setCreateTime(System.currentTimeMillis());
+        //设置这条收藏的更新时间
+        taskCollect.setUpdateTime(System.currentTimeMillis());
+        //保存至数据库
+        return taskCollectService.saveTaskCollect(taskCollect);
+    }
+
+    /**
+     * 判断当前用户有没有收藏当前任务
+     * @param task 当前用户的信息
+     * @return
+     */
+    @Override
+    public boolean judgeCollectTask(Task task) {
+        String memberId = "admin";
+        //暂时不用
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        //如果收藏了任务返回false 负责返回true
+        int result = taskCollectService.judgeCollectTask(memberId,task.getTaskId());
+        System.err.println(result);
+        if(result > 0){
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 取消收藏的任务
+     * @param task 任务的信息
+     * @return
+     */
+    @Override
+    public int cancelCollectTask(Task task) {
+        //暂时不用
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        int result = taskCollectService.deleteTaskCollectById("12",task.getTaskId());
+        return 0;
+    }
+
+    /**
+     * 更改当前任务的隐私模式
+     * @param task 任务的实体信息
+     * @return
+     */
+    @Override
+    public int SettingUpPrivacyPatterns(Task task) {
+        return taskMapper.SettingUpPrivacyPatterns(task);
+    }
+
+    /**
+     * 查询该项目下的所有成员信息
+     * @param projectId 当前项目的id
+     * @return
+     */
+    @Override
+    public List<UserEntity> findProjectAllMember(String projectId) {
+        //暂时不用
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        String memberId = "21";
+        List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
+        for (UserEntity userEntity : projectAllMember) {
+            //剔除当前用户
+            if(userEntity.getId().equals(memberId)){
+                projectAllMember.remove(userEntity);
+            }
+        }
+        return projectAllMember;
     }
 
 }

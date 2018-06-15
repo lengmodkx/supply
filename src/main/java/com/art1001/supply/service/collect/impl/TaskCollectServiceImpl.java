@@ -43,12 +43,13 @@ public class TaskCollectServiceImpl implements TaskCollectService {
 
 	/**
 	 * 通过id删除collect数据
-	 * 
-	 * @param id
+	 *
+	 * @param memberId 当前用户id
+	 * @param taskId 任务id
 	 */
 	@Override
-	public void deleteTaskCollectById(String id){
-		taskCollectMapper.deleteTaskCollectById(id);
+	public int deleteTaskCollectById(String memberId,String taskId){
+		return taskCollectMapper.deleteTaskCollectById(memberId,taskId);
 	}
 
 	/**
@@ -60,14 +61,15 @@ public class TaskCollectServiceImpl implements TaskCollectService {
 	public void updateTaskCollect(TaskCollect taskCollect){
 		taskCollectMapper.updateTaskCollect(taskCollect);
 	}
+
 	/**
 	 * 保存collect数据
-	 * 
+	 *
 	 * @param taskCollect
 	 */
 	@Override
-	public void saveTaskCollect(TaskCollect taskCollect){
-		taskCollectMapper.saveTaskCollect(taskCollect);
+	public int saveTaskCollect(TaskCollect taskCollect){
+		return taskCollectMapper.saveTaskCollect(taskCollect);
 	}
 	/**
 	 * 获取所有collect数据
@@ -78,5 +80,16 @@ public class TaskCollectServiceImpl implements TaskCollectService {
 	public List<TaskCollect> findTaskCollectAllList(){
 		return taskCollectMapper.findTaskCollectAllList();
 	}
-	
+
+	/**
+	 * 判断当前用户有没有收藏该任务
+	 * @param memberId 当前登录用户id
+	 * @param taskId 当前任务id
+	 * @return
+	 */
+	@Override
+	public int judgeCollectTask(String memberId, String taskId) {
+		return taskCollectMapper.judgeCollectTask(memberId,taskId);
+	}
+
 }

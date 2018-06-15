@@ -70,7 +70,7 @@
 	
 	<delete id="deleteTaskCollectById" parameterType="java.lang.String">
 		delete from
-		prm_task_collect where id = #{id}
+		prm_task_collect where member_id = #{memberId} and task_id = #{taskId}
 	</delete>
 	
 	<insert id="saveTaskCollect" parameterType="com.art1001.supply.entity.collect.TaskCollect">
@@ -164,5 +164,9 @@
 		WHERE id = #{id}
 
 	</update>
+
+	<select id="judgeCollectTask" resultType="java.lang.Integer">
+		select count(0) from prm_task_collect where task_id = #{taskId} and member_id = #{memberId}
+	</select>
 	
 </mapper>
