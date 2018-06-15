@@ -11,6 +11,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.mapper.task.FabulousMapper;
 import com.art1001.supply.mapper.task.TaskLogMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
@@ -44,6 +45,10 @@ public class TaskServiceImpl implements TaskService {
 	/** TaskLogService接口 */
 	@Resource
     private TaskLogService taskLogService;
+
+	/** FablousMapper接口*/
+	@Resource
+    private FabulousMapper fabulousMapper;
 
 	
 	/**
@@ -127,14 +132,16 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(IdGen.uuid());
         //初始创建任务设置为父任务
         task.setParentId("0");
+        //设置所在项目
+        task.setProjectId(project.getProjectId());
+        //设置该任务的初始状态
+        task.setTaskStatus("未完成");
+        //设置该任务是否删除 0 未删除 1 已删除
+        task.setTaskDel(0);
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //设置该任务的初始状态
-        task.setTaskStatus("1");
-        //设置该任务是否删除 0 未删除 1 已删除
-        task.setTaskDel(0);
         //保存任务信息
         taskMapper.saveTask(task);
         //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
@@ -179,26 +186,28 @@ public class TaskServiceImpl implements TaskService {
 	/**
 	 * 重写方法
 	 * 修改当前任务状态
-	 * @param taskId 任务id
+	 * @param task 任务信息
 	 * @return
 	 */
 	@Override
-	public TaskLogVO changeTaskStatus(String taskId,String taskStatus) {
+	public TaskLogVO resetAndCompleteTask(Task task) {
 	    //修改任务状态
-	    int result = taskMapper.changeTaskStatus(taskId,taskStatus,System.currentTimeMillis());
-        Task task = new Task();
-        task.setTaskId(taskId);
+	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
+	    StringBuilder content = new StringBuilder("");
         //如果当前状态为未完成  则 日志记录为 完成任务 否则为 重做任务
-        if(taskStatus == "1"){
-            TaskLogVO taskLogVO = saveTaskLog(task, TaskLogFunction.S.getName());
-            taskLogVO.setResult(result);
-            return taskLogVO;
-        } else{
-            TaskLogVO taskLogVO = saveTaskLog(task, TaskLogFunction.S.getName());
-            taskLogVO.setResult(result);
-	        return taskLogVO;
+        if(task.getTaskStatus().equals("完成")){
+            content.append(TaskLogFunction.Q.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
-	}
+        if(task.getTaskStatus().equals("未完成")){
+            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        if(task.getTaskStatus().equals("重新开始")){
+            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
 
     /**
      * 重写方法
@@ -487,5 +496,163 @@ public class TaskServiceImpl implements TaskService {
         return taskMemberService.delTaskMemberByTaskIdAndMemberId(task,userEntity);
     }
 
+    /**
+     * 给当前任务点赞
+     * @param task 任务的实体信息
+     * @return
+     */
+    @Override
+    public int clickFabulous(Task task) {
+        //暂时不用
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        Fabulous fabulous = new Fabulous();
+        fabulous.setTaskId(task.getTaskId());
+        fabulous.setMemberId("11111");
+        fabulous.setFabulousId(System.currentTimeMillis());
+        //添加任务和赞的关系数据
+        int result = fabulousMapper.addFabulous(fabulous);
+        //更新任务得赞数量
+        task.setFabulousCount(task.getFabulousCount() + 1);
+        System.out.println(task.getFabulousCount());
+        return taskMapper.updateTask(task);
+    }
+
+    /**
+     * 判断当前用户有没有给该任务点赞
+     * @param task 任务信息
+     * @return
+     */
+    @Override
+    public boolean judgeFabulous(Task task) {
+        //获取当前用户登录的id (暂时不用)
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        String member = "11111";
+        int result = fabulousMapper.judgeFabulous(task.getTaskId(),member);
+        if(result > 0){
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 用户取消赞
+     * @param task 当前任务信息
+     * @return
+     */
+    @Override
+    public int cancelFabulous(Task task) {
+        //获取当前用户登录的id (暂时不用)
+        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        String memberId = "11111";
+        return fabulousMapper.cancelFabulous(task.getTaskId(),memberId);
+    }
+
+    /**
+     * 给当前任务添加子任务
+     * @param currentTask 当前任务 信息
+     * @param subLevel 子级任务信息
+     * @param projectId
+     * @return
+     */
+    @Override
+    public TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel,String projectId) {
+        //获取当前登录用户的id
+        //String id = ShiroAuthenticationManager.getUserEntity().getId();
+        subLevel.setMemberId("11111");
+        //设置是哪个项目的任务
+        subLevel.setProjectId(projectId);
+        //设置任务的层级
+        subLevel.setLevel(2);
+        //设置父任务id
+        subLevel.setParentId(currentTask.getTaskId());
+        //设置该任务的id
+        subLevel.setTaskId(IdGen.uuid());
+        //设置任务的菜单
+        subLevel.setTaskMenuId(currentTask.getTaskMenuId());
+        //设置该任务是否删除 0 未删除 1 已删除
+        subLevel.setTaskDel(0);
+        //设置该任务的创建时间
+        subLevel.setCreateTime(System.currentTimeMillis());
+        //设置该任务的最后更新时间
+        subLevel.setUpdateTime(System.currentTimeMillis());
+        //设置该任务的初始状态
+        subLevel.setTaskStatus("未完成");
+        //保存任务信息
+        int result = taskMapper.saveTask(subLevel);
+        //拼接日志字符串
+        StringBuilder content = new StringBuilder("");
+        content.append(TaskLogFunction.H.getName()).append(" ").append("\"").append(subLevel.getTaskName()).append("\"");
+        //保存日志信息至数据库
+        TaskLogVO taskLogVO = saveTaskLog(currentTask, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 完成和重做子任务
+     * @param task 当前任务信息
+     * @return
+     */
+    @Override
+    public TaskLogVO resetAndCompleteSubLevelTask(Task task) {
+        StringBuilder content = new StringBuilder("");
+        //如果子任务为完成则设置成未完成 如果子任务为未完成则设置为完成
+        if(task.getTaskStatus().equals("完成")){
+            content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        if(task.getTaskStatus().equals("未完成")){
+            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        if(task.getTaskStatus().equals("重新开始")){
+            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        //更新任务信息
+        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 复制任务
+     * @param task 当前任务信息
+     * @return
+     */
+    @Override
+    public TaskLogVO copyTask(Task task) {
+        //根据被复制任务的id 取出该项目所有的子任务
+        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(task.getTaskId());
+        //把被复制的任务的id更改成新生成的任务的id
+        task.setTaskId(IdGen.uuid());
+        //更新新任务的创建时间
+        task.setCreateTime(System.currentTimeMillis());
+        //设置新任务的更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        taskMapper.saveTask(task);
+        int result = 0;
+        StringBuilder content = new StringBuilder("");
+        //把所有的子任务信息设置好后插入数据库
+        for (Task subLevelTask : subLevelTaskList) {
+            //设置新的子任务id
+            subLevelTask.setTaskId(IdGen.uuid());
+            //设置新的子任务id为新任务的id
+            subLevelTask.setParentId(task.getTaskId());
+            //设置子任务的项目id为新任务的项目id
+            subLevelTask.setProjectId(task.getProjectId());
+            //设置子任务的菜单id为新任务的菜单id
+            subLevelTask.setTaskMenuId(task.getTaskMenuId());
+            //设置子任务的更新时间
+            subLevelTask.setUpdateTime(System.currentTimeMillis());
+            //设置任务的创建时间
+            subLevelTask.setCreateTime(System.currentTimeMillis());
+            result += taskMapper.saveTask(subLevelTask);
+        }
+        //追加日志字符串
+        content.append(TaskLogFunction.R.getName()).append(" ").append(task.getTaskName());
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
 
 }

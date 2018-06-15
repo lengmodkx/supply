@@ -67,11 +67,11 @@ public interface TaskService {
 	TaskLogVO moveToRecycleBin(String taskId, String taskDel);
 
 	/**
-	 * 修改当前任务状态（完成/未完成）
-	 * @param taskId 任务id
+	 * 修改当前任务状态（完成/重做）
+	 * @param task 任务id
 	 * @return
 	 */
-	TaskLogVO changeTaskStatus(String taskId,String taskStatus);
+	TaskLogVO resetAndCompleteTask(Task task);
 
 	/**
 	 * 设定任务的时间(开始 / 结束)
@@ -174,4 +174,42 @@ public interface TaskService {
 	 * @return
 	 */
 	TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity);
+
+	/**
+	 * 给当前任务点赞
+	 * @param task 任务的实体信息
+	 * @return
+	 */
+    int clickFabulous(Task task);
+
+	boolean judgeFabulous(Task task);
+
+	/**
+	 * 用户取消对当前任务的赞
+	 * @param task 当前任务信息
+	 * @return
+	 */
+	int cancelFabulous(Task task);
+
+	/**
+	 * 给当前任务添加子级任务
+	 * @param currentTask 当前任务 信息
+	 * @param subLevel 子级任务信息
+	 * @return
+	 */
+	TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel,String projectId);
+
+	/**
+	 * 完成子任务 和 重做子任务
+	 * @param task 当前任务信息
+	 * @return
+	 */
+	TaskLogVO resetAndCompleteSubLevelTask(Task task);
+
+	/**
+	 * 复制任务
+	 * @return
+	 * @param task 当前任务信息
+	 */
+	TaskLogVO copyTask(Task task);
 }

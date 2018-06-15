@@ -81,6 +81,26 @@ public class AliyunOss {
     }
 
     /**
+     * 上传字符串
+     * @param key 前缀全路径
+     * @param content 字符串内容
+     */
+    public static void uploadString(String key, String content) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 创建Bucket
+            ensureBucket(ossClient, bucketName);
+            // 上传文件流
+            ossClient.putObject(bucketName, key, new ByteArrayInputStream(content.getBytes()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    /**
      * 创建文件夹
      * 根据项目名称创建文件夹
      *

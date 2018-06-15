@@ -18,8 +18,8 @@ public class FileControllerTest extends ApplicationTests {
     @Test
     public void fileListTest() {
         Project project = new Project();
-        project.setProjectId("1");
-        project.setProjectName("第一个项目");
+        project.setProjectId("2");
+        project.setProjectName("第二个项目");
         fileService.initProjectFolder(project);
     }
 
@@ -62,7 +62,18 @@ public class FileControllerTest extends ApplicationTests {
     }
 
     @Test
-    public void uploadFileTeset() {
+    public void uploadFileTest() {
+        String fileId = "6440d5be06ae4650bd527b00909e5352";
+        String fileName = "fileName";
+        File file = fileService.findFileById(fileId);
+        if (file != null) {
+            String fileUrl = file.getFileUrl() + fileName;
+            AliyunOss.uploadString(fileUrl, "测试字符串   test String");
+            file.setFileName(fileName);
+            file.setFileUrl(fileUrl);
+            file.setParentId(file.getFileId());
+            fileService.uploadFile(file);
+        }
 
     }
 }
