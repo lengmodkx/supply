@@ -22,7 +22,7 @@
     left: 50%;
     margin-left: -150px;
 }
-.search-input{
+.header-middle .search-input{
     width: 300px;
     height: 35px;
     margin-top: 7px;
@@ -38,7 +38,11 @@
 }
 .head-right{
     float: right;
-    line-height: 40px;
+    line-height: 50px;
+    margin-right: 60px;
+}
+.head-right .layui-breadcrumb a:hover{
+    color: #017ECA !important;
 }
 /*右侧头像和下拉栏*/
 .head-photo-wrap{

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/objsetting.css}" href="../static/css/objsetting.css">
+</head>
+<body>
+<div class="setting-box boxsizing layui-form">
+    <div class="setting-title">项目设置 <img src="../static/image/close.png" ></div>
+<div class="setting-content clearfix">
+    <!--左侧导航-->
+    <ul class="setting-left-nav">
+        <li class="now">项目信息</li>
+        <li>项目偏好</li>
+        <li>任务权限</li>
+        <li>更多</li>
+    </ul>
+    <!--右侧内容-->
+    <div class="settings boxsizing">
+        <!--项目封面-->
+        <div class="project-cover layui-form" >
+            <div class="project-cover-title">项目封面</div>
+            <img src="../static/image/nofile.png" class="project-cover-img">
+            <p class="fonts">项目名称</p>
+            <input type="text" name=""  placeholder="项目名称"  class="layui-input ">
+            <p class="fonts">项目简介</p>
+            <input type="text" name=""  placeholder="项目简介"  class="layui-input ">
+            <p class="fonts">项目公开性</p>
+            <select name="" lay-verify="">
+                <option value="">项目公开性</option>
+                <option value="010">公开</option>
+                <option value="021">不公开</option>
+            </select>
+            <p class="fonts">项目拥有者</p>
+            <div class="project-people">
+                <img src="../static/image/begintime.png" >
+                <span>谁谁谁</span>
+            </div>
+        </div>
+        <!--项目偏好-->
+        <div class="project-like layui-form" style="display: none">
+            <div class="project-like-title">应用排序</div>
+            <p class="px-sm">拖动图标排序。你可以前往项目菜单-应用与插件打开或关闭应用</p>
+            <ul id="px">
+                <li>任务</li>
+                <li>分享</li>
+                <li>文件</li>
+                <li>日程</li>
+                <li>群聊</li>
+                <li>统计</li>
+            </ul>
+            <div class="black-line"></div>
+            <div class="project-like-title">项目动态提醒</div>
+            <p class="px-sm">当项目有新动态时，以标记或通知的方式提醒，仅对个人</p>
+            <input type="radio" name="sex" value="" title="推送动态提醒（显示标记并以桌面通知的方式进行推送）">
+            <input type="radio" name="sex" value="" title="不推送动态提醒（只显示标记）" >
+        </div>
+        <!--任务权限-->
+        <div class="task-power" style="display: none">
+            <div class="task-power-title">
+                <p>可分别自定义配置任务的创建者/执行者权限</p>
+                <span>任务创建者/执行者权限自定义</span>
+                <div class="switchs"> <input type="checkbox" name="" lay-skin="switch"></div>
+            </div>
+            <div class="power-head">
+                <div class="layui-row">
+                    <div class="layui-col-md4">任务权限</div>
+                    <div class="layui-col-md4">创建者</div>
+                    <div class="layui-col-md4">执行者</div>
+                </div>
+            </div>
+            <div class="power-box">
+                <div class="layui-row">
+                    <div class="layui-col-md4">将任务移至回收站</div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                </div>
+            </div>
+            <div class="power-box">
+                <div class="layui-row">
+                    <div class="layui-col-md4">删除任务</div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                </div>
+            </div>
+            <div class="power-box">
+                <div class="layui-row">
+                    <div class="layui-col-md4">完成/重做任务</div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                </div>
+            </div>
+            <div class="power-box">
+                <div class="layui-row">
+                    <div class="layui-col-md4">更改执行者</div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                </div>
+            </div>
+            <div class="power-box">
+                <div class="layui-row">
+                    <div class="layui-col-md4">设置任务开始/截止时间</div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                </div>
+            </div>
+
+        </div>
+        <!--更多-->
+        <div class="setting-more" style="display: none">
+            <div class="setting-more-title">项目操作</div>
+            <span>一旦你退出了该项目，你不能查看任何关于该项目的信息。退出项目后如果想重新加入，请联系项目管理员</span>
+            <div class="layui-btn layui-btn-normal">退出</div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
+
+</html>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+    // 拖拽函数
+    Sortable.create(document.getElementById('px'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+
+    $(function () {
+        $(".setting-left-nav li").click(function () {
+            var i=$(this).index();
+            $(this).addClass("now").siblings().removeClass("now");
+            $(".settings>div").eq(i).show().siblings().hide()
+
+        })
+    })
+
+</script>

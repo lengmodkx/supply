@@ -1,0 +1,63 @@
+body{
+    background-color: black;
+}
+.my-collect{
+    width: 60%;
+    min-height: 500px;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 0 46px;
+}
+.collect-head{
+    width: 100%;
+    height: 55px;
+    font-size: 14px;
+    border-bottom: 1px solid #D5D5D5;
+}
+.collect-head span{
+    float: left;
+    height: 55px;
+    line-height: 60px;
+    margin-right: 50px;
+    cursor: pointer;
+}
+.collect-head span:nth-last-child(1){
+    margin-right: 0;
+}
+.collect-head span.now{
+    color: #017ECA;
+}
+.collect-search{
+    float: right;
+    position: relative;
+    margin-top: 10px;
+}
+.collect-search input{
+    width: 310px;
+    height: 35px;
+    padding-left: 45px;
+    background-color: #EEEEEE;
+    border: 0 none;
+    border-radius: 5px;
+}
+.collect-search i{
+    position: absolute;
+    left: 10px;
+    top: 8px;
+
+}
+/*没有收藏*/
+.no-collect img{
+    width: 77px;
+    height: 77px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 120px;
+}
+.no-collect p{
+    font-size: 14px;
+    color: #AAAAAA;
+    line-height: 40px;
+    text-align: center;
+}
