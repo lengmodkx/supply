@@ -6,10 +6,8 @@ function firefox() {
         $(".xjt").css("margin-top","-18px")
     }
 };
-
-$(function () {
-
-
+//使用layui的form表单
+function useLayerForm(){
     layui.use('form', function(){
         var form = layui.form;
 
@@ -27,10 +25,14 @@ $(function () {
                 $(".who-can-see").text("所有成员可见")
             }
         });
-
-
-
     });
+};
+
+$(function () {
+
+
+    useLayerForm();
+
     layui.use('laydate', function(){
         var laydate = layui.laydate;
 
@@ -122,11 +124,25 @@ var that;
                 '            <div class="line"></div>\n' +
                 '        </li>');
             layer.closeAll('page');
+            useLayerForm();
           if ($(".add-bq").val()==''){
               $(".tags").hide();
           }
         }
     });
+
+    // 点击 具体 任务 出现修改任务 弹窗
+    $("html").on("click",".assignment",function(){
+        changeRenwu();
+        $(".publish-bottom img:nth-of-type(1)").click(function () {
+           $(".fujian-box").slideDown()
+        });
+        $(".close-fujian").click(function () {
+            $(".fujian-box").slideUp()
+        })
+    });
+
+
 var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     //点击 新建任务列表
     $(".noclick-creat-model").click(function () {
@@ -192,8 +208,6 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
                 animation: 150 //动画参数
             });
 
-
-
         }
     });
 
@@ -211,6 +225,22 @@ function addRenwu() {
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
             content: $("#new-assignment")
+        });
+    });
+};
+//添加任务 弹框界面
+function changeRenwu() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['750px','500px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            anim: 1,  //动画 0-6
+            content: $("#revise-task")
         });
     });
 }

@@ -1,0 +1,197 @@
+body{
+    background-color: #FEFCFC;
+}
+.chat-box{
+    width: 60%;
+    min-height: 500px;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 0 46px;
+    position: relative;
+    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+}
+.chat-title{
+    width: 100%;
+    height: 55px;
+    font-size: 14px;
+    border-bottom: 1px solid #D5D5D5;
+    line-height: 60px;
+}
+.chat{
+    width: 100%;
+    height: 300px;
+    overflow-y: scroll;
+}
+.receive{
+    float: left;
+    width: 100%;
+    margin-top: 5px;
+}
+.receive img{
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.receive p{
+    float: left;
+    margin-left: 20px;
+    max-width: 88%;
+    padding: 10px 15px;
+    background-color: #DBE5EB;
+    border-radius: 10px;
+}
+.send{
+    float: right;
+    width: 100%;
+    margin-top: 5px;
+}
+.send img{
+    float: right;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.send p{
+    float: right;
+    margin-right: 20px;
+    max-width: 88%;
+    padding: 10px 15px;
+    background-color: #DBE5EB;
+    border-radius: 10px;
+}
+/*底部发布*/
+.publish{
+    width: 100%;
+    height: 120px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #EEEEEE;
+    padding: 10px 15px;
+}
+.publish-input{
+    padding: 10px;
+    width: 100%;
+    height: 60px;
+    background-color: #EEEEEE;
+    min-height: 60px;
+    resize: none;
+    border: 0 none;
+
+}
+.fenge-line{
+    width: 100%;
+    height: 2px;
+    background-color: #E2E2E2;
+}
+.publish-bottom{
+    width: 100%;
+    height: 40px;
+    position: relative;
+}
+.publish-bottom>img{
+    float: left;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+.publish-btn{
+    width: 60px;
+    height: 30px;
+    float: right;
+    margin-top: 10px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #1E9FFF;
+    color: white;
+    cursor: pointer;
+}
+.publish-btn:hover{
+    opacity: 0.8;
+}
+/*上传附件框*/
+.fujian-box{
+    width: 250px;
+    height: 210px;
+    position: absolute;
+    background-color: white;
+    top: -140px;
+    left: -100px;
+    padding: 5px;
+    box-shadow: 0 7px 21px rgba(0,0,0,.1);
+    border-radius: 3px;
+}
+.fujian-box-title{
+    width: 100%;
+    height: 50px;
+    padding: 10px 15px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    font-size: 16px;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+}
+.close-fujian{
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    cursor: pointer;
+}
+.close-fujian:hover{
+    color: #3da8f5 !important;
+}
+.zj-up,.select-up{
+    width: 100%;
+    height: 34px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    line-height: 34px;
+    font-size: 14px;
+}
+.zj-up:hover{
+    background-color: #f7f7f7;
+}
+.select-up:hover{
+    background-color: #f7f7f7;
+}
+.zj-up i,.select-up i{
+    float: left;
+    margin-right: 15px;
+    margin-left: 10px;
+}
+.zj-up span,.select-up span{
+    float: left;
+}
+.xian{
+    width: 100%;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+}
+.fujian-box-bottom{
+    width: 100%;
+    height: 50px;
+    padding: 10px 5px;
+}
+.lianjie{
+    width: 150px;
+    height: 28px;
+    float: left;
+}
+.add-fujian{
+    width: 54px;
+    height: 28px;
+    float: right;
+    text-align: center;
+    line-height: 28px;
+    background-color: #1E9FFF;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.add-fujian:hover {
+    opacity: 0.8;
+}
