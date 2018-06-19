@@ -72,7 +72,7 @@
     <div class="content-list possess" >
         <ul class="layui-row layui-col-space30" >
             <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
-                th:style="'background:url(' + @{/image/bj.jpg} + ');'"
+                th:style="'background-image:url(' + @{/image/bj.jpg} + ');'"
                 th:each="project : ${projects}"
                 th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'">
                 <div class="describe boxsizing">
@@ -101,7 +101,7 @@
     <div class="content-list partake" style="display: none">
         <ul class="layui-row layui-col-space30">
             <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
-                th:style="'background:url(' + @{/image/bj.jpg} + ');'"
+                th:style="'background-image:url(' + @{/image/bj.jpg} + ');'"
                 th:each="project : ${joinInproject}"
                 th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'">
                 <div class="describe boxsizing">
@@ -124,7 +124,7 @@
         <ul class="layui-row layui-col-space30">
             <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
                 th:each="project : ${collectrojects}"
-                th:style="'background:url(' + @{/image/bj.jpg} + ');'"
+                th:style="'background-image:url(' + @{/image/bj.jpg} + ');'"
                 th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'">
                 <div class="describe boxsizing">
                     <div>
@@ -142,7 +142,7 @@
     <!--项目回收站-->
     <div class="content-list recycle-bin " style="display: none">
         <ul class="layui-row layui-col-space30">
-            <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring" th:style="'background:url(' + @{/image/bj.jpg} + ');'" th:each="project : ${delProjects}">
+            <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring" th:style="'background-image:url(' + @{/image/bj.jpg} + ');'" th:each="project : ${delProjects}">
                 <div class="describe boxsizing">
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
