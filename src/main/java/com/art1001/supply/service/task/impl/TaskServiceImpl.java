@@ -702,7 +702,6 @@ public class TaskServiceImpl implements TaskService {
         //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         //如果收藏了任务返回false 负责返回true
         int result = taskCollectService.judgeCollectTask(memberId,task.getTaskId());
-        System.err.println(result);
         if(result > 0){
             return false;
         } else{
@@ -765,6 +764,7 @@ public class TaskServiceImpl implements TaskService {
         //暂时不用
         //taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
         //taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+        //taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
         //头像暂无
         taskLog.setMemberImg("");
         taskLog.setTaskId(task.getTaskId());

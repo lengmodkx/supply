@@ -731,13 +731,8 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.resetAndCompleteSubLevelTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","状态更新成功!");
-                jsonObject.put("result","1");
-            } else{
-                jsonObject.put("msg","状态更新失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","状态更新成功!");
+            jsonObject.put("result","1");
         } catch (Exception e){
             log.error("系统异常! 状态更新失败 当前任务id: {}{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -755,14 +750,9 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.copyTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","复制成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","复制失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","复制成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("系统异常,复制任务失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -780,14 +770,9 @@ public class TaskController {
     public JSONObject collectTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = taskService.collectTask(task);
-            if(result > 0){
-                jsonObject.put("msg","收藏成功!");
-                jsonObject.put("result","1");
-            } else{
-                jsonObject.put("msg","收藏成功!");
-                jsonObject.put("result","0");
-            }
+            taskService.collectTask(task);
+            jsonObject.put("msg","收藏成功!");
+            jsonObject.put("result","1");
         } catch (Exception e){
             log.error("系统异常,任务收藏失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -805,14 +790,9 @@ public class TaskController {
     public JSONObject cancelCollectTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = taskService.cancelCollectTask(task);
-            if(result > 0){
-                jsonObject.put("msg","取消收藏成功");
-                jsonObject.put("result","1");
-            } else{
-                jsonObject.put("msg","取消收藏失败");
-                jsonObject.put("result","0");
-            }
+            taskService.cancelCollectTask(task);
+            jsonObject.put("msg","取消收藏成功");
+            jsonObject.put("result","1");
         } catch (Exception  e){
             log.error("系统异常,取消收藏失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -829,14 +809,9 @@ public class TaskController {
     public JSONObject settingUpPrivacyPatterns(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = taskService.SettingUpPrivacyPatterns(task);
-            if(result > 0){
-                jsonObject.put("msg","修改成功!");
-                jsonObject.put("result","1");
-            } else{
-                jsonObject.put("msg","修改失败!");
-                jsonObject.put("result","0");
-            }
+            taskService.SettingUpPrivacyPatterns(task);
+            jsonObject.put("msg","修改成功!");
+            jsonObject.put("result","1");
         } catch (Exception e){
             log.error("更改隐私模式失败! 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -886,7 +861,12 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> list = taskService.findProjectAllMember(projectId);
-            jsonObject.put("data",list);
+            if(list.size() > 0){
+                jsonObject.put("data",list);
+            } else{
+                jsonObject.put("data",null);
+                jsonObject.put("msg","无数据");
+            }
         } catch (Exception e){
             log.error("系统异常,数据获取失败! 当前项目id: {},{}",projectId,e);
             throw new AjaxException(e);
@@ -905,14 +885,9 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.updateTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","更新成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","更新失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","更新成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
         } catch (ServiceException e){
             jsonObject.put("msg","必须完成子级任务,才能完成父级任务!");
             jsonObject.put("result","0");
