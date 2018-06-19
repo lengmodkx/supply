@@ -28,6 +28,7 @@
 		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+		<result column="other" property="other" jdbcType="VARCHAR"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -55,7 +56,8 @@
 				remind_time,
 				repetition_time,
 				fabulous_count,
-				privacy_pattern
+				privacy_pattern,
+				other
 	</sql>
 
 	<sql id="whereStatement">
@@ -187,6 +189,9 @@
 			<if test="privacyPattern != null">
 				privacy_pattern,
 			</if>
+			<if test="other != null">
+				other,
+			</if>
 
 		</trim>
 
@@ -266,6 +271,9 @@
 			</if>
 			<if test="privacy_pattern != null">
 				#{privacyPattern},
+			</if>
+			<if test="other != null">
+				#{other},
 			</if>
 		</trim>
 
@@ -349,6 +357,9 @@
 			</if>
 			<if test="privacyPattern != null">
 				privacy_pattern = #{privacyPattern},
+			</if>
+			<if test="other != null">
+				other = #{other},
 			</if>
 		</set>
 		WHERE task_id = #{taskId}
