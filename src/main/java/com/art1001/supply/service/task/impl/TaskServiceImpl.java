@@ -13,6 +13,7 @@ import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.collect.TaskCollectMapper;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -121,6 +122,10 @@ public class TaskServiceImpl implements TaskService {
         if(task.getExecutor() != null && task.getExecutor() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.U.getName());
         }
+        //更新任务其他
+        if(task.getOther() != null && task.getOther() != ""){
+            taskLogVO = saveTaskLog(task,TaskLogFunction.G.getName());
+        }
         int result = taskMapper.updateTask(task);
         taskLogVO.setResult(result);
         return taskLogVO;
@@ -157,7 +162,7 @@ public class TaskServiceImpl implements TaskService {
         //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
         taskMemberService.saveManyTaskeMmber(memberId,task);
         //拿到TaskLog对象并且保存
-        return saveTaskLog(task, TaskLogFunction.R.getName());
+        return saveTaskLog(task, TaskLogFunction.R.getName() + task.getTaskName());
     }
 
 	/**
@@ -201,13 +206,24 @@ public class TaskServiceImpl implements TaskService {
 	 */
 	@Override
 	public TaskLogVO resetAndCompleteTask(Task task) {
-	    //修改任务状态
-	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
 	    StringBuilder content = new StringBuilder("");
         //如果当前状态为未完成  则 日志记录为 完成任务 否则为 重做任务
         if(task.getTaskStatus().equals("完成")){
             content.append(TaskLogFunction.Q.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
+        //查询出该父级任务下的所有子级任务
+        List<Task> subLevelList = taskMapper.findSubLevelTask(task.getTaskId());
+        if(subLevelList != null){
+            //如果所有的子级任务里有未完成的则抛出异常
+            for (Task t : subLevelList) {
+                if(t.getTaskStatus().equals("未完成") || t.getTaskStatus().equals("重新开始")){
+                    throw new ServiceException("必须完成子级任务,才能完成父级任务!");
+                }
+            }
+        }
+	    //修改任务状态
+	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
+        int a = 1/0;
         if(task.getTaskStatus().equals("未完成")){
             content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
@@ -284,28 +300,6 @@ public class TaskServiceImpl implements TaskService {
             return taskLogVO;
         }
             return null;
-    }
-
-    /**
-     * 返回日志实体对象
-     */
-    @Override
-    public TaskLogVO saveTaskLog(Task task,String content){
-        TaskLog taskLog = new TaskLog();
-        taskLog.setId(IdGen.uuid());
-        taskLog.setMemberName("admin");
-        taskLog.setMemberId("4");
-        //暂时不用
-        //taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
-        //taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
-        //头像暂无
-        taskLog.setMemberImg("");
-        taskLog.setTaskId(task.getTaskId());
-        taskLog.setContent("admin " + content);
-        taskLog.setCreateTime(System.currentTimeMillis());
-        taskLogService.saveTaskLog(taskLog);
-        TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
-        return taskLogVO;
     }
 
     /**
@@ -757,6 +751,28 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         return projectAllMember;
+    }
+
+    /**
+     * 返回日志实体对象
+     */
+    @Override
+    public TaskLogVO saveTaskLog(Task task,String content){
+        TaskLog taskLog = new TaskLog();
+        taskLog.setId(IdGen.uuid());
+        taskLog.setMemberName("admin");
+        taskLog.setMemberId("4");
+        //暂时不用
+        //taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
+        //taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+        //头像暂无
+        taskLog.setMemberImg("");
+        taskLog.setTaskId(task.getTaskId());
+        taskLog.setContent("admin " + content);
+        taskLog.setCreateTime(System.currentTimeMillis());
+        taskLogService.saveTaskLog(taskLog);
+        TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
+        return taskLogVO;
     }
 
 }

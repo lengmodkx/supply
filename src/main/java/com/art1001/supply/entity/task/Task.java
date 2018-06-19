@@ -157,4 +157,9 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private int privacyPattern;
 
+	/**
+	 * 其他
+	 */
+	private String other;
+
 }

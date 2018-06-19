@@ -893,4 +893,33 @@ public class TaskController {
         }
         return jsonObject;
     }
+
+    /**
+     * 更新任务的其他
+     * @param task
+     * @return
+     */
+    @PostMapping("updateOther")
+    @ResponseBody
+    public JSONObject updateOther(@RequestParam Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","更新成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","更新失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (ServiceException e){
+            jsonObject.put("msg","必须完成子级任务,才能完成父级任务!");
+            jsonObject.put("result","0");
+        } catch (Exception e){
+            log.error("系统异常,更新任务其他失败! 当前任务id: {},{}",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }
