@@ -376,19 +376,19 @@ public class ProjectController {
             Relation relation = new Relation();
             relation.setProjectId(projectId);
             relation.setLable(0);
-            List<Relation> taskGroup = relationService.findRelationAllList(relation);
+            List<Relation> taskGroups = relationService.findRelationAllList(relation);
 
             //取第0个任务分组的菜单
             Relation relation1 = new Relation();
-            relation1.setParentId(taskGroup.get(0).getRelationId());
+            relation1.setParentId(taskGroups.get(0).getRelationId());
             relation1.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation1);
 
 
             Project project = projectService.findProjectByProjectId(projectId);
             model.addAttribute("project",project);
-            model.addAttribute("taskGroup",taskGroup);
-            model.addAttribute("taskMenu",taskMenu);
+            model.addAttribute("taskGroups",taskGroups);
+            model.addAttribute("taskMenus",taskMenu);
         }catch (Exception e){
             throw new SystemException(e);
         }
