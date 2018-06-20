@@ -6,6 +6,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
@@ -15,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -94,13 +94,7 @@ public class FileServiceImpl implements FileService {
         file.setProjectId(parentFile.getProjectId());
         file.setFileUrl(fileUrl);
         // 获取用户信息
-        // TODO: 2018/6/14 在缓存中得到用户
-        // UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("6cb972b67e8a4a3980fb9cd5d5a89cd2");
-        userEntity.setUserName("飞哥");
-        userEntity.getUserInfo().setImage("www.baudu.com/image");
-
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         file.setMemberId(userEntity.getId());
         file.setMemberName(userEntity.getUserName());
         file.setMemberImg(userEntity.getUserInfo().getImage());
@@ -154,12 +148,7 @@ public class FileServiceImpl implements FileService {
         file.setProjectId(project.getProjectId());
         file.setFileUrl(folderName);
         // 获取用户信息
-        // TODO: 2018/6/14 在缓存中得到用户
-//		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("6cb972b67e8a4a3980fb9cd5d5a89cd2");
-        userEntity.setUserName("飞哥");
-        userEntity.getUserInfo().setImage("www.baudu.com/image");
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
 
         file.setMemberId(userEntity.getId());
         file.setMemberName(userEntity.getUserName());
@@ -205,13 +194,7 @@ public class FileServiceImpl implements FileService {
         file.setProjectId(parentFile.getProjectId());
         file.setFileUrl(folderName);
         // 获取用户信息
-        // TODO: 2018/6/14 在缓存中得到用户
-        // UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("6cb972b67e8a4a3980fb9cd5d5a89cd2");
-        userEntity.setUserName("飞哥");
-        userEntity.getUserInfo().setImage("www.baudu.com/image");
-
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         file.setMemberId(userEntity.getId());
         file.setMemberName(userEntity.getUserName());
         file.setMemberImg(userEntity.getUserInfo().getImage());
@@ -226,13 +209,7 @@ public class FileServiceImpl implements FileService {
     public void uploadFile(File file) {
         file.setFileId(IdGen.uuid());
         // 获取用户信息
-        // TODO: 2018/6/14 在缓存中得到用户
-        // UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("6cb972b67e8a4a3980fb9cd5d5a89cd2");
-        userEntity.setUserName("飞哥");
-        userEntity.getUserInfo().setImage("www.baudu.com/image");
-
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         file.setMemberId(userEntity.getId());
         file.setMemberName(userEntity.getUserName());
         file.setMemberImg(userEntity.getUserInfo().getImage());
