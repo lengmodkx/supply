@@ -15,11 +15,17 @@ import java.util.List;
 @Slf4j
 public class AliyunOss {
 
-    // TODO 正式使用
+    // TODO 开发使用
     private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-    private static String accessKeyId = "LTAIP4MyTAbONGJx";
-    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
-    private static String bucketName = "art1001-bim-5d";
+    private static String accessKeyId = "LTAIqk28Y76sRtVQ";
+    private static String accessKeySecret = "95Gjw4otcqgADeixghuOcDU2oqTLrU";
+    private static String bucketName = "faydan";
+
+    // TODO 正式使用
+//    private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
+//    private static String accessKeyId = "LTAIP4MyTAbONGJx";
+//    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
+//    private static String bucketName = "art1001-bim-5d";
 
     // Object是OSS存储数据的基本单元，称为OSS的对象，也被称为OSS的文件。详细描述请参看“开发人员指南 > 基本概念 > OSS基本概念介绍”。
     // Object命名规范如下：使用UTF-8编码，长度必须在1-1023字节之间，不能以“/”或者“\”字符开头。
@@ -90,6 +96,26 @@ public class AliyunOss {
             ensureBucket(ossClient, bucketName);
             // 上传文件流
             ossClient.putObject(bucketName, key, new ByteArrayInputStream(content.getBytes()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    /**
+     * 上传byte数组
+     * @param objectName 文件名全路径
+     * @param bytes byte数组
+     */
+    public static void uploadByte(String objectName, byte[] bytes) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 创建Bucket
+            ensureBucket(ossClient, bucketName);
+            // 上传文件流
+            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
