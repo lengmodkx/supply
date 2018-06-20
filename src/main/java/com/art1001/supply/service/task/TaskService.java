@@ -171,8 +171,8 @@ public interface TaskService {
 	TaskLogVO addTaskMember(Task task, UserEntity[] userEntity);
 
 	/**
-	 * 移除项目成员
-	 * @param task 当前项目实体信息
+	 * 移除任务参与者
+	 * @param task 当前任务实体信息
 	 * @param userEntity 被移除的用户的信息
 	 * @return
 	 */
@@ -251,4 +251,47 @@ public interface TaskService {
 	 */
 	List<UserEntity> findProjectAllMember(String projectId);
 
+	/**
+	 * 智能分组 分别为  查询 今天的任务 , 完成的任务, 未完成的任务
+	 * @param status 任务状态条件
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> intelligenceGroup(String status,String projectId);
+
+	/**
+	 * 查询某个菜单下的所有任务的信息
+	 * @param menuId 菜单id
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> taskMenu(String menuId,String projectId);
+
+	/**
+	 * 查询某个人执行的所有任务
+	 * @param uId
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> findTaskByExecutor(String uId,String projectId);
+
+	/**
+	 * 查询等待认领的任务
+	 * @return
+	 */
+	List<Task> waitClaimTask(String projectId);
+
+	/**
+	 * 移除该任务的执行者 改为待认领状态
+	 * @param taskId 任务的id
+	 */
+	int removeExecutor(String taskId);
+
+	/**
+	 * 更新任务执行者
+	 * @param taskId 该任务的id
+	 * @param uId 新的任务执行者的id
+	 * @return
+	 */
+	int updateTaskExecutor(String taskId, String uId);
 }
