@@ -165,10 +165,11 @@ public interface TaskService {
 	/**
 	 * 添加参与者
 	 * @param task 任务实体信息
-	 * @param userEntity 多个用户的信息
+	 * @param addUserEntity 要添加的参与者信息
+	 * @param removeUserEntity 要移除的参与者信息
 	 * @return
 	 */
-	TaskLogVO addTaskMember(Task task, UserEntity[] userEntity);
+	TaskLogVO addAndRemoveTaskMember(Task task, UserEntity[] addUserEntity, UserEntity[] removeUserEntity);
 
 	/**
 	 * 移除任务参与者
@@ -176,7 +177,7 @@ public interface TaskService {
 	 * @param userEntity 被移除的用户的信息
 	 * @return
 	 */
-	TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity);
+	TaskLogVO removeTaskMember(Task task, UserEntity userEntity);
 
 	/**
 	 * 给当前任务点赞

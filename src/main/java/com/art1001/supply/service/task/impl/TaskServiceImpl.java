@@ -481,25 +481,41 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 添加项目成员
      * @param task 任务实体信息
-     * @param userEntity 多个用户的信息
+     * @param addUserEntity 要添加的参与者的信息
+     * @param removeUserEntity 要移除的参与者的信息
      * @return
      */
     @Override
-    public TaskLogVO addTaskMember(Task task, UserEntity[] userEntity) {
-        //向任务成员表中添加数据
-        int result = taskMemberService.addManyMemberInfo(userEntity,task);
+    public TaskLogVO addAndRemoveTaskMember(Task task, UserEntity[] addUserEntity, UserEntity[] removeUserEntity) {
         StringBuilder content = new StringBuilder("");
-        content.append(TaskLogFunction.C.getName()).append(" ");
-        //循环用来拼接log日志字符串
-        for (int i = 0; i < userEntity.length; i++) {
-            if(i == userEntity.length - 1){
-                content.append(userEntity[i].getUserName());
-            } else{
-                content.append(userEntity[i].getUserName()).append(",");
+        //向任务成员表中添加数据
+        if(addUserEntity != null){
+            taskMemberService.addManyMemberInfo(addUserEntity,task);
+            //循环用来拼接log日志字符串
+            content.append(TaskLogFunction.C.getName()).append(" ");
+            for (int i = 0; i < addUserEntity.length; i++) {
+                if(i == addUserEntity.length - 1){
+                    content.append(addUserEntity[i].getUserName());
+                } else{
+                    content.append(addUserEntity[i].getUserName()).append(",");
+                }
+            }
+        }
+        if(removeUserEntity != null){
+            taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUserEntity);
+            if(!StringUtils.isEmpty(content.toString())){
+                content.append(",");
+            }
+            content.append(TaskLogFunction.B.getName()).append(" ");
+            for (int i = 0; i < removeUserEntity.length; i++) {
+                if(i == removeUserEntity.length - 1){
+                    content.append(removeUserEntity[i].getUserName());
+                } else{
+                    content.append(removeUserEntity[i].getUserName()).append(",");
+                }
             }
         }
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
         return taskLogVO;
     }
 
@@ -510,8 +526,11 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO removeTaskMember(Task task, UserEntity[] userEntity) {
-        return taskMemberService.delTaskMemberByTaskIdAndMemberId(task,userEntity);
+    public TaskLogVO removeTaskMember(Task task, UserEntity userEntity) {
+        taskMemberService.removeTaskMember(task,userEntity);
+        StringBuilder builder = new StringBuilder("");
+        builder.append(TaskLogFunction.B.getName()).append(userEntity.getUserName());
+        return saveTaskLog(task,builder.toString());
     }
 
     /**

@@ -40,8 +40,8 @@ import java.util.Map;
  * 任务控制器，关于任务的操作
  */
 @Controller
-@RequestMapping("task")
 @Slf4j
+@RequestMapping("task")
 public class TaskController {
 
     /** 任务逻辑层接口 */
@@ -96,14 +96,15 @@ public class TaskController {
     /**
      * 添加项目成员
      * @param task
-     * @param userEntity
+     * @param addUserEntity 要添加项目成员
+     * @param removeUserEntity 要移除的项目成员
      */
-    @PostMapping("addTaskMember")
+    @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+    public JSONObject addAndRemoveTaskMember(@RequestParam Task task,@RequestParam UserEntity[] addUserEntity,@RequestParam UserEntity[] removeUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.addTaskMember(task,userEntity);
+            TaskLogVO taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加成功!");
                 jsonObject.put("result",taskLogVO.getResult());
@@ -127,7 +128,7 @@ public class TaskController {
      */
     @PostMapping("removeTaskMember")
     @ResponseBody
-    public JSONObject removeTaskMember(@RequestParam Task task,@RequestParam UserEntity[] userEntity){
+    public JSONObject removeTaskMember(@RequestParam Task task,@RequestParam UserEntity userEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.removeTaskMember(task,userEntity);
@@ -1056,5 +1057,10 @@ public class TaskController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    @GetMapping("task1")
+    public String task(){
+        return "mainpage";
     }
 }
