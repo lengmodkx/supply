@@ -220,7 +220,7 @@ function addRenwu() {
             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
-            area:['460px','652px'],
+            area:['500px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
@@ -228,19 +228,20 @@ function addRenwu() {
         });
     });
 };
-//添加任务 弹框界面
+//修改任务 弹框界面
 function changeRenwu() {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
-            area:['750px','500px'],
+            area:['500px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: $("#revise-task")
+            content: "页面是 reviserask.html"
         });
     });
 }

@@ -301,19 +301,14 @@ body{
     width: 460px;
     padding: 27px 32px;
     background-color: white;
-    /*position: fixed;*/
-    /*top: 0;*/
-    /*left: 50%;*/
-    /*margin-left: -230px;*/
-    box-shadow: 0 0 15px #C4C4C4;
-   /*overflow: scroll;*/
-    /*height: 100%;*/
+    overflow-y: scroll;
+    height: 600px;
 
 }
-/*.new-assignment::-webkit-scrollbar{*/
-    /*width: 1px;*/
-    /*height: 100%;*/
-/*}*/
+.new-assignment::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
 .close-assignment{
     position: absolute;
     top: 0;
@@ -325,12 +320,15 @@ body{
 }
 .rw-content{
     width: 100%;
-    height: 90px;
+    height: 70px;
     padding: 16px;
     border: 1px solid #d9d9d9;
     border-radius: 3px;
     line-height: 20px;
     z-index: 20;
+}
+.rw-content.layui-textarea{
+    min-height: 70px;
 }
 .who-create{
     width: 100%;
@@ -503,6 +501,7 @@ body{
     width: 24px;
     height: 24px;
     border-radius: 50%;
+    position: relative;
 }
 .add-work-people img{
     width: 100%;

@@ -1,6 +1,7 @@
+/*修改任务*/
 .revise-task-wrap{
     width: 500px;
-    height: 500px;
+    height: 600px;
     position: relative;
     margin: 0 auto;
 }
@@ -8,7 +9,7 @@
     width: 500px;
     padding: 16px;
     background-color: white;
-    height: 380px;
+    height: 480px;
     overflow-y: scroll;
     position: relative;
     overflow-x: hidden;
@@ -17,6 +18,42 @@
     width: 1px;
     height: 10px;
     background-color: 	#F8F8FF;
+}
+.close-revise-task{
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    z-index: 5;
+    cursor: pointer;
+}
+.close-revise-task:hover{
+    color: #3da8f5 !important;
+}
+.assignment-menu-show{
+    position: absolute;
+    right: 35px;
+    top: 18px;
+    z-index: 5;
+    cursor: pointer;
+}
+.assignment-menu-show:hover{
+    color: #3da8f5 !important;
+}
+.zan{
+    position: absolute;
+    right: 65px;
+    top: 18px;
+    z-index: 5;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    transition: all 0.2s;
+}
+.zan:hover{
+    width: 17px;
+    height: 17px;
+    top: 16px;
+    right: 63px;
 }
 .revise-task-title{
     width: 100%;
@@ -29,6 +66,10 @@
     height: 20px;
     line-height: 20px;
     margin-bottom: 15px;
+}
+.task-name .layui-form-checked[lay-skin=primary] i{
+    border-color: #2B93D2;
+    background-color: #2B93D2;
 }
 .task-name .layui-form-checkbox[lay-skin=primary]{
     float: left;
@@ -59,6 +100,42 @@
     margin-top: 25px;
     position: relative;
 }
+.who-wrap,.no-renling{
+    float: left;
+    padding: 5px 10px;
+    height: 25px;
+    position: relative;
+    border-radius: 15px;
+    margin-top: -5px;
+    cursor: pointer;
+    margin-left: -10px;
+    margin-right: 15px;
+}
+.no-renling span{
+    float: left;
+}
+.who-wrap:hover{
+    background-color: #f5f5f5;
+}
+.who-wrap:hover .remove-who-wrap{
+    display: block;
+}
+ .remove-who-wrap{
+    position: absolute;
+    top: -7px;
+    right: -3px;
+    display: none;
+}
+ .no-people-img{
+    float: left;
+    margin-right: 5px;
+}
+.no-renling{
+    display: none;
+}
+.no-renling:hover span{
+    color: #3da8f5;
+}
 .who-and-time img{
     width: 25px;
     height: 25px;
@@ -71,20 +148,29 @@
     font-size: 14px;
     float: left;
 }
+.time-wrap{
+    width: 100%;
+    height: 25px;
+    margin-top: 15px;
+}
 .time-wrap input{
     height: 25px;
     border: 0 none;
     padding-left: 0;
     cursor: pointer;
     line-height: 25px;
+    float: left;
+    width: 80%;
 }
-.kaishi-time{
-    position: absolute;
-    left: 100px;
+.time-wrap input::placeholder{
+    color: black;
 }
-.jieshu-time{
-    position: absolute;
-    left: 230px;
+.time-wrap>img{
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 15px;
+    margin-top: 3px;
 }
 .combox{
     width: 100%;
@@ -117,6 +203,191 @@
 .yxj.combox img{
     margin-top: 10px;
 }
+/*标签 搜索框   新建标签*/
+.tags-search-build{
+    width: 250px;
+    height: 250px;
+    background-color: white;
+    position: absolute;
+    top: 30px;
+    left: 75px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+}
+.add-tag{
+    position: relative;
+}
+.no-tags{
+    cursor: pointer;
+}
+.no-tags:hover{
+    color: #2B93D2;
+}
+.has-tags{
+
+}
+.tag{
+    padding: 0 8px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+    position: relative;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #A1D5FA;
+}
+.tag:hover i{
+    display: block;
+}
+.tag i{
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: none;
+}
+.tag-search{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.tag-search-title{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 15px;
+}
+.tag-search-input{
+    width: 80%;
+    height: 100%;
+    border: 0 none;
+    float: left;
+}
+.tag-search-title img{
+    width: 18px;
+    height: 18px;
+    float: right;
+    margin-right: 0;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.tags-ul{
+    width: 100%;
+    height: 200px;
+    padding-top: 50px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.tags-list{
+    width: 230px;
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+.tags-ul::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
+.tags-list:hover{
+    background-color: #f5f5f5;
+}
+.dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #3DA8F5;
+    float: left;
+    margin-right: 10px;
+    margin-top: 15px;
+}
+.tag-font{
+    font-size: 14px;
+    float: left;
+}
+/*新建标签*/
+.build-tags{
+    width: 100%;
+    height: 100%;
+}
+.build-tags-title{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 15px;
+    text-align: center;
+}
+.go-return{
+    float: left;
+    cursor: pointer;
+}
+.close-tag{
+    float: right;
+    cursor: pointer;
+}
+.build-tags-con{
+    width: 100%;
+    padding: 20px 15px;
+}
+.tag-name{
+    width: 100%;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #e5e5e5;
+    outline-style: none;
+}
+.color-pick{
+    width: 100%;
+    height: 24px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+.color-pick li{
+    width: 24px;
+    height: 24px;
+    float: left;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+}
+.color-pick li i{
+    display: none;
+}
+.color-pick li:nth-of-type(1){
+    background-color: #3DA8F5;
+}
+.color-pick li:nth-of-type(2){
+    background-color: #75C940;
+}
+.color-pick li:nth-of-type(3){
+    background-color: #2FBDB3;
+}
+.color-pick li:nth-of-type(4){
+    background-color: #797EC9;
+}
+.color-pick li:nth-of-type(5){
+    background-color: #FFAF38;
+}
+.color-pick li:nth-of-type(6){
+    background-color: #FF4F3E;
+}
+.tag-ok{
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+    background-color: #ccc;
+    border: 0 none;
+    outline-style: none;
+    color: white;
+    cursor: not-allowed;
+}
 .add-tag .label{
     width: 300px;
 }
@@ -127,6 +398,54 @@
 .add-guanlian span{
     color: #2B93D2;
     cursor: pointer;
+}
+/*具体子任务*/
+.child-task-list{
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+}
+.child-task-list .layui-form-checkbox[lay-skin=primary]{
+    float: left;
+    margin-top: 7px;
+}
+.child-task-con{
+    float: left;
+    margin-left: 10px;
+    width: 80%;
+}
+.child-task-con:hover{
+    background-color: #f7f7f7;
+}
+.child-task-con>span{
+    float: left;
+    font-size: 12px;
+}
+.child-task-con .dt{
+    float: left;
+    width: 40px;
+    height: 20px;
+    background-color: #f5f5f5;
+    text-align: center;
+    line-height: 20px;
+    margin-top: 7px;
+    margin-left: 15px;
+}
+.go-detail{
+    float: right;
+    line-height: 32px;
+    cursor: pointer;
+}
+.go-detail:hover{
+    color: #3da8f5 !important;
+}
+.child-task-who{
+    width: 24px;
+    height: 24px;
+    float: right;
+    margin-right: 10px;
+    border-radius: 50%;
+    margin-top: 4px;
 }
 .common-add-style{
     width: 90%;
@@ -295,5 +614,162 @@
     border-radius: 3px;
 }
 .add-fujian:hover{
+    opacity: 0.8;
+}
+/*任务菜单框*/
+
+.renwu-menu{
+    width: 200px;
+    padding: 0 20px 1px 20px;
+    background-color: white;
+    position: absolute;
+    top: 35px;
+    right: 0px;
+    box-shadow: 0 7px 21px rgba(0,0,0,.1);
+    color: #9F9F9F;
+}
+.scheduling-menu-title{
+    width: 100%;
+    height: 54px;
+    line-height: 54px;
+    text-align: center;
+    font-size: 16px;
+    border-bottom: 1px solid #D5D5D5;
+    margin-bottom: 22px;
+}
+.scheduling-menu-title img{
+    width: 16px;
+    height: 16px;
+    float: right;
+    margin-top: 20px;
+    cursor: pointer;
+
+}
+.menu-box{
+    width: 100%;
+    height: 22px;
+    margin-bottom: 22px;
+    line-height: 22px;
+    cursor: pointer;
+}
+.menu-box img{
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 20px;
+}
+.menu-box span{
+    float: left;
+    font-size: 14px;
+}
+.secret.menu-box{
+    height: 45px;
+    position: relative;
+    color: #9F9F9F;
+    margin-top: 10px;
+}
+.layui-form-switch{
+    margin-top: 0;
+}
+.switch{
+    float: right;
+}
+.who-can-see{
+    position: absolute;
+    bottom: 0;
+    left: 38px;
+}
+.layui-form-onswitch{
+    background-color: #017ECA;
+    border-color: #017ECA;
+}
+
+/*参与者  人员 弹框*/
+.people{
+    width: 252px;
+    height: 360px;
+    border-radius: 4px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background-color: white;
+    padding: 15px ;
+}
+.peoples{
+    width: 100%;
+    height: 210px;
+    padding-top: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-bottom: 1px solid #E5E5E5;
+}
+.peoples::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
+.peoples>p{
+    font-size: 12px;
+    color: #a6a6a6;
+}
+.one-people{
+    width: 100%;
+    height: 32px;
+    padding: 6px 0;
+    font-size: 14px;
+    line-height: 32px;
+    cursor: pointer;
+}
+.one-people:hover{
+    background-color: #f5f5f5;
+}
+.one-people img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    float: left;
+}
+.one-people span{
+    float: left;
+    margin-left: 15px;
+}
+.one-people i{
+    float: right;
+    margin-right: 5px;
+    display: none;
+}
+.add-new-people{
+    width: 100%;
+    height: 32px;
+    padding: 6px 0;
+    font-size: 14px;
+    line-height: 32px;
+    cursor: pointer;
+}
+
+.add-new-people img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    float: left;
+}
+.add-new-people span{
+    float: left;
+    margin-left: 15px;
+    color: #3da8f5;
+}
+
+
+.people-ok{
+    width: 220px;
+    height: 40px;
+    margin: 15px auto;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+    background-color: #3696DC;
+    cursor: pointer;
+}
+.people-ok:hover{
     opacity: 0.8;
 }
