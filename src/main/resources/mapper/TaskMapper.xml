@@ -499,4 +499,8 @@
 			task_id = #{taskId}
 		</where>
 	</update>
+
+	<delete id="removeTaskMember">
+		delete from prm_task_member where
+	</delete>
 </mapper>
