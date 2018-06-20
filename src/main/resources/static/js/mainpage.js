@@ -63,12 +63,38 @@ $(function () {
         animation: 150 //动画参数
     });
 
-
-
-
-
-
     firefox();
+//点击导航（设计任务、分享、文件、群聊、统计） 静态切换
+    $(".toper-nav li").click(function () {
+        $(this).addClass("now").siblings("li").removeClass("now")
+    });
+    $(".click-file").click(function () {
+        $("#file").show().siblings().hide()
+    });
+    $(".click-task").click(function () {
+        $("#project-design-task").show().siblings().hide()
+    });
+    $(".click-share").click(function () {
+        $("#share").show().siblings().hide()
+    });
+    $(".click-date").click(function () {
+        $("#date").show().siblings().hide()
+    });
+    $(".click-chat").click(function () {
+        $("#chat").show().siblings().hide()
+    });
+
+    // 项目菜单的高度
+    var winhei=parseInt(window.innerHeight);
+    $(".project-menu").css({"height":winhei-100 +'px'});
+    //点击菜单，打开项目菜单区域
+    $(".menu").click(function () {
+        $(".project-menu").fadeToggle();
+    });
+    $(".close-menu").click(function () {
+        $(".project-menu").fadeOut();
+    });
+
     //点击 任务列表顶部 下箭头，出现内容
     $("html").on("click",".add-new-model",function(){
         $(this).siblings(".lbmenu").slideToggle()
@@ -217,14 +243,14 @@ function addRenwu() {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
             area:['500px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: $("#new-assignment")
+            content: '页面是 revisetask.html'
         });
     });
 };
