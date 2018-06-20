@@ -1,196 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head >
     <meta charset="UTF-8">
-    <title>主页面</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/addtask.css}" href="../static/css/addtask.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
 </head>
+
 <body>
-<!--头部-->
-<div class="header">
-        <div class="head-left">5D管理系统-项目协同管理</div>
-        <div class=" header-middle">
-            <input type="text"    class="layui-input search-input boxsizing">
-            <i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>
-        </div>
-        <div class="head-right">
-            <span class="layui-breadcrumb" lay-separator="|">
-                <a id="mine">我的</a>
-                <a id="new-built">新建</a>
-                <a id="calendar">日历</a>
-                <a id="msg">消息</a>
-                <a id="help">帮助</a>
-            </span>
-        </div>
-
-    <!--右侧固定的头像与菜单栏-->
-    <div class="head-photo-wrap">
-        <img src="../static/image/add.png" class="head-photo">
-
-        <div class="vertical-nav">
-            <ul>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">创建企业</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">个人项目</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">账号设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">偏好设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">切换至国际服务器</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">退出登录</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!--点击 帮助 出现的弹框-->
-    <div class="help-list"></div>
-</div>
-
-<!--顶部-->
-<div class="toper-wrap boxsizing" >
-    <div class="toper-left">
-        <a href="#">首页</a>
-        <i class="layui-icon layui-icon-right" style="font-size: 16px; color: #C3C2C2;"></i>
-        <a href="#">BIM5D过程管理平台</a>
-        <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
-    </div>
-    <div class="toper-nav">
-        <ul>
-            <li>
-                <a href="#">UI设计任务</a>
-            </li>
-            <div>
-                <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
-                <span>|</span>
-            </div>
-
-            <li>
-                <a href="#">分享</a>
-            </li>
-            <li>
-                <a href="#">文件</a>
-            </li>
-            <li>
-                <a href="#">日程</a>
-            </li>
-            <li>
-                <a href="#">群聊</a>
-            </li>
-            <li>
-                <a href="#">统计</a>
-            </li>
-        </ul>
-    </div>
-    <div class="toper-right">
-        <i class="layui-icon layui-icon-user" style="font-size: 16px; color: #017ECA;"></i>
-        <span class="team">群组</span>
-        <i class="layui-icon layui-icon-app" style="font-size: 16px; color: #017ECA;"></i>
-        <span class="menu">菜单</span>
-    </div>
-    <!--点击菜单，出现 的项目菜单 区域-->
-    <div class="project-menu boxsizing" style="display: none">
-        <div class="menu-title">项目菜单<span class="close-menu">关闭</span></div>
-        <div class="menu-list menu-set">
-            <img src="../static/image/setting.png">
-            <span>项目设置</span>
-        </div>
-        <div class="menu-list menu-tag">
-            <img src="../static/image/biaoqian.png">
-            <span>标签</span>
-        </div>
-        <div class="menu-list menu-cj">
-            <img src="../static/image/chajian.png">
-            <span>应用与插件</span>
-        </div>
-        <div class="menu-list menu-more">
-            <img src="../static/image/gengduo.png">
-            <span>查看更多</span>
-        </div>
-        <div class="heng-line"></div>
-        <div class="menu-list menu-evolve" style="margin-top: 24px">
-            <img src="../static/image/jinzhan.png">
-            <span>项目进展</span>
-        </div>
-        <img src="" class="pro-evolve">
-        <div class="heng-line"></div>
-        <div class="menu-list menu-trends-title" style="margin-top: 24px">
-            <img src="../static/image/dongtai.png">
-            <span>项目动态</span>
-        </div>
-        <ul class="pro-trends boxsizing">
-            <li class="trends-list">
-                <div class="trends-list-left">
-                    <img class="who-trends-img" src="../static/image/add.png" >
-                </div>
-                <div class="trends-list-right">
-                    <span class="who-trends-name">谁谁谁</span>
-                    <span class="do-what">重做了任务：登录功能  DT-18</span>
-                    <p class="trends-time">17分钟前</p>
-                </div>
-            </li>
-            <li class="trends-list">
-                <div class="trends-list-left">
-                    <img class="who-trends-img" src="../static/image/add.png" >
-                </div>
-                <div class="trends-list-right">
-                    <span class="who-trends-name">谁谁谁</span>
-                    <span class="do-what">重做了任务：登录功能  DT-18</span>
-                    <p class="trends-time">17分钟前</p>
-                </div>
-            </li>
-
-        </ul>
-    </div>
-
-</div>
-
-<!--点击 ‘我的’ 出现的顶部内容-->
-<div class="my-toper" style="display: none">
-   <div class="my-nav-wrap">
-       <ul>
-           <li id="near-thing" class="now">近期的事</li>
-           <li id="my-task">任务</li>
-           <li id="my-scheduling">日程</li>
-           <li id="my-file">文件</li>
-           <li id="my-collect">收藏</li>
-       </ul>
-   </div>
-</div>
-<!--内容区域-->
-<div class="content-wrap-wrap boxsizing">
- <div class="content-wrap boxsizing">
-   <div class="content boxsizing">
-
-
-   </div>
- </div>
-</div>
-
-
-<div th:replace="common/common_foot :: foot"></div>
-
-
 <!--添加任务界面-->
-<div id="new-assignment" class="new-assignment boxsizing layui-form" style="display: none">
+<div id="new-assignment" class="new-assignment boxsizing layui-form" >
     <textarea name="" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
         <div class="who-wrap">
@@ -354,45 +175,101 @@
     </div>
 </div>
 
-<!--设计修改任务界面-->
-<div id="change-task" style="display: none"></div>
-
+</body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-</body>
+<script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
+<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 </html>
 <script>
-   $(function () {
-       $(".content").load("task.html");
-       $("#mine").click(function () {
-           $(".toper-wrap").slideUp();
-           $(".my-toper").slideDown();
-           $(".content").load("mynearthing.html");
-       })
-   });
-//点击 我的出现的导航条 点击加载不同页面
-   $("#near-thing").click(function () {
-       $(".content").load("mynearthing.html");
-   });
-   $("#my-task").click(function () {
-       $(".content").load("mytask.html");
-   });
-   $("#my-scheduling").click(function () {
-       $(".content").load("myscheduling.html");
-   });
-   $("#my-file").click(function () {
-       $(".content").load("myfile.html");
-   });
-   $("#my-collect").click(function () {
-       $(".content").load("mycollect.html");
-   });
+    $(function () {
+        //点击 认领人 的x 号， 移出认领人 ，待认领出现
+        $(".remove-who-wrap").click(function () {
+            $(this).parent().remove();
+            if ($(".who-and-time").find(".who-wrap").length==0){
+                $(".no-renling").show();
+            }else {
+                $(".no-renling").hide();
+            }
+        });
+        //点击 待认领 出现 人员名单
+        $(".no-renling").click(function (e) {
+            $(".people").show(500)
+            e.stopPropagation()
+        });
+        // 点击添加标签
+        $(".no-tags").click(function (e) {
+            $(".tags-search-build").show();
+            $(".tag-search").show();
+            $(".no-tags").hide();
+            e.stopPropagation();
+        });
+        $(".tag-search-title img").click(function () {
+            $(".tag-search").hide();
+            $(".build-tags").show();
+        });
+        $(".go-return").click(function () {
+            $(".tag-search").show();
+            $(".build-tags").hide();
+        });
+        $(".close-tag").click(function () {
+            $(".tags-search-build").slideUp();
+            $(".no-tags").show();
+        });
+        $(".has-tags>i").click(function (e) {
+            $(".tags-search-build").show();
+            $(".tag-search").show();
 
-   //点击 添加 类名now 使文字变色
-   $(".my-nav-wrap li").click(function () {
-       $(this).addClass("now").siblings().removeClass("now")
-   });
-   layui.use('element', function(){
-       var element = layui.element;
+            e.stopPropagation();
+        });
 
-   });
+        // 点击某个具体标签
+        $(".tags-list").click(function () {
+            var tag=$(this).find(".tag-font").text();
+            $(".has-tags").show()
+            $(".has-tags").prepend('<span class="tag">\n' +
+                '                    '+tag+'  \n' +
+                '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
+                '                </span>')
+        });
+        $(".revise-task").on("click",".tag i",function(){
+            $(this).parent().remove();
+            //判断 有没有标签
+            console.log($(".has-tags span").length);
+            if ($(".has-tags span").length==0){
+                $(".has-tags").hide();
+                $(".no-tags").show();
+            } else {
+                $(".has-tags").show();
+                $(".no-tags").hide();
+            }
+        });
+        //点击空白区域 添加标签消失
+        $(document).click(function(event){
+            var _con = $('.tags-search-build');   // 设置目标区域
+            if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+                //$('#divTop').slideUp('slow');   //滑动消失
+                $('.tags-search-build').hide(500);          //淡出消失
+            }
+        });
+        //点击添加人员按钮
+        $(".add-work-people img").click(function (e) {
+            $(".people").show(500);
+            e.stopPropagation()
+        });
+
+        //点击人员 出现对勾
+        $(".one-people").click(function () {
+            $(this).find("i").toggle();
+
+        });
+        //点击空白区域 添加人员消失
+        $(document).click(function(event){
+            var _con = $('.people ');   // 设置目标区域
+            if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+                //$('#divTop').slideUp('slow');   //滑动消失
+                $('.people ').hide(500);          //淡出消失
+            }
+        });
+    })
 </script>
