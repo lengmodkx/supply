@@ -238,6 +238,31 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     });
 
 });
+$("#mine").click(function () {
+
+    mypage();
+
+
+});
+
+//点击我的 弹出 我的页面框
+function mypage() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '50px',
+             area:['100%','100%'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['mypage.html','no']
+        });
+    });
+};
 //添加任务 弹框界面
 function addRenwu() {
     layui.use('layer', function(){
@@ -250,7 +275,7 @@ function addRenwu() {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: '页面是 revisetask.html'
+            content: 'addtask.html'
         });
     });
 };
@@ -267,7 +292,7 @@ function changeRenwu() {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "页面是 reviserask.html"
+            content: "reviserask.html"
         });
     });
 }
