@@ -18,8 +18,8 @@ public class FileControllerTest extends ApplicationTests {
     @Test
     public void fileListTest() {
         Project project = new Project();
-        project.setProjectId("2");
-        project.setProjectName("第二个项目");
+        project.setProjectId("1");
+        project.setProjectName("第一个项目");
         fileService.initProjectFolder(project);
     }
 
@@ -27,7 +27,7 @@ public class FileControllerTest extends ApplicationTests {
     public void fileChildListTest() {
         String projectId = "1";
         String parentId = "6440d5be06ae4650bd527b00909e5352";
-        List<File> fileList = fileService.findChildFile(projectId, parentId);
+        List<File> fileList = fileService.findChildFile(projectId, parentId, 0);
 
         fileList.forEach(System.out::println);
     }
@@ -51,11 +51,11 @@ public class FileControllerTest extends ApplicationTests {
         File file = new File();
         file.setFileId(fileId);
         file.setFileDel(1);
-        fileService.updateFile(file);
+//        fileService.updateFile(file);
 
         String projectId = "1";
         String parentId = "6440d5be06ae4650bd527b00909e5352";
-        List<File> fileList = fileService.findChildFile(projectId, parentId);
+        List<File> fileList = fileService.findChildFile(projectId, parentId, 0);
         fileList.forEach(f -> {
             System.out.println(f.getFileName());
         });
@@ -64,7 +64,7 @@ public class FileControllerTest extends ApplicationTests {
     @Test
     public void uploadFileTest() {
         String fileId = "6440d5be06ae4650bd527b00909e5352";
-        String fileName = "fileName";
+        String fileName = "fileNamex";
         File file = fileService.findFileById(fileId);
         if (file != null) {
             String fileUrl = file.getFileUrl() + fileName;
@@ -76,4 +76,6 @@ public class FileControllerTest extends ApplicationTests {
         }
 
     }
+
+
 }

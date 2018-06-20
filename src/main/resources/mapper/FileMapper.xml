@@ -82,14 +82,14 @@
 		SELECT COUNT(0) FROM prm_file WHERE parent_id = #{parentId} AND file_name = #{fileName}
 	</select>
 
-	<select id="findChildFile" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="findChildFile" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
 		where
 		project_id = #{projectId}
 		and parent_id = #{parentId}
-		and file_del = 0
+		and file_del = #{isDel}
 	</select>
 	
 	<delete id="deleteFileById" parameterType="java.lang.String">

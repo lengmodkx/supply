@@ -2,10 +2,13 @@ package com.art1001.supply.util;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.*;
+import com.art1001.supply.entity.file.File;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,6 +144,7 @@ public class AliyunOss {
             if (listing.getCommonPrefixes().size() > 0) {
                 //CommonPrefixs列表中给出的是fun目录下的所有子文件夹。fun/movie/001.avi 和 fun/movie/007.avi 两个文件并没有被列出来，因为它们属于fun文件夹下的movie目录。
                 for (String commonPrefix : listing.getCommonPrefixes()) {
+                    File file = new File();
                     // 去掉前缀
                     fileList.add(commonPrefix.replace(folderName, ""));
                 }
@@ -152,6 +156,14 @@ public class AliyunOss {
                 for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
                     // 去掉前缀
                     fileList.add(objectSummary.getKey().replace(folderName, ""));
+
+                    System.out.println("=============================");
+                    System.out.println("=============================");
+                    System.out.println("=============================");
+                    System.out.println(objectSummary.getSize());
+                    System.out.println("=============================");
+                    System.out.println("=============================");
+                    System.out.println("=============================");
                 }
             }
         } catch (Exception e) {
@@ -163,8 +175,68 @@ public class AliyunOss {
         return fileList;
     }
 
+    /**
+     * 下载文件
+     * @param key 路径
+     * @param localFile 名称
+     */
+    public static void downFileToLocation(String key, String localFile){
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 下载object到文件
+            ossClient.getObject(new GetObjectRequest(bucketName, key), new java.io.File(localFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    public static InputStreamReader downloadInputStream(String objectName) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 下载object到文件
+            //ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
+            OSSObject ossObject = ossClient.getObject(bucketName, objectName);
+            // 读取文件内容。
+            System.out.println("Object content:");
+            return new InputStreamReader(ossObject.getObjectContent());
+//            BufferedReader reader = new BufferedReader();
+//            while (true) {
+//                String line = reader.readLine();
+//                if (line == null) break;
+//                System.out.println("\n" + line);
+//            }
+            //数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
+//            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+        return null;
+    }
+
+    /**
+     * 删除单个文件
+     * @param key 文件路径名
+     */
+    public static void deleteFile(String key){
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 下载object到文件
+            ossClient.deleteObject(bucketName, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
     public static void main(String[] args) {
-        List<String> fileList = fileList("第一个项目-1528941522377/视频/");
-        fileList.forEach(System.out::println);
+        InputStreamReader inputStreamReader = downloadInputStream("第一个项目-1529401007925/卡哇伊-1529401803055.jpg");
     }
 }
