@@ -2,6 +2,9 @@ package com.art1001.supply.entity.relation;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.List;
+
+import com.art1001.supply.entity.task.Task;
 import lombok.Data;
 
 /**
@@ -45,5 +48,7 @@ public class Relation extends BaseEntity implements Serializable {
 	 * 删除分组/菜单 0不删除，1删除
 	 */
 	private Integer relationDel;
+
+	private List<Task> taskList;
 
 }

@@ -77,8 +77,8 @@ public class RelationServiceImpl implements RelationService {
 	 * @return
 	 */
 	@Override
-	public List<Relation> findRelationAllList(){
-		return relationMapper.findRelationAllList();
+	public List<Relation> findRelationAllList(Relation relation){
+		return relationMapper.findRelationAllList(relation);
 	}
 
 	/**

@@ -52,7 +52,7 @@ public interface RelationService {
 	 * 
 	 * @return
 	 */
-	public List<Relation> findRelationAllList();
+	public List<Relation> findRelationAllList(Relation relation);
 
 	/**
 	 * 根据分组删除分组下的所有菜单

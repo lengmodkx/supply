@@ -191,7 +191,7 @@
     //点击项目进入任务界面
     function projectClick(projectId){
         console.log(projectId);
-        window.location.href = "/project/task?projectId="+projectId;
+        window.location.href = "/project/task.html?projectId="+projectId;
     }
 
     //点击收藏项目
@@ -252,7 +252,7 @@
                     console.log(data);
                     if(data.result===1){
                        //创建项目成功之后进入任务主界面
-                        window.location.href = "/project/task?projectId="+data.projectId;
+                        window.location.href = "/project/task.html?projectId="+data.projectId;
                     }else{
                         layer.msg(data.msg,{icon:5});
                     }
