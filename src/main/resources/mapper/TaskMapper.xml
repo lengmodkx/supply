@@ -472,7 +472,7 @@
 	<select id="taskMenu" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where project_id = #{projectId} and task_menu_id = #{menuId}
+		from prm_task where task_menu_id = #{menuId}
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->

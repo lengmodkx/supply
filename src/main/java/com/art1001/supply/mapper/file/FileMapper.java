@@ -61,9 +61,10 @@ public interface FileMapper {
 	 *
 	 * @param projectId 关联项目id
 	 * @param parentId 父级id，顶级目录为 0
+	 * @param isDel 删除标识
 	 * @return List<File>
 	 */
-	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId);
+	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId, @Param("isDel") Integer isDel);
 
 	/**
 	 * 查新该目录下的名称是否存在

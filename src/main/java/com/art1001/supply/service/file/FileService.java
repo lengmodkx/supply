@@ -1,9 +1,12 @@
 package com.art1001.supply.service.file;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -28,7 +31,13 @@ import com.art1001.supply.entity.project.Project;
 
 	/**
 	 * 修改file数据
+	 *
+	 * @param projectId 项目id
+	 * @param parentId  上级目录id
+	 * @param multipartFile 文件
 	 */
+	 String uploadFile(String projectId, String parentId, MultipartFile multipartFile, HttpServletRequest request) throws Exception;
+
 	 void updateFile(File file);
 
 	/**
@@ -64,17 +73,13 @@ import com.art1001.supply.entity.project.Project;
 	void createFolder(String parentId, String fileName);
 
     /**
-     * 上传文件
-     */
-	void uploadFile(File file);
-
-    /**
      * 查询当前文件目录下的文件夹及文件
      *
      * @param projectId 关联项目id
      * @param parentId 父级id，顶级目录为 0
+	 * @param isDel 删除标识
      * @return List<File>
      */
-	List<File> findChildFile(String projectId, String parentId);
+	List<File> findChildFile(String projectId, String parentId, Integer isDel);
 
 }

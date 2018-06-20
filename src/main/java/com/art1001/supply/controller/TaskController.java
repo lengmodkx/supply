@@ -945,14 +945,14 @@ public class TaskController {
      */
     @PostMapping("taskMenu")
     @ResponseBody
-    public JSONObject taskMenu(@RequestParam String menuId,@RequestParam String projectId){
+    public JSONObject taskMenu(@RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try{
             if(StringUtils.isEmpty(menuId)){
                 jsonObject.put("msg","请选择菜单!");
                 return jsonObject;
             }
-            List<Task> taskList = taskService.taskMenu(menuId,projectId);
+            List<Task> taskList = taskService.taskMenu(menuId);
             if(taskList.size() > 0){
                 jsonObject.put("data",taskList);
                 jsonObject.put("result","1");

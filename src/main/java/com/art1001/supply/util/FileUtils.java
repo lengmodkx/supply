@@ -42,6 +42,14 @@ public class FileUtils {
      * @param myFile 文件
      * @param imgDir 图片存储目录
      * @param type   文件格式类型
+     *
+     * @return {@link Map}
+     * map:
+     *      success: true false
+     *      result: 提示信息
+     *      filename: 文件名
+     *      originalFilename: 原始文件名
+     *
      */
     public static Map<String, Object> ossfileUpload(MultipartFile myFile, String imgDir, HttpServletRequest request, String type) throws IOException, NullPointerException {
 
@@ -51,6 +59,7 @@ public class FileUtils {
         // boolean errorFlag = true;
         // 获取内容类型
         String contentType = request.getContentType();
+        // 得到上传文件的大小
         int contentLength = request.getContentLength();
         String fileExt = myFile.getOriginalFilename().substring(myFile.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
         originalFilename = String.valueOf(new DateTime().getMillis()) + myFile.getOriginalFilename().substring(myFile.getOriginalFilename().indexOf("."));
@@ -85,11 +94,37 @@ public class FileUtils {
     }
 
     /**
+     * 云服务器 上传文件-单图上传
+     *
+     * @param myFile 文件
+     * @param imgDir 图片存储目录
+     *
+     * @return {@link Map}
+     * map:
+     *      success: true false
+     *      result: 提示信息
+     *      filename: 文件名
+     *
+     */
+    public static Map<String, Object> ossFileUpload(MultipartFile myFile, String imgDir, String fileName) throws IOException, NullPointerException, InterruptedException {
+        Map<String, Object> map = Maps.newHashMap();
+
+        Thread.sleep(100);
+
+        // 文件路径
+        String fileUrl = imgDir + fileName;
+        AliyunOss.uploadInputStream(fileUrl, myFile.getInputStream());
+        map.put("fileUrl", fileUrl);
+        map.put("filename", fileName);
+        return map;
+    }
+
+    /**
      * 文件大小转换为字符串格式
      *
      * @param size 文件大小(单位B)
      */
-    private static String convertFileSize(long size) {
+    public static String convertFileSize(long size) {
         long kb = 1024;
         long mb = kb * 1024;
         long gb = mb * 1024;

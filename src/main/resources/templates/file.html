@@ -13,8 +13,10 @@
 <div class="file-box boxsizing layui-form">
     <div class="file-toper">
         <span>文件库</span>
-        <div class="add-share"><img src="../static/image/upload.png" >上传</div>
-        <div class="add-share"><img src="../static/image/add.png" >创建文件夹</div>
+        <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+        </div>
+        <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
+        </div>
     </div>
     <div class="file-title">
         <div class="layui-row">
@@ -23,27 +25,32 @@
             <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
             <div class="layui-col-md3 layui-col-lg-3 file-time">更新时间</div>
             <div class="layui-col-md3 layui-col-lg-3 file-style">
-                <img src="../static/image/jggpb.png" >
-                <img src="../static/image/lpb.png" >
+                <img th:src="@{/image/jggpb.png}" src="../static/image/jggpb.png">
+                <img th:src="@{/image/lpb.png}" src="../static/image/lpb.png">
             </div>
         </div>
     </div>
     <!--没有文件-->
     <div class="no-file" style="display: none">
-        <img src="../static/image/nofile.png" >
+        <img th:src="@{/image/nofile.png}" src="../static/image/nofile.png">
         <p>目前还没有文件～</p>
     </div>
     <!--有文件-->
     <div class="have-file">
-        <div class="layui-row">
-            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
-            <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
-            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
-            <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
-            <div class="layui-col-md3 layui-col-lg-3 file-operate">
-                <!--<i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>-->
-                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-
+        <div th:each="file:${fileList}">
+            <div class="layui-row">
+                <div class="layui-col-md2 layui-col-lg-2 file-name">
+                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure">
+                    <div th:text="${file.fileName}"></div>
+                </div>
+                <div class="layui-col-md2 layui-col-lg-2 file-size" th:text="${file.size}"></div>
+                <div class="layui-col-md2 layui-col-lg-2 file-time" th:text="${file.memberName}"></div>
+                <div class="layui-col-md3 layui-col-lg-3 file-people"
+                     th:text="${#dates.format(file.updateTime,'M月dd日')}"></div>
+                <div class="layui-col-md3 layui-col-lg-3 file-operate">
+                    <!--<i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>-->
+                    <a href="https://faydan.oss-cn-beijing.aliyuncs.com/第一个项目-1529401007925/卡哇伊-1529402096469.jpg" download=""><i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i></a>
+                </div>
             </div>
         </div>
 
@@ -51,34 +58,76 @@
 
 </div>
 
-
-
-
-
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script>
-    layui.use('form', function(){
-        var form = layui.form;
+    layui.use(['form', 'upload', 'layer'], function () {
+        var form = layui.form
+            , upload = layui.upload
+            , layer = layui.layer;
 
         //监听提交
-        form.on('submit(formDemo)', function(data){
+        form.on('submit(formDemo)', function (data) {
             layer.msg(JSON.stringify(data.field));
             return false;
         });
 
-        form.on('switch(switch-filter)', function(data){
+        form.on('switch(switch-filter)', function (data) {
             console.log(data.elem.checked); //开关是否开启，true或者false
             if (data.elem.checked) {
                 $(".who-can-see").text("仅自己可见")
-            }else {
+            } else {
                 $(".who-can-see").text("所有成员可见")
             }
         });
 
+        /**
+         * 创建文件夹
+         */
+        $("#createFolder").click(function () {
+            layer.prompt({title: '新建文件夹', resize: false, formType: 3}, function (folderName, index) {
+                $.ajax({
+                    url: "/file/createFolder",
+                    type: "post",
+                    data: {projectId: 1, parentId: 0, folderName: folderName},
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.result === 1) {
+                            layer.close(index);
+                            layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                                window.location.reload();
+                            })
+                        } else {
+                            layer.msg(data.msg, {icon: 2})
+                        }
+                    }
+                });
+            });
+        });
 
-
+        /**
+         * 文件上传
+         */
+        upload.render({
+            elem: '#uploadFile' //绑定元素
+            , url: '/file/uploadFile?projectId=1' //上传接口
+            , exts: '|' // 可上传所有类型的文件
+            , done: function (data) {
+                //上传完毕回调
+                if (data.result === 1) {
+                    window.location.reload();
+                } else {
+                    layer.msg(data.msg, 1, 8);
+                }
+            }
+            , error: function () {
+                //请求异常回调
+                layer.msg('上传失败', 1, 8);
+            }
+        });
     });
+
 </script>
 </html>
