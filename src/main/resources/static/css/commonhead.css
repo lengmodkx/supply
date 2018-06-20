@@ -61,9 +61,9 @@
     float: right;
     cursor: pointer;
 }
-.head-photo-wrap:hover .vertical-nav{
-    display: block;
-}
+/*.head-photo-wrap:hover .vertical-nav{*/
+    /*display: block;*/
+/*}*/
 .vertical-nav{
     width: 230px;
     height: 345px;
@@ -176,7 +176,7 @@
     margin-right: 20px;
     cursor: pointer;
 }
-.toper-nav ul>div span{
+.l{
     font-size: 20px;
     color: #C3C2C2;
 }
