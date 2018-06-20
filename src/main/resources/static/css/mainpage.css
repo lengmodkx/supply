@@ -92,7 +92,7 @@ body{
     min-height: 20px;
 
 }
-.model:nth-of-type(6){
+.model:nth-last-child(1){
     margin-right: 0;
 }
 .model-title{
