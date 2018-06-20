@@ -1,30 +1,21 @@
 package com.art1001.supply.service.task.impl;
 
-import java.lang.reflect.Member;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import javax.annotation.Resource;
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
-import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -251,20 +242,15 @@ public class TaskMemberServiceImpl implements TaskMemberService {
      */
 	@Override
 	public TaskLogVO delTaskMemberByTaskIdAndMemberId(Task task, UserEntity[] userEntity) {
-        int result =0;
-        StringBuilder content = new StringBuilder(TaskLogFunction.A.getName()).append(" ");
-        //循环删除任务成员关系并且拼接日志字符串
+        //循环删除任务成员关系
 		for (int i = 0; i < userEntity.length; i++) {
-			result = taskMemberMapper.delTaskMemberByTaskIdAndMemberId(task,userEntity[i]);
-			if(i == userEntity.length - 1){
-				content.append(userEntity[i].getUserName());
-			} else{
-				content.append(userEntity[i].getUserName()).append(",");
-			}
+			taskMemberMapper.delTaskMemberByTaskIdAndMemberId(task,userEntity[i]);
 		}
-        TaskLogVO taskLogVO = taskService.saveTaskLog(task, content.toString());
-		taskLogVO.setResult(result);
-        return taskLogVO;
+		return null;
 	}
 
+	@Override
+	public void removeTaskMember(Task task, UserEntity userEntity) {
+		taskMemberMapper.delTaskMemberByTaskIdAndMemberId(task,userEntity);
+	}
 }

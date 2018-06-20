@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head>
     <meta charset="UTF-8">
-    <title></title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/objsetting.css}" href="../static/css/objsetting.css">
 </head>
 <body>
 <div class="setting-box boxsizing layui-form">
-    <div class="setting-title">项目设置 <img src="../static/image/close.png" ></div>
+    <div class="setting-title">项目设置
+        <!--<img src="../static/image/close.png" >-->
+    </div>
 <div class="setting-content clearfix">
     <!--左侧导航-->
     <ul class="setting-left-nav">
@@ -112,7 +113,7 @@
         <!--更多-->
         <div class="setting-more" style="display: none">
             <div class="setting-more-title">项目操作</div>
-            <span>一旦你退出了该项目，你不能查看任何关于该项目的信息。退出项目后如果想重新加入，请联系项目管理员</span>
+            <p>一旦你退出了该项目，你不能查看任何关于该项目的信息。退出项目后如果想重新加入，请联系项目管理员</p>
             <div class="layui-btn layui-btn-normal">退出</div>
         </div>
     </div>

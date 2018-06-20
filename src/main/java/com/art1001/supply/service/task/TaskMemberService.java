@@ -1,6 +1,5 @@
 package com.art1001.supply.service.task;
 
-import java.lang.reflect.Member;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
@@ -10,7 +9,6 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
-import org.apache.catalina.User;
 
 
 /**
@@ -85,4 +83,12 @@ public interface TaskMemberService {
 	 * @return
 	 */
 	TaskLogVO delTaskMemberByTaskIdAndMemberId(Task task, UserEntity[] userEntity);
+
+	/**
+	 * 移除单个任务参与者
+	 * @param task 任务信息
+	 * @param userEntity 被移除的任务参与者信息
+	 * @return
+	 */
+	void removeTaskMember(Task task, UserEntity userEntity);
 }

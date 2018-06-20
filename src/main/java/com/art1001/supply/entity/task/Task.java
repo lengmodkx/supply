@@ -150,11 +150,16 @@ public class Task extends BaseEntity implements Serializable {
 	/**
 	 * 任务得赞数
 	 */
-	private int fabulousCount;
+	private Integer fabulousCount;
 
 	/**
 	 * 任务的隐私模式
 	 */
-	private int privacyPattern;
+	private Integer privacyPattern;
+
+	/**
+	 * 其他
+	 */
+	private String other;
 
 }

@@ -125,4 +125,45 @@ public interface TaskMapper {
 	 * @return
 	 */
     int SettingUpPrivacyPatterns(Task task);
+
+	/**
+	 * 根据任务的状态查询多条任务信息
+	 * @param status
+	 * @return
+	 */
+	List<Task> findTaskByStatus(@Param("status") String status,@Param("projectId")String projectId);
+
+	/**
+	 * 查询今天的任务信息
+	 * @return
+	 */
+	List<Task> findTaskByToday(@Param("projectId")String projectId);
+
+	/**
+	 * 根据任务菜单查询任务信息
+	 * @param menuId
+	 * @return
+	 */
+    List<Task> taskMenu(@Param("menuId") String menuId);
+
+	/**
+	 * 查询某个人执行的所有任务
+	 * @param uId 执行者的id
+	 * @param projectId 项目的id
+	 * @return
+	 */
+	List<Task> findTaskByExecutor(@Param("uId") String uId,@Param("projectId") String projectId);
+
+	/**
+	 * 查询该项目下所有未被认领的任务
+	 * @return
+	 */
+    List<Task> waitClaimTask(@Param("projectId") String projectId);
+
+	/**
+	 * 将该任务的执行者清除掉
+	 * @param taskId 任务id
+	 * @return
+	 */
+	int removeExecutor(@Param("taskId") String taskId);
 }

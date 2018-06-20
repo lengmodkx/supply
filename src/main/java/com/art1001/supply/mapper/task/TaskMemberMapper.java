@@ -76,4 +76,5 @@ public interface TaskMemberMapper {
 	 */
 	@Delete("delete from prm_task_member where current_task_id = #{task.taskId} and member_id = #{userEntity.id}")
     int delTaskMemberByTaskIdAndMemberId(@Param("task") Task task,@Param("userEntity")UserEntity userEntity);
+
 }
