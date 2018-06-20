@@ -8,18 +8,17 @@ body{
 }
 
 .content-wrap-wrap{
-    /*margin-top: 25px;*/
-    /*position: relative;*/
-    /*margin-left: 2.5%;*/
     position: fixed;
-    top: 125px;
+    top: 50px;
     right: 0;
     bottom: 0;
     left: 0;
     padding: 0;
-    overflow: hidden;
+    /*overflow: hidden;*/
     z-index: 1;
+    overflow-y: auto;
 }
+
 .content-wrap{
     position: relative;
     height: 100%;
@@ -32,22 +31,22 @@ body{
     -ms-user-select: none;
 }
 .content{
-    position: relative;
-    padding: 10px;
-    white-space: nowrap;
-    overflow-x: auto;
-    /*overflow-y: hidden;*/
-    -webkit-overflow-scrolling: touch;
-    height: 100%;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    /*position: relative;*/
+    /*padding: 10px;*/
+    /*white-space: nowrap;*/
+    /*overflow-x: auto;*/
+    /*!*overflow-y: hidden;*!*/
+    /*-webkit-overflow-scrolling: touch;*/
+    /*height: 100%;*/
+    /*-webkit-transform: translateZ(0);*/
+    /*transform: translateZ(0);*/
 }
-.content::-webkit-scrollbar{
+.content-wrap-wrap::-webkit-scrollbar{
     width: 1px;
     height: 10px;
     background-color: 	#F8F8FF;
 }
-.content::-webkit-scrollbar-thumb
+.content-wrap-wrap::-webkit-scrollbar-thumb
 {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
@@ -55,7 +54,7 @@ body{
 }
 .model{
     width: 280px;
-    margin-right: 20px;
+   margin-left: 20px;
     min-height: 500px;
     background-color: #EEEEEE;
    /*display: inline-block;*/
@@ -72,6 +71,7 @@ body{
     vertical-align: top;
     /*height: 100%;*/
     z-index: 1;
+    margin-top: 65px;
 
 }
 
@@ -92,9 +92,9 @@ body{
     min-height: 20px;
 
 }
-.model:nth-last-child(1){
-    margin-right: 0;
-}
+/*.model:nth-last-child(1){*/
+    /*margin-right: 0;*/
+/*}*/
 .model-title{
     width: 100%;
     height: 30px;
@@ -547,6 +547,8 @@ body{
     padding: 15px 10px;
     display: inline-block;
     background-color: #EEEEEE;
+    margin-top: 65px;
+    margin-left: 20px;
     margin-right: 20px;
 }
 .noclick-creat-model{
