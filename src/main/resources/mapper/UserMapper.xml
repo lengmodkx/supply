@@ -148,13 +148,15 @@
 		i.u_image,
 		i.u_telephone,
 		i.u_email,
-		i.u_address
+		i.u_address,
+		i.u_create_time
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name = #{name}
 	</select>
 	
 	<select id="findById" parameterType="String" resultMap="userMap" flushCache="true" useCache="true">
-		SELECT u.u_id,
+		SELECT
+		u.u_id,
 		u.u_name,
 		u.u_account_name,
 		u.u_password,
@@ -180,9 +182,10 @@
 		i.u_telephone,
 		i.u_email,
 		i.u_image,
-		i.u_address
+		i.u_address,
+		i.u_create_time
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
-		where u.u_id = ${id}
+		where u.u_id = #{id}
 		
 		<!-- 这种映射方式可以不用写resultMap,同时加双引号是为了mybatis可以识别映射
 			SELECT u.u_id id,
@@ -273,10 +276,10 @@
 			<if test="locked != null">
 				u_locked = ${locked},
 			</if>
-			<if test="organizationId != null and organizationId != ''">
+			<if test="organizationId != null">
 				u_organization_id = ${organizationId},
 			</if>
-			<if test="partmentId != null and partmentId != ''">
+			<if test="partmentId != null">
 				u_partment_id = ${partmentId},
 			</if>
 			<if test="organizationLable != null and organizationLable != ''">

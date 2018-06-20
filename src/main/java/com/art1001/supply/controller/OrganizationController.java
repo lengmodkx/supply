@@ -2,7 +2,6 @@ package com.art1001.supply.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -39,7 +38,7 @@ public class OrganizationController {
 
 
 
-
+    //增加一个企业
     @RequestMapping("/addOrg")
     @ResponseBody
     public JSONObject  addOrg(@RequestParam String orgName,@RequestParam String orgDes){
@@ -67,7 +66,7 @@ public class OrganizationController {
 
 
 
-
+    //更新企业
     @RequestMapping("/updateOrg")
     @ResponseBody
     public JSONObject updateOrg(Organization organization){
@@ -86,6 +85,7 @@ public class OrganizationController {
     }
 
 
+    //删除企业
     @RequestMapping("/delOrg")
     @ResponseBody
     public JSONObject delOrg(@RequestParam String orgId){
@@ -103,12 +103,16 @@ public class OrganizationController {
     }
 
 
+    //给企业添加员工
     @RequestMapping("/addMember")
     @ResponseBody
-    public JSONObject addMember(){
+    public JSONObject addMember(@RequestParam String orgId,@RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
-            
+
+
+
+
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
         }catch (Exception e){
