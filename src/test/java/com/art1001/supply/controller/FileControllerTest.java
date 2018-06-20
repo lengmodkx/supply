@@ -72,7 +72,6 @@ public class FileControllerTest extends ApplicationTests {
             file.setFileName(fileName);
             file.setFileUrl(fileUrl);
             file.setParentId(file.getFileId());
-            fileService.uploadFile(file);
         }
 
     }

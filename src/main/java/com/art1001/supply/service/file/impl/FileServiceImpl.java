@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -75,8 +77,9 @@ public class FileServiceImpl implements FileService {
         if (byParentIdAndFileName > 0) {
             // 名字重复加时间戳
             // fileName = fileName.substring(0, fileName.indexOf(".")) + "-" + System.currentTimeMillis() + fileName.substring(fileName.indexOf("."));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             StringBuilder sb = new StringBuilder(fileName);
-            sb.insert(fileName.indexOf("."), "-" + System.currentTimeMillis());
+            sb.insert(fileName.indexOf("."), "-" + format.format(Calendar.getInstance().getTime()));
             fileName = sb.toString();
         }
 
@@ -138,8 +141,9 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public void initProjectFolder(Project project) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         // 在OSS上创建目录
-        String folderName = project.getProjectName() + "-" + System.currentTimeMillis() + "/";
+        String folderName = project.getProjectName() + "-" + format.format(Calendar.getInstance().getTime()) + "/";
         AliyunOss.createFolder(folderName);
         // 写库
         File file = new File();
@@ -200,20 +204,6 @@ public class FileServiceImpl implements FileService {
         file.setMemberImg(userEntity.getUserInfo().getImage());
         file.setCatalog(1);
         file.setParentId(parentId);
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.saveFile(file);
-    }
-
-    @Override
-    public void uploadFile(File file) {
-        file.setFileId(IdGen.uuid());
-        // 获取用户信息
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
-        file.setCatalog(0);
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         fileMapper.saveFile(file);

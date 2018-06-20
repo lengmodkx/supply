@@ -73,11 +73,6 @@ import java.util.List;
 	void createFolder(String parentId, String fileName);
 
     /**
-     * 上传文件
-     */
-	void uploadFile(File file);
-
-    /**
      * 查询当前文件目录下的文件夹及文件
      *
      * @param projectId 关联项目id

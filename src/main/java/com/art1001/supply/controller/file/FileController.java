@@ -14,6 +14,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -186,6 +189,12 @@ public class FileController {
         File file = fileService.findFileById(fileId);
         InputStreamReader inputStreamReader = AliyunOss.downloadInputStream(file.getFileUrl());
 
+    }
 
+    public static void main(String[] args) {
+        Calendar calendar = Calendar.getInstance();
+        Date time = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(sdf.format(time));
     }
 }
