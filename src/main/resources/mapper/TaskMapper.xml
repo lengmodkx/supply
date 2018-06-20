@@ -269,7 +269,7 @@
 			<if test="fabulousCount != null">
 				#{fabulousCount},
 			</if>
-			<if test="privacy_pattern != null">
+			<if test="privacyPattern != null">
 				#{privacyPattern},
 			</if>
 			<if test="other != null">
@@ -453,4 +453,50 @@
 		</where>
 	</update>
 
+	<!-- 根据任务状态查询多个任务信息 -->
+	<select id="findTaskByStatus" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where task_status = #{status} and project_id = #{projectId}
+	</select>
+
+	<!-- 查询今天的任务 -->
+	<select id="findTaskByToday" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where (SELECT FROM_UNIXTIME(prm_task.create_time/1000, '%Y-%m-%d')) = ( select CURDATE())
+		and project_id = #{projectId}
+	</select>
+
+	<!-- 查询当前菜单下的全部任务信息 -->
+	<select id="taskMenu" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where project_id = #{projectId} and task_menu_id = #{menuId}
+	</select>
+
+	<!-- 查询某个执行者的所有任务 -->
+	<select id="findTaskByExecutor" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where project_id = #{projectId} and executor = #{uId}
+	</select>
+
+	<!-- 查询项目下所有待认领的任务 -->
+	<select id="waitClaimTask" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where project_id = #{projectId} and executor = ''
+	</select>
+
+	<!-- 将任务的执行者设置为空字符串 -->
+	<update id="removeExecutor">
+		update prm_task
+		<set>
+			executor = ''
+		</set>
+		<where>
+			task_id = #{taskId}
+		</where>
+	</update>
 </mapper>

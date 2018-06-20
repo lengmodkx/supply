@@ -25,6 +25,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -153,6 +154,13 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskStatus("未完成");
         //设置该任务是否删除 0 未删除 1 已删除
         task.setTaskDel(0);
+        //设置任务的隐私面模式
+        task.setPrivacyPattern(0);
+        //如果没有设置执行者 则 为空字符串
+        if(StringUtils.isEmpty(task.getExecutor())){
+            System.out.println("走");
+            task.setExecutor(new String(""));
+        }
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -750,6 +758,73 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         return projectAllMember;
+    }
+
+    /**
+     * 智能分组 分别为  查询 今天的任务 , 完成的任务, 未完成的任务
+     * @param status 任务状态条件
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> intelligenceGroup(String status,String projectId) {
+        List<Task> taskList = new ArrayList<Task>();
+        //如果状态为空,就查询今天的任务 否则 按照任务的状态查询任务
+        if(StringUtils.isEmpty(status)){
+            taskList = taskMapper.findTaskByToday(projectId);
+        } else{
+            taskList = taskMapper.findTaskByStatus(status,projectId);
+        }
+        return taskList;
+    }
+
+    /**
+     * 查询某个菜单下的所有任务的信息
+     * @param menuId 菜单id
+     * @return
+     */
+    @Override
+    public List<Task> taskMenu(String menuId,String projecId) {
+        return taskMapper.taskMenu(menuId,projecId);
+    }
+
+    /**
+     * 查询某个人执行的所有任务
+     * @param uId 执行者的id
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByExecutor(String uId,String projectId) {
+        return taskMapper.findTaskByExecutor(uId,projectId);
+    }
+
+    /**
+     * 查询该项目下所有未被认领的任务
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> waitClaimTask(String projectId) {
+        return taskMapper.waitClaimTask(projectId);
+    }
+
+    /**
+     * 移除该任务的执行者 改为待认领状态
+     * @param taskId 任务的id
+     * @return
+     */
+    @Override
+    public int removeExecutor(String taskId) {
+        return taskMapper.removeExecutor(taskId);
+    }
+
+    @Override
+    public int updateTaskExecutor(String taskId, String executor) {
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setExecutor(executor);
+        return taskMapper.updateTask(task);
     }
 
     /**
