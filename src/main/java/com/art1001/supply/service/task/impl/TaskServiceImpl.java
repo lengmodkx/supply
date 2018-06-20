@@ -286,6 +286,9 @@ public class TaskServiceImpl implements TaskService {
         //设置更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //更新任务信息
+        if(!StringUtils.isEmpty(newTaskMenuVO.getProjectId())){
+
+        }
         int result = taskMapper.updateTask(task);
         String content = "";
         //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
@@ -803,8 +806,8 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public List<Task> taskMenu(String menuId,String projecId) {
-        return taskMapper.taskMenu(menuId,projecId);
+    public List<Task> taskMenu(String menuId) {
+        return taskMapper.taskMenu(menuId);
     }
 
     /**

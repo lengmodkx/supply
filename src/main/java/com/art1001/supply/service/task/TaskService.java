@@ -263,10 +263,9 @@ public interface TaskService {
 	/**
 	 * 查询某个菜单下的所有任务的信息
 	 * @param menuId 菜单id
-	 * @param projectId 项目id
 	 * @return
 	 */
-	List<Task> taskMenu(String menuId,String projectId);
+	List<Task> taskMenu(String menuId);
 
 	/**
 	 * 查询某个人执行的所有任务

@@ -144,7 +144,7 @@ public interface TaskMapper {
 	 * @param menuId
 	 * @return
 	 */
-    List<Task> taskMenu(@Param("menuId") String menuId,@Param("projectId")String projectId);
+    List<Task> taskMenu(@Param("menuId") String menuId);
 
 	/**
 	 * 查询某个人执行的所有任务
