@@ -238,14 +238,34 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     });
 
 });
-$("#mine").click(function () {
-
-    mypage();
-
-
+// 点击头像 ，弹出框
+$(".head-photo").click(function () {
+    headphoto()
 });
-
+function headphoto() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: ['10px', '90%'],
+            area:['230px','345px'],
+            fixed: false,
+            shade: 0,
+            shadeClose: true, //点击遮罩关闭
+            anim: 1,  //动画 0-6
+            content: $(".vertical-nav"),
+            zIndex: layer.zIndex, //重点1
+            success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+    });
+};
 //点击我的 弹出 我的页面框
+$("#mine").click(function () {
+    mypage();
+});
 function mypage() {
     layui.use('layer', function(){
         var layer = layui.layer;
@@ -258,6 +278,7 @@ function mypage() {
             shadeClose: true,
             closeBtn: 0,
             shade: 0,
+            zIndex:198900,
             anim: 1,  //动画 0-6
             content: ['mypage.html','no']
         });
