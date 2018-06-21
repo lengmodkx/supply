@@ -204,7 +204,6 @@ public class AliyunOss {
     }
 
 
-
     /**
      * 删除单个文件
      *
@@ -227,54 +226,56 @@ public class AliyunOss {
         private long bytesRead = 0;
         private long totalBytes = -1;
         private boolean succeed = false;
+
         @Override
         public void progressChanged(ProgressEvent progressEvent) {
             long bytes = progressEvent.getBytes();
             ProgressEventType eventType = progressEvent.getEventType();
             switch (eventType) {
                 case TRANSFER_STARTED_EVENT:
-                    System.out.println("Start to download......");
+                    log.info("开始下载......");
                     break;
                 case RESPONSE_CONTENT_LENGTH_EVENT:
                     this.totalBytes = bytes;
-                    System.out.println(this.totalBytes + " bytes in total will be downloaded to a local file");
+                    log.info(this.totalBytes + " 字节总数将被下载到本地文件");
                     break;
                 case RESPONSE_BYTE_TRANSFER_EVENT:
                     this.bytesRead += bytes;
                     if (this.totalBytes != -1) {
-                        int percent = (int)(this.bytesRead * 100.0 / this.totalBytes);
-                        System.out.println(bytes + " bytes have been read at this time, download progress: " +
-                                percent + "%(" + this.bytesRead + "/" + this.totalBytes + ")");
+                        int percent = (int) (this.bytesRead * 100.0 / this.totalBytes);
+                        log.info(bytes + " 此时字节已被读取，下载进度: " + percent + "%(" + this.bytesRead + "/" + this.totalBytes + ")");
                     } else {
-                        System.out.println(bytes + " bytes have been read at this time, download ratio: unknown" +
-                                "(" + this.bytesRead + "/...)");
+                        log.info(bytes + " 此时字节已被读取，下载比例：未知" + "(" + this.bytesRead + "/...)");
                     }
                     break;
                 case TRANSFER_COMPLETED_EVENT:
                     this.succeed = true;
-                    System.out.println("Succeed to download, " + this.bytesRead + " bytes have been transferred in total");
+                    log.info("成功下载，" + this.bytesRead + " 字节总数已被传输。");
                     break;
                 case TRANSFER_FAILED_EVENT:
-                    System.out.println("Failed to download, " + this.bytesRead + " bytes have been transferred");
+                    log.error("下载失败， " + this.bytesRead + " 字节已被传输");
                     break;
                 default:
                     break;
             }
         }
+
         public boolean isSucceed() {
             return succeed;
         }
     }
+
     public static void main(String[] args) {
 
-        String objectName = "第一个项目-1529401007925/卡哇伊-1529402096469.jpg";
+        String objectName = "第一个项目-1529401007925/测试.xlsx";
 
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
             // 带进度条的下载。
-            ossClient.getObject(new GetObjectRequest(bucketName, objectName).
-                            <GetObjectRequest>withProgressListener(new GetObjectProgressListener()),
-                    new File("D:\\image\\test.jpg"));
+            ossClient.getObject(
+                    new GetObjectRequest(bucketName, objectName).withProgressListener(new GetObjectProgressListener()),
+                    new File("D:\\image\\test.jpg")
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }
