@@ -29,8 +29,25 @@
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
+		<result column="order" property="order" jdbcType="INTEGER"/>
 	</resultMap>
-    
+
+	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
+		<id property="taskId" column="task_id"></id>
+		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember">
+			<id column="id" property="id"></id>
+			<result column="member_id1" property="memberId" jdbcType="VARCHAR" />
+			<result column="public_id" property="publicId" jdbcType="VARCHAR" />
+			<result column="public_type1" property="publicType" jdbcType="VARCHAR" />
+			<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+			<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
+			<result column="type" property="type" jdbcType="VARCHAR" />
+			<result column="current_task_id" property="currentTaskId" jdbcType="VARCHAR" />
+			<result column="create_time1" property="createTime" jdbcType="BIGINT" />
+			<result column="update_time1" property="updateTime" jdbcType="BIGINT" />
+		</association>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 						task_id,
 				project_id,
@@ -57,7 +74,8 @@
 				repetition_time,
 				fabulous_count,
 				privacy_pattern,
-				other
+				other,
+				`order`
 	</sql>
 
 	<sql id="whereStatement">
@@ -192,6 +210,9 @@
 			<if test="other != null">
 				other,
 			</if>
+			<if test="other != null">
+				`order`,
+			</if>
 
 		</trim>
 
@@ -274,6 +295,9 @@
 			</if>
 			<if test="other != null">
 				#{other},
+			</if>
+			<if test="order != null">
+				#{order},
 			</if>
 		</trim>
 
@@ -360,6 +384,9 @@
 			</if>
 			<if test="other != null">
 				other = #{other},
+			</if>
+			<if test="other != null">
+				`order` = #{order},
 			</if>
 		</set>
 		WHERE task_id = #{taskId}
@@ -496,10 +523,15 @@
 	</select>
 
 	<!-- 查询当前菜单下的全部任务信息 -->
-	<select id="taskMenu" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where task_del = 0 and task_menu_id = #{menuId} order by create_time desc
+	<select id="taskMenu" resultMap="findMenuTaskMemberInfo">
+		SELECT task_id,  task_name, start_time, end_time,tag_id, parent_id, p.member_id, executor, task_menu_id, task_status, task_del, p.update_time, privacy_pattern, other,pm.member_img,pm.member_id pm_member_id,pm.type from
+		prm_task p inner join prm_task_member pm
+		where (p.executor = pm.member_id and pm.type = '执行者')
+		 or (p.task_id = pm.current_task_id and p.executor = '')
+		 and p.parent_id = 0
+		 and p.privacy_pattern = 0
+		 and p.task_del = 0
+		 and p.task_menu_id = #{menuId}
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->
@@ -543,7 +575,7 @@
 	<select id="findTaskByProject" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where project_id = #{projectId}
+		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId}
 	</select>
 
 	<!-- 按照优先级查询任务 -->
