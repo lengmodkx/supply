@@ -69,18 +69,23 @@ $(function () {
         $(this).addClass("now").siblings("li").removeClass("now")
     });
     $(".click-file").click(function () {
+        $(".view").hide();
         $("#file").show().siblings().hide()
     });
     $(".click-task").click(function () {
-        $("#project-design-task").show().siblings().hide()
+        $(".view").show();
+        $(".board-view>div").hide()
     });
     $(".click-share").click(function () {
+        $(".view").hide();
         $("#share").show().siblings().hide()
     });
     $(".click-date").click(function () {
+        $(".view").hide();
         $("#date").show().siblings().hide()
     });
     $(".click-chat").click(function () {
+        $(".view").hide();
         $("#chat").show().siblings().hide()
     });
 
