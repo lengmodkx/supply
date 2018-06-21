@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.user.UserEntity;
@@ -13,6 +14,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectFuncService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -59,23 +61,28 @@ public class ProjectController {
     @Resource
     private FileService fileService;
 
+    @Resource
+    private ProjectFuncService funcService;
+
     @RequestMapping("/home.html")
     public String home(Model model){
 
         try {
-            String userId = ShiroAuthenticationManager.getUserId();
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             //我创建的任务
-            List<Project> projects = projectService.findProjectByMemberId(userId);
+            List<Project> projects = projectService.findProjectByMemberId(userEntity.getId());
             model.addAttribute("projects",projects);
             //我参与的任务
-            List<Project> joinInproject = projectMemberService.findProjectByMemberId(userId, 0);
+            List<Project> joinInproject = projectMemberService.findProjectByMemberId(userEntity.getId(), 0);
             model.addAttribute("joinInproject",joinInproject);
             //我收藏的项目
-            List<Project> collectrojects = projectCollectService.findProjectByMemberId(userId);
+            List<Project> collectrojects = projectCollectService.findProjectByMemberId(userEntity.getId());
             model.addAttribute("collectrojects",collectrojects);
             //项目回收站
-            List<Project> delProjects = projectMemberService.findProjectByMemberId(userId,1);
+            List<Project> delProjects = projectMemberService.findProjectByMemberId(userEntity.getId(),1);
             model.addAttribute("delProjects",delProjects);
+
+            model.addAttribute("user",userEntity);
             return "home";
         }catch (Exception e){
             throw  new SystemException(e);
@@ -150,10 +157,20 @@ public class ProjectController {
             project.setCreateTime(System.currentTimeMillis());
             project.setIsPublic(0);
             project.setProjectRemind(0);
-            project.setProjectMenu("[{任务},{分享},{文件},{日程},{统计},{群聊}]");
             project.setMemberId(userEntity.getId());
             project.setProjectStatus(0);
             projectService.saveProject(project);
+
+            //初始化项目功能菜单
+            String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
+            for (int i=0;i<funcs.length;i++) {
+                ProjectFunc projectFunc = new ProjectFunc();
+                projectFunc.setPName(funcs[i]);
+                projectFunc.setIsOpen(1);
+                projectFunc.setPOrder(i);
+                projectFunc.setProjectId(project.getProjectId());
+                funcService.saveProjectFunc(projectFunc);
+            }
 
             //初始化分组
             Relation relation = new Relation();
@@ -397,5 +414,16 @@ public class ProjectController {
     }
 
 
+    @GetMapping("/addtask.html")
+    public String addtask(Model model){
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        model.addAttribute("user",userEntity);
+        return "addtask";
+    }
 
+
+    @GetMapping("/menuList.html")
+    public String menuList(){
+        return "tk-caidanliebiao";
+    }
 }

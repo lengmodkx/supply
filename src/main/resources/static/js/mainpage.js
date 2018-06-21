@@ -50,18 +50,16 @@ $(function () {
     });
 
     // 拖拽函数
-    Sortable.create(document.getElementById('list1'),{
-        group:"words",
-        animation: 150 //动画参数
+    $(".taskList").each(function (data,item) {
+        console.log($(item).attr('id'));
+        var el = document.getElementById($(item).attr('id'));
+        Sortable.create(el,{
+            group:"words",
+            animation: 150 //动画参数
+        });
     });
-    Sortable.create(document.getElementById('list2'),{
-        group:"words",
-        animation: 150 //动画参数
-    });
-    Sortable.create(document.getElementById('list3'),{
-        group:"words",
-        animation: 150 //动画参数
-    });
+
+
 
     firefox();
 //点击导航（设计任务、分享、文件、群聊、统计） 静态切换
@@ -90,11 +88,8 @@ $(function () {
     });
 
 
-
-var that;
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
-        that=$(this);
         addRenwu();
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
@@ -247,7 +242,7 @@ function lbmenu(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: ['tk-caidanliebiao.html','no']
+            content: ['menuList.html','no']
         });
     });
 };

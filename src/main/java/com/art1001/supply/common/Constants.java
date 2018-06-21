@@ -5,7 +5,7 @@ public class Constants {
     /**
      * 会员头像上传路径
      */
-    public final static String MEMBER_IMAGE_URL = "/upload/img/avatar";
+    public final static String MEMBER_IMAGE_URL = "upload/avatar";
 
     // TODO: 2018/6/20 开发环境
     public static final String OSS_URL = "https://faydan.oss-cn-beijing.aliyuncs.com/";

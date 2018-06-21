@@ -133,7 +133,7 @@ body{
 /*}*/
 .model .ul-wrap>ul{
     width: 260px;
-    min-height: 20px;
+    min-height: 2px;
    max-height: 390px;
     overflow-y: scroll;
     margin-bottom: 10px;

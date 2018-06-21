@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserInfoEntity;
@@ -10,8 +11,10 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.EmailUtil;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,13 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
             if (userMapper.insert(userEntity) == 1) {
                 if (userMapper.insertUserRole(userEntity) == 1) {
                     userEntity.getUserInfo().setId(userEntity.getId());
+                    // 图片byte数组
+                    byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
+
+                    // oss上传
+                    String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+                    AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
+                    userEntity.getUserInfo().setImage(Constants.MEMBER_IMAGE_URL + fileName);
                     int cnt = userMapper.insertUserInfo(userEntity);
                     //发送邮件
 //                    emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);

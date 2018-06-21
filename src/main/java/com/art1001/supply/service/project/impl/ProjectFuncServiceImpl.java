@@ -78,5 +78,10 @@ public class ProjectFuncServiceImpl implements ProjectFuncService {
 	public List<ProjectFunc> findProjectFuncAllList(){
 		return projectFuncMapper.findProjectFuncAllList();
 	}
-	
+
+	@Override
+	public List<ProjectFunc> findProjectFuncList(String projectId) {
+		return projectFuncMapper.findProjectFuncList(projectId);
+	}
+
 }

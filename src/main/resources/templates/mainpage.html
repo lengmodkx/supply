@@ -51,7 +51,7 @@
                    <div class="toper-nav">
                        <ul>
                            <li class="click-task now">
-                               <a  >UI设计任务</a>
+                               <a  >任务</a>
                                <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
                                <span class="l">|</span>
                            </li>
@@ -83,79 +83,21 @@
        <!--产品设计任务页面-->
           <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
-               <div class="board-scrum-stages boxsizing">
+               <ul class="board-scrum-stages boxsizing">
                    <!--待处理-->
-                   <div class="model boxsizing">
-
+                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}">
                        <div class="model-title">
-                           <span>待处理</span>
+                           <span th:text="${taskMenu.relationName}">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
                            <!--点击下箭头出现的内容-->
-                           <div class="lbmenu">
-                               <div class="lbmenu-title">
-                                   <p>菜单列表</p>
-                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                               </div>
-                               <div class="lbmenu-add">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                                       在此处添加新列表
-                                   </div>
-                               </div>
-                               <div class="lbmenu-remove">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                                       本列表所有任务移到回收站
-                                   </div>
-                               </div>
-                           </div>
                        </div>
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
-                           <ul id="list1">
-                               <li class="assignment ">
-                                   <!--<div class="tags boxsizing">-->
-                                       <!--<span class="one-tag">112</span>-->
-                                   <!--</div>-->
+                           <ul th:id="${taskMenu.relationId}" class="taskList">
+                               <li class="assignment" th:each="task:${taskMenu.taskList}">
                                    <div class="assignment-top-box boxsizing">
                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <span class="timer">今天9:00-明天</span>
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
-                               </li>
-                               <li class="assignment">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <span class="timer">今天9:00-明天</span>
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
-                               </li>
-                               <li class="assignment">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <span class="timer">今天9:00-明天</span>
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
-                               </li>
-                               <li class="assignment">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                        <img class="assignment-tx" src="../static/image/add.png" >
                                    </div>
                                    <div class="assignment-bottom-box">
@@ -171,105 +113,7 @@
                            <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
                            <span>添加任务</span>
                        </div>
-                   </div>
-                   <!--进行中-->
-                   <div class="model boxsizing">
-                       <div class="model-title">
-                           <span>进行中</span>
-                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
-                           <!--点击下箭头出现的内容-->
-                           <div class="lbmenu">
-                               <div class="lbmenu-title">
-                                   <p>菜单列表</p>
-                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                               </div>
-                               <div class="lbmenu-add">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                                       在此处添加新列表
-                                   </div>
-                               </div>
-                               <div class="lbmenu-remove">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                                       本列表所有任务移到回收站
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                       <!--任务列表-->
-                       <div class="ul-wrap layui-form">
-                           <ul id="list2">
-                               <li class="assignment">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <span class="timer">今天9:00-明天</span>
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
-                               </li>
-                           </ul>
-                       </div>
-                       <!--添加任务按钮-->
-                       <div class="add-assignment">
-                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
-                           <span>添加任务</span>
-                       </div>
-
-                   </div>
-                   <!--已完成-->
-                   <div class="model boxsizing">
-                       <div class="model-title">
-                           <span>已完成</span>
-                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
-                           <!--点击下箭头出现的内容-->
-                           <div class="lbmenu">
-                               <div class="lbmenu-title">
-                                   <p>菜单列表</p>
-                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                               </div>
-                               <div class="lbmenu-add">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                                       在此处添加新列表
-                                   </div>
-                               </div>
-                               <div class="lbmenu-remove">
-                                   <div class="lbmenu-add-content">
-                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                                       本列表所有任务移到回收站
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                       <!--任务列表-->
-                       <div class="ul-wrap layui-form">
-                           <ul id="list3">
-                               <li class="assignment">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <span class="timer">今天9:00-明天</span>
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
-                               </li>
-                           </ul>
-                       </div>
-                       <!--添加任务按钮-->
-                       <div class="add-assignment">
-                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
-                           <span>添加任务</span>
-                       </div>
-
-                   </div>
+                   </li>
 
                    <!--新建任务列表-->
                    <div class="creat-model boxsizing">
@@ -285,7 +129,7 @@
                            </div>
                        </div>
                    </div>
-               </div>
+               </ul>
              </div>
           </div>
 

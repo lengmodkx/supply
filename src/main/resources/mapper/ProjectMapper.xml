@@ -15,8 +15,9 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
-		<result column="project_menu" property="projectMenu" jdbcType="VARCHAR" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+		<association property="funcList" column="project_id" javaType="ArrayList"
+					 select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -32,7 +33,6 @@
 		create_time,
 		update_time,
 		is_public,
-		project_menu,
 		project_remind
 	</sql>
 
@@ -126,10 +126,6 @@
 			<if test="isPublic != null ">
 				is_public,
 			</if>
-			<if test="projectMenu != null and projectMenu != ''">
-				project_menu,
-			</if>
-
 			<if test="projectRemind != null ">
 				project_remind,
 			</if>
@@ -173,9 +169,6 @@
 
 			<if test="isPublic != null ">
 				#{isPublic},
-			</if>
-			<if test="projectMenu != null and projectMenu != ''">
-				#{projectMenu},
 			</if>
 
 			<if test="projectRemind != null ">
@@ -224,9 +217,6 @@
 			</if>
 			<if test="isPublic != null ">
 				is_public = #{isPublic},
-			</if>
-			<if test="projectMenu != null and projectMenu != ''">
-				project_menu = #{projectMenu},
 			</if>
 
 			<if test="projectRemind != null ">

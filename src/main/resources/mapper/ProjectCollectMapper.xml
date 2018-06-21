@@ -25,7 +25,6 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
-		<result column="project_menu" property="projectMenu" jdbcType="VARCHAR" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
 	</resultMap>
 
@@ -42,7 +41,6 @@
 		prm_project.create_time,
 		prm_project.update_time,
 		prm_project.is_public,
-		prm_project.project_menu,
 		prm_project.project_remind
 	</sql>
 

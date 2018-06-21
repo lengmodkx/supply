@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * projectEntity
@@ -63,12 +64,9 @@ public class Project extends BaseEntity implements Serializable {
     private Integer isPublic;
 
     /**
-     * 项目菜单标题（可调整顺序）
-     */
-    private String projectMenu;
-
-    /**
      * 项目是否开启推送提醒
      */
     private Integer projectRemind;
+
+    private List<ProjectFunc> funcList;
 }

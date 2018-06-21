@@ -13,7 +13,7 @@
     <div class="layui-row">
 
         <div class="layui-col-md4 layui-col-lg5 header-left">5D管理系统</div>
-        <div class="layui-col-md4 layui-col-lg4 header-middle">
+        <div class="layui-col-md4 layui-col-lg4">
             <input type="text" class="layui-input search-input boxsizing">
             <i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>
         </div>
@@ -30,7 +30,7 @@
     </div>
     <!--右侧固定的头像与菜单栏-->
     <div class="head-photo-wrap">
-        <img src="" class="head-photo">
+        <img class="head-photo" th:src="#{IMAGE_SERVER}+${user.userInfo.image}">
 
         <div class="vertical-nav">
             <ul>
@@ -129,14 +129,15 @@
             <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
                 th:each="project : ${collectrojects}"
                 th:style="'background-image:url(' + @{/image/bj.jpg} + ');'"
-                th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'">
+                th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
+            >
                 <div class="describe boxsizing">
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
-                        <!--<span class="tools">-->
-                        <!--<i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>-->
-                        <!--<i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>-->
-                        <!--</span>-->
+                        <span class="tools">
+                        <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>
+                        </span>
                     </div>
                     <p th:text="${project.projectDes}">描述描述</p>
                 </div>
@@ -150,9 +151,6 @@
                 <div class="describe boxsizing">
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
-                        <!--<span class="tools">-->
-                        <!--<i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>-->
-                        <!--</span>-->
                     </div>
                     <p th:text="${project.projectDes}">描述描述</p>
                 </div>
@@ -192,11 +190,11 @@
     function projectClick(projectId){
         console.log(projectId);
         window.location.href = "/project/task.html?projectId="+projectId;
+        return false;
     }
 
     //点击收藏项目
     function projectCollect(projectId){
-
         console.log(projectId);
         // $.post("/project/collectProject",projectId,function (data) {
         //     if(data.result===1){
@@ -205,8 +203,8 @@
         //         layer.msg(data.msg,{icon:5});
         //     }
         // });
+        return false;
     }
-
 
     $(function () {
         console.log($(".content-list li").css("width"));
@@ -242,6 +240,7 @@
     }
     //点击完成创建按钮
     $(function () {
+
         layui.use('form', function(){
             var form = layui.form;
             //监听提交

@@ -15,7 +15,7 @@
     <textarea name="" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
         <div class="who-wrap">
-            <img src="../static/image/adds.png" >
+            <img th:src="@{/image/adds.png}" >
             <span>谁谁谁</span>
             <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
         </div>
@@ -25,15 +25,15 @@
         </div>
     </div>
     <div class="begin-time abox">
-        <img src="../static/image/begintime.png" >
+        <img th:src="@{/image/begintime.png}" >
         <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
     </div>
     <div class="over-time abox">
-        <img src="../static/image/begintime.png" >
+        <img th:src="@{/image/begintime.png}" >
         <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
     </div>
     <div class="no-repeat abox">
-        <img src="../static/image/norepeat.png" >
+        <img th:src="@{/image/norepeat.png}" >
         <select name="repeat" lay-verify="">
             <option value="repeat-no">不重复</option>
             <option value="repeat-day">每天重复</option>
@@ -44,7 +44,7 @@
         </select>
     </div>
     <div class="no-remand abox">
-        <img src="../static/image/noremand.png" >
+        <img th:src="@{/image/noremand.png}" >
         <select name="remand" lay-verify="">
             <option value="remand-no">不提醒</option>
             <option value="remand-over">任务截止时提醒</option>
@@ -59,7 +59,7 @@
         </div>
     </div>
     <div class="add-tag combox">
-        <img src="../static/image/biaoqian.png" >
+        <img th:src="@{/image/biaoqian.png}" >
         <span>标签</span>
         <span class="no-tags">添加标签</span>
         <!--新建  搜索标签框-->
@@ -68,7 +68,7 @@
             <div class="tag-search" style="display: none">
                 <div class="tag-search-title boxsizing">
                     <input class="tag-search-input" type="text" placeholder="搜索标签">
-                    <img src="../static/image/adds.png" >
+                    <img th:src="@{/image/adds.png}" >
                 </div>
                 <ul class="tags-ul boxsizing">
                     <li class="tags-list">
@@ -129,16 +129,16 @@
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <img src="../static/image/add.png" >
+            <img th:src="@{/image/add.png}" >
             <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
-            <img src="../static/image/adds.png" >
+            <img th:src="@{/image/adds.png}" >
         </div>
     </div>
     <div class="heng-line"></div>
     <div class="secret abox layui-form">
-        <img src="../static/image/suo.png" >
+        <img th:src="@{/image/suo.png}" >
         <span>隐私模式</span>
         <div class="switch">
             <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
@@ -154,18 +154,18 @@
         <div class="peoples">
             <p>参与者</p>
             <div class="one-people">
-                <img src="../static/image/begintime.png">
+                <img th:src="@{/image/begintime.png}">
                 <span>李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <p>推荐</p>
             <div class="one-people">
-                <img src="../static/image/begintime.png">
+                <img th:src="@{/image/begintime.png}">
                 <span>李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <div class="add-new-people">
-                <img src="../static/image/adds.png">
+                <img th:src="@{/image/adds.png}">
                 <span>邀请新成员</span>
             </div>
         </div>

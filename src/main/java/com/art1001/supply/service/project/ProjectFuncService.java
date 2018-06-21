@@ -53,5 +53,12 @@ public interface ProjectFuncService {
 	 * @return
 	 */
 	public List<ProjectFunc> findProjectFuncAllList();
+
+	/**
+	 * 根据项目id获取所有project 功能菜单数据
+	 *
+	 * @return
+	 */
+	List<ProjectFunc> findProjectFuncList(String projectId);
 	
 }
