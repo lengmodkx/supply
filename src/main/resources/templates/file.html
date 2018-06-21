@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+
 </head>
 <body>
 <div class="file-box boxsizing layui-form">
@@ -49,7 +50,9 @@
                      th:text="${#dates.format(file.updateTime,'M月dd日')}"></div>
                 <div class="layui-col-md3 layui-col-lg-3 file-operate">
                     <!--<i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>-->
-                    <a href="https://faydan.oss-cn-beijing.aliyuncs.com/第一个项目-1529401007925/卡哇伊-1529402096469.jpg" download=""><i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i></a>
+                    <a th:href="@{/file/downloadFile(fileId = ${file.fileId})}">
+                        <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -63,6 +66,7 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script>
+
     layui.use(['form', 'upload', 'layer'], function () {
         var form = layui.form
             , upload = layui.upload

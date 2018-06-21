@@ -75,6 +75,15 @@ public interface TaskMapper {
     int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel, @Param("updateTime") long updateTime);
 
 	/**
+	 * 移入回收站/恢复任务(适用于和分组一起移入回收站的任务)
+	 * @param taskId 任务id
+	 * @param taskDel 任务是否在回收站
+	 * @param updateTime 更新时间
+	 * @return
+	 */
+	int groupTaskmoveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel, @Param("updateTime") long updateTime);
+
+	/**
 	 * 修改当前任务状态
 	 * @param taskId 当前任务id
 	 * @param updateTime 当前时间毫秒数
@@ -194,4 +203,20 @@ public interface TaskMapper {
 	 * @return
 	 */
 	List<Task> findTaskByPriority(@Param("projectId") String projectId,@Param("priority") String priority);
+
+	/**
+	 * 查询任务下的所有子任务
+	 * @param taskId 任务id
+	 * @return
+	 */
+	List<Task> findTaskByFatherTask(String taskId);
+
+	/**
+	 * 恢复任务的功能
+	 * @param taskId 任务的id
+	 * @param menuId 恢复后放到哪个菜单
+	 * @param updateTime 更新时间
+	 * @param projectId 项目id
+	 */
+	void recoverTask(@Param("taskId") String taskId, @Param("menuId") String menuId,@Param("updateTime") Long updateTime,@Param("projectId") String projectId);
 }

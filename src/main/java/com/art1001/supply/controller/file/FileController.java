@@ -1,6 +1,7 @@
 package com.art1001.supply.controller.file;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.util.AliyunOss;
@@ -11,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -34,14 +34,14 @@ public class FileController {
      * 文件列表
      *
      * @param projectId 项目id
-     * @param parentId 上级目录id
-     * @param isDel 删除标识
+     * @param parentId  上级目录id
+     * @param isDel     删除标识
      */
     @GetMapping("/list.html")
     public String list(
             @RequestParam String projectId,
-            @RequestParam (required = false, defaultValue = "0") String parentId,
-            @RequestParam (required = false, defaultValue = "0") Integer isDel,
+            @RequestParam(required = false, defaultValue = "0") String parentId,
+            @RequestParam(required = false, defaultValue = "0") Integer isDel,
             Model model
     ) {
         if (parentId.equals("0")) {
@@ -59,15 +59,15 @@ public class FileController {
     /**
      * 创建文件夹
      *
-     * @param projectId 项目id
-     * @param parentId  上一级目录id  默认为0
+     * @param projectId  项目id
+     * @param parentId   上一级目录id  默认为0
      * @param folderName 文件夹名称
      */
     @PostMapping("/createFolder")
     @ResponseBody
     public JSONObject createFolder(
             @RequestParam String projectId,
-            @RequestParam (required = false, defaultValue = "0") String parentId,
+            @RequestParam(required = false, defaultValue = "0") String parentId,
             @RequestParam String folderName
     ) {
         JSONObject jsonObject = new JSONObject();
@@ -99,13 +99,13 @@ public class FileController {
      *
      * @param projectId 项目id
      * @param parentId  上级目录id
-     * @param file 文件
+     * @param file      文件
      */
     @PostMapping("/uploadFile")
     @ResponseBody
     public JSONObject uploadFile(
             @RequestParam String projectId,
-            @RequestParam (required = false, defaultValue = "0") String parentId,
+            @RequestParam(required = false, defaultValue = "0") String parentId,
             MultipartFile file,
             HttpServletRequest request
     ) {
@@ -134,6 +134,7 @@ public class FileController {
 
     /**
      * 修改文件
+     *
      * @param file file
      */
     @PostMapping("/updateFile")
@@ -183,18 +184,65 @@ public class FileController {
     @ResponseBody
     public void downloadFile(
             @RequestParam String fileId,
-            HttpServletRequest request,
             HttpServletResponse response
-    ) {
+    ) throws IOException {
+        // 获取文件
         File file = fileService.findFileById(fileId);
-        InputStreamReader inputStreamReader = AliyunOss.downloadInputStream(file.getFileUrl());
-
+        String fileName = file.getFileName();
+        // 如果下载的是目录
+        if (file.getCatalog() == 1) {
+            fileName += ".zip";
+        }
+        String path = Constants.OSS_URL + file.getFileUrl();
+        InputStream inputStream = AliyunOss.downloadInputStream(path);
+        // 设置响应类型
+        response.setContentType("application/x-msdownload");
+        // 设置头信息
+        // 设置fileName的编码
+        fileName = URLEncoder.encode(fileName, "UTF-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        ServletOutputStream outputStream = response.getOutputStream();
+        byte[] bytes = new byte[1024];
+        int n;
+        assert inputStream != null;
+        while ((n = inputStream.read(bytes)) != -1) {
+            outputStream.write(bytes, 0, n);
+        }
+        outputStream.close();
+        inputStream.close();
     }
 
-    public static void main(String[] args) {
-        Calendar calendar = Calendar.getInstance();
-        Date time = calendar.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println(sdf.format(time));
+    @RequestMapping("/download")
+    @ResponseBody
+    public HttpServletResponse download(HttpServletResponse response) {
+        try {
+            String path = "D:\\image\\1529482251430.jpg";
+            // path是指欲下载的文件的路径。
+            java.io.File file = new java.io.File(path);
+            // 取得文件名。
+            String filename = file.getName();
+            // 取得文件的后缀名。
+            String ext = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
+
+            // 以流的形式下载文件。
+            InputStream fis = new BufferedInputStream(new FileInputStream(path));
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes()));
+            response.addHeader("Content-Length", "" + file.length());
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return response;
     }
+
 }
