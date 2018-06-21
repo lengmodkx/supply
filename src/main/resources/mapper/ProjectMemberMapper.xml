@@ -12,6 +12,7 @@
 		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="member_lable" property="memberLable" jdbcType="INTEGER" />
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
@@ -57,7 +58,8 @@
 				member_phone,
 				member_email,
 				create_time,
-				update_time
+				update_time,
+		        member_lable
 	</sql>
 
 	<sql id="whereStatement">
@@ -141,6 +143,9 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="memberLable != null ">
+			member_lable,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -171,6 +176,9 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="memberLable != null ">
+				#{memberLable},
 			</if>
 		</trim>
 
@@ -203,6 +211,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="memberLable != null ">
+				member_lable = #{memberLable},
 			</if>
 		</set>
 

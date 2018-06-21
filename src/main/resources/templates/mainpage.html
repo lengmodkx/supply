@@ -29,372 +29,270 @@
                 <a id="help">帮助</a>
             </span>
         </div>
-
     <!--右侧固定的头像与菜单栏-->
     <div class="head-photo-wrap">
         <img src="../static/image/add.png" class="head-photo">
-
-        <div class="vertical-nav">
-            <ul>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">创建企业</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">个人项目</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">账号设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">偏好设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">切换至国际服务器</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">退出登录</a>
-                </li>
-            </ul>
-        </div>
     </div>
-
-    <!--点击 帮助 出现的弹框-->
-    <div class="help-list"></div>
 </div>
 
 
-
-<!--点击 ‘我的’ 出现的顶部内容-->
-<div class="my-toper" style="display: none">
-   <div class="my-nav-wrap">
-       <ul>
-           <li id="near-thing" class="now">近期的事</li>
-           <li id="my-task">任务</li>
-           <li id="my-scheduling">日程</li>
-           <li id="my-file">文件</li>
-           <li id="my-collect">收藏</li>
-       </ul>
-   </div>
-</div>
 <!--内容区域-->
 <div class="content-wrap-wrap boxsizing">
  <!--<div class="content-wrap boxsizing">-->
    <div class="content boxsizing">
        <!--顶部-->
-       <div class="toper-wrap boxsizing" >
-           <div class="toper-left">
-               <a href="#">首页</a>
-               <i class="layui-icon layui-icon-right" style="font-size: 16px; color: #C3C2C2;"></i>
-               <a href="#">BIM5D过程管理平台</a>
-               <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
-           </div>
-           <div class="toper-nav">
-               <ul>
-                   <li class="click-task now">
-                       <a  >UI设计任务</a>
-                   </li>
-                   <div>
+          <div class="project-navigation">
+                   <div class="toper-left">
+                       <a href="#">首页</a>
+                       <i class="layui-icon layui-icon-right" style="font-size: 16px; color: #C3C2C2;"></i>
+                       <a href="#">BIM5D过程管理平台</a>
                        <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
-                       <span>|</span>
+                   </div>
+                   <div class="toper-nav">
+                       <ul>
+                           <li class="click-task now">
+                               <a  >UI设计任务</a>
+                               <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
+                               <span class="l">|</span>
+                           </li>
+
+                           <li class="click-share">
+                               <a  >分享</a>
+                           </li>
+                           <li class="click-file">
+                               <a >文件</a>
+                           </li>
+                           <li class="click-date">
+                               <a >日程</a>
+                           </li>
+                           <li  class="click-chat">
+                               <a>群聊</a>
+                           </li>
+                           <li class="click-count">
+                               <a >统计</a>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="toper-right">
+                       <i class="layui-icon layui-icon-user" style="font-size: 16px; color: #017ECA;"></i>
+                       <span class="team">群组</span>
+                       <i class="layui-icon layui-icon-app" style="font-size: 16px; color: #017ECA;"></i>
+                       <span class="menu">菜单</span>
+                   </div>
+               </div>
+       <!--产品设计任务页面-->
+          <div class="view boxsizing">
+             <div class="board-scrum-view boxsizing">
+               <div class="board-scrum-stages boxsizing">
+                   <!--待处理-->
+                   <div class="model boxsizing">
+
+                       <div class="model-title">
+                           <span>待处理</span>
+                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+                           <!--点击下箭头出现的内容-->
+                           <div class="lbmenu">
+                               <div class="lbmenu-title">
+                                   <p>菜单列表</p>
+                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+                               </div>
+                               <div class="lbmenu-add">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                                       在此处添加新列表
+                                   </div>
+                               </div>
+                               <div class="lbmenu-remove">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                                       本列表所有任务移到回收站
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <!--任务列表-->
+                       <div class="ul-wrap layui-form">
+                           <ul id="list1">
+                               <li class="assignment ">
+                                   <!--<div class="tags boxsizing">-->
+                                       <!--<span class="one-tag">112</span>-->
+                                   <!--</div>-->
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                               <li class="assignment">
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                               <li class="assignment">
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                               <li class="assignment">
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                           </ul>
+                       </div>
+                       <!--添加任务按钮-->
+                       <div class="add-assignment">
+                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+                           <span>添加任务</span>
+                       </div>
+                   </div>
+                   <!--进行中-->
+                   <div class="model boxsizing">
+                       <div class="model-title">
+                           <span>进行中</span>
+                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+                           <!--点击下箭头出现的内容-->
+                           <div class="lbmenu">
+                               <div class="lbmenu-title">
+                                   <p>菜单列表</p>
+                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+                               </div>
+                               <div class="lbmenu-add">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                                       在此处添加新列表
+                                   </div>
+                               </div>
+                               <div class="lbmenu-remove">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                                       本列表所有任务移到回收站
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <!--任务列表-->
+                       <div class="ul-wrap layui-form">
+                           <ul id="list2">
+                               <li class="assignment">
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                           </ul>
+                       </div>
+                       <!--添加任务按钮-->
+                       <div class="add-assignment">
+                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+                           <span>添加任务</span>
+                       </div>
+
+                   </div>
+                   <!--已完成-->
+                   <div class="model boxsizing">
+                       <div class="model-title">
+                           <span>已完成</span>
+                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+                           <!--点击下箭头出现的内容-->
+                           <div class="lbmenu">
+                               <div class="lbmenu-title">
+                                   <p>菜单列表</p>
+                                   <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+                               </div>
+                               <div class="lbmenu-add">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                                       在此处添加新列表
+                                   </div>
+                               </div>
+                               <div class="lbmenu-remove">
+                                   <div class="lbmenu-add-content">
+                                       <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                                       本列表所有任务移到回收站
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <!--任务列表-->
+                       <div class="ul-wrap layui-form">
+                           <ul id="list3">
+                               <li class="assignment">
+                                   <div class="assignment-top-box boxsizing">
+                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                       <span class="assignment-title">设计修改任务界面</span>
+                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                   </div>
+                                   <div class="assignment-bottom-box">
+                                       <span class="timer">今天9:00-明天</span>
+                                   </div>
+                                   <!--//左边框线-->
+                                   <div class="line"></div>
+                               </li>
+                           </ul>
+                       </div>
+                       <!--添加任务按钮-->
+                       <div class="add-assignment">
+                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+                           <span>添加任务</span>
+                       </div>
+
                    </div>
 
-                   <li class="click-share">
-                       <a  >分享</a>
-                   </li>
-                   <li class="click-file">
-                       <a >文件</a>
-                   </li>
-                   <li class="click-date">
-                       <a >日程</a>
-                   </li>
-                   <li  class="click-chat">
-                       <a>群聊</a>
-                   </li>
-                   <li class="click-count">
-                       <a >统计</a>
-                   </li>
-               </ul>
-           </div>
-           <div class="toper-right">
-               <i class="layui-icon layui-icon-user" style="font-size: 16px; color: #017ECA;"></i>
-               <span class="team">群组</span>
-               <i class="layui-icon layui-icon-app" style="font-size: 16px; color: #017ECA;"></i>
-               <span class="menu">菜单</span>
-           </div>
+                   <!--新建任务列表-->
+                   <div class="creat-model boxsizing">
+                       <div class="noclick-creat-model">
+                           <i class="layui-icon layui-icon-add-circle" style="font-size: 22px; color: #AEAEAE;"></i>
+                           <span>新建任务列表</span>
+                       </div>
+                       <div class="click-creat-model" style="display: none">
+                           <input type="text" name="title"  placeholder="新建任务列表..." autocomplete="off" class="layui-input creat-model-input">
+                           <div class="clearfix">
+                               <div class="creat-model-ok layui-btn layui-btn-normal">保存</div>
+                               <div class="creat-model-no">取消</div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+             </div>
+          </div>
 
-       </div>
-       <!--点击菜单，出现 的项目菜单 区域-->
-       <div class="project-menu boxsizing" style="display: none">
-           <div class="menu-title">项目菜单<span class="close-menu">关闭</span></div>
-           <div class="menu-list menu-set">
-               <img src="../static/image/setting.png">
-               <span>项目设置</span>
-           </div>
-           <div class="menu-list menu-tag">
-               <img src="../static/image/biaoqian.png">
-               <span>标签</span>
-           </div>
-           <div class="menu-list menu-cj">
-               <img src="../static/image/chajian.png">
-               <span>应用与插件</span>
-           </div>
-           <div class="menu-list menu-more">
-               <img src="../static/image/gengduo.png">
-               <span>查看更多</span>
-           </div>
-           <div class="heng-line"></div>
-           <div class="menu-list menu-evolve" style="margin-top: 24px">
-               <img src="../static/image/jinzhan.png">
-               <span>项目进展</span>
-           </div>
-           <img src="" class="pro-evolve">
-           <div class="heng-line"></div>
-           <div class="menu-list menu-trends-title" style="margin-top: 24px">
-               <img src="../static/image/dongtai.png">
-               <span>项目动态</span>
-           </div>
-           <ul class="pro-trends boxsizing">
-               <li class="trends-list">
-                   <div class="trends-list-left">
-                       <img class="who-trends-img" src="../static/image/add.png" >
-                   </div>
-                   <div class="trends-list-right">
-                       <span class="who-trends-name">谁谁谁</span>
-                       <span class="do-what">重做了任务：登录功能  DT-18</span>
-                       <p class="trends-time">17分钟前</p>
-                   </div>
-               </li>
-               <li class="trends-list">
-                   <div class="trends-list-left">
-                       <img class="who-trends-img" src="../static/image/add.png" >
-                   </div>
-                   <div class="trends-list-right">
-                       <span class="who-trends-name">谁谁谁</span>
-                       <span class="do-what">重做了任务：登录功能  DT-18</span>
-                       <p class="trends-time">17分钟前</p>
-                   </div>
-               </li>
-
-           </ul>
-       </div>
        <!--页面内容部分-->
   <div class="board-view ">
-       <!--产品设计任务页面-->
-<div id="project-design-task">
-       <!--待处理-->
-       <div class="model boxsizing">
 
-           <div class="model-title">
-               <span>待处理</span>
-               <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
-               <!--点击下箭头出现的内容-->
-               <div class="lbmenu">
-                   <div class="lbmenu-title">
-                       <p>菜单列表</p>
-                       <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                   </div>
-                   <div class="lbmenu-add">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                           在此处添加新列表
-                       </div>
-                   </div>
-                   <div class="lbmenu-remove">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                           本列表所有任务移到回收站
-                       </div>
-                   </div>
-               </div>
-           </div>
-           <!--任务列表-->
-           <div class="ul-wrap layui-form">
-               <ul id="list1">
-                   <li class="assignment ">
-                       <div class="tags boxsizing">
-                           <span class="one-tag">112</span>
-                       </div>
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-                   <li class="assignment">
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-                   <li class="assignment">
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-                   <li class="assignment">
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-               </ul>
-           </div>
-           <!--添加任务按钮-->
-           <div class="add-assignment">
-               <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
-               <span>添加任务</span>
-           </div>
-       </div>
-       <!--进行中-->
-       <div class="model boxsizing">
-           <div class="model-title">
-               <span>进行中</span>
-               <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
-               <!--点击下箭头出现的内容-->
-               <div class="lbmenu">
-                   <div class="lbmenu-title">
-                       <p>菜单列表</p>
-                       <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                   </div>
-                   <div class="lbmenu-add">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                           在此处添加新列表
-                       </div>
-                   </div>
-                   <div class="lbmenu-remove">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                           本列表所有任务移到回收站
-                       </div>
-                   </div>
-               </div>
-           </div>
-           <!--任务列表-->
-           <div class="ul-wrap layui-form">
-               <ul id="list2">
-                   <li class="assignment">
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-               </ul>
-           </div>
-           <!--添加任务按钮-->
-           <div class="add-assignment">
-               <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
-               <span>添加任务</span>
-           </div>
 
-       </div>
-       <!--已完成-->
-       <div class="model boxsizing">
-           <div class="model-title">
-               <span>已完成</span>
-               <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
-               <!--点击下箭头出现的内容-->
-               <div class="lbmenu">
-                   <div class="lbmenu-title">
-                       <p>菜单列表</p>
-                       <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-                   </div>
-                   <div class="lbmenu-add">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                           在此处添加新列表
-                       </div>
-                   </div>
-                   <div class="lbmenu-remove">
-                       <div class="lbmenu-add-content">
-                           <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                           本列表所有任务移到回收站
-                       </div>
-                   </div>
-               </div>
-           </div>
-           <!--任务列表-->
-           <div class="ul-wrap layui-form">
-               <ul id="list3">
-                   <li class="assignment">
-                       <div class="assignment-top-box boxsizing">
-                           <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                           <span class="assignment-title">设计修改任务界面</span>
-                           <img class="assignment-tx" src="../static/image/add.png" >
-                       </div>
-                       <div class="assignment-bottom-box">
-                           <span class="timer">今天9:00-明天</span>
-                           <span class="dates">dt-12</span>
-                       </div>
-                       <!--//左边框线-->
-                       <div class="line"></div>
-                   </li>
-               </ul>
-           </div>
-           <!--添加任务按钮-->
-           <div class="add-assignment">
-               <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
-               <span>添加任务</span>
-           </div>
-
-       </div>
-
-       <!--新建任务列表-->
-       <div class="creat-model boxsizing">
-           <div class="noclick-creat-model">
-               <i class="layui-icon layui-icon-add-circle" style="font-size: 22px; color: #AEAEAE;"></i>
-               <span>新建任务列表</span>
-           </div>
-           <div class="click-creat-model" style="display: none">
-               <input type="text" name="title"  placeholder="新建任务列表..." autocomplete="off" class="layui-input creat-model-input">
-               <div class="clearfix">
-                   <div class="creat-model-ok layui-btn layui-btn-normal">保存</div>
-                   <div class="creat-model-no">取消</div>
-               </div>
-           </div>
-       </div>
-</div>
        <!--文件 页面-->
        <div id="file" style="display: none">
            <div class="file-box boxsizing layui-form">
@@ -472,50 +370,7 @@
                       <div class="layui-col-md3 layui-col-lg-3 file-operate">
                           <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
                           <!--<i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>-->
-                          <!--文件菜单 弹框-->
-                          <div class="scheduling-menu boxsizing layui-form">
-                              <div class="scheduling-menu-title">分享菜单
-                                  <img src="../static/image/close.png" >
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/bjrc.png" >
-                                  <span>编辑分享</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/fzrc.png" >
-                                  <span>复制分享</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/fzrclj.png" >
-                                  <span>复制分享链接</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/gxrc.png" >
-                                  <span>共享分享</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/scrc.png" >
-                                  <span>收藏分享</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/ydrc.png" >
-                                  <span>移动分享</span>
-                              </div>
-                              <div class="menu-box edit-rc">
-                                  <img src="../static/image/hsz.png" >
-                                  <span>移到回收站</span>
-                              </div>
-                              <div class="heng-line"></div>
-                              <div class="secret menu-box layui-form">
-                                  <img src="../static/image/suo.png" >
-                                  <span>隐私模式</span>
-                                  <div class="switch">
-                                      <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
-                                  </div>
-                                  <div class="who-can-see">所有成员可见</div>
-                              </div>
 
-                          </div>
                       </div>
                   </div>
 
@@ -550,7 +405,6 @@
                                   <div class="scheduling-name">
                                       <span>设计项目主机</span><span>——</span><span>项目名称</span>
                                   </div>
-                                  <div class="scheduling-dt">dt-12</div>
                               </li>
                               <li>
                                   <div class="scheduling-time">
@@ -559,7 +413,6 @@
                                   <div class="scheduling-name">
                                       <span>设计项目主机</span><span>——</span><span>项目名称</span>
                                   </div>
-                                  <div class="scheduling-dt">dt-12</div>
                               </li>
                           </ul>
                       </div>
@@ -567,93 +420,8 @@
               </div>
           </div>
 
-          <!--编辑日程 弹框-->
-          <div class="edit-scheduling boxsizing layui-form">
-              <div class="edit-scheduling-title">编辑日程</div>
-              <textarea name=""  placeholder="设计修改任务界面" class="layui-textarea"></textarea>
-              <div class="begin-time abox">
-                  <img src="../static/image/begintime.png" >
-                  <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
-              </div>
-              <div class="over-time abox">
-                  <img src="../static/image/begintime.png" >
-                  <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
-              </div>
-              <div class="no-repeat abox">
-                  <img src="../static/image/norepeat.png" >
-                  <select name="repeat" lay-verify="">
-                      <option value="repeat-no">不重复</option>
-                      <option value="repeat-day">每天重复</option>
-                      <option value="repeat-week">每周重复</option>
-                      <option value="repeat-mouth">每月重复</option>
-                      <option value="repeat-year">每年重复</option>
-                      <option value="repeat-workday">工作日重复</option>
-                  </select>
-              </div>
-              <div class="no-remand abox">
-                  <img src="../static/image/noremand.png" >
-                  <select name="remand" lay-verify="">
-                      <option value="remand-no">不提醒</option>
-                      <option value="remand-over">任务截止时提醒</option>
-                      <option value="remand-begin">任务开始时提醒</option>
-                  </select>
-              </div>
-              <div class="heng-line"></div>
-              <p class="cyz">参与者</p>
-              <div class="work-people boxsizing clearfix">
-                  <div class="one-work-people">
-                      <img src="../static/image/add.png" >
-                      <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
-                  </div>
-                  <div class="add-work-people">
-                      <img src="../static/image/adds.png" >
-                  </div>
-              </div>
-              <div class="heng-line"></div>
-              <div class="edit-scheduling-ok">保存</div>
-          </div>
-          <!--日程菜单 弹框-->
-          <div class="scheduling-menu boxsizing layui-form">
-              <div class="scheduling-menu-title">日程菜单</div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/bjrc.png" >
-                  <span>编辑日程</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/fzrc.png" >
-                  <span>复制日程</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/fzrclj.png" >
-                  <span>复制日程链接</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/gxrc.png" >
-                  <span>共享日程</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/scrc.png" >
-                  <span>收藏日程</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/ydrc.png" >
-                  <span>移动日程</span>
-              </div>
-              <div class="menu-box edit-rc">
-                  <img src="../static/image/hsz.png" >
-                  <span>移到回收站</span>
-              </div>
-              <div class="heng-line"></div>
-              <div class="secret menu-box layui-form">
-                  <img src="../static/image/suo.png" >
-                  <span>隐私模式</span>
-                  <div class="switch">
-                      <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
-                  </div>
-                  <div class="who-can-see">所有成员可见</div>
-              </div>
 
-          </div>
+
       </div>
       <!--群聊页面-->
       <div id="chat" style="display: none">
@@ -678,34 +446,12 @@
                       <img src="../static/image/biaoqing.png" >
                       <div class="publish-btn ">发布</div>
                   </div>
-                  <!--上传文件框-->
-                  <div class="fujian-box boxsizing">
-                      <div class="fujian-box-title boxsizing">
-                          添加附件
-                          <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
-                      </div>
-                      <div class="zj-up">
-                          <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
-                          <span>直接上传</span>
-                      </div>
-                      <div class="xian"></div>
-                      <div class="select-up">
-                          <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
-                          <span>从文件库选择</span>
-                      </div>
-                      <div class="xian"></div>
-                      <div class="fujian-box-bottom boxsizing">
-                          <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
-                          <div class="add-fujian">添加</div>
-                      </div>
-                  </div>
 
               </div>
           </div>
       </div>
-  </div>
-   </div>
- <!--</div>-->
+  </div></div>
+ </div>
 </div>
 
 
@@ -724,10 +470,6 @@
 <script>
    $(function () {
 
-       $("#mine").click(function () {
-
-
-       })
    });
 
    //点击 添加 类名now 使文字变色

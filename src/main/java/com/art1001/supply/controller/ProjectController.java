@@ -3,6 +3,7 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.collect.ProjectCollect;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -11,9 +12,11 @@ import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.ProjectCollectService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +52,13 @@ public class ProjectController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private TaskService taskService;
+
+    @Resource
+    private FileService fileService;
+
     @RequestMapping("/home.html")
     public String home(Model model){
 
@@ -150,6 +160,9 @@ public class ProjectController {
             relation.setRelationName("任务");
             relation.setProjectId(project.getProjectId());
             relation.setLable(0);
+            relation.setRelationDel(0);
+            relation.setCreateTime(System.currentTimeMillis());
+            relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
 
             //初始化菜单
@@ -160,6 +173,9 @@ public class ProjectController {
                 relation1.setRelationName(menu);
                 relation1.setParentId(relation.getRelationId());
                 relation1.setLable(1);
+                relation1.setRelationDel(0);
+                relation1.setCreateTime(System.currentTimeMillis());
+                relation1.setUpdateTime(System.currentTimeMillis());
                 relationService.saveRelation(relation1);
             }
 
@@ -173,10 +189,15 @@ public class ProjectController {
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());
             projectMember.setCreateTime(System.currentTimeMillis());
             projectMember.setUpdateTime(System.currentTimeMillis());
+            projectMember.setMemberLable(1);
             projectMemberService.saveProjectMember(projectMember);
+
+            //初始化项目文件夹
+            fileService.initProjectFolder(project);
+
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
-            jsonObject.put("data",project);
+            jsonObject.put("projectId",project.getProjectId());
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -226,15 +247,21 @@ public class ProjectController {
         return jsonObject;
     }
 
-    @PostMapping("/updateProjectMember")
+    /**
+     * 给项目添加成员
+     * @param projectId
+     * @param memberIds
+     * @return
+     */
+    @PostMapping("/addProjectMember")
     @ResponseBody
-    public JSONObject updateProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
+    public JSONObject addProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
         JSONObject jsonObject = new JSONObject();
         try{
 
             if(StringUtils.isEmpty(memberIds)){
                 jsonObject.put("result",0);
-                jsonObject.put("msg","请选择组员");
+                jsonObject.put("msg","请选择成员");
             }else{
                 String[] memberId = memberIds.split(",");
                 for (int i=0;i<memberId.length;i++){
@@ -248,6 +275,7 @@ public class ProjectController {
                     projectMember.setMemberImg(userEntity.getUserInfo().getImage());
                     projectMember.setCreateTime(System.currentTimeMillis());
                     projectMember.setUpdateTime(System.currentTimeMillis());
+                    projectMember.setMemberLable(0);
                     projectMemberService.saveProjectMember(projectMember);
                 }
 
@@ -319,6 +347,55 @@ public class ProjectController {
         }
         return jsonObject;
     }
+
+
+    @GetMapping("/projectSetting")
+    public String projectSetting(@RequestParam String projectId, Model model){
+        String userId = ShiroAuthenticationManager.getUserId();
+        Project project = projectService.findProjectByProjectId(projectId);
+        UserEntity userEntity = userService.findById(project.getMemberId());
+
+        model.addAttribute("project",project);
+        model.addAttribute("user",userEntity);
+        if(userId.equals(project.getMemberId())){
+            model.addAttribute("hasPermission",1);
+        }else{
+            model.addAttribute("hasPermission",0);
+        }
+
+        return "objsetting";
+    }
+
+
+
+
+    @GetMapping("/task.html")
+    public String mainpage(@RequestParam String projectId,Model model){
+        try {
+            //查询项目任务分组
+            Relation relation = new Relation();
+            relation.setProjectId(projectId);
+            relation.setLable(0);
+            List<Relation> taskGroups = relationService.findRelationAllList(relation);
+
+            //取第0个任务分组的菜单
+            Relation relation1 = new Relation();
+            relation1.setParentId(taskGroups.get(0).getRelationId());
+            relation1.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+
+
+            Project project = projectService.findProjectByProjectId(projectId);
+            model.addAttribute("project",project);
+            model.addAttribute("taskGroups",taskGroups);
+            model.addAttribute("taskMenus",taskMenu);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
+        return "mainpage";
+    }
+
 
 
 }

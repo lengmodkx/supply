@@ -3,7 +3,9 @@ package com.art1001.supply.mapper.relation;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.task.Task;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * relationmapper接口
@@ -36,10 +38,10 @@ public interface RelationMapper {
 
 	/**
 	 * 修改relation数据
-	 * 
-	 * @param relation
-	 */
-	void updateRelation(Relation relation);
+	 *
+     * @param relation
+     */
+	int updateRelation(Relation relation);
 
 	/**
 	 * 保存relation数据
@@ -53,7 +55,7 @@ public interface RelationMapper {
 	 * 
 	 * @return
 	 */
-	List<Relation> findRelationAllList();
+	List<Relation> findRelationAllList(Relation relation);
 
 	/**
 	 * 根据分组删除分组下的所有菜单
@@ -61,4 +63,24 @@ public interface RelationMapper {
 	 */
 	void deletenMenuByRelationId(String relationId);
 
+
+	/**
+	 * 根据菜单id排序任务
+	 * @param relationId 菜单id
+	 * @return
+	 */
+	Relation taskSort(String relationId);
+
+	/**
+	 * 排序分组内的菜单
+	 * @param relationId
+	 * @return
+	 */
+	List<Relation> menuSort(String relationId);
+
+	/**
+	 * 将菜单或者任务放入回收站
+	 * @param relationId
+	 */
+	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel);
 }

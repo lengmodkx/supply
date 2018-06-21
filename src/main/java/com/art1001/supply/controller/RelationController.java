@@ -1,17 +1,24 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.print.attribute.standard.JobSheets;
+import java.util.List;
 
 /**
  * 项目，任务分组，菜单之间的关系处理
@@ -101,6 +108,91 @@ public class RelationController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 排序分组中的菜单
+     * @param relationId 分组id
+     * @return
+     */
+    @PostMapping("menuSort")
+    @ResponseBody
+    public JSONObject menuSort(String relationId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Relation> relationList = relationService.menuSort(relationId);
+            jsonObject.put("data",relationList);
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,菜单排序失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 添加菜单
+     * @param parentId 父级分组id
+     * @param relation 菜单信息
+     * @return
+     */
+    @PostMapping("addMenu")
+    @ResponseBody
+    public JSONObject addMenu(String parentId, Relation relation){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.addMenu(parentId,relation);
+            jsonObject.put("msg","添加成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,创建列表失败!",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更新菜单的信息
+     * @param relation
+     * @return
+     */
+    @PostMapping("editMenu")
+    @ResponseBody
+    public JSONObject editMenu(Relation relation){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.editMenu(relation);
+            jsonObject.put("msg","信息更新成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,菜单编辑失败!",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 菜单排序任务
+     * @param relationId 菜单id
+     */
+    @PostMapping("taskSort")
+    @ResponseBody
+    public JSONObject taskSort(String relationId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Relation relation = relationService.taskSort(relationId);
+            jsonObject.put("data",relation.getTaskList());
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,排序失败!",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+    public void moveRecycleBin(String relationId,String relationDel){
+            relationService.moveRecycleBin(relationId,relationDel);
     }
 
 }

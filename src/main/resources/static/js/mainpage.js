@@ -69,18 +69,23 @@ $(function () {
         $(this).addClass("now").siblings("li").removeClass("now")
     });
     $(".click-file").click(function () {
+        $(".view").hide();
         $("#file").show().siblings().hide()
     });
     $(".click-task").click(function () {
-        $("#project-design-task").show().siblings().hide()
+        $(".view").show();
+        $(".board-view>div").hide()
     });
     $(".click-share").click(function () {
+        $(".view").hide();
         $("#share").show().siblings().hide()
     });
     $(".click-date").click(function () {
+        $(".view").hide();
         $("#date").show().siblings().hide()
     });
     $(".click-chat").click(function () {
+        $(".view").hide();
         $("#chat").show().siblings().hide()
     });
 
@@ -238,6 +243,52 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     });
 
 });
+// 点击头像 ，弹出框
+$(".head-photo").click(function () {
+    headphoto()
+});
+function headphoto() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: ['10px', '90%'],
+            area:['230px','345px'],
+            fixed: false,
+            shade: 0,
+            shadeClose: true, //点击遮罩关闭
+            anim: 1,  //动画 0-6
+            content: $(".vertical-nav"),
+            zIndex: layer.zIndex, //重点1
+            success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+    });
+};
+//点击我的 弹出 我的页面框
+$("#mine").click(function () {
+    mypage();
+});
+function mypage() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '50px',
+             area:['100%','100%'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            zIndex:198900,
+            anim: 1,  //动画 0-6
+            content: ['mypage.html','no']
+        });
+    });
+};
 //添加任务 弹框界面
 function addRenwu() {
     layui.use('layer', function(){
@@ -250,7 +301,7 @@ function addRenwu() {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: '页面是 revisetask.html'
+            content: 'addtask.html'
         });
     });
 };
@@ -267,7 +318,7 @@ function changeRenwu() {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "页面是 reviserask.html"
+            content: "reviserask.html"
         });
     });
 }

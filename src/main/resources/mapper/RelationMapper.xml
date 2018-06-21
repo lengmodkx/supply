@@ -12,7 +12,12 @@
 		<result column="lable" property="lable" jdbcType="INTEGER" />
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 	</resultMap>
-    
+
+	<resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
+		<collection property="taskList" column="{menuId=relation_id}" javaType="ArrayList"
+					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.taskMenu"/>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 				relation_id,
 				relation_name,
@@ -52,6 +57,16 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_relation
+		where 1=1
+		<if test="projectId != null and projectId !=''">
+			and project_id = #{projectId}
+		</if>
+		<if test="lable != null">
+			and lable = #{lable}
+		</if>
+		<if test="relationId != null and relationId !=''">
+			and parent_id = #{relationId}
+		</if>
 		<if test="orderBy == 0">
 			order by relation_id desc
 		</if>
@@ -128,7 +143,7 @@
 				#{lable},
 			</if>
 			<if test="relationDel != null ">
-				#{relation_del},
+				#{relationDel},
 			</if>
 		</trim>
 
@@ -174,5 +189,35 @@
 			prm_relation where parent_id = #{relationId}
 	</delete>
 
+	<!-- 排序菜单内的任务  按照日期 -->
+	<select id="taskSort" resultMap="BaseResultMapVo">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_relation where relation_id = #{relationId}
+	</select>
 
+	<!-- 排序分组内的菜单 -->
+	<select id="menuSort" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_relation where parent_id = #{relationId}
+		order by create_time desc
+	</select>
+
+	<update id="moveRecycleBin">
+		update prm_relation
+		<set>
+			<if test="relationId != null and relationId != ''">
+				<if test="relationDel == 0">
+					relation_del = 1
+				</if>
+				<if test="relationDel == 1">
+					relation_del = 0
+				</if>
+			</if>
+		</set>
+		<where>
+			relation_id = #{relationId}
+		</where>
+	</update>
 </mapper>

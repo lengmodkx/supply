@@ -71,4 +71,5 @@ public class BaseEntity {
 	/** 审核 */
 	public static final Integer DEL_FLAG_AUDIT = 2;
 
+	public Integer orderBy;
 }

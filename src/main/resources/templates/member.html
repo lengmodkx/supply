@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/member.css}" href="../static/css/member.css">
+</head>
+<body>
+<!--顶部-->
+<div class="m-toper-wrap boxsizing" >
+    <div class="toper-left">
+        <a href="#">首页</a>
+        <i class="layui-icon layui-icon-right" style="font-size: 16px; color: #C3C2C2;"></i>
+        <a href="#">成员</a>
+        <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #C3C2C2;"></i>
+    </div>
+</div>
+
+<!--内容-->
+<div class="member-content">
+    <!--左侧 搜索人员-->
+    <div class="member-left boxsizing">
+        <div class="search-box ">
+            <input class="boxsizing" type="text" placeholder="搜索">
+            <i class="layui-icon layui-icon-search" style="font-size: 18px; color: #C6C6C6;"></i>
+        </div>
+    </div>
+</div>
+</body>
+</html>

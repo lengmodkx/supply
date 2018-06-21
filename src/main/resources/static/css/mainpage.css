@@ -1,6 +1,5 @@
 html,body{
     background-color: #FEFCFC;
-
 }
 body{
     /*overflow-x: scroll;*/
@@ -52,12 +51,57 @@ body{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #ADD8E6;
 }
+.project-navigation{
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    height: 50px;
+    border-bottom: 1px solid #d9d9d9;
+    z-index: 50;
+    background-color: #f5f5f5;
+    transition: right 218ms ease;
+    line-height: 50px;
+    padding: 0 5%;
+}
+.view{
+    position: fixed;
+    top: 100px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: all 218ms ease;
+}
+.board-scrum-view{
+    position: relative;
+    height: 100%;
+    background-color: #fff;
+    border: 0 solid #e5e5e5;
+    overflow-y: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.board-scrum-stages{
+    position: relative;
+    padding: 10px;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
 .model{
     width: 280px;
    margin-left: 20px;
-    min-height: 500px;
+    height: 100%;
     background-color: #EEEEEE;
-   /*display: inline-block;*/
     padding: 15px 10px;
     display: -webkit-inline-flex;
     display: -ms-inline-flexbox;
@@ -71,7 +115,7 @@ body{
     vertical-align: top;
     /*height: 100%;*/
     z-index: 1;
-    margin-top: 65px;
+    /*margin-top: 65px;*/
 
 }
 
@@ -90,17 +134,23 @@ body{
 .model .ul-wrap>ul{
     width: 260px;
     min-height: 20px;
-
+   max-height: 390px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+}
+.model .ul-wrap>ul::-webkit-scrollbar{
+width: 1px;
+height: 1px;
 }
 /*.model:nth-last-child(1){*/
     /*margin-right: 0;*/
 /*}*/
 .model-title{
     width: 100%;
-    height: 30px;
     font-size: 14px;
     color: #B5B5B5;
     position: relative;
+    margin-bottom: 15px;
 }
 
 /*点击下箭头出现的内容 开始*/
@@ -547,7 +597,7 @@ body{
     padding: 15px 10px;
     display: inline-block;
     background-color: #EEEEEE;
-    margin-top: 65px;
+    /*margin-top: 65px;*/
     margin-left: 20px;
     margin-right: 20px;
 }

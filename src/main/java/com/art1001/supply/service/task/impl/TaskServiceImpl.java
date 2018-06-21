@@ -3,6 +3,7 @@ package com.art1001.supply.service.task.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Resource;
 
@@ -283,12 +284,13 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
+        task.setExecutor("");
+        taskMapper.clearTaskMember(task.getTaskId());
+        //设置新的项目id
+        task.setProjectId(newTaskMenuVO.getProjectId());
         //设置更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //更新任务信息
-        if(!StringUtils.isEmpty(newTaskMenuVO.getProjectId())){
-
-        }
         int result = taskMapper.updateTask(task);
         String content = "";
         //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
@@ -330,8 +332,11 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO turnToFatherLevel(Task task) {
+        Task fatherLevelTask = taskMapper.findFatherLevelProjectId(task.getParentId());
         //将任务的父级任务设置为0 (没有父级任务)
         task.setParentId("0");
+        //设置项目id
+        task.setProjectId(fatherLevelTask.getProjectId());
         //设置更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //更新任务信息
@@ -532,7 +537,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskLogVO removeTaskMember(Task task, UserEntity userEntity) {
         taskMemberService.removeTaskMember(task,userEntity);
         StringBuilder builder = new StringBuilder("");
-        builder.append(TaskLogFunction.B.getName()).append(userEntity.getUserName());
+        builder.append(TaskLogFunction.B.getName()).append(" ").append(userEntity.getUserName());
         return saveTaskLog(task,builder.toString());
     }
 
@@ -603,8 +608,6 @@ public class TaskServiceImpl implements TaskService {
         //获取当前登录用户的id
         //String id = ShiroAuthenticationManager.getUserEntity().getId();
         subLevel.setMemberId("11111");
-        //设置是哪个项目的任务
-        subLevel.setProjectId(currentTask.getProjectId());
         //设置任务的层级
         subLevel.setLevel(2);
         //设置父任务id
@@ -765,18 +768,15 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 查询该项目下的所有成员信息
      * @param projectId 当前项目的id
+     * @param executor 当前任务的执行者信息
      * @return
      */
     @Override
-    public List<UserEntity> findProjectAllMember(String projectId) {
-        //暂时不用
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        String memberId = "21";
+    public List<UserEntity> findProjectAllMember(String projectId,String executor) {
         List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-        for (UserEntity userEntity : projectAllMember) {
-            //剔除当前用户
-            if(userEntity.getId().equals(memberId)){
-                projectAllMember.remove(userEntity);
+        for (int i = 0; i < projectAllMember.size(); i++) {
+            if(projectAllMember.get(i).getId().equals(executor)){
+                projectAllMember.remove(projectAllMember.get(i));
             }
         }
         return projectAllMember;
@@ -841,6 +841,33 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.removeExecutor(taskId);
     }
 
+    /**
+     * 查询项目下的指定的优先级的任务
+     * @param projectId 项目id
+     * @param priority 优先级别
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByPriority(String projectId, String priority) {
+        return taskMapper.findTaskByPriority(projectId,priority);
+    }
+
+    /**
+     * 查询该项目下的所有任务
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByProject(String projectId) {
+        return taskMapper.findTaskByProject(projectId);
+    }
+
+    /**
+     * 更新任务的执行者
+     * @param taskId 该任务的id
+     * @param executor
+     * @return
+     */
     @Override
     public int updateTaskExecutor(String taskId, String executor) {
         Task task = new Task();

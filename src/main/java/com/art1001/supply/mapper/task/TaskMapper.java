@@ -166,4 +166,32 @@ public interface TaskMapper {
 	 * @return
 	 */
 	int removeExecutor(@Param("taskId") String taskId);
+
+	/**
+	 * 清空该任务下的所有成员信息
+	 * @param taskId 任务的id
+	 */
+	void clearTaskMember(@Param("taskId") String taskId);
+
+	/**
+	 * 查询当前子任务的父级任务的项目id
+	 * @param taskId 父任务id
+	 * @return
+	 */
+	Task findFatherLevelProjectId(String taskId);
+
+	/**
+	 * 查询项目下所有任务信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> findTaskByProject(@Param("projectId") String projectId);
+
+	/**
+	 * 查询项目下的指定的优先级的任务
+	 * @param projectId 项目id
+	 * @param priority 优先级别
+	 * @return
+	 */
+	List<Task> findTaskByPriority(@Param("projectId") String projectId,@Param("priority") String priority);
 }
