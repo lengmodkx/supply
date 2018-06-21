@@ -10,6 +10,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,20 @@ public class RelationController {
     public JSONObject addRelation(Relation relation){
         JSONObject jsonObject = new JSONObject();
         try {
+            relation.setRelationId(IdGen.uuid());
             relation.setCreateTime(System.currentTimeMillis());
+            //初始化菜单
+            String[] menus  = new String[]{"待处理","进行中","已完成"};
+            for (String menu:menus) {
+                Relation relation1 = new Relation();
+                relation1.setRelationName(menu);
+                relation1.setParentId(relation.getRelationId());
+                relation1.setLable(1);
+                relation1.setRelationDel(0);
+                relation1.setCreateTime(System.currentTimeMillis());
+                relation1.setUpdateTime(System.currentTimeMillis());
+                relationService.saveRelation(relation1);
+            }
             relationService.saveRelation(relation);
             jsonObject.put("result",1);
             jsonObject.put("msg","添加成功");
@@ -237,24 +251,56 @@ public class RelationController {
         return jsonObject;
     }
 
+    /**
+     * 导出任务数据
+     * @param response
+     * @return
+     */
     @GetMapping("exportTaskInfo")
-    public void exportTaskInfo(HttpServletResponse response){
+    public JSONObject exportTaskInfo(HttpServletResponse response){
+        JSONObject jsonObject = new JSONObject();
         Pager pager = new Pager();
+        List<Column> columnList = new ArrayList<Column>();
+        String[] titles = new String[]{"任务名称","开始时间","结束时间","优先级","备注","层级","创建者","创建时间"};
+        int i = 0;
+        //设置表头对象
+        for (String title: titles) {
+            i++;
+            Column column = new Column();
+            column.setId(String.valueOf(i));
+            column.setTitle(title);
+            column.setWidth("500");
+            columnList.add(column);
+        }
+        //查询出要导出的任务信息
         List<Task> taskAllList = taskService.findTaskAllList();
         List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
-        List<Column> column = new ArrayList<Column>();
-        for (Task task: taskAllList) {
-
+        for (Task task : taskAllList) {
+            i = 0;
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put(String.valueOf(i+=1),task.getTaskName());
+            map.put(String.valueOf(i+=1),task.getStartTime());
+            map.put(String.valueOf(i+=1),task.getEndTime());
+            map.put(String.valueOf(i+=1),task.getPriority());
+            map.put(String.valueOf(i+=1),task.getRemarks());
+            map.put(String.valueOf(i+=1),task.getLevel());
+            map.put(String.valueOf(i+=1),task.getMemberId());
+            map.put(String.valueOf(i+=1),task.getCreateTime());
+            list.add(map);
         }
-        pager.setExportColumns(column);
+        pager.setExportColumns(columnList);
         pager.setExportDatas(list);
         pager.setExportFileName("任务数据");
         pager.setExportType("EXCEL");
         try {
             ExportUtils.export(response,pager);
+            jsonObject.put("msg","数据导出成功!");
+            jsonObject.put("result","1");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("系统异常,数据导出失败!");
+            throw new AjaxException(e);
         }
+        return jsonObject;
     }
 
 }

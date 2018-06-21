@@ -162,4 +162,14 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private String other;
 
+	/**
+	 * 任务的排序编号
+	 */
+	private Integer order;
+
+	/**
+	 * 任务成员关系的信息
+	 */
+	private TaskMember taskMember;
+
 }

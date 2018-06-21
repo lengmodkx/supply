@@ -156,8 +156,7 @@ public class ExportUtils {
 			if (exportDatas != null && exportDatas.size() > 0) {
 				// 循环写入表中数据
 				for (int i = 0; i < exportDatas.size(); i++) {
-					Map<String, Object> record = (Map<String, Object>) exportDatas
-							.get(i);
+					Map<String, Object> record = (Map<String, Object>) exportDatas.get(i);
 					seq = 0;
 					for (int j = 0; j < pager.getExportColumns().size(); j++) {
 						Column column = pager.getExportColumns().get(j);
