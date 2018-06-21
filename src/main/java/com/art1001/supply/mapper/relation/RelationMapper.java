@@ -82,5 +82,5 @@ public interface RelationMapper {
 	 * 将菜单或者任务放入回收站
 	 * @param relationId
 	 */
-	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel);
+	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel,@Param("updateTime")Long updateTime);
 }

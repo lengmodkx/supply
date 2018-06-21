@@ -193,6 +193,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO moveToRecycleBin(String taskId, String taskDel) {
+        //把该任务放到回收站
         int result = taskMapper.moveToRecycleBin(taskId,taskDel,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
@@ -874,6 +875,27 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(taskId);
         task.setExecutor(executor);
         return taskMapper.updateTask(task);
+    }
+
+    /**
+     * 查询某个任务下的所有子任务
+     * @param taskId 父级任务id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByFatherTask(String taskId) {
+        return taskMapper.findTaskByFatherTask(taskId);
+    }
+
+    /**
+     * 恢复任务
+     * @param taskId 任务的id
+     * @param menuId 恢复后放到哪个菜单
+     * @param projectId 项目id
+     */
+    @Override
+    public void recoveryTask(String taskId, String menuId,String projectId) {
+        taskMapper.recoverTask(taskId,menuId,System.currentTimeMillis(),projectId);
     }
 
     /**

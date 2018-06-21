@@ -365,11 +365,43 @@
 		WHERE task_id = #{taskId}
 	</update>
 
-	<!-- 此条sql 用来处理任务 移入回收站/恢复任务的功能 -->
+	<!-- 此条sql 用来处理任务 移入回收站的功能 -->
 	<update id="moveToRecycleBin">
 		update prm_task
 		<set>
-			<if test="taskDel != null and taskDel != '' ">
+			task_del = 1,
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			project_id = '',
+			task_menu_id = '',
+		</set>
+		<where>
+			task_id = #{taskId}
+		</where>
+	</update>
+
+	<!-- 此条sql 用来处理任务恢复的功能 -->
+	<update id="recoverTask">
+		update prm_task
+		<set>
+			task_del = 0,
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			project_id = #{projectId}
+			task_menu_id = #{menuId},
+		</set>
+		<where>
+			task_id = #{taskId}
+		</where>
+	</update>
+
+	<!-- 用于处理任务分组 移入\恢复  的sql -->
+	<update id="groupTaskmoveToRecycleBin">
+		update prm_task
+		<set>
+			<if test="taskDel != null and taskDel != ''">
 				<if test="taskDel == 1">
 					task_del = 0,
 				</if>
@@ -377,13 +409,8 @@
 					task_del = 1,
 				</if>
 			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime},
-			</if>
 		</set>
-		<where>
-			task_id = #{taskId}
-		</where>
+		where task_id = #{taskId}
 	</update>
 
 	<!-- 修改某个任务的状态 -->
@@ -472,7 +499,7 @@
 	<select id="taskMenu" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where task_menu_id = #{menuId} order by create_time desc
+		from prm_task where task_del = 0 and task_menu_id = #{menuId} order by create_time desc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->
@@ -524,5 +551,12 @@
 		select
 		<include refid="Base_Column_List"></include>
 		from prm_task where project_id = #{projectId} and priority = #{priority}
+	</select>
+
+	<!-- 查询任务下的所有子任务 -->
+	<select id="findTaskByFatherTask" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where task_del = 0 and parent_id = #{taskId}
 	</select>
 </mapper>

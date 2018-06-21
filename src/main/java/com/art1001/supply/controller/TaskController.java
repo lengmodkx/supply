@@ -179,7 +179,7 @@ public class TaskController {
     }
 
     /**
-     *  将任务 (移入回收站/回复)
+     *  将任务 移入回收站
      * @param taskId 任务的id
      * @param taskDel 任务是否在回收站
      * @return
@@ -203,6 +203,28 @@ public class TaskController {
             log.error("操作失败，任务：" + taskId + ",操作前该任务状态:\t ,{}, {}",taskDel, e);
             jsonObject.put("msg", "系统异常,操作失败！");
             jsonObject.put("result","0");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 任务恢复
+     * @param taskId 任务id
+     * @param menuId 要恢复到的菜单的id
+     * @param projectId 要恢复到的任务的id
+     * @return
+     */
+    @PostMapping("recoveryTask")
+    @ResponseBody
+    public JSONObject recoveryTask(String taskId,String menuId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            taskService.recoveryTask(taskId,menuId,projectId);
+            jsonObject.put("msg","恢复任务成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,任务恢复失败!");
             throw new AjaxException(e);
         }
         return jsonObject;
