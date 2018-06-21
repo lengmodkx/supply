@@ -204,16 +204,20 @@
 		order by create_time desc
 	</select>
 
+	<!-- 将分组移动至回收站 -->
 	<update id="moveRecycleBin">
 		update prm_relation
 		<set>
 			<if test="relationId != null and relationId != ''">
 				<if test="relationDel == 0">
-					relation_del = 1
+					relation_del = 1,
 				</if>
 				<if test="relationDel == 1">
-					relation_del = 0
+					relation_del = 0,
 				</if>
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
 			</if>
 		</set>
 		<where>

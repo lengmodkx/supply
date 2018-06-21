@@ -62,7 +62,7 @@ public interface TaskService {
 	public List<Task> findTaskAllList();
 
 	/**
-	 * 任务 (移入回收站/回复)
+	 * 任务 移入回收站
 	 * @param taskId 当前任务id
 	 * @param taskDel 当前任务是否已经在回收站
 	 * @return
@@ -316,5 +316,18 @@ public interface TaskService {
 	 */
 	List<Task> findTaskByPriority(String projectId,String priority);
 
-	//List<Task>
+	/**
+	 * 查询某个任务下的所有子任务
+	 * @param taskId 父级任务id
+	 * @return
+	 */
+	List<Task> findTaskByFatherTask(String taskId);
+
+	/**
+	 * 恢复任务的功能
+	 * @param taskId 任务的id
+	 * @param menuId 恢复后放到哪个菜单
+	 * @param projectId 项目id
+	 */
+	void recoveryTask(String taskId, String menuId,String projectId);
 }

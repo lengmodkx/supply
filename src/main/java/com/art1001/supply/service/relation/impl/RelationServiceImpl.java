@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.mapper.relation.RelationMapper;
+import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
@@ -26,6 +27,10 @@ public class RelationServiceImpl implements RelationService {
 	/**taskService 逻辑层接口  */
 	@Resource
 	private TaskService taskService;
+
+	/**taskMapper 接口 */
+	@Resource
+	private TaskMapper taskMapper;
 
 	/**
 	 * 查询分页relation数据
@@ -77,15 +82,6 @@ public class RelationServiceImpl implements RelationService {
 	public void saveRelation(Relation relation){
 		relation.setRelationId(IdGen.uuid());
 		relationMapper.saveRelation(relation);
-		//已完成的菜单
-		Relation completed = new Relation(IdGen.uuid(),"已完成",relation.getRelationId(),1,0,System.currentTimeMillis(),System.currentTimeMillis());
-		//进行中
-		Relation conduct = new Relation(IdGen.uuid(),"进行中",relation.getRelationId(),1,0,System.currentTimeMillis(),System.currentTimeMillis());
-		//待处理
-		Relation pending = new Relation(IdGen.uuid(),"待处理",relation.getRelationId(),1,0,System.currentTimeMillis(),System.currentTimeMillis());
-		relationMapper.saveRelation(completed);
-		relationMapper.saveRelation(conduct);
-		relationMapper.saveRelation(pending);
 	}
 	/**
 	 * 获取所有relation数据
@@ -153,20 +149,13 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	/**
-	 * 将分组和分组下的所有任务(移至回收站 或者 恢复)
+	 * 将分组(移至回收站 或者 恢复)
 	 * @param relationId 分组的id
 	 * @param relationDel 当前分组的状态
 	 */
 	@Override
 	public void moveRecycleBin(String relationId,String relationDel) {
-		List<Relation> relationList = relationMapper.menuSort(relationId);
-		for (Relation relation : relationList) {
-			List<Task> tasks = taskService.taskMenu(relation.getRelationId());
-			for (Task task : tasks) {
-				taskService.moveToRecycleBin(task.getTaskId(),String.valueOf(task.getTaskDel()));
-			}
-			relationMapper.moveRecycleBin(relation.getRelationId(),String.valueOf(relation.getRelationDel()));
-		}
-		relationMapper.moveRecycleBin(relationId,relationDel);
+		relationMapper.moveRecycleBin(relationId,relationDel,System.currentTimeMillis());
 	}
+
 }

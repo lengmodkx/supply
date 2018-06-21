@@ -2,6 +2,9 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.dtgrid.model.Column;
+import com.art1001.supply.dtgrid.model.Pager;
+import com.art1001.supply.dtgrid.util.ExportUtils;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -11,14 +14,17 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.print.attribute.standard.JobSheets;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import java.beans.ExceptionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 项目，任务分组，菜单之间的关系处理
@@ -190,9 +196,65 @@ public class RelationController {
         return jsonObject;
     }
 
-
-    public void moveRecycleBin(String relationId,String relationDel){
+    /**
+     * 将分组移动到回收站中
+     * @param relationId
+     * @param relationDel
+     * @return
+     */
+    @PostMapping("moveRecycleBin")
+    @ResponseBody
+    public JSONObject moveRecycleBin(String relationId,String relationDel){
+        JSONObject jsonObject = new JSONObject();
+        try {
             relationService.moveRecycleBin(relationId,relationDel);
+            jsonObject.put("msg","成功将任务移至回收站!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,移动失败",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 恢复任务分组
+     * @param relationId 任务分组的id
+     * @param relationDel 任务分组的状态
+     */
+    @PostMapping("recoveryRelation")
+    @ResponseBody
+    public JSONObject recoveryRelation(String relationId,String relationDel){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.moveRecycleBin(relationId,relationDel);
+            jsonObject.put("msg","恢复成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,恢复分组失败!",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    @GetMapping("exportTaskInfo")
+    public void exportTaskInfo(HttpServletResponse response){
+        Pager pager = new Pager();
+        List<Task> taskAllList = taskService.findTaskAllList();
+        List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
+        List<Column> column = new ArrayList<Column>();
+        for (Task task: taskAllList) {
+
+        }
+        pager.setExportColumns(column);
+        pager.setExportDatas(list);
+        pager.setExportFileName("任务数据");
+        pager.setExportType("EXCEL");
+        try {
+            ExportUtils.export(response,pager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
