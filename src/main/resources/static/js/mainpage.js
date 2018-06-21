@@ -89,24 +89,7 @@ $(function () {
         $("#chat").show().siblings().hide()
     });
 
-    // 项目菜单的高度
-    var winhei=parseInt(window.innerHeight);
-    $(".project-menu").css({"height":winhei-100 +'px'});
-    //点击菜单，打开项目菜单区域
-    $(".menu").click(function () {
-        $(".project-menu").fadeToggle();
-    });
-    $(".close-menu").click(function () {
-        $(".project-menu").fadeOut();
-    });
 
-    //点击 任务列表顶部 下箭头，出现内容
-    $("html").on("click",".add-new-model",function(){
-        $(this).siblings(".lbmenu").slideToggle()
-    });
-    $("html").on("click",".lbmenu-close",function(){
-        $(".lbmenu").slideUp()
-    });
 
 var that;
     //点击添加任务按钮
@@ -243,27 +226,54 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     });
 
 });
-// 点击头像 ，弹出框
-$(".head-photo").click(function () {
-    headphoto()
+
+
+//点击 任务列表顶部 下箭头，弹出框
+$("html").on("click",".add-new-model",function(){
+    var top=$(this).offset().top +20 +'px';
+    var left=$(this).offset().left -125 +'px';
+     lbmenu(top,left)
 });
-function headphoto() {
+function lbmenu(top,left) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
-            offset: ['10px', '90%'],
-            area:['230px','345px'],
-            fixed: false,
+            offset: [top,left],
+            area:['250px','150px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
             shade: 0,
-            shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: $(".vertical-nav"),
-            zIndex: layer.zIndex, //重点1
-            success: function(layero){
-                layer.setTop(layero); //重点2
-            }
+            content: ['tk-caidanliebiao.html','no']
+        });
+    });
+};
+
+
+
+// 点击头像 ，弹出框
+$(".head-photo").click(function () {
+    var top=$(this).offset().top +40 +'px';
+    var left=$(this).offset().left -130 +'px';
+    headphoto(top,left)
+});
+function headphoto(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset:[top,left],
+            area:['230px','345px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['tk-click-touxiang.html','no']
         });
     });
 };
@@ -283,7 +293,6 @@ function mypage() {
             shadeClose: true,
             closeBtn: 0,
             shade: 0,
-            zIndex:198900,
             anim: 1,  //动画 0-6
             content: ['mypage.html','no']
         });
@@ -297,7 +306,7 @@ function addRenwu() {
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
-            area:['500px','600px'],
+            area:['460px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
@@ -322,4 +331,27 @@ function changeRenwu() {
         });
     });
 }
-
+//点击菜单，打开项目菜单区域
+$(".menu").click(function () {
+    var top=$(this).offset().top +40 +'px';
+    var right=$(window).width()-$(this).offset().left;
+    var left=$(this).offset().left -380 +right+'px';
+    projectMenu(top,left)
+});
+function projectMenu(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area:['380px','500px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['tk-xiangmucaidan.html','no']
+        });
+    });
+};

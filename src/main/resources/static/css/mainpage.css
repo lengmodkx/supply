@@ -157,14 +157,10 @@ height: 1px;
 .lbmenu{
     width: 250px;
     height: 150px;
-    position: absolute;
-    right: -120px;
-    bottom: -140px;
     background-color: white;
     z-index: 50;
     box-shadow: 0 0 15px #C4C4C4;
     border-radius: 5px;
-    display: none;
 }
 .lbmenu-title{
     width: 210px;

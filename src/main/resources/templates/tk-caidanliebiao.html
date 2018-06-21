@@ -4,41 +4,27 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
 </head>
 <body>
-<!--右侧固定的头像与菜单栏-->
-
-
-    <div class="vertical-nav" style="display: block">
-        <img src="../static/image/close.png" class="close-vertical-nav">
-        <ul>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">创建企业</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">个人项目</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">账号设置</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">偏好设置</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">切换至国际服务器</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">退出登录</a>
-            </li>
-        </ul>
+<div class="lbmenu">
+    <div class="lbmenu-title">
+        <p>菜单列表</p>
+        <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
     </div>
+    <div class="lbmenu-add">
+        <div class="lbmenu-add-content">
+            <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+            在此处添加新列表
+        </div>
+    </div>
+    <div class="lbmenu-remove">
+        <div class="lbmenu-add-content">
+            <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+            本列表所有任务移到回收站
+        </div>
+    </div>
+</div>
 
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -84,7 +70,7 @@
             format:'yyyy年MM月dd日 HH时mm分ss秒'
         });
     });
-    $(".close-vertical-nav").click(function () {
+    $(".lbmenu-close").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     })
