@@ -16,13 +16,15 @@ public class ImageUtil {
      **/
     public static void main(String[] args) throws IOException {
         // 用户名
-        String name = "小明";
-        // 图片byte数组
-        byte[] bytes = generateImg(name);
+        String[] names = {"q", "w", "m", "x"};
+        for (String name : names) {
+            // 图片byte数组
+            byte[] bytes = generateImg(name);
 
-        // oss上传
-        String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-        AliyunOss.uploadByte("upload/" + fileName, bytes);
+            // oss上传
+            String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+            AliyunOss.uploadByte("upload/" + fileName, bytes);
+        }
     }
 
     /**
@@ -87,9 +89,22 @@ public class ImageUtil {
             }
             //英文
             else {
-                font = new Font("微软雅黑", Font.PLAIN, 55);
+                font = new Font("微软雅黑", Font.PLAIN, 50);
                 g2.setFont(font);
-                g2.drawString(nameWritten.toUpperCase(), 33, 67);
+                int xAxis = 0;
+                switch (nameWritten.toUpperCase()) {
+                    case "Q":
+                        xAxis = 30;
+                        break;
+                    case "W":
+                    case "M":
+                        xAxis = 25;
+                        break;
+                    default:
+                        xAxis = 33;
+                        break;
+                }
+                g2.drawString(nameWritten.toUpperCase(), xAxis, 70);
             }
         }
         BufferedImage rounded = makeRoundedCorner(bi);
