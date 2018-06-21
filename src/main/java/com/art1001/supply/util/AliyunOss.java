@@ -1,25 +1,31 @@
 package com.art1001.supply.util;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.event.ProgressEvent;
+import com.aliyun.oss.event.ProgressEventType;
+import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
-import com.art1001.supply.entity.file.File;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class AliyunOss {
 
-    // TODO 正式使用
+    // TODO 开发使用
     private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-    private static String accessKeyId = "LTAIP4MyTAbONGJx";
-    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
-    private static String bucketName = "art1001-bim-5d";
+    private static String accessKeyId = "LTAIqk28Y76sRtVQ";
+    private static String accessKeySecret = "95Gjw4otcqgADeixghuOcDU2oqTLrU";
+    private static String bucketName = "faydan";
+
+    // TODO 正式使用
+//    private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
+//    private static String accessKeyId = "LTAIP4MyTAbONGJx";
+//    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
+//    private static String bucketName = "art1001-bim-5d";
 
     // Object是OSS存储数据的基本单元，称为OSS的对象，也被称为OSS的文件。详细描述请参看“开发人员指南 > 基本概念 > OSS基本概念介绍”。
     // Object命名规范如下：使用UTF-8编码，长度必须在1-1023字节之间，不能以“/”或者“\”字符开头。
@@ -79,7 +85,8 @@ public class AliyunOss {
 
     /**
      * 上传字符串
-     * @param key 前缀全路径
+     *
+     * @param key     前缀全路径
      * @param content 字符串内容
      */
     public static void uploadString(String key, String content) {
@@ -99,8 +106,9 @@ public class AliyunOss {
 
     /**
      * 上传byte数组
+     *
      * @param objectName 文件名全路径
-     * @param bytes byte数组
+     * @param bytes      byte数组
      */
     public static void uploadByte(String objectName, byte[] bytes) {
         // 创建OSSClient实例
@@ -138,93 +146,28 @@ public class AliyunOss {
     }
 
     /**
-     * 获取当前文件夹下的文件夹和文件
-     * @param folderName 目录的全路径
-     * @return 文件列表
-     */
-    public static List<String> fileList(String folderName) {
-        // 创建OSSClient实例
-        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
-        List<String> fileList = new ArrayList<>();
-        try {
-            // 构造ListObjectsRequest请求。
-            ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
-            // "/" 为文件夹的分隔符。
-            listObjectsRequest.setDelimiter("/");
-            // 列出fun目录下的所有文件和文件夹。
-            listObjectsRequest.setPrefix(folderName);
-            ObjectListing listing = ossClient.listObjects(listObjectsRequest);
-
-            if (listing.getCommonPrefixes().size() > 0) {
-                //CommonPrefixs列表中给出的是fun目录下的所有子文件夹。fun/movie/001.avi 和 fun/movie/007.avi 两个文件并没有被列出来，因为它们属于fun文件夹下的movie目录。
-                for (String commonPrefix : listing.getCommonPrefixes()) {
-                    File file = new File();
-                    // 去掉前缀
-                    fileList.add(commonPrefix.replace(folderName, ""));
-                }
-            }
-
-            listing.getObjectSummaries().remove(0);
-            if (listing.getObjectSummaries().size() > 0) {
-                //ObjectSummaries 的列表中给出的是fun目录下的文件。
-                for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
-                    // 去掉前缀
-                    fileList.add(objectSummary.getKey().replace(folderName, ""));
-
-                    System.out.println("=============================");
-                    System.out.println("=============================");
-                    System.out.println("=============================");
-                    System.out.println(objectSummary.getSize());
-                    System.out.println("=============================");
-                    System.out.println("=============================");
-                    System.out.println("=============================");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            ossClient.shutdown();
-        }
-
-        return fileList;
-    }
-
-    /**
      * 下载文件
-     * @param key 路径
-     * @param localFile 名称
+     *
+     * @param objectName 路径
      */
-    public static void downFileToLocation(String key, String localFile){
+    public static String downFileToLocation(String objectName) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
-            // 下载object到文件
-            ossClient.getObject(new GetObjectRequest(bucketName, key), new java.io.File(localFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            ossClient.shutdown();
-        }
-    }
-
-    public static InputStreamReader downloadInputStream(String objectName) {
-        // 创建OSSClient实例
-        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
-        try {
-            // 下载object到文件
             //ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
             OSSObject ossObject = ossClient.getObject(bucketName, objectName);
             // 读取文件内容。
             System.out.println("Object content:");
-            return new InputStreamReader(ossObject.getObjectContent());
-//            BufferedReader reader = new BufferedReader();
-//            while (true) {
-//                String line = reader.readLine();
-//                if (line == null) break;
-//                System.out.println("\n" + line);
-//            }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(ossObject.getObjectContent()));
+            StringBuilder builder = new StringBuilder();
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) break;
+                builder.append("\n").append(line);
+            }
             //数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
-//            reader.close();
+            reader.close();
+            return builder.toString();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -233,11 +176,41 @@ public class AliyunOss {
         return null;
     }
 
+    public static InputStream downloadInputStream(String path) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            return new URL(path).openStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+        return null;
+    }
+
+    public static InputStreamReader downloadFile(String objectName, String fileName) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 下载OSS文件到本地文件。如果指定的本地文件存在会覆盖，不存在则新建。
+            ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File("C:\\Users\\faydan\\Downloads\\" + fileName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+        return null;
+    }
+
+
+
     /**
      * 删除单个文件
+     *
      * @param key 文件路径名
      */
-    public static void deleteFile(String key){
+    public static void deleteFile(String key) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
@@ -250,7 +223,62 @@ public class AliyunOss {
         }
     }
 
+    static class GetObjectProgressListener implements ProgressListener {
+        private long bytesRead = 0;
+        private long totalBytes = -1;
+        private boolean succeed = false;
+        @Override
+        public void progressChanged(ProgressEvent progressEvent) {
+            long bytes = progressEvent.getBytes();
+            ProgressEventType eventType = progressEvent.getEventType();
+            switch (eventType) {
+                case TRANSFER_STARTED_EVENT:
+                    System.out.println("Start to download......");
+                    break;
+                case RESPONSE_CONTENT_LENGTH_EVENT:
+                    this.totalBytes = bytes;
+                    System.out.println(this.totalBytes + " bytes in total will be downloaded to a local file");
+                    break;
+                case RESPONSE_BYTE_TRANSFER_EVENT:
+                    this.bytesRead += bytes;
+                    if (this.totalBytes != -1) {
+                        int percent = (int)(this.bytesRead * 100.0 / this.totalBytes);
+                        System.out.println(bytes + " bytes have been read at this time, download progress: " +
+                                percent + "%(" + this.bytesRead + "/" + this.totalBytes + ")");
+                    } else {
+                        System.out.println(bytes + " bytes have been read at this time, download ratio: unknown" +
+                                "(" + this.bytesRead + "/...)");
+                    }
+                    break;
+                case TRANSFER_COMPLETED_EVENT:
+                    this.succeed = true;
+                    System.out.println("Succeed to download, " + this.bytesRead + " bytes have been transferred in total");
+                    break;
+                case TRANSFER_FAILED_EVENT:
+                    System.out.println("Failed to download, " + this.bytesRead + " bytes have been transferred");
+                    break;
+                default:
+                    break;
+            }
+        }
+        public boolean isSucceed() {
+            return succeed;
+        }
+    }
     public static void main(String[] args) {
-        InputStreamReader inputStreamReader = downloadInputStream("第一个项目-1529401007925/卡哇伊-1529401803055.jpg");
+
+        String objectName = "第一个项目-1529401007925/卡哇伊-1529402096469.jpg";
+
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 带进度条的下载。
+            ossClient.getObject(new GetObjectRequest(bucketName, objectName).
+                            <GetObjectRequest>withProgressListener(new GetObjectProgressListener()),
+                    new File("D:\\image\\test.jpg"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 关闭Client。
+        ossClient.shutdown();
     }
 }

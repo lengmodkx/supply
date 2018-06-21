@@ -7,7 +7,8 @@ public class Constants {
      */
     public final static String MEMBER_IMAGE_URL = "/upload/img/avatar";
 
-    public static final String OSS_URL = "art1001-bim-5d.oss-cn-beijing.aliyuncs.com";
+    // TODO: 2018/6/20 开发环境
+    public static final String OSS_URL = "https://faydan.oss-cn-beijing.aliyuncs.com/";
 
     public static final String TASK = "任务";
     public static final String FILE = "文件";
