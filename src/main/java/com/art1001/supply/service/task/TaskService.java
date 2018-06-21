@@ -84,7 +84,7 @@ public interface TaskService {
 	TaskLogVO updateTaskStartAndEndTime(Task task);
 
 	/**
-	 * 根据分组id 查询该菜单下有没有任务
+	 * 根据菜单id 查询该菜单下有没有任务
 	 * @param taskMenuId 菜单id
 	 * @return
 	 */
@@ -186,6 +186,11 @@ public interface TaskService {
 	 */
     int clickFabulous(Task task);
 
+	/**
+	 * 判断用户有没有该任务点赞
+	 * @param task 任务的实体信息
+	 * @return
+	 */
 	boolean judgeFabulous(Task task);
 
 	/**
@@ -248,9 +253,10 @@ public interface TaskService {
 	/**
 	 * 查询当前项目下的所有成员信息
 	 * @param projectId
+	 * @param executor 任务的执行者id
 	 * @return
 	 */
-	List<UserEntity> findProjectAllMember(String projectId);
+	List<UserEntity> findProjectAllMember(String projectId,String executor);
 
 	/**
 	 * 智能分组 分别为  查询 今天的任务 , 完成的任务, 未完成的任务
@@ -294,4 +300,21 @@ public interface TaskService {
 	 * @return
 	 */
 	int updateTaskExecutor(String taskId, String uId);
+
+	/**
+	 * 查询该项目下的所有任务
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> findTaskByProject(String projectId);
+
+	/**
+	 * 查询项目下的指定的优先级的任务
+	 * @param projectId 项目id
+	 * @param priority 优先级别
+	 * @return
+	 */
+	List<Task> findTaskByPriority(String projectId,String priority);
+
+	//List<Task>
 }

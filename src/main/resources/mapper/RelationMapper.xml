@@ -143,7 +143,7 @@
 				#{lable},
 			</if>
 			<if test="relationDel != null ">
-				#{relation_del},
+				#{relationDel},
 			</if>
 		</trim>
 
@@ -189,5 +189,35 @@
 			prm_relation where parent_id = #{relationId}
 	</delete>
 
+	<!-- 排序菜单内的任务  按照日期 -->
+	<select id="taskSort" resultMap="BaseResultMapVo">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_relation where relation_id = #{relationId}
+	</select>
 
+	<!-- 排序分组内的菜单 -->
+	<select id="menuSort" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_relation where parent_id = #{relationId}
+		order by create_time desc
+	</select>
+
+	<update id="moveRecycleBin">
+		update prm_relation
+		<set>
+			<if test="relationId != null and relationId != ''">
+				<if test="relationDel == 0">
+					relation_del = 1
+				</if>
+				<if test="relationDel == 1">
+					relation_del = 0
+				</if>
+			</if>
+		</set>
+		<where>
+			relation_id = #{relationId}
+		</where>
+	</update>
 </mapper>

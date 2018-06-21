@@ -51,4 +51,18 @@ public class Relation extends BaseEntity implements Serializable {
 
 	private List<Task> taskList;
 
+	public Relation(){
+
+	}
+
+	public Relation(String relationId, String relationName, String parentId, Integer lable, Integer relationDel,Long createTime,Long endTime) {
+		this.relationId = relationId;
+		this.relationName = relationName;
+		this.parentId = parentId;
+		this.projectId = projectId;
+		this.lable = lable;
+		this.relationDel = relationDel;
+		this.setCreateTime(createTime);
+		this.setEndTime(endTime);
+	}
 }
