@@ -472,7 +472,7 @@
 	<select id="taskMenu" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where task_menu_id = #{menuId}
+		from prm_task where task_menu_id = #{menuId} order by create_time desc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->
@@ -500,7 +500,29 @@
 		</where>
 	</update>
 
-	<delete id="removeTaskMember">
-		delete from prm_task_member where
+	<!-- 清空该任务的所有参与者 -->
+	<delete id="clearTaskMember">
+		delete from prm_task_member where current_task_id = #{taskId}
 	</delete>
+
+	<!-- 查询当前子任务的父级任务的项目id -->
+	<select id="findFatherLevelProjectId" resultType="com.art1001.supply.entity.task.Task">
+		select
+	  	prm_task.project_id projectId
+		from prm_task where task_id = #{taskId}
+	</select>
+
+	<!-- 查询出项目下的所有任务 -->
+	<select id="findTaskByProject" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where project_id = #{projectId}
+	</select>
+
+	<!-- 按照优先级查询任务 -->
+	<select id="findTaskByPriority" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where project_id = #{projectId} and priority = #{priority}
+	</select>
 </mapper>
