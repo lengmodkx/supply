@@ -3,17 +3,17 @@
 <mapper namespace="com.art1001.supply.mapper.project.ProjectFuncMapper">
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.project.ProjectFunc">
-		<result column="p_id" property="pId" jdbcType="INTEGER" />
-		<result column="p_name" property="pName" jdbcType="VARCHAR" />
-		<result column="p_order" property="pOrder" jdbcType="INTEGER" />
+		<result column="func_id" property="funcId" jdbcType="INTEGER" />
+		<result column="func_name" property="funcName" jdbcType="VARCHAR" />
+		<result column="func_order" property="funcOrder" jdbcType="INTEGER" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="is_open" property="isOpen" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
-				p_id,
-				p_name,
-				p_order,
+				func_id,
+				func_name,
+				func_order,
 				project_id,
 				is_open
 	</sql>
@@ -33,10 +33,10 @@
 		<include refid="whereStatement" />
 		
 		<if test="orderBy == 0">
-			order by p_id desc
+			order by func_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by p_id asc
+			order by func_id asc
 		</if>
 		
 	</select>
@@ -47,10 +47,10 @@
 		<include refid="Base_Column_List" />
 		from prm_project_func
 		<if test="orderBy == 0">
-			order by p_id desc
+			order by func_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by p_id asc
+			order by func_id asc
 		</if>
 	</select>
 	
@@ -58,13 +58,13 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_project_func c where p_id = #{pId}
+		from prm_project_func c where func_id = #{funcId}
 
 	</select>
 	
 	<delete id="deleteProjectFuncByPId" parameterType="java.lang.String">
 		delete from
-		prm_project_func where p_id = #{pId}
+		prm_project_func where func_id = #{funcId}
 	</delete>
 	
 	<insert id="saveProjectFunc" parameterType="com.art1001.supply.entity.project.ProjectFunc">
@@ -72,14 +72,14 @@
 		insert into prm_project_func
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
-			<if test="pId != null ">
-			p_id,
+			<if test="funcId != null ">
+			func_id,
 			</if>
-			<if test="pName != null and pName != ''">
-			p_name,
+			<if test="funcName != null and funcName != ''">
+			func_name,
 			</if>
-			<if test="pOrder != null ">
-			p_order,
+			<if test="funcOrder != null ">
+			func_order,
 			</if>
 			<if test="projectId != null and projectId != ''">
 			project_id,
@@ -91,14 +91,14 @@
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 
-			<if test="pId != null ">
-				#{pId},
+			<if test="funcId != null ">
+				#{funcId},
 			</if>
-			<if test="pName != null and pName != ''">
-				#{pName},
+			<if test="funcName != null and funcName != ''">
+				#{funcName},
 			</if>
-			<if test="pOrder != null ">
-				#{pOrder},
+			<if test="funcOrder != null ">
+				#{funcOrder},
 			</if>
 			<if test="projectId != null and projectId != ''">
 				#{projectId},
@@ -114,14 +114,14 @@
 
 		update prm_project_func
 		<set>
-			<if test="pId != null ">
-				p_id = #{pId},
+			<if test="funcId != null ">
+				func_id = #{funcId},
 			</if>
-			<if test="pName != null and pName != ''">
-				p_name = #{pName},
+			<if test="funcName != null and funcName != ''">
+				func_name = #{funcName},
 			</if>
-			<if test="pOrder != null ">
-				p_order = #{pOrder},
+			<if test="funcOrder != null ">
+				func_order = #{funcOrder},
 			</if>
 			<if test="projectId != null and projectId != ''">
 				project_id = #{projectId},
@@ -131,7 +131,7 @@
 			</if>
 		</set>
 
-		WHERE p_id = #{pId}
+		WHERE func_id = #{funcId}
 
 	</update>
 
@@ -140,6 +140,7 @@
 		<include refid="Base_Column_List" />
 		from prm_project_func
 		where project_id = #{projectId}
+		order by func_order asc
 	</select>
 
 

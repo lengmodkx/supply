@@ -16,19 +16,19 @@ public class ProjectFunc extends BaseEntity implements Serializable {
 	/**
 	 * p_id
 	 */
-	private Integer pId;
+	private Integer funcId;
 
 
 	/**
 	 * p_name
 	 */
-	private String pName;
+	private String funcName;
 
 
 	/**
 	 * p_order
 	 */
-	private Integer pOrder;
+	private Integer funcOrder;
 
 
 	/**

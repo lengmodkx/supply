@@ -1,13 +1,16 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -18,17 +21,21 @@ import com.art1001.supply.service.project.ProjectFuncService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +70,9 @@ public class ProjectController {
 
     @Resource
     private ProjectFuncService funcService;
+
+    @Resource
+    private TagService tagService;
 
     @RequestMapping("/home.html")
     public String home(Model model){
@@ -152,7 +162,7 @@ public class ProjectController {
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setProjectCover("");
+            project.setProjectCover("upload/project/bj.png");
             project.setProjectDel(0);
             project.setCreateTime(System.currentTimeMillis());
             project.setIsPublic(0);
@@ -165,9 +175,9 @@ public class ProjectController {
             String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
             for (int i=0;i<funcs.length;i++) {
                 ProjectFunc projectFunc = new ProjectFunc();
-                projectFunc.setPName(funcs[i]);
+                projectFunc.setFuncName(funcs[i]);
                 projectFunc.setIsOpen(1);
-                projectFunc.setPOrder(i);
+                projectFunc.setFuncOrder(i);
                 projectFunc.setProjectId(project.getProjectId());
                 funcService.saveProjectFunc(projectFunc);
             }
@@ -370,6 +380,7 @@ public class ProjectController {
     public String projectSetting(@RequestParam String projectId, Model model){
         String userId = ShiroAuthenticationManager.getUserId();
         Project project = projectService.findProjectByProjectId(projectId);
+        //获取项目拥有着信息
         UserEntity userEntity = userService.findById(project.getMemberId());
 
         model.addAttribute("project",project);
@@ -379,9 +390,59 @@ public class ProjectController {
         }else{
             model.addAttribute("hasPermission",0);
         }
-
         return "objsetting";
     }
+
+
+    @PostMapping("/upload")
+    @ResponseBody
+    public JSONObject uploadCover(@RequestParam String projectId,
+                                  MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //先删除阿里云上项目的图片然后再上传
+            Project project = projectService.findProjectByProjectId(projectId);
+            //不删除项目的默认图片
+            if(!"upload/project/bj.png".equals(project.getProjectCover())){
+                AliyunOss.deleteFile(project.getProjectCover());
+            }
+
+            String filename = System.currentTimeMillis()+".jpg";
+            AliyunOss.uploadInputStream(Constants.PROJECT_IMG + filename,file.getInputStream());
+            Project project1 = new Project();
+            project1.setProjectId(projectId);
+            project1.setProjectCover(Constants.PROJECT_IMG + filename);
+            projectService.updateProject(project1);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "上传成功");
+            jsonObject.put("data",Constants.PROJECT_IMG + filename);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("/updateFunc")
+    @ResponseBody
+    public JSONObject updateFunc(@RequestParam Integer[] funcIds){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            for (int i=0;i<funcIds.length;i++){
+                ProjectFunc projectFunc = new ProjectFunc();
+                projectFunc.setFuncOrder(i);
+                projectFunc.setFuncId(funcIds[i]);
+                funcService.updateProjectFunc(projectFunc);
+            }
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "更新成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 
 
 
@@ -415,9 +476,16 @@ public class ProjectController {
 
 
     @GetMapping("/addtask.html")
-    public String addtask(Model model){
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        model.addAttribute("user",userEntity);
+    public String addtask(@RequestParam String projectId, Model model){
+        try {
+            List<Tag> tagList = tagService.findByProjectId(projectId);
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            model.addAttribute("user",userEntity);
+            model.addAttribute("tagList",tagList);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
         return "addtask";
     }
 

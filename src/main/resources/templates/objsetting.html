@@ -24,97 +24,105 @@
         <!--项目封面-->
         <div class="project-cover layui-form" >
             <div class="project-cover-title">项目封面</div>
-            <img src="../static/image/nofile.png" class="project-cover-img">
+            <div style="position: relative">
+                <img th:src="#{IMAGE_SERVER} + ${project.projectCover}" class="project-cover-img"/>
+                <button type="button" class="layui-btn" id="upload" style="position: absolute;left: 270px;background-color: #1E9FFF">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+            </div>
+
             <p class="fonts">项目名称</p>
-            <input type="text" name=""  placeholder="项目名称"  class="layui-input ">
+            <input type="text" th:name="projectName" th:value="${project.projectName}" placeholder="项目名称"  class="layui-input ">
             <p class="fonts">项目简介</p>
-            <input type="text" name=""  placeholder="项目简介"  class="layui-input ">
+            <input type="text" th:name="projectDes" th:value="${project.projectDes}"  placeholder="项目简介"  class="layui-input ">
             <p class="fonts">项目公开性</p>
-            <select name="" lay-verify="">
-                <option value="">项目公开性</option>
-                <option value="010">公开</option>
-                <option value="021">不公开</option>
+            <select th:name="isPublic" th:value="${project.isPublic}" lay-verify="required">
+                <option value="0" th:selected="${project.isPublic eq 0}">私有项目 (仅项目成员可查看和编辑)</option>
+                <option value="1" th:selected="${project.isPublic eq 1}">公开项目 (所有人都可通过链接访问，仅项目成员可编辑)</option>
             </select>
             <p class="fonts">项目拥有者</p>
             <div class="project-people">
-                <img src="../static/image/begintime.png" >
-                <span>谁谁谁</span>
+                <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" />
+                <span th:text="${user.userName}">谁谁谁</span>
             </div>
         </div>
         <!--项目偏好-->
         <div class="project-like layui-form" style="display: none">
             <div class="project-like-title">应用排序</div>
-            <p class="px-sm">拖动图标排序。你可以前往项目菜单-应用与插件打开或关闭应用</p>
+            <p class="px-sm">拖动图标排序</p>
             <ul id="px">
-                <li>任务</li>
-                <li>分享</li>
-                <li>文件</li>
-                <li>日程</li>
-                <li>群聊</li>
-                <li>统计</li>
+                <li th:each="projectFunc:${project.funcList}" th:text="${projectFunc.funcName}" th:id="${projectFunc.funcId}">
+                    任务
+                </li>
             </ul>
             <div class="black-line"></div>
             <div class="project-like-title">项目动态提醒</div>
             <p class="px-sm">当项目有新动态时，以标记或通知的方式提醒，仅对个人</p>
-            <input type="radio" name="sex" value="" title="推送动态提醒（显示标记并以桌面通知的方式进行推送）">
-            <input type="radio" name="sex" value="" title="不推送动态提醒（只显示标记）" >
+            <input type="radio" name="projectRemind" value="0" title="不推送动态提醒（只显示标记）"
+                   th:checked="${project.projectRemind eq 0}"
+                   lay-filter="remind"/>
+            <input type="radio" name="projectRemind" value="1" title="推送动态提醒（显示标记并以桌面通知的方式进行推送）"
+                   th:checked="${project.projectRemind eq 1}"
+                   lay-filter="remind"/>
+
         </div>
         <!--任务权限-->
-        <div class="task-power" style="display: none">
+        <div class="task-power layui-fluid" style="display: none">
             <div class="task-power-title">
                 <p>可分别自定义配置任务的创建者/执行者权限</p>
                 <span>任务创建者/执行者权限自定义</span>
-                <div class="switchs"> <input type="checkbox" name="" lay-skin="switch"></div>
+                <div class="switchs"> <input type="checkbox" name="" lay-skin="switch" lay-filter="permission"></div>
             </div>
-            <div class="power-head">
-                <div class="layui-row">
-                    <div class="layui-col-md4">任务权限</div>
-                    <div class="layui-col-md4">创建者</div>
-                    <div class="layui-col-md4">执行者</div>
+            <div class="permission_content" style="display: none">
+                <div class="power-head">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">任务权限</div>
+                        <div class="layui-col-md4 layui-col-xs4">创建者</div>
+                        <div class="layui-col-md4 layui-col-xs4">执行者</div>
+                    </div>
                 </div>
-            </div>
-            <div class="power-box">
-                <div class="layui-row">
-                    <div class="layui-col-md4">将任务移至回收站</div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                <div class="power-box">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">将任务移至回收站</div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="power-box">
-                <div class="layui-row">
-                    <div class="layui-col-md4">删除任务</div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                <div class="power-box">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">删除任务</div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="power-box">
-                <div class="layui-row">
-                    <div class="layui-col-md4">完成/重做任务</div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                <div class="power-box">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">完成/重做任务</div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="power-box">
-                <div class="layui-row">
-                    <div class="layui-col-md4">更改执行者</div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                <div class="power-box">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">更改执行者</div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="power-box">
-                <div class="layui-row">
-                    <div class="layui-col-md4">设置任务开始/截止时间</div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
-                    <div class="layui-col-md4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                <div class="power-box">
+                    <div class="layui-row">
+                        <div class="layui-col-md4 layui-col-xs4">设置任务开始/截止时间</div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                        <div class="layui-col-md4 layui-col-xs4"><input type="checkbox" name="" title="" lay-skin="primary"></div>
+                    </div>
                 </div>
             </div>
 
         </div>
         <!--更多-->
-        <div class="setting-more" style="display: none">
+        <div class="setting-more" style="width: 100px">
             <div class="setting-more-title">项目操作</div>
-            <p>一旦你退出了该项目，你不能查看任何关于该项目的信息。退出项目后如果想重新加入，请联系项目管理员</p>
-            <div class="layui-btn layui-btn-normal">退出</div>
+            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="exitProject" style="background-color: #017ECA">移到回收站</button>
         </div>
     </div>
 </div>
@@ -124,9 +132,10 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
+<script th:inline="javascript">
+    var projectId = [[${project.projectId}]];
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 
-</html>
-<script>
     layui.use('form', function(){
         var form = layui.form;
 
@@ -135,12 +144,60 @@
             layer.msg(JSON.stringify(data.field));
             return false;
         });
+
+        form.on('radio(remind)', function(data){
+
+            console.log(data.value); //被点击的radio的value值
+            return false;
+        });
+
+        form.on('switch(permission)', function(data){
+            if(data.elem.checked){
+                $(".permission_content").show();
+            }else{
+                $(".permission_content").hide();
+            }
+            return false;
+        });
+
+        form.on('submit(exitProject)', function(data){
+
+            layer.confirm('一旦将项目移到回收站, 所有与项目有关的信息将会被移到回收站。请谨慎对待！', {
+                btn: ['移到回收站'] //按钮
+            }, function(){
+                $.post('/project/updateProject',{'projectId':projectId,"projectDel":1} ,function (data) {
+                    if(data.result===1){
+                        layer.alert("移除成功");
+                        layer.closeAll();
+                    }
+                });
+            });
+
+
+            return false;
+        });
     });
     // 拖拽函数
     Sortable.create(document.getElementById('px'),{
         group:"words",
-        animation: 150 //动画参数
+        animation: 150, //动画参数
+        onEnd: function (evt){ //拖拽更新节点位置发生该事件
+            console.log('onUpdate.foo:', [evt.item, evt.from]);
+            var id_arr='';
+            for(var i=0, len=evt.from.children.length; i<len; i++){
+                id_arr+=','+ evt.from.children[i].getAttribute('id');
+            }
+            id_arr=id_arr.substr(1);
+            //然后请求后台ajax 这样就完成了拖拽排序
+            console.log(JSON.stringify(id_arr));
+            $.post('/project/updateFunc',{'funcIds':id_arr} ,function (data) {
+                if(data.result===1){
+
+                }
+            });
+        }
     });
+
 
     $(function () {
         $(".setting-left-nav li").click(function () {
@@ -149,6 +206,28 @@
             $(".settings>div").eq(i).show().siblings().hide()
 
         })
-    })
+    });
+
+
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        //执行实例
+        upload.render({
+            elem: '#upload' //绑定元素
+            ,url: '/project/upload' //上传接口
+            ,data:{projectId:projectId}
+            ,done: function(res){
+                //上传完毕回调
+                console.log(res);
+                $('.project-cover-img').attr("src", IMAGE_SERVER + res.data);
+                parent.$('#'+projectId).css("background-image",'url('+IMAGE_SERVER + res.data+')');
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
 
 </script>
+</html>

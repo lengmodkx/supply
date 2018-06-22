@@ -33,22 +33,22 @@ public class ProjectFuncServiceImpl implements ProjectFuncService {
 	/**
 	 * 通过pId获取单条project数据
 	 * 
-	 * @param pId
+	 * @param funcId
 	 * @return
 	 */
 	@Override 
-	public ProjectFunc findProjectFuncByPId(String pId){
-		return projectFuncMapper.findProjectFuncByPId(pId);
+	public ProjectFunc findProjectFuncByPId(String funcId){
+		return projectFuncMapper.findProjectFuncByPId(funcId);
 	}
 
 	/**
 	 * 通过pId删除project数据
 	 * 
-	 * @param pId
+	 * @param funcId
 	 */
 	@Override
-	public void deleteProjectFuncByPId(String pId){
-		projectFuncMapper.deleteProjectFuncByPId(pId);
+	public void deleteProjectFuncByPId(String funcId){
+		projectFuncMapper.deleteProjectFuncByPId(funcId);
 	}
 
 	/**

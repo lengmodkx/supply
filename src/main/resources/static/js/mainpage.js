@@ -40,18 +40,17 @@ $(function () {
         laydate.render({
             elem: '#beginTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'yyyy年MM月dd日 HH时mm分'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'yyyy年MM月dd日 HH时mm分'
         });
     });
 
     // 拖拽函数
     $(".taskList").each(function (data,item) {
-        console.log($(item).attr('id'));
         var el = document.getElementById($(item).attr('id'));
         Sortable.create(el,{
             group:"words",
@@ -90,7 +89,7 @@ $(function () {
 
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
-        addRenwu();
+        addRenwu($('.add-assignment').attr("data"));
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
@@ -294,7 +293,8 @@ function mypage() {
     });
 };
 //添加任务 弹框界面
-function addRenwu() {
+function addRenwu(projectId) {
+    console.log(projectId);
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -305,7 +305,7 @@ function addRenwu() {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: 'addtask.html'
+            content: 'addtask.html?projectId='+projectId
         });
     });
 };

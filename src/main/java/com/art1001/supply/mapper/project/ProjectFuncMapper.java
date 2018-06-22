@@ -22,17 +22,17 @@ public interface ProjectFuncMapper {
 	/**
 	 * 通过pId获取单条project数据
 	 * 
-	 * @param pId
+	 * @param funcId
 	 * @return
 	 */
-	ProjectFunc findProjectFuncByPId(String pId);
+	ProjectFunc findProjectFuncByPId(String funcId);
 
 	/**
 	 * 通过pId删除project数据
 	 * 
-	 * @param pId
+	 * @param funcId
 	 */
-	void deleteProjectFuncByPId(String pId);
+	void deleteProjectFuncByPId(String funcId);
 
 	/**
 	 * 修改project数据

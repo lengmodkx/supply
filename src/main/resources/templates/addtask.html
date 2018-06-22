@@ -11,12 +11,13 @@
 
 <body>
 <!--添加任务界面-->
-<div id="new-assignment" class="new-assignment boxsizing layui-form" >
-    <textarea name="" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
+<form id="new-assignment" class="new-assignment boxsizing layui-form" >
+    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
         <div class="who-wrap">
-            <img th:src="@{/image/adds.png}" >
-            <span>谁谁谁</span>
+            <input th:name="userId" th:value="${user.id}" type="hidden"/>
+            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" />
+            <span th:text="${user.userName}">谁谁谁</span>
             <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
         </div>
         <div class="no-renling">
@@ -25,37 +26,37 @@
         </div>
     </div>
     <div class="begin-time abox">
-        <img th:src="@{/image/begintime.png}" >
-        <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
+        <img th:src="@{/image/begintime.png}" />
+        <input type="text" class="layui-input" id="beginTime" th:name="startTime" placeholder="设置开始时间">
     </div>
     <div class="over-time abox">
-        <img th:src="@{/image/begintime.png}" >
-        <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
+        <img th:src="@{/image/begintime.png}" />
+        <input type="text" class="layui-input" id="overTime" th:name="endTime" placeholder="设置截止时间">
     </div>
     <div class="no-repeat abox">
         <img th:src="@{/image/norepeat.png}" >
         <select name="repeat" lay-verify="">
-            <option value="repeat-no">不重复</option>
-            <option value="repeat-day">每天重复</option>
-            <option value="repeat-week">每周重复</option>
-            <option value="repeat-mouth">每月重复</option>
-            <option value="repeat-year">每年重复</option>
-            <option value="repeat-workday">工作日重复</option>
+            <option value="不重复">不重复</option>
+            <option value="每天重复">每天重复</option>
+            <option value="每周重复">每周重复</option>
+            <option value="每月重复">每月重复</option>
+            <option value="每年重复">每年重复</option>
+            <option value="工作日重复">工作日重复</option>
         </select>
     </div>
     <div class="no-remand abox">
         <img th:src="@{/image/noremand.png}" >
         <select name="remand" lay-verify="">
-            <option value="remand-no">不提醒</option>
-            <option value="remand-over">任务截止时提醒</option>
-            <option value="remand-begin">任务开始时提醒</option>
+            <option value="不提醒">不提醒</option>
+            <option value="任务截止时提醒">任务截止时提醒</option>
+            <option value="任务开始时提醒">任务开始时提醒</option>
         </select>
     </div>
     <div class="pri layui-form">
         <div class="layui-input-block">
-            <input type="radio" name="state" value="putong" title="普通" checked>
-            <input type="radio" name="state" value="jinji" title="紧急">
-            <input type="radio" name="state" value="veryjinji" title="非常紧急" >
+            <input type="radio" name="state" value="普通" title="普通" checked>
+            <input type="radio" name="state" value="紧急" title="紧急">
+            <input type="radio" name="state" value="非常紧急" title="非常紧急" >
         </div>
     </div>
     <div class="add-tag combox">
@@ -173,7 +174,7 @@
 
 
     </div>
-</div>
+</form>
 
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>

@@ -144,6 +144,7 @@ html,body{
 .describe-title{
     width: 76%;
     float: left;
+    color: white;
 }
 .describe p{
     height: 70%;
