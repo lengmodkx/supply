@@ -40,26 +40,28 @@ $(function () {
         laydate.render({
             elem: '#beginTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 H:00'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 H:00'
         });
     });
 
     // 拖拽函数
-    $(".taskList").each(function (data,item) {
-        console.log($(item).attr('id'));
-        var el = document.getElementById($(item).attr('id'));
-        Sortable.create(el,{
-            group:"words",
-            animation: 150 //动画参数
-        });
+    Sortable.create(document.getElementById('list1'),{
+        group:"words",
+        animation: 150 //动画参数
     });
-
-
+    Sortable.create(document.getElementById('list2'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
+    Sortable.create(document.getElementById('list3'),{
+        group:"words",
+        animation: 150 //动画参数
+    });
 
     firefox();
 //点击导航（设计任务、分享、文件、群聊、统计） 静态切换
@@ -88,8 +90,11 @@ $(function () {
     });
 
 
+
+var that;
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
+        that=$(this);
         addRenwu();
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
@@ -242,7 +247,7 @@ function lbmenu(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: ['menuList.html','no']
+            content: ['tk-caidanliebiao.html','no']
         });
     });
 };
@@ -317,7 +322,7 @@ function changeRenwu() {
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
-            area:['500px','600px'],
+            area:['800px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,

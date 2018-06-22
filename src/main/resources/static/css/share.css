@@ -43,6 +43,17 @@ body{
     line-height: 60px;
     text-align: center;
 }
+.file-title .layui-form-checkbox[lay-skin=primary]{
+    float: left;
+    margin-top: 9px;
+    margin-left: 5px;
+}
+.file-title .file-name .layui-form-checkbox[lay-skin=primary] i{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-top: 12px;
+}
 .file-style img{
     float: right;
     margin-right: 20px;

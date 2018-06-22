@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
 </head>
 <body>
 <!--头部-->
@@ -31,7 +32,7 @@
         </div>
     <!--右侧固定的头像与菜单栏-->
     <div class="head-photo-wrap">
-        <img src="../static/image/add.png" class="head-photo">
+        <img src="../static/image/add.png" class="head-photo"  th:src="@{/image/add.png}" />
     </div>
 </div>
 
@@ -98,7 +99,7 @@
                                    <div class="assignment-top-box boxsizing">
                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
                                        <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png" >
+                                       <img class="assignment-tx" src="../static/image/add.png"  th:src="@{/image/add.png}" />
                                    </div>
                                    <div class="assignment-bottom-box">
                                        <span class="timer">今天9:00-明天</span>
@@ -142,40 +143,55 @@
            <div class="file-box boxsizing layui-form">
                <div class="file-toper">
                    <span>文件库</span>
-                   <div class="add-share"><img src="../static/image/upload.png" >上传</div>
-                   <div class="add-share"><img src="../static/image/add.png" >创建文件夹</div>
+                   <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+                   </div>
+                   <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
+                   </div>
                </div>
                <div class="file-title">
                    <div class="layui-row">
-                       <div class="layui-col-md2 layui-col-lg-2 file-name">名称</div>
+                       <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >名称</div>
                        <div class="layui-col-md2 layui-col-lg-2 file-size">大小</div>
                        <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
                        <div class="layui-col-md3 layui-col-lg-3 file-time">更新时间</div>
                        <div class="layui-col-md3 layui-col-lg-3 file-style">
-                           <img src="../static/image/jggpb.png" >
-                           <img src="../static/image/lpb.png" >
+                           <img th:src="@{/image/jggpb.png}" src="../static/image/jggpb.png">
+                           <img th:src="@{/image/lpb.png}" src="../static/image/lpb.png">
                        </div>
                    </div>
                </div>
                <!--没有文件-->
                <div class="no-file" style="display: none">
-                   <img src="../static/image/nofile.png" >
+                   <img th:src="@{/image/nofile.png}" src="../static/image/nofile.png">
                    <p>目前还没有文件～</p>
                </div>
                <!--有文件-->
                <div class="have-file">
-                   <div class="layui-row">
-                       <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
-                       <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
-                       <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
-                       <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
-                       <div class="layui-col-md3 layui-col-lg-3 file-operate">
-                           <!--<i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>-->
-                           <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-
-                       </div>
-                   </div>
-
+                   <!--列表模式-->
+                   <ul class="liebiao-show">
+                       <li class="layui-row">
+                           <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
+                           <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
+                           <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
+                           <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
+                           <div class="layui-col-md3 layui-col-lg-3 file-operate">
+                               <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
+                               <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
+                           </div>
+                       </li>
+                   </ul>
+                   <!--缩略图模式-->
+                   <ul class="img-show">
+                       <li class="boxsizing one-file-wrap">
+                           <div class="one-file">
+                               <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary">
+                               <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
+                               <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>
+                               <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>
+                           </div>
+                           <div class="one-file-name">图片.zip</div>
+                       </li>
+                   </ul>
                </div>
 
            </div>
@@ -185,7 +201,7 @@
           <div class="file-box boxsizing layui-form">
               <div class="file-toper">
                   <span>所有分享</span>
-                  <div class="add-share"><img src="../static/image/add.png" >添加分享</div>
+                  <div class="add-share"><img src="../static/image/add.png"  th:src="@{/image/add.png}" />添加分享</div>
               </div>
               <div class="file-title">
                   <div class="layui-row">
@@ -194,14 +210,14 @@
                       <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
                       <div class="layui-col-md3 layui-col-lg-3 file-time">更新时间</div>
                       <div class="layui-col-md3 layui-col-lg-3 file-style">
-                          <img src="../static/image/jggpb.png" >
-                          <img src="../static/image/lpb.png" >
+                          <img class="suoluetu-moshi" src="../static/image/jggpb.png"  th:src="@{/image/jggpb.png}" />
+                          <img class="liebiao-moshi" src="../static/image/lpb.png"  th:src="@{/image/lpb.png}" />
                       </div>
                   </div>
               </div>
               <!--没有文件-->
               <div class="no-file" style="display: none">
-                  <img src="../static/image/nofile.png" >
+                  <img src="../static/image/nofile.png"  th:src="@{/image/nofile.png}" />
                   <p>目前还没有文件～</p>
               </div>
               <!--有文件-->
@@ -226,7 +242,7 @@
       <div id="date" style="display: none">
           <div class="add-scheduling">
               <div class="middle-box">
-                  <img src="../static/image/adds.png" >
+                  <img src="../static/image/adds.png"  th:src="@{/image/adds.png}" />
                   添加日程
               </div>
           </div>
@@ -273,11 +289,11 @@
               <div class="chat-title">项目名称</div>
               <div class="chat">
                   <div class="receive">
-                      <img src="../static/image/begintime.png">
+                      <img src="../static/image/begintime.png"  th:src="@{/image/begintime.png}" />
                       <p class="boxsizing">我是接受的消息</p>
                   </div>
                   <div class="send">
-                      <img src="../static/image/begintime.png">
+                      <img src="../static/image/begintime.png"  th:src="@{/image/begintime.png}" />
                       <p class="boxsizing">我是发送的消息</p>
                   </div>
               </div>
@@ -286,8 +302,8 @@
                   <textarea name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
                   <div class="fenge-line"></div>
                   <div class="publish-bottom">
-                      <img src="../static/image/fujian.png" >
-                      <img src="../static/image/biaoqing.png" >
+                      <img src="../static/image/fujian.png"  th:src="@{/image/fujian.png}" />
+                      <img src="../static/image/biaoqing.png"  th:src="@{/image/biaoqing.png}" />
                       <div class="publish-btn ">发布</div>
                   </div>
 
@@ -308,6 +324,7 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
+<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 
 </body>
 </html>

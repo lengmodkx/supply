@@ -1,0 +1,64 @@
+/*文件 缩略图模式显示*/
+.img-show{
+    width: 100%;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    display: none;
+    margin-top: 20px;
+}
+.one-file-wrap{
+    width: 164px;
+    height: 210px;
+    margin-top: 5px;
+}
+.one-file-name{
+    height: 46px;
+    width: 100%;
+    line-height: 46px;
+}
+.one-file{
+    width: 164px;
+    height: 164px;
+    border: 1px solid #e5e5e5;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.one-file .layui-form-checkbox[lay-skin=primary]{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+.one-file:hover .layui-form-checkbox[lay-skin=primary]{
+    display: block;
+}
+.one-file>img{
+    width: 64px;
+    height: 64px;
+    margin: auto;
+}
+.one-file:hover i{
+    display: block;
+}
+.img-show-download{
+    position: absolute;
+    bottom: 20px;
+    left: 55px;
+    display: none;
+}
+.img-show-download:hover{
+    color: #3da8f5 !important;
+}
+.img-show-operate{
+    position: absolute;
+    bottom: 20px;
+    left: 85px;
+    display: none;
+}
+.img-show-operate:hover{
+    color: #3da8f5 !important;
+}

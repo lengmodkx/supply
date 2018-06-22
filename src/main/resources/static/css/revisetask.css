@@ -1,12 +1,12 @@
 /*修改任务*/
 .revise-task-wrap{
-    width: 500px;
+    width: 600px;
     height: 600px;
     position: relative;
     margin: 0 auto;
 }
 .revise-task{
-    width: 500px;
+    width: 600px;
     padding: 16px;
     background-color: white;
     height: 480px;
@@ -149,9 +149,9 @@
     float: left;
 }
 .time-wrap{
-    width: 100%;
+    width: 130px;
     height: 25px;
-    margin-top: 15px;
+    float: left;
 }
 .time-wrap input{
     height: 25px;
@@ -160,7 +160,7 @@
     cursor: pointer;
     line-height: 25px;
     float: left;
-    width: 80%;
+    width: 105px;
 }
 .time-wrap input::placeholder{
     color: black;
@@ -169,8 +169,29 @@
     width: 18px;
     height: 18px;
     float: left;
-    margin-right: 15px;
+    margin-right: 5px;
     margin-top: 3px;
+}
+.no-repeat>img,.no-remand>img{
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 10px;
+    margin-top: 3px;
+    position: absolute;
+    top: 0px;
+    left: 0;
+}
+.no-repeat,.no-remand{
+    float: left;
+    width: 30px;
+    position: relative;
+}
+.no-repeat .layui-select-title{
+    opacity: 0;
+}
+.no-remand .layui-select-title{
+    opacity: 0;
 }
 .combox{
     width: 100%;
@@ -212,6 +233,7 @@
     top: 30px;
     left: 75px;
     box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    z-index: 100;
 }
 .add-tag{
     position: relative;
@@ -695,6 +717,7 @@
     left: 0;
     background-color: white;
     padding: 15px ;
+    z-index: 100;
 }
 .peoples{
     width: 100%;

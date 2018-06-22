@@ -82,52 +82,52 @@
 .over-time input::placeholder{
     color: black;
 }
-.no-repeat select{
+.norepeat select{
     float: left;
     height: 18px;
     width: 200px;
 }
-.no-repeat .layui-unselect,.layui-form-select{
+.norepeat .layui-unselect,.layui-form-select{
     float: left;
     height: 18px;
     width: 200px;
 }
-.no-repeat .layui-unselect,.layui-form-select input{
+.norepeat .layui-unselect,.layui-form-select input{
     padding-left: 0;
     border: 0 none;
     color: black;
 }
-.no-repeat .layui-unselect,.layui-form-select input::placeholder{
+.norepeat .layui-unselect,.layui-form-select input::placeholder{
     color: black;
 }
-.no-repeat .layui-edge{
+.norepeat .layui-edge{
     display: none;
 }
-.no-repeat .layui-form-select dl{
+.norepeat .layui-form-select dl{
     /*top: 30px;*/
 }
-.no-remand select{
+.noremand select{
     float: left;
     height: 18px;
     width: 200px;
 }
-.no-remand .layui-unselect,.layui-form-select{
+.noremand .layui-unselect,.layui-form-select{
     float: left;
     height: 18px;
     width: 200px;
 }
-.no-remand .layui-unselect,.layui-form-select input{
+.noremand .layui-unselect,.layui-form-select input{
     padding-left: 0;
     border: 0 none;
     color: black;
 }
-.no-remand .layui-unselect,.layui-form-select input::placeholder{
+.noremand .layui-unselect,.layui-form-select input::placeholder{
     color: black;
 }
-.no-remand .layui-edge{
+.noremand .layui-edge{
     display: none;
 }
-.no-remand .layui-form-select dl{
+.noremand .layui-form-select dl{
     top: 30px;
 }
 .pri{
