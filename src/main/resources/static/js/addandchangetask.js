@@ -20,10 +20,14 @@ layui.use('form', function(){
 
         //执行一个laydate实例
         laydate.render({
-            elem: '#beginTimes' //指定元素
+            elem: '#beginTime', //指定元素
+            type:'datetime',
+            format:'M月d日 H:00'
         });
         laydate.render({
-            elem: '#overTimes' //指定元素
+            elem: '#overTime', //指定元素
+            type:'datetime',
+            format:'M月d日 H:00'
         });
     });
 
@@ -96,6 +100,11 @@ layui.use('form', function(){
             $(".has-tags").show();
             $(".no-tags").hide();
         }
+    });
+    //点击颜色，颜色出现对勾
+    $(".color-pick li").click(function () {
+        $(this).find("i").show();
+        $(this).siblings().find("i").hide()
     });
     //点击空白区域 添加标签消失
     $(document).click(function(event){

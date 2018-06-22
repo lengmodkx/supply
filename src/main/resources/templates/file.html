@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
 
 </head>
 <body>
@@ -21,13 +22,13 @@
     </div>
     <div class="file-title">
         <div class="layui-row">
-            <div class="layui-col-md2 layui-col-lg-2 file-name">名称</div>
+            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >名称</div>
             <div class="layui-col-md2 layui-col-lg-2 file-size">大小</div>
             <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
             <div class="layui-col-md3 layui-col-lg-3 file-time">更新时间</div>
             <div class="layui-col-md3 layui-col-lg-3 file-style">
-                <img th:src="@{/image/jggpb.png}" src="../static/image/jggpb.png">
-                <img th:src="@{/image/lpb.png}" src="../static/image/lpb.png">
+                <img class="suoluetu-moshi" th:src="@{/image/jggpb.png}" src="../static/image/jggpb.png">
+                <img class="liebiao-moshi" th:src="@{/image/lpb.png}" src="../static/image/lpb.png">
             </div>
         </div>
     </div>
@@ -38,25 +39,31 @@
     </div>
     <!--有文件-->
     <div class="have-file">
-        <div th:each="file:${fileList}">
-            <div class="layui-row">
-                <div class="layui-col-md2 layui-col-lg-2 file-name">
-                    <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure">
-                    <div th:text="${file.fileName}"></div>
-                </div>
-                <div class="layui-col-md2 layui-col-lg-2 file-size" th:text="${file.size}"></div>
-                <div class="layui-col-md2 layui-col-lg-2 file-time" th:text="${file.memberName}"></div>
-                <div class="layui-col-md3 layui-col-lg-3 file-people"
-                     th:text="${#dates.format(file.updateTime,'M月dd日')}"></div>
-                <div class="layui-col-md3 layui-col-lg-3 file-operate">
-                    <!--<i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>-->
-                    <a th:href="@{/file/downloadFile(fileId = ${file.fileId})}">
-                        <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-                    </a>
-                </div>
+        <!--列表模式-->
+        <ul class="liebiao-show">
+        <li class="layui-row">
+            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
+            <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
+            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
+            <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
+            <div class="layui-col-md3 layui-col-lg-3 file-operate">
+                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
+                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
             </div>
-        </div>
-
+        </li>
+        </ul>
+        <!--缩略图模式-->
+        <ul class="img-show">
+            <li class="boxsizing one-file-wrap">
+                <div class="one-file">
+                    <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary">
+                    <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
+                    <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>
+                    <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>
+                </div>
+                <div class="one-file-name">图片.zip</div>
+            </li>
+        </ul>
     </div>
 
 </div>
@@ -65,6 +72,7 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
+<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 <script>
 
     layui.use(['form', 'upload', 'layer'], function () {

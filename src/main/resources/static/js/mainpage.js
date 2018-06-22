@@ -40,12 +40,12 @@ $(function () {
         laydate.render({
             elem: '#beginTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分'
+            format:'M月d日 H:00'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分'
+            format:'M月d日 H:00'
         });
     });
 
@@ -57,8 +57,6 @@ $(function () {
             animation: 150 //动画参数
         });
     });
-
-
 
     firefox();
 //点击导航（设计任务、分享、文件、群聊、统计） 静态切换
