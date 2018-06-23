@@ -220,7 +220,7 @@
 			</if>
 
 			<if test="projectRemind != null ">
-				projecct_remind = #{projectRemind},
+				project_remind = #{projectRemind},
 			</if>
 		</set>
 

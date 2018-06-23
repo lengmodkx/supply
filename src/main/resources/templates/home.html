@@ -62,10 +62,10 @@
 <div class="content">
     <div class="content-nav">
         <ul class="layui-row" >
-            <li class=" layui-col-md3"><a class="selected" href="#">我拥有的项目</a></li>
-            <li class=" layui-col-md3"><a href="#">我参与的项目</a></li>
-            <li class=" layui-col-md3"><a href="#">我收藏的项目</a></li>
-            <li class=" layui-col-md3"><a href="#">项目回收站</a></li>
+            <li class=" layui-col-md3"><a class="selected" href="/project/home.html">我拥有的项目</a></li>
+            <li class=" layui-col-md3"><a href="/project/home.html">我参与的项目</a></li>
+            <li class=" layui-col-md3"><a href="/project/home.html">我收藏的项目</a></li>
+            <li class=" layui-col-md3"><a href="/project/home.html">项目回收站</a></li>
         </ul>
     </div>
     <!--我拥有的项目-->
@@ -80,10 +80,10 @@
                     <div>
                         <span class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </span>
                         <span class="tools">
-                        <i class="layui-icon layui-icon-edit project-set" style="font-size: 15px; color: gray;" title="打开项目设置"
+                        <i class="layui-icon layui-icon-edit project-set" style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
                            th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
 
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: gray;" title="星标"
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
                            th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
 
                         </span>
@@ -114,8 +114,10 @@
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
                         <span class="tools">
-                        <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置" th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标" th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
+                        <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
+                           th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
+                           th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
                         </span>
                         <!--<span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>-->
                     </div>
@@ -137,8 +139,10 @@
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
                         <span class="tools">
-                        <i class="layui-icon layui-icon-edit " style="font-size: 15px; color: #fff;" title="打开项目设置"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 15px; color: #fff;" title="星标"></i>
+                        <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
+                           th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
+                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="取消收藏"
+                           th:onclick="'javascript:cancleCollect(\''+${project.projectId}+'\')'"></i>
                         </span>
                     </div>
                     <p th:text="${project.projectDes}">描述描述</p>
@@ -157,6 +161,10 @@
                 <div class="describe boxsizing">
                     <div>
                         <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
+                        <span class="tools">
+                        <i class="layui-icon layui-icon-refresh " style="font-size: 18px; color: #eeeeee;" title="恢复项目"></i>
+                        <i class="layui-icon layui-icon-delete star" style="font-size: 18px; color: #eeeeee;" title="删除项目"></i>
+                        </span>
                     </div>
                     <p th:text="${project.projectDes}">描述描述</p>
                 </div>
@@ -169,6 +177,15 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script type="text/javascript">
+    layui.use('element', function(){
+        var element = layui.element;
+
+        //一些事件监听
+        element.on('tab(demo)', function(data){
+            console.log(data);
+        });
+    });
+
     function stopBubbling(e) {
         e = window.event || e;
         if (e.stopPropagation) {
@@ -192,14 +209,18 @@
             });
         });
     }
-    layui.use('element', function(){
-        var element = layui.element;
 
-        //一些事件监听
-        element.on('tab(demo)', function(data){
-            console.log(data);
+    function cancleCollect(projectId,e){
+        stopBubbling(e);
+        $.post("/project/collectProject",{"projectId":projectId},function (data) {
+            if(data.result===1){
+                layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            }else{
+                layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+            }
         });
-    });
+    }
+
 
     //点击项目进入任务界面
     function projectClick(projectId,e){
@@ -212,13 +233,13 @@
     function projectCollect(projectId,e){
         stopBubbling(e);
         console.log(projectId);
-        // $.post("/project/collectProject",projectId,function (data) {
-        //     if(data.result===1){
-        //         layer.msg(data.msg,{icon:1});
-        //     }else{
-        //         layer.msg(data.msg,{icon:5});
-        //     }
-        // });
+        $.post("/project/collectProject",{"projectId":projectId},function (data) {
+            if(data.result===1){
+                layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            }else{
+                layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+            }
+        });
     }
 
     $(function () {

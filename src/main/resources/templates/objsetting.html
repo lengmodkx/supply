@@ -23,6 +23,8 @@
     <div class="settings boxsizing">
         <!--项目封面-->
         <div class="project-cover layui-form" >
+            <input th:value="${project.projectId}" type="hidden" name="projectId"/>
+            <input th:value="${project.projectCover}" type="hidden" name="projectCover" id="projectCover"/>
             <div class="project-cover-title">项目封面</div>
             <div style="position: relative">
                 <img th:src="#{IMAGE_SERVER} + ${project.projectCover}" class="project-cover-img"/>
@@ -45,6 +47,11 @@
                 <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" />
                 <span th:text="${user.userName}">谁谁谁</span>
             </div>
+            <span style="display: block;width: 100%;height: 1px;background-color: #8a8d94;margin-top: 20px"></span>
+            <div style="float: right">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="saveProject" style="background-color: #017ECA;margin-top: 20px" th:if="${hasPermission==1}">保存</button>
+            </div>
+
         </div>
         <!--项目偏好-->
         <div class="project-like layui-form" style="display: none">
@@ -64,7 +71,6 @@
             <input type="radio" name="projectRemind" value="1" title="推送动态提醒（显示标记并以桌面通知的方式进行推送）"
                    th:checked="${project.projectRemind eq 1}"
                    lay-filter="remind"/>
-
         </div>
         <!--任务权限-->
         <div class="task-power layui-fluid" style="display: none">
@@ -117,10 +123,9 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <!--更多-->
-        <div class="setting-more" style="width: 100px">
+        <div class="setting-more" style="width: 100px;display: none">
             <div class="setting-more-title">项目操作</div>
             <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="exitProject" style="background-color: #017ECA">移到回收站</button>
         </div>
@@ -172,8 +177,17 @@
                     }
                 });
             });
+            return false;
+        });
 
-
+        form.on('submit(saveProject)', function(data){
+            console.log(JSON.stringify(data.field));
+            $.post('/project/updateProject',data.field ,function (data) {
+                if(data.result===1){
+                    layer.alert("移除成功");
+                    layer.closeAll();
+                }
+            });
             return false;
         });
     });
@@ -221,6 +235,7 @@
                 //上传完毕回调
                 console.log(res);
                 $('.project-cover-img').attr("src", IMAGE_SERVER + res.data);
+                $('#projectCover').val(res.data);
                 parent.$('#'+projectId).css("background-image",'url('+IMAGE_SERVER + res.data+')');
             }
             ,error: function(){
