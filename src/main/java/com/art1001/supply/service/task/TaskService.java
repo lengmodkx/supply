@@ -7,6 +7,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
@@ -64,10 +65,9 @@ public interface TaskService {
 	/**
 	 * 任务 移入回收站
 	 * @param taskId 当前任务id
-	 * @param taskDel 当前任务是否已经在回收站
 	 * @return
 	 */
-	TaskLogVO moveToRecycleBin(String taskId, String taskDel);
+	TaskLogVO moveToRecycleBin(String taskId);
 
 	/**
 	 * 修改当前任务状态（完成/重做）
@@ -219,8 +219,10 @@ public interface TaskService {
 	 * 复制任务
 	 * @return
 	 * @param task 当前任务信息
+	 * @param projectId 当前任务所在的项目id
+	 * @param newTaskMenuVO 复制到的位置的信息
 	 */
-	TaskLogVO copyTask(Task task);
+	TaskLogVO copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO);
 
 	/**
 	 * 收藏任务
@@ -267,11 +269,17 @@ public interface TaskService {
 	List<Task> intelligenceGroup(String status,String projectId);
 
 	/**
-	 * 查询某个菜单下的所有任务的信息
+	 * 查询某个菜单下的所有任务的信息及任务的执行者信息
 	 * @param menuId 菜单id
 	 * @return
 	 */
 	List<Task> taskMenu(String menuId);
+
+	/**
+	 * 查询菜单下的任务信息 不包括 执行者信息
+	 * @return
+	 */
+	List<Task> simpleTaskMenu(String menuId);
 
 	/**
 	 * 查询某个人执行的所有任务
@@ -296,10 +304,11 @@ public interface TaskService {
 	/**
 	 * 更新任务执行者
 	 * @param taskId 该任务的id
-	 * @param uId 新的任务执行者的id
+	 * @param uName 新的任务执行者的名字
+	 * @param userInfoEntity 新的执行者的信息
 	 * @return
 	 */
-	int updateTaskExecutor(String taskId, String uId);
+	void updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
 
 	/**
 	 * 查询该项目下的所有任务
@@ -330,4 +339,10 @@ public interface TaskService {
 	 * @param projectId 项目id
 	 */
 	void recoveryTask(String taskId, String menuId,String projectId);
+
+	/**
+	 * 查询此任务的关联
+	 * @param taskId 任务id
+	 */
+	Map<String,List> findTaskRelation(String taskId);
 }

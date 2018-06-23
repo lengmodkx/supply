@@ -86,4 +86,13 @@ public class TaskLogServiceImpl implements TaskLogService {
 		return taskLogMapper.findTaskLogContentById(id);
 	}
 
+	/**
+	 * 初始化任务的日志
+	 * @param taskId 任务的id
+	 * @return
+	 */
+	@Override
+	public List<TaskLog> initTaskLog(String taskId) {
+		return taskLogMapper.initTaskLog(taskId);
+	}
 }

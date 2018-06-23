@@ -1,13 +1,13 @@
 package com.art1001.supply.service.task.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.collect.TaskCollect;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
@@ -15,16 +15,14 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.collect.TaskCollectMapper;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.collect.TaskCollectService;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.shiro.filter.KickoutAuthFilter;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -94,6 +92,9 @@ public class TaskServiceImpl implements TaskService {
      */
 	@Override
 	public int deleteTaskByTaskId(String taskId){
+	    //删除任务-成员-文件的关联信息
+        taskMemberService.clearTaskMemberByTaskId(taskId);
+        //删除任务信息
 	    return taskMapper.deleteTaskByTaskId(taskId);
     }
 
@@ -159,8 +160,7 @@ public class TaskServiceImpl implements TaskService {
         task.setPrivacyPattern(0);
         //如果没有设置执行者 则 为空字符串
         if(StringUtils.isEmpty(task.getExecutor())){
-            System.out.println("走");
-            task.setExecutor(new String(""));
+            task.setExecutor("");
         }
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
@@ -186,24 +186,19 @@ public class TaskServiceImpl implements TaskService {
 
     /**
 	 * 重写方法
-     * 移入回收站/恢复任务
+     * 移入回收站
      * @param taskId 当前任务id
-     * @param taskDel 当前任务是否已经在回收站
      * @return
      */
     @Override
-    public TaskLogVO moveToRecycleBin(String taskId, String taskDel) {
+    public TaskLogVO moveToRecycleBin(String taskId) {
         //把该任务放到回收站
-        int result = taskMapper.moveToRecycleBin(taskId,taskDel,System.currentTimeMillis());
+        int result = taskMapper.moveToRecycleBin(taskId,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
         TaskLogVO taskLogVO = new TaskLogVO();
-        //如果任务状态为0 日志打印内容为 xxx把任务移入了回收站 否则   xxx恢复了任务
-        if(taskDel == "0"){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.P.getName());
-        } else{
-            taskLogVO = saveTaskLog(task,TaskLogFunction.O.getName());
-        }
+        //任务状态为0 日志打印内容为 xxx把任务移入了回收站
+        taskLogVO = saveTaskLog(task,TaskLogFunction.P.getName());
         taskLogVO.setResult(result);
         return taskLogVO;
     }
@@ -285,8 +280,11 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
-        task.setExecutor("");
-        taskMapper.clearTaskMember(task.getTaskId());
+        //如果是跨项目移动 则清空任务成员关系 及 执行者
+        if(!newTaskMenuVO.getProjectId().equals(oldTaskMenuVO.getProjectId())){
+            task.setExecutor("");
+            taskMapper.clearTaskMember(task.getTaskId());
+        }
         //设置新的项目id
         task.setProjectId(newTaskMenuVO.getProjectId());
         //设置更新时间
@@ -662,34 +660,56 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 复制任务
      * @param task 当前任务信息
+     * @param projectId 当前任务所在的项目id
+     * @param newTaskMenuVO 要复制到的位置信息
      * @return
      */
     @Override
-    public TaskLogVO copyTask(Task task) {
-        //根据被复制任务的id 取出该项目所有的子任务
-        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(task.getTaskId());
+    public TaskLogVO copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO) {
+        String oldTaskId = task.getTaskId();
         //把被复制的任务的id更改成新生成的任务的id
         task.setTaskId(IdGen.uuid());
         //更新新任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置新任务的更新时间
         task.setUpdateTime(System.currentTimeMillis());
+        //如果复制到其他项目 则任务的 参与者信息、执行者 不会保留
+        if(!projectId.equals(newTaskMenuVO.getProjectId())){
+            task.setExecutor("");
+        } else{
+            //如果复制到其他分组或者其他菜单的话  保留任务的执行者以及参与者信息
+            List<TaskMember> taskMemberByTaskId = taskMemberService.findTaskMemberByTaskId(oldTaskId);
+            //循环向数据库添加 任务成员关系 和 文件,任务,分享,日程 的关联关系
+            if(taskMemberByTaskId != null && taskMemberByTaskId.size() > 0){
+                for (TaskMember taskMembers : taskMemberByTaskId) {
+                    taskMembers.setId(IdGen.uuid());
+                    taskMembers.setCreateTime(System.currentTimeMillis());
+                    taskMembers.setUpdateTime(System.currentTimeMillis());
+                    taskMemberService.saveTaskMember(taskMembers);
+                }
+            }
+
+            //重新插入关联的文件信息
+        }
+        //保存到数据库
         taskMapper.saveTask(task);
         int result = 0;
         StringBuilder content = new StringBuilder("");
-        //把所有的子任务信息设置好后插入数据库
-        for (Task subLevelTask : subLevelTaskList) {
-            //设置新的子任务id
-            subLevelTask.setTaskId(IdGen.uuid());
-            //设置新的子任务id为新子任务的id
-            subLevelTask.setParentId(task.getTaskId());
-            //设置子任务的项目id为新子任务的项目id
-            subLevelTask.setProjectId(task.getProjectId());
-            //设置新子任务的更新时间
-            subLevelTask.setUpdateTime(System.currentTimeMillis());
-            //设置新子任务的创建时间
-            subLevelTask.setCreateTime(System.currentTimeMillis());
-            result += taskMapper.saveTask(subLevelTask);
+        //根据被复制任务的id 取出该任务所有的子任务
+        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(task.getTaskId());
+        if(subLevelTaskList != null && subLevelTaskList.size() > 0){
+            //把所有的子任务信息设置好后插入数据库
+            for (Task subLevelTask : subLevelTaskList) {
+                //设置新的子任务id
+                subLevelTask.setTaskId(IdGen.uuid());
+                //设置新的子任务的父任务id
+                subLevelTask.setParentId(task.getTaskId());
+                //设置新子任务的更新时间
+                subLevelTask.setUpdateTime(System.currentTimeMillis());
+                //设置新子任务的创建时间
+                subLevelTask.setCreateTime(System.currentTimeMillis());
+                result += taskMapper.saveTask(subLevelTask);
+            }
         }
         //追加日志字符串
         content.append(TaskLogFunction.R.getName()).append(" ").append(task.getTaskName());
@@ -802,13 +822,23 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * 查询某个菜单下的所有任务的信息
+     * 查询某个菜单下的所有任务的信息 包括执行者信息
      * @param menuId 菜单id
      * @return
      */
     @Override
     public List<Task> taskMenu(String menuId) {
         return taskMapper.taskMenu(menuId);
+    }
+
+    /**
+     * 查询某个菜单下的所有任务的信息 不包括执行者信息
+     * @param menuId
+     * @return
+     */
+    @Override
+    public List<Task> simpleTaskMenu(String menuId) {
+        return taskMapper.simpleTaskMenu(menuId);
     }
 
     /**
@@ -866,15 +896,34 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 更新任务的执行者
      * @param taskId 该任务的id
-     * @param executor
+     * @param userInfoEntity 用户信息
+     * @param uName 用户名
      * @return
      */
     @Override
-    public int updateTaskExecutor(String taskId, String executor) {
+    public void updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
         Task task = new Task();
         task.setTaskId(taskId);
-        task.setExecutor(executor);
-        return taskMapper.updateTask(task);
+        task.setExecutor(userInfoEntity.getId());
+        taskMapper.updateTask(task);
+        //初始化一个任务成员关系实体
+        TaskMember taskMember = new TaskMember();
+        taskMember.setId(IdGen.uuid());
+        taskMember.setMemberId(userInfoEntity.getId());
+        taskMember.setCurrentTaskId(task.getTaskId());
+        taskMember.setMemberName(uName);
+        taskMember.setMemberImg(userInfoEntity.getImage());
+        taskMember.setType("执行者");
+        taskMember.setCreateTime(System.currentTimeMillis());
+        taskMember.setUpdateTime(System.currentTimeMillis());
+        taskMemberService.saveTaskMember(taskMember);
+        //查询新的任务执行者之前是不是此任务的参与者
+        int isTaskMember = taskMemberService.findTaskMemberExecutorIsMember(userInfoEntity.getId(), task.getTaskId());
+        //如果新的任务执行者以前已经是该任务的参与者  就不在添加该执行者的参与者信息
+        if(isTaskMember == 0){
+            taskMember.setType("参与者");
+            taskMemberService.saveTaskMember(taskMember);
+        }
     }
 
     /**
@@ -896,7 +945,13 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void recoveryTask(String taskId, String menuId,String projectId) {
         taskMapper.recoverTask(taskId,menuId,System.currentTimeMillis(),projectId);
+        //任务状态为0 日志打印内容为 xxx把任务移入了回收站
+        TaskLogVO taskLogVO = new TaskLogVO();
+        Task task = new Task();
+        task.setTaskId(taskId);
+        saveTaskLog(task,TaskLogFunction.P.getName());
     }
+
 
     /**
      * 返回日志实体对象
@@ -921,4 +976,17 @@ public class TaskServiceImpl implements TaskService {
         return taskLogVO;
     }
 
+    /**
+     * 查询此任务的关联
+     * @param taskId 任务id
+     */
+    @Override
+    public Map<String, List> findTaskRelation(String taskId) {
+        Map<String, List> map = new HashMap<String,List>();
+        List<Task> taskRelationTask = taskMemberService.findTaskRelationTask(taskId);
+        List<File> taskRelationFile = taskMemberService.taskRelationFile(taskId);
+        map.put("relationTask",taskRelationTask);
+        map.put("relationFile",taskRelationFile);
+        return map;
+    }
 }

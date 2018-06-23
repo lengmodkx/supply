@@ -3,7 +3,8 @@ package com.art1001.supply.service.relation;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.user.UserInfoEntity;
 
 
 /**
@@ -94,4 +95,52 @@ public interface RelationService {
 	 * @param relationId 分组的id
 	 */
 	void moveRecycleBin(String relationId,String relationDel);
+
+	/**
+	 * 设置菜单下的所有任务的执行者
+	 * @param relationId 列表id
+	 * @param userInfoEntity 新的执行者的信息
+	 */
+    void setMenuAllTaskExecutor(String relationId,UserInfoEntity userInfoEntity,String uName);
+
+	/**
+	 * 设置此菜单下的所有的任务的截止时间
+	 * @param relationId 菜单id
+	 * @param endTime 截止时间
+	 */
+	void setMenuAllTaskEndTime(String relationId, Long endTime);
+
+	/**
+	 * 移动菜单下的所有任务信息
+	 * @param oldTaskMenuVO 旧的任务位置信息
+	 * @param newTaskMenuVO 新的任务位置信息
+	 */
+	void moveMenuAllTask(TaskMenuVO oldTaskMenuVO, TaskMenuVO newTaskMenuVO);
+
+	/**
+	 * 复制了列表下所有任务
+	 * @param oldTaskMenuVO 复制前的任务位置信息
+	 * @param newTaskMenuVO 复制到的任务位置信息
+	 */
+	void copyMenuAllTask(TaskMenuVO oldTaskMenuVO, TaskMenuVO newTaskMenuVO);
+
+	/**
+	 * 把菜单下的所有任务移到回收站
+	 * @param relationId 菜单id
+	 */
+	void menuAllTaskToRecycleBin(String relationId);
+
+	/**
+	 * 根据任务id 查询该任务的菜单信息.
+	 * @param taskId 任务id
+	 * @return
+	 */
+    Relation findMenuInfoByTaskId(String taskId);
+
+	/**
+	 * 根据菜单id 查询出该菜单所在的 分组信息以及项目信息
+	 * @param relationId 菜单id
+	 * @return
+	 */
+	TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
 }
