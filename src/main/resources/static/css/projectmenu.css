@@ -1,0 +1,146 @@
+/*点击菜单出现的项目菜单区域*/
+.project-menu{
+    width: 380px;
+    height: 500px;
+    overflow-y: scroll;
+    background-color: white;
+
+}
+.project-menu-show{
+    padding: 0 20px;
+}
+.menu-title{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    position: relative;
+    font-size: 16px;
+    border-bottom: 1px solid #F4F4F4;
+    margin-bottom: 15px;
+}
+.close-menu{
+    position: absolute;
+    font-size: 14px;
+    color: #BCBCBC;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    z-index: 20;
+}
+.menu-list{
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+.menu-list img{
+    float: left;
+    width: 18px;
+    height: 18px;
+    margin-right: 15px;
+    margin-top: 1px;
+}
+.menu-list span{
+    float: left;
+    cursor: pointer;
+}
+.menu-list span:hover{
+    color: #017ECA;
+}
+.pro-evolve{
+    width: 90%;
+    height: 115px;
+    margin-left: 5%;
+    background-color: gray;
+}
+.pro-trends{
+    width: 100%;
+    padding: 0 35px;
+}
+.trends-list{
+    width: 100%;
+    height: 50px;
+    font-size: 12px;
+    position: relative;
+    line-height: 15px;
+    margin-bottom: 20px;
+
+}
+.trends-list-left{
+    width: 50px;
+    height: 100%;
+    float: left;
+}
+.trends-list-left img{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    float: left;
+}
+.trends-list-right{
+    width: 200px;
+    height: 100%;
+    float: left;
+}
+.who-trends-name{
+    color: #017ECA;
+}
+.trends-time{
+    color: #CDCDCD;
+    margin-top: 5px;
+}
+/*点击查看更多*/
+.look-more-title{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+}
+.look-more-title-line{
+    width: 100%;
+    height: 100%;
+    border-bottom: 1px solid #F4F4F4;
+    position: relative;
+}
+.look-more-title-line div{
+    float: left;
+    cursor: pointer;
+}
+.look-more-title i{
+    float: left;
+    margin-right: 5px;
+}
+.look-more-title span{
+    float: left;
+    font-size: 14px;
+}
+.look-more-title img{
+  position: absolute;
+    right: 2px;
+    top: 17px;
+    width: 20px;
+    height: 20px;
+}
+.look-more-list{
+    width: 100%;
+}
+.look-more-list li{
+    width: 100%;
+    height: 45px;
+    padding: 5px 20px;
+    line-height: 35px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.look-more-list li:hover{
+    background-color: #EEEEEE;
+}
+.look-more-list li img{
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 15px;
+}

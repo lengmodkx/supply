@@ -183,8 +183,14 @@
 .one-work-people:hover{
     border: 1px solid #3da8f5;
 }
+.one-work-people:nth-of-type(1):hover{
+    border: 0 none;
+}
 .one-work-people:hover .remove-work-people{
     display: block;
+}
+.one-work-people:nth-of-type(1):hover .remove-work-people{
+    display: none;
 }
 .work-people img{
     width: 100%;

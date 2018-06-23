@@ -4,43 +4,44 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/projectmenu.css}" href="../static/css/projectmenu.css">
 </head>
 <body>
 <!--点击菜单，出现 的项目菜单 区域-->
 <div class="project-menu boxsizing" >
+  <div class="project-menu-show boxsizing" >
     <div class="menu-title">项目菜单<span class="close-menu">关闭</span></div>
     <div class="menu-list menu-set">
-        <img src="../static/image/setting.png">
+        <img src="../static/image/setting.png" th:src="@{/image/setting.png}" />
         <span>项目设置</span>
     </div>
     <div class="menu-list menu-tag">
-        <img src="../static/image/biaoqian.png">
+        <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
         <span>标签</span>
     </div>
     <div class="menu-list menu-cj">
-        <img src="../static/image/chajian.png">
+        <img src="../static/image/chajian.png" th:src="@{/image/chajian.png}" />
         <span>应用与插件</span>
     </div>
     <div class="menu-list menu-more">
-        <img src="../static/image/gengduo.png">
+        <img src="../static/image/gengduo.png" th:src="@{/image/gengduo.png}" />
         <span>查看更多</span>
     </div>
     <div class="heng-line"></div>
     <div class="menu-list menu-evolve" style="margin-top: 24px">
-        <img src="../static/image/jinzhan.png">
+        <img src="../static/image/jinzhan.png" th:src="@{/image/jinzhan.png}" />
         <span>项目进展</span>
     </div>
     <img src="" class="pro-evolve">
     <div class="heng-line"></div>
     <div class="menu-list menu-trends-title" style="margin-top: 24px">
-        <img src="../static/image/dongtai.png">
+        <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
         <span>项目动态</span>
     </div>
     <ul class="pro-trends boxsizing">
         <li class="trends-list">
             <div class="trends-list-left">
-                <img class="who-trends-img" src="../static/image/add.png" >
+                <img class="who-trends-img" src="../static/image/add.png" th:src="@{/image/add.png}" />
             </div>
             <div class="trends-list-right">
                 <span class="who-trends-name">谁谁谁</span>
@@ -50,7 +51,7 @@
         </li>
         <li class="trends-list">
             <div class="trends-list-left">
-                <img class="who-trends-img" src="../static/image/add.png" >
+                <img class="who-trends-img" src="../static/image/add.png" th:src="@{/image/add.png}" />
             </div>
             <div class="trends-list-right">
                 <span class="who-trends-name">谁谁谁</span>
@@ -60,6 +61,38 @@
         </li>
 
     </ul>
+  </div>
+
+    <!--查看更多-->
+  <div class="look-more-show" style="display: none">
+      <div class="look-more-title boxsizing">
+         <div class="look-more-title-line">
+             <div>
+                 <i class="layui-icon layui-icon-left" style="font-size: 18px; color: #B4B4B4;"></i>
+                 <span>返回</span>
+             </div>
+             <img class="close-menu" src="../static/image/close.png" th:src="@{/image/close.png}" />
+         </div>
+      </div>
+      <ul class="look-more-list">
+          <li class="boxsizing">
+              <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />查看回收站
+          </li>
+          <li class="boxsizing">
+              <img src="../static/image/dingyue.png" th:src="@{/image/dingyue.png}" />订阅项目内容至第三方日历
+          </li>
+          <li class="boxsizing">
+              <img src="../static/image/drrw.png" th:src="@{/image/drrw.png}" />导入任务至当前分组
+          </li>
+          <li class="boxsizing">
+              <img src="../static/image/drrw.png" th:src="@{/image/drrw.png}" />导出分组内所有任务
+          </li>
+          <li class="boxsizing">
+              <img src="../static/image/rwys.png" th:src="@{/image/rwys.png}" />任务演示模式
+          </li>
+      </ul>
+
+  </div>
 </div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -82,13 +115,6 @@
                 $(".who-can-see").text("所有成员可见")
             }
         });
-        
-        
-        $(".close-menu").click(function () {
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
-        })
-
 
 
     });
@@ -111,5 +137,21 @@
             format:'yyyy年MM月dd日 HH时mm分ss秒'
         });
     });
+    $(function () {
+        $(".close-menu").click(function () {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        });
+        // 点击查看更多
+        $(".menu-more").click(function () {
+            $(".look-more-show").show();
+            $(".project-menu-show").hide()
+        });
+        $(".look-more-title-line div").click(function () {
+            $(".look-more-show").hide();
+            $(".project-menu-show").show()
+        })
+
+    })
 </script>
 </html>
