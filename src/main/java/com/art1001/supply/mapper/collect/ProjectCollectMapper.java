@@ -59,7 +59,9 @@ public interface ProjectCollectMapper {
 
 	List<Project> findProjectByMemberId(String memberId);
 
-	int findCollectByProjectId(String projectId);
+	int findCollectByProjectId(String projectId,String memberId);
 
 	void deleteCollectByProjectId(String projectId);
+
+
 }

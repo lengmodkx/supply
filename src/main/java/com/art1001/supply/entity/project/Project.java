@@ -69,4 +69,8 @@ public class Project extends BaseEntity implements Serializable {
     private Integer projectRemind;
 
     private List<ProjectFunc> funcList;
+    /**
+     * 是否收藏，0不是，1是
+     */
+    private Integer isCollect;
 }
