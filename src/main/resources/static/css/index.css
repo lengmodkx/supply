@@ -93,14 +93,21 @@ html,body{
     font-size: 16px;
     line-height: 40px;
 }
+
 .complete-wrap,.possess-wrap,.partake-wrap,.recycle-bin-wrap{
     margin-top: 40px;
 }
 .content-list{
     width: 100%;
 }
-
-
+.recycle-bin-wrap .titles span{
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.recycle-bin-wrap .titles span:hover{
+    color: #43A0D8;
+}
 
 
 .content-list ul li{
@@ -111,16 +118,13 @@ html,body{
     background-position: center;
     background-size: 100% 100%;
     background-origin: content-box;
+    position: relative;
     cursor: pointer;
-    transition: -webkit-transform .218s ease;
-    transition: transform .218s ease;
-    transition: transform .218s ease,-webkit-transform .218s ease;
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
+    transition:top 2s;
+    -webkit-transition:top 2s; /* Safari */
 }
 .content-list ul li:hover{
-    -webkit-transform: translateY(-5px);
-    transform: translateY(-5px);
+    top: -5px;
 
 }
 .describe{
