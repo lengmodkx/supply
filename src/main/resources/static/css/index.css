@@ -120,12 +120,12 @@ html,body{
     background-origin: content-box;
     position: relative;
     cursor: pointer;
-    transition:top 2s;
-    -webkit-transition:top 2s; /* Safari */
+    transition:top 0.5s;
+    -webkit-transition:top 0.5s; /* Safari */
+    top: 0;
 }
 .content-list ul li:hover{
     top: -5px;
-
 }
 .describe{
     width: 100%;
