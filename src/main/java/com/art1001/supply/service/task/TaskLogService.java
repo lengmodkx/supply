@@ -61,4 +61,11 @@ public interface TaskLogService {
 	 * @return
 	 */
 	TaskLogVO findTaskLogContentById(String id);
+
+	/**
+	 * 初始化任务日志
+	 * @param taskId 任务的id
+	 * @return
+	 */
+	List<TaskLog> initTaskLog(String taskId);
 }

@@ -159,5 +159,12 @@
 		select content,create_time createTime from prm_task_log where id = #{id}
 
 	</select>
+
+	<!-- 初始化5条 任务的操作日志 -->
+	<select id="initTaskLog" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task_log where task_id = #{taskId} order by create_time desc limit 0,5
+	</select>
 	
 </mapper>

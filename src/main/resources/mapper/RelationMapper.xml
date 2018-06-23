@@ -13,6 +13,14 @@
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 	</resultMap>
 
+	<!-- 根据菜单查询 分组,项目信息的resultMap -->
+	<resultMap id="MenuVOMap" type="com.art1001.supply.entity.task.TaskMenuVO">
+		<result column="relation_id" property="taskGroupId" jdbcType="VARCHAR" />
+		<result column="relation_name" property="taskGroupName" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
 		<collection property="taskList" column="{menuId=relation_id}" javaType="ArrayList"
 					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.taskMenu"/>
@@ -219,4 +227,44 @@
 			relation_id = #{relationId}
 		</where>
 	</update>
+
+	<!-- 查询出该任务的所属菜单信息 -->
+	<select id="findMenuInfoByTaskId" resultMap="BaseResultMap">
+		SELECT
+			prm_relation.relation_id ,
+			prm_relation.relation_name
+		FROM
+			prm_relation,
+			prm_project
+		WHERE
+			prm_relation.relation_id = (
+				SELECT
+					prm_task.task_menu_id
+				FROM
+					prm_task
+				WHERE
+					prm_task.task_id = #{taskId}
+			)
+	</select>
+
+	<!-- 根据菜单id 查询出 任务 项目等信息 -->
+	<select id="findProjectAndGroupInfoByMenuId" resultMap="MenuVOMap">
+			SELECT
+				prm_project.project_id,
+				prm_project.project_name,
+				prm_relation.relation_id,
+				prm_relation.relation_name
+			FROM
+				prm_relation,
+				prm_project
+			WHERE
+				prm_relation.relation_id = (
+					SELECT
+						prm_relation.parent_id
+					FROM
+						prm_relation
+					WHERE
+						prm_relation.relation_id = #{relationId}
+	)		and prm_relation.project_id = prm_project.project_id
+	</select>
 </mapper>

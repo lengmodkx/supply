@@ -68,11 +68,10 @@ public interface TaskMapper {
 	/**
 	 * 移入回收站/恢复任务
 	 * @param taskId 任务id
-	 * @param taskDel 任务是否在回收站
 	 * @param updateTime 更新时间
 	 * @return
 	 */
-    int moveToRecycleBin(@Param("taskId") String taskId, @Param("taskDel") String taskDel, @Param("updateTime") long updateTime);
+    int moveToRecycleBin(@Param("taskId") String taskId, @Param("updateTime") long updateTime);
 
 	/**
 	 * 移入回收站/恢复任务(适用于和分组一起移入回收站的任务)
@@ -219,4 +218,11 @@ public interface TaskMapper {
 	 * @param projectId 项目id
 	 */
 	void recoverTask(@Param("taskId") String taskId, @Param("menuId") String menuId,@Param("updateTime") Long updateTime,@Param("projectId") String projectId);
+
+	/**
+	 * 查询某个菜单下的所有任务的信息 不包括执行者信息
+	 * @param menuId
+	 * @return
+	 */
+    List<Task> simpleTaskMenu(String menuId);
 }

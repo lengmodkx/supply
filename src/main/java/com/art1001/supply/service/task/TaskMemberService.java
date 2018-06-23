@@ -9,6 +9,8 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
+import org.apache.ibatis.annotations.Delete;
 
 
 /**
@@ -69,12 +71,10 @@ public interface TaskMemberService {
 	public void saveManyTaskeMmber(UserEntity[] member, Task task);
 
 	/**
-	 *
-	 * @param member 多个成员信息
-	 * @param task 任务实体信息
-	 * @return
+	 * 添加任务成员关系
+	 * @param taskMember
 	 */
-	int addManyMemberInfo(UserEntity[] member, Task task);
+	public void saveTaskMember(TaskMember taskMember);
 
 	/**
 	 * 通过任务id 成员id 删除 任务成员关系表的数据
@@ -91,4 +91,62 @@ public interface TaskMemberService {
 	 * @return
 	 */
 	void removeTaskMember(Task task, UserEntity userEntity);
+
+	/**
+	 * 删除一条关联信息
+	 * @param taskId 任务id
+	 */
+    void removeExecutor(String taskId);
+
+	/**
+	 * 添加多个参与者信息
+	 * @param addUserEntity 添加的用户数组信息
+	 * @param task 任务信息
+	 */
+	int addManyMemberInfo(UserEntity[] addUserEntity, Task task);
+
+	/**
+	 * 查询 指定任务下的指定成员有没有以任务参与者的方式出现
+	 * @param memberId 成员nid
+	 * @param taskId 任务id
+	 */
+	int findTaskMemberExecutorIsMember(String memberId, String taskId);
+
+	/**
+	 * 查询一个任务下所有的参与者的关系信息
+	 * @param taskId 任务id信息
+	 *
+	 */
+	List<TaskMember> findTaskMemberByTaskId(String taskId);
+
+
+
+	/**
+	 * 查询此任务的关联id
+	 * @param taskId 此任务的id
+	 * @return
+	 */
+	List<Task> findTaskRelationTask(String taskId);
+
+	/**
+	 * 查询此任务关联的文件
+	 * @param taskId 任务id
+	 * @return 任务id
+	 */
+	List<File> taskRelationFile(String taskId);
+
+	/**
+	 * 查询到该任务的所有参与者的"基本信息" (不保括执行者)
+	 *
+	 * @param taskId 任务id
+	 * @param status 要查询的成员身份属于什么
+	 * @return
+	 */
+	List<UserInfoEntity> findTaskMemberInfo(String taskId, String status);
+
+	/**
+	 * 清空该人的成员关联信息
+	 * @param taskId
+	 */
+	void clearTaskMemberByTaskId(String taskId);
 }

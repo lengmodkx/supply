@@ -115,11 +115,9 @@
 	</select>
 	
 	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
-
 		select
 		<include refid="Base_Column_List" />
-		from prm_task c where task_id = #{taskId}
-
+		from prm_task where task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
@@ -148,7 +146,7 @@
 			end_time,
 			</if>
 			<if test="repeat != null and repeat != ''">
-			repeat,
+			`repeat`,
 			</if>
 			<if test="remind != null and remind != ''">
 			remind,
@@ -210,7 +208,7 @@
 			<if test="other != null">
 				other,
 			</if>
-			<if test="other != null">
+			<if test="order != null">
 				`order`,
 			</if>
 
@@ -234,16 +232,16 @@
 				#{endTime},
 			</if>
 			<if test="repeat != null and repeat != ''">
-				${repeat},
+				#{repeat},
 			</if>
 			<if test="remind != null and remind != ''">
-				${remind},
+				#{remind},
 			</if>
 			<if test="remarks != null and remarks != ''">
 				#{remarks},
 			</if>
 			<if test="priority != null and priority != ''">
-				${priority},
+				#{priority},
 			</if>
 			<if test="tagId != null and tagId != ''">
 				#{tagId},
@@ -329,7 +327,7 @@
 				`remind` = #{remind},
 			</if>
 			<if test="remarks != null and remarks != ''">
-				`remarks` = ${remarks},
+				`remarks` = #{remarks},
 			</if>
 			<if test="priority != null and priority != ''">
 				`priority` = #{priority},
@@ -400,8 +398,6 @@
 			<if test="updateTime != null">
 				update_time = #{updateTime},
 			</if>
-			project_id = '',
-			task_menu_id = '',
 		</set>
 		<where>
 			task_id = #{taskId}
@@ -590,5 +586,12 @@
 		select
 		<include refid="Base_Column_List"></include>
 		from prm_task where task_del = 0 and parent_id = #{taskId}
+	</select>
+
+	<!-- 查询菜单下的所有任务信息 不包括 执行者信息 -->
+	<select id="simpleTaskMenu" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where task_menu_id = #{menuId}
 	</select>
 </mapper>

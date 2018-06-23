@@ -4,8 +4,10 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * relationmapper接口
@@ -83,4 +85,24 @@ public interface RelationMapper {
 	 * @param relationId
 	 */
 	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel,@Param("updateTime")Long updateTime);
+
+	/**
+	 *
+	 * @param relationId
+	 */
+    void setMenuAllTaskExecutor(String relationId);
+
+	/**
+	 * 根据任务id查询出该任务的菜单信息
+	 * @param taskId
+	 * @return
+	 */
+	Relation findMenuInfoByTaskId(String taskId);
+
+	/**
+	 * 根据菜单id 查询出 菜单说在的分组信息 和 项目信息
+	 * @param relationId 菜单id
+	 * @return
+	 */
+    TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
 }

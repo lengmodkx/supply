@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
@@ -10,8 +11,10 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.task.TaskMemberMapper;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
@@ -36,6 +39,10 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	/** taskService 接口*/
 	@Resource
 	private TaskService taskService;
+
+	/** fileService接口 */
+	@Resource
+	private FileService fileService;
 
 	/**
 	 * 查询分页taskMember数据
@@ -170,6 +177,15 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	}
 
 	/**
+	 * 清空任务成员关系
+	 * @param taskId 任务id
+	 */
+	@Override
+	public void clearTaskMemberByTaskId(String taskId) {
+		taskMemberMapper.clearTaskMemberByTaskId(taskId);
+	}
+
+	/**
 	 * 保存任务和参与者的关系
 	 * @param member 参与者们的信息
 	 * @param task  (包含任务的创建人 用来确认是否是该任务的创建人) taskId 新创建的任务的id
@@ -193,10 +209,12 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setUpdateTime(System.currentTimeMillis());
 			//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
 			if(userEntity.getId().equals(task.getMemberId())){
-				taskMember.setType("3");
-			} else{
+				taskMember.setType("创建者");
+			} else if(userEntity.getId().equals(task.getExecutor())){
 				//否则设置为参与者
-				taskMember.setType("1");
+				taskMember.setType("执行者");
+			} else{
+				taskMember.setType("参与者");
 			}
 			//该条关系的更新时间
 			taskMember.setUpdateTime(System.currentTimeMillis());
@@ -205,7 +223,7 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		}
 	}
 
-    /**
+	/**
      * 循环向(任务-成员) 关系表中添加多条数据
      * @param userEntity
      * @param task
@@ -249,8 +267,99 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		return null;
 	}
 
+	/**
+	 * 删除多条关联信息
+	 * @param task 任务信息
+	 * @param userEntity 被移除的任务参与者信息
+	 */
 	@Override
 	public void removeTaskMember(Task task, UserEntity userEntity) {
 		taskMemberMapper.delTaskMemberByTaskIdAndMemberId(task,userEntity);
+	}
+
+	/**
+	 * 删除一条关联信息 (必须是执行者)
+	 * @param taskId 任务id
+	 */
+	@Override
+	public void removeExecutor(String taskId) {
+		taskMemberMapper.removeExecutor(taskId);
+	}
+
+	/**
+	 * 查询当前成员在该任务下存不存在该任务参与者的记录
+	 * @param memberId 成员nid
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Override
+	public int findTaskMemberExecutorIsMember(String memberId, String taskId) {
+		return taskMemberMapper.findTaskMemberExecutorIsMember(memberId,taskId);
+	}
+
+	/**
+	 * 保存 任务参与者的关联信息
+	 * @param taskMember
+	 */
+	@Override
+	public void saveTaskMember(TaskMember taskMember) {
+		taskMemberMapper.saveTaskMember(taskMember);
+	}
+
+	/**
+	 * 查询一个任务下的所有参与者信息
+	 * @param taskId 任务id
+	 */
+	@Override
+	public List<TaskMember> findTaskMemberByTaskId(String taskId) {
+		return taskMemberMapper.findTaskMemberByTaskId(taskId);
+	}
+
+	/**
+	 * 查询此任务的关联任务
+	 * @param taskId 此任务的id
+	 * @return
+	 */
+	@Override
+	public List<Task> findTaskRelationTask(String taskId) {
+		List<TaskMember> list = taskMemberMapper.findTaskRelationTask(taskId);
+		if(list != null && list.size() > 0){
+			List<Task> taskList = new ArrayList<Task>();
+			for (TaskMember taskMember : list) {
+				taskList.add(taskService.findTaskByTaskId(taskMember.getPublicId()));
+			}
+			return taskList;
+		}
+		return null;
+	}
+
+	/**
+	 * 查询关联的文件
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Override
+	public List<File> taskRelationFile(String taskId) {
+		List<TaskMember> list = taskMemberMapper.findTaskRelationTask(taskId);
+		if(list != null && list.size() > 0){
+			List<File> fileList = new ArrayList<File>();
+			for (TaskMember taskMember : list) {
+				fileList.add(fileService.findFileById(taskMember.getPublicId()));
+			}
+			return fileList;
+		}
+		return null;
+	}
+
+	/**
+	 * 查询到该任务的所有参与者的"基本信息" (不保括执行者)
+	 *
+	 * @param taskId 任务id
+	 * @param status 要查询的成员身份属于什么
+	 * @return
+	 */
+	@Override
+	public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
+		return taskMemberMapper.findTaskMemberInfo(taskId,status);
 	}
 }

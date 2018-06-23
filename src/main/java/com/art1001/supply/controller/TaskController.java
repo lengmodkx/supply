@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
@@ -15,7 +16,9 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
@@ -59,6 +62,14 @@ public class TaskController {
     /** 用户逻辑层接口 */
     @Resource
     private UserService userService;
+
+    /** 任务日志逻辑层接口  */
+    @Resource
+    private TaskLogService taskLogService;
+
+    /** 任务 分组、菜单 逻辑层接口   */
+    @Resource
+    private RelationService relationService;
 
 
     /**
@@ -181,16 +192,15 @@ public class TaskController {
     /**
      *  将任务 移入回收站
      * @param taskId 任务的id
-     * @param taskDel 任务是否在回收站
      * @return
      */
     @PostMapping("moveToRecycleBin")
     @ResponseBody
-    public JSONObject moveToRecycleBin(@RequestParam String taskId,@RequestParam String taskDel) {
+    public JSONObject moveToRecycleBin(@RequestParam String taskId) {
         JSONObject jsonObject = new JSONObject();
         try {
             //将任务移入回收站
-            TaskLogVO taskLogVO = taskService.moveToRecycleBin(taskId, taskDel);
+            TaskLogVO taskLogVO = taskService.moveToRecycleBin(taskId);
             if (taskLogVO.getResult() > 0) {
                 jsonObject.put("msg", "操作成功！");
                 jsonObject.put("result","1");
@@ -200,7 +210,7 @@ public class TaskController {
                 jsonObject.put("result","0");
             }
         } catch (Exception e) {
-            log.error("操作失败，任务：" + taskId + ",操作前该任务状态:\t ,{}, {}",taskDel, e);
+            log.error("操作失败!", e);
             jsonObject.put("msg", "系统异常,操作失败！");
             jsonObject.put("result","0");
             throw new AjaxException(e);
@@ -748,15 +758,15 @@ public class TaskController {
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam Task task){
+    public JSONObject copyTask(@RequestParam Task task,@RequestParam String projectId,@RequestParam TaskMenuVO newTaskMenuVO){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.copyTask(task);
+            TaskLogVO taskLogVO = taskService.copyTask(task,projectId,newTaskMenuVO);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
-            log.error("系统异常,复制任务失败! 当前任务id: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,复制任务失败! ",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -843,13 +853,13 @@ public class TaskController {
     }
 
     /**
-     * 根据任务id 查询任务的具体信息
+     * 初始化打开任务的界面
      * @param task 任务的信息
      * @return
      */
-    @PostMapping("findTaskById")
+    @PostMapping("initTask")
     @ResponseBody
-    public JSONObject findTaskById(Task task){
+    public JSONObject initTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //查询出此条任务的具体信息
@@ -858,6 +868,56 @@ public class TaskController {
             boolean isFabulous = taskService.judgeFabulous(task);
             //判断当前用户有没有收藏该任务
             boolean isCollect = taskService.judgeCollectTask(task);
+            //返回该任务的关联信息
+            Map<String, List> taskRelation = taskService.findTaskRelation(task.getTaskId());
+            //该任务关联的任务
+            List<Task> taskList = taskRelation.get("relationTask");
+            //该任务关联的文件
+            List<File> fileList = taskRelation.get("relationFile");
+            if(taskList != null && taskList.size() > 0){
+                jsonObject.put("relationTask",taskList);
+            } else{
+                jsonObject.put("relationTask","无关联任务数据");
+            }
+            if(fileList != null && fileList.size() > 0){
+                jsonObject.put("relationFile",fileList);
+            } else{
+                jsonObject.put("relationFile","无关联文件数据");
+            }
+            //返回当前任务的所有子任务信息
+            List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
+            if(subLevelTask != null & subLevelTask.size() > 0){
+                jsonObject.put("subLevelTask",subLevelTask);
+            } else{
+                jsonObject.put("subLevelTask","无子任务数据!");
+            }
+            //查询出该任务的成员信息(创建者,参与者,执行者)
+            List<UserInfoEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者");
+            if(!participantList.isEmpty()){
+                jsonObject.put("participantList",participantList);
+            } else{
+                jsonObject.put("participantList","无数据!");
+            }
+            //查询出该任务的执行者信息
+            List<UserInfoEntity> executor = taskMemberService.findTaskMemberInfo(task.getTaskId(),"执行者");
+            if(!executor.isEmpty()){
+                jsonObject.put("executor",executor);
+            } else{
+                jsonObject.put("executor","无数据!");
+            }
+            //查询出该任务所在的位置信息
+            Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
+            //根据菜单信息查询出该任务的所在的分组 和 项目信息
+            TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
+            jsonObject.put("menuRelation",menuRelation);
+            jsonObject.put("taskMenuVo",taskMenuVO);
+            //查询出该任务的日志信息
+            List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
+            if(!logList.isEmpty()){
+                jsonObject.put("taskLog",logList);
+            } else{
+                jsonObject.put("taskLog","没有操作日志记录!");
+            }
             //返回数据
             jsonObject.put("data",taskById);
             jsonObject.put("isFabulous",isFabulous);
@@ -1055,15 +1115,16 @@ public class TaskController {
     /**
      * 更新任务的执行者
      * @param taskId 任务id
-     * @param uId 新的执行者的id
+     * @param uName 新的执行者的名字
+     * @param userInfoEntity 新的执行者的信息
      * @return
      */
     @PostMapping("updateTaskExecutor")
     @ResponseBody
-    public JSONObject updateTaskExecutor(@RequestParam String taskId,@RequestParam String uId){
+    public JSONObject updateTaskExecutor(@RequestParam String taskId,@RequestParam UserInfoEntity userInfoEntity,@RequestParam String uName){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.updateTaskExecutor(taskId,uId);
+            taskService.updateTaskExecutor(taskId,userInfoEntity,uName);
             jsonObject.put("msg","修改成功");
             jsonObject.put("result","1");
         } catch (Exception e){

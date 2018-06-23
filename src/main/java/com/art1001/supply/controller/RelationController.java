@@ -7,6 +7,8 @@ import com.art1001.supply.dtgrid.model.Pager;
 import com.art1001.supply.dtgrid.util.ExportUtils;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
@@ -303,4 +305,107 @@ public class RelationController {
         return jsonObject;
     }
 
+
+    /**
+     * 更新一个菜单下所有的任务执行者
+     * @param relationId 菜单id
+     * @param userInfoEntity 用户信息
+     * @param uName 用户名字
+     */
+    @PostMapping("setMenuAllTaskExecutor")
+    @ResponseBody
+    public void setMenuAllTaskExecutor(String relationId,UserInfoEntity userInfoEntity,String uName){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.setMenuAllTaskExecutor(relationId,userInfoEntity,uName);
+            jsonObject.put("msg","更新成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,更新失败!",e);
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 设置此菜单下所有的任务的截止时间
+     * @param relationId
+     * @param endTime
+     * @return
+     */
+    @PostMapping("setMenuAllTaskEndTime")
+    @ResponseBody
+    public JSONObject setMenuAllTaskEndTime(@RequestParam("relationId") String relationId,@RequestParam("endTime") Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.setMenuAllTaskEndTime(relationId,endTime);
+            jsonObject.put("msg","设置成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,设置失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移动列表下的所有任务
+     * @param oldTaskMenuVO 原来的位置信息
+     * @param newTaskMenuVO 新的位置信息
+     */
+    @PostMapping("moveMenuAllTask")
+    @ResponseBody
+    public JSONObject moveMenuAllTask(TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg","移动成功!");
+        jsonObject.put("result","1");
+        try {
+            relationService.moveMenuAllTask(oldTaskMenuVO,newTaskMenuVO);
+
+        } catch (Exception e){
+            log.error("系统异常,移动任务失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 复制列表下所有的任务
+     * @param oldTaskMenuVO 旧的任务位置
+     * @param newTaskMenuVO 新的任务位置
+     * @return
+     */
+    @PostMapping("copyMenuAllTask")
+    @ResponseBody
+    public JSONObject copyMenuAllTask(@RequestParam TaskMenuVO oldTaskMenuVO,@RequestParam TaskMenuVO newTaskMenuVO){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.copyMenuAllTask(oldTaskMenuVO,newTaskMenuVO);
+            jsonObject.put("msg","复制成功!");
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,任务复制失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 把菜单下的所有任务移入回收站
+     * @param relationId 菜单id
+     * @return
+     */
+    @PostMapping("menuAllTaskToRecycleBin")
+    @ResponseBody
+    public JSONObject menuAllTaskToRecycleBin(String relationId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg", "已经该列表下的任务全部移入回收站!");
+        jsonObject.put("result", "1");
+        try {
+            relationService.menuAllTaskToRecycleBin(relationId);
+        } catch (Exception e) {
+            log.error("系统异常,移入回收站失败!", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }
