@@ -26,6 +26,8 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+		<association property="isCollect" column="{projectId,memberId}" javaType="java.lang.Integer"
+					 select="com.art1001.supply.mapper.collect.ProjectCollectMapper.findCollectByProjectId"/>
 	</resultMap>
 
 	<sql id="Base_Column_List1">
@@ -207,9 +209,9 @@
 		prm_project_collect.member_id = #{memberId} and project_del = 0
 	</select>
 
-	<select id="findCollectByProjectId" resultType="java.lang.Integer" parameterType="java.lang.String">
+	<select id="findCollectByProjectId" resultType="java.lang.Integer" >
 		select count(project_id)
-		from prm_project_collect where project_id = #{projectId}
+		from prm_project_collect where project_id = #{projectId} and member_id = #{memberId}
 
 	</select>
 
