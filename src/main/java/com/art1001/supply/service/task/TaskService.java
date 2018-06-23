@@ -254,7 +254,7 @@ public interface TaskService {
 
 	/**
 	 * 查询当前项目下的所有成员信息
-	 * @param projectId
+	 * @param projectId 项目id
 	 * @param executor 任务的执行者id
 	 * @return
 	 */

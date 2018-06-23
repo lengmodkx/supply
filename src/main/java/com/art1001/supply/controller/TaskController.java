@@ -937,7 +937,7 @@ public class TaskController {
      */
     @PostMapping("findProjectAllMember")
     @ResponseBody
-    public JSONObject findProjectAllMember(@RequestParam String projectId,@RequestParam String executor){
+    public JSONObject findProjectAllMember(@RequestParam String executor,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> list = taskService.findProjectAllMember(projectId,executor);

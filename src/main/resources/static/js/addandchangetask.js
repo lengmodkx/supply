@@ -1,42 +1,44 @@
-layui.use('form', function(){
+
+layui.use('form', function() {
     var form = layui.form;
 
     //监听提交
-    form.on('submit(formDemo)', function(data){
+    form.on('submit(formDemo)', function (data) {
         layer.msg(JSON.stringify(data.field));
         return false;
     });
 
-    form.on('switch(switch-filter)', function(data){
+    form.on('switch(switch-filter)', function (data) {
         console.log(data.elem.checked); //开关是否开启，true或者false
         if (data.elem.checked) {
             $(".who-can-see").text("仅自己可见")
-        }else {
+        } else {
             $(".who-can-see").text("所有成员可见")
         }
     });
-    layui.use('laydate', function(){
+});
+    layui.use('laydate', function () {
         var laydate = layui.laydate;
 
         //执行一个laydate实例
         laydate.render({
             elem: '#beginTime', //指定元素
-            type:'datetime',
-            format:'M月d日 H:00'
+            type: 'datetime',
+            format: 'M月d日 H:00'
         });
         laydate.render({
             elem: '#overTime', //指定元素
-            type:'datetime',
-            format:'M月d日 H:00'
+            type: 'datetime',
+            format: 'M月d日 H:00'
         });
     });
 
     //点击 认领人 的x 号， 移出认领人 ，待认领出现
     $(".remove-who-wrap").click(function () {
         $(this).parent().remove();
-        if ($(".who-and-time").find(".who-wrap").length==0){
+        if ($(".who-and-time").find(".who-wrap").length == 0) {
             $(".no-renling").show();
-        }else {
+        } else {
             $(".no-renling").hide();
         }
     });
@@ -82,18 +84,18 @@ layui.use('form', function(){
 
     // 点击某个具体标签
     $(".tags-list").click(function () {
-        var tag=$(this).find(".tag-font").text();
+        var tag = $(this).find(".tag-font").text();
         $(".has-tags").show()
         $(".has-tags").prepend('<span class="tag">\n' +
-            '                    '+tag+'  \n' +
+            '                    ' + tag + '  \n' +
             '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
             '                </span>')
     });
-    $(".revise-task").on("click",".tag i",function(){
+    $(".revise-task").on("click", ".tag i", function () {
         $(this).parent().remove();
         //判断 有没有标签
         console.log($(".has-tags span").length);
-        if ($(".has-tags span").length==0){
+        if ($(".has-tags span").length == 0) {
             $(".has-tags").hide();
             $(".no-tags").show();
         } else {
@@ -107,9 +109,9 @@ layui.use('form', function(){
         $(this).siblings().find("i").hide()
     });
     //点击空白区域 添加标签消失
-    $(document).click(function(event){
+    $(document).click(function (event) {
         var _con = $('.tags-search-build');   // 设置目标区域
-        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+        if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失
             $('.tags-search-build').hide(500);          //淡出消失
         }
@@ -126,11 +128,6 @@ layui.use('form', function(){
         $(this).parent().remove()
     });
 
-    //点击添加人员按钮
-    $(".add-work-people img").click(function (e) {
-        $(".people").show(500);
-        e.stopPropagation()
-    });
 
     //点击人员 出现对勾
     $(".one-people").click(function () {
@@ -138,9 +135,9 @@ layui.use('form', function(){
 
     });
     //点击空白区域 添加人员消失
-    $(document).click(function(event){
+    $(document).click(function (event) {
         var _con = $('.people ');   // 设置目标区域
-        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+        if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失
             $('.people ').hide(500);          //淡出消失
         }
@@ -149,6 +146,26 @@ layui.use('form', function(){
     //点击 添加附件
     $(".publish-bottom img:nth-of-type(1)").click(function () {
         $(".fujian-box").slideToggle();
-    })
+    });
 
-});
+
+
+    $(".add-work-people img").click(function (e) {
+        var url = "/task/findProjectAllMember";
+        var executorId = $("span[name = 'executor']").attr("value");
+        var args = {"executor": executorId, "projectId": projectId};
+        var content = "";
+        $.post(url, args, function (data) {
+            var member = data.data;
+            if (member.length > 0) {
+                for (var i = 0; i < member.length; i++) {
+                    content += "<img th:src='\@{/image/begintime.png}\'>";
+                    content += "<span>" + member[i].userName + "</span>";
+                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                }
+                $("#executor").html(content);
+                $(".people").show(500);
+            }
+        }, "json");
+        e.stopPropagation();
+    });

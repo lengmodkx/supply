@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head >
+<head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
@@ -11,12 +11,13 @@
 
 <body>
 <!--添加任务界面-->
-<form id="new-assignment" class="new-assignment boxsizing layui-form" >
-    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" class="layui-textarea rw-content boxsizing"></textarea>
+<form id="new-assignment" class="new-assignment boxsizing layui-form">
+    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容"
+              class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
         <div class="who-wrap">
             <input th:name="userId" th:value="${user.id}" type="hidden"/>
-            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" />
+            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}"/>
             <span th:text="${user.userName}">谁谁谁</span>
             <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
         </div>
@@ -26,15 +27,15 @@
         </div>
     </div>
     <div class="begin-time abox">
-        <img th:src="@{/image/begintime.png}" />
+        <img th:src="@{/image/begintime.png}"/>
         <input type="text" class="layui-input" id="beginTime" th:name="startTime" placeholder="设置开始时间">
     </div>
     <div class="over-time abox">
-        <img th:src="@{/image/begintime.png}" />
+        <img th:src="@{/image/begintime.png}"/>
         <input type="text" class="layui-input" id="overTime" th:name="endTime" placeholder="设置截止时间">
     </div>
     <div class="norepeat abox">
-        <img th:src="@{/image/norepeat.png}" >
+        <img th:src="@{/image/norepeat.png}">
         <select name="repeat" lay-verify="">
             <option value="不重复">不重复</option>
             <option value="每天重复">每天重复</option>
@@ -45,7 +46,7 @@
         </select>
     </div>
     <div class="noremand abox">
-        <img th:src="@{/image/noremand.png}" >
+        <img th:src="@{/image/noremand.png}">
         <select name="remand" lay-verify="">
             <option value="不提醒">不提醒</option>
             <option value="任务截止时提醒">任务截止时提醒</option>
@@ -56,11 +57,11 @@
         <div class="layui-input-block">
             <input type="radio" name="state" value="普通" title="普通" checked>
             <input type="radio" name="state" value="紧急" title="紧急">
-            <input type="radio" name="state" value="非常紧急" title="非常紧急" >
+            <input type="radio" name="state" value="非常紧急" title="非常紧急">
         </div>
     </div>
     <div class="add-tag combox">
-        <img th:src="@{/image/biaoqian.png}" >
+        <img th:src="@{/image/biaoqian.png}">
         <span>标签</span>
         <span class="no-tags">添加标签</span>
         <!--新建  搜索标签框-->
@@ -69,7 +70,7 @@
             <div class="tag-search" style="display: none">
                 <div class="tag-search-title boxsizing">
                     <input class="tag-search-input" type="text" placeholder="搜索标签">
-                    <img th:src="@{/image/adds.png}" >
+                    <img th:src="@{/image/adds.png}">
                 </div>
                 <ul class="tags-ul boxsizing">
                     <li class="tags-list">
@@ -130,23 +131,24 @@
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <img th:src="@{/image/add.png}" >
-            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+            <img th:src="@{/image/add.png}">
+            <i class="layui-icon layui-icon-close-fill remove-work-people "
+               style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
-            <img th:src="@{/image/adds.png}" >
+            <img th:src="@{/image/adds.png}">
         </div>
     </div>
     <div class="heng-line"></div>
     <div class="secret abox layui-form">
-        <img th:src="@{/image/suo.png}" >
+        <img th:src="@{/image/suo.png}">
         <span>隐私模式</span>
         <div class="switch">
             <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
         </div>
         <div class="who-can-see">所有成员可见</div>
     </div>
-    <div class="layui-btn layui-btn-normal new-assignment-ok" >创建</div>
+    <div class="layui-btn layui-btn-normal new-assignment-ok">创建</div>
 
 
     <!--人员 参与者 弹框-->
@@ -156,11 +158,11 @@
             <p>参与者</p>
             <div class="one-people">
                 <img th:src="@{/image/begintime.png}">
-                <span>李健</span>
+                <span th:text="${user.userName}" th:value="${user.id}" th:name="executor"></span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <p>推荐</p>
-            <div class="one-people">
+            <div class="one-people" id="executor">
                 <img th:src="@{/image/begintime.png}">
                 <span>李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
@@ -181,8 +183,10 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
-</html>
-<script>
 
+<script th:inline="javascript">
+    var projectId = [[${projectId}]];
+    //点击添加人员按钮
 </script>
+<script  th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
+</html>

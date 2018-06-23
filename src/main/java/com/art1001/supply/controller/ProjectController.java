@@ -486,6 +486,7 @@ public class ProjectController {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             model.addAttribute("user",userEntity);
             model.addAttribute("tagList",tagList);
+            model.addAttribute("projectId",projectId);
         }catch (Exception e){
             throw new SystemException(e);
         }
