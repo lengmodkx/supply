@@ -222,6 +222,10 @@ public class ProjectController {
             //初始化项目文件夹
             fileService.initProjectFolder(project);
 
+
+            //写资源表
+
+
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
             jsonObject.put("projectId",project.getProjectId());

@@ -112,7 +112,8 @@
                            th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
 
                         <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
-                           th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
+                           th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"
+                           ></i>
 
                         </span>
                             <!--<span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>-->
@@ -232,6 +233,7 @@
         $.post("/project/collectProject",{"projectId":projectId},function (data) {
             if(data.result===1){
                 layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+                window.location.href = "/project/home.html";
             }else{
                 layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
             }
@@ -253,12 +255,10 @@
         $.post("/project/collectProject",{"projectId":projectId},function (data) {
             if(data.result===1){
                 layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
-                $(this).css("color","#FFAF38");
                 $(".complete-wrap").show();
-                $(".complete ul").append($(this).parents("li"))
+                window.location.href = "/project/home.html";
             }else{
                 layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
-                $(this).css("color","#eeeeee")
             }
         });
     }
