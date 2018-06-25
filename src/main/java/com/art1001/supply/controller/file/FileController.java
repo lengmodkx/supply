@@ -44,13 +44,6 @@ public class FileController {
             @RequestParam(required = false, defaultValue = "0") Integer isDel,
             Model model
     ) {
-        if (parentId.equals("0")) {
-            List<File> childFile = fileService.findChildFile(projectId, parentId, isDel);
-            if (childFile.size() > 0) {
-                parentId = childFile.get(0).getFileId();
-            }
-
-        }
         List<File> fileList = fileService.findChildFile(projectId, parentId, isDel);
         model.addAttribute("fileList", fileList);
         return "file";
@@ -80,7 +73,7 @@ public class FileController {
 
             }
 
-            fileService.createFolder(parentId, folderName);
+            fileService.createFolder(projectId, parentId, folderName);
 
             jsonObject.put("result", 1);
             jsonObject.put("msg", "创建成功");
@@ -106,19 +99,11 @@ public class FileController {
     public JSONObject uploadFile(
             @RequestParam String projectId,
             @RequestParam(required = false, defaultValue = "0") String parentId,
-            MultipartFile file,
-            HttpServletRequest request
+            MultipartFile file
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if (parentId.equals("0")) {
-                List<File> childFile = fileService.findChildFile(projectId, parentId, 0);
-                if (childFile.size() > 0) {
-                    parentId = childFile.get(0).getFileId();
-                }
-
-            }
-            String imgDir = fileService.uploadFile(projectId, parentId, file, request);
+            String imgDir = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
             jsonObject.put("data", imgDir);
             jsonObject.put("msg", "上传成功");
@@ -212,37 +197,39 @@ public class FileController {
         inputStream.close();
     }
 
-    @RequestMapping("/download")
-    @ResponseBody
-    public HttpServletResponse download(HttpServletResponse response) {
-        try {
-            String path = "D:\\image\\1529482251430.jpg";
-            // path是指欲下载的文件的路径。
-            java.io.File file = new java.io.File(path);
-            // 取得文件名。
-            String filename = file.getName();
-            // 取得文件的后缀名。
-            String ext = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
+    /**
+     * 移动文件
+     * @param fileId 文件id
+     * @param folderId 目标文件夹id
+     */
+    @RequestMapping("/moveFile")
+    public void moveFile(
+            @RequestParam String fileId,
+            @RequestParam String folderId
+    ) {
+        fileService.moveFile(fileId, folderId);
+        // 获取目标文件夹
+        File folder = fileService.findFileById(folderId);
+        // 获取数据库中的文件
+        File file = fileService.findFileById(fileId);
 
-            // 以流的形式下载文件。
-            InputStream fis = new BufferedInputStream(new FileInputStream(path));
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            // 清空response
-            response.reset();
-            // 设置response的Header
-            response.addHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes()));
-            response.addHeader("Content-Length", "" + file.length());
-            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-            response.setContentType("application/octet-stream");
-            toClient.write(buffer);
-            toClient.flush();
-            toClient.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return response;
+    }
+
+    /**
+     * 复制文件
+     * @param fileId 文件id
+     * @param folderId 目标文件夹id
+     */
+    @RequestMapping("/copyFile")
+    public void copyFile(
+            @RequestParam String fileId,
+            @RequestParam String folderId
+    ) {
+        // 获取目标文件夹
+        File folder = fileService.findFileById(folderId);
+        // 获取数据库中的文件
+        File file = fileService.findFileById(fileId);
+
     }
 
 }

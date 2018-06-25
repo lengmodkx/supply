@@ -41,7 +41,7 @@ public class FileControllerTest extends ApplicationTests {
         if (count > 0) {
             System.out.println("已经存在");
         } else {
-            fileService.createFolder(parentId, fileName);
+            fileService.createFolder("", parentId, fileName);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.art1001.supply.service.file.impl;
 
+import com.aliyun.oss.model.OSSObjectSummary;
+import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
@@ -10,6 +12,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +35,9 @@ public class FileServiceImpl implements FileService {
      */
     @Resource
     private FileMapper fileMapper;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 查询分页file数据
@@ -69,32 +75,22 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String uploadFile(String projectId, String parentId, MultipartFile multipartFile, HttpServletRequest request) throws Exception {
+    public String uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
         // 得到文件名
         String fileName = multipartFile.getOriginalFilename();
-        // 查询本层目录是否有此文件名存在
-        int byParentIdAndFileName = fileMapper.findByParentIdAndFileName(parentId, fileName);
-        if (byParentIdAndFileName > 0) {
-            // 名字重复加时间戳
-            // fileName = fileName.substring(0, fileName.indexOf(".")) + "-" + System.currentTimeMillis() + fileName.substring(fileName.indexOf("."));
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            StringBuilder sb = new StringBuilder(fileName);
-            sb.insert(fileName.indexOf("."), "-" + format.format(Calendar.getInstance().getTime()));
-            fileName = sb.toString();
-        }
 
         // 获取要创建文件的上级目录实体
-        File parentFile = fileMapper.findFileById(parentId);
-        Map<String, Object> map = FileUtils.ossFileUpload(multipartFile, parentFile.getFileUrl(), fileName);
+        String parentUrl = fileService.getPerLevel(projectId, parentId);
+        // 上传阿里云OSS
+        Map<String, Object> map = FileUtils.ossFileUpload(multipartFile, parentUrl, fileName);
 
         // 得到文件的访问路径
         String fileUrl = (String) map.get("fileUrl");
 
         // 写库
         File file = new File();
-        file.setFileId(IdGen.uuid());
         file.setFileName(fileName);
-        file.setProjectId(parentFile.getProjectId());
+        file.setProjectId(projectId);
         file.setFileUrl(fileUrl);
         // 获取用户信息
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -102,13 +98,11 @@ public class FileServiceImpl implements FileService {
         file.setMemberName(userEntity.getUserName());
         file.setMemberImg(userEntity.getUserInfo().getImage());
         // 得到上传文件的大小
-        int contentLength = request.getContentLength();
+        long contentLength = multipartFile.getSize();
         file.setSize(FileUtils.convertFileSize(contentLength));
         file.setCatalog(0);
         file.setParentId(parentId);
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.saveFile(file);
+        fileService.saveFile(file);
         return fileUrl;
 
     }
@@ -125,6 +119,10 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public void saveFile(File file) {
+        // 设置uuid
+        file.setFileId(IdGen.uuid());
+        file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
         fileMapper.saveFile(file);
     }
 
@@ -138,41 +136,37 @@ public class FileServiceImpl implements FileService {
         return fileMapper.findFileAllList();
     }
 
+    /**
+     * 初始化创建项目文件夹
+     */
     @Override
     @Transactional
     public void initProjectFolder(Project project) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        // 在OSS上创建目录
-        String folderName = project.getProjectName() + "-" + format.format(Calendar.getInstance().getTime()) + "/";
+        // 在OSS上创建根目录，此目录的名字用时间戳，库中不存此项，此文件夹用来归类。此目的用来辨别相同文件名的不同内容
+        String folderName = System.currentTimeMillis() + "/";
         AliyunOss.createFolder(folderName);
-        // 写库
-        File file = new File();
-        file.setFileId(IdGen.uuid());
-        file.setFileName(folderName.replace("/", ""));
-        file.setProjectId(project.getProjectId());
-        file.setFileUrl(folderName);
-        // 获取用户信息
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
-        file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
-        file.setCatalog(1);
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.saveFile(file);
-        // 创建成功后创建子目录
-        String parentId = file.getFileId();
+        // 初始化项目
         String[] childFolderNameArr = {"图片", "文档", "视频", "音频"};
         for (String childFolderName : childFolderNameArr) {
+            File file = new File();
             // 在OSS上创建目录
-            String childFolder = folderName + childFolderName + "/";
+            String childFolder = folderName + System.currentTimeMillis() + "/";
             AliyunOss.createFolder(childFolder);
-            file.setFileId(IdGen.uuid());
+            // 写库
+            // 拿到项目的名字作为初始化的文件名
             file.setFileName(childFolderName);
+            // 项目id
+            file.setProjectId(project.getProjectId());
+            // 文件请求路径
             file.setFileUrl(childFolder);
-            file.setParentId(parentId);
-            fileMapper.saveFile(file);
+            // 获取用户信息
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            file.setMemberId(userEntity.getId());
+            file.setMemberName(userEntity.getUserName());
+            file.setMemberImg(userEntity.getUserInfo().getImage());
+            // 设置是否目录
+            file.setCatalog(1);
+            fileService.saveFile(file);
         }
     }
 
@@ -182,36 +176,101 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void createFolder(String parentId, String fileName) {
-        // 获取要创建目录的目录实体
-        File parentFile = fileMapper.findFileById(parentId);
+    public void createFolder(String projectId, String parentId, String fileName) {
+        // 获取父级url
+        String parentUrl = fileService.getPerLevel(projectId, parentId);
 
-        // 设置目录的url
-        String folderName = parentFile.getFileUrl() + fileName + "/";
-        // 在oss中创建
-        AliyunOss.createFolder(folderName);
+        // 设置新建目录的url
+        String fileUrl = parentUrl + System.currentTimeMillis() + "/";
 
-        // 写库
+        // 现在阿里云上创建文件夹
+        AliyunOss.createFolder(fileUrl);
+        // 存库
         File file = new File();
-        file.setFileId(IdGen.uuid());
+        // 拿到项目的名字作为初始化的文件名
         file.setFileName(fileName);
-        file.setProjectId(parentFile.getProjectId());
-        file.setFileUrl(folderName);
+        // 项目id
+        file.setProjectId(projectId);
+        // 文件请求路径
+        file.setFileUrl(fileUrl);
         // 获取用户信息
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         file.setMemberId(userEntity.getId());
         file.setMemberName(userEntity.getUserName());
         file.setMemberImg(userEntity.getUserInfo().getImage());
+        // 设置是否目录
         file.setCatalog(1);
-        file.setParentId(parentId);
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.saveFile(file);
+        fileService.saveFile(file);
     }
 
     @Override
     public List<File> findChildFile(String projectId, String parentId, Integer isDel) {
         return fileMapper.findChildFile(projectId, parentId, isDel);
+    }
+
+    /**
+     * 移动文件
+     *
+     * @param fileId   源文件id
+     * @param folderId 目标目录id
+     */
+    @Override
+    @Transactional
+    public void moveFile(String fileId, String folderId) {
+        // 获取目录信息
+        File folder = fileMapper.findFileById(folderId);
+        String destinationFolderName = folder.getFileUrl();
+        // 获取源文件
+        File file = fileMapper.findFileById(fileId);
+        // 修改oss上的路径，成功后改库
+        if (file.getCatalog() == 1) { // 文件夹
+            ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
+
+            assert listing != null;
+            // 得到所有的文件夹，
+            for (String commonPrefix : listing.getCommonPrefixes()) {
+                String destinationObjectName = destinationFolderName + commonPrefix;
+                AliyunOss.createFolder(destinationObjectName);
+            }
+            // 得到所有的文件
+            for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
+                String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
+                AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
+            }
+        } else { // 文件
+            AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
+            // 设置源文件父级id， url
+            file.setParentId(folder.getFileId());
+            file.setFileUrl(folder.getFileUrl() + file.getFileName());
+        }
+
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param fileId   源文件id
+     * @param folderId 目标目录id
+     */
+    @Override
+    public void copyFile(String fileId, String folderId) {
+
+    }
+
+    /**
+     * 获取上级url
+     * @param projectId 项目id
+     * @param parentId 当parentId为 0 时，则返回顶级url
+     */
+    @Override
+    public String getPerLevel(String projectId, String parentId) {
+        if (parentId.equals("0")) {
+            String fileUrl = fileMapper.findTopLevel(projectId);
+            return fileUrl.substring(0, fileUrl.indexOf("/") + 1);
+        } else {
+            File file = fileMapper.findByProjectIdAndFileId(projectId, parentId);
+            return file.getFileUrl();
+        }
     }
 
 }

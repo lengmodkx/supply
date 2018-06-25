@@ -36,7 +36,7 @@ import java.util.List;
 	 * @param parentId  上级目录id
 	 * @param multipartFile 文件
 	 */
-	 String uploadFile(String projectId, String parentId, MultipartFile multipartFile, HttpServletRequest request) throws Exception;
+	 String uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception;
 
 	 void updateFile(File file);
 
@@ -67,10 +67,11 @@ import java.util.List;
     /**
      * 创建目录
      *
+     * @param projectId 项目id
      * @param parentId 要创建的目录的父级id
      * @param fileName 创建的目录名称
      */
-	void createFolder(String parentId, String fileName);
+	void createFolder(String projectId, String parentId, String fileName);
 
     /**
      * 查询当前文件目录下的文件夹及文件
@@ -82,4 +83,24 @@ import java.util.List;
      */
 	List<File> findChildFile(String projectId, String parentId, Integer isDel);
 
+	/**
+	 * 移动文件
+	 *
+	 * @param fileId 源文件id
+	 * @param folderId 目标目录id
+	 */
+    void moveFile(String fileId, String folderId);
+
+	/**
+	 * 复制文件
+	 *
+	 * @param fileId 源文件id
+	 * @param folderId 目标目录id
+	 */
+	void copyFile(String fileId, String folderId);
+
+    /**
+     * 获取上级文件路径
+     */
+    String getPerLevel(String projectId, String parentId);
 }

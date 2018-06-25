@@ -1,4 +1,3 @@
-
 $(function () {
     layui.use(['form', 'upload', 'layer'], function () {
         var form = layui.form
