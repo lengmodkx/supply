@@ -9,18 +9,20 @@
 <body>
 <!--编辑日程 弹框-->
 <div class="edit-scheduling boxsizing layui-form">
-    <div class="edit-scheduling-title">编辑日程</div>
+    <div class="edit-scheduling-title">编辑日程
+        <img src="../static/image/close.png" th:src="@{/image/close.png}" />
+    </div>
     <textarea name=""  placeholder="设计修改任务界面" class="layui-textarea"></textarea>
     <div class="begin-time abox">
-        <img src="../static/image/begintime.png" >
+        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
         <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
     </div>
     <div class="over-time abox">
-        <img src="../static/image/begintime.png" >
+        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
         <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
     </div>
     <div class="no-repeat abox">
-        <img src="../static/image/norepeat.png" >
+        <img src="../static/image/norepeat.png" th:src="@{/image/norepeat.png}" />
         <select name="repeat" lay-verify="">
             <option value="repeat-no">不重复</option>
             <option value="repeat-day">每天重复</option>
@@ -31,7 +33,7 @@
         </select>
     </div>
     <div class="no-remand abox">
-        <img src="../static/image/noremand.png" >
+        <img src="../static/image/noremand.png" th:src="@{/image/noremand.png}" />
         <select name="remand" lay-verify="">
             <option value="remand-no">不提醒</option>
             <option value="remand-over">任务截止时提醒</option>
@@ -42,11 +44,11 @@
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <img src="../static/image/add.png" >
+            <img src="../static/image/add.png" th:src="@{/image/add.png}" />
             <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
-            <img src="../static/image/adds.png" >
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
         </div>
     </div>
     <div class="heng-line"></div>
@@ -88,13 +90,18 @@
         laydate.render({
             elem: '#beginTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 H:00'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 HH:00'
         });
     });
+    
+    $(".edit-scheduling-title img").click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    })
 </script>
 </html>

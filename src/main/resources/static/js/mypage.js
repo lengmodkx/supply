@@ -32,12 +32,12 @@ $(function () {
         laydate.render({
             elem: '#beginTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 H时:00'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
+            format:'M月d日 H时:00'
         });
     });
 
@@ -66,6 +66,24 @@ $(function () {
     $("html").on("click",".my-toper>i",function () {
        parent.layer.closeAll()
     });
-
-
+// 日程页面 ，编辑日程 弹框
+    $(".add-scheduling .middle-box").click(function () {
+        bianjiricheng()
+    });
+    function bianjiricheng() {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset: '20px',
+                area:['480px','455px'],
+                fixed: false,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: "tk-bianjiricheng.html"
+            });
+        });
+    }
 });

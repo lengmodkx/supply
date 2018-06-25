@@ -95,6 +95,15 @@
     font-size: 16px;
     text-indent: 1em;
     border-bottom: 1px solid #E8E8E8;
+    position: relative;
+}
+.edit-scheduling-title>img{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 5px;
+    top: 10px;
+    cursor: pointer;
 }
 .edit-scheduling .layui-textarea{
     min-height: 70px;
