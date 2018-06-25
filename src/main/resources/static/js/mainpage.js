@@ -290,9 +290,9 @@ function mypage() {
     });
 };
 //添加任务 弹框界面
-function addRenwu(projectId,task_menu_id) {
+function addRenwu(projectId,taskMenuId) {
     console.log(projectId);
-    console.log(task_menu_id);
+    console.log(taskMenuId);
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -303,7 +303,7 @@ function addRenwu(projectId,task_menu_id) {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: 'addtask.html?projectId='+projectId + '&taskMenuId='+ task_menu_id
+            content: 'addtask.html?projectId='+projectId + '&taskMenuId='+ taskMenuId
         });
     });
 };
