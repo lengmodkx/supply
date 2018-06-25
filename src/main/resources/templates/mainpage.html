@@ -95,7 +95,7 @@
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
                            <ul th:id="${taskMenu.relationId}" class="taskList">
-                               <li class="assignment" th:each="task:${taskMenu.taskList}">
+                               <li class="assignment" th:each="task:${taskMenu.taskList}" th:id="${task.taskId}" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\')'">
                                    <div class="assignment-top-box boxsizing">
                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
                                        <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>

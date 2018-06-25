@@ -234,8 +234,7 @@
 			prm_relation.relation_id ,
 			prm_relation.relation_name
 		FROM
-			prm_relation,
-			prm_project
+			prm_relation
 		WHERE
 			prm_relation.relation_id = (
 				SELECT

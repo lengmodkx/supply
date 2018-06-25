@@ -34,6 +34,7 @@ import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -92,7 +93,7 @@ public class TaskController {
             //保存任务信息到数据库
             TaskLogVO taskLogVO = taskService.saveTask(userEntity,project,task);
             jsonObject.put("msg","添加任务成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -876,9 +877,8 @@ public class TaskController {
      * @param task 任务的信息
      * @return
      */
-    @PostMapping("initTask")
-    @ResponseBody
-    public JSONObject initTask(Task task){
+    @GetMapping("initTask.html")
+    public String initTask(Task task,Model model){
         JSONObject jsonObject = new JSONObject();
         try {
             //查询出此条任务的具体信息
@@ -894,58 +894,60 @@ public class TaskController {
             //该任务关联的文件
             List<File> fileList = taskRelation.get("relationFile");
             if(taskList != null && taskList.size() > 0){
-                jsonObject.put("relationTask",taskList);
+                model.addAttribute("relationTask",taskList);
             } else{
-                jsonObject.put("relationTask","无关联任务数据");
+                model.addAttribute("relationTask","无关联任务数据");
             }
             if(fileList != null && fileList.size() > 0){
                 jsonObject.put("relationFile",fileList);
+                model.addAttribute("relationFile",fileList);
             } else{
-                jsonObject.put("relationFile","无关联文件数据");
+                model.addAttribute("relationFile","无关联文件数据");
             }
             //返回当前任务的所有子任务信息
             List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
             if(subLevelTask != null & subLevelTask.size() > 0){
                 jsonObject.put("subLevelTask",subLevelTask);
+                model.addAttribute("subLevelTask",subLevelTask);
             } else{
-                jsonObject.put("subLevelTask","无子任务数据!");
+                model.addAttribute("subLevelTask","无子任务数据");
             }
             //查询出该任务的成员信息(创建者,参与者,执行者)
             List<UserInfoEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者");
             if(!participantList.isEmpty()){
-                jsonObject.put("participantList",participantList);
+                model.addAttribute("participantList",participantList);
             } else{
-                jsonObject.put("participantList","无数据!");
+                model.addAttribute("participantList","无数据!");
             }
             //查询出该任务的执行者信息
             List<UserInfoEntity> executor = taskMemberService.findTaskMemberInfo(task.getTaskId(),"执行者");
             if(!executor.isEmpty()){
-                jsonObject.put("executor",executor);
+                model.addAttribute("executor",executor);
             } else{
-                jsonObject.put("executor","无数据!");
+                model.addAttribute("executor","无数据!");
             }
             //查询出该任务所在的位置信息
             Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
             //根据菜单信息查询出该任务的所在的分组 和 项目信息
             TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
-            jsonObject.put("menuRelation",menuRelation);
-            jsonObject.put("taskMenuVo",taskMenuVO);
+            model.addAttribute("menuRelation",menuRelation);
+            model.addAttribute("taskMenuVo",taskMenuVO);
             //查询出该任务的日志信息
             List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
             if(!logList.isEmpty()){
-                jsonObject.put("taskLog",logList);
+                model.addAttribute("taskLog",logList);
             } else{
-                jsonObject.put("taskLog","没有操作日志记录!");
+                model.addAttribute("taskLog","没有操作日志记录!");
             }
             //返回数据
-            jsonObject.put("data",taskById);
-            jsonObject.put("isFabulous",isFabulous);
-            jsonObject.put("isCollect",isCollect);
+            model.addAttribute("data",taskById);
+            model.addAttribute("isFabulous",isFabulous);
+            model.addAttribute("isCollect",isCollect);
         } catch (Exception e){
-            log.error("系统异常,获取数据失败! 当前任务id: ,{},{}",task.getTaskId(),e);
-            throw new AjaxException(e);
+            log.error("系统异常,获取数据失败! 当前任务id ,{},{}",task.getTaskId(),e);
+            throw new SystemException(e);
         }
-        return jsonObject;
+        return "mytask";
     }
 
     /**
