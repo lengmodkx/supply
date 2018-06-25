@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.project.OrganizationMemberMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.project.OrganizationMember">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
+		<result column="member_phone" property="memberPhone" jdbcType="INTEGER" />
+		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="organization_lable" property="organizationLable" jdbcType="INTEGER" />
+		<result column="partment_lable" property="partmentLable" jdbcType="INTEGER" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+				id,
+				organization_id,
+				partment_id,
+				member_id,
+				member_name,
+				member_img,
+				member_phone,
+				member_email,
+				create_time,
+				update_time,
+				organization_lable,
+				partment_lable
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findOrganizationMemberPagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_organization_member
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+		
+	</select>
+	
+	<select id="findOrganizationMemberAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.project.OrganizationMember">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_organization_member
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+	</select>
+	
+	<select id="findOrganizationMemberById" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_organization_member c where id = #{id}
+
+	</select>
+	
+	<delete id="deleteOrganizationMemberById" parameterType="java.lang.String">
+		delete from
+		prm_organization_member where id = #{id}
+	</delete>
+	
+	<insert id="saveOrganizationMember" parameterType="com.art1001.supply.entity.project.OrganizationMember">
+
+		insert into prm_organization_member
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+			id,
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+			organization_id,
+			</if>
+			<if test="partmentId != null and partmentId != ''">
+			partment_id,
+			</if>
+			<if test="memberId != null and memberId != ''">
+			member_id,
+			</if>
+			<if test="memberName != null and memberName != ''">
+			member_name,
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+			member_img,
+			</if>
+			<if test="memberPhone != null ">
+			member_phone,
+			</if>
+			<if test="memberEmail != null and memberEmail != ''">
+			member_email,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+			<if test="updateTime != null ">
+			update_time,
+			</if>
+			<if test="organizationLable != null ">
+			organization_lable,
+			</if>
+			<if test="partmentLable != null ">
+			partment_lable,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+				#{organizationId},
+			</if>
+			<if test="partmentId != null and partmentId != ''">
+				#{partmentId},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				#{memberName},
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+				#{memberImg},
+			</if>
+			<if test="memberPhone != null ">
+				#{memberPhone},
+			</if>
+			<if test="memberEmail != null and memberEmail != ''">
+				#{memberEmail},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+			<if test="organizationLable != null ">
+				#{organizationLable},
+			</if>
+			<if test="partmentLable != null ">
+				#{partmentLable},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateOrganizationMember" parameterType="com.art1001.supply.entity.project.OrganizationMember">
+
+		update prm_organization_member
+		<set>
+			<if test="organizationId != null and organizationId != ''">
+				organization_id = #{organizationId},
+			</if>
+			<if test="partmentId != null and partmentId != ''">
+				partment_id = #{partmentId},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				member_id = #{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				member_name = #{memberName},
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+				member_img = #{memberImg},
+			</if>
+			<if test="memberPhone != null ">
+				member_phone = #{memberPhone},
+			</if>
+			<if test="memberEmail != null and memberEmail != ''">
+				member_email = #{memberEmail},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null ">
+				update_time = #{updateTime},
+			</if>
+			<if test="organizationLable != null ">
+				organization_lable = #{organizationLable},
+			</if>
+			<if test="partmentLable != null ">
+				partment_lable = #{partmentLable},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>
