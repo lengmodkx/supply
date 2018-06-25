@@ -11,8 +11,8 @@
 
 <body>
 <!--添加任务界面-->
-<form id="new-assignment" class="new-assignment boxsizing layui-form">
-    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容"
+<form class="new-assignment boxsizing layui-form">
+    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" id="taskName"
               class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
         <div class="who-wrap">
@@ -36,7 +36,7 @@
     </div>
     <div class="norepeat abox">
         <img th:src="@{/image/norepeat.png}">
-        <select name="repeat" lay-verify="">
+        <select name="repeat" lay-verify="" id = "repeat">
             <option value="不重复">不重复</option>
             <option value="每天重复">每天重复</option>
             <option value="每周重复">每周重复</option>
@@ -47,7 +47,7 @@
     </div>
     <div class="noremand abox">
         <img th:src="@{/image/noremand.png}">
-        <select name="remand" lay-verify="">
+        <select name="remand" lay-verify="" id = "remand">
             <option value="不提醒">不提醒</option>
             <option value="任务截止时提醒">任务截止时提醒</option>
             <option value="任务开始时提醒">任务开始时提醒</option>
@@ -144,11 +144,11 @@
         <img th:src="@{/image/suo.png}">
         <span>隐私模式</span>
         <div class="switch">
-            <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
+            <input type="checkbox" id="privacyPattern" lay-skin="switch" lay-filter="switch-filter">
         </div>
         <div class="who-can-see">所有成员可见</div>
     </div>
-    <div class="layui-btn layui-btn-normal new-assignment-ok">创建</div>
+    <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
 
 
     <!--人员 参与者 弹框-->
@@ -173,8 +173,6 @@
             </div>
         </div>
         <div class="people-ok">确定</div>
-
-
     </div>
 </form>
 
@@ -187,9 +185,10 @@
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
+    //当前任务所在菜单id
+    var taskMenuId = [[${menuTaskId}]];
     //当前任务执行者id
     var executorId = $("span[name = 'executor']").attr("value");
-    //点击添加人员按钮
 </script>
 <script  th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
 </html>

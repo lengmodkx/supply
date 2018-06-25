@@ -87,7 +87,7 @@ $(function () {
 
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
-        addRenwu($('.add-assignment').attr("data"));
+        addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"));
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
@@ -104,7 +104,6 @@ $(function () {
     });
     //创建任务按钮 点击事件
     $(".new-assignment-ok").click(function (e) {
-
         if($(".rw-content").val()==""){
             $(".rw-content").focus();
             e.preventDefault();
@@ -291,8 +290,9 @@ function mypage() {
     });
 };
 //添加任务 弹框界面
-function addRenwu(projectId) {
+function addRenwu(projectId,task_menu_id) {
     console.log(projectId);
+    console.log(task_menu_id);
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -303,7 +303,7 @@ function addRenwu(projectId) {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: 'addtask.html?projectId='+projectId
+            content: 'addtask.html?projectId='+projectId + '&taskMenuId='+ task_menu_id
         });
     });
 };

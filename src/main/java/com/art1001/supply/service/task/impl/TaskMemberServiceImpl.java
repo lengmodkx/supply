@@ -193,33 +193,41 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	@Override
 	public void saveManyTaskeMmber(UserEntity[] member,Task task) {
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
-		for (UserEntity userEntity : member){
-			TaskMember taskMember = new TaskMember();
-			//设置id
-			taskMember.setId(IdGen.uuid());
-			//设置参与者姓名
-			taskMember.setMemberName(userEntity.getUserName());
-			//设置参与者id
-			taskMember.setMemberId(userEntity.getId());
-			//设置这条关系的创建时间
-			taskMember.setCreateTime(System.currentTimeMillis());
-			//设置当前任务id
-			taskMember.setCurrentTaskId(task.getTaskId());
-			//设置更新时间
-			taskMember.setUpdateTime(System.currentTimeMillis());
-			//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
-			if(userEntity.getId().equals(task.getMemberId())){
-				taskMember.setType("创建者");
-			} else if(userEntity.getId().equals(task.getExecutor())){
-				//否则设置为参与者
-				taskMember.setType("执行者");
-			} else{
-				taskMember.setType("参与者");
+		if(member != null && member.length > 0){
+			for (UserEntity userEntity : member){
+				TaskMember taskMember = new TaskMember();
+				//设置id
+				taskMember.setId(IdGen.uuid());
+				//设置参与者id
+				taskMember.setMemberId(userEntity.getId());
+				//设置参与者姓名
+				taskMember.setMemberName(userEntity.getUserName());
+				//设置这条关系的创建时间
+				taskMember.setCreateTime(System.currentTimeMillis());
+				//设置当前任务id
+				taskMember.setPublicId(task.getTaskId());
+				//设置更新时间
+				taskMember.setUpdateTime(System.currentTimeMillis());
+				//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
+				if(userEntity.getId().equals(task.getMemberId())){
+					taskMember.setType("创建者");
+				} else if(userEntity.getId().equals(task.getExecutor())){
+					//否则设置为参与者
+					taskMember.setType("执行者");
+					taskMember.setUpdateTime(System.currentTimeMillis());
+					taskMemberMapper.saveTaskMember(taskMember);
+					taskMember.setType("参与者");
+					taskMember.setUpdateTime(System.currentTimeMillis());
+					taskMemberMapper.saveTaskMember(taskMember);
+					return;
+				} else{
+					taskMember.setType("参与者");
+				}
+				//该条关系的更新时间
+				taskMember.setUpdateTime(System.currentTimeMillis());
+				//将该关系对象 保存至数据库
+				taskMemberMapper.saveTaskMember(taskMember);
 			}
-			//该条关系的更新时间
-			taskMember.setUpdateTime(System.currentTimeMillis());
-			//将该关系对象 保存至数据库
-			taskMemberMapper.saveTaskMember(taskMember);
 		}
 	}
 
