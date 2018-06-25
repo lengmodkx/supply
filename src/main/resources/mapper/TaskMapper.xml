@@ -42,7 +42,6 @@
 			<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 			<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 			<result column="type" property="type" jdbcType="VARCHAR" />
-			<result column="current_task_id" property="currentTaskId" jdbcType="VARCHAR" />
 			<result column="create_time1" property="createTime" jdbcType="BIGINT" />
 			<result column="update_time1" property="updateTime" jdbcType="BIGINT" />
 		</association>
@@ -520,14 +519,10 @@
 
 	<!-- 查询当前菜单下的全部任务信息 -->
 	<select id="taskMenu" resultMap="findMenuTaskMemberInfo">
-		SELECT task_id,  task_name, start_time, end_time,tag_id, parent_id, p.member_id, executor, task_menu_id, task_status, task_del, p.update_time, privacy_pattern, other,pm.member_img,pm.member_id pm_member_id,pm.type from
-		prm_task p inner join prm_task_member pm
-		where (p.executor = pm.member_id and pm.type = '执行者')
-		 or (p.task_id = pm.current_task_id and p.executor = '')
-		 and p.parent_id = 0
-		 and p.privacy_pattern = 0
-		 and p.task_del = 0
-		 and p.task_menu_id = #{menuId}
+		select task_id, task_name, start_time, end_time,tag_id, parent_id, t.member_id, executor, task_menu_id, task_status, task_del, t.update_time, privacy_pattern, other,p.member_id,p.member_img,p.member_name,p.type
+		from prm_task t left JOIN prm_task_member p
+		on p.public_id = t.task_id
+		where t.task_menu_id = #{menuId}
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->
