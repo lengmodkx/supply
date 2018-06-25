@@ -86,7 +86,7 @@
              <div class="board-scrum-view boxsizing">
                <ul class="board-scrum-stages boxsizing">
                    <!--待处理-->
-                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}">
+                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}"  onclick="">
                        <div class="model-title">
                            <span th:text="${taskMenu.relationName}">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>

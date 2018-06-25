@@ -88,9 +88,6 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="currentTaskId != null and currentTaskId != ''">
-			current_task_id,
-			</if>
 			<if test="publicId != null and publicId != ''">
 			public_id,
 			</if>

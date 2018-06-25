@@ -88,7 +88,7 @@ public class ProjectCollectServiceImpl implements ProjectCollectService {
 	}
 
 	@Override
-	public int findCollectByProjectId(String projectId,String memberId) {
+	public int findCollectByProjectId(String projectId, String memberId) {
 		return projectCollectMapper.findCollectByProjectId(projectId,memberId);
 	}
 

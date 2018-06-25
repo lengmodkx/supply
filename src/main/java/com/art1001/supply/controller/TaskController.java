@@ -1,6 +1,7 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
@@ -26,6 +27,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
@@ -75,27 +77,23 @@ public class TaskController {
 
     /**
      * 添加新任务
-     * @param userEntity 该任务的成员id数组
      * @param project 得到当前项目的实体信息
      * @param task 任务实体信息
      * @return
      */
     @PostMapping("saveTask")
     @ResponseBody
-    public JSONObject saveTask(
-                              @RequestParam UserEntity [] userEntity,
-                              @RequestParam Project project,
-                              @RequestParam Task task
-    ){
+    public JSONObject saveTask(Project project,Task task,String members){
+        JSONArray objects = JSONObject.parseArray(members);
+        List<UserEntity> list = objects.toJavaList(UserEntity.class);
+        UserEntity[] userEntity = list.toArray(new UserEntity[0]);
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
             TaskLogVO taskLogVO = taskService.saveTask(userEntity,project,task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","添加任务成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            }
+            jsonObject.put("msg","添加任务成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
