@@ -138,8 +138,34 @@ $(function () {
             }
         }
     });
-    
-    
+    // 文件菜单 弹出框
+    $(".show-operate").click(function () {
+        var top=$(this).offset().top +30 +'px';
+        var left=$(this).offset().left -170 +'px';
+        headphoto(top,left)
+    });
+    $(".img-show-operate").click(function () {
+        var top=$(this).offset().top -350 +'px';
+        var left=$(this).offset().left -170 +'px';
+        headphoto(top,left)
+    });
+    function headphoto(top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area:['340px','360px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: 0,
+                anim: 1,  //动画 0-6
+                content: ['tk-filemenu.html','no']
+            });
+        });
+    }
     
 });
 

@@ -70,20 +70,9 @@
         </li>
         </ul>
         <!--缩略图模式-->
-        <ul class="img-show">
-            <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
-                <div class="one-file">
-                    <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary">
-                    <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
-                    <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>
-                    <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>
-                </div>
-                <div class="one-file-name" th:text="${file.fileName}">图片.zip</div>
-            </li>
-        </ul>
         <div class="img-show-wrap" style="display: none">
-            <ul class="img-show">
-                <li class="boxsizing one-file-wrap new-file-wrap" style="display: none">
+            <ul class="img-show clearfix">
+                <li class="boxsizing new-file-wrap" style="display: none">
                     <div class="one-file">
                         <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                     </div>

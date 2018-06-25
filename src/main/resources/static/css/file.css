@@ -33,13 +33,19 @@
 }
 .one-file-wrap{
     display: inline-block;
-    width: 164px;
+    width: 162px;
     height: 210px;
-    margin: 5px 0 12px 17px;
+    margin: 5px 17px 12px 0;
+    float: left;
 
 }
+
 .new-file-wrap{
-    margin-left: 0 !important;
+    display: inline-block;
+    width: 164px;
+    height: 210px;
+    margin: 5px 17px 12px 0;
+    float: left;
 }
 .one-file-name{
     height: 46px;
