@@ -44,6 +44,19 @@ layui.use('form', function() {
     });
     //点击 待认领 出现 人员名单
     $(".no-renling").click(function (e) {
+        var url = "/task/findProjectAllMember";
+        var args = {"executor": executorId, "projectId": projectId};
+        //异步请求项目人员名单
+        $.post(url,args,function(data){
+            var member = data.data;
+            var content = "";
+            for(var i = 0;i < member.length;i++){
+                content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
+                content += "<span>" + member[i].userName + "</span>";
+                content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+            }
+            $("#executor").html(content);
+        });
         $(".people").show(500)
         e.stopPropagation()
     });
@@ -58,6 +71,20 @@ layui.use('form', function() {
 
     // 点击添加标签
     $(".no-tags").click(function (e) {
+        var url = "/task/findAllTags";
+        var args = {"projectId":projectId};
+        //异步请求获取项目下的所有标签
+        $.post(url,args,function(data){
+            var tags = data.data;
+            var content = "";
+            for(var i = 0;i < tags.length; i++){
+                content += "<li class='tags-list'>" +
+                                "<span class='dot'></span>" +
+                                "<span class='tag-font' th:value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
+                            "</li>";
+            }
+            $('#tags').html(content);
+        },"json");
         $(".tags-search-build").show();
         $(".tag-search").show();
         $(".no-tags").hide();
@@ -152,14 +179,13 @@ layui.use('form', function() {
 
     $(".add-work-people img").click(function (e) {
         var url = "/task/findProjectAllMember";
-        var executorId = $("span[name = 'executor']").attr("value");
         var args = {"executor": executorId, "projectId": projectId};
         var content = "";
         $.post(url, args, function (data) {
             var member = data.data;
             if (member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
-                    content += "<img th:src='\@{/image/begintime.png}\'>";
+                    content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
                     content += "<span>" + member[i].userName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                 }

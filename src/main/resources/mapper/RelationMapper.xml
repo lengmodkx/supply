@@ -60,7 +60,7 @@
 		
 	</select>
 	
-	<select id="findRelationAllList" resultMap="BaseResultMap"
+	<select id="findRelationAllList" resultMap="BaseResultMapVo"
 		parameterType="com.art1001.supply.entity.relation.Relation">
 		SELECT
 		<include refid="Base_Column_List" />

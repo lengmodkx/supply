@@ -27,6 +27,7 @@ import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.data.convert.ReadingConverter;
@@ -521,6 +522,26 @@ public class TaskController {
             }
         } catch (Exception e){
             log.error("保存失败,标签名称为:,{},{}",tag.getTagName(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取项目下的所有标签
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("findAllTags")
+    @ResponseBody
+    public JSONObject findAllTags(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Tag> byProjectId = tagService.findByProjectId(projectId);
+            jsonObject.put("data",byProjectId);
+            jsonObject.put("result","1");
+        } catch (Exception e){
+            log.error("系统异常,标签获取失败!");
             throw new AjaxException(e);
         }
         return jsonObject;

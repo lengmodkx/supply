@@ -72,7 +72,7 @@
                     <input class="tag-search-input" type="text" placeholder="搜索标签">
                     <img th:src="@{/image/adds.png}">
                 </div>
-                <ul class="tags-ul boxsizing">
+                <ul class="tags-ul boxsizing" id = "tags">
                     <li class="tags-list">
                         <span class="dot"></span>
                         <span class="tag-font">标签标签</span>
@@ -185,7 +185,10 @@
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 
 <script th:inline="javascript">
+    //当前项目id
     var projectId = [[${projectId}]];
+    //当前任务执行者id
+    var executorId = $("span[name = 'executor']").attr("value");
     //点击添加人员按钮
 </script>
 <script  th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
