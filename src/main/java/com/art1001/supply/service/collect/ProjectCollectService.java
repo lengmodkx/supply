@@ -67,7 +67,7 @@ public interface ProjectCollectService {
 	 * @param projectId
 	 * @return
 	 */
-	int findCollectByProjectId(String projectId);
+	int findCollectByProjectId(String projectId,String memberId);
 
 	void deleteCollectByProjectId(String projectId);
 

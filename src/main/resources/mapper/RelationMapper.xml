@@ -72,8 +72,8 @@
 		<if test="lable != null">
 			and lable = #{lable}
 		</if>
-		<if test="relationId != null and relationId !=''">
-			and parent_id = #{relationId}
+		<if test="parentId != null and parentId !=''">
+			and parent_id = #{parentId}
 		</if>
 		order by create_time asc
 	</select>
