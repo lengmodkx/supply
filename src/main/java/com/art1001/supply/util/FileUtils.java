@@ -112,6 +112,7 @@ public class FileUtils {
         Thread.sleep(100);
 
         // 文件路径
+        fileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("."));
         String fileUrl = imgDir + fileName;
         AliyunOss.uploadInputStream(fileUrl, myFile.getInputStream());
         map.put("fileUrl", fileUrl);

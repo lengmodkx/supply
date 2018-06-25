@@ -73,4 +73,23 @@ public interface FileMapper {
 	 * @param fileName 目录名称
 	 */
 	int findByParentIdAndFileName(@Param("parentId") String parentId, @Param("fileName") String fileName);
+
+	/**
+	 * 根据项目id 和 文件 id 查询文件
+	 * @param projectId 项目id
+	 * @param fileId 上级id
+	 */
+    File findByProjectIdAndFileId(@Param("projectId") String projectId, @Param("fileId") String fileId);
+
+	/**
+	 * 根据项目id 和 上级 id 查询文件  查询子集
+	 * @param projectId 项目id
+	 * @param parentId 上级id
+	 */
+	List<File> findByProjectIdAndParentId(@Param("projectId") String projectId, @Param("parentId") String parentId);
+
+	/**
+	 * 获取项目顶级路径
+	 */
+	String findTopLevel(@Param("projectId") String projectId);
 }

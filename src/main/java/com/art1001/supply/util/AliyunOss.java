@@ -7,10 +7,10 @@ import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 public class AliyunOss {
@@ -54,6 +54,9 @@ public class AliyunOss {
         log.info("\t用户标志：" + info.getBucket().getOwner());
     }
 
+    /**
+     * 删除bucket
+     */
     public static void deleteBucket(OSSClient ossClient, String bucketName) {
         if (ossClient.doesBucketExist(bucketName)) {
             ossClient.deleteBucket(bucketName);
@@ -146,36 +149,11 @@ public class AliyunOss {
     }
 
     /**
-     * 下载文件
+     * 返回要下载的文件流
      *
-     * @param objectName 路径
+     * @param path 文件的完整路径
+     * @return InputStream
      */
-    public static String downFileToLocation(String objectName) {
-        // 创建OSSClient实例
-        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
-        try {
-            //ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
-            OSSObject ossObject = ossClient.getObject(bucketName, objectName);
-            // 读取文件内容。
-            System.out.println("Object content:");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(ossObject.getObjectContent()));
-            StringBuilder builder = new StringBuilder();
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) break;
-                builder.append("\n").append(line);
-            }
-            //数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
-            reader.close();
-            return builder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            ossClient.shutdown();
-        }
-        return null;
-    }
-
     public static InputStream downloadInputStream(String path) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
@@ -189,12 +167,21 @@ public class AliyunOss {
         return null;
     }
 
-    public static InputStreamReader downloadFile(String objectName, String fileName) {
+    /**
+     * 列举指定目录下的所有文件和文件夹
+     * @param folder 目录
+     */
+    public static ObjectListing fileList(String folder) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
-            // 下载OSS文件到本地文件。如果指定的本地文件存在会覆盖，不存在则新建。
-            ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File("C:\\Users\\faydan\\Downloads\\" + fileName));
+            // 构造ListObjectsRequest请求。
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
+            // 设置正斜线（/）为文件夹的分隔符。
+//            listObjectsRequest.setDelimiter("/");
+            // 列出fun目录下的所有文件和文件夹。
+            listObjectsRequest.setPrefix(folder);
+            return ossClient.listObjects(listObjectsRequest);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -202,7 +189,6 @@ public class AliyunOss {
         }
         return null;
     }
-
 
     /**
      * 删除单个文件
@@ -222,6 +208,51 @@ public class AliyunOss {
         }
     }
 
+    /**
+     * 移动文件
+     * 原理：先复制，再删除
+     *
+     * @param sourceObjectName 源对象名称
+     * @param destinationObjectName 目标对象名称
+     */
+    public static void moveFile(String sourceObjectName, String destinationObjectName) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 拷贝文件。
+            CopyObjectResult result = ossClient.copyObject(bucketName, sourceObjectName, bucketName, destinationObjectName);
+            System.out.println("ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+            deleteFile(sourceObjectName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param sourceObjectName 源对象名称
+     * @param destinationObjectName 目标对象名称
+     */
+    public static void copyFile(String sourceObjectName, String destinationObjectName) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 拷贝文件。
+            CopyObjectResult result = ossClient.copyObject(bucketName, sourceObjectName, bucketName, destinationObjectName);
+            System.out.println("ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
+    /**
+     * 下载进度条
+     */
     static class GetObjectProgressListener implements ProgressListener {
         private long bytesRead = 0;
         private long totalBytes = -1;

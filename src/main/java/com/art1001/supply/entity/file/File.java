@@ -57,7 +57,7 @@ public class File extends BaseEntity implements Serializable {
 
 
     /**
-     * 是否目录
+     * 是否目录  1：目录  2：文件
      */
     private Integer catalog;
 

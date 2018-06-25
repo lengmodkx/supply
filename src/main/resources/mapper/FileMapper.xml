@@ -91,6 +91,37 @@
 		and parent_id = #{parentId}
 		and file_del = #{isDel}
 	</select>
+
+	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+			file_url
+		FROM
+			prm_file
+		WHERE
+			project_id = #{projectId}
+		AND file_id = #{fileId}
+	</select>
+
+	<select id="findByProjectIdAndParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+			prm_file
+		WHERE
+			project_id = #{projectId}
+		AND parent_id = #{parentId}
+	</select>
+
+	<select id="findTopLevel" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			file_url
+		FROM
+			prm_file
+		WHERE
+			project_id = #{projectId}
+		AND parent_id = '0'
+		LIMIT 0, 1
+	</select>
 	
 	<delete id="deleteFileById" parameterType="java.lang.String">
 		delete from

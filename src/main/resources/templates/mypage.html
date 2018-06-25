@@ -102,7 +102,7 @@
     <div id="my-scheduling"  style="display: none" >
         <div class="add-scheduling">
             <div class="middle-box">
-                <img src="../static/image/adds.png" >
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                 添加日程
             </div>
         </div>
@@ -142,86 +142,41 @@
             </div>
         </div>
 
-        <!--编辑日程 弹框-->
-        <div class="edit-scheduling boxsizing layui-form">
-            <div class="edit-scheduling-title">编辑日程</div>
-            <textarea name=""  placeholder="设计修改任务界面" class="layui-textarea"></textarea>
-            <div class="begin-time abox">
-                <img src="../static/image/begintime.png" >
-                <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
-            </div>
-            <div class="over-time abox">
-                <img src="../static/image/begintime.png" >
-                <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
-            </div>
-            <div class="no-repeat abox">
-                <img src="../static/image/norepeat.png" >
-                <select name="repeat" lay-verify="">
-                    <option value="repeat-no">不重复</option>
-                    <option value="repeat-day">每天重复</option>
-                    <option value="repeat-week">每周重复</option>
-                    <option value="repeat-mouth">每月重复</option>
-                    <option value="repeat-year">每年重复</option>
-                    <option value="repeat-workday">工作日重复</option>
-                </select>
-            </div>
-            <div class="no-remand abox">
-                <img src="../static/image/noremand.png" >
-                <select name="remand" lay-verify="">
-                    <option value="remand-no">不提醒</option>
-                    <option value="remand-over">任务截止时提醒</option>
-                    <option value="remand-begin">任务开始时提醒</option>
-                </select>
-            </div>
-            <div class="heng-line"></div>
-            <p class="cyz">参与者</p>
-            <div class="work-people boxsizing clearfix">
-                <div class="one-work-people">
-                    <img src="../static/image/add.png" >
-                    <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
-                </div>
-                <div class="add-work-people">
-                    <img src="../static/image/adds.png" >
-                </div>
-            </div>
-            <div class="heng-line"></div>
-            <div class="edit-scheduling-ok">保存</div>
-        </div>
 
         <!--日程菜单 弹框-->
-        <div class="scheduling-menu boxsizing layui-form">
+        <div style="display: none" class="scheduling-menu boxsizing layui-form">
             <div class="scheduling-menu-title">日程菜单</div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/bjrc.png" >
+                <img src="../static/image/bjrc.png" th:src="@{/image/bjrc.png}" />
                 <span>编辑日程</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/fzrc.png" >
+                <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
                 <span>复制日程</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/fzrclj.png" >
+                <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
                 <span>复制日程链接</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/gxrc.png" >
+                <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
                 <span>共享日程</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/scrc.png" >
+                <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
                 <span>收藏日程</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/ydrc.png" >
+                <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
                 <span>移动日程</span>
             </div>
             <div class="menu-box edit-rc">
-                <img src="../static/image/hsz.png" >
+                <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
                 <span>移到回收站</span>
             </div>
             <div class="heng-line"></div>
             <div class="secret menu-box layui-form">
-                <img src="../static/image/suo.png" >
+                <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
                 <span>隐私模式</span>
                 <div class="switch">
                     <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
@@ -243,14 +198,14 @@
                     <div class="layui-col-md4 layui-col-lg-4 file-size">大小</div>
                     <div class="layui-col-md4 layui-col-lg-4 file-time">更新时间</div>
                     <div class="layui-col-md2 layui-col-lg-2 file-style">
-                        <img src="../static/image/jggpb.png" >
-                        <img src="../static/image/lpb.png" >
+                        <img src="../static/image/jggpb.png" th:src="@{/image/jggpb.png}" />
+                        <img src="../static/image/lpb.png" th:src="@{/image/lpb.png}" />
                     </div>
                 </div>
             </div>
             <!--没有文件-->
             <div class="no-file" style="display: none">
-                <img src="../static/image/nofile.png" >
+                <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}" />
                 <p>目前还没有文件～</p>
             </div>
             <!--有文件-->
@@ -262,47 +217,46 @@
                     <div class="layui-col-md2 layui-col-lg-2 file-operate">
                         <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
                         <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-                        <!--文件菜单 弹框-->
-                        <div class="scheduling-menu boxsizing layui-form">
-                            <div class="scheduling-menu-title">日程菜单
-                                <img src="../static/image/close.png" >
-                            </div>
-                            <div class="menu-box edit-rc">
-                                <img src="../static/image/fzrc.png" >
-                                <span>复制文件</span>
-                            </div>
-                            <div class="menu-box edit-rc">
-                                <img src="../static/image/fzrclj.png" >
-                                <span>复制文件链接</span>
-                            </div>
-                            <div class="menu-box edit-rc">
-                                <img src="../static/image/gxrc.png" >
-                                <span>共享文件</span>
-                            </div>
-                            <div class="menu-box edit-rc">
-                                <img src="../static/image/scrc.png" >
-                                <span>收藏文件</span>
-                            </div>
-                            <div class="menu-box edit-rc">
-                                <img src="../static/image/hsz.png" >
-                                <span>移到回收站</span>
-                            </div>
-                            <div class="heng-line"></div>
-                            <div class="secret menu-box layui-form">
-                                <img src="../static/image/suo.png" >
-                                <span>隐私模式</span>
-                                <div class="switch">
-                                    <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
-                                </div>
-                                <div class="who-can-see">所有成员可见</div>
-                            </div>
-
-                        </div>
                     </div>
                 </div>
 
             </div>
+            <!--文件菜单 弹框-->
+            <div class="scheduling-menu boxsizing layui-form" style="display:none;">
+                <div class="scheduling-menu-title">文件菜单
+                    <img src="../static/image/close.png" th:src="@{/image/close.png}" />
+                </div>
+                <div class="menu-box edit-rc">
+                    <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
+                    <span>复制文件</span>
+                </div>
+                <div class="menu-box edit-rc">
+                    <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
+                    <span>复制文件链接</span>
+                </div>
+                <div class="menu-box edit-rc">
+                    <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
+                    <span>共享文件</span>
+                </div>
+                <div class="menu-box edit-rc">
+                    <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
+                    <span>收藏文件</span>
+                </div>
+                <div class="menu-box edit-rc">
+                    <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
+                    <span>移到回收站</span>
+                </div>
+                <div class="heng-line"></div>
+                <div class="secret menu-box layui-form">
+                    <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
+                    <span>隐私模式</span>
+                    <div class="switch">
+                        <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
+                    </div>
+                    <div class="who-can-see">所有成员可见</div>
+                </div>
 
+            </div>
         </div>
     </div>
     <!--收藏页面-->
@@ -318,7 +272,7 @@
             </div>
             <!--没有收藏-->
             <div class="no-collect">
-                <img src="../static/image/nocollect.png" >
+                <img src="../static/image/nocollect.png" th:src="@{/image/nocollect.png}" />
                 <p>还没有任何收藏</p>
                 <p>你可以收藏有价值的任务、分享、文件、日程和有关账册！</p>
             </div>

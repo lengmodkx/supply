@@ -528,7 +528,7 @@ height: 1px;
     border: 1px solid #3da8f5;
 }
 .one-work-people:nth-of-type(1):hover{
-    border: 0 none;
+    border: 1px solid white;
 }
 .one-work-people:hover .remove-work-people{
     display: block;
