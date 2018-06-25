@@ -331,7 +331,7 @@ public class ProjectController {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            int collect = projectCollectService.findCollectByProjectId(projectId);
+            int collect = projectCollectService.findCollectByProjectId(projectId,userEntity.getId());
             //如果等于0，说明收藏表不存在项目的收藏，此时插入
             if(collect==0){
                 ProjectCollect projectCollect = new ProjectCollect();

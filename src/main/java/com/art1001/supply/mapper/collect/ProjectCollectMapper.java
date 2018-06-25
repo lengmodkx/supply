@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * collectmapper接口
@@ -59,7 +60,7 @@ public interface ProjectCollectMapper {
 
 	List<Project> findProjectByMemberId(String memberId);
 
-	int findCollectByProjectId(String projectId,String memberId);
+	int findCollectByProjectId(@Param("projectId") String projectId, @Param("memberId") String memberId);
 
 	void deleteCollectByProjectId(String projectId);
 

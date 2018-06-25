@@ -29,7 +29,7 @@
         <result column="update_time" property="updateTime" jdbcType="BIGINT" />
         <result column="is_public" property="isPublic" jdbcType="INTEGER" />
         <result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
-		<association property="isCollect" column="{projectId,memberId}" javaType="java.lang.Integer"
+		<association property="isCollect" column="{project_id,member_id}" javaType="java.lang.Integer"
 					 select="com.art1001.supply.mapper.collect.ProjectCollectMapper.findCollectByProjectId"/>
     </resultMap>
 
