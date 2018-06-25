@@ -144,6 +144,11 @@ $(function () {
                     '        </li>');
                 $(".new-file").hide();
                 $(".new-file-wrap").hide();
+                layui.use('form', function(){
+                    var form = layui.form;
+
+                    form.render();
+                });
             }
         }
     });
