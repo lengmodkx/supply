@@ -91,11 +91,9 @@ public class TaskController {
         try {
             //保存任务信息到数据库
             TaskLogVO taskLogVO = taskService.saveTask(userEntity,project,task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","添加任务成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            }
+            jsonObject.put("msg","添加任务成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
