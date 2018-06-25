@@ -79,17 +79,18 @@ $(function () {
                 var mydate = new Date();
                 var str= (mydate.getMonth()+1) + "月";
                 str += mydate.getDate() + "日";
-                $(".new-file").after('<li class="layui-row">\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >'+ $(this).val()+'</div>\n' +
+                $(".new-file").after('<li class="layui-row layui-form">\n' +
+                    '            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" ></div>\n' +
+                    '            <div class="layui-col-md2 layui-col-lg-2 file-name">'+ $(this).val()+'</div>\n' +
                     '            <div class="layui-col-md2 layui-col-lg-2 file-size">--</div>\n' +
                     '            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>\n' +
                     '            <div class="layui-col-md3 layui-col-lg-3 file-people">'+str+'</div>\n' +
-                    '            <div class="layui-col-md3 layui-col-lg-3 file-operate">\n' +
+                    '            <div class="layui-col-md2 layui-col-lg-2 file-operate">\n' +
                     '                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
                     '                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
                     '            </div>\n' +
                     '        </li>');
-                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap">\n' +
+                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
                     '                    <div class="one-file boxsizing">\n' +
                     '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
                     '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
@@ -100,6 +101,17 @@ $(function () {
                     '                </li>');
                 $(".new-file").hide();
                 $(".new-file-wrap").hide();
+
+                layui.use('form', function(){
+                    var form = layui.form;
+
+                    //监听提交
+                    form.on('submit(formDemo)', function(data){
+                        layer.msg(JSON.stringify(data.field));
+                        return false;
+                    });
+                });
+
             }
         }
     });
@@ -114,7 +126,7 @@ $(function () {
                 var mydate = new Date();
                 var str= (mydate.getMonth()+1) + "月";
                 str += mydate.getDate() + "日";
-                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap">\n' +
+                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
                     '                    <div class="one-file boxsizing">\n' +
                     '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
                     '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
@@ -123,12 +135,13 @@ $(function () {
                     '                    </div>\n' +
                     '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
                     '                </li>');
-                $(".new-file").after('<li class="layui-row">\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >'+ $(this).val()+'</div>\n' +
+                $(".new-file").after('<li class="layui-row layui-form">\n' +
+                    '            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" ></div>\n' +
+                    '            <div class="layui-col-md2 layui-col-lg-2 file-name">'+ $(this).val()+'</div>\n' +
                     '            <div class="layui-col-md2 layui-col-lg-2 file-size">--</div>\n' +
                     '            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>\n' +
                     '            <div class="layui-col-md3 layui-col-lg-3 file-people">'+str+'</div>\n' +
-                    '            <div class="layui-col-md3 layui-col-lg-3 file-operate">\n' +
+                    '            <div class="layui-col-md2 layui-col-lg-2 file-operate">\n' +
                     '                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
                     '                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
                     '            </div>\n' +
