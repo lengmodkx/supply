@@ -1,7 +1,6 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.OrganizationMember;
 import com.art1001.supply.exception.AjaxException;
