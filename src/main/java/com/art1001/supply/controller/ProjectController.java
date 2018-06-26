@@ -468,9 +468,12 @@ public class ProjectController {
 
 
             Project project = projectService.findProjectByProjectId(projectId);
+            List<File> fileList = fileService.findChildFile(projectId, "0", 0);
+            model.addAttribute("fileList", fileList);
             model.addAttribute("project",project);
             model.addAttribute("taskGroups",taskGroups);
             model.addAttribute("taskMenus",taskMenu);
+
         }catch (Exception e){
             throw new SystemException(e);
         }

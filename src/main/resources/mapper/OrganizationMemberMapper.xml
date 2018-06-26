@@ -65,11 +65,9 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_organization_member
-		<if test="orderBy == 0">
-			order by id desc
-		</if>
-		<if test="orderBy == 1">
-			order by id asc
+		where 1=1
+		<if test="organizationId != null and organizationId != ''">
+			AND organization_id = #{organizationId}
 		</if>
 	</select>
 	
