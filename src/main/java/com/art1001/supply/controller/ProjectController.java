@@ -480,13 +480,14 @@ public class ProjectController {
 
 
     @GetMapping("/addtask.html")
-    public String addtask(@RequestParam String projectId, Model model){
+    public String addtask(@RequestParam String projectId,@RequestParam String taskMenuId, Model model){
         try {
             List<Tag> tagList = tagService.findByProjectId(projectId);
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             model.addAttribute("user",userEntity);
             model.addAttribute("tagList",tagList);
             model.addAttribute("projectId",projectId);
+            model.addAttribute("taskMenuId",taskMenuId);
         }catch (Exception e){
             throw new SystemException(e);
         }

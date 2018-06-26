@@ -59,4 +59,12 @@ public interface UserService {
 	 * @return
 	 */
 	public Map<String,List<UserEntity>> findUserByIsExistTask(Task task);
+
+	/**
+	 * 查询该任务下 除执行者外所有的参与者的详细信息
+	 * @param taskId 任务id
+	 * @param status 身份
+	 * @return
+	 */
+    List<UserInfoEntity> findTaskMemberInfo(String taskId, String status);
 }

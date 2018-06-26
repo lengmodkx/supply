@@ -22,6 +22,7 @@ import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.filter.KickoutAuthFilter;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
@@ -144,20 +145,19 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public TaskLogVO saveTask(UserEntity[] memberId, Project project, Task task) {
         //获取当前登录用户的id
-        //String id = ShiroAuthenticationManager.getUserEntity().getId();
-        task.setMemberId("4");
+        String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置该任务的id
         task.setTaskId(IdGen.uuid());
         //初始创建任务设置为父任务
         task.setParentId("0");
+        //设置任务的创建者
+        task.setMemberId(id);
         //设置所在项目
         task.setProjectId(project.getProjectId());
         //设置该任务的初始状态
         task.setTaskStatus("未完成");
         //设置该任务是否删除 0 未删除 1 已删除
         task.setTaskDel(0);
-        //设置任务的隐私面模式
-        task.setPrivacyPattern(0);
         //如果没有设置执行者 则 为空字符串
         if(StringUtils.isEmpty(task.getExecutor())){
             task.setExecutor("");

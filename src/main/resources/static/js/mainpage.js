@@ -87,7 +87,7 @@ $(function () {
 
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
-        addRenwu($('.add-assignment').attr("data"));
+        addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"));
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
@@ -104,7 +104,6 @@ $(function () {
     });
     //创建任务按钮 点击事件
     $(".new-assignment-ok").click(function (e) {
-
         if($(".rw-content").val()==""){
             $(".rw-content").focus();
             e.preventDefault();
@@ -137,16 +136,7 @@ $(function () {
         }
     });
 
-    // 点击 具体 任务 出现修改任务 弹窗
-    $("html").on("click",".assignment",function(){
-        changeRenwu();
-        $(".publish-bottom img:nth-of-type(1)").click(function () {
-           $(".fujian-box").slideDown()
-        });
-        $(".close-fujian").click(function () {
-            $(".fujian-box").slideUp()
-        })
-    });
+
 
 
 var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
@@ -244,7 +234,18 @@ function lbmenu(top,left) {
     });
 };
 
-
+//点击 具体 任务 出现修改任务 弹窗
+function updateTask(taskId){
+    $("html").on("click",".assignment",function(){
+        changeRenwu(taskId);
+        $(".publish-bottom img:nth-of-type(1)").click(function () {
+            $(".fujian-box").slideDown()
+        });
+        $(".close-fujian").click(function () {
+            $(".fujian-box").slideUp()
+        })
+    });
+}
 
 // 点击头像 ，弹出框
 $(".head-photo").click(function () {
@@ -291,8 +292,9 @@ function mypage() {
     });
 };
 //添加任务 弹框界面
-function addRenwu(projectId) {
+function addRenwu(projectId,taskMenuId) {
     console.log(projectId);
+    console.log(taskMenuId);
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -303,12 +305,12 @@ function addRenwu(projectId) {
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
-            content: 'addtask.html?projectId='+projectId
+            content: 'addtask.html?projectId='+projectId + '&taskMenuId='+ taskMenuId
         });
     });
 };
 //修改任务 弹框界面
-function changeRenwu() {
+function changeRenwu(taskId) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -320,7 +322,7 @@ function changeRenwu() {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "reviserask.html"
+            content: "/task/initTask.html?taskId="+ taskId
         });
     });
 }

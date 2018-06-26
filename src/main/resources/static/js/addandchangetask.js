@@ -1,10 +1,49 @@
 
+
 layui.use('form', function() {
     var form = layui.form;
-
     //监听提交
-    form.on('submit(formDemo)', function (data) {
-        layer.msg(JSON.stringify(data.field));
+    form.on('submit(createTask)', function (data) {
+        //设置任务开始时间
+        var beginTime = $('#beginTime').val();
+        var startTime = new Date(beginTime.toString()).getTime();
+        //设置任务结束时间
+        var overTime = $('#overTime').val();
+        var endTime = new Date(overTime.toString()).getTime();
+        //设置任务的内容
+        var taskName = $("#taskName").val();
+        //设置重复模式
+        var repeat = $('#repeat').val();
+        //设置任务提醒
+        var remind = $('#remand').val();
+        //设置任务优先级
+        var priority = $('input[name="state"]:checked').val();
+        //设置隐私模式
+        var privacyPattern = "";
+        if($('#privacyPattern').prop('checked')) {
+            privacyPattern = "1";
+        } else{
+            privacyPattern = "0";
+        }
+        var member = new Object();
+        member.id = "100001";
+        member.userName = "何少华";
+
+        var member2 = new Object();
+        member2.id = "100002";
+        member2.userName = "飞猪B";
+        var members  = new Array();
+        members[0] = member;
+        members[1] = member2;
+        var url = "/task/saveTask";
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":JSON.stringify(members)};
+        $.post(url,args,function(data){
+            if(data.result == 1){
+                layer.msg("任务创建成功!");
+                //关闭遮罩层
+                //任务数回显
+            }
+        },"json");
         return false;
     });
 
@@ -17,6 +56,7 @@ layui.use('form', function() {
         }
     });
 });
+
     layui.use('laydate', function () {
         var laydate = layui.laydate;
 
@@ -24,12 +64,12 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime', //指定元素
             type: 'datetime',
-            format: 'M月d日 H:00'
+            format: 'yyyy-MM-dd HH:mm:ss'
         });
         laydate.render({
             elem: '#overTime', //指定元素
             type: 'datetime',
-            format: 'M月d日 H:00'
+            format: 'yyyy-MM-dd HH:mm:ss'
         });
     });
 
@@ -55,7 +95,6 @@ layui.use('form', function() {
                 content += "<span>" + member[i].userName + "</span>";
                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
             }
-            $("#executor").html(content);
         });
         $(".people").show(500)
         e.stopPropagation()

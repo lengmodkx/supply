@@ -97,6 +97,9 @@ body{
 .have-file .layui-row:hover{
     background-color: #EEEEEE;
 }
+.file-name{
+    text-align: left;
+}
 .file-name .layui-form-checkbox[lay-skin=primary]{
     float: left;
     margin-top: 9px;

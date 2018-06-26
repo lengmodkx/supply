@@ -6,6 +6,7 @@ import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -83,4 +84,13 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
 	List<UserEntity> findUserByNotExistTask(Task task);
+
+	/**
+	 * 查询到该任务的成员信息
+	 *
+	 * @param taskId 任务id
+	 * @param status 要查询的成员身份属于什么
+	 * @return
+	 */
+	List<UserInfoEntity> findTaskMemberInfo(@Param("taskId") String taskId, @Param("status") String status);
 }
