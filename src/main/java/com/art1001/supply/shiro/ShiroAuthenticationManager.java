@@ -62,14 +62,12 @@ public class ShiroAuthenticationManager {
 	 */
 	public static UserEntity getUserEntity() {
 		UserEntity userEntity = new UserEntity();
-//		try {
-//			Object p = SecurityUtils.getSubject().getPrincipal();
-//			BeanUtils.copyProperties(userEntity,p);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//		}
-		userEntity.setUserName("何少华");
-		userEntity.setId("10001");
+		try {
+			Object p = SecurityUtils.getSubject().getPrincipal();
+			BeanUtils.copyProperties(userEntity,p);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return userEntity;
 	}
 
