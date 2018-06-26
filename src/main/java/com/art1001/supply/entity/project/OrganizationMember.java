@@ -52,7 +52,7 @@ public class OrganizationMember extends BaseEntity implements Serializable {
 	/**
 	 * 手机号
 	 */
-	private Integer memberPhone;
+	private String memberPhone;
 
 
 	/**
@@ -70,5 +70,10 @@ public class OrganizationMember extends BaseEntity implements Serializable {
 	 * 是否是企业拥有着，0是成员 1是拥有着
 	 */
 	private Integer partmentLable;
+
+	/**
+	 * 企业用户是否被停用 0停用，1启用
+	 */
+	private Integer memberLock;
 
 }

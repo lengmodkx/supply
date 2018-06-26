@@ -2,11 +2,14 @@ package com.art1001.supply.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.project.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +31,16 @@ import java.util.List;
 public class OrganizationController {
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private OrganizationService organizationService;
 
     @Resource
     private PartmentService partmentService;
 
+    @Resource
+    private OrganizationMemberService organizationMemberService;
 
+    @Resource
+    private UserService userService;
 
     //增加一个企业
     @RequestMapping("/addOrg")
@@ -106,15 +110,38 @@ public class OrganizationController {
     //给企业添加员工
     @RequestMapping("/addMember")
     @ResponseBody
-    public JSONObject addMember(@RequestParam String orgId,@RequestParam String memberId){
+    public JSONObject addMember(@RequestParam String orgId,@RequestParam String[] memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
-
-
-
-
-            jsonObject.put("result",1);
-            jsonObject.put("msg","删除成功");
+            for (String memberId:memberIds) {
+                OrganizationMember member = organizationMemberService.findOrgByMemberId(memberId);
+                UserEntity userEntity = userService.findById(memberId);
+                OrganizationMember organizationMember = new OrganizationMember();
+                organizationMember.setOrganizationId(orgId);
+                organizationMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+                organizationMember.setMemberImg(userEntity.getUserInfo().getImage());
+                organizationMember.setMemberId(memberId);
+                organizationMember.setMemberName(userEntity.getUserName());
+                organizationMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+                organizationMember.setOrganizationLable(1);
+                if(member==null){
+                    //新增成员的部门id统一为0
+                    organizationMember.setPartmentId("0");
+                    organizationMemberService.saveOrganizationMember(organizationMember);
+                    jsonObject.put("result",1);
+                    jsonObject.put("msg","添加成功");
+                }else{
+                    if(member.getMemberLock()==1){
+                        organizationMember.setId(member.getId());
+                        organizationMemberService.updateOrganizationMember(organizationMember);
+                        jsonObject.put("result",1);
+                        jsonObject.put("msg","添加成功");
+                    }else{
+                        jsonObject.put("result",0);
+                        jsonObject.put("msg","邀请失败，该成员已被停用");
+                    }
+                }
+            }
         }catch (Exception e){
             throw  new AjaxException(e);
         }
@@ -124,44 +151,67 @@ public class OrganizationController {
 
 
 
-
-
-
-
-
-
-
     @RequestMapping("/members")
-    public void members(@RequestParam(value = "pageNo",defaultValue = "1") Integer pageNo,
+    @ResponseBody
+    public JSONObject members(@RequestParam(value = "pageNo",defaultValue = "1") Integer pageNo,
                         @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
-                        @RequestParam(value = "flag",defaultValue = "1") Integer flag){
+                        @RequestParam(value = "flag",defaultValue = "1") Integer flag,
+                        @RequestParam(value = "orgId") String orgId){
         JSONObject jsonObject = new JSONObject();
-        List<UserEntity> userEntityList = new ArrayList<>();
+
         try {
 
+            Pager pager = new Pager();
+            pager.setPageNo(pageNo);
+            pager.setPageSize(pageSize);
+            OrganizationMember organizationMember = new OrganizationMember();
+            organizationMember.setMemberLock(1);
+            organizationMember.setId(orgId);
 
+            //未分配部门的员工
+            if(flag==1){
+                organizationMember.setPartmentId("0");
+            }else if(flag==2){//账号停用的员工
+                organizationMember.setMemberLock(0);
+            }
 
-
-
-
-
-
+            pager.setCondition(organizationMember);
+            List<OrganizationMember> memberList = organizationMemberService.findOrganizationMemberPagerList(pager);
             jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
-            jsonObject.put("data",userEntityList);
+            jsonObject.put("data",memberList);
 
         }catch (Exception e){
             throw new AjaxException(e);
         }
 
-
+        return jsonObject;
 
     }
 
 
 
 
+    @RequestMapping("/addPartment")
+    @ResponseBody
+    public JSONObject addPartment(@RequestParam(value = "orgId") String orgId,
+                                  @RequestParam(value = "partmentName") String partmentName,
+                                  @RequestParam(value = "partmentLogo") String partmentLogo){
+        JSONObject jsonObject = new JSONObject();
 
+        try {
+
+
+
+            jsonObject.put("result",1);
+            jsonObject.put("msg","创建成功");
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+
+        return jsonObject;
+    }
 
 
 
