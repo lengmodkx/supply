@@ -22,7 +22,7 @@
     </div>
     <div class="file-title">
         <div class="layui-row">
-            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" th:text="${file.fileName}"></div>
+            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure"></div>
             <div class="layui-col-md2 layui-col-lg-2 file-name">文件名称</div>
             <div class="layui-col-md2 layui-col-lg-2 file-size">大小</div>
             <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
@@ -49,8 +49,8 @@
 
             </li>
             <li class="layui-row" th:each="file:${fileList}">
-                <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" th:text="${file.fileName}"></div>
-                <div class="layui-col-md2 layui-col-lg-2 file-name">6.5任务</div>
+                <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure"></div>
+                <div class="layui-col-md2 layui-col-lg-2 file-name" th:text="${file.fileName}">6.5任务</div>
                 <div class="layui-col-md2 layui-col-lg-2 file-size" th:text="${file.size}">2.3M</div>
                 <div class="layui-col-md2 layui-col-lg-2 file-time" th:text="${file.memberName}">谁谁谁</div>
                 <div class="layui-col-md3 layui-col-lg-3 file-people" th:text="${#dates.format(file.createTime,'M-dd')}">6月1日</div>
@@ -59,18 +59,6 @@
                     <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
                 </div>
             </li>
-
-        <li class="layui-row">
-            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" th:text="${file.fileName}"></div>
-            <div class="layui-col-md2 layui-col-lg-2 file-name">6.5任务</div>
-            <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
-            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
-            <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
-            <div class="layui-col-md2 layui-col-lg-2 file-operate">
-                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
-                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-            </div>
-        </li>
         </ul>
         <!--缩略图模式-->
         <div class="img-show-wrap" style="display: none">
@@ -81,14 +69,14 @@
                     </div>
                     <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"></div>
                 </li>
-                <li class="boxsizing one-file-wrap">
+                <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
                     <div class="one-file boxsizing">
                         <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">
                         <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                         <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>
                         <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>
                     </div>
-                    <div class="one-file-name">图片.zip</div>
+                    <div class="one-file-name" th:text="${file.fileName}">图片.zip</div>
                 </li>
 
             </ul>

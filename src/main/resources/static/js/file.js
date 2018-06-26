@@ -74,7 +74,7 @@ $(function () {
             if ($(".new-file-input").val()=='') {
                 $(".new-file").hide();
                 $(".new-file-wrap").hide();
-                return false
+                return false;
             }else {
                 var mydate = new Date();
                 var str= (mydate.getMonth()+1) + "月";

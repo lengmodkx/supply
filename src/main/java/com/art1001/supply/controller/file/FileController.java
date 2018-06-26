@@ -3,7 +3,9 @@ package com.art1001.supply.controller.file;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -103,6 +105,7 @@ public class FileController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             String imgDir = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
             jsonObject.put("data", imgDir);
