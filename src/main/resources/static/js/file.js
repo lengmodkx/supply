@@ -20,9 +20,38 @@ $(function () {
         });
         form.on('checkbox(checks)', function(data){
             if(data.elem.checked){
-                $(this).parent().css("border","4px solid #3da8f5")
+                $(this).parent().css("border","4px solid #3da8f5");
+                movein($(this).parent())
             }else {
-                $(this).parent().css("border","1px solid #e5e5e5")
+                $(this).parent().css("border","1px solid #e5e5e5");
+                moveout($(this).parent())
+            }
+
+        });
+        // 点击全选
+        form.on('checkbox(check-all)', function(data){
+            var i=$(".one-file").length-1;
+            if(data.elem.checked){
+                $(".one-file").css("border","4px solid #3da8f5");
+                $(".one-file input").attr('checked',true);
+                layui.use('form', function(){
+                    var form = layui.form;
+                    form.render();
+                });
+                $(".one-file>div").addClass("layui-form-checked");
+                movein($(".one-file"));
+                $(".one-file>div").css("opacity","1");
+                $(".file-names>span").text("已选择" + i+ "项")
+
+            }else {
+                $(".one-file").css("border","1px solid #e5e5e5");
+                $(".one-file-wrap input").attr('checked',false);
+                layui.use('form', function(){
+                    var form = layui.form;
+                    form.render();
+                });
+                moveout($(".one-file"));
+                $(".file-names>span").text("全选")
             }
 
         });
@@ -48,18 +77,30 @@ $(function () {
             }
         });
     });
-    
-    //点击 列表模式  缩略图 模式 切换
-    $(".liebiao-moshi").click(function () {
-        $(".img-show-wrap").hide();
-        $(".liebiao-show").show();
+    // 鼠标移入移出，显示隐藏 按钮 和 选择框
+    $("html").on("mouseover",".one-file",function () {
+        movein($(this))
     });
-    $(".suoluetu-moshi").click(function () {
-
-        $(".img-show-wrap").show();
-        $(".liebiao-show").hide()
+    $("html").on("mouseleave",".one-file",function () {
+        if ($(this).find("input").is(':checked')) {
+            return false
+        }else if ($(this).find("input").attr("checked")=="checked") {
+            return false
+        }else {
+            moveout($(this))
+        }
     });
-
+    // 鼠标移入 函数
+    function movein(that){
+    that.find("div").css("opacity","1");
+    that.find(".img-show-operate").css("opacity","1");
+    that.find("i").css("opacity","1");
+    }
+    function moveout(that){
+        that.find("div").css("opacity","0");
+        that.find(".img-show-operate").css("opacity","0");
+        that.find("i").css("opacity","0");
+    }
     /**
      * 创建文件夹
      */
@@ -67,49 +108,6 @@ $(function () {
         $(".new-file").show();
         $(".new-file-wrap").show();
 
-    });
-    // 列表模式  创建
-    $(".new-file-input").keypress(function (e) {
-        if (e.which==13){
-            if ($(".new-file-input").val()=='') {
-                $(".new-file").hide();
-                $(".new-file-wrap").hide();
-                return false
-            }else {
-                var mydate = new Date();
-                var str= (mydate.getMonth()+1) + "月";
-                str += mydate.getDate() + "日";
-                $(".new-file").after('<li class="layui-row layui-form">\n' +
-                    '            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" ></div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-name">'+ $(this).val()+'</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-size">--</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>\n' +
-                    '            <div class="layui-col-md3 layui-col-lg-3 file-people">'+str+'</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-operate">\n' +
-                    '                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '            </div>\n' +
-                    '        </li>');
-                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
-                    '                    <div class="one-file boxsizing">\n' +
-                    '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
-                    '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
-                    '                        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '                        <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '                    </div>\n' +
-                    '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
-                    '                </li>');
-                $(".new-file").hide();
-                $(".new-file-wrap").hide();
-
-                layui.use('form', function(){
-                    var form = layui.form;
-
-                    form.render();
-                });
-
-            }
-        }
     });
     // 缩略图模式创建
     $(".new-file-wrap input").keypress(function (e){
@@ -126,27 +124,15 @@ $(function () {
                     '                    <div class="one-file boxsizing">\n' +
                     '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
                     '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
-                    '                        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '                        <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
+                    '<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
+                    '<div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>'+
                     '                    </div>\n' +
                     '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
                     '                </li>');
-                $(".new-file").after('<li class="layui-row layui-form">\n' +
-                    '            <div class="layui-col-md1 layui-col-lg-1 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" ></div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-name">'+ $(this).val()+'</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-size">--</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>\n' +
-                    '            <div class="layui-col-md3 layui-col-lg-3 file-people">'+str+'</div>\n' +
-                    '            <div class="layui-col-md2 layui-col-lg-2 file-operate">\n' +
-                    '                <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '                <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>\n' +
-                    '            </div>\n' +
-                    '        </li>');
                 $(".new-file").hide();
                 $(".new-file-wrap").hide();
                 layui.use('form', function(){
                     var form = layui.form;
-
                     form.render();
                 });
             }
