@@ -372,4 +372,11 @@
 		(select member_id from prm_task_member where current_task_id = #{taskId} and  member_id in
 		(select member_id from prm_project_member where project_id =  #{projectId}))
 	</select>
+
+	<!-- 查询任务下的所有参与者的基本信息  不保括执行者 -->
+	<select id="findTaskMemberInfo" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from tb_user where u_id in (select member_id from prm_task_member where public_id = #{taskId}  and type = #{status})
+	</select>
 </mapper>

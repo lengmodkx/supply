@@ -18,7 +18,6 @@
 	<sql id="Base_Column_List">
 						id,
 				member_id,
-				current_task_id,
 				public_id,
 				public_type,
 				member_name,
@@ -119,9 +118,6 @@
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
 			</if>
-			<if test="currentTaskId != null and currentTaskId != ''">
-				#{currentTaskId},
-			</if>
 			<if test="publicId != null and publicId != ''">
 				#{publicId},
 			</if>
@@ -154,9 +150,6 @@
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
 			</if>
-			<if test="currentTaskId != null and currentTaskId != ''">
-				current_task_id = #{currentTaskId},
-			</if>
 			<if test="publicId != null and publicId != ''">
 				public_id = #{publicId},
 			</if>
@@ -186,27 +179,20 @@
 
 	<!-- 查询该成员在此任务中有没有以参与者的形式存在 -->
 	<select id="findTaskMemberExecutorIsMember" resultType="java.lang.Integer">
-		select count(0) from prm_task_member where current_task_id = #{taskId} and member_id = #{memberId} and type = '参与者'
+		select count(0) from prm_task_member where public_id = #{taskId} and member_id = #{memberId} and type = '参与者'
 	</select>
 
 	<!-- 查询出当前任务的所有参与者的关联信息 -->
 	<select id="findTaskMemberByTaskId" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task_member where current_task_id = #{taskId}
+		from prm_task_member where public_id = #{taskId}
 	</select>
 
 	<!-- 查询出当前任务的关联的为任务的信息 -->
 	<select id="findTaskRelationTask" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task_member where current_task_id = #{taskId} and public_type = '任务'
-	</select>
-
-	<!-- 查询任务下的所有参与者的基本信息  不保括执行者 -->
-	<select id="findTaskMemberInfo" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"></include>
-		from tb_user where u_id in (select member_id from prm_task_member where current_task_id = #{taskId}  and type = #{status})
+		from prm_task_member where public_id = #{taskId} and public_type = '任务'
 	</select>
 </mapper>

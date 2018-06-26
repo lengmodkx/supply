@@ -368,6 +368,6 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	 */
 	@Override
 	public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
-		return taskMemberMapper.findTaskMemberInfo(taskId,status);
+		return userService.findTaskMemberInfo(taskId,status);
 	}
 }

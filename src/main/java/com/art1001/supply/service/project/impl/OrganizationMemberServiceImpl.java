@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.project.OrganizationMember;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -67,6 +68,7 @@ public class OrganizationMemberServiceImpl implements OrganizationMemberService 
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
+		organizationMember.setId(IdGen.uuid());
 		organizationMemberMapper.saveOrganizationMember(organizationMember);
 	}
 	/**
@@ -78,5 +80,10 @@ public class OrganizationMemberServiceImpl implements OrganizationMemberService 
 	public List<OrganizationMember> findOrganizationMemberAllList(){
 		return organizationMemberMapper.findOrganizationMemberAllList();
 	}
-	
+
+	@Override
+	public OrganizationMember findOrgByMemberId(String memberId) {
+		return organizationMemberMapper.findOrgByMemberId(memberId);
+	}
+
 }

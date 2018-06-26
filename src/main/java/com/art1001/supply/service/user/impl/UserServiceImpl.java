@@ -186,5 +186,14 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
         return map;
     }
 
-
+    /**
+     * 查询该任务下 除执行者外所有的参与者的详细信息
+     * @param taskId 任务id
+     * @param status 身份
+     * @return
+     */
+    @Override
+    public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
+        return userMapper.findTaskMemberInfo(taskId,status);
+    }
 }

@@ -136,16 +136,7 @@ $(function () {
         }
     });
 
-    // 点击 具体 任务 出现修改任务 弹窗
-    $("html").on("click",".assignment",function(){
-        changeRenwu();
-        $(".publish-bottom img:nth-of-type(1)").click(function () {
-           $(".fujian-box").slideDown()
-        });
-        $(".close-fujian").click(function () {
-            $(".fujian-box").slideUp()
-        })
-    });
+
 
 
 var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
@@ -243,7 +234,18 @@ function lbmenu(top,left) {
     });
 };
 
-
+//点击 具体 任务 出现修改任务 弹窗
+function updateTask(taskId){
+    $("html").on("click",".assignment",function(){
+        changeRenwu(taskId);
+        $(".publish-bottom img:nth-of-type(1)").click(function () {
+            $(".fujian-box").slideDown()
+        });
+        $(".close-fujian").click(function () {
+            $(".fujian-box").slideUp()
+        })
+    });
+}
 
 // 点击头像 ，弹出框
 $(".head-photo").click(function () {
@@ -308,7 +310,7 @@ function addRenwu(projectId,taskMenuId) {
     });
 };
 //修改任务 弹框界面
-function changeRenwu() {
+function changeRenwu(taskId) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -320,7 +322,7 @@ function changeRenwu() {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "reviserask.html"
+            content: "/task/initTask.html?taskId="+ taskId
         });
     });
 }

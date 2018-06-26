@@ -107,15 +107,6 @@ public interface TaskMemberMapper {
 	List<TaskMember> findTaskRelationTask(String taskId);
 
 	/**
-	 * 查询到该任务的成员信息
-	 *
-	 * @param taskId 任务id
-	 * @param status 要查询的成员身份属于什么
-	 * @return
-	 */
-	List<UserInfoEntity> findTaskMemberInfo(@Param("taskId") String taskId,@Param("status") String status);
-
-	/**
 	 * 清空任务的关联
 	 * @param taskId 任务id
 	 *

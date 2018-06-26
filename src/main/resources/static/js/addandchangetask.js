@@ -34,11 +34,15 @@ layui.use('form', function() {
         member2.userName = "飞猪B";
         var members  = new Array();
         members[0] = member;
-        members[1] = member2
+        members[1] = member2;
         var url = "/task/saveTask";
         var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":JSON.stringify(members)};
         $.post(url,args,function(data){
-            layer.msg(data.msg);
+            if(data.result == 1){
+                layer.msg("任务创建成功!");
+                //关闭遮罩层
+                //任务数回显
+            }
         },"json");
         return false;
     });

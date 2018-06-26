@@ -55,4 +55,11 @@ public interface OrganizationMemberMapper {
 	 */
 	List<OrganizationMember> findOrganizationMemberAllList();
 
+	/**
+	 * 通过用户id查询企业用户
+	 * @param memberId
+	 * @return
+	 */
+	OrganizationMember findOrgByMemberId(String memberId);
+
 }
