@@ -32,6 +32,7 @@ $(function () {
         form.on('checkbox(check-all)', function(data){
             var i=$(".one-file").length-1;
             if(data.elem.checked){
+                $(".file-caozuo-wrap").show();
                 $(".one-file").css("border","4px solid #3da8f5");
                 $(".one-file input").attr('checked',true);
                 layui.use('form', function(){
@@ -44,6 +45,7 @@ $(function () {
                 $(".file-names>span").text("已选择" + i+ "项")
 
             }else {
+                $(".file-caozuo-wrap").hide();
                 $(".one-file").css("border","1px solid #e5e5e5");
                 $(".one-file-wrap input").attr('checked',false);
                 layui.use('form', function(){
@@ -104,11 +106,20 @@ $(function () {
     /**
      * 创建文件夹
      */
-    $("#createFolder").click(function () {
-        $(".new-file").show();
+    $("#createFolder").click(function (e) {
         $(".new-file-wrap").show();
-
+        $(".new-file-wrap input").focus();
+        e.stopPropagation();
     });
+    //点击空白区域， 创建文件夹消失
+    $(document).click(function(event){
+        var _con = $('.new-file-wrap');  // 设置目标区域
+        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+            //$('#divTop').slideUp('slow');  //滑动消失
+            $('.new-file-wrap').hide(500);     //淡出消失
+        }
+    });
+
     // 缩略图模式创建
     $(".new-file-wrap input").keypress(function (e){
         if (e.which==13){
