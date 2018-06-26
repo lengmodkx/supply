@@ -1,4 +1,19 @@
+function getQueryString(name)
+{
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if(r!=null)return  unescape(r[2]);
+    return null;
+}
+
+var parentId = $("#parentId").val();
+var projectId = getQueryString("projectId");
+console.log(parentId);
+console.log(projectId);
+var url = '/file/uploadFile?projectId=' + projectId + "&parentId=" + parentId;
+console.log(url);
 $(function () {
+
     layui.use(['form', 'upload', 'layer'], function () {
         var form = layui.form
             , upload = layui.upload
@@ -63,7 +78,9 @@ $(function () {
          */
         upload.render({
             elem: '#uploadFile' //绑定元素
-            , url: '/file/uploadFile?projectId=1' //上传接口
+            , url: '/file/uploadFile' //上传接口
+            , method: 'post'
+            , data: {projectId: projectId, parentId: parentId}
             , exts: '|' // 可上传所有类型的文件
             , done: function (data) {
                 //上传完毕回调
@@ -122,30 +139,38 @@ $(function () {
 
     // 缩略图模式创建
     $(".new-file-wrap input").keypress(function (e){
+        var folderName = $(".new-file-wrap input").val();
         if (e.which==13){
-            if ($(".new-file-wrap input").val()=='') {
+            if (folderName == '') {
                 $(".new-file").hide();
                 $(".new-file-wrap").hide();
                 return false
             }else {
-                var mydate = new Date();
-                var str= (mydate.getMonth()+1) + "月";
-                str += mydate.getDate() + "日";
-                $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
-                    '                    <div class="one-file boxsizing">\n' +
-                    '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
-                    '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
-                    '<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
-                    '<div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>'+
-                    '                    </div>\n' +
-                    '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
-                    '                </li>');
-                $(".new-file").hide();
-                $(".new-file-wrap").hide();
-                layui.use('form', function(){
-                    var form = layui.form;
-                    form.render();
+                $.post("/file/createFolder", {projectId: projectId, parentId: parentId, folderName: folderName}, function (data) {
+                    if (data.result === 1) {
+                        layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                            $("#file").load("/file/list.html?projectId=" + projectId + "&parentId=" + parentId );
+                        });
+                    }
                 });
+                // var mydate = new Date();
+                // var str= (mydate.getMonth()+1) + "月";
+                // str += mydate.getDate() + "日";
+                // $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
+                //     '                    <div class="one-file boxsizing">\n' +
+                //     '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
+                //     '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
+                //     '<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
+                //     '<div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>'+
+                //     '                    </div>\n' +
+                //     '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
+                //     '                </li>');
+                // $(".new-file").hide();
+                // $(".new-file-wrap").hide();
+                // layui.use('form', function(){
+                //     var form = layui.form;
+                //     form.render();
+                // });
             }
         }
     });
@@ -177,8 +202,16 @@ $(function () {
             });
         });
     }
-    
-});
 
+    // 进入下级目录
+    $(".fileList").each(function () {
+        $(this).click(function () {
+            var fileId = $(this).find("span").attr("data");
+            var projectId = getQueryString("projectId");
+            $("#file").load("/file/list.html?projectId=" + projectId + "&parentId=" + fileId);
+        });
+    });
+
+});
 
 

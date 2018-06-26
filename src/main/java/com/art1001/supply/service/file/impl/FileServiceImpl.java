@@ -81,22 +81,19 @@ public class FileServiceImpl implements FileService {
 
         // 获取要创建文件的上级目录实体
         String parentUrl = fileService.getPerLevel(projectId, parentId);
-        // 上传阿里云OSS
-        Map<String, Object> map = FileUtils.ossFileUpload(multipartFile, parentUrl, fileName);
 
-        // 得到文件的访问路径
-        String fileUrl = (String) map.get("fileUrl");
+        fileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("."));
+        // 设置文件url
+        String fileUrl = parentUrl + fileName;
+        // 上传oss
+        AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
 
         // 写库
         File file = new File();
         file.setFileName(fileName);
         file.setProjectId(projectId);
         file.setFileUrl(fileUrl);
-        // 获取用户信息
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
+
         // 得到上传文件的大小
         long contentLength = multipartFile.getSize();
         file.setSize(FileUtils.convertFileSize(contentLength));
@@ -109,6 +106,13 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void updateFile(File file) {
+        // 修改操作用户
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        file.setMemberId(userEntity.getId());
+        file.setMemberName(userEntity.getUserName());
+        file.setMemberImg(userEntity.getUserInfo().getImage());
+        // 修改跟新时间
+        file.setUpdateTime(System.currentTimeMillis());
         fileMapper.updateFile(file);
     }
 
@@ -121,6 +125,13 @@ public class FileServiceImpl implements FileService {
     public void saveFile(File file) {
         // 设置uuid
         file.setFileId(IdGen.uuid());
+        // 获取操作用户
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        // 设置操作用户信息
+        file.setMemberId(userEntity.getId());
+        file.setMemberName(userEntity.getUserName());
+        file.setMemberImg(userEntity.getUserInfo().getImage());
+        // 设置时间
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         fileMapper.saveFile(file);
@@ -159,11 +170,7 @@ public class FileServiceImpl implements FileService {
             file.setProjectId(project.getProjectId());
             // 文件请求路径
             file.setFileUrl(childFolder);
-            // 获取用户信息
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            file.setMemberId(userEntity.getId());
-            file.setMemberName(userEntity.getUserName());
-            file.setMemberImg(userEntity.getUserInfo().getImage());
+
             // 设置是否目录
             file.setCatalog(1);
             fileService.saveFile(file);
@@ -189,15 +196,13 @@ public class FileServiceImpl implements FileService {
         File file = new File();
         // 拿到项目的名字作为初始化的文件名
         file.setFileName(fileName);
+        // 设置父级id
+        file.setParentId(parentId);
         // 项目id
         file.setProjectId(projectId);
         // 文件请求路径
         file.setFileUrl(fileUrl);
-        // 获取用户信息
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
+
         // 设置是否目录
         file.setCatalog(1);
         fileService.saveFile(file);
@@ -211,50 +216,100 @@ public class FileServiceImpl implements FileService {
     /**
      * 移动文件
      *
-     * @param fileId   源文件id
+     * @param fileIds   源文件id数组
      * @param folderId 目标目录id
      */
     @Override
     @Transactional
-    public void moveFile(String fileId, String folderId) {
+    public void moveFile(String[] fileIds, String folderId) {
         // 获取目录信息
         File folder = fileMapper.findFileById(folderId);
         String destinationFolderName = folder.getFileUrl();
-        // 获取源文件
-        File file = fileMapper.findFileById(fileId);
-        // 修改oss上的路径，成功后改库
-        if (file.getCatalog() == 1) { // 文件夹
-            ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
+        for (String fileId : fileIds) {
+            // 获取源文件
+            File file = fileMapper.findFileById(fileId);
 
-            assert listing != null;
-            // 得到所有的文件夹，
-            for (String commonPrefix : listing.getCommonPrefixes()) {
-                String destinationObjectName = destinationFolderName + commonPrefix;
-                AliyunOss.createFolder(destinationObjectName);
+            // 修改oss上的路径，成功后改库
+            if (file.getCatalog() == 1) { // 文件夹
+                ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
+
+                assert listing != null;
+                // 得到所有的文件夹，
+                for (String commonPrefix : listing.getCommonPrefixes()) {
+                    // 得到文件名
+                    String destinationObjectName = destinationFolderName + commonPrefix;
+                    // 移动oss上的文件夹
+                    AliyunOss.createFolder(destinationObjectName);
+                }
+                // 得到所有的文件
+                for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
+                    // 得到文件名
+                    String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
+                    // 移动oss上的文件夹
+                    AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
+                    // 修改库中路径
+                    file.setFileUrl(destinationFolderName);
+                    // 设置上级id
+                    file.setParentId(folderId);
+                    fileService.updateFile(file);
+                }
+            } else { // 文件
+                AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
+                // 设置源文件父级id， url
+                file.setParentId(folderId);
+                file.setFileUrl(folder.getFileUrl() + file.getFileName());
+                fileService.updateFile(file);
             }
-            // 得到所有的文件
-            for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
-                String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
-                AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
-            }
-        } else { // 文件
-            AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
-            // 设置源文件父级id， url
-            file.setParentId(folder.getFileId());
-            file.setFileUrl(folder.getFileUrl() + file.getFileName());
         }
-
     }
 
     /**
      * 复制文件
      *
-     * @param fileId   源文件id
+     * @param fileIds   源文件id数组
      * @param folderId 目标目录id
      */
     @Override
-    public void copyFile(String fileId, String folderId) {
+    public void copyFile(String[] fileIds, String folderId) {
+        // 获取目录信息
+        File folder = fileMapper.findFileById(folderId);
+        String destinationFolderName = folder.getFileUrl();
+        for (String fileId : fileIds) {
+            // 获取源文件
+            File file = fileMapper.findFileById(fileId);
 
+            // 修改oss上的路径，成功后改库
+            if (file.getCatalog() == 1) { // 文件夹
+                ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
+
+                assert listing != null;
+                // 得到所有的文件夹，
+                for (String commonPrefix : listing.getCommonPrefixes()) {
+                    // 得到文件名
+                    String destinationObjectName = destinationFolderName + commonPrefix;
+                    // 移动oss上的文件夹
+                    AliyunOss.createFolder(destinationObjectName);
+                }
+                // 得到所有的文件
+                for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
+                    // 得到文件名
+                    String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
+                    // 移动oss上的文件夹
+                    AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
+                    // 修改库中路径
+                    file.setFileUrl(destinationFolderName);
+                    // 设置文件上级id
+                    file.setParentId(folderId);
+                    fileService.saveFile(file);
+                }
+            } else { // 文件
+                AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
+                // 设置源文件父级id， url
+                file.setParentId(folder.getFileId());
+                file.setFileUrl(folder.getFileUrl() + file.getFileName());
+                fileService.saveFile(file);
+            }
+        }
     }
 
     /**
@@ -271,6 +326,11 @@ public class FileServiceImpl implements FileService {
             File file = fileMapper.findByProjectIdAndFileId(projectId, parentId);
             return file.getFileUrl();
         }
+    }
+
+    @Override
+    public List<File> findFileList(File file) {
+        return fileMapper.findFileList(file);
     }
 
 }

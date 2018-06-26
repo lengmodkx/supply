@@ -8,6 +8,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,70 @@ public class FileController {
     ) {
         List<File> fileList = fileService.findChildFile(projectId, parentId, isDel);
         model.addAttribute("fileList", fileList);
-        return "file";
+        model.addAttribute("parentId", parentId);
+        model.addAttribute("projectId", projectId);
+        return "mainpage";
+    }
+
+    /**
+     * 文件目录
+     * @param file 文件
+     *             projectId 项目id
+     *             parentId 上级id
+     *
+     */
+    @GetMapping("/getFolder")
+    @ResponseBody
+    public JSONObject getFolder(File file) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            // 设置 catalog 为1，只查询目录
+            file.setCatalog(1);
+            // 只查询未删除的目录
+            file.setFileDel(0);
+            if (StringUtils.isEmpty(file.getParentId())) {
+                file.setParentId("0");
+            }
+            List<File> fileList = fileService.findFileList(file);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "获取失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 文件目录
+     * @param file 文件
+     *             projectId 项目id
+     *             parentId 上级id
+     *
+     */
+    @GetMapping("/getFile")
+    @ResponseBody
+    public JSONObject getFile(File file) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            // 设置 catalog 为1，只查询目录
+            // 只查询未删除的目录
+            file.setFileDel(0);
+            if (StringUtils.isEmpty(file.getParentId())) {
+                file.setParentId("0");
+            }
+            List<File> fileList = fileService.findFileList(file);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "获取失败");
+        }
+        return jsonObject;
     }
 
     /**
@@ -67,14 +131,6 @@ public class FileController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if (parentId.equals("0")) {
-                List<File> childFile = fileService.findChildFile(projectId, parentId, 0);
-                if (childFile.size() > 0) {
-                    parentId = childFile.get(0).getFileId();
-                }
-
-            }
-
             fileService.createFolder(projectId, parentId, folderName);
 
             jsonObject.put("result", 1);
@@ -105,7 +161,6 @@ public class FileController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             String imgDir = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
             jsonObject.put("data", imgDir);
@@ -115,6 +170,44 @@ public class FileController {
             log.error("上传文件异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "上传失败");
+        }
+
+        return jsonObject;
+    }
+
+    /**
+     * 更新文件
+     */
+    @PostMapping("/updateUploadFile")
+    @ResponseBody
+    public JSONObject updateUploadFile(
+            @RequestParam String fileId,
+            MultipartFile multipartFile
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            // 得到原来的文件
+            File file = fileService.findFileById(fileId);
+            // 设置文件url
+            String fileUrl = file.getFileUrl();
+            // 上传oss，相同的objectName会覆盖
+            AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
+
+            // 得到文件名
+            String fileName = multipartFile.getOriginalFilename();
+            // 设置修改后的文件名
+            file.setFileName(fileName);
+
+            // 更新数据库
+            fileService.updateFile(file);
+
+            // 设置返回数据
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("result", 0);
+            jsonObject.put("data", "更新失败");
         }
 
         return jsonObject;
@@ -202,20 +295,17 @@ public class FileController {
 
     /**
      * 移动文件
-     * @param fileId 文件id
+     * @param fileIds 文件id数组
      * @param folderId 目标文件夹id
      */
     @RequestMapping("/moveFile")
     public void moveFile(
-            @RequestParam String fileId,
+            @RequestParam String[] fileIds,
             @RequestParam String folderId
     ) {
-        fileService.moveFile(fileId, folderId);
+        fileService.moveFile(fileIds, folderId);
         // 获取目标文件夹
         File folder = fileService.findFileById(folderId);
-        // 获取数据库中的文件
-        File file = fileService.findFileById(fileId);
-
     }
 
     /**

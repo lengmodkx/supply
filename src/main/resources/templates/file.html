@@ -13,33 +13,38 @@
 </head>
 <body>
 <div class="file-box boxsizing layui-form">
+    <input type="hidden" title="parentId" th:value="${parentId}" id="parentId">
     <div class="file-toper">
         <span>文件库</span>
-        <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+        <div class="add-share" id="uploadFile">
+            <img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
         </div>
-        <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
+        <div class="add-share" id="createFolder">
+            <img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
         </div>
     </div>
     <div class="check-all-file">
 
-            <div class="file-names"><input class=" " type="checkbox" name="" title="" lay-skin="primary" lay-filter="check-all" th:text="${file.fileName}"><span>全选</span></div>
-            <div class="file-caozuo-wrap">
-                <div class="file-caozuo">
-                    <i class="layui-icon layui-icon-download-circle " style="font-size: 16px; color: #ADADAD;"></i> 下载
-                </div>
-                <div class="file-caozuo">
-                    <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
-                </div>
-                <div class="file-caozuo">
-                    <i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制
-                </div>
-                <div class="file-caozuo">
-                    <i class="layui-icon layui-icon-star-fill " style="font-size: 16px; color: #ADADAD;"></i> 收藏
-                </div>
-                <div class="file-caozuo">
-                    <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: #ADADAD;"></i> 移到回收站
-                </div>
+        <div class="file-names">
+            <input class=" " type="checkbox" name="" title="" lay-skin="primary" lay-filter="check-all"><span>全选</span>
+        </div>
+        <div class="file-caozuo-wrap">
+            <div class="file-caozuo">
+                <i class="layui-icon layui-icon-download-circle " style="font-size: 16px; color: #ADADAD;"></i> 下载
             </div>
+            <div class="file-caozuo">
+                <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
+            </div>
+            <div class="file-caozuo">
+                <i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制
+            </div>
+            <div class="file-caozuo">
+                <i class="layui-icon layui-icon-star-fill " style="font-size: 16px; color: #ADADAD;"></i> 收藏
+            </div>
+            <div class="file-caozuo">
+                <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: #ADADAD;"></i> 移到回收站
+            </div>
+        </div>
 
     </div>
     <!--没有文件-->
@@ -51,7 +56,7 @@
     <div class="have-file">
 
         <!--缩略图模式-->
-        <div class="img-show-wrap" >
+        <div class="img-show-wrap">
             <ul class="img-show clearfix">
                 <li class="boxsizing new-file-wrap" style="display: none">
                     <div class="one-file">
@@ -59,21 +64,21 @@
                     </div>
                     <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"></div>
                 </li>
-                <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
+                <li class="boxsizing one-file-wrap fileList" th:each="file:${fileList}">
                     <div class="one-file boxsizing">
-                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks" >
+                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">
                         <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                         <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
-                       <div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>
+                        <div class="img-show-operate">
+                            <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>
+                        </div>
                     </div>
-                    <div class="one-file-name" th:text="${file.fileName}">图片.zip</div>
+                    <div class="one-file-name"  th:text="${file.fileName}">图片.zip</div>
+                    <span th:data="${file.fileId}"></span>
                 </li>
-
             </ul>
         </div>
-
     </div>
-
 </div>
 
 </body>

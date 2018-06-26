@@ -36,13 +36,13 @@
     </div>
 </div>
 
-
 <!--内容区域-->
 <div class="content-wrap-wrap boxsizing">
  <!--<div class="content-wrap boxsizing">-->
    <div class="content boxsizing">
-       <!--顶部-->
-          <div class="project-navigation">
+
+        <!--顶部-->
+        <div class="project-navigation">
                    <div class="toper-left">
                        <a href="/project/home.html">首页</a>
                        <i class="layui-icon layui-icon-right" style="font-size: 16px; color: #C3C2C2;"></i>
@@ -81,8 +81,9 @@
                        <span class="menu">菜单</span>
                    </div>
                </div>
-       <!--产品设计任务页面-->
-          <div class="view boxsizing">
+
+        <!--产品设计任务页面-->
+        <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
                <ul class="board-scrum-stages boxsizing">
                    <!--待处理-->
@@ -134,9 +135,8 @@
              </div>
           </div>
 
-       <!--页面内容部分-->
-  <div class="board-view ">
-
+        <!--页面内容部分-->
+        <div class="board-view ">
 
        <!--文件 页面-->
        <div id="file" style="display: none">
@@ -186,23 +186,22 @@
                                </div>
                                <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"></div>
                            </li>
-                           <li class="boxsizing one-file-wrap">
+                           <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
                                <div class="one-file boxsizing">
                                    <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks" >
                                    <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                                    <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                    <div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>
                                </div>
-                               <div class="one-file-name">图片.zip</div>
+                               <div class="one-file-name" th:text="${file.fileName}">图片222.zip</div>
                            </li>
 
                        </ul>
                    </div>
-
                </div>
-
            </div>
        </div>
+
       <!--分享页面-->
       <div id="share" style="display: none">
           <div class="file-box boxsizing layui-form">
@@ -245,6 +244,7 @@
 
           </div>
       </div>
+
       <!--日程页面-->
       <div id="date" style="display: none">
           <div class="add-scheduling">
@@ -290,6 +290,7 @@
 
 
       </div>
+
       <!--群聊页面-->
       <div id="chat" style="display: none">
           <div class="chat-box boxsizing layui-form">
@@ -317,14 +318,9 @@
               </div>
           </div>
       </div>
-  </div></div>
+  </div>
+   </div>
  </div>
-</div>
-
-
-
-
-
 
 
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -348,4 +344,18 @@
        var element = layui.element;
 
    });
+
+   $("#fileButton").click(function () {
+       var projectId = getQueryString("projectId");
+       $("#file").load("/file/list.html?projectId=" + projectId);
+   });
+
+
+   function getQueryString(name)
+   {
+       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+       var r = window.location.search.substr(1).match(reg);
+       if(r!=null)return  unescape(r[2]);
+       return null;
+   }
 </script>
