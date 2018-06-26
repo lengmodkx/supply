@@ -77,8 +77,8 @@ public class OrganizationMemberServiceImpl implements OrganizationMemberService 
 	 * @return
 	 */
 	@Override
-	public List<OrganizationMember> findOrganizationMemberAllList(){
-		return organizationMemberMapper.findOrganizationMemberAllList();
+	public List<OrganizationMember> findOrganizationMemberAllList(OrganizationMember organizationMember){
+		return organizationMemberMapper.findOrganizationMemberAllList(organizationMember);
 	}
 
 	@Override

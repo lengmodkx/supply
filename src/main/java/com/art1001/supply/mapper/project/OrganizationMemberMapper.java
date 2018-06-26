@@ -53,7 +53,7 @@ public interface OrganizationMemberMapper {
 	 * 
 	 * @return
 	 */
-	List<OrganizationMember> findOrganizationMemberAllList();
+	List<OrganizationMember> findOrganizationMemberAllList(OrganizationMember organizationMember);
 
 	/**
 	 * 通过用户id查询企业用户

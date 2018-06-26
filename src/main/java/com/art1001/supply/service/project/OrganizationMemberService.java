@@ -52,7 +52,7 @@ public interface OrganizationMemberService {
 	 * 
 	 * @return
 	 */
-	public List<OrganizationMember> findOrganizationMemberAllList();
+	public List<OrganizationMember> findOrganizationMemberAllList(OrganizationMember organizationMember);
 
 	/**
 	 * 通过用户id查询企业用户

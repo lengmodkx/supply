@@ -59,14 +59,14 @@
                     </div>
                     <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"></div>
                 </li>
-                <li class="boxsizing one-file-wrap">
+                <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
                     <div class="one-file boxsizing">
                         <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks" >
                         <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                         <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                        <div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>
                     </div>
-                    <div class="one-file-name">图片.zip</div>
+                    <div class="one-file-name" th:text="${file.fileName}">图片.zip</div>
                 </li>
 
             </ul>

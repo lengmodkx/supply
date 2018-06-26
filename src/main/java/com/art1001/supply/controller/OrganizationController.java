@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -188,32 +187,6 @@ public class OrganizationController {
         return jsonObject;
 
     }
-
-
-
-
-    @RequestMapping("/addPartment")
-    @ResponseBody
-    public JSONObject addPartment(@RequestParam(value = "orgId") String orgId,
-                                  @RequestParam(value = "partmentName") String partmentName,
-                                  @RequestParam(value = "partmentLogo") String partmentLogo){
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-
-
-
-            jsonObject.put("result",1);
-            jsonObject.put("msg","创建成功");
-
-        }catch (Exception e){
-            throw new AjaxException(e);
-        }
-
-        return jsonObject;
-    }
-
-
 
 
 

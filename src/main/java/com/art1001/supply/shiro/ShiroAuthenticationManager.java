@@ -1,7 +1,4 @@
 package com.art1001.supply.shiro;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserSessionEntity;
 import com.art1001.supply.service.user.UserSessionService;
@@ -11,10 +8,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,14 +55,12 @@ public class ShiroAuthenticationManager {
 	 */
 	public static UserEntity getUserEntity() {
 		UserEntity userEntity = new UserEntity();
-//		try {
-//			Object p = SecurityUtils.getSubject().getPrincipal();
-//			BeanUtils.copyProperties(userEntity,p);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//		}
-		userEntity.setUserName("何少华");
-		userEntity.setId("10001");
+		try {
+			Object p = SecurityUtils.getSubject().getPrincipal();
+			BeanUtils.copyProperties(userEntity,p);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return userEntity;
 	}
 
