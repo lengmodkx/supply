@@ -13,6 +13,7 @@ console.log(projectId);
 var url = '/file/uploadFile?projectId=' + projectId + "&parentId=" + parentId;
 console.log(url);
 $(function () {
+    var selectNum=0;
 
     layui.use(['form', 'upload', 'layer'], function () {
         var form = layui.form
@@ -33,13 +34,24 @@ $(function () {
                 $(".who-can-see").text("所有成员可见")
             }
         });
+        //选中复选框
         form.on('checkbox(checks)', function(data){
             if(data.elem.checked){
+                selectNum +=1;
                 $(this).parent().css("border","4px solid #3da8f5");
-                movein($(this).parent())
+                movein($(this).parent());
+                $(".file-caozuo-wrap").show();
+                $(".file-names>span").text("已选择" + selectNum+ "项")
             }else {
+                selectNum -=1;
                 $(this).parent().css("border","1px solid #e5e5e5");
-                moveout($(this).parent())
+                moveout($(this).parent());
+                if (selectNum<=0){
+                    $(".file-caozuo-wrap").hide();
+                    $(".file-names>span").text("全选");
+                }else {
+                    $(".file-names>span").text("已选择" + selectNum+ "项");
+                }
             }
 
         });
@@ -212,6 +224,35 @@ $(function () {
         });
     });
 
+    //点击文件夹
+    $(".one-file-wrap img").click(function () {
+       $(".new-file-wrap").siblings().remove();
+   for (var i=0;i<3;i++) {
+       $(".img-show").append('<li class="boxsizing one-file-wrap fileList" th:each="file:${fileList}">\n' +
+           '                    <div class="one-file boxsizing">\n' +
+           '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
+           '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
+           '                        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
+           '                        <div class="img-show-operate">\n' +
+           '                            <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>\n' +
+           '                        </div>\n' +
+           '                    </div>\n' +
+           '                    <div class="one-file-name"  th:text="${file.fileName}">图片.zip</div>\n' +
+           '                    <span th:data="${file.fileId}"></span>\n' +
+           '                </li>')
+   }
+   // 文件库 后面 添加 “> 图片” 文字
+   $(".file-toper").append(' <span> <i class="layui-icon layui-icon-right" style="font-size: 14px; color: #B4B4B4;"></i> 图片 </span>')
+
+        // 点击 “文件库 > 图片” 再把点击元素的后面的兄弟元素span移除
+
+
+    })
+
+
+
 });
+
+
 
 
