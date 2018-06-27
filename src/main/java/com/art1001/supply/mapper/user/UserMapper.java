@@ -93,4 +93,11 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
 	List<UserInfoEntity> findTaskMemberInfo(@Param("taskId") String taskId, @Param("status") String status);
+
+	/**
+	 * 根据任务id 查询出任务下的执行者信息
+	 * @param taskId 任务id
+	 * @return
+	 */
+	UserEntity findExecutorByTask(String taskId);
 }

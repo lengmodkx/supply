@@ -235,15 +235,13 @@ function lbmenu(top,left) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
-function updateTask(taskId){
-    $("html").on("click",".assignment",function(){
-        changeRenwu(taskId);
-        $(".publish-bottom img:nth-of-type(1)").click(function () {
-            $(".fujian-box").slideDown()
-        });
-        $(".close-fujian").click(function () {
-            $(".fujian-box").slideUp()
-        })
+function updateTask(taskId,projectId,type){
+    changeRenwu(taskId,projectId,type);
+    $(".publish-bottom img:nth-of-type(1)").click(function () {
+        $(".fujian-box").slideDown()
+    });
+    $(".close-fujian").click(function () {
+        $(".fujian-box").slideUp()
     });
 }
 
@@ -310,7 +308,7 @@ function addRenwu(projectId,taskMenuId) {
     });
 };
 //修改任务 弹框界面
-function changeRenwu(taskId) {
+function changeRenwu(taskId,projectId,type) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -322,7 +320,7 @@ function changeRenwu(taskId) {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "/task/initTask.html?taskId="+ taskId
+            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId +"&type="+type
         });
     });
 }

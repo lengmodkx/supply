@@ -379,4 +379,13 @@
 		<include refid="userAttributes"></include>
 		from tb_user where u_id in (select member_id from prm_task_member where public_id = #{taskId}  and type = #{status})
 	</select>
+
+	<!-- 根据任务id 查询 执行者信息 -->
+	<select id="findExecutorByTask" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from
+		tb_user where tb_user.u_id = (select executor from prm_task where prm_task.task_id = #{taskId})
+
+	</select>
 </mapper>

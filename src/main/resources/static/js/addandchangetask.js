@@ -47,32 +47,167 @@ layui.use('form', function() {
         return false;
     });
 
-    form.on('switch(switch-filter)', function (data) {
-        console.log(data.elem.checked); //开关是否开启，true或者false
-        if (data.elem.checked) {
-            $(".who-can-see").text("仅自己可见")
-        } else {
-            $(".who-can-see").text("所有成员可见")
+    /**
+     * 重复规则下拉框监听
+     */
+    form.on('select(repeat)', function(formData){
+        // console.log(data.elem); //得到select原始DOM对象
+        // console.log(data.value); //得到被选中的值
+        // console.log(data.othis); //得到美化后的DOM对象
+        var taskId = $('#taskId').val();
+        var repeat = formData.value;
+        var oldRepeat = $('#oldRepeat').val();
+        if(repeat == oldRepeat){
+            return false;
         }
+        var url = "/task/updateTaskRepeat";
+        $.post(url,{"taskId":taskId,"repeat": repeat},function (data) {
+           if(data.result == 1){
+               $('#oldRepeat').val(repeat);
+               layer.msg(data.msg);
+           } else{
+               layer.msg("规则更新失败!");
+           }
+        },"json");
+
     });
+
+    /**
+     * 提醒模式下拉框监听
+     */
+    form.on('select(remind)', function(formData){
+        // console.log(data.elem); //得到select原始DOM对象
+        // console.log(data.value); //得到被选中的值
+        // console.log(data.othis); //得到美化后的DOM对象
+        var taskId = $('#taskId').val();
+        var remind = formData.value;
+        var oldremind = $('#oldRemind').val();
+        if(remind == oldremind){
+            return false;
+        }
+        var url = "/task/updateTaskRemindTime";
+        $.post(url,{"taskId":taskId,"remind": remind},function (data) {
+            if(data.result == 1){
+                $('#oldRemind').val(remind);
+                layer.msg(data.msg);
+            } else{
+                layer.msg("提醒模式更新失败!");
+            }
+        },"json");
+    });
+
+    /**
+     * 监听任务的优先级按钮
+     */
+    form.on('radio(priority)', function(priorityData){
+        var taskId = $('#taskId').val();
+        var oldPriorty = $('#oldPriority').val();
+        if(oldPriorty == priorityData.value){
+            return false;
+        }
+        //console.log(data.elem); //得到radio原始DOM对象
+        //console.log(data.value); //被点击的radio的value值
+        var url = '/task/updateTaskPriority';
+        var args = {"taskId":taskId,"priority":priorityData.value};
+        $.post(url,args,function (data) {
+           if(data.result == 1){
+               layer.msg(data.msg);
+               $('#oldPriority').val(priorityData.value);
+           } else{
+               layer.msg('设置失败');
+           }
+        },"json");
+    });
+
+    /**
+     * 监听任务的模式
+     */
+    form.on('switch(switch-filter)', function (privacyData) {
+        alert(1);
+        //console.log(privacyData.elem.checked); //开关是否开启，true或者false
+        var url = '/task/settingUpPrivacyPatterns';
+        var privacyPattern = 1;
+        if(privacyData.elem.checked){
+            privacyPattern = 0;
+        }
+        var args = {"taskId":$('#taskId').val(),"privacyPattern":privacyPattern};
+        $.post(url,args,function (data) {
+            if(data.result == 1){
+                if (privacyData.elem.checked) {
+                    layer.msg("设置为仅自己可见");
+                    $(".who-can-see").text("仅自己可见")
+                } else {
+                    layer.msg("设置为所有人可见");
+                    $(".who-can-see").text("所有成员可见")
+                }
+            } else{
+                layer.msg("设置失败!");
+            }
+        },"json");
+    });
+
 });
 
     layui.use('laydate', function () {
         var laydate = layui.laydate;
 
-        //执行一个laydate实例
         laydate.render({
-            elem: '#beginTime', //指定元素
+            elem: '#beginTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm:ss'
-        });
-        laydate.render({
-            elem: '#overTime', //指定元素
-            type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm:ss'
-        });
-    });
+            format: 'yyyy-MM-dd HH:00'
+        })
 
+        laydate.render({
+            elem: '#beginTime',
+            type: 'datetime',
+            format: 'yyyy-MM-dd HH:00'
+        })
+
+        laydate.render({
+            elem: '#beginTimes',
+            type: 'datetime',
+            format: 'yyyy-MM-dd HH:00'
+            ,done: function(value, date, endDate){
+                var taskId = $('#taskId').val();
+                var url = "/task/updateTaskStartAndEndTime";
+                var startTime = new Date(value.toString()).getTime();
+                var args = {"taskId":taskId,"startTime":startTime};
+                $.post(url,args,function(data){
+                    if(data.result == 1){
+                        layer.msg(data.msg);
+                    } else{
+                        layer.msg('设置失败!');
+                    }
+                },"json");
+                //console.log(value); //得到日期生成的值，如：2017-08-18
+                //console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                //console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+        laydate.render({
+            elem: '#overTimes', //指定元素
+            type: 'datetime',
+            format: 'yyyy-MM-dd HH:00',
+            done: function(value, date, endDate){
+                var taskId = $('#taskId').val();
+                var url = "/task/updateTaskStartAndEndTime";
+                var endTime = new Date(value.toString()).getTime();
+                var args = {"taskId":taskId,"endTime":endTime};
+                $.post(url,args,function(data){
+                    if(data.result == 1){
+                        layer.msg(data.msg);
+                    } else{
+                        layer.msg('设置失败!');
+                    }
+                },"json");
+                // console.log(value); //得到日期生成的值，如：2017-08-18
+                // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+
+
+    });
     //点击 认领人 的x 号， 移出认领人 ，待认领出现
     $(".remove-who-wrap").click(function () {
         $(this).parent().remove();
@@ -82,6 +217,7 @@ layui.use('form', function() {
             $(".no-renling").hide();
         }
     });
+
     //点击 待认领 出现 人员名单
     $(".no-renling").click(function (e) {
         var url = "/task/findProjectAllMember";
@@ -91,10 +227,13 @@ layui.use('form', function() {
             var member = data.data;
             var content = "";
             for(var i = 0;i < member.length;i++){
+                content += "<div class='one-people'>";
                 content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
                 content += "<span>" + member[i].userName + "</span>";
                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                content += "</div>";
             }
+            $('#executor').html(content);
         });
         $(".people").show(500)
         e.stopPropagation()
@@ -222,15 +361,45 @@ layui.use('form', function() {
         var content = "";
         $.post(url, args, function (data) {
             var member = data.data;
-            if (member.length > 0) {
+            if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
+                    content += "<div class=\'one-people\'>";
                     content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
                     content += "<span>" + member[i].userName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                    content += "</div>";
                 }
+                $("#executor").html(content);
+                $(".people").show(500);
+            } else{
+                    content += "<div class=\'one-people\'>";
+                    content += "<img th:src='\@{add.png}\'>";
+                    content += "<span>该项目还没有成员</span>";
+                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                    content += "</div>";
                 $("#executor").html(content);
                 $(".people").show(500);
             }
         }, "json");
         e.stopPropagation();
     });
+    //监听任务内容的光标离开时间
+    $('#remarks').blur(function(){
+        var taskId = $('#taskId').val();
+        var oldRemarks = $('#oldRemarks').val();
+        var remarks = $('#remarks').val();
+        if(remarks == oldRemarks){
+            return false;
+        }
+        var url = "/task/upateTaskRemarks";
+        var args = {"taskId":taskId,"remarks":remarks};
+        $.post(url,args,function(data){
+           if(data.result == 1){
+               $('#oldRemarks').val(remarks);
+               layer.msg(data.msg);
+           } else{
+               layer.msg('任务内容更新失败!');
+           }
+        },"json");
+     });
+

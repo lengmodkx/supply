@@ -442,6 +442,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO updateTaskRemindTime(Task task, UserEntity userEntity) {
+        StringBuilder content = new StringBuilder("");
         //判断是开始时提醒还是结束时提醒
         if(task.getRemind().equals("任务截止时提醒")){
            task.setRepetitionTime(task.getEndTime());
@@ -449,10 +450,13 @@ public class TaskServiceImpl implements TaskService {
         if(task.getRemind().equals("任务开始时提醒")){
             task.setRepetitionTime(task.getStartTime());
         }
+        if(task.getRemind().equals("不提醒")){
+            task.setRepetitionTime(0L);
+        }
         task.setUpdateTime(System.currentTimeMillis());
-        String content = TaskLogFunction.M.getName();
+        content.append(TaskLogFunction.A13.getName()).append(" ").append(task.getRemind());
         int result = taskMapper.updateTask(task);
-        TaskLogVO taskLogVO = saveTaskLog(task, content);
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
         return taskLogVO;
         //UserEntity是要被提醒的成员信息(暂时先不用)
