@@ -343,8 +343,10 @@
 	</update>
 
 	<!-- 查询指定id的人员信息 -->
-	<select id="findManyUserById" resultType="com.art1001.supply.entity.user.UserEntity">
-		select u_id id,u_name userName from tb_user where u_id in
+	<select id="findManyUserById" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from tb_user where u_id in
 		<foreach collection="array" item = "u_id" open="(" separator="," close=")">
 			#{u_id}
 		</foreach>
@@ -355,6 +357,13 @@
 		select
 		<include refid="userAttributes" ></include>
 		from tb_user where u_id in (select member_id from prm_project_member where project_id = #{projectId})
+	</select>
+
+	<!-- 根据用户id查用户信息 -->
+	<select id="findUserInfoById" resultMap="userMap">
+		select
+		<include refid="userAttributes" ></include>
+		from tb_user where u_id = #{id}
 	</select>
 
 	<!-- 查询存在该任务中的成员信息 -->

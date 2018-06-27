@@ -143,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
      * @param task task信息
      */
 	@Override
-	public TaskLogVO saveTask(UserEntity[] memberId, Project project, Task task) {
+	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
         //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置该任务的id
@@ -602,21 +602,18 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 给当前任务添加子任务
-     * @param currentTask 当前任务 信息
+     * @param parentTaskId 父任务的id
      * @param subLevel 子级任务信息
      * @return
      */
     @Override
-    public TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel) {
+    public TaskLogVO addSubLevelTasks(String parentTaskId, Task subLevel) {
         //获取当前登录用户的id
-        //String id = ShiroAuthenticationManager.getUserEntity().getId();
-        subLevel.setMemberId("11111");
+        String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置任务的层级
         subLevel.setLevel(2);
         //设置父任务id
-        subLevel.setParentId(currentTask.getTaskId());
-        //设置该任务的id
-        subLevel.setTaskId(IdGen.uuid());
+        subLevel.setParentId(parentTaskId);
         //设置该任务是否删除 0 未删除 1 已删除
         subLevel.setTaskDel(0);
         //设置该任务的创建时间
@@ -631,7 +628,9 @@ public class TaskServiceImpl implements TaskService {
         StringBuilder content = new StringBuilder("");
         content.append(TaskLogFunction.H.getName()).append(" ").append("\"").append(subLevel.getTaskName()).append("\"");
         //保存日志信息至数据库
-        TaskLogVO taskLogVO = saveTaskLog(currentTask, content.toString());
+        Task task = new Task();
+        task.setTaskId(parentTaskId);
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
         return taskLogVO;
     }
@@ -964,16 +963,11 @@ public class TaskServiceImpl implements TaskService {
     public TaskLogVO saveTaskLog(Task task,String content){
         TaskLog taskLog = new TaskLog();
         taskLog.setId(IdGen.uuid());
-        taskLog.setMemberName("admin");
-        taskLog.setMemberId("4");
-        //暂时不用
-        //taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
-        //taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
-        //taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
-        //头像暂无
-        taskLog.setMemberImg("");
+        taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
+        taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+        taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
         taskLog.setTaskId(task.getTaskId());
-        taskLog.setContent("admin " + content);
+        taskLog.setContent(taskLog.getMemberName() + "  " + content);
         taskLog.setCreateTime(System.currentTimeMillis());
         taskLogService.saveTaskLog(taskLog);
         TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());

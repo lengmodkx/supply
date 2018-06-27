@@ -68,7 +68,7 @@ public interface TaskMemberService {
 	 * @param member 多个成员信息
 	 * @param task 任务实体信息
 	 */
-	public void saveManyTaskeMmber(UserEntity[] member, Task task);
+	public void saveManyTaskeMmber(String[] member, Task task);
 
 	/**
 	 * 添加任务成员关系

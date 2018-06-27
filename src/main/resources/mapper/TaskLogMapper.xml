@@ -164,7 +164,7 @@
 	<select id="initTaskLog" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task_log where task_id = #{taskId} order by create_time desc limit 0,5
+		from prm_task_log where task_id = #{taskId} order by create_time asc limit 0,5
 	</select>
 	
 </mapper>

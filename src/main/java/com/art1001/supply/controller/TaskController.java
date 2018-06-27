@@ -86,14 +86,11 @@ public class TaskController {
      */
     @PostMapping("saveTask")
     @ResponseBody
-    public JSONObject saveTask(Project project,Task task,String members){
-        JSONArray objects = JSONObject.parseArray(members);
-        List<UserEntity> list = objects.toJavaList(UserEntity.class);
-        UserEntity[] userEntity = list.toArray(new UserEntity[0]);
+    public JSONObject saveTask(Project project,Task task,String[] members){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
-            TaskLogVO taskLogVO = taskService.saveTask(userEntity,project,task);
+            TaskLogVO taskLogVO = taskService.saveTask(members,project,task);
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
@@ -545,7 +542,8 @@ public class TaskController {
         try {
             List<Tag> byProjectId = tagService.findByProjectId(projectId);
             jsonObject.put("data",byProjectId);
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
+
         } catch (Exception e){
             log.error("系统异常,标签获取失败!");
             throw new AjaxException(e);
@@ -733,28 +731,30 @@ public class TaskController {
 
     /**
      * 添加子任务
-     * @param currentTask 父任务信息
+     * @param parentTaskId 父任务id
      * @param subLevel 子任务信息
      * @param projectId 当前项目id
      * @return
      */
     @PostMapping("addSubLevelTask")
     @ResponseBody
-    public JSONObject addSubLevelTask(Task currentTask,Task subLevel,String projectId){
+    public JSONObject addSubLevelTask(String parentTaskId,Task subLevel,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存子任务信息至数据库
-            TaskLogVO taskLogVO = taskService.addSubLevelTasks(currentTask,subLevel);
+            subLevel.setTaskId(IdGen.uuid());
+            TaskLogVO taskLogVO = taskService.addSubLevelTasks(parentTaskId,subLevel);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加成功!");
-                jsonObject.put("result","1");
+                jsonObject.put("result",1);
                 jsonObject.put("taskLog",taskLogVO);
+                jsonObject.put("subTaskId",subLevel.getTaskId());
             } else{
                 jsonObject.put("msg","添加失败!");
-                jsonObject.put("result","0");
+                jsonObject.put("result",0);
             }
         } catch (Exception e){
-            log.error("系统异常! 添加子级任务失败! 当前任务id: ,{},{}",currentTask.getTaskId(),e);
+            log.error("系统异常! 添加子级任务失败! 当前任务id: ,{},{}",parentTaskId,e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -870,9 +870,16 @@ public class TaskController {
         try {
             //查询出项目下不存在与该任务中的成员信息
             Map<String, List<UserEntity>> userByIsExistTask = userService.findUserByIsExistTask(task);
-            jsonObject.put("userExistTask",userByIsExistTask.get("existList"));
-            jsonObject.put("userNotExistTask",userByIsExistTask.get("notExistList"));
-            jsonObject.put("result","1");
+            if(userByIsExistTask.get("existList") != null && userByIsExistTask.get("existList").size() > 0){
+                jsonObject.put("userExistTask",userByIsExistTask.get("existList"));
+            } else{
+                jsonObject.put("userExistTask","没有任务参与者数据");
+            }
+            if(userByIsExistTask.get("notExistList") != null && userByIsExistTask.get("notExistList").size() > 0){
+                jsonObject.put("userNotExistTask",userByIsExistTask.get("notExistList"));
+            } else{
+                jsonObject.put("userExistTask","没有可加入的成员");
+            }
         } catch (Exception e){
             throw new AjaxException(e);
         }

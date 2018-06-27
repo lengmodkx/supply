@@ -18,7 +18,9 @@
         <div class="who-wrap">
             <input th:name="userId" th:value="${user.id}" type="hidden"/>
             <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}"/>
-            <span th:text="${user.userName}">谁谁谁</span>
+            <input type="hidden" th:id="executorId" th:value="${user.id}"/>
+            <input type="hidden" th:id="executorName" th:value="${user.userName}"/>
+            <span th:text="${user.userName}" id = "showExecutor">谁谁谁</span>
             <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
         </div>
         <div class="no-renling">
@@ -151,10 +153,11 @@
     <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
 
     <!--人员 参与者 弹框-->
-    <div class="people boxsizing" style="display: none">
+    <input type="hidden" id = "memberId" />
+    <div class="people boxsizing" style="display: none" >
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
-            <p>参与者</p>
+            <p id = "identity">参与者</p>
             <div class="one-people">
                 <img th:src="@{/image/begintime.png}">
                 <span th:text="${user.userName}" th:value="${user.id}" th:name="executor"></span>
@@ -169,7 +172,7 @@
                 <span>邀请新成员</span>
             </div>
         </div>
-        <div class="people-ok">确定</div>
+        <div id="people-ok" class="people-ok">确定</div>
     </div>
 </form>
 

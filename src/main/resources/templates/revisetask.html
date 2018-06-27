@@ -23,6 +23,7 @@
         <div class="who-and-time">
             <div class="who-wrap">
                 <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
+                <input type="hidden" th:value="${executor.id}"/>
                 <span th:text="${executor.userName}"></span>
                 <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
             </div>
@@ -93,11 +94,8 @@
                         <input class="tag-search-input" type="text" placeholder="搜索标签">
                         <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                     </div>
-                    <ul class="tags-ul boxsizing">
-                        <li class="tags-list">
-                            <span class="dot"></span>
-                            <span class="tag-font">标签标签</span>
-                        </li>
+                    <ul class="tags-ul boxsizing" id = "tags">
+                        <!--这里是标签-->
                     </ul>
                 </div>
                 <!--新建标签-->
@@ -145,15 +143,16 @@
             <span>子任务</span>
         </div>
         <!--具体子任务-->
-        <div class="child-task-list" th:each="subTask:${subLevelTask}">
-            <input type="checkbox" name="" title="" lay-skin="primary" th:value="${subTask.taskId}">
-            <div class="child-task-con">
-                <span th:text="${subTask.taskName}"></span>
-                <div class="dt">dt-41</div>
+        <div th:id="subTask">
+            <div class="child-task-list" th:each="subTask:${subLevelTask}">
+                <input type="checkbox" name="" title="" lay-skin="primary" th:value="${subTask.taskId}">
+                <div class="child-task-con">
+                    <span th:text="${subTask.taskName}"></span>
+                    <div class="dt">dt-41</div>
+                </div>
+                <i class="layui-icon layui-icon-right go-detail" style="font-size: 16px; color: #a6a6a6;"></i>
+                <img class="child-task-who" src="../static/image/lpb.png" th:src="@{/image/lpb.png}">
             </div>
-            <i class="layui-icon layui-icon-right go-detail" style="font-size: 16px; color: #a6a6a6;"></i>
-            <img class="child-task-who" src="../static/image/lpb.png" th:src="@{/image/lpb.png}">
-
         </div>
 
         <!--添加子任务-->
@@ -183,22 +182,17 @@
                 <img src="../static/image/add.png" th:src="@{/image/add.png}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
-            <div class="add-work-people">
+            <div class="add-work-people" th:id="taskInfoAddMember">
                 <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             </div>
         </div>
         <div class="heng-line"></div>
         <div class="state">
-            <ul>
-                <li class="combox">
+            <ul id = "log">
+                <li class="combox" th:each="taskLog:${taskLog}">
                     <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
-                    <span>谁谁谁 干了什么</span>
-                    <div class="in-what-time">6月1日 12:00</div>
-                </li>
-                <li class="combox">
-                    <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
-                    <span>谁谁谁 干了什么</span>
-                    <div class="in-what-time">6月1日 12:00</div>
+                    <span th:text="${taskLog.content}"></span>
+                    <div class="in-what-time" th:value = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                 </li>
             </ul>
         </div>
@@ -268,7 +262,7 @@
             <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
             <span>隐私模式</span>
             <div class="switch">
-                <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter" />
+                <input type="checkbox" name="" th:checked="${task.privacyPattern == 1}" lay-skin="switch" lay-filter="switch-filter" />
             </div>
             <div class="who-can-see">所有成员可见</div>
         </div>
@@ -278,14 +272,16 @@
     <div class="people boxsizing" style="display: none">
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
-            <p>参与者</p>
-            <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
-                <span>李健</span>
-                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
+            <div>
+                <p>参与者</p>
+                <div class="one-people">
+                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
+                    <span>李健</span>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
+                </div>
             </div>
             <p>推荐</p>
-            <div id = "executor">
+            <div id = "noExecutor">
 
             </div>
             <div class="add-new-people">
@@ -294,8 +290,6 @@
             </div>
         </div>
         <div class="people-ok">确定</div>
-
-
     </div>
 
 </div>
@@ -305,10 +299,12 @@
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
+    //当前任务id
+    var taskId = [[${task.taskId}]];
     //当前任务所在菜单id
     var taskMenuId = [[${taskMenuId}]];
     //当前任务执行者id
     var executorId = [[${executor.id}]]
 </script>
-<script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
+<script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 </html>

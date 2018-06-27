@@ -74,4 +74,11 @@ public interface UserService {
 	 * @return
 	 */
 	UserEntity findExecutorByTask(String taskId);
+
+	/**
+	 * 根据用户id查询信息
+	 * @param executor 用户id
+	 * @return
+	 */
+	UserEntity findUserInfoById(String executor);
 }

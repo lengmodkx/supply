@@ -206,4 +206,14 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     public UserEntity findExecutorByTask(String taskId) {
         return userMapper.findExecutorByTask(taskId);
     }
+
+    /**
+     * 根据用户id 查信息
+     * @param executor 用户id
+     * @return
+     */
+    @Override
+    public UserEntity findUserInfoById(String executor) {
+        return userMapper.findUserInfoById(executor);
+    }
 }

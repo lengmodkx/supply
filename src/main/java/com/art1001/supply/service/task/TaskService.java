@@ -53,7 +53,7 @@ public interface TaskService {
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public TaskLogVO saveTask(UserEntity[] memberId,Project project,Task task);
+	public TaskLogVO saveTask(String[] memberId,Project project,Task task);
 
 	/**
 	 * 获取所有task数据
@@ -202,11 +202,11 @@ public interface TaskService {
 
 	/**
 	 * 给当前任务添加子级任务
-	 * @param currentTask 当前任务 信息
+	 * @param parentTaskId 父任务的id
 	 * @param subLevel 子级任务信息
 	 * @return
 	 */
-	TaskLogVO addSubLevelTasks(Task currentTask, Task subLevel);
+	TaskLogVO addSubLevelTasks(String parentTaskId, Task subLevel);
 
 	/**
 	 * 完成子任务 和 重做子任务

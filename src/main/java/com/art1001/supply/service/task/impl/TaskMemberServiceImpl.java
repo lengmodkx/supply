@@ -18,7 +18,10 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import jodd.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -191,42 +194,65 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	 * @param task  (包含任务的创建人 用来确认是否是该任务的创建人) taskId 新创建的任务的id
 	 */
 	@Override
-	public void saveManyTaskeMmber(UserEntity[] member,Task task) {
+	public void saveManyTaskeMmber(String[] member,Task task) {
+		//保存创建者的信息
+		String [] createAndExecutor = {"创建者","执行者"};
+		for (String str : createAndExecutor) {
+			TaskMember taskMember = new TaskMember();
+			taskMember.setId(IdGen.uuid());
+			taskMember.setPublicId(task.getTaskId());
+			taskMember.setCreateTime(System.currentTimeMillis());
+			taskMember.setUpdateTime(System.currentTimeMillis());
+			if(str.equals("创建者")){
+				taskMember.setType("创建者");
+				taskMember.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
+				taskMember.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
+				taskMember.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+				taskMemberMapper.saveTaskMember(taskMember);
+				continue;
+			}
+			if(str.equals("执行者")){
+				if(!StringUtils.isEmpty(task.getExecutor())){
+					UserEntity userById = userService.findUserInfoById(task.getExecutor());
+					taskMember.setType("执行者");
+					taskMember.setMemberId(userById.getId());
+					taskMember.setMemberName(userById.getUserName());
+					taskMember.setMemberImg(userById.getUserInfo().getImage());
+					taskMemberMapper.saveTaskMember(taskMember);
+					taskMember.setId(IdGen.uuid());
+					taskMember.setType("参与者");
+					taskMemberMapper.saveTaskMember(taskMember);
+				}
+			}
+		}
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
 		if(member != null && member.length > 0){
-			for (UserEntity userEntity : member){
-				TaskMember taskMember = new TaskMember();
-				//设置id
-				taskMember.setId(IdGen.uuid());
-				//设置参与者id
-				taskMember.setMemberId(userEntity.getId());
-				//设置参与者姓名
-				taskMember.setMemberName(userEntity.getUserName());
-				//设置这条关系的创建时间
-				taskMember.setCreateTime(System.currentTimeMillis());
-				//设置当前任务id
-				taskMember.setPublicId(task.getTaskId());
-				//设置更新时间
-				taskMember.setUpdateTime(System.currentTimeMillis());
-				//如果当前用户的id是该任务的创建者 则把该条关系的任务角色设置为创建者
-				if(userEntity.getId().equals(task.getMemberId())){
-					taskMember.setType("创建者");
-				} else if(userEntity.getId().equals(task.getExecutor())){
-					//否则设置为参与者
-					taskMember.setType("执行者");
+			List<UserEntity> manyUserById = userService.findManyUserById(member);
+			if(manyUserById != null && manyUserById.size() > 0) {
+				for (UserEntity userEntity : manyUserById) {
+					TaskMember taskMember = new TaskMember();
+					//设置id
+					taskMember.setId(IdGen.uuid());
+					//设置参与者id
+					taskMember.setMemberId(userEntity.getId());
+					//设置参与者姓名
+					taskMember.setMemberName(userEntity.getUserName());
+					//设置这条关系的创建时间
+					taskMember.setCreateTime(System.currentTimeMillis());
+					//设置名字
+					taskMember.setMemberName(userEntity.getUserName());
+					//设置头像
+					taskMember.setMemberImg(userEntity.getUserInfo().getImage());
+					//设置当前任务id
+					taskMember.setPublicId(task.getTaskId());
+					//设置更新时间
 					taskMember.setUpdateTime(System.currentTimeMillis());
-					taskMemberMapper.saveTaskMember(taskMember);
 					taskMember.setType("参与者");
+					//该条关系的更新时间
 					taskMember.setUpdateTime(System.currentTimeMillis());
+					//将该关系对象 保存至数据库
 					taskMemberMapper.saveTaskMember(taskMember);
-					return;
-				} else{
-					taskMember.setType("参与者");
 				}
-				//该条关系的更新时间
-				taskMember.setUpdateTime(System.currentTimeMillis());
-				//将该关系对象 保存至数据库
-				taskMemberMapper.saveTaskMember(taskMember);
 			}
 		}
 	}
