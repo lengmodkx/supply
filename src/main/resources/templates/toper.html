@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<div th:fragment="toper (projectName)">
+<div th:fragment="toper (projectName,projectId)">
     <div class="toper-wrap boxsizing">
         <div class="toper-left">
             <a href="/project/home.html">首页</a>
@@ -11,23 +11,23 @@
         </div>
         <div class="toper-nav">
             <ul>
-                <li>
-                    <a>UI设计任务</a>
+                <li class="now">
+                    <a th:href="@{/project/task.html(projectId=${projectId})}">任务</a>
                 </li>
                 <li>
-                    <a>分享</a>
+                    <a th:href="@{/share/share.html(projectId=${projectId})}">分享</a>
                 </li>
                 <li>
-                    <a>文件</a>
+                    <a th:href="@{/file/list.html(projectId=${projectId})}">文件</a>
                 </li>
                 <li>
-                    <a>日程</a>
+                    <a th:href="@{/schedule/schedule.html(projectId=${projectId})}">日程</a>
                 </li>
                 <li>
-                    <a>群聊</a>
+                    <a th:href="@{/chat/chat.html(projectId=${projectId})}">群聊</a>
                 </li>
                 <li>
-                    <a>统计</a>
+                    <a th:href="@{/statistics/statistics.html(projectId=${projectId})}">统计</a>
                 </li>
             </ul>
         </div>

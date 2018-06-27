@@ -53,6 +53,12 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
-<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
+<script>
+    $(function () {
+        var url = window.location.href;
+        if(url.indexOf("chat") > 0){
+            $(".toper-nav ul li:nth-of-type(5)").addClass("now").siblings().removeClass("now");
+        }
+    });
+</script>
 </html>

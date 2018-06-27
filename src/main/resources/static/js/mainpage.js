@@ -30,6 +30,10 @@ function useLayerForm(){
 
 $(function () {
 
+    var url = window.location.href;
+    if(url.indexOf("task") > 0){
+        $(".toper-nav ul li:nth-of-type(1)").addClass("now").siblings().removeClass("now");
+    }
 
     useLayerForm();
 

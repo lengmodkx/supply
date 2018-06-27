@@ -16,7 +16,7 @@
 <body>
 <header th:include="common/header::frag (${user.userInfo.image})"></header>
 
-<div th:include="common/toper::frag (${user.userInfo.projectName})"></div>
+<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
 
 <div class="content-wrap-wrap boxsizing">
     <div class="content boxsizing">
@@ -71,6 +71,12 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
-<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
+<script>
+    $(function () {
+        var url = window.location.href;
+        if(url.indexOf("schedule") > 0){
+            $(".toper-nav ul li:nth-of-type(4)").addClass("now").siblings().removeClass("now");
+        }
+    });
+</script>
 </html>

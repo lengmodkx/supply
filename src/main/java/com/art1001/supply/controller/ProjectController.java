@@ -473,7 +473,7 @@ public class ProjectController {
             model.addAttribute("project",project);
             model.addAttribute("taskGroups",taskGroups);
             model.addAttribute("taskMenus",taskMenu);
-
+            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         }catch (Exception e){
             throw new SystemException(e);
         }

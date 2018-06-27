@@ -246,6 +246,10 @@ $(function () {
 
     })
 
+    var url = window.location.href;
+    if(url.indexOf("file") > 0){
+        $(".toper-nav ul li:nth-of-type(3)").addClass("now").siblings().removeClass("now");
+    }
 
 
 });

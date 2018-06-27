@@ -5,6 +5,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class FileController {
     @Resource
     private FileService fileService;
 
+    @Resource
+    private ProjectService projectService;
     /**
      * 文件列表
      *
@@ -50,8 +53,9 @@ public class FileController {
         List<File> fileList = fileService.findChildFile(projectId, parentId, isDel);
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", parentId);
-        model.addAttribute("projectId", projectId);
-        return "mainpage";
+        model.addAttribute("project", projectService.findProjectByProjectId(projectId));
+        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        return "file";
     }
 
     /**
