@@ -244,7 +244,26 @@ $(function () {
         // 点击 “文件库 > 图片” 再把点击元素的后面的兄弟元素span移除
 
 
-    })
+    });
+    
+  //下载文件弹框
+    function loadfile() {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset: '50px',
+                area:['100%','100%'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: 0,
+                anim: 1,  //动画 0-6
+                content: ['tk-file-download.html','no']
+            });
+        });
+    };
 
     var url = window.location.href;
     if(url.indexOf("file") > 0){
