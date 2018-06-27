@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link},~{})">
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
     <title>首页</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}" href="../static/css/index.css">
 </head>
 <body>
-<header th:replace="common/header :: header"></header>
+<header th:include="common/header::frag (${user.userInfo.image})"></header>
 
 <div class="content">
 
