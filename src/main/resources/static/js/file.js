@@ -6,12 +6,9 @@ function getQueryString(name)
     return null;
 }
 
-var parentId = $("#parentId").val();
-var projectId = getQueryString("projectId");
-console.log(parentId);
+// var parentId = $("#parentId").val();
+var projectId = $("#projectId").val();
 console.log(projectId);
-var url = '/file/uploadFile?projectId=' + projectId + "&parentId=" + parentId;
-console.log(url);
 $(function () {
     var selectNum=0;
 
@@ -92,19 +89,19 @@ $(function () {
             elem: '#uploadFile' //绑定元素
             , url: '/file/uploadFile' //上传接口
             , method: 'post'
-            , data: {projectId: projectId, parentId: parentId}
+            , data: {projectId: projectId}
             , exts: '|' // 可上传所有类型的文件
             , done: function (data) {
                 //上传完毕回调
                 if (data.result === 1) {
                     window.location.reload();
                 } else {
-                    layer.msg(data.msg, 1, 8);
+                    layer.msg(data.msg, {icon: 2});
                 }
             }
             , error: function () {
                 //请求异常回调
-                layer.msg('上传失败', 1, 8);
+                layer.msg('上传失败', {icon: 2});
             }
         });
     });

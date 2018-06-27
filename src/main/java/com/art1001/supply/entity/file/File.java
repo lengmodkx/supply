@@ -3,6 +3,7 @@ package com.art1001.supply.entity.file;
 import com.art1001.supply.entity.base.BaseEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Data;
 
@@ -57,7 +58,7 @@ public class File extends BaseEntity implements Serializable {
 
 
     /**
-     * 是否目录  1：目录  2：文件
+     * 是否目录  1：目录  0：文件
      */
     private Integer catalog;
 
@@ -84,5 +85,10 @@ public class File extends BaseEntity implements Serializable {
      * 标签id
      */
     private String tagId;
+
+    /**
+     * 子文件
+     */
+    private List<File> fileChildList;
 
 }
