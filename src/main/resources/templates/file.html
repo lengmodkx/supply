@@ -5,85 +5,91 @@
     <title></title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
-
 </head>
 <body>
-<div class="file-box boxsizing layui-form">
-    <input type="hidden" title="parentId" th:value="${parentId}" id="parentId">
-    <div class="file-toper">
-        <span>文件库</span>
-        <div class="add-share" id="uploadFile">
-            <img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
-        </div>
-        <div class="add-share" id="createFolder">
-            <img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
-        </div>
-    </div>
-    <div class="check-all-file">
+<header th:include="common/header::frag (${user.userInfo.image})"></header>
 
-        <div class="file-names">
-            <input class=" " type="checkbox" name="" title="" lay-skin="primary" lay-filter="check-all"><span>全选</span>
-        </div>
-        <div class="file-caozuo-wrap">
-            <div class="file-caozuo">
-                <i class="layui-icon layui-icon-download-circle " style="font-size: 16px; color: #ADADAD;"></i> 下载
+<div th:include="common/toper::frag (${user.userInfo.projectName})"></div>
+
+<div class="content-wrap-wrap boxsizing">
+    <div class="content boxsizing">
+        <div id="file" style="display: none">
+    <div class="file-box boxsizing layui-form">
+        <div class="file-toper">
+            <span>文件库</span>
+            <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
             </div>
-            <div class="file-caozuo">
-                <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
-            </div>
-            <div class="file-caozuo">
-                <i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制
-            </div>
-            <div class="file-caozuo">
-                <i class="layui-icon layui-icon-star-fill " style="font-size: 16px; color: #ADADAD;"></i> 收藏
-            </div>
-            <div class="file-caozuo">
-                <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: #ADADAD;"></i> 移到回收站
+            <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
             </div>
         </div>
+        <div class="check-all-file">
 
-    </div>
-    <!--没有文件-->
-    <div class="no-file" style="display: none">
-        <img th:src="@{/image/nofile.png}" src="../static/image/nofile.png">
-        <p>目前还没有文件～</p>
-    </div>
-    <!--有文件-->
-    <div class="have-file">
+            <div class="file-names"><input class=" " type="checkbox" name="" title="" lay-skin="primary" lay-filter="check-all" ><span>全选</span></div>
+            <div class="file-caozuo-wrap" style="display: none">
+                <div class="file-caozuo">
+                    <i class="layui-icon layui-icon-download-circle " style="font-size: 16px; color: #ADADAD;"></i> 下载
+                </div>
+                <div class="file-caozuo">
+                    <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
+                </div>
+                <div class="file-caozuo">
+                    <i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制
+                </div>
+                <div class="file-caozuo">
+                    <i class="layui-icon layui-icon-star-fill " style="font-size: 16px; color: #ADADAD;"></i> 收藏
+                </div>
+                <div class="file-caozuo">
+                    <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: #ADADAD;"></i> 移到回收站
+                </div>
+            </div>
+        </div>
+        <!--没有文件-->
+        <div class="no-file" style="display: none">
+            <img th:src="@{/image/nofile.png}" src="../static/image/nofile.png">
+            <p>目前还没有文件～</p>
+        </div>
+        <!--有文件-->
+        <div class="have-file">
 
-        <!--缩略图模式-->
-        <div class="img-show-wrap">
-            <ul class="img-show clearfix">
-                <li class="boxsizing new-file-wrap" style="display: none">
-                    <div class="one-file">
-                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
-                    </div>
-                    <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"></div>
-                </li>
-                <li class="boxsizing one-file-wrap fileList" th:each="file:${fileList}">
-                    <div class="one-file boxsizing">
-                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">
-                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
-                        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
-                        <div class="img-show-operate">
-                            <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>
+            <!--缩略图模式-->
+            <div class="img-show-wrap" >
+                <ul class="img-show clearfix">
+                    <li class="boxsizing new-file-wrap" style="display: none">
+                        <div class="one-file">
+                            <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                         </div>
-                    </div>
-                    <div class="one-file-name"  th:text="${file.fileName}">图片.zip</div>
-                    <span th:data="${file.fileId}"></span>
-                </li>
-            </ul>
+                        <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
+                    </li>
+                    <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
+                        <div class="one-file boxsizing">
+                            <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks" >
+                            <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                            <img src="../static/image/nofile.png" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}">
+                            <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
+                            <div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>
+                        </div>
+                        <div class="one-file-name" th:text="${file.fileName}">图片222.zip</div>
+                    </li>
+
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-
+    </div>
+</div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
+<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 <script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 </html>

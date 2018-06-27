@@ -20,31 +20,49 @@
 
 <div class="content-wrap-wrap boxsizing">
     <div class="content boxsizing">
-        <div id="chat" style="display: none">
-            <div class="chat-box boxsizing layui-form">
-                <div class="chat-title">项目名称</div>
-                <div class="chat">
-                    <div class="receive">
-                        <img src="../static/image/begintime.png"  th:src="@{/image/begintime.png}" />
-                        <p class="boxsizing">我是接受的消息</p>
-                    </div>
-                    <div class="send">
-                        <img src="../static/image/begintime.png"  th:src="@{/image/begintime.png}" />
-                        <p class="boxsizing">我是发送的消息</p>
-                    </div>
-                </div>
-
-                <div class="publish boxsizing">
-                    <textarea name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
-                    <div class="fenge-line"></div>
-                    <div class="publish-bottom">
-                        <img src="../static/image/fujian.png"  th:src="@{/image/fujian.png}" />
-                        <img src="../static/image/biaoqing.png"  th:src="@{/image/biaoqing.png}" />
-                        <div class="publish-btn ">发布</div>
-                    </div>
-
+        <div id="date" style="display: none">
+            <div class="add-scheduling">
+                <div class="middle-box">
+                    <img src="../static/image/adds.png"  th:src="@{/image/adds.png}" />
+                    添加日程
                 </div>
             </div>
+            <!--//每一个折叠区域-->
+            <div class="my-scheduling-box boxsizing layui-form">
+                <div class="scheduling-title">
+                    <span class="now">未来的日程</span><span>过去的日程</span>
+                </div>
+                <div class="layui-collapse my-scheduling">
+                    <div class="layui-colla-item">
+                        <div class="layui-colla-title">
+                            <span class="scheduling-date">今天</span><span class="scheduling-num">+2</span>
+                        </div>
+                        <div class="layui-colla-content layui-show scheduling-list">
+                            <ul>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
     </div>
 </div>
