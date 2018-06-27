@@ -20,6 +20,7 @@ body{
 .file-toper span{
     height: 55px;
     line-height: 60px;
+    cursor: pointer;
 }
 .add-share{
     float: right;

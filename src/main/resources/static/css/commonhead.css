@@ -160,9 +160,9 @@
     height: 48px;
     font-size: 16px;
 }
-.toper-nav li:nth-of-type(1){
-    margin-right: 10px;
-}
+/*.toper-nav li:nth-of-type(1){*/
+    /*margin-right: 10px;*/
+/*}*/
 .toper-nav li:hover{
    border-bottom: 2px solid #017ECA;
 }
