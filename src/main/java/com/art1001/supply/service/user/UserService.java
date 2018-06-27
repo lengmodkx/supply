@@ -67,4 +67,11 @@ public interface UserService {
 	 * @return
 	 */
     List<UserInfoEntity> findTaskMemberInfo(String taskId, String status);
+
+	/**
+	 * 根据任务id 查询出该任务的执行者信息
+	 * @param taskId 任务id
+	 * @return
+	 */
+	UserEntity findExecutorByTask(String taskId);
 }

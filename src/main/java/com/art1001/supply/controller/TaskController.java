@@ -40,8 +40,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.xml.ws.RequestWrapper;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.SimpleFormatter;
 
 /**
  * 任务控制器，关于任务的操作
@@ -285,7 +287,7 @@ public class TaskController {
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("系统异常,更新任务备注失败! 当前任务: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,更新任务备注失败! 当前任务:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -303,15 +305,15 @@ public class TaskController {
         try {
             TaskLogVO taskLogVO = taskService.updateTask(task);
             if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","更新成功!");
-                jsonObject.put("result","1");
+                jsonObject.put("msg","设置成功!");
+                jsonObject.put("result",1);
                 jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","更新失败!");
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("系统异常,更新任务优先级失败! 当前任务: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,更新任务优先级失败! 当前任务,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -377,23 +379,23 @@ public class TaskController {
      */
     @PostMapping("updateTaskRepeat")
     @ResponseBody
-    public JSONObject updateTaskRepeat(@RequestParam Task task,@RequestParam Object object){
+    public JSONObject updateTaskRepeat(Task task,Object object){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.updateTaskRepeat(task,object);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","重复规则设置成功");
-                jsonObject.put("result","1");
+                jsonObject.put("result",1);
                 jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","重复规则设置失败!");
                 jsonObject.put("result","0");
             }
         } catch (Exception e){
-            log.error("系统异常,重复规则更新失败! 当前任务id: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,重复规则更新失败! 当前任务id:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
-        return null;
+        return jsonObject;
     }
 
     /**
@@ -407,13 +409,17 @@ public class TaskController {
         try {
             //更新任务时间信息
             TaskLogVO taskLogVO = taskService.updateTaskStartAndEndTime(task);
-            if(taskLogVO.getResult() > 1){
-                jsonObject.put("msg","时间更新成功!");
-                jsonObject.put("result","1");
+            if(taskLogVO.getResult() > 0){
+                if(task.getStartTime() != null){
+                    jsonObject.put("msg","开始时间更新成功!");
+                } else{
+                    jsonObject.put("msg","结束时间更新成功!");
+                }
+                jsonObject.put("result",1);
                 jsonObject.put("taskLog",taskLogVO);
             } else{
                 jsonObject.put("msg","时间更新失败!");
-                jsonObject.put("result","0");
+                jsonObject.put("result",0);
             }
         } catch (Exception e){
             log.error("任务时间信息更新失败,{}",e);
@@ -456,17 +462,18 @@ public class TaskController {
      */
     @PostMapping("updateTaskRemindTime")
     @ResponseBody
-    public JSONObject updateTaskRemindTime(@RequestParam Task task,@RequestParam UserEntity userEntity){
+    public JSONObject updateTaskRemindTime(Task task,UserEntity userEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.updateTaskRemindTime(task,userEntity);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","设置成功！");
-                jsonObject.put("result","1");
+                jsonObject.put("result",1);
                 jsonObject.put("taskLog",taskLogVO);
-            }
+            } else{
                 jsonObject.put("msg","设置失败！");
                 jsonObject.put("result","0");
+            }
         } catch (Exception e){
             log.error("系统异常,设置提醒时间失败! 任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -843,9 +850,9 @@ public class TaskController {
         try {
             taskService.SettingUpPrivacyPatterns(task);
             jsonObject.put("msg","修改成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("更改隐私模式失败! 当前任务id: ,{},{}",task.getTaskId(),e);
+            log.error("更改隐私模式失败! 当前任务id,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -878,11 +885,22 @@ public class TaskController {
      * @return
      */
     @GetMapping("initTask.html")
-    public String initTask(Task task,Model model){
+    public String initTask(Task task,String projectId,String type,Model model){
         JSONObject jsonObject = new JSONObject();
+        //时间格式
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
+            //获取当前用户信息
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            model.addAttribute("user",userEntity);
+            //当前项目信息
+            model.addAttribute("projectId",projectId);
+            //是创建任务还是更新任务
+            model.addAttribute("type",type);
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
+            //format
+            model.addAttribute("task",taskById);
             //判断当前用户有没有对该任务点赞
             boolean isFabulous = taskService.judgeFabulous(task);
             //判断当前用户有没有收藏该任务
@@ -909,22 +927,35 @@ public class TaskController {
             if(subLevelTask != null & subLevelTask.size() > 0){
                 jsonObject.put("subLevelTask",subLevelTask);
                 model.addAttribute("subLevelTask",subLevelTask);
-            } else{
-                model.addAttribute("subLevelTask","无子任务数据");
             }
-            //查询出该任务的成员信息(创建者,参与者,执行者)
+            //查询出该任务的参与者信息
             List<UserInfoEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者");
             if(!participantList.isEmpty()){
                 model.addAttribute("participantList",participantList);
             } else{
                 model.addAttribute("participantList","无数据!");
             }
-            //查询出该任务的执行者信息
-            List<UserInfoEntity> executor = taskMemberService.findTaskMemberInfo(task.getTaskId(),"执行者");
-            if(!executor.isEmpty()){
-                model.addAttribute("executor",executor);
+            //拿到该任务的执行者信息
+            UserEntity executorInfo = userService.findExecutorByTask(task.getTaskId());
+            if(executorInfo != null){
+                model.addAttribute("executor",executorInfo);
             } else{
-                model.addAttribute("executor","无数据!");
+                executorInfo = new UserEntity();
+                executorInfo.setUserName("待认领");
+                model.addAttribute("executor",executorInfo);
+            }
+            //查询出项目下的成员
+            List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
+            if(projectAllMember != null && projectAllMember.size() > 0){
+                model.addAttribute("members",projectAllMember);
+            } else{
+                if(projectAllMember == null){
+                    projectAllMember = new ArrayList<UserEntity>();
+                }
+                UserEntity userEntity1 = new UserEntity();
+                userEntity1.setUserName("该项目下没有成员");
+                projectAllMember.add(userEntity1);
+                model.addAttribute("members",projectAllMember);
             }
             //查询出该任务所在的位置信息
             Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
@@ -947,7 +978,7 @@ public class TaskController {
             log.error("系统异常,获取数据失败! 当前任务id ,{},{}",task.getTaskId(),e);
             throw new SystemException(e);
         }
-        return "mytask";
+        return "revisetask";
     }
 
     /**
@@ -962,7 +993,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> list = taskService.findProjectAllMember(projectId,executor);
-            if(list.size() > 0){
+            if(list != null && list.size() > 0){
                 jsonObject.put("data",list);
             } else{
                 jsonObject.put("data",null);
@@ -1153,10 +1184,5 @@ public class TaskController {
             throw new AjaxException(e);
         }
         return jsonObject;
-    }
-
-    @GetMapping("task1")
-    public String task(){
-        return "mainpage";
     }
 }
