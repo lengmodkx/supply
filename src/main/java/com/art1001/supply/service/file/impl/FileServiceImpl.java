@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -77,12 +78,12 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
         // 得到文件名
-        String fileName = multipartFile.getOriginalFilename();
+        String originalFilename = multipartFile.getOriginalFilename();
 
         // 获取要创建文件的上级目录实体
         String parentUrl = fileService.getPerLevel(projectId, parentId);
-
-        fileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("."));
+        // 重置文件名
+        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
         // 设置文件url
         String fileUrl = parentUrl + fileName;
         // 上传oss
@@ -90,7 +91,8 @@ public class FileServiceImpl implements FileService {
 
         // 写库
         File file = new File();
-        file.setFileName(fileName);
+        // 用原本的文件名
+        file.setFileName(originalFilename);
         file.setProjectId(projectId);
         file.setFileUrl(fileUrl);
 
@@ -236,6 +238,7 @@ public class FileServiceImpl implements FileService {
                 assert listing != null;
                 // 得到所有的文件夹，
                 for (String commonPrefix : listing.getCommonPrefixes()) {
+
                     // 得到文件名
                     String destinationObjectName = destinationFolderName + commonPrefix;
                     // 移动oss上的文件夹

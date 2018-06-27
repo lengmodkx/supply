@@ -108,4 +108,11 @@ import java.util.List;
 	 * 根据条件查询文件
 	 */
 	List<File> findFileList(File file);
+
+	/**
+	 * 获取一个文件夹下所有的子文件
+	 * @param fileId 要获取的文件夹id
+	 * @return List<File>
+	 */
+//	List<File> findAllChild(String fileId);
 }

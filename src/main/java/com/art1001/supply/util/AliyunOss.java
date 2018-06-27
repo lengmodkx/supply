@@ -167,6 +167,22 @@ public class AliyunOss {
         return null;
     }
 
+    public static void rangeDownload(String objectName) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, objectName);
+            // 获取0~1000字节范围内的数据，包括0和1000，共1001个字节的数据。如果指定的范围无效（比如开始或结束位置的指定值为负数，或指定值大于文件大小），则下载整个文件。
+            getObjectRequest.setRange(-1, -1);
+            // 范围下载。
+            ossClient.getObject(getObjectRequest, new File("D:/test"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
+    }
+
     /**
      * 列举指定目录下的所有文件和文件夹
      * @param folder 目录

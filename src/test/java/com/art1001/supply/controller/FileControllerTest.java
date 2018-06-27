@@ -8,6 +8,10 @@ import com.art1001.supply.util.AliyunOss;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class FileControllerTest extends ApplicationTests {
@@ -74,6 +78,21 @@ public class FileControllerTest extends ApplicationTests {
             file.setParentId(file.getFileId());
         }
 
+    }
+
+    @Test
+    public void findAllChildTest() {
+        String fileId = "c281fd72f08e42eb9370a027a3cef889";
+//        List<File> fileList = fileService.findAllChild(fileId);
+    }
+
+    public static void main(String[] args) {
+        AliyunOss.rangeDownload("1529984862029/1529984862219");
+
+    }
+
+    private static String test() {
+        return "1231";
     }
 
 

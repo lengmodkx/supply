@@ -107,6 +107,7 @@ public class FileController {
             List<File> fileList = fileService.findFileList(file);
             jsonObject.put("result", 1);
             jsonObject.put("data", fileList);
+            jsonObject.put("file", file);
         } catch (Exception e) {
             e.printStackTrace();
             jsonObject.put("result", 0);
@@ -306,6 +307,12 @@ public class FileController {
         fileService.moveFile(fileIds, folderId);
         // 获取目标文件夹
         File folder = fileService.findFileById(folderId);
+    }
+
+    @GetMapping("/downloadFolder")
+    @ResponseBody
+    public void downloadFolder(HttpServletResponse response) {
+
     }
 
     /**
