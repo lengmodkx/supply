@@ -14,7 +14,7 @@ html,body{
     font-size: 16px;
 }
 .header-middle{
-    position: relative;
+    /*position: relative;*/
 }
 .search-input{
     width: 300px;

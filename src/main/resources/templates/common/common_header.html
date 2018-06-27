@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="common_header(title,links)">
+<head th:fragment="common_header(title,links,styles)">
     <meta charset="UTF-8">
-    <title></title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" th:href="@{/css/common.css}" href="../../static/css/common.css">
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css">
     <link rel="stylesheet" th:href="@{/css/commonhead.css}" href="../../static/css/commonhead.css">
+    <title th:replace="${title}">The awesome application</title>
     <th:block th:replace="${links}" />
+    <th:block th:replace="${styles}" />
 </head>
 
 </html>
