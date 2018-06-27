@@ -1,63 +1,63 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head th:replace="common/header :: header(~{::title},~{::link})">
     <meta charset="UTF-8">
     <title>首页</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}" href="../static/css/index.css">
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">-->
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">-->
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/css/index.css}" href="../static/css/index.css">-->
 </head>
 <body>
 <!--头部-->
-<div class="header">
-    <div class="layui-row">
+<!--<div class="header">-->
+    <!--<div class="layui-row">-->
 
-        <div class="layui-col-md4 layui-col-lg5 header-left">5D管理系统</div>
-        <div class="layui-col-md4 layui-col-lg4">
-            <input type="text" class="layui-input search-input boxsizing">
-            <i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>
-        </div>
+        <!--<div class="layui-col-md4 layui-col-lg5 header-left">5D管理系统</div>-->
+        <!--<div class="layui-col-md4 layui-col-lg4">-->
+            <!--<input type="text" class="layui-input search-input boxsizing">-->
+            <!--<i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>-->
+        <!--</div>-->
 
-        <div class="layui-col-md4 layui-col-lg3 header-right">
-            <span class="layui-breadcrumb" lay-separator="|">
-                <a href="">我的</a>
-                <a href="">新建</a>
-                <a href="">日历</a>
-                <a href="">消息</a>
-                <a href="">帮助</a>
-            </span>
-        </div>
-    </div>
-    <!--右侧固定的头像与菜单栏-->
-    <div class="head-photo-wrap">
-        <img class="head-photo" th:src="#{IMAGE_SERVER}+${user.userInfo.image}">
+        <!--<div class="layui-col-md4 layui-col-lg3 header-right">-->
+            <!--<span class="layui-breadcrumb" lay-separator="|">-->
+                <!--<a href="">我的</a>-->
+                <!--<a href="">新建</a>-->
+                <!--<a href="">日历</a>-->
+                <!--<a href="">消息</a>-->
+                <!--<a href="">帮助</a>-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--&lt;!&ndash;右侧固定的头像与菜单栏&ndash;&gt;-->
+    <!--<div class="head-photo-wrap">-->
+        <!--<img class="head-photo" th:src="#{IMAGE_SERVER}+${user.userInfo.image}">-->
 
-        <div class="vertical-nav">
-            <ul>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">创建企业</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">个人项目</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">账号设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">偏好设置</a>
-                </li>
-                <li class="boxsizing">
-                    <span></span>
-                    <a href="">退出登录</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
+        <!--<div class="vertical-nav">-->
+            <!--<ul>-->
+                <!--<li class="boxsizing">-->
+                    <!--<span></span>-->
+                    <!--<a href="">创建企业</a>-->
+                <!--</li>-->
+                <!--<li class="boxsizing">-->
+                    <!--<span></span>-->
+                    <!--<a href="">个人项目</a>-->
+                <!--</li>-->
+                <!--<li class="boxsizing">-->
+                    <!--<span></span>-->
+                    <!--<a href="">账号设置</a>-->
+                <!--</li>-->
+                <!--<li class="boxsizing">-->
+                    <!--<span></span>-->
+                    <!--<a href="">偏好设置</a>-->
+                <!--</li>-->
+                <!--<li class="boxsizing">-->
+                    <!--<span></span>-->
+                    <!--<a href="">退出登录</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
 <div class="content">
     <!--<div class="content-nav">-->

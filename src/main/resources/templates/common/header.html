@@ -1,5 +1,16 @@
 <!DOCTYPE html>
-<div class="header" id="header" th:fragment="header">
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title th:replace="${title}">The awesome application</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" th:href="@{/css/common.css}" href="../../static/css/common.css">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css">
+    <link rel="stylesheet" th:href="@{/css/commonhead.css}" href="../../static/css/commonhead.css">
+    <link th:block th:replace="${links}" />
+    <!--<style th:block th:replace="${styles}" />-->
+</head>
+<div class="header" id="header" >
     <div class="head-left">5D管理系统-项目协同管理</div>
     <div class=" header-middle">
         <input type="text"    class="layui-input search-input boxsizing">
@@ -17,7 +28,7 @@
 
     <!--右侧固定的头像与菜单栏-->
     <div class="head-photo-wrap">
-        <img src="../static/image/add.png" class="head-photo">
+        <img src="../../static/image/add.png" class="head-photo">
 
         <div class="vertical-nav">
             <ul>
@@ -49,3 +60,4 @@
         </div>
     </div>
 </div>
+</html>
