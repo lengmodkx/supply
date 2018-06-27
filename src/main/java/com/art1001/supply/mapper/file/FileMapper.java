@@ -92,4 +92,9 @@ public interface FileMapper {
 	 * 获取项目顶级路径
 	 */
 	String findTopLevel(@Param("projectId") String projectId);
+
+	/**
+	 * 根据条件查询文件
+	 */
+	List<File> findFileList(File file);
 }

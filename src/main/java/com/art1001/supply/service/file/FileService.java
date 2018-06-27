@@ -86,21 +86,26 @@ import java.util.List;
 	/**
 	 * 移动文件
 	 *
-	 * @param fileId 源文件id
+	 * @param fileIds 源文件id数组
 	 * @param folderId 目标目录id
 	 */
-    void moveFile(String fileId, String folderId);
+    void moveFile(String[] fileIds, String folderId);
 
 	/**
 	 * 复制文件
 	 *
-	 * @param fileId 源文件id
+	 * @param fileIds 源文件id数组
 	 * @param folderId 目标目录id
 	 */
-	void copyFile(String fileId, String folderId);
+	void copyFile(String[] fileIds, String folderId);
 
     /**
      * 获取上级文件路径
      */
     String getPerLevel(String projectId, String parentId);
+
+	/**
+	 * 根据条件查询文件
+	 */
+	List<File> findFileList(File file);
 }

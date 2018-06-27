@@ -100,10 +100,21 @@ body{
 .file-name{
     text-align: left;
 }
+.file-names{
+    text-align: left;
+    float: left;
+    line-height: 35px;
+}
 .file-name .layui-form-checkbox[lay-skin=primary]{
     float: left;
     margin-top: 9px;
     margin-left: 5px;
+}
+.file-names .layui-form-checkbox[lay-skin=primary]{
+    float: left;
+    margin-top: 9px;
+    margin-left: 5px;
+    margin-right: 15px;
 }
 .file-name .layui-form-checkbox[lay-skin=primary] i{
     width: 14px;

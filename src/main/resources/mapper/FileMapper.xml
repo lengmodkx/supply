@@ -122,6 +122,42 @@
 		AND parent_id = '0'
 		LIMIT 0, 1
 	</select>
+
+	<select id="findFileList" parameterType="com.art1001.supply.entity.file.File" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		prm_file
+		<where>
+			<if test="fileName != null and fileName != ''">
+				file_name = #{fileName}
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				and file_url = #{fileUrl}
+			</if>
+			<if test="projectId != null and projectId != ''">
+				and project_id = #{projectId}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				and member_id = #{memberId}
+			</if>
+			<if test="memberName != null and memberName != ''">
+				and member_name = #{memberName}
+			</if>
+			<if test="memberImg != null and memberImg != ''">
+				and member_img = #{memberImg}
+			</if>
+			<if test="catalog != null ">
+				and catalog = #{catalog}
+			</if>
+			<if test="parentId != null and parentId != ''">
+				and parent_id = #{parentId}
+			</if>
+			<if test="fileDel != null">
+				and file_del = #{fileDel}
+			</if>
+		</where>
+	</select>
 	
 	<delete id="deleteFileById" parameterType="java.lang.String">
 		delete from
