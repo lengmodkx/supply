@@ -385,11 +385,6 @@ layui.use('form', function() {
      * 选中任务的参与者
      */
     $('.people-ok').click(function () {
-      if(document.getElementById("people-ok").classList.contains("cyz-chufa")){
-
-      }else {
-
-      }
         var arr=[];
         for (var i=0;i<$(".one-people").length;i++){
             if ($(".one-people").eq(i).find("i").is(":visible")) {
@@ -432,67 +427,56 @@ layui.use('form', function() {
         $(".fujian-box").slideToggle();
     });
 
-
     /**
-     * 查看任务详情的时候显示的人员信息
-     */
-    $('#taskInfoAddMember').click(function () {
-        var url = '/task/findTaskMemberInfo';
-        var args = {"projectId":projectId,"taskId":taskId};
-        var executor = "";
-        var noExecutor = "";
-        $.post(url,args,function (data) {
-            for (var i = 0;i < data.userExistTask.length;i++){
-                executor += '<p>参与者</p>'+
-                            '<div class="one-people">'+
-                                '<img src="/image/begintime.png" th:src="@{'+ data.userExistTask[i].userInfo.image +'}" />'+
-                                '<span value = "'+ data.userExistTask[i].id +'">'+ data.userExistTask[i].userName +'</span>'+
-                                '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                            '</div>';
-            }
-            for (var i = 0;i < data.userNotExistTask.length;i++){
-                noExecutor += "<div class=\'one-people\'>";
-                                    "<img th:src='\@{"+ data.userNotExistTask[i].userInfo.image +"}\'>";
-                                    "<span value = '"+ data.userNotExistTask[i].id +"'>" + data.userNotExistTask[i].userName + "</span>";
-                                    "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-                                "</div>";
-            }
-            $('#executor').html(executor);
-            $('#noExecutor').html(noExecutor);
-        },"json");
-    });
-
-    /**
-     * 添加任务的时候显示的人员信息
+     * 任务详情的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
-        var url = "/task/findProjectAllMember";
-        var args = {"executor": $('#executorId').val(), "projectId": projectId};
+        var url = '/task/findTaskMemberInfo';
+        var args = {"projectId":projectId, "taskId": taskId};
+        var executor = "";
+        var noExecutor = "";
         $.post(url, args, function (data) {
             var content = "";
             var member = data.data;
             if (member != null && member.length > 0) {
-                for (var i = 0; i < member.length; i++) {
-                    content += "<div class=\'one-people\'>";
-                    content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
-                    content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
-                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-                    content += "</div>";
+                for (var i = 0;i < data.userExistTask.length;i++){
+                    executor += '<p>参与者</p>'+
+                        '<div class="one-people">'+
+                        '<img src="/image/begintime.png" th:src="@{'+ data.userExistTask[i].userInfo.image +'}" />'+
+                        '<span value = "'+ data.userExistTask[i].id +'">'+ data.userExistTask[i].userName +'</span>'+
+                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '</div>';
                 }
-                $("#executor").html(content);
-                $('#identity').html("参与者");
-                $(".people").show(500,function () {
-                   document.getElementById("people-ok").classList.add("cyz-chufa")
-                });
-
-            } else{
-                    content += "<div class=\'one-people\'>";
-                    content += "<img th:src='\@{add.png}\'>";
-                    content += "<span>该项目还没有成员</span>";
-                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-                    content += "</div>";
-                $("#executor").html(content);
-                $(".people").show(500);
+                for (var i = 0;i < data.userNotExistTask.length;i++){
+                    noExecutor += "<div class=\'one-people\'>";
+                    "<img th:src='\@{"+ data.userNotExistTask[i].userInfo.image +"}\'>";
+                    "<span value = '"+ data.userNotExistTask[i].id +"'>" + data.userNotExistTask[i].userName + "</span>";
+                    "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                    "</div>";
+                }
+                $('#executor').html(executor);
+                $('#noExecutor').html(noExecutor);
+            //     for (var i = 0; i < member.length; i++) {
+            //         content += "<div class=\'one-people\'>";
+            //         content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
+            //         content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+            //         content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+            //         content += "</div>";
+            //     }
+            //     $("#executor").html(content);
+            //     $('#identity').html("参与者");
+            //     $(".people").show(500,function () {
+            //        document.getElementById("people-ok").classList.add("cyz-chufa")
+            //     });
+            //
+            // } else{
+            //         content += "<div class=\'one-people\'>";
+            //         content += "<img th:src='\@{add.png}\'>";
+            //         content += "<span>该项目还没有成员</span>";
+            //         content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+            //         content += "</div>";
+            //     $("#executor").html(content);
+            //     $(".people").show(500);
             }
         }, "json");
         e.stopPropagation();

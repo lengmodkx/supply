@@ -370,7 +370,7 @@
 	<select id="findUserByExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
 		from tb_user where u_id in
-		(select member_id from prm_task_member where current_task_id = #{taskId} and  member_id in
+		(select member_id from prm_task_member where public_id = #{taskId} and  member_id in
 		 (select member_id from prm_project_member where project_id =  #{projectId}))
 	</select>
 
@@ -378,7 +378,7 @@
 	<select id="findUserByNotExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
 		from tb_user where u_id not in
-		(select member_id from prm_task_member where current_task_id = #{taskId} and  member_id in
+		(select member_id from prm_task_member where public_id = #{taskId} and  member_id in
 		(select member_id from prm_project_member where project_id =  #{projectId}))
 	</select>
 
