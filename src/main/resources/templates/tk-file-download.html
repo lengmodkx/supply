@@ -12,11 +12,12 @@
 <div class="download-wrap">
     <!--顶部-->
     <div class="download-toper boxsizing">
-        <span class="download-name">啥啥啥任务</span>
+        <input type="hidden" th:value="${file.fileId}" id="fileId">
+        <span class="download-name" th:text="${file.fileName}">啥啥啥任务</span>
         <ul class="download-toper-ul">
             <li>详情</li>
-            <li>版本更新</li>
-            <li>下载</li>
+            <li id="uploadFile">版本更新</li>
+            <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
             <li>更多</li>
         </ul>
         <img src="../static/image/close.png" th:src="@{/image/close.png}">
@@ -24,8 +25,10 @@
     <!--左侧-->
     <div class="download-left boxsizing">
         <div class="download-left-box">
-            <div class="download-left-name">aaa.zip</div>
-            <div class="download-left-btn">下载文件 (<span>1.2MB</span>)</div>
+            <div class="download-left-name">
+                <img th:src="#{IMAGE_SERVER} + ${file.fileUrl}" alt="" src="">
+            </div>
+            <div class="download-left-btn" th:data="${file.fileId}">下载文件 (<span th:text="${file.size}">1.2MB</span>)</div>
         </div>
     </div>
     <!--右侧-->
@@ -33,13 +36,13 @@
         <div class="scroll-box">
             <p class="fonts">版本信息</p>
             <div class="up-prople-info">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
+                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
                 <span class="up-prople-name">谁谁谁</span>
                 <span class="up-prople-time">上传于 <span>6月5日8:00</span></span>
             </div>
             <div class="line"></div>
             <div class="add-tag combox">
-                <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
+                <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}"/>
                 <span>标签</span>
                 <span class="no-tags">添加标签</span>
                 <!--新建  搜索标签框-->
@@ -48,7 +51,7 @@
                     <div class="tag-search" style="display: none">
                         <div class="tag-search-title boxsizing">
                             <input class="tag-search-input" type="text" placeholder="搜索标签">
-                            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                            <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
                         </div>
                         <ul class="tags-ul boxsizing">
                             <li class="tags-list">
@@ -60,9 +63,11 @@
                     <!--新建标签-->
                     <div class="build-tags" style="display: none">
                         <div class="build-tags-title boxsizing">
-                            <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
+                            <i class="layui-icon layui-icon-left go-return"
+                               style="font-size: 15px; color: #a6a6a6;"></i>
                             新建标签
-                            <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+                            <i class="layui-icon layui-icon-close close-tag"
+                               style="font-size: 15px; color: #a6a6a6;"></i>
                         </div>
                         <div class="build-tags-con boxsizing">
                             <input class="tag-name boxsizing" type="text" placeholder="标签名称">
@@ -98,28 +103,29 @@
             </div>
             <div class="line"></div>
             <div class="add-guanlian combox">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
                 <span>添加关联</span>
             </div>
             <p class="cyz">参与者</p>
             <div class="work-people boxsizing clearfix">
                 <div class="one-work-people">
-                    <img src="../static/image/add.png" th:src="@{/image/add.png}" />
-                    <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+                    <img src="../static/image/add.png" th:src="@{/image/add.png}"/>
+                    <i class="layui-icon layui-icon-close-fill remove-work-people "
+                       style="font-size: 15px; color: #3da8f5;"></i>
                 </div>
                 <div class="add-work-people">
-                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
                 </div>
             </div>
             <div class="state">
                 <ul>
                     <li class="combox">
-                        <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
+                        <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}"/>
                         <span>谁谁谁 干了什么</span>
                         <div class="in-what-time">6月1日 12:00</div>
                     </li>
                     <li class="combox">
-                        <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
+                        <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}"/>
                         <span>谁谁谁 干了什么</span>
                         <div class="in-what-time">6月1日 12:00</div>
                     </li>
@@ -127,10 +133,11 @@
             </div>
         </div>
         <div style="background-color: #E5E5E5" class="publish boxsizing">
-            <textarea style="background-color: #E5E5E5" name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
+            <textarea style="background-color: #E5E5E5" name="" placeholder="@快速提及他人，enter快速发布"
+                      class="layui-textarea publish-input"></textarea>
             <div class="fenge-line"></div>
             <div class="publish-bottom">
-                <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}" />
+                <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}"/>
                 <div class="publish-btn ">发布</div>
             </div>
             <!--上传文件框-->
@@ -150,7 +157,7 @@
                 </div>
                 <div class="xian"></div>
                 <div class="fujian-box-bottom boxsizing">
-                    <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
+                    <input type="text" placeholder="粘贴下载链接..." class="layui-input lianjie">
                     <div class="add-fujian">添加</div>
                 </div>
             </div>
@@ -159,26 +166,24 @@
     </div>
 
 
-
-
     <!--人员 参与者 弹框-->
     <div class="people boxsizing" style="display: none">
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
             <p>参与者</p>
             <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
+                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
                 <span>李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <p>推荐</p>
             <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
+                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
                 <span>李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <div class="add-new-people">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
                 <span>邀请新成员</span>
             </div>
         </div>
@@ -192,25 +197,64 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/filedownload.js}" src="../static/js/filedownload.js"></script>
 <script>
-    layui.use('form', function(){
-        var form = layui.form;
+    var fileId = $("#fileId").val();
+    $(function () {
 
-        //监听提交
-        form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
-            return false;
+        layui.use(['form', 'layer', 'upload'], function () {
+            var form = layui.form
+                , layer = layui.layer
+                , upload = layui.upload;
+
+            //监听提交
+            form.on('submit(formDemo)', function (data) {
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
+
+            /**
+             * 文件上传
+             */
+            upload.render({
+                elem: '#uploadFile' //绑定元素
+                , url: '/file/updateUploadFile' //上传接口
+                , method: 'post'
+                , data: {fileId: fileId}
+                , exts: '|' // 可上传所有类型的文件
+                , done: function (data) {
+                    //上传完毕回调
+                    if (data.result === 1) {
+                        parent.location.reload();
+                    } else {
+                        layer.msg(data.msg, {icon: 2});
+                    }
+                }
+                , error: function () {
+                    //请求异常回调
+                    layer.msg('更新失败', {icon: 2});
+                }
+            });
+
+            // 下载按钮
+            $(".download-left-btn").click(function () {
+                var fileId = $(this).attr("data");
+                download(fileId);
+            });
+
         });
-
-
     });
-    layui.use('element', function(){
+
+    layui.use('element', function () {
         var element = layui.element;
 
     });
-    
+
     $(".edit-scheduling-title img").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     })
+
+    function download(fileId) {
+        window.location.href = "/file/downloadFile?fileId=" + fileId;
+    }
 </script>
 </html>

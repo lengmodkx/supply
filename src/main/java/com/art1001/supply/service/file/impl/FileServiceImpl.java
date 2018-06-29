@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * fileServiceImpl
  */
-@Service("fileService1")
+@Service
 public class FileServiceImpl implements FileService {
 
     /**

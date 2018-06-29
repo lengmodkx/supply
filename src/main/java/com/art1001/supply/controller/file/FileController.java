@@ -77,6 +77,12 @@ public class FileController {
         return "tk-filemenu";
     }
 
+    @RequestMapping("/openDownloadFile")
+    public String openDownloadFile(@RequestParam String fileId, Model model) {
+        model.addAttribute("file", fileService.findFileById(fileId));
+        return "tk-file-download";
+    }
+
     /**
      * 文件目录
      * @param file 文件
@@ -235,24 +241,24 @@ public class FileController {
     @ResponseBody
     public JSONObject updateUploadFile(
             @RequestParam String fileId,
-            MultipartFile multipartFile
+            MultipartFile file
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
             // 得到原来的文件
-            File file = fileService.findFileById(fileId);
+            File f = fileService.findFileById(fileId);
             // 设置文件url
-            String fileUrl = file.getFileUrl();
+            String fileUrl = f.getFileUrl();
             // 上传oss，相同的objectName会覆盖
-            AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
+            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
 
             // 得到文件名
-            String fileName = multipartFile.getOriginalFilename();
+            String fileName = file.getOriginalFilename();
             // 设置修改后的文件名
-            file.setFileName(fileName);
+            f.setFileName(fileName);
 
             // 更新数据库
-            fileService.updateFile(file);
+            fileService.updateFile(f);
 
             // 设置返回数据
             jsonObject.put("result", 1);

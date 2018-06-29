@@ -29,8 +29,7 @@
             <div class="file-toper">
                 <span><a href="javascript: void(0)"
                          onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
-                <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}"
-                                                            src="../static/image/upload.png">上传
+                <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
                 </div>
                 <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
                 </div>
@@ -79,8 +78,8 @@
                         <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
                             <div class="one-file boxsizing fileList">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
-                                <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
-                                <img src="../static/image/nofile.png" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}">
+                                <img src="../static/image/nofile.png" th:class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                                <img src="../static/image/nofile.png" th:class="textFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}">
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                 <div class="img-show-operate">
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>

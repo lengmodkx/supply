@@ -264,9 +264,15 @@ $(function () {
 
     $(".fileList").each(function () {
         // 进入下级目录
-        $(this).find("img").click(function () {
+        $(this).find(".folderFile").click(function () {
             var fileId = $(this).parent().next().attr("data");
             window.location.href = "/file/list.html?projectId=" + projectId + "&parentId=" + fileId;
+        });
+
+        // 文件点击
+        $(this).find(".textFile").click(function () {
+            var fileId = $(this).parent().next().attr("data");
+            loadFile(fileId);
         });
 
         // 下载
@@ -311,7 +317,7 @@ $(function () {
     // });
 
     //下载文件弹框
-    function loadfile() {
+    function loadFile(fileId) {
         layui.use('layer', function () {
             var layer = layui.layer;
             layer.open({
@@ -324,7 +330,7 @@ $(function () {
                 closeBtn: 0,
                 shade: 0,
                 anim: 1,  //动画 0-6
-                content: ['tk-file-download.html', 'no']
+                content: ['/file/openDownloadFile?fileId=' + fileId]
             });
         });
     }
