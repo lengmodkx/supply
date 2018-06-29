@@ -215,7 +215,7 @@ public class ProjectController {
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
             projectMember.setMemberId(userEntity.getId());
-            projectMember.setMemberName(userEntity.getAccountName());
+            projectMember.setMemberName(userEntity.getUserName());
             projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
             projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());

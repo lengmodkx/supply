@@ -65,13 +65,13 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'MM-dd HH:mm'
         });
 
         laydate.render({
             elem: '#overTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'MM-dd HH:mm'
         });
     });
 if ($("#have-executor").val()){
@@ -149,7 +149,6 @@ if ($("#have-executor").val()){
             $('#tags').html(content);
             $(".tags-search-build").show();
             $(".tag-search").show();
-            $(".no-tags").hide();
         },"json");
         e.stopPropagation();
     });
@@ -286,7 +285,7 @@ if ($("#have-executor").val()){
             var arr=[];
             for (var i=0;i<$(".one-people").length;i++){
                 if ($(".one-people").eq(i).find("i").is(":visible")) {
-                    var value =$(".one-people").eq(i).find("span").attr("value");
+                    var value =$(".one-people").eq(i).find("span").attr("data-id");
                     arr.push(value);
                 }
             }
@@ -315,6 +314,7 @@ if ($("#have-executor").val()){
      * 添加任务的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
+
         zxz =false;
         var url = "/task/findProjectAllMember";
         var args = {"executor": $('#executorId').val(), "projectId": projectId};
@@ -325,8 +325,8 @@ if ($("#have-executor").val()){
             if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
                     content += "<div class=\'one-people\'>";
-                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
-                    content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].memberImg +"'>";
+                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].memberName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 }
