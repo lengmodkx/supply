@@ -117,6 +117,9 @@
        var a = '<li class="assignment" onclick="javascript:updateTask(\''+ task.taskId +'\',\''+ task.projectId+'\')">'+
            '<div class="assignment-top-box boxsizing">'+
            '<input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >'+
+           '<div class="layui-unselect layui-form-checkbox" lay-skin="primary">'+
+           '<i class="layui-icon layui-icon-ok"></i>'+
+           '</div>'+
            '<span class="assignment-title">'+task.taskName+'</span>';
        if(task.taskMember == null){
            a += '<img class="assignment-tx" src="" />';
@@ -129,9 +132,9 @@
            '</div>'+
            '<div class="line"></div>'+
            '</li>';
-       $('#'+taskMenuId).append(a);
+       var old = $('#'+taskMenuId).html();
+       $('#'+taskMenuId).html(a).append(old);
    }
-
 </script>
 
 

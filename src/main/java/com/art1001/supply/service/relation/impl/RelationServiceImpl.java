@@ -308,8 +308,13 @@ public class RelationServiceImpl implements RelationService {
 		return relationMapper.findProjectAndGroupInfoByMenuId(relationId);
 	}
 
-//	@Override
-//	public int findMenuTaskMaxOrder(String taskMenuId) {
-//		return relationMapper.findMenuTaskMaxOrder(taskMenuId);
-//	}
+	/**
+	 * 查询菜单下的任务的最大序号
+	 * @param taskMenuId 菜单id
+	 * @return
+	 */
+	@Override
+	public int findMenuTaskMaxOrder(String taskMenuId) {
+		return relationMapper.findMenuTaskMaxOrder(taskMenuId);
+	}
 }
