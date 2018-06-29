@@ -756,6 +756,10 @@
     float: left;
     margin-left: 15px;
 }
+
+#executor.special-executor i{
+    display: block;
+}
 .one-people i{
     float: right;
     margin-right: 5px;

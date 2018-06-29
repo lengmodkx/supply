@@ -34,18 +34,9 @@
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
 		<id property="taskId" column="task_id"></id>
-		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember">
-			<id column="id" property="id"></id>
-			<result column="member_id1" property="memberId" jdbcType="VARCHAR" />
-			<result column="public_id" property="publicId" jdbcType="VARCHAR" />
-			<result column="public_type1" property="publicType" jdbcType="VARCHAR" />
-			<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-			<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-			<result column="type" property="type" jdbcType="VARCHAR" />
-			<result column="create_time1" property="createTime" jdbcType="BIGINT" />
-			<result column="update_time1" property="updateTime" jdbcType="BIGINT" />
+		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="{taskId=task_id}" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor">
 		</association>
-	</resultMap>
+</resultMap>
 
 	<sql id="Base_Column_List">
 						task_id,
@@ -112,11 +103,12 @@
 			order by task_id asc
 		</if>
 	</select>
-	
-	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		select
-		<include refid="Base_Column_List" />
-		from prm_task where task_id = #{taskId}
+
+	<!-- 根据任务id 查询任务的信息 和执行者的信息i -->
+	<select id="findTaskByTaskId" resultMap="findMenuTaskMemberInfo" parameterType="java.lang.String">
+	SELECT
+	<include refid="Base_Column_List"></include>
+	from prm_task where prm_task.task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
@@ -519,10 +511,10 @@
 
 	<!-- 查询当前菜单下的全部任务信息 -->
 	<select id="taskMenu" resultMap="findMenuTaskMemberInfo">
-		select task_id, task_name, start_time, end_time,tag_id, parent_id, t.member_id, executor, task_menu_id, task_status, task_del, t.update_time, privacy_pattern, other,p.member_id,p.member_img,p.member_name,p.type
-		from prm_task t left JOIN prm_task_member p
-		on p.public_id = t.task_id
-		where t.task_menu_id = #{menuId}
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task
+		where prm_task.task_menu_id = #{menuId} order by prm_task.order desc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->
@@ -540,15 +532,12 @@
 	</select>
 
 	<!-- 将任务的执行者设置为空字符串 -->
-	<update id="removeExecutor">
-		update prm_task
-		<set>
-			executor = ''
-		</set>
+	<delete id="removeExecutor">
+		delete from prm_task_member
 		<where>
-			task_id = #{taskId}
+			public_id = #{taskId} and type = '执行者'
 		</where>
-	</update>
+	</delete>
 
 	<!-- 清空该任务的所有参与者 -->
 	<delete id="clearTaskMember">

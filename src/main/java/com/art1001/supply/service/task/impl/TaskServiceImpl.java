@@ -18,6 +18,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.collect.TaskCollectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
@@ -62,6 +63,10 @@ public class TaskServiceImpl implements TaskService {
     /** 用户逻辑层接口 */
     @Resource
     private UserService userService;
+
+    /** 关系层逻辑接口 */
+    @Resource
+    private RelationService relationService;
 	
 	/**
 	 * 重写方法
@@ -146,8 +151,6 @@ public class TaskServiceImpl implements TaskService {
 	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
         //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
-        //设置该任务的id
-        task.setTaskId(IdGen.uuid());
         //初始创建任务设置为父任务
         task.setParentId("0");
         //设置任务的创建者
@@ -166,6 +169,14 @@ public class TaskServiceImpl implements TaskService {
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
+        //根据查询菜单id 查询 菜单id 下的 最大排序号
+        //int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+//        if(maxOrder < 1){
+//            maxOrder = 0;
+//        } else{
+//            maxOrder += 1;
+//        }
+//        task.setOrder(maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
         //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
@@ -497,32 +508,40 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO addAndRemoveTaskMember(Task task, UserEntity[] addUserEntity, UserEntity[] removeUserEntity) {
+    public TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
         StringBuilder content = new StringBuilder("");
-        //向任务成员表中添加数据
-        if(addUserEntity != null){
-            taskMemberService.addManyMemberInfo(addUserEntity,task);
-            //循环用来拼接log日志字符串
-            content.append(TaskLogFunction.C.getName()).append(" ");
-            for (int i = 0; i < addUserEntity.length; i++) {
-                if(i == addUserEntity.length - 1){
-                    content.append(addUserEntity[i].getUserName());
-                } else{
-                    content.append(addUserEntity[i].getUserName()).append(",");
+        if(addUserEntity != null && addUserEntity.length > 0){
+            List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
+            UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
+            //向任务成员表中添加数据
+            if(addUserEntity != null){
+                taskMemberService.addManyMemberInfo(addUser,task);
+                //循环用来拼接log日志字符串
+                content.append(TaskLogFunction.C.getName()).append(" ");
+                for (int i = 0; i < addUserEntity.length; i++) {
+                    if(i == addUserEntity.length - 1){
+                        content.append(addUser[i].getUserName());
+                    } else{
+                        content.append(addUser[i].getUserName()).append(",");
+                    }
                 }
             }
         }
-        if(removeUserEntity != null){
-            taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUserEntity);
-            if(!StringUtils.isEmpty(content.toString())){
-                content.append(",");
-            }
-            content.append(TaskLogFunction.B.getName()).append(" ");
-            for (int i = 0; i < removeUserEntity.length; i++) {
-                if(i == removeUserEntity.length - 1){
-                    content.append(removeUserEntity[i].getUserName());
-                } else{
-                    content.append(removeUserEntity[i].getUserName()).append(",");
+        if(removeUserEntity != null && removeUserEntity.length > 0) {
+            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
+            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
+            if (removeUserEntity != null) {
+                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
+                if (!StringUtils.isEmpty(content.toString())) {
+                    content.append(",");
+                }
+                content.append(TaskLogFunction.B.getName()).append(" ");
+                for (int i = 0; i < removeUserEntity.length; i++) {
+                    if (i == removeUserEntity.length - 1) {
+                        content.append(removeUser[i].getUserName());
+                    } else {
+                        content.append(removeUser[i].getUserName()).append(",");
+                    }
                 }
             }
         }
@@ -909,11 +928,12 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(taskId);
         task.setExecutor(userInfoEntity.getId());
         taskMapper.updateTask(task);
+        taskMemberService.delTaskMemberExecutor(taskId);
         //初始化一个任务成员关系实体
         TaskMember taskMember = new TaskMember();
         taskMember.setId(IdGen.uuid());
         taskMember.setMemberId(userInfoEntity.getId());
-        taskMember.setCurrentTaskId(task.getTaskId());
+        taskMember.setPublicId(task.getTaskId());
         taskMember.setMemberName(uName);
         taskMember.setMemberImg(userInfoEntity.getImage());
         taskMember.setType("执行者");
@@ -924,6 +944,7 @@ public class TaskServiceImpl implements TaskService {
         int isTaskMember = taskMemberService.findTaskMemberExecutorIsMember(userInfoEntity.getId(), task.getTaskId());
         //如果新的任务执行者以前已经是该任务的参与者  就不在添加该执行者的参与者信息
         if(isTaskMember == 0){
+            taskMember.setId(IdGen.uuid());
             taskMember.setType("参与者");
             taskMemberService.saveTaskMember(taskMember);
         }

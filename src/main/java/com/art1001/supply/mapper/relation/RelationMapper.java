@@ -105,4 +105,6 @@ public interface RelationMapper {
 	 * @return
 	 */
     TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
+
+    int findMenuTaskMaxOrder(String taskMenuId);
 }

@@ -90,9 +90,12 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
+            task.setTaskId(IdGen.uuid());
             TaskLogVO taskLogVO = taskService.saveTask(members,project,task);
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
+            Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
+            jsonObject.put("task",taskByTaskId);
             jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -104,25 +107,20 @@ public class TaskController {
     }
 
     /**
-     * 添加项目成员
+     * 添加任务成员
      * @param task
      * @param addUserEntity 要添加项目成员
      * @param removeUserEntity 要移除的项目成员
      */
     @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addAndRemoveTaskMember(@RequestParam Task task,@RequestParam UserEntity[] addUserEntity,@RequestParam UserEntity[] removeUserEntity){
+    public JSONObject addAndRemoveTaskMember(Task task,String[] addUserEntity,String[] removeUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","添加成功!");
-                jsonObject.put("result",taskLogVO.getResult());
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","添加失败!");
-                jsonObject.put("result",taskLogVO.getResult());
-            }
+            jsonObject.put("msg","更新成功!");
+            jsonObject.put("result",1);
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -873,12 +871,12 @@ public class TaskController {
             if(userByIsExistTask.get("existList") != null && userByIsExistTask.get("existList").size() > 0){
                 jsonObject.put("userExistTask",userByIsExistTask.get("existList"));
             } else{
-                jsonObject.put("userExistTask","没有任务参与者数据");
+
             }
             if(userByIsExistTask.get("notExistList") != null && userByIsExistTask.get("notExistList").size() > 0){
                 jsonObject.put("userNotExistTask",userByIsExistTask.get("notExistList"));
             } else{
-                jsonObject.put("userExistTask","没有可加入的成员");
+
             }
         } catch (Exception e){
             throw new AjaxException(e);
@@ -892,7 +890,7 @@ public class TaskController {
      * @return
      */
     @GetMapping("initTask.html")
-    public String initTask(Task task,String projectId,String type,Model model){
+    public String initTask(Task task,String projectId,Model model){
         JSONObject jsonObject = new JSONObject();
         //时间格式
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -902,8 +900,6 @@ public class TaskController {
             model.addAttribute("user",userEntity);
             //当前项目信息
             model.addAttribute("projectId",projectId);
-            //是创建任务还是更新任务
-            model.addAttribute("type",type);
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
             //format
@@ -1159,12 +1155,12 @@ public class TaskController {
      */
     @PostMapping("removeExecutor")
     @ResponseBody
-    public JSONObject removeExecutor(@RequestParam String taskId){
+    public JSONObject removeExecutor(String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
             taskService.removeExecutor(taskId);
             jsonObject.put("msg","移除成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,操作失败,{}",e);
         }
@@ -1180,12 +1176,12 @@ public class TaskController {
      */
     @PostMapping("updateTaskExecutor")
     @ResponseBody
-    public JSONObject updateTaskExecutor(@RequestParam String taskId,@RequestParam UserInfoEntity userInfoEntity,@RequestParam String uName){
+    public JSONObject updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity,String uName){
         JSONObject jsonObject = new JSONObject();
         try {
             taskService.updateTaskExecutor(taskId,userInfoEntity,uName);
             jsonObject.put("msg","修改成功");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
             throw new AjaxException(e);

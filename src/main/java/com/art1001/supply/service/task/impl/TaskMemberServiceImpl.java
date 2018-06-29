@@ -271,12 +271,12 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setId(IdGen.uuid());
 			//设置参与者姓名
 			taskMember.setMemberName(userEntity[i].getUserName());
+			//哪个任务的关联关系
+			taskMember.setPublicId(task.getTaskId());
 			//设置参与者id
 			taskMember.setMemberId(userEntity[i].getId());
 			//设置这条关系的创建时间
 			taskMember.setCreateTime(System.currentTimeMillis());
-			//设置当前任务id
-			taskMember.setCurrentTaskId(task.getTaskId());
 			//设置任务成员的角色
             taskMember.setType("参与者");
             //设置更新时间
@@ -395,5 +395,10 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	@Override
 	public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
 		return userService.findTaskMemberInfo(taskId,status);
+	}
+
+	@Override
+	public void delTaskMemberExecutor(String taskId) {
+		taskMemberMapper.delTaskMemberExecutor(taskId);
 	}
 }

@@ -21,13 +21,15 @@
             <span>设计修改任务界面</span>
         </div>
         <div class="who-and-time">
-            <div class="who-wrap">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                <input type="hidden" th:value="${executor.id}"/>
-                <span th:text="${executor.userName}"></span>
+            <input type="hidden" id="have-executor" th:value="${executor.id}">
+            <!--<input type="hidden" id="have-executor-img" th:value="${executor.userInfo.image}">-->
+            <div class="who-wrap" >
+                <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" id = "executorImg" th:if="${executor.userInfo != null}"/>
+                <input type="hidden" th:value="${executor.id}" id = "executorId"/>
+                <span th:text="${executor.userName}" id = "executorName"></span>
                 <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
             </div>
-            <div class="no-renling">
+            <div class="no-renling" style="display: none">
                 <i class="layui-icon layui-icon-username no-people-img" style="font-size: 20px; color: #A6A6A6;"></i>
                 <span>待认领</span>
             </div>
@@ -78,8 +80,8 @@
             <div class="layui-input-block">
                 <input type="hidden" th:value="${task.priority}" id = "oldPriority"/>
                 <input type="radio" lay-filter = "priority" name="state" value="普通" title="普通" th:checked="${task.priority == '普通'}" >
-                <input type="radio" lay-filter = "priority" name="state" value="紧急" title="紧急" th:checked="${task.priority != '紧急'}">
-                <input type="radio" lay-filter = "priority" name="state" value="非常紧急" title="非常紧急" th:checked="${task.priority != '非常紧急'}">
+                <input type="radio" lay-filter = "priority" name="state" value="紧急" title="紧急" th:checked="${task.priority == '紧急'}">
+                <input type="radio" lay-filter = "priority" name="state" value="非常紧急" title="非常紧急" th:checked="${task.priority == '非常紧急'}">
             </div>
         </div>
         <div class="add-tag combox">
@@ -272,13 +274,9 @@
     <div class="people boxsizing" style="display: none">
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
-            <div>
-                <p>参与者</p>
-                <div class="one-people">
-                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
-                    <span>李健</span>
-                    <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
-                </div>
+            <p>参与者</p>
+            <div id = "executor" class="special-executor">
+
             </div>
             <p>推荐</p>
             <div id = "noExecutor">
@@ -304,7 +302,9 @@
     //当前任务所在菜单id
     var taskMenuId = [[${taskMenuId}]];
     //当前任务执行者id
-    var executorId = [[${executor.id}]]
+    var executorId = [[${executor.id}]];
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 </html>

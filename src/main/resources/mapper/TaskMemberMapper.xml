@@ -177,6 +177,12 @@
 
 	</update>
 
+	<select id="findTaskExecutor" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task_member where public_id = #{taskId} and type = '执行者'
+	</select>
+
 	<!-- 查询该成员在此任务中有没有以参与者的形式存在 -->
 	<select id="findTaskMemberExecutorIsMember" resultType="java.lang.Integer">
 		select count(0) from prm_task_member where public_id = #{taskId} and member_id = #{memberId} and type = '参与者'
@@ -195,4 +201,9 @@
 		<include refid="Base_Column_List"></include>
 		from prm_task_member where public_id = #{taskId} and public_type = '任务'
 	</select>
+
+	<!-- 删除一个任务下的执行者信息 -->
+	<delete id="delTaskMemberExecutor">
+		delete from prm_task_member where public_id = #{taskId} and type = '执行者'
+	</delete>
 </mapper>
