@@ -1,5 +1,5 @@
 
-
+var liId;
 // 火狐浏览器兼容
 function firefox() {
     if(isFirefox=navigator.userAgent.indexOf("Firefox")>0){
@@ -58,8 +58,20 @@ $(function () {
         var el = document.getElementById($(item).attr('id'));
         Sortable.create(el,{
             group:"words",
-            animation: 150 //动画参数
+            animation: 150 ,//动画参数
+
+            onChoose:function f() {  //列表单元被选中的回调函数
+                console.log('列表单元被选中的回调函数')
+
+            },
+            onUpdate: function (evt){ //拖拽更新节点位置发生该事件
+                console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
+            },
+            onEnd: function(evt){ //拖拽完毕之后发生该事件
+                console.log('onEnd.foo:', [evt.item, evt.newIndex]);
+            }
         });
+
     });
 
     firefox();
@@ -91,7 +103,8 @@ $(function () {
 
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(){
-        addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"));
+        liId=$(this).siblings(".ul-wrap").children(".taskList").children(":first").attr("id");
+        addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"),liId);
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
@@ -239,8 +252,8 @@ function lbmenu(top,left) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
-function updateTask(taskId,projectId,type){
-    changeRenwu(taskId,projectId,type);
+function updateTask(taskId,projectId){
+    changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {
         $(".fujian-box").slideDown()
     });
@@ -294,9 +307,7 @@ function mypage() {
     });
 };
 //添加任务 弹框界面
-function addRenwu(projectId,taskMenuId) {
-    console.log(projectId);
-    console.log(taskMenuId);
+function addRenwu(projectId,taskMenuId,liId) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -312,7 +323,7 @@ function addRenwu(projectId,taskMenuId) {
     });
 };
 //修改任务 弹框界面
-function changeRenwu(taskId,projectId,type) {
+function changeRenwu(taskId,projectId) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -324,7 +335,7 @@ function changeRenwu(taskId,projectId,type) {
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId +"&type="+type
+            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
         });
     });
 }

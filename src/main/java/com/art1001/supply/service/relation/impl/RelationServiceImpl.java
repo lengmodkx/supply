@@ -307,4 +307,9 @@ public class RelationServiceImpl implements RelationService {
 	public TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId) {
 		return relationMapper.findProjectAndGroupInfoByMenuId(relationId);
 	}
+
+//	@Override
+//	public int findMenuTaskMaxOrder(String taskMenuId) {
+//		return relationMapper.findMenuTaskMaxOrder(taskMenuId);
+//	}
 }

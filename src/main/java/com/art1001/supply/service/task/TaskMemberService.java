@@ -149,4 +149,10 @@ public interface TaskMemberService {
 	 * @param taskId
 	 */
 	void clearTaskMemberByTaskId(String taskId);
+
+	/**
+	 * 删除一个任务下的执行者信息
+	 * @param taskId 任务id
+	 */
+	void delTaskMemberExecutor(String taskId);
 }

@@ -143,4 +143,6 @@ public interface RelationService {
 	 * @return
 	 */
 	TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
+
+	//int findMenuTaskMaxOrder(String taskMenuId);
 }

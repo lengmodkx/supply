@@ -58,16 +58,19 @@
 			<result property="createTime" column="r_create_time"/>
 			<result property="updateTime" column="r_update_time"/>
 		</association>
-		<association property="userInfo" column="id" javaType="com.art1001.supply.entity.user.UserInfoEntity">
-			<id property="id" column="u_id"/>
-			<result property="sex" column="u_sex"/>
-			<result property="birthday" column="u_birthday"/>
-			<result property="telephone" column="u_telephone"/>
-			<result property="email" column="u_email"/>
-			<result property="image" column="u_image"/>
-			<result property="address" column="u_address"/>
-			<result property="createTime" column="u_create_time"/>
+		<association property="userInfo" column="{uId=u_id}" javaType="com.art1001.supply.entity.user.UserInfoEntity" select="com.art1001.supply.mapper.user.UserMapper.findUserInfoByUserId">
 		</association>
+	</resultMap>
+
+	<resultMap id="userInfo" type="com.art1001.supply.entity.user.UserInfoEntity">
+		<id property="id" column="u_id"/>
+		<result property="sex" column="u_sex"/>
+		<result property="birthday" column="u_birthday"/>
+		<result property="telephone" column="u_telephone"/>
+		<result property="email" column="u_email"/>
+		<result property="image" column="u_image"/>
+		<result property="address" column="u_address"/>
+		<result property="createTime" column="u_create_time"/>
 	</resultMap>
 
 	<select id="findCount" resultType="java.lang.Integer">
@@ -344,9 +347,35 @@
 
 	<!-- 查询指定id的人员信息 -->
 	<select id="findManyUserById" resultMap="userMap">
-		select
-		<include refid="userAttributes"></include>
-		from tb_user where u_id in
+		SELECT
+		tb_user.u_id,
+		u_name,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		tb_user.u_create_time,
+		u_update_time,
+		u_organization_id,
+		u_partment_id,
+		u_organization_lable,
+		tb_user_info.u_id u_id1,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		tb_user_info.u_create_time u_create_time1
+		FROM
+		tb_user,
+		tb_user_info
+		WHERE
+		tb_user.u_id = tb_user_info.u_id
+		and tb_user.u_id in
 		<foreach collection="array" item = "u_id" open="(" separator="," close=")">
 			#{u_id}
 		</foreach>
@@ -361,9 +390,35 @@
 
 	<!-- 根据用户id查用户信息 -->
 	<select id="findUserInfoById" resultMap="userMap">
-		select
-		<include refid="userAttributes" ></include>
-		from tb_user where u_id = #{id}
+		SELECT
+	tb_user.u_id,
+	u_name,
+	u_account_name,
+	u_password,
+	u_delete_status,
+	u_locked,
+	u_description,
+	u_credentials_salt,
+	u_creator_name,
+	tb_user.u_create_time,
+	u_update_time,
+	u_organization_id,
+	u_partment_id,
+	u_organization_lable,
+	tb_user_info.u_id u_id1,
+	u_sex,
+	u_birthday,
+	u_telephone,
+	u_email,
+	u_image,
+	u_address,
+	tb_user_info.u_create_time u_create_time1
+FROM
+	tb_user,
+	tb_user_info
+WHERE
+	tb_user.u_id = tb_user_info.u_id
+and tb_user.u_id = #{id}
 	</select>
 
 	<!-- 查询存在该任务中的成员信息 -->
@@ -394,7 +449,12 @@
 		select
 		<include refid="userAttributes"></include>
 		from
-		tb_user where tb_user.u_id = (select executor from prm_task where prm_task.task_id = #{taskId})
+		tb_user where tb_user.u_id = (select member_id from prm_task_member where public_id = #{taskId} and type = '执行者')
+	</select>
 
+	<!-- 根据id 查询用户的注册信息 -->
+	<select id="findUserInfoByUserId" resultMap="userInfo">
+		select <include refid="userInfoAttributes"></include>
+		from tb_user_info where u_id = #{uId}
 	</select>
 </mapper>

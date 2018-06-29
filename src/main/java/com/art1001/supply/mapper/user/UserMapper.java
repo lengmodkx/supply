@@ -107,4 +107,11 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
 	UserEntity findUserInfoById(String id);
+
+	/**
+	 * 查询该用户的详细信息
+	 * @param uId 用户id
+	 * @return
+	 */
+	UserInfoEntity findUserInfoByUserId(String uId);
 }
