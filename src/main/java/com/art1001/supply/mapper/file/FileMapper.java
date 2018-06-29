@@ -1,6 +1,8 @@
 package com.art1001.supply.mapper.file;
 
 import java.util.List;
+import java.util.Map;
+
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import org.apache.ibatis.annotations.Mapper;
@@ -97,4 +99,30 @@ public interface FileMapper {
 	 * 根据条件查询文件
 	 */
 	List<File> findFileList(File file);
+
+	/**
+	 * 根据id数组查询文件
+	 * @param fileIds 数组
+	 */
+	List<File> findByIds(String[] fileIds);
+
+	/**
+	 * 获取项目url
+	 */
+    String findProjectUrl(String projectId);
+
+	/**
+	 * 移入回收站
+	 *
+	 * @param fileIds ids
+	 */
+	void recoveryFile(String[] fileIds);
+
+	/**
+	 * 移动文件
+	 * @param map 条件
+	 * 		 fileIds 源文件id数组
+	 * 		 folderId 目标目录id
+	 */
+	void moveFile(Map<String, Object> map);
 }

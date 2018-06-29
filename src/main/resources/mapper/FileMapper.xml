@@ -129,8 +129,11 @@
 		FROM
 		prm_file
 		<where>
+			<if test="fileId != null and fileId != ''">
+				file_id = #{fileId}
+			</if>
 			<if test="fileName != null and fileName != ''">
-				file_name = #{fileName}
+				and file_name = #{fileName}
 			</if>
 			<if test="fileUrl != null and fileUrl != ''">
 				and file_url = #{fileUrl}
@@ -158,6 +161,36 @@
 			</if>
 		</where>
 	</select>
+
+	<select id="findByIds" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from prm_file
+		where file_id in
+		<foreach collection="array" open="(" separator="," close=")" item="id">
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="findProjectUrl" parameterType="java.lang.String" resultType="java.lang.String">
+		select file_url from prm_file where parent_id = '1' and project_id = #{projectId}
+	</select>
+
+	<update id="moveFile" parameterType="java.util.Map">
+		update prm_file set parent_id = #{folderId}
+		where file_id in
+		<foreach collection="fileIds" open="(" separator="," close=")" item="fileId">
+			#{fileId}
+		</foreach>
+	</update>
+
+	<update id="recoveryFile" parameterType="java.lang.String">
+		update prm_file set file_del = 1
+		where file_id in
+		<foreach collection="array" open="(" separator="," close=")" item="id">
+			#{id}
+		</foreach>
+	</update>
 	
 	<delete id="deleteFileById" parameterType="java.lang.String">
 		delete from
