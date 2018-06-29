@@ -70,25 +70,20 @@ public class File extends BaseEntity implements Serializable {
 
 
     /**
-     * 父级id
+     * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
-    private String parentId;
+    private String parentId = "0";
 
 
     /**
      * 是否删除
      */
-    private Integer fileDel;
+    private Integer fileDel = 0;
 
 
     /**
      * 标签id
      */
     private String tagId;
-
-    /**
-     * 子文件
-     */
-    private List<File> fileChildList;
 
 }

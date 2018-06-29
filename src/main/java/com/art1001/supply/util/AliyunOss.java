@@ -5,6 +5,7 @@ import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
+import com.art1001.supply.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -158,13 +159,32 @@ public class AliyunOss {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
-            return new URL(path).openStream();
+            return new URL(Constants.OSS_URL + path).openStream();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             ossClient.shutdown();
         }
         return null;
+    }
+
+    /**
+     * 下载到本地
+     *
+     * @param objectName objectName
+     * @param path 本地路径
+     */
+    public static void downloadLocal(String objectName, String path) {
+        // 创建OSSClient实例
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            // 下载OSS文件到本地文件。如果指定的本地文件存在会覆盖，不存在则新建。
+            ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File(path));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ossClient.shutdown();
+        }
     }
 
     public static void rangeDownload(String objectName) {
