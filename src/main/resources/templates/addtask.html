@@ -88,7 +88,6 @@
                         <span class="dot"></span>
                         <span class="tag-font">标签标签</span>
                     </li>
-
                 </ul>
             </div>
             <!--新建标签-->
@@ -134,12 +133,30 @@
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <img th:src="@{/image/add.png}">
+            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}">
             <i class="layui-icon layui-icon-close-fill remove-work-people "
                style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
             <img th:src="@{/image/adds.png}">
+        </div>
+    </div>
+    <!--人员 参与者 弹框-->
+    <div>
+        <input type="hidden" id = "memberId" />
+        <div class="people boxsizing" style="display: none" >
+            <input type="text" name="" placeholder="搜索" class="layui-input">
+            <div class="peoples">
+                <p id = "identity">参与者</p>
+                <div id = "members">
+
+                </div>
+                <p>推荐</p>
+                <div id = "executor">
+                    <!--项目成员列表-->
+                </div>
+            </div>
+            <div id="people-ok" class="people-ok">确定</div>
         </div>
     </div>
     <div class="heng-line"></div>
@@ -153,26 +170,6 @@
     </div>
     <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
 
-    <!--人员 参与者 弹框-->
-    <input type="hidden" id = "memberId" />
-    <div class="people boxsizing" style="display: none" >
-        <input type="text" name="" placeholder="搜索" class="layui-input">
-        <div class="peoples">
-            <p id = "identity">参与者</p>
-            <div id = "members">
-
-            </div>
-            <p>推荐</p>
-            <div id = "executor">
-                <!--项目成员列表-->
-            </div>
-            <div class="add-new-people">
-                <img th:src="@{/image/adds.png}">
-                <span>邀请新成员</span>
-            </div>
-        </div>
-        <div id="people-ok" class="people-ok">确定</div>
-    </div>
 </form>
 
 </body>

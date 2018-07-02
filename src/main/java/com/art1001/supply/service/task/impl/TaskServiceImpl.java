@@ -170,13 +170,13 @@ public class TaskServiceImpl implements TaskService {
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
-        //int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
-//        if(maxOrder < 1){
-//            maxOrder = 0;
-//        } else{
-//            maxOrder += 1;
-//        }
-//        task.setOrder(maxOrder);
+        Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+        if(maxOrder == null){
+            maxOrder = 0;
+        } else{
+            maxOrder += 1;
+        }
+        task.setOrder(maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
         //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
