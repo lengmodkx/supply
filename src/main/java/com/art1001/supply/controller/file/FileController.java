@@ -327,9 +327,10 @@ public class FileController {
             HttpServletResponse response
     ) throws IOException {
         InputStream inputStream = null;
-                // 获取文件
+        // 获取文件
         File file = fileService.findFileById(fileId);
         String fileName = file.getFileName();
+
         String deleteUrl = "";
         // 如果下载的是目录，则打包成zip
         if (file.getCatalog() == 1) {
@@ -542,10 +543,11 @@ public class FileController {
             } else { // 文件
                 int byteSum = 0;
                 int byteRead = 0;
-                
+                InputStream inStream = null;
+                FileOutputStream fs = null;
                 try {
-                    InputStream inStream = AliyunOss.downloadInputStream(file.getFileUrl());
-                    FileOutputStream fs = new FileOutputStream(path + "\\" + file.getFileName());
+                    inStream = AliyunOss.downloadInputStream(file.getFileUrl());
+                    fs = new FileOutputStream(path + "\\" + file.getFileName());
 
                     byte[] buffer = new byte[1204];
                     assert inStream != null;
@@ -555,6 +557,16 @@ public class FileController {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        assert inStream != null;
+                        inStream.close();
+                        assert fs != null;
+                        fs.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         }

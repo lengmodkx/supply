@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.joda.time.DateTime;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,20 +120,15 @@ public class FileUtils {
     }
 
     /**
-     * 获取临时下载闻见目录
+     * 获取临时下载文件目录
      */
     public static String getTempPath() {
-        try {
-            // 获取根路径
-            File path = new File(ResourceUtils.getURL("classpath:").getPath());
-            // 下载目录为/temp，可以如下获取：
-            File upload = new File(path.getAbsolutePath(), "temp");
-            if (!upload.exists()) upload.mkdirs();
-            return upload.getAbsolutePath();
-        } catch (FileNotFoundException e) {
-            log.error("获取临时下载目录异常, {}", e);
-            return null;
-        }
+        // 获取根路径
+        String path = System.getProperty("user.dir");
+        // 下载目录为/temp，可以如下获取：
+        File upload = new File(path, "temp");
+        if (!upload.exists()) upload.mkdirs();
+        return upload.getAbsolutePath();
     }
 
     /**
@@ -143,8 +137,9 @@ public class FileUtils {
     public static void delFolder(String folderPath) {
         try {
             // 删除完里面所有内容
-            delAllFile(folderPath);
-            java.io.File myFilePath = new java.io.File(folderPath);
+            boolean b = delAllFile(folderPath);
+
+            File myFilePath = new File(folderPath);
             // 删除空文件夹
             myFilePath.delete();
         } catch (Exception e) {
@@ -159,27 +154,28 @@ public class FileUtils {
         boolean flag = false;
         File file = new File(path);
         if (!file.exists()) {
-            return flag;
+            return false;
         }
         if (!file.isDirectory()) {
-            return flag;
+            return false;
         }
         String[] tempList = file.list();
         File temp = null;
-        for (int i = 0; i < tempList.length; i++) {
+        assert tempList != null;
+        for (String aTempList : tempList) {
             if (path.endsWith(File.separator)) {
-                temp = new File(path + tempList[i]);
+                temp = new File(path + aTempList);
             } else {
-                temp = new File(path + File.separator + tempList[i]);
+                temp = new File(path + File.separator + aTempList);
             }
             if (temp.isFile()) {
                 temp.delete();
             }
             if (temp.isDirectory()) {
                 // 先删除文件夹里面的文件
-                delAllFile(path + "/" + tempList[i]);
+                delAllFile(path + "\\" + aTempList);
                 // 再删除空文件夹
-                delFolder(path + "/" + tempList[i]);
+                delFolder(path + "\\" + aTempList);
                 flag = true;
             }
         }
@@ -353,6 +349,6 @@ public class FileUtils {
 
     public static void main(String[] args) {
         // 删除文件夹
-        FileUtils.deleteDir("D:\\project\\supply\\target\\classes\\temp\\1530240548765");
+        FileUtils.delFolder("D:\\project\\supply\\temp\\1530522000382");
     }
 }
