@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
@@ -29,6 +30,8 @@ import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.omg.CORBA.OBJ_ADAPTER;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -74,7 +77,9 @@ public class ProjectController {
     @Resource
     private TagService tagService;
 
-    @RequestMapping("/home.html")
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+    @RequestMapping("/project.html")
     public String home(Model model){
 
         try {
@@ -93,7 +98,7 @@ public class ProjectController {
             model.addAttribute("delProjects",delProjects);
 
             model.addAttribute("user",userEntity);
-            return "home";
+            return "project";
         }catch (Exception e){
             throw  new SystemException(e);
         }
@@ -210,7 +215,7 @@ public class ProjectController {
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
             projectMember.setMemberId(userEntity.getId());
-            projectMember.setMemberName(userEntity.getAccountName());
+            projectMember.setMemberName(userEntity.getUserName());
             projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
             projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());
@@ -229,6 +234,7 @@ public class ProjectController {
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
             jsonObject.put("projectId",project.getProjectId());
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSON.toJSON(project).toString()));
         }catch (Exception e){
             throw new AjaxException(e);
         }

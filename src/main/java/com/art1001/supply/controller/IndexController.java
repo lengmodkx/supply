@@ -42,15 +42,10 @@ public class IndexController extends BaseController {
     @Resource
     private Producer captchaProducer;
 
-    @RequestMapping("/home.html")
-    public String index() {
-        return "home";
-    }
-
     /**
      * 跳转到登陆页面
      */
-    @GetMapping("/login.html")
+    @GetMapping("/")
     public String login() {
         return "login";
     }

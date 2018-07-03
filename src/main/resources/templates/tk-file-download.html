@@ -37,8 +37,8 @@
             <p class="fonts">版本信息</p>
             <div class="up-prople-info">
                 <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-                <span class="up-prople-name">谁谁谁</span>
-                <span class="up-prople-time">上传于 <span>6月5日8:00</span></span>
+                <span class="up-prople-name" th:text="${file.memberName}">谁谁谁</span>
+                <span class="up-prople-time">上传于 <span th:text="${#dates.format(file.createTime,'yyyy-MM-dd HH:mm:ss')}">6月5日8:00</span></span>
             </div>
             <div class="line"></div>
             <div class="add-tag combox">

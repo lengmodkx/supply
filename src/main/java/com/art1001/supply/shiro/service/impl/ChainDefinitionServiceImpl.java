@@ -6,16 +6,18 @@ package com.art1001.supply.shiro.service.impl;
 import com.art1001.supply.shiro.service.ChainDefinitionService;
 import jodd.props.Props;
 import jodd.props.PropsEntry;
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -90,15 +92,18 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 	public Map<String, String> initChainDefinitionsMap() {
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();
 		try {
-			String shiroConfig = ChainDefinitionServiceImpl.class.getResource("/shiroAuth.props").toURI().getPath();
+			InputStream stream = getClass().getClassLoader().getResourceAsStream("shiroAuth.props");
+			File targetFile = new File("shiroAuth.props");
+			FileUtils.copyInputStreamToFile(stream, targetFile);
+
 			Props props = new Props();
-			props.load(new File(shiroConfig), "UTF-8");
+			props.load(targetFile, "UTF-8");
 			Iterator<PropsEntry> baseAuth = props.entries().iterator();
 			while(baseAuth.hasNext()){
 				PropsEntry pe = baseAuth.next();
 				chainMap.put(pe.getKey(), pe.getValue());
 			}
-		} catch (URISyntaxException e) {
+		} catch (FileNotFoundException e) {
 			logger.error("获取文件shiro默认权限配置文件路径", e);
 		} catch (IOException e) {
 			logger.error("读取文件shiro默认权限配置文件异常:", e);
