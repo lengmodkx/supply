@@ -13,6 +13,10 @@
     line-height: 48px;
     border-bottom: 1px solid #E5E5E5;
 }
+.project-names{
+    color: gray;
+    margin-left: 5px;
+}
 .create-rc-title .selected{
     opacity: 0;
 }
