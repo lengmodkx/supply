@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
@@ -78,8 +77,6 @@ public class TaskController {
     @Resource
     private RelationService relationService;
 
-    @Resource
-    private ProjectMemberService projectMemberService;
 
     /**
      * 添加新任务
@@ -996,7 +993,7 @@ public class TaskController {
     public JSONObject findProjectAllMember(String executor,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ProjectMember> list = projectMemberService.findProjectMemberAllList();
+            List<UserEntity> list = taskService.findProjectAllMember(projectId,executor);
             if(list != null && list.size() > 0){
                 jsonObject.put("data",list);
             } else{
