@@ -1,0 +1,157 @@
+
+.calendar-box{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+}
+.close-calendar{
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.calendar-box-left{
+    min-width: 265px;
+    height: 100%;
+    padding: 20px;
+    border-right: 1px solid rgba(0,0,0,.1);
+    font-size: 14px;
+    position: relative;
+}
+.search-box{
+    width: 100%;
+    height: 40px;
+    position: relative;
+    margin-top: 20px;
+}
+.search-box input{
+    width: 100%;
+    height: 40px;
+    padding: 0 35px;
+    border: 1px solid #d9d9d9;
+}
+.search-box i{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+.calendar-people{
+    width: 100%;
+    margin: 20px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 400px;
+
+}
+.calendar-people li{
+    width: 100%;
+    height: 34px;
+    line-height: 34px;
+    cursor: pointer;
+}
+.calendar-people li:hover *{
+    color: #3da8f5 !important;
+}
+.calendar-people li img{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+.calendar-people li span{
+    float: left;
+    font-size: 14px;
+}
+.calendar-people li i{
+    float: right;
+}
+
+.add-gz{
+    width: 186px;
+    margin: 0 auto;
+    height: 44px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -93px;
+    background-color: #348fd0;
+    text-align: center;
+    line-height: 44px;
+    color: white;
+    cursor: pointer;
+}
+.add-gz:hover{
+
+    opacity: 0.8;
+}
+
+
+
+
+.calendar-box-right{
+    width: 100%;
+
+}
+
+#calendar *{
+    border-color: #ddd;
+}
+#calendar .fc-head th{
+    color: #383838;
+    font-weight: 400;
+}
+#calendar .fc-head{
+    height: 50px;
+    line-height: 50px;
+}
+#calendar .fc-toolbar{
+    height: 50px;
+    margin-bottom: 0;
+    background-color: #EEEEEE;
+
+}
+#calendar .fc-toolbar>div{
+    margin-top: 10px;
+}
+#calendar .fc-toolbar button{
+    background-color:  #348fd0;
+    color: white;
+    border: 0 none;
+    outline-style: none;
+    margin-right: 10px;
+}
+#calendar .fc-toolbar button:nth-last-child(1){
+    margin-right: 50px;
+}
+#calendar .fc-toolbar button:hover{
+    opacity: 0.8;
+}
+
+/*创建任务 创建 日程按钮*/
+.create-rw-rc{
+    width: 200px;
+    height: 80px;
+    background-color: white;
+    padding: 5px 0;
+    box-shadow: 0 0 5px #A3A3A3;
+}
+.create-rw-rc li{
+   width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+    font-size: 14px;
+    color: #A3A3A3;
+    cursor: pointer;
+}
+.create-rw-rc li:hover{
+    background-color: #F7F7F7;
+}
+.create-rw-rc li i{
+    margin-right: 10px;
+}
