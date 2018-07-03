@@ -23,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -43,10 +45,9 @@ public class FileController {
     /**
      * 文件列表
      *
-     * @param file
-     *           projectId 项目id
-     *           parentId  上级目录id
-     *           isDel     删除标识 默认为0
+     * @param file projectId 项目id
+     *             parentId  上级目录id
+     *             isDel     删除标识 默认为0
      */
     @GetMapping("/list.html")
     public String list(
@@ -64,7 +65,7 @@ public class FileController {
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
-        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
         return "file";
     }
 
@@ -85,10 +86,10 @@ public class FileController {
 
     /**
      * 文件目录
+     *
      * @param file 文件
      *             projectId 项目id
      *             parentId 上级id
-     *
      */
     @GetMapping("/getFolder")
     @ResponseBody
@@ -116,10 +117,10 @@ public class FileController {
 
     /**
      * 文件目录
+     *
      * @param file 文件
      *             projectId 项目id
      *             parentId 上级id
-     *
      */
     @GetMapping("/getFile")
     @ResponseBody
@@ -154,11 +155,12 @@ public class FileController {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = new File();
-            file.setFileId(fileId);
+            file.setParentId(fileId);
             file.setCatalog(1);
             List<File> fileList = fileService.findFileList(file);
             jsonObject.put("result", 1);
             jsonObject.put("data", fileList);
+            jsonObject.put("fileId", fileId);
             jsonObject.put("msg", "获取成功");
         } catch (Exception e) {
             log.error("获取子目录失败， {}", e);
@@ -342,8 +344,10 @@ public class FileController {
             folder.mkdirs();
             // 设置查询条件
             List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
-            // 下载到临时文件
-            this.downloadZip(childFile, path);
+            if (childFile.size() > 0) {
+                // 下载到临时文件
+                this.downloadZip(childFile, path);
+            }
 
             // 把临时文件打包成zip下载
             String downloadPath = path + ".zip";
@@ -353,7 +357,7 @@ public class FileController {
             // 开始下载
 
             // 以流的形式下载文件。
-            inputStream= new BufferedInputStream(new FileInputStream(downloadPath));
+            inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
             fileName += ".zip";
             // 删除临时文件
             deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
@@ -381,12 +385,6 @@ public class FileController {
         if (file.getCatalog() == 1) {
             FileUtils.delFolder(deleteUrl);
         }
-    }
-
-    @GetMapping("/downloadFolder")
-    @ResponseBody
-    public void downloadFolder(HttpServletResponse response) {
-
     }
 
     @GetMapping("/copyFile.html")
@@ -418,6 +416,7 @@ public class FileController {
 
     /**
      * 移动文件
+     *
      * @param fileIds ids
      */
     @GetMapping("/moveFile.html")
@@ -458,7 +457,8 @@ public class FileController {
 
     /**
      * 移动文件
-     * @param fileIds 文件id数组
+     *
+     * @param fileIds  文件id数组
      * @param folderId 目标文件夹id
      */
     @RequestMapping("/moveFile")
@@ -481,7 +481,54 @@ public class FileController {
     }
 
     /**
+     * 复制文件
+     *
+     * @param fileIds   多个文件id
+     * @param folderId 目标文件夹id
+     */
+    @RequestMapping("/copyFile")
+    @ResponseBody
+    public void copyFile(
+            @RequestParam String[] fileIds,
+            @RequestParam String folderId
+    ) {
+        for (String fileId : fileIds) {
+            // 获取目标文件夹
+            File folder = fileService.findFileById(folderId);
+            // 获取源文件
+            File file = fileService.findFileById(fileId);
+            // 父级id
+            String parentId = "";
+            // 设置父级id
+            if (folder.getParentId().equals("1")) {
+                // 如果是项目的根目录则设置父级id为0
+                parentId = "0";
+            } else {
+                parentId = folder.getFileId();
+            }
+
+            if (file.getCatalog() == 1) { // 文件夹
+                file.setParentId(parentId);
+                String fId = file.getFileId();
+                String projectId = file.getProjectId();
+                fileService.saveFile(file);
+                List<File> childFile = fileService.findChildFile(projectId, fId, 0);
+                if (childFile.size() > 0) {
+                    Map<String, List<File>> map = new HashMap<>();
+                    map.put(file.getFileId(), childFile);
+                    this.copyFolder(map);
+                }
+
+            } else { // 文件
+                this.copyFileSave(file, parentId);
+            }
+        }
+
+    }
+
+    /**
      * 回收站
+     *
      * @param fileIds ids
      */
     @RequestMapping("/recoveryFile")
@@ -502,23 +549,6 @@ public class FileController {
         return jsonObject;
     }
 
-    /**
-     * 复制文件
-     * @param fileId 文件id
-     * @param folderId 目标文件夹id
-     */
-    @RequestMapping("/copyFile")
-    public void copyFile(
-            @RequestParam String fileId,
-            @RequestParam String folderId
-    ) {
-        // 获取目标文件夹
-        File folder = fileService.findFileById(folderId);
-        // 获取数据库中的文件
-        File file = fileService.findFileById(fileId);
-
-    }
-
     public static void main(String[] args) {
         System.out.println(FileUtils.getTempPath());
         String tempPath = FileUtils.getTempPath();
@@ -529,8 +559,9 @@ public class FileController {
 
     /**
      * 下载zip
+     *
      * @param fileList 下载条件
-     * @param path url
+     * @param path     url
      */
     private void downloadZip(List<File> fileList, String path) {
         List<File> fileUrl = new ArrayList<>();
@@ -577,5 +608,66 @@ public class FileController {
                 this.downloadZip(childFile, path + "\\" + file.getFileName());
             }
         }
+    }
+
+    /**
+     * 复制文件夹
+     */
+    private void copyFolder(Map<String, List<File>> map) {
+        Map<String, List<File>> fileMap = new HashMap<>();
+        for (Map.Entry<String, List<File>> entry: map.entrySet()) {
+            // 得到键，即parentId
+            String parentId = entry.getKey();
+            // 得到值，即FileList
+            List<File> fileList = entry.getValue();
+            for (File file : fileList) {
+                if (file.getCatalog() == 1) { // 文件夹
+                    // 设置父级id
+                    file.setParentId(parentId);
+                    String fId = file.getFileId();
+                    String projectId = file.getProjectId();
+                    // 存库
+                    fileService.saveFile(file);
+                    // 得到此文件夹下一层的子集
+                    List<File> childFile = fileService.findChildFile(projectId, fId, 0);
+                    fileMap.put(file.getFileId(), childFile);
+                } else { //文件
+                    this.copyFileSave(file, parentId);
+                }
+            }
+
+            if (fileMap.size() > 0) {
+                this.copyFolder(fileMap);
+            }
+        }
+    }
+
+    /**
+     * 复制文件保存
+     */
+    private void copyFileSave(File file, String parentId) {
+        // 得到源文件objectName
+        String fileUrl = file.getFileUrl();
+        // 源文件名
+        String fileName = file.getFileName();
+        // 得到后缀名
+        String ext = fileName.substring(fileName.lastIndexOf("."), fileName.length() - 1);
+        // 设置现在文件名
+        String newFileName = System.currentTimeMillis() + "." + ext;
+        // 设置现在文件objectName
+        String newFileUrl = fileUrl.substring(0, fileUrl.lastIndexOf("/"));
+
+        // 在oss上复制
+        AliyunOss.copyFile(fileUrl, newFileName);
+
+        // 设置文件名
+        file.setFileName(newFileName);
+        // 设置url
+        file.setFileUrl(newFileUrl);
+        // 设置父级id
+        file.setParentId(parentId);
+
+        file.setFileUrl(fileUrl);
+        fileService.saveFile(file);
     }
 }

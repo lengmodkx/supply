@@ -86,9 +86,12 @@
     -ms-flex-pack: stretch;
     justify-content: stretch;
 }
-.clone-project-right::-webkit-scrollbar{
+/*.clone-project-right::-webkit-scrollbar{*/
+    /*height: 10px;*/
+    /*width: 10px;*/
+    /*color: #9F9F9F;*/
 
-}
+/*}*/
 .column{
     min-width: 220px;
     height: 100%;
@@ -120,9 +123,16 @@
     cursor: pointer;
     line-height: 24px;
 }
+.clone-project-right ul .selected{
+    background-color:  #3DA8F5;
+    color: white;
+}
 .clone-project-right ul li:hover{
     background-color:  #3DA8F5;
     color: white;
+}
+.clone-project-right ul .selected i{
+    color: white !important;
 }
 .clone-project-right ul li:hover i{
     color: white !important;

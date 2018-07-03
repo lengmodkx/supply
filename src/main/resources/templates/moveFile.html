@@ -13,13 +13,18 @@
         <h4>移动 <span th:text="${fileMsg}"> 1个文件</span> <span th:text="${folderMsg}"> 1个文件夹</span> 至</h4>
     </div>
     <input type="hidden" th:value="${fileIds}" id="fileIds">
-    <input type="hidden" id="folderId">
+    <input type="hidden" th:value="${projectId}" id="projectId">
+    <input type="hidden" id="parentId">
     <div class="clone-project-content">
         <div class="clone-project-left">
             <p class="title-font boxsizing">项目</p>
             <ul class="personal-task" th:each="project: ${projectList}">
-                <li th:if="${projectId} == ${project.projectId}" class="boxsizing selected" th:text="${project.projectName}">啥啥啥任务</li>
-                <li th:if="${projectId} != ${project.projectId}" class="boxsizing" th:text="${project.projectName}">啥啥啥任务</li>
+                <li th:if="${projectId} == ${project.projectId}" class="boxsizing selected"
+                    th:text="${project.projectName}">啥啥啥任务
+                </li>
+                <li th:if="${projectId} != ${project.projectId}" class="boxsizing" th:text="${project.projectName}">
+                    啥啥啥任务
+                </li>
 
             </ul>
         </div>
@@ -27,10 +32,11 @@
             <div class="clone-project-right">
                 <div class="column">
                     <div class="create-wjj-wrap">
-                        <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 20px; color: #a6a6a6;"></i>
+                        <i class="layui-icon layui-icon-add-circle create-wjj"
+                           style="font-size: 20px; color: #a6a6a6;"></i>
                     </div>
                     <p class="boxsizing title-font">文件夹</p>
-                    <div class="new-wjj boxsizing"><input  type="text" placeholder="按 Enter 新建文件夹"></div>
+                    <div class="new-wjj boxsizing"><input type="text" placeholder="按 Enter 新建文件夹"></div>
                     <ul th:each="file:${fileList}">
                         <li class="boxsizing folderName">
                             <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>
@@ -55,11 +61,11 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
     $(function () {
-        layui.use(['form', 'layer'], function(){
+        layui.use(['form', 'layer'], function () {
             var form = layui.form
                 , layer = layui.layer;
             //监听提交
-            form.on('submit(formDemo)', function(data){
+            form.on('submit(formDemo)', function (data) {
                 layer.msg(JSON.stringify(data.field));
                 return false;
             });
@@ -68,10 +74,14 @@
             $(".folderName").each(function () {
                 $(this).click(function () {
                     var fileId = $(this).find("span").attr("data");
-                    $.post("getChildFolder", {fileId: fileId}, function (data) {
+                    $.post("/file/getChildFolder", {fileId: fileId}, function (data) {
                         if (data.result === 1) {
-                            $("#folderId").val(fileId);
-                            console.log(data.data)
+                            // 设置父级id
+                            $("#parentId").val(data.fileId);
+                            var fileList = data.data;
+                            $.each(fileList, function (index, file) {
+
+                            });
                         } else {
                             layer.msg(data.msg, {icon: 2})
                         }
@@ -81,7 +91,8 @@
 
             $(".clone-ok").click(function () {
                 var fileIds = $("#fileIds").val();
-                var folderId = $("#folderId").val();
+                var folderId = $("#parentId").val();
+                console.log(fileIds, folderId);
                 $.post("/file/moveFile", {folderId: folderId, fileIds: fileIds}, function (data) {
                     if (data.result === 1) {
                         parent.location.reload();
@@ -92,33 +103,55 @@
             });
         });
         //点击 添加文件夹
-        $("html").on("click",".create-wjj",function (e) {
+        $("html").on("click", ".create-wjj", function (e) {
             $(this).parent().siblings(".new-wjj").show();
             e.stopPropagation()
         });
         //点击空白区域 新建 文件夹 输入框 消失
-        $("html").on("click",".new-wjj input",function (e) {
+        $("html").on("click", ".new-wjj input", function (e) {
             e.stopPropagation()
         });
-        $("html").on("keydown",".new-wjj input",function (e) {
-            if(event.keyCode ==13){
-                $(this).parent().siblings("ul").append('<li class="boxsizing">\n' +
-                    '                            <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
-                    '                            <span>'+$(this).val()+'</span>\n' +
-                    '                        </li>');
-                $(this).parent().hide()
+        $("html").on("keydown", ".new-wjj input", function (e) {
+            if (event.keyCode === 13) {
+                var fileName = $(this).val();
+                var projectId = $("#projectId").val();
+                var parentId = $("#parentId").val();
+                console.log("parentId", parentId);
+                $.post("/file/createFolder", {
+                    projectId: projectId,
+                    parentId: parentId,
+                    folderName: fileName
+                }, function (data) {
+                    if (data.result === 1) {
+                        $(this).parent().siblings("ul").append('<li class="boxsizing">\n' +
+                            '                            <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
+                            '                            <span data="' + data.data + '">' + fileName + '</span>\n' +
+                            '                        </li>');
+                        $(this).parent().hide()
+                    } else {
+                        layer.msg(data.msg, {icon: 2});
+                    }
+                });
             }
-
         });
-        $(document).click(function(event){
+        $(document).click(function (event) {
             var _con = $('.new-wjj input');  // 设置目标区域
-            if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+            if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
                 $('.new-wjj').hide(100);     //淡出消失
             }
         });
 
         // 点击 文件夹 出现 文件夹的内容
-        $("html").on("click",".column ul li",function () {
+        $("html").on("click", ".column ul li", function () {
+            $(this).addClass("selected").siblings().removeClass("selected");
+            $(this).parent("ul").siblings().find("li").removeClass("selected");
+            if ($(this).parents(".column").next().length != 0) {
+                $(this).parents(".column").nextAll().remove();
+            }
+
+            var parentIdId = $(this).attr("data");
+            console.log(parentIdId);
+
             $(this).parents(".column").after(' <div class="column">\n' +
                 '                    <div class="create-wjj-wrap">\n' +
                 '                        <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 20px; color: #a6a6a6;"></i>\n' +
@@ -129,6 +162,7 @@
                 '                        \n' +
                 '                    </ul>\n' +
                 '                </div>')
+
         });
         // 关闭弹出层
         $(".clone-project-foot div").click(function () {
