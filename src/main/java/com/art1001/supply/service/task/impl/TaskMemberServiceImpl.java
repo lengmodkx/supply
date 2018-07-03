@@ -273,6 +273,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setMemberName(userEntity[i].getUserName());
 			//哪个任务的关联关系
 			taskMember.setPublicId(task.getTaskId());
+			//添加参与者的头像
+			taskMember.setMemberImg(userEntity[i].getUserInfo().getImage());
 			//设置参与者id
 			taskMember.setMemberId(userEntity[i].getId());
 			//设置这条关系的创建时间
@@ -386,16 +388,29 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 	}
 
 	/**
-	 * 查询到该任务的所有参与者的"基本信息" (不保括执行者)
-	 *
+	 * 查询到该任务的所有参与者的信息(不保括执行者)
 	 * @param taskId 任务id
 	 * @param status 要查询的成员身份属于什么
+	 * @param executorId 执行者的id
 	 * @return
 	 */
 	@Override
-	public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
-		return userService.findTaskMemberInfo(taskId,status);
-	}
+	public List<UserEntity> findTaskMemberInfo(String taskId, String status,String executorId) {
+        List<UserEntity> taskMemberInfo = userService.findTaskMemberInfo(taskId, status);
+        if(taskMemberInfo != null && taskMemberInfo.size() > 0){
+            for (UserEntity infoEntity : taskMemberInfo) {
+                //如果任务的参与者集合中 存在任务执行者身份的参与者的话 则移除掉
+                if(infoEntity.getId().equals(executorId)){
+                    taskMemberInfo.remove(infoEntity);
+                    break;
+                }
+            }
+            if(taskMemberInfo.size() == 0){
+                return null;
+            }
+        }
+        return taskMemberInfo;
+    }
 
 	@Override
 	public void delTaskMemberExecutor(String taskId) {

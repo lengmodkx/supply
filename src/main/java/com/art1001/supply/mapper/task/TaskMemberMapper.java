@@ -75,7 +75,7 @@ public interface TaskMemberMapper {
 	 * @param userEntity 多个参与者信息
 	 * @return
 	 */
-	@Delete("delete from prm_task_member where public_id = #{task.taskId} and member_id = #{userEntity.id}")
+	@Delete("delete from prm_task_member where public_id = #{task.taskId} and member_id = #{userEntity.id} and type != '创建者'")
     int delTaskMemberByTaskIdAndMemberId(@Param("task") Task task,@Param("userEntity")UserEntity userEntity);
 
 	/**

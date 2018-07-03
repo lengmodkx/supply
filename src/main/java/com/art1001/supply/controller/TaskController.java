@@ -131,23 +131,18 @@ public class TaskController {
     /**
      * 移除任务-成员关系
      * @param task 当前项目实体信息
-     * @param userEntity 被移除的用户的信息
+     * @param uId 被移除的用户的id
      * @return
      */
     @PostMapping("removeTaskMember")
     @ResponseBody
-    public JSONObject removeTaskMember(@RequestParam Task task,@RequestParam UserEntity userEntity){
+    public JSONObject removeTaskMember(Task task,String uId){
         JSONObject jsonObject = new JSONObject();
         try {
+            UserEntity userEntity = userService.findUserById(uId);
             TaskLogVO taskLogVO = taskService.removeTaskMember(task,userEntity);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","任务参与者移除成功!");
-                jsonObject.put("result",taskLogVO.getResult());
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","任务参与者移除失败!");
-                jsonObject.put("result",taskLogVO.getResult());
-            }
+            jsonObject.put("msg","任务参与者移除成功!");
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("移除任务成员失败! 当前任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -902,7 +897,6 @@ public class TaskController {
             model.addAttribute("projectId",projectId);
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
-            //format
             model.addAttribute("task",taskById);
             //判断当前用户有没有对该任务点赞
             boolean isFabulous = taskService.judgeFabulous(task);
@@ -925,18 +919,14 @@ public class TaskController {
             } else{
                 model.addAttribute("relationFile","无关联文件数据");
             }
+            //查询出该任务的创建者信息
+            UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
+            model.addAttribute("taskCreate",taskCreate);
             //返回当前任务的所有子任务信息
             List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
             if(subLevelTask != null & subLevelTask.size() > 0){
                 jsonObject.put("subLevelTask",subLevelTask);
                 model.addAttribute("subLevelTask",subLevelTask);
-            }
-            //查询出该任务的参与者信息
-            List<UserInfoEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者");
-            if(!participantList.isEmpty()){
-                model.addAttribute("participantList",participantList);
-            } else{
-                model.addAttribute("participantList","无数据!");
             }
             //拿到该任务的执行者信息
             UserEntity executorInfo = userService.findExecutorByTask(task.getTaskId());
@@ -945,7 +935,15 @@ public class TaskController {
             } else{
                 executorInfo = new UserEntity();
                 executorInfo.setUserName("待认领");
+                executorInfo.setId("");
                 model.addAttribute("executor",executorInfo);
+            }
+            //查询出该任务的参与者信息
+            List<UserEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者",executorInfo.getId());
+            if(participantList != null){
+                model.addAttribute("participantList",participantList);
+            } else{
+                model.addAttribute("participantList",null);
             }
             //查询出项目下的成员
             List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);

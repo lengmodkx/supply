@@ -179,11 +179,17 @@
         </div>
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
-        <div class="work-people boxsizing clearfix">
+        <div class="work-people boxsizing clearfix" id = "participate" >
             <div class="one-work-people">
-                <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+                <img src="../static/image/add.png" th:value="${executor.id}" th:if="${executor.id != ''}" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
+                <img src="../static/image/add.png" th:value="${taskCreate.id}"  th:if="${executor.id == ''}" th:src="#{IMAGE_SERVER}+${taskCreate.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
+            <div class="one-work-people" th:id="${participant.id}" th:if="${participantList != null}" th:each="participant:${participantList}">
+                <img src="../static/image/add.png" th:value="${participant.id}" th:src="#{IMAGE_SERVER}+${participant.userInfo.image}" />
+                <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+            </div>
+
             <div class="add-work-people">
                 <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             </div>
@@ -274,7 +280,7 @@
     <div class="people boxsizing" style="display: none">
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
-            <p>参与者</p>
+            <p id = "title">参与者</p>
             <div id = "executor" class="special-executor">
 
             </div>

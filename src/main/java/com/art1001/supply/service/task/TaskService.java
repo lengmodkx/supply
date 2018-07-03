@@ -345,4 +345,13 @@ public interface TaskService {
 	 * @param taskId 任务id
 	 */
 	Map<String,List> findTaskRelation(String taskId);
+
+	/**
+	 * 根据任务id查询任务的创建者id
+	 * @param taskId 任务的id
+	 * @return
+	 */
+	String findTaskMemberIdByTaskId(String taskId);
+
+
 }

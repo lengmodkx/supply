@@ -891,6 +891,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int removeExecutor(String taskId) {
+        taskMapper.clearExecutor(taskId);
         return taskMapper.removeExecutor(taskId);
     }
 
@@ -1007,5 +1008,15 @@ public class TaskServiceImpl implements TaskService {
         map.put("relationTask",taskRelationTask);
         map.put("relationFile",taskRelationFile);
         return map;
+    }
+
+    /**
+     * 根据任务的id查询该任务的创建人id
+     * @param taskId 任务的id
+     * @return
+     */
+    @Override
+    public String findTaskMemberIdByTaskId(String taskId) {
+        return taskMapper.findTaskMemberIdByTaskId(taskId);
     }
 }

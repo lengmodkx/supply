@@ -229,6 +229,7 @@ layui.use('form', function() {
             if(data.result == 1){
                 $('#executorId').val('');
                 $('#executorName').html('');
+                parent.clearExecutor(taskId);
                 layer.msg("移除成功!");
             } else{
                 layer.msg("移除失败!");
@@ -244,7 +245,7 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $(".no-renling").click(function (e) {
-        $('#noExecutor').html("");
+        $('#noExecutor').html("执行者");
         zxz=true;
         var url = "/task/findProjectAllMember";
         var args = {"executor": executorId, "projectId": projectId};
@@ -389,8 +390,16 @@ layui.use('form', function() {
             }
         });
     });
+
+    //移除任务的参与者
     $(".remove-work-people").click(function () {
-        $(this).parent().remove()
+        var id = $(this).prev().attr("value");
+        var args = {"taskId":taskId,"uId":id};
+        var url = "/task/removeTaskMember";
+        $(this).parent().remove();
+        $.post(url,args,function (data) {
+            //移除完成
+        },"json");
     });
 
 
@@ -426,10 +435,15 @@ $('.people-ok').click(function () {
                 img = $(".one-people").eq(i).find("img").attr("value");
             }
         }
+        if(id == ''){
+            $(".people").hide(500);
+            return false;
+        }
         var url = "/task/updateTaskExecutor";
         var args = {"taskId":taskId,"id":id,"image":img,"uName":name};
         $.post(url,args,function(data){
             if(data.result == 1){
+                parent.changeExecutor(taskId,IMAGE_SERVER+img);
                 layer.msg("执行者更新成功!");
                 $('#executorId').val(id);
                 $('#executorName').html(name);
@@ -443,6 +457,7 @@ $('.people-ok').click(function () {
         },"json");
     }else {  //参与者 确定
         var addUserEntity=[];
+        var addUserImage = [];
         var removeUserEntity=[];
         for (var i=0;i<$("#executor .one-people").length;i++){
             if ($("#executor .one-people").eq(i).find("i").is(":hidden")) {
@@ -453,18 +468,31 @@ $('.people-ok').click(function () {
         for (var i=0;i<$("#noExecutor .one-people").length;i++){
             if ($("#noExecutor .one-people").eq(i).find("i").is(":visible")) {
                 var value =$("#noExecutor .one-people").eq(i).find("span").attr("value");
+                var image =$("#noExecutor .one-people").eq(i).find("img").attr("src");
+                addUserImage.push(image);
                 addUserEntity.push(value);
             }
         }
+        if(addUserEntity == '' && removeUserEntity == ''){
+            $(".people").hide(500);
+            return false;
+        }
         var url = "/task/addAndRemoveTaskMember";
         var args = {"taskId":taskId,"addUserEntity":addUserEntity.toString(),"removeUserEntity":removeUserEntity.toString()};
+        var content = '';
         $.post(url,args,function (data) {
             if(data.result > 0){
-                layer.msg("人员更新成功!");
-                $('#executorId').val(id);
-                $('#executorName').html(name);
+                for(var i = 0;i < addUserEntity.length;i++){
+                    content += '<div class="one-work-people">'+
+                            '<img src="'+ addUserImage[i] +'" value="' + addUserEntity[i] + '">'+
+                            '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                        '</div>';
+                }
+                for (var i = 0;i<removeUserEntity.length;i++){
+                    $('#'+removeUserEntity[i]).remove();
+                }
+                $(".add-work-people").before(content);
                 $(".people").hide(500);
-                console.log($("#people-ok").val())
             } else{
                 layer.msg("人员更新失败!");
             }

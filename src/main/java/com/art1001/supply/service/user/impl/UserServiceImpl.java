@@ -9,6 +9,7 @@ import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
@@ -31,6 +32,11 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
 
     @Resource
     private EmailUtil emailUtil;
+
+    /** 任务的逻辑层接口 */
+    @Resource
+    private TaskService taskService;
+
 
     protected UserServiceImpl(UserMapper userMapper) {
         super(userMapper);
@@ -176,11 +182,22 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
      */
     @Override
     public Map<String, List<UserEntity>> findUserByIsExistTask(Task task) {
+        //查询出该任务的创建者id
+        String taskMemberIdByTaskId = taskService.findTaskMemberIdByTaskId(task.getTaskId());
         Map<String,List<UserEntity>> map = new HashMap<String,List<UserEntity>>(3);
         //查询存在于该任务中的成员信息
         List<UserEntity> existList = userMapper.findUserByExistTask(task);
         //查询不存在于该任务中的成员信息
         List<UserEntity> notExistList = userMapper.findUserByNotExistTask(task);
+        //把集合中任务的创建者删除掉
+        if(notExistList != null && notExistList.size() > 0){
+            for (UserEntity userEntity : notExistList) {
+                if(userEntity.getId().equals(taskMemberIdByTaskId)){
+                    notExistList.remove(userEntity);
+                    break;
+                }
+            }
+        }
         map.put("existList",existList);
         map.put("notExistList",notExistList);
         return map;
@@ -193,7 +210,7 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
      * @return
      */
     @Override
-    public List<UserInfoEntity> findTaskMemberInfo(String taskId, String status) {
+    public List<UserEntity> findTaskMemberInfo(String taskId, String status) {
         return userMapper.findTaskMemberInfo(taskId,status);
     }
 
@@ -215,5 +232,25 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     @Override
     public UserEntity findUserInfoById(String executor) {
         return userMapper.findUserInfoById(executor);
+    }
+
+    /**
+     * 查询出任务的创建者信息
+     * @param taskId 任务的id
+     * @return
+     */
+    @Override
+    public UserEntity findTaskCreate(String taskId) {
+        return userMapper.findTaskCreate(taskId);
+    }
+
+    /**
+     * 根据id查询出用户的信息
+     * @param uId 用户id
+     * @return
+     */
+    @Override
+    public UserEntity findUserById(String uId) {
+        return userMapper.findUserById(uId);
     }
 }

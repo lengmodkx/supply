@@ -425,7 +425,7 @@ and tb_user.u_id = #{id}
 	<select id="findUserByExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
 		from tb_user where u_id in
-		(select member_id from prm_task_member where public_id = #{taskId} and  member_id in
+		(select member_id from prm_task_member where public_id = #{taskId} and `type` != '创建者' and member_id in
 		 (select member_id from prm_project_member where project_id =  #{projectId}))
 	</select>
 
@@ -433,7 +433,7 @@ and tb_user.u_id = #{id}
 	<select id="findUserByNotExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
 		from tb_user where u_id not in
-		(select member_id from prm_task_member where public_id = #{taskId} and  member_id in
+		(select member_id from prm_task_member where public_id = #{taskId} and `type` != '创建者' and  member_id in
 		(select member_id from prm_project_member where project_id =  #{projectId}))
 	</select>
 
@@ -456,5 +456,22 @@ and tb_user.u_id = #{id}
 	<select id="findUserInfoByUserId" resultMap="userInfo">
 		select <include refid="userInfoAttributes"></include>
 		from tb_user_info where u_id = #{uId}
+	</select>
+
+	<!-- 查询出某个任务的创建者信息 -->
+	<select id="findTaskCreate" resultMap="userMap">
+		  select
+		  <include refid="userAttributes"></include>
+		  from tb_user where u_id =
+		  (
+			select prm_task_member.member_id from prm_task_member where `type` = '创建者' and  public_id = #{taskId}
+		  )
+	</select>
+
+	<!-- 根据用户id查询出用户信息 -->
+	<select id="findUserById" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from tb_user where u_id = #{uId}
 	</select>
 </mapper>

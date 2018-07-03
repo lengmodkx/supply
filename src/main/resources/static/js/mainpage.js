@@ -69,6 +69,8 @@ $(function () {
             },
             onEnd: function(evt){ //拖拽完毕之后发生该事件
                 console.log('onEnd.foo:', [evt.item, evt.newIndex]);
+                var id_arr;
+
             }
         });
 
