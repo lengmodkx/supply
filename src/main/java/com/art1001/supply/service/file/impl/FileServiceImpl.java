@@ -20,15 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * fileServiceImpl
  */
-@Service("fileService1")
+@Service
 public class FileServiceImpl implements FileService {
 
     /**
@@ -81,7 +78,7 @@ public class FileServiceImpl implements FileService {
         String originalFilename = multipartFile.getOriginalFilename();
 
         // 获取要创建文件的上级目录实体
-        String parentUrl = fileService.getPerLevel(projectId, parentId);
+        String parentUrl = fileService.findProjectUrl(projectId);
         // 重置文件名
         String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
         // 设置文件url
@@ -157,22 +154,27 @@ public class FileServiceImpl implements FileService {
     public void initProjectFolder(Project project) {
         // 在OSS上创建根目录，此目录的名字用时间戳，库中不存此项，此文件夹用来归类。此目的用来辨别相同文件名的不同内容
         String folderName = System.currentTimeMillis() + "/";
+        // 在oss中为每个项目创建一个目录
         AliyunOss.createFolder(folderName);
+        File projectFile = new File();
+        projectFile.setFileName(project.getProjectName());
+        projectFile.setProjectId(project.getProjectId());
+        projectFile.setFileUrl(folderName);
+        projectFile.setParentId("1");
+        projectFile.setCatalog(1);
+        fileService.saveFile(projectFile);
         // 初始化项目
         String[] childFolderNameArr = {"图片", "文档", "视频", "音频"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
             // 在OSS上创建目录
-            String childFolder = folderName + System.currentTimeMillis() + "/";
-            AliyunOss.createFolder(childFolder);
+            // String childFolder = folderName + System.currentTimeMillis() + "/";
+            // AliyunOss.createFolder(childFolder);
             // 写库
             // 拿到项目的名字作为初始化的文件名
             file.setFileName(childFolderName);
             // 项目id
             file.setProjectId(project.getProjectId());
-            // 文件请求路径
-            file.setFileUrl(childFolder);
-
             // 设置是否目录
             file.setCatalog(1);
             fileService.saveFile(file);
@@ -186,14 +188,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void createFolder(String projectId, String parentId, String fileName) {
-        // 获取父级url
-        String parentUrl = fileService.getPerLevel(projectId, parentId);
-
-        // 设置新建目录的url
-        String fileUrl = parentUrl + System.currentTimeMillis() + "/";
-
-        // 现在阿里云上创建文件夹
-        AliyunOss.createFolder(fileUrl);
         // 存库
         File file = new File();
         // 拿到项目的名字作为初始化的文件名
@@ -202,10 +196,8 @@ public class FileServiceImpl implements FileService {
         file.setParentId(parentId);
         // 项目id
         file.setProjectId(projectId);
-        // 文件请求路径
-        file.setFileUrl(fileUrl);
 
-        // 设置是否目录
+        // 设置目录
         file.setCatalog(1);
         fileService.saveFile(file);
     }
@@ -224,46 +216,10 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public void moveFile(String[] fileIds, String folderId) {
-        // 获取目录信息
-        File folder = fileMapper.findFileById(folderId);
-        String destinationFolderName = folder.getFileUrl();
-        for (String fileId : fileIds) {
-            // 获取源文件
-            File file = fileMapper.findFileById(fileId);
-
-            // 修改oss上的路径，成功后改库
-            if (file.getCatalog() == 1) { // 文件夹
-                ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
-
-                assert listing != null;
-                // 得到所有的文件夹，
-                for (String commonPrefix : listing.getCommonPrefixes()) {
-
-                    // 得到文件名
-                    String destinationObjectName = destinationFolderName + commonPrefix;
-                    // 移动oss上的文件夹
-                    AliyunOss.createFolder(destinationObjectName);
-                }
-                // 得到所有的文件
-                for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
-                    // 得到文件名
-                    String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
-                    // 移动oss上的文件夹
-                    AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
-                    // 修改库中路径
-                    file.setFileUrl(destinationFolderName);
-                    // 设置上级id
-                    file.setParentId(folderId);
-                    fileService.updateFile(file);
-                }
-            } else { // 文件
-                AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
-                // 设置源文件父级id， url
-                file.setParentId(folderId);
-                file.setFileUrl(folder.getFileUrl() + file.getFileName());
-                fileService.updateFile(file);
-            }
-        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("fileIds", fileIds);
+        map.put("folderId", folderId);
+        fileMapper.moveFile(map);
     }
 
     /**
@@ -318,22 +274,25 @@ public class FileServiceImpl implements FileService {
     /**
      * 获取上级url
      * @param projectId 项目id
-     * @param parentId 当parentId为 0 时，则返回顶级url
      */
     @Override
-    public String getPerLevel(String projectId, String parentId) {
-        if (parentId.equals("0")) {
-            String fileUrl = fileMapper.findTopLevel(projectId);
-            return fileUrl.substring(0, fileUrl.indexOf("/") + 1);
-        } else {
-            File file = fileMapper.findByProjectIdAndFileId(projectId, parentId);
-            return file.getFileUrl();
-        }
+    public String findProjectUrl(String projectId) {
+        return fileMapper.findProjectUrl(projectId);
     }
 
     @Override
     public List<File> findFileList(File file) {
         return fileMapper.findFileList(file);
+    }
+
+    @Override
+    public List<File> findByIds(String[] fileIds) {
+        return fileMapper.findByIds(fileIds);
+    }
+
+    @Override
+    public void recoveryFile(String[] fileIds) {
+        fileMapper.recoveryFile(fileIds);
     }
 
 }

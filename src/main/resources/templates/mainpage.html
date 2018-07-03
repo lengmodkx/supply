@@ -36,11 +36,12 @@
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
                            <ul th:id="${taskMenu.relationId}" class="taskList">
-                               <li class="assignment" th:each="task:${taskMenu.taskList}" th:id="${task.taskId}" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${project.projectId} + '\',\'' + 1 + '\')'">
+                               <li class="assignment" th:each="task:${taskMenu.taskList}" th:id="${task.taskId}" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
                                    <div class="assignment-top-box boxsizing">
                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
                                        <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                       <img class="assignment-tx" src="../static/image/add.png"  th:src="@{/image/add.png}" />
+                                       <img class="assignment-tx" th:if="${task.taskMember != null}" src="../static/image/add.png"  th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
+                                       <img class="assignment-tx" th:if="${task.taskMember == null}" src="/image/add.png" th:src="@{/image/add.png}"/>
                                    </div>
                                    <div class="assignment-bottom-box">
                                        <span class="timer">今天9:00-明天</span>
@@ -78,6 +79,7 @@
  </div>
 
 
+<script th:src="@{/js/saveTaskBackShow.js}" src="../static/js/saveTaskBackShow.js"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
@@ -85,12 +87,9 @@
 <script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 
 </body>
-</html>
-<script>
-   $(function () {
+<script th:inline="javascript">
 
-   });
-
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
    //点击 添加 类名now 使文字变色
    $(".my-nav-wrap li").click(function () {
        $(this).addClass("now").siblings().removeClass("now")
@@ -113,4 +112,40 @@
        if(r!=null)return  unescape(r[2]);
        return null;
    }
+
+   function taskShow(taskMenuId,task) {
+       var a = '<li class="assignment" id = "'+ task.taskId +'" onclick="javascript:updateTask(\''+ task.taskId +'\',\''+ task.projectId+'\')">'+
+           '<div class="assignment-top-box boxsizing">'+
+           '<input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >'+
+           '<div class="layui-unselect layui-form-checkbox" lay-skin="primary">'+
+           '<i class="layui-icon layui-icon-ok"></i>'+
+           '</div>'+
+           '<span class="assignment-title">'+task.taskName+'</span>';
+       if(task.taskMember == null){
+           a += '<img class="assignment-tx" src="/image/add.png" />';
+       } else{
+           a += '<img class="assignment-tx" src="'+IMAGE_SERVER + task.taskMember.memberImg+'" />';
+       }
+        a +=   '</div>'+
+           '<div class="assignment-bottom-box">'+
+           '<span class="timer">今天9:00-明天</span>'+
+           '</div>'+
+           '<div class="line"></div>'+
+           '</li>';
+       var old = $('#'+taskMenuId).html();
+       $('#'+taskMenuId).html(a).append(old);
+   }
+
+   function changeExecutor(taskId,image){
+       var div = $('#'+taskId + ' div').first();
+       $(div).children('img:eq(0)').attr('src',image);
+   }
+
+   function clearExecutor(taskId){
+       var div = $('#'+taskId + ' div').first();
+       $(div).children('img:eq(0)').attr('src','/image/add.png');
+   }
 </script>
+
+
+</html>

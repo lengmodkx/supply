@@ -9,32 +9,35 @@
 <body>
 <!--文件菜单 弹框-->
 <div class="scheduling-menu boxsizing layui-form">
+
+    <input type="hidden" th:value="${fileId}" id="fileId">
+
     <div class="scheduling-menu-title">文件菜单
-        <img src="../static/image/close.png" >
+        <img th:src="@{/image/close.png}"  src="../static/image/close.png">
     </div>
+    <!--<div class="menu-box edit-rc">-->
+        <!--<img th:src="@{/image/fzrc.png}" src="../static/image/fzrc.png" >-->
+        <!--<span>复制文件</span>-->
+    <!--</div>-->
     <div class="menu-box edit-rc">
-        <img src="../static/image/fzrc.png" >
-        <span>复制文件</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/fzrclj.png" >
+        <img th:src="@{/image/fzrclj.png}" src="../static/image/fzrclj.png" >
         <span>复制文件链接</span>
     </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/gxrc.png" >
-        <span>共享文件</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/scrc.png" >
-        <span>收藏文件</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/hsz.png" >
+    <!--<div class="menu-box edit-rc">-->
+        <!--<img th:src="@{/image/gxrc.png}" src="../static/image/gxrc.png" >-->
+        <!--<span>共享文件</span>-->
+    <!--</div>-->
+    <!--<div class="menu-box edit-rc">-->
+        <!--<img th:src="@{/image/scrc.png}" src="../static/image/scrc.png" >-->
+        <!--<span>收藏文件</span>-->
+    <!--</div>-->
+    <div class="menu-box edit-rc recoveryFile">
+        <img th:src="@{/image/hsz.png}" src="../static/image/hsz.png" >
         <span>移到回收站</span>
     </div>
     <div class="heng-line"></div>
     <div class="secret menu-box layui-form">
-        <img src="../static/image/suo.png" >
+        <img th:src="@{/image/suo.png}" src="../static/image/suo.png" >
         <span>隐私模式</span>
         <div class="switch">
             <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
@@ -49,6 +52,9 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
+
+    var fileId = $("#fileId").val();
+
     layui.use('form', function(){
         var form = layui.form;
 
@@ -67,6 +73,16 @@
             }
         });
 
+        // 移入回收站
+        $(".recoveryFile").click(function () {
+            $.post("/file/recoveryFile", {fileIds: fileId}, function (data) {
+                if (data.result === 1) {
+                    parent.location.reload();
+                } else {
+                    layer.msg(data.msg, {icon: 2})
+                }
+            });
+        });
 
     });
     $(function () {

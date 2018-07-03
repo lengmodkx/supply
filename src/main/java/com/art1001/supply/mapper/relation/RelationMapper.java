@@ -105,4 +105,13 @@ public interface RelationMapper {
 	 * @return
 	 */
     TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
+
+	/**
+	 * 查询当前菜单下的任务的最大序号
+	 * @param taskMenuId 菜单id
+	 * @return
+	 */
+	int findMenuTaskMaxOrder(String taskMenuId);
+
+
 }

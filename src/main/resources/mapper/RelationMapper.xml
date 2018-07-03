@@ -266,4 +266,9 @@
 						prm_relation.relation_id = #{relationId}
 	)		and prm_relation.project_id = prm_project.project_id
 	</select>
+
+	<!-- 查询当前菜单下的任务序号 -->
+	<select id="findMenuTaskMaxOrder" resultType="java.lang.Integer">
+		select IFNULL(max(`order`),0) from prm_task where prm_task.task_menu_id = #{taskMenuId}
+	</select>
 </mapper>

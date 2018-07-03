@@ -173,7 +173,7 @@
                 $.post('/project/updateProject',{'projectId':projectId,"projectDel":1} ,function (data) {
                     if(data.result===1){
                         layer.alert("移除成功");
-                        layer.closeAll();
+                        parent.layer.closeAll();
                     }
                 });
             });
@@ -184,8 +184,8 @@
             console.log(JSON.stringify(data.field));
             $.post('/project/updateProject',data.field ,function (data) {
                 if(data.result===1){
-                    layer.alert("移除成功");
-                    layer.closeAll();
+                    layer.alert("更新成功");
+                    parent.layer.closeAll();
                 }
             });
             return false;

@@ -102,12 +102,25 @@ import java.util.List;
     /**
      * 获取上级文件路径
      */
-    String getPerLevel(String projectId, String parentId);
+    String findProjectUrl(String projectId);
 
 	/**
 	 * 根据条件查询文件
 	 */
 	List<File> findFileList(File file);
+
+	/**
+	 * 根据id数组查询文件
+	 * @param fileIds 数组
+	 */
+	List<File> findByIds(String[] fileIds);
+
+	/**
+	 * 移入回收站
+	 *
+	 * @param fileIds ids
+	 */
+	void recoveryFile(String[] fileIds);
 
 	/**
 	 * 获取一个文件夹下所有的子文件

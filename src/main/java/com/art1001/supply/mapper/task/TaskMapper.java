@@ -225,4 +225,19 @@ public interface TaskMapper {
 	 * @return
 	 */
     List<Task> simpleTaskMenu(String menuId);
+
+	/**
+	 * 根据任务的id 查询出任务的创建者id
+	 * @param taskId 任务的id
+	 * @return
+	 */
+	@Select("select member_id from prm_task where task_id = #{taskId}")
+	String findTaskMemberIdByTaskId(String taskId);
+
+	/**
+	 * 清空任务的执行者
+	 * @param taskId 任务id
+	 */
+	@Update("update prm_task set executor = '' where task_id = #{taskId}")
+    void clearExecutor(String taskId);
 }

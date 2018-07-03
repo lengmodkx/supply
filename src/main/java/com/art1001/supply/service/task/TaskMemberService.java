@@ -140,13 +140,20 @@ public interface TaskMemberService {
 	 *
 	 * @param taskId 任务id
 	 * @param status 要查询的成员身份属于什么
+	 * @param executorId 任务执行者的id
 	 * @return
 	 */
-	List<UserInfoEntity> findTaskMemberInfo(String taskId, String status);
+	List<UserEntity> findTaskMemberInfo(String taskId, String status,String executorId);
 
 	/**
 	 * 清空该人的成员关联信息
 	 * @param taskId
 	 */
 	void clearTaskMemberByTaskId(String taskId);
+
+	/**
+	 * 删除一个任务下的执行者信息
+	 * @param taskId 任务id
+	 */
+	void delTaskMemberExecutor(String taskId);
 }

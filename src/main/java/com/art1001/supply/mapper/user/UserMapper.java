@@ -92,7 +92,7 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @param status 要查询的成员身份属于什么
 	 * @return
 	 */
-	List<UserInfoEntity> findTaskMemberInfo(@Param("taskId") String taskId, @Param("status") String status);
+	List<UserEntity> findTaskMemberInfo(@Param("taskId") String taskId, @Param("status") String status);
 
 	/**
 	 * 根据任务id 查询出任务下的执行者信息
@@ -107,4 +107,25 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
 	UserEntity findUserInfoById(String id);
+
+	/**
+	 * 查询该用户的详细信息
+	 * @param uId 用户id
+	 * @return
+	 */
+	UserInfoEntity findUserInfoByUserId(String uId);
+
+	/**
+	 * 查询出任务的创建者信息
+	 * @param taskId 任务id
+	 * @return
+	 */
+    UserEntity findTaskCreate(String taskId);
+
+	/**
+	 * 根据用户id查询出用户的信息
+	 * @param uId 用户id
+	 * @return
+	 */
+	UserEntity findUserById(String uId);
 }

@@ -15,9 +15,10 @@
     <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" id="taskName"
               class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
+        <input type="hidden" id="have-executor" th:value="${user.id}">
         <div class="who-wrap">
             <input th:name="userId" th:value="${user.id}" type="hidden"/>
-            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}"/>
+            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" th:id="executorImg"/>
             <input type="hidden" th:id="executorId" th:value="${user.id}"/>
             <input type="hidden" th:id="executorName" th:value="${user.userName}"/>
             <span th:text="${user.userName}" id = "showExecutor">谁谁谁</span>
@@ -87,7 +88,6 @@
                         <span class="dot"></span>
                         <span class="tag-font">标签标签</span>
                     </li>
-
                 </ul>
             </div>
             <!--新建标签-->
@@ -133,12 +133,30 @@
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <img th:src="@{/image/add.png}">
+            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}">
             <i class="layui-icon layui-icon-close-fill remove-work-people "
                style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
             <img th:src="@{/image/adds.png}">
+        </div>
+    </div>
+    <!--人员 参与者 弹框-->
+    <div>
+        <input type="hidden" id = "memberId" />
+        <div class="people boxsizing" style="display: none" >
+            <input type="text" name="" placeholder="搜索" class="layui-input">
+            <div class="peoples">
+                <p id = "identity">参与者</p>
+                <div id = "members">
+
+                </div>
+                <p>推荐</p>
+                <div id = "executor">
+                    <!--项目成员列表-->
+                </div>
+            </div>
+            <div id="people-ok" class="people-ok">确定</div>
         </div>
     </div>
     <div class="heng-line"></div>
@@ -152,31 +170,10 @@
     </div>
     <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
 
-    <!--人员 参与者 弹框-->
-    <input type="hidden" id = "memberId" />
-    <div class="people boxsizing" style="display: none" >
-        <input type="text" name="" placeholder="搜索" class="layui-input">
-        <div class="peoples">
-            <p>参与者</p>
-            <div class="one-people">
-                <img th:src="@{/image/begintime.png}">
-                <span th:text="${user.userName}" th:value="${user.id}" th:name="executor"></span>
-                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
-            </div>
-            <p>推荐</p>
-            <div id = "executor">
-                <!--项目成员列表-->
-            </div>
-            <div class="add-new-people">
-                <img th:src="@{/image/adds.png}">
-                <span>邀请新成员</span>
-            </div>
-        </div>
-        <div id="people-ok" class="people-ok">确定</div>
-    </div>
 </form>
 
 </body>
+<script th:src="@{/js/saveTaskBackShow.js}" src="../static/js/saveTaskBackShow.js"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
@@ -189,6 +186,9 @@
     var taskMenuId = [[${taskMenuId}]];
     //当前任务执行者id
     var executorId = $("span[name = 'executor']").attr("value");
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+
 </script>
 <script  th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
 </html>

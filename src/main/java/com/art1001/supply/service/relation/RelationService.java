@@ -143,4 +143,10 @@ public interface RelationService {
 	 * @return
 	 */
 	TaskMenuVO findProjectAndGroupInfoByMenuId(String relationId);
+
+	/**
+	 * 根据查询菜单id 查询 菜单id 下的 最大排序号
+	 * @param taskMenuId 菜单id
+	 */
+	int findMenuTaskMaxOrder(String taskMenuId);
 }

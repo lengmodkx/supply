@@ -1,9 +1,16 @@
-
-
+function close() {
+    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+    parent.layer.close(index); //再执行关闭
+}
+var zxz=false;
 layui.use('form', function() {
     var form = layui.form;
     //监听提交
     form.on('submit(createTask)', function (data) {
+        console.log(222);
+      console.log( $("#"+taskMenuId));
+
+        $('#'+taskMenuId).html("dfdfd");
         //获取选中的参与者信息
         var members = $('#memberId').val();
         //设置任务的执行者
@@ -42,8 +49,10 @@ layui.use('form', function() {
         $.post(url,args,function(data){
             if(data.result == 1){
                 layer.msg("任务创建成功!");
-                //关闭遮罩层
-                //任务数回显
+                close();
+                parent.taskShow(taskMenuId,data.task);
+            } else{
+                layer.msg("任务创建失败!");
             }
         },"json");
         return false;
@@ -56,18 +65,27 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'MM-dd HH:mm'
         });
 
         laydate.render({
             elem: '#overTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'MM-dd HH:mm'
         });
     });
+if ($("#have-executor").val()){
+    $(".who-wrap").show();
+    $(".no-renling").hide()
+} else {
+    $(".who-wrap").hide();
+    $(".no-renling").show()
+}
     //点击 认领人 的x 号， 移出认领人 ，待认领出现
     $(".remove-who-wrap").click(function () {
         $(this).parent().hide();
+        $('#executorId').val('');
+        $('#showExecutor').html("待认领");
         if ($(".who-and-time").find(".who-wrap").css("display") == "none") {
             $(".no-renling").show();
         } else {
@@ -77,19 +95,29 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $(".no-renling").click(function (e) {
+        zxz=true;
+        $('#identity').html("执行者");
         var url = "/task/findProjectAllMember";
-        var args = {"projectId": projectId};
+        var args = {"projectId": projectId,"executor":executorId};
         //异步请求项目人员名单
         $.post(url,args,function(data){
             var member = data.data;
+            var executor = "";
             var content = "";
             for(var i = 0;i < member.length;i++){
                 content += "<div class='one-people'>";
-                content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
+                content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
                 content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                 content += "</div>";
             }
+            executor+=
+            "<div class='one-people'>"+
+            "<img th:src='\@{}\'>"+
+            "<span value = ''>待认领</span>"+
+            "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
+            "</div>";
+            $('#members').html(executor);
             $('#executor').html(content);
         });
         $(".people").show(500)
@@ -121,7 +149,6 @@ layui.use('form', function() {
             $('#tags').html(content);
             $(".tags-search-build").show();
             $(".tag-search").show();
-            $(".no-tags").hide();
         },"json");
         e.stopPropagation();
     });
@@ -224,12 +251,11 @@ layui.use('form', function() {
 
     //点击人员 出现对勾
     $("html").on("click",".one-people",function () {
-        $(this).find("i").toggle();
-        var arr=[]
-        for (var i=0;i<$(".one-people").length;i++){
-            if ($(this).find(i).is(":visible")) {
-                var value=$(this).find("span").attr("value");
-            }
+        if (zxz){
+            $(this).siblings().find("i").hide();
+            $(this).find("i").toggle();
+        } else {
+            $(this).find("i").toggle();
         }
     });
 
@@ -237,27 +263,35 @@ layui.use('form', function() {
      * 选中任务的参与者
      */
     $('.people-ok').click(function () {
-      // if(document.getElementById("people-ok").classList.contains("cyz-chufa")){
-      // }else {
-      // }
-        var arr=[];
-        for (var i=0;i<$(".one-people").length;i++){
-            if ($(".one-people").eq(i).find("i").is(":visible")) {
-                var value =$(".one-people").eq(i).find("span").attr("value");
-                arr.push(value);
+        // 执行者 确定
+        if (zxz){
+            var id = "";
+            var name = "";
+            var image = "";
+            for (var i=0;i<$(".one-people").length;i++){
+                if ($(".one-people").eq(i).find("i").is(":visible")) {
+                    id = $(".one-people").eq(i).find("span").attr("value");
+                    name = $(".one-people").eq(i).find("span").html();
+                    image =  $(".one-people").eq(i).find("img").attr("src");
+                }
             }
-        }
-        var identity = $('#identity').html();
-        //被选中的参与者id 存储
-        $('#memberId').val(arr);
-        if(identity == '执行者'){
-            alert($('#executorId').val(arr));
-            $(".who-and-time").append('<div class="who-wrap">\n' +
-                '            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}"/>\n' +
-                '            <span th:text="'+ name +'" id = "showExecutor" value = '+ arr +'></span>\n' +
-                '            <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
-                '        </div>')
-            $(".no-renling").hide()
+            $(".who-wrap").css("display","block");
+            $('#executorId').val(id);
+            $('#showExecutor').html(name);
+            $('#executorImg').attr("src",image);
+            $(".no-renling").hide();
+            $(".people").hide(500);
+        }else {  //参与者 确定
+            var arr=[];
+            for (var i=0;i<$(".one-people").length;i++){
+                if ($(".one-people").eq(i).find("i").is(":visible")) {
+                    var value =$(".one-people").eq(i).find("span").attr("data-id");
+                    arr.push(value);
+                }
+            }
+            //被选中的参与者id 存储
+            $('#memberId').val(arr);
+            $(".no-renling").hide();
         }
         $(".people").hide(500);
     });
@@ -280,19 +314,37 @@ layui.use('form', function() {
      * 添加任务的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
+
+        zxz =false;
         var url = "/task/findProjectAllMember";
         var args = {"executor": $('#executorId').val(), "projectId": projectId};
         $.post(url, args, function (data) {
             var content = "";
+            var cyz = "";
             var member = data.data;
             if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
                     content += "<div class=\'one-people\'>";
-                    content += "<img th:src='\@{"+ member[i].userInfo.image +"}\'>";
-                    content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].memberImg +"'>";
+                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].memberName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 }
+                if($('#executorId').val() == ''){
+                    cyz += '<div class="one-people">'+
+                        '<img th:src="@{/image/begintime.png}">'+
+                        '<span value="" th:name="executor">没有参与者</span>'+
+                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '</div>';
+                } else{
+                    cyz += '<div class="one-people">'+
+                        '<img src="'+ $('#executorImg').attr("src") +'">'+
+                        '<span value="'+ $('#executorId').val() +'" th:name="executor">'+ $('#showExecutor').html() +'</span>'+
+                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '</div>';
+
+                }
+                $('#members').html(cyz);
                 $("#executor").html(content);
                 $('#identity').html("参与者");
                 $(".people").show(500,function () {

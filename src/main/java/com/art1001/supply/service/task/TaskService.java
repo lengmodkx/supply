@@ -169,7 +169,7 @@ public interface TaskService {
 	 * @param removeUserEntity 要移除的参与者信息
 	 * @return
 	 */
-	TaskLogVO addAndRemoveTaskMember(Task task, UserEntity[] addUserEntity, UserEntity[] removeUserEntity);
+	TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity);
 
 	/**
 	 * 移除任务参与者
@@ -345,4 +345,13 @@ public interface TaskService {
 	 * @param taskId 任务id
 	 */
 	Map<String,List> findTaskRelation(String taskId);
+
+	/**
+	 * 根据任务id查询任务的创建者id
+	 * @param taskId 任务的id
+	 * @return
+	 */
+	String findTaskMemberIdByTaskId(String taskId);
+
+
 }

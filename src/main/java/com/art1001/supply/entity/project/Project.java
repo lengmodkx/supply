@@ -2,6 +2,7 @@ package com.art1001.supply.entity.project;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * projectEntity
  */
 @Data
+@ToString
 public class Project extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
