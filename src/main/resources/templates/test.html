@@ -31,12 +31,11 @@ Welcome<br/><input id="text" type="text" />
         function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
             setMessageInnerHTML("连接成功");
-            // stompClient.subscribe('/app/subscribeTest', function (response) {
-            //     setMessageInnerHTML("已成功订阅/app/subscribeTest");
-            //     var returnData = JSON.parse(response.body);
-            //     setMessageInnerHTML("/app/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
-            // });
-            subscribe1();
+            stompClient.subscribe('/app/subscribeTest', function (response) {
+                setMessageInnerHTML("已成功订阅/app/subscribeTest");
+                var returnData = JSON.parse(response.body);
+                setMessageInnerHTML("/app/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
+            });
         },
         function errorCallBack(error) {
             // 连接失败时（服务器响应 ERROR 帧）的回调方法
@@ -48,16 +47,16 @@ Welcome<br/><input id="text" type="text" />
     function send() {
         var message = document.getElementById('text').value;
         var messageJson = JSON.stringify({ "name": message });
-        stompClient.send("/project/sendTest", {}, messageJson);
-        setMessageInnerHTML("/project/sendTest 你发送的消息:" + message);
+        stompClient.send("/app/sendTest", {}, messageJson);
+        setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
     }
 
     //订阅消息
     function subscribe1() {
-        stompClient.subscribe('/topic/subscribe', function (response) {
-            setMessageInnerHTML("已成功订阅/topic/subscribe");
+        stompClient.subscribe('/topic/subscribeTest', function (response) {
+            setMessageInnerHTML("已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
-            setMessageInnerHTML("/topic/subscribe 你接收到的消息为:" + returnData.responseMessage);
+            setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
         });
     }
 

@@ -37,7 +37,7 @@ public class WebSocketAction {
     /**
      * 项目的订阅
      */
-    @SubscribeMapping("/subscribe")
+    @SubscribeMapping("/subscribeTest")
     public void project() {
         logger.info("用户订阅了我。。。");
     }
@@ -55,6 +55,7 @@ public class WebSocketAction {
 
 
     //客户端只要订阅了/topic/subscribeTest主题，调用这个方法即可
+    @RequestMapping("test")
     public void templateTest() {
         messagingTemplate.convertAndSend("/topic/subscribeTest", new ServerMessage("服务器主动推的数据"));
     }

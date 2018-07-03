@@ -45,7 +45,7 @@ public class IndexController extends BaseController {
     /**
      * 跳转到登陆页面
      */
-    @GetMapping("/login.html")
+    @GetMapping("/")
     public String login() {
         return "login";
     }
