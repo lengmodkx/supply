@@ -214,13 +214,10 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			if(str.equals("执行者")){
 				if(!StringUtils.isEmpty(task.getExecutor())){
 					UserEntity userById = userService.findUserInfoById(task.getExecutor());
-					taskMember.setType("执行者");
+					taskMember.setType(str);
 					taskMember.setMemberId(userById.getId());
 					taskMember.setMemberName(userById.getUserName());
 					taskMember.setMemberImg(userById.getUserInfo().getImage());
-					taskMemberMapper.saveTaskMember(taskMember);
-					taskMember.setId(IdGen.uuid());
-					taskMember.setType("参与者");
 					taskMemberMapper.saveTaskMember(taskMember);
 				}
 			}
@@ -230,6 +227,11 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			List<UserEntity> manyUserById = userService.findManyUserById(member);
 			if(manyUserById != null && manyUserById.size() > 0) {
 				for (UserEntity userEntity : manyUserById) {
+					if(task.getExecutor().equals("")){
+						if(userEntity.getId().equals(ShiroAuthenticationManager.getUserEntity().getId())){
+							continue;
+						}
+					}
 					TaskMember taskMember = new TaskMember();
 					//设置id
 					taskMember.setId(IdGen.uuid());

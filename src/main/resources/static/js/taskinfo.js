@@ -268,13 +268,25 @@ layui.use('form', function() {
             "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>"+
             "</div>"
         );
+        $('#noExecutor').html('');
         zxz=true;
         var url = "/task/findProjectAllMember";
         var args = {"executor": executorId, "projectId": projectId};
         //异步请求项目人员名单
         $.post(url,args,function(data){
-            var member = data.data;
             var content = "";
+            var member = data.data;
+            if(member == null){
+                content += "<div class='one-people'>";
+                content += "<img value = '' src='/static/image/add.png'>";
+                content += "<span value = ''>" + 没有成员了 + "</span>";
+                content += "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>";
+                content += "</div>";
+                $('#noExecutor').html(content);
+                $(".people").show(500);
+                $("#executor").removeClass("special-executor");
+                return false;
+            }
             for(var i = 0;i < member.length;i++){
                 content += "<div class='one-people'>";
                 content += "<img value = '"+ member[i].userInfo.image +"' src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";

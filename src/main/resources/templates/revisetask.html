@@ -181,7 +181,7 @@
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
             <div class="one-work-people" th:if="${executor.id != ''}">
-                <img src="../static/image/add.png" th:value="${executor.id}" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
+                <img src="../static/image/add.png" th:value="${executor.id}"  th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
             <div class="one-work-people" th:id="${participant.id}" th:if="${participantList != null}" th:each="participant:${participantList}">
