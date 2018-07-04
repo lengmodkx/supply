@@ -474,26 +474,37 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * 清除任务的开始时间和结束时间
+     * 清除任务的开始时间
      * @param task 任务的实体信息
      * @return
      */
     @Override
-    public TaskLogVO removeTaskStartAndEndTime(Task task) {
+    public TaskLogVO removeTaskStartTime(Task task) {
         StringBuilder content = new StringBuilder("");
         int result = 0;
         //设置最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //如果开始时间不为空 则清空开始时间
-        if(task.getStartTime() != null){
-            result = taskMapper.removeTaskStartTime(task);
-            content.append(TaskLogFunction.J.getName());
-        }
-        //如果截止时间不为空 则清空截止时间
-        if(task.getEndTime() != null){
-            result = taskMapper.removeTaskEndTime(task);
-            content.append(TaskLogFunction.K.getName());
-        }
+        result = taskMapper.removeTaskStartTime(task);
+        content.append(TaskLogFunction.J.getName());
+        //保存操作日志
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 清除任务的结束时间
+     * @param task 任务的实体信息
+     * @return
+     */
+    @Override
+    public TaskLogVO removeTaskEndTime(Task task) {
+        StringBuilder content = new StringBuilder("");
+        int result = 0;
+        //设置最后更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        result = taskMapper.removeTaskEndTime(task);
+        content.append(TaskLogFunction.K.getName());
         //保存操作日志
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);

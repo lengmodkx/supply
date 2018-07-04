@@ -773,7 +773,9 @@
     line-height: 32px;
     cursor: pointer;
 }
-
+#members.yougou i{
+    display: block;
+}
 .add-new-people img{
     width: 32px;
     height: 32px;

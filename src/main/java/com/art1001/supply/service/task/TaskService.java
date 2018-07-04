@@ -160,7 +160,14 @@ public interface TaskService {
 	 * @param task 任务的实体信息
 	 * @return
 	 */
-	TaskLogVO removeTaskStartAndEndTime(Task task);
+	TaskLogVO removeTaskStartTime(Task task);
+
+	/**
+	 * 清除任务的开始时间和结束时间
+	 * @param task 任务的实体信息
+	 * @return
+	 */
+	TaskLogVO removeTaskEndTime(Task task);
 
 	/**
 	 * 添加参与者

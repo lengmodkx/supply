@@ -419,16 +419,42 @@ public class TaskController {
     }
 
     /**
-     * 清除任务的开始时间和结束时间
+     * 清除任务的开始时间
      * @param task 任务的实体信息
      * @return
      */
-    @PostMapping("removeTaskStartAndEndTime")
+    @PostMapping("removeTaskStartTime")
     @ResponseBody
-    public JSONObject removeTaskStartAndEndTime(Task task){
+    public JSONObject removeTaskStartTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.removeTaskStartAndEndTime(task);
+            TaskLogVO taskLogVO = taskService.removeTaskStartTime(task);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("msg","清空成功!");
+                jsonObject.put("result","1");
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("msg","清空失败!");
+                jsonObject.put("result","0");
+            }
+        } catch (Exception e){
+            log.error("系统异常,清除失败! 当前任务id:,{},{} ",task.getTaskId(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 清除任务的截止时间
+     * @param task 任务的实体信息
+     * @return
+     */
+    @PostMapping("removeTaskEndTime")
+    @ResponseBody
+    public JSONObject removeTaskEndTime(Task task){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            TaskLogVO taskLogVO = taskService.removeTaskEndTime(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","清空成功!");
                 jsonObject.put("result","1");
@@ -1182,6 +1208,25 @@ public class TaskController {
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 反向选取用户信息
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("reverseFindUser")
+    @ResponseBody
+    public JSONObject reverseFindUser(String projectId,String[] uId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<UserEntity> list = userService.reverseFindUser(projectId,uId);
+            jsonObject.put("reversUser",list);
+        } catch (Exception e){
+            log.error("系统异常,操作失败!{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;

@@ -181,18 +181,22 @@ if ($("#have-executor").val()){
             '                </span>')
     });
 
-    $(".revise-task").on("click", ".tag i", function () {
+    //移除任务的参与者
+    $("html").on("click",".remove-work-people",function () {
         $(this).parent().remove();
-        //判断 有没有标签
-        console.log($(".has-tags span").length);
-        if ($(".has-tags span").length == 0) {
-            $(".has-tags").hide();
-            $(".no-tags").show();
-        } else {
-            $(".has-tags").show();
-            $(".no-tags").hide();
-        }
     });
+    // $(".revise-task").on("click", ".tag i", function () {
+    //     $(this).parent().remove();
+    //     //判断 有没有标签
+    //     console.log($(".has-tags span").length);
+    //     if ($(".has-tags span").length == 0) {
+    //         $(".has-tags").hide();
+    //         $(".no-tags").show();
+    //     } else {
+    //         $(".has-tags").show();
+    //         $(".no-tags").hide();
+    //     }
+    // });
 
     //点击颜色，颜色出现对勾
     $(".color-pick li").click(function () {
@@ -275,6 +279,10 @@ if ($("#have-executor").val()){
                     image =  $(".one-people").eq(i).find("img").attr("src");
                 }
             }
+            if(id == ''){
+                $(".people").hide(500);
+                return false;
+            }
             $(".who-wrap").css("display","block");
             $('#executorId').val(id);
             $('#showExecutor').html(name);
@@ -283,12 +291,26 @@ if ($("#have-executor").val()){
             $(".people").hide(500);
         }else {  //参与者 确定
             var arr=[];
+            var img = [];
             for (var i=0;i<$(".one-people").length;i++){
                 if ($(".one-people").eq(i).find("i").is(":visible")) {
-                    var value =$(".one-people").eq(i).find("span").attr("data-id");
+                    var value = $(".one-people").eq(i).find("span").attr("data-id");
+                    var image = $(".one-people").eq(i).find("img").attr("src");
                     arr.push(value);
+                    img.push(image);
                 }
             }
+            if(arr == ''){
+                return false;
+            }
+            var content = "";
+            for(var i = 0;i < arr.length;i++){
+                content += '<div value = "' + arr[i] + '" class="one-work-people">'+
+                    '<img src="'+ img[i] +'">'+
+                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                    '</div>';
+            }
+            $(".add-work-people").before(content);
             //被选中的参与者id 存储
             $('#memberId').val(arr);
             $(".no-renling").hide();
@@ -316,6 +338,11 @@ if ($("#have-executor").val()){
     $(".add-work-people img").click(function (e) {
 
         zxz =false;
+        var isExistId = [];
+        $('.work-people').children('div').each(function () {
+           isExistId.push($(this).html());
+        });
+        alert(isExistId);
         var url = "/task/findProjectAllMember";
         var args = {"executor": $('#executorId').val(), "projectId": projectId};
         $.post(url, args, function (data) {
@@ -325,22 +352,22 @@ if ($("#have-executor").val()){
             if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
                     content += "<div class=\'one-people\'>";
-                    content += "<img src='"+IMAGE_SERVER+ member[i].memberImg +"'>";
-                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].memberName + "</span>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
+                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].userName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 }
                 if($('#executorId').val() == ''){
                     cyz += '<div class="one-people">'+
-                        '<img th:src="@{/image/begintime.png}">'+
-                        '<span value="" th:name="executor">没有参与者</span>'+
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '<img src="/static/image/add.png">'+
+                        '<span data-id="">'+ "无参与者" +'</span>'+
+                        '<i  class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>'+
                         '</div>';
                 } else{
                     cyz += '<div class="one-people">'+
-                        '<img src="'+ $('#executorImg').attr("src") +'">'+
-                        '<span value="'+ $('#executorId').val() +'" th:name="executor">'+ $('#showExecutor').html() +'</span>'+
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '<img src="' + $('#executorImg').attr("src") + '">'+
+                        '<span data-id="' + $('#executorId').val() + '">'+ $('#showExecutor').html() +'</span>'+
+                        '<i  class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>'+
                         '</div>';
 
                 }
@@ -348,7 +375,9 @@ if ($("#have-executor").val()){
                 $("#executor").html(content);
                 $('#identity').html("参与者");
                 $(".people").show(500,function () {
-                   document.getElementById("people-ok").classList.add("cyz-chufa")
+                   document.getElementById("people-ok").classList.add("cyz-chufa");
+                    // document.getElementById("members").classList.add("yougou");
+
                 });
 
             } else{
@@ -358,9 +387,13 @@ if ($("#have-executor").val()){
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 $("#executor").html(content);
-                $(".people").show(500);
+                $(".people").show(500,function () {
+                    // document.getElementById("members").classList.add("yougou");
+                });
             }
         }, "json");
+
+
         e.stopPropagation();
     });
 

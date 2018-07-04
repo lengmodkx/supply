@@ -16,6 +16,7 @@ import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.EmailUtil;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ImageUtil;
+import org.elasticsearch.index.mapper.Uid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -252,5 +253,19 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     @Override
     public UserEntity findUserById(String uId) {
         return userMapper.findUserById(uId);
+    }
+
+    /**
+     * 根据用户的id 反向选择用户
+     * @param projectId 项目id
+     * @param uId 用户的id
+     * @return
+     */
+    @Override
+    public List<UserEntity> reverseFindUser(String projectId, String[] uId) {
+        Map map = new HashMap();
+        map.put("projectId",projectId);
+        map.put("uId",uId);
+        return userMapper.reverseFindUser(map);
     }
 }

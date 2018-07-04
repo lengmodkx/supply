@@ -170,16 +170,24 @@ layui.use('form', function() {
             format: 'yyyy-MM-dd HH:mm'
             ,done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
-                var url = "/task/updateTaskStartAndEndTime";
                 var startTime = new Date(value.toString()).getTime();
                 var args = {"taskId":taskId,"startTime":startTime};
-                $.post(url,args,function(data){
-                    if(data.result == 1){
-                        layer.msg(data.msg);
-                    } else{
-                        layer.msg('设置失败!');
-                    }
-                },"json");
+                if(value == ''){
+                    var url = "/task/removeTaskStartTime";
+                    $.post(url,{taskId:taskId},function (data) {
+                        //完成
+                    })
+                } else{
+                    var url = "/task/updateTaskStartAndEndTime";
+                    $.post(url,args,function(data){
+                        if(data.result == 1){
+                            layer.msg(data.msg);
+                        } else{
+                            layer.msg('设置失败!');
+                        }
+                    },"json");
+
+                }
                 //console.log(value); //得到日期生成的值，如：2017-08-18
                 //console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
                 //console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
@@ -191,19 +199,26 @@ layui.use('form', function() {
             format: 'yyyy-MM-dd HH:mm',
             done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
-                var url = "/task/updateTaskStartAndEndTime";
                 var endTime = new Date(value.toString()).getTime();
                 var args = {"taskId":taskId,"endTime":endTime};
-                $.post(url,args,function(data){
-                    if(data.result == 1){
-                        layer.msg(data.msg);
-                    } else{
-                        layer.msg('设置失败!');
-                    }
-                },"json");
-                // console.log(value); //得到日期生成的值，如：2017-08-18
-                // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-                // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                if(value == ''){
+                    var url = "/task/removeTaskEndTime";
+                    $.post(url,{taskId:taskId},function (data) {
+                        //完成
+                    });
+                } else{
+                    var url = "/task/updateTaskStartAndEndTime";
+                    $.post(url,args,function(data){
+                        if(data.result == 1){
+                            layer.msg(data.msg);
+                        } else{
+                            layer.msg('设置失败!');
+                        }
+                    },"json");
+                }
+                console.log(value); //得到日期生成的值，如：2017-08-18
+                console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
             }
         });
 
@@ -245,7 +260,14 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $(".no-renling").click(function (e) {
-        $('#noExecutor').html("执行者");
+        $('#titles').html('执行者');
+        $('#executor').html(
+            "<div class='one-people'>"+
+            "<img value = '' src=''>"+
+            "<span value = ''>" + '待认领' + "</span>"+
+            "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>"+
+            "</div>"
+        );
         zxz=true;
         var url = "/task/findProjectAllMember";
         var args = {"executor": executorId, "projectId": projectId};
@@ -260,7 +282,7 @@ layui.use('form', function() {
                 content += "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>";
                 content += "</div>";
             }
-            $('#executor').html(content);
+            $('#noExecutor').html(content);
         });
         $(".people").show(500);
         $("#executor").removeClass("special-executor");
@@ -392,15 +414,16 @@ layui.use('form', function() {
     });
 
     //移除任务的参与者
-    $(".remove-work-people").click(function () {
-        var id = $(this).prev().attr("value");
-        var args = {"taskId":taskId,"uId":id};
-        var url = "/task/removeTaskMember";
-        $(this).parent().remove();
-        $.post(url,args,function (data) {
-            //移除完成
-        },"json");
-    });
+   $("html").on("click",".remove-work-people",function () {
+       var id = $(this).prev().attr("value");
+       var args = {"taskId":taskId,"uId":id};
+       var url = "/task/removeTaskMember";
+       $(this).parent().remove();
+       $.post(url,args,function (data) {
+           //移除完成
+       },"json");
+   });
+
 
 
     //点击人员 出现对勾

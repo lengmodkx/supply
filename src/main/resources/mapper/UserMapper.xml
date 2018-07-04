@@ -474,4 +474,16 @@ and tb_user.u_id = #{id}
 		<include refid="userAttributes"></include>
 		from tb_user where u_id = #{uId}
 	</select>
+
+	<!-- 根据用户的id反向选择用户 -->
+	<select id="reverseFindUser" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from tb_user where u_id in (
+		select member_id from prm_project_member where project_id = #{projectId} and member_id not in
+		<foreach collection="uId" separator="," open="(" close=")" item="mId">
+			#{mId}
+		</foreach>
+		)
+	</select>
 </mapper>

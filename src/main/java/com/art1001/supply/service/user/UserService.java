@@ -95,4 +95,11 @@ public interface UserService {
 	 * @return
 	 */
 	UserEntity findUserById(String uId);
+
+	/**
+	 * 根据用户的id反向选择用户
+	 * @param projectId
+	 * @return
+	 */
+	List<UserEntity> reverseFindUser(String projectId,String[] uId);
 }
