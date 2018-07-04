@@ -306,7 +306,7 @@ public interface TaskService {
 	 * 移除该任务的执行者 改为待认领状态
 	 * @param taskId 任务的id
 	 */
-	int removeExecutor(String taskId);
+	TaskLogVO removeExecutor(String taskId);
 
 	/**
 	 * 更新任务执行者
@@ -315,7 +315,7 @@ public interface TaskService {
 	 * @param userInfoEntity 新的执行者的信息
 	 * @return
 	 */
-	void updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
+	TaskLogVO updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
 
 	/**
 	 * 查询该项目下的所有任务

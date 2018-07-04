@@ -58,5 +58,10 @@ public class TaskLogVO {
      * 日程的实体信息
      */
     private Schedule schedule;
+
+    /**
+     * 用户头像
+     */
+    private String memberImg;
 }
 

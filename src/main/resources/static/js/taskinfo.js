@@ -66,6 +66,7 @@ layui.use('form', function() {
         $.post(url,{"taskId":taskId,"repeat": repeat},function (data) {
            if(data.result == 1){
                $('#oldRepeat').val(repeat);
+               getLog(data.taskLog);
                layer.msg(data.msg);
            } else{
                layer.msg("规则更新失败!");
@@ -91,6 +92,7 @@ layui.use('form', function() {
         $.post(url,{"taskId":taskId,"remind": remind},function (data) {
             if(data.result == 1){
                 $('#oldRemind').val(remind);
+                getLog(data.taskLog);
                 layer.msg(data.msg);
             } else{
                 layer.msg("提醒模式更新失败!");
@@ -113,6 +115,7 @@ layui.use('form', function() {
         var args = {"taskId":taskId,"priority":priorityData.value};
         $.post(url,args,function (data) {
            if(data.result == 1){
+               getLog(data.taskLog);
                layer.msg(data.msg);
                $('#oldPriority').val(priorityData.value);
            } else{
@@ -181,6 +184,7 @@ layui.use('form', function() {
                     var url = "/task/updateTaskStartAndEndTime";
                     $.post(url,args,function(data){
                         if(data.result == 1){
+                            getLog(data.taskLog);
                             layer.msg(data.msg);
                         } else{
                             layer.msg('设置失败!');
@@ -210,6 +214,7 @@ layui.use('form', function() {
                     var url = "/task/updateTaskStartAndEndTime";
                     $.post(url,args,function(data){
                         if(data.result == 1){
+                            getLog(data.taskLog);
                             layer.msg(data.msg);
                         } else{
                             layer.msg('设置失败!');
@@ -242,6 +247,7 @@ layui.use('form', function() {
         var args = {"taskId":taskId};
         $.post(url,args,function (data) {
             if(data.result == 1){
+                getLog(data.taskLog);
                 $('#executorId').val('');
                 $('#executorName').html('');
                 parent.clearExecutor(taskId);
@@ -480,6 +486,7 @@ $('.people-ok').click(function () {
             if(data.result == 1){
                 parent.changeExecutor(taskId,IMAGE_SERVER+img);
                 layer.msg("执行者更新成功!");
+                getLog(data.taskLog);
                 $('#executorId').val(id);
                 $('#executorName').html(name);
                 $('#executorImg').attr("src",IMAGE_SERVER+img);
@@ -517,6 +524,7 @@ $('.people-ok').click(function () {
         var content = '';
         $.post(url,args,function (data) {
             if(data.result > 0){
+                getLog(data.taskLog);
                 for(var i = 0;i < addUserEntity.length;i++){
                     content += '<div class="one-work-people">'+
                             '<img src="'+ addUserImage[i] +'" value="' + addUserEntity[i] + '">'+
@@ -600,7 +608,7 @@ $('.people-ok').click(function () {
         }, "json");
         e.stopPropagation();
 });
-    //监听任务内容的光标离开时间
+    //监听任务内容的光标离开事件
     $('#remarks').blur(function(){
         var taskId = $('#taskId').val();
         var oldRemarks = $('#oldRemarks').val();
@@ -625,11 +633,24 @@ $('.people-ok').click(function () {
      * @param taskLogVO 任务日志对象
      */
     function getLog(taskLogVO){
+        var datey = new Date().getFullYear();
+        var datem=new Date().getMonth()+1;
+        if (datem <10){
+            datem='0'+datem
+        }
+        var dated=new Date().getDay();
+        if (dated <10){
+            dated='0'+dated
+        }
+        var dateh=new Date().getHours();
+        var datemin=new Date().getMinutes();
+        var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
+
         var log = $('#log').html();
         log += '<li class="combox">'+
-            '<img src="/image/dongtai.png" th:src="@{/image/dongtai.png}" />'+
+            '<img src="' + IMAGE_SERVER+taskLogVO.memberImg + '" />'+
             '<span>'+ taskLogVO.content +'</span>'+
-            '<div class="in-what-time" th:value = '+"${#dates.format(taskLogVO.createTime,'yyyy-MM-dd HH:mm')}"+'></div>'+
+            '<div class="in-what-time"  >' + date + '</div>'+
             '</li>';
         $('#log').html(log);
     }

@@ -41,6 +41,7 @@ import javax.annotation.Resource;
 import javax.xml.ws.RequestWrapper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.SimpleFormatter;
@@ -992,6 +993,7 @@ public class TaskController {
             model.addAttribute("taskMenuVo",taskMenuVO);
             //查询出该任务的日志信息
             List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
+            Collections.reverse(logList);
             if(!logList.isEmpty()){
                 model.addAttribute("taskLog",logList);
             } else{
@@ -1182,7 +1184,8 @@ public class TaskController {
     public JSONObject removeExecutor(String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.removeExecutor(taskId);
+            TaskLogVO taskLogVO = taskService.removeExecutor(taskId);
+            jsonObject.put("taskLog",taskLogVO);
             jsonObject.put("msg","移除成功!");
             jsonObject.put("result",1);
         } catch (Exception e){
@@ -1203,9 +1206,10 @@ public class TaskController {
     public JSONObject updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity,String uName){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.updateTaskExecutor(taskId,userInfoEntity,uName);
+            TaskLogVO taskLogVO = taskService.updateTaskExecutor(taskId, userInfoEntity, uName);
             jsonObject.put("msg","修改成功");
             jsonObject.put("result",1);
+            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
             throw new AjaxException(e);

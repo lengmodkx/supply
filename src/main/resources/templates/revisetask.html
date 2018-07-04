@@ -197,9 +197,9 @@
         <div class="state">
             <ul id = "log">
                 <li class="combox" th:each="taskLog:${taskLog}">
-                    <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
+                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${taskLog.memberImg}" />
                     <span th:text="${taskLog.content}"></span>
-                    <div class="in-what-time" th:value = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}"></div>
+                    <div class="in-what-time" th:text = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                 </li>
             </ul>
         </div>
