@@ -340,9 +340,8 @@ if ($("#have-executor").val()){
         zxz =false;
         var isExistId = [];
         $('.work-people').children('div').each(function () {
-           isExistId.push($(this).html());
+           isExistId.push($(this).attr('id'));
         });
-        alert(isExistId);
         var url = "/task/findProjectAllMember";
         var args = {"executor": $('#executorId').val(), "projectId": projectId};
         $.post(url, args, function (data) {
