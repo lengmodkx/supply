@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Repository
@@ -128,4 +129,11 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @return
 	 */
 	UserEntity findUserById(String uId);
+
+	/**
+	 * 根据用户的id反向选择用户
+	 * @param map 包含  项目id  和 用户的id
+	 * @return
+	 */
+	List<UserEntity> reverseFindUser(Map<String,Object> map);
 }

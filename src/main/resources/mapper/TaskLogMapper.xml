@@ -156,7 +156,7 @@
 	<!-- 查询该日志的content -->
 	<select id="findTaskLogContentById" resultType="com.art1001.supply.entity.task.TaskLogVO" parameterType="java.lang.String">
 
-		select content,create_time createTime from prm_task_log where id = #{id}
+		select content,create_time createTime,member_img memberImg from prm_task_log where id = #{id}
 
 	</select>
 
@@ -164,7 +164,7 @@
 	<select id="initTaskLog" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task_log where task_id = #{taskId} order by create_time asc limit 0,5
+		from prm_task_log where task_id = #{taskId} order by create_time desc limit 0,5
 	</select>
 	
 </mapper>

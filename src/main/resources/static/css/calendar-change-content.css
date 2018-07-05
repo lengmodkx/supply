@@ -1,150 +1,97 @@
-/*修改任务*/
-.revise-task-wrap{
+
+.change-schedule{
     width: 600px;
-    height: 600px;
+    height: 540px;
     position: relative;
-    margin: 0 auto;
-}
-.revise-task{
-    width: 600px;
-    padding: 16px;
     background-color: white;
-    height: 480px;
-    overflow-y: scroll;
-    position: relative;
+    margin: 0 auto;
+
+}
+.scroll-box{
+    width: 100%;
+    height: 420px;
     overflow-x: hidden;
+    overflow-y: scroll;
 }
-.revise-task::-webkit-scrollbar{
+.white-box{
+    width: 100%;
+    padding: 0 16px;
+}
+.gray-box{
+    width: 100%;
+    padding: 10px 16px;
+    background-color: #F5F5F5;
+}
+.scroll-box::-webkit-scrollbar{
     width: 1px;
-    height: 10px;
-    background-color: 	#F8F8FF;
+    height: 1px;
 }
-.close-revise-task{
-    position: absolute;
-    right: 10px;
-    top: 18px;
-    z-index: 5;
+.change-schedule-title{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
+.change-schedule-title-left{
+    float: left;
+    font-size: 15px;
+}
+.change-schedule-title-right{
+    float: right;
+}
+.change-schedule-title-right i{
+    float: left;
+    margin-left: 15px;
     cursor: pointer;
 }
-.close-revise-task:hover{
-    color: #3da8f5 !important;
+.change-schedule-title-right i:hover{
+    color: #3DA8F5 !important;
 }
-.assignment-menu-show{
-    position: absolute;
-    right: 42px;
-    top: 18px;
-    z-index: 5;
+.change-schedule-title-right img{
+    position: relative;
+    float: left;
     cursor: pointer;
-}
-.assignment-menu-show:hover{
-    color: #3da8f5 !important;
-}
-.zan{
-    position: absolute;
-    right: 75px;
-    top: 18px;
-    z-index: 5;
-    cursor: pointer;
-}
-.zan>img{
+    margin-top: 17px;
     width: 15px;
     height: 15px;
-    vertical-align: middle;
-    margin-top: -4px;
-    transition: all 0.2s;
+    top: 0;
+    left: 0;
+    transition: all 0.3s;
 }
-.zan span{
-    font-size: 14px;
-    color: #B7ACA6;
-    line-height: 18px;
-}
-.zan :hover{
+.change-schedule-title-right img:hover{
     width: 17px;
     height: 17px;
-    top: 16px;
-    right: 63px;
+    top: -1px;
+    left: -1px;
 }
-.revise-task-title{
+.schedule-name{
     width: 100%;
-    height: 38px;
-    font-size: 16px;
-    font-weight: bold;
+    height: 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
-.task-name{
+.schedule-name input{
+    padding: 0 15px;
     width: 100%;
-    height: 20px;
-    line-height: 20px;
-    margin-bottom: 15px;
+    height: 30px;
+    border-radius: 5px;
+    border: 0 none;
+    outline-style: none;
+    font-size: 15px;
 }
-.task-name .layui-form-checked[lay-skin=primary] i{
-    border-color: #2B93D2;
-    background-color: #2B93D2;
+.schedule-name input:focus{
+    background-color: #E5E5E5;
 }
-.task-name .layui-form-checkbox[lay-skin=primary]{
-    float: left;
-}
-.task-name .layui-form-checkbox[lay-skin=primary] i{
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    margin-top: 2px;
-}
-.is-sure{
-    width: 14px;
-    height: 14px;
-    border: 1px solid #D3D3D3;
-    border-radius: 50%;
-    display: inline-block;
-    cursor: pointer;
-    float: left;
-}
-.task-name span{
-    float: left;
-    font-size: 14px;
-    margin-left: 15px;
-}
+/*选择人员和时间开始*/
 .who-and-time{
     width: 100%;
-    height: 25px;
+    height: 50px;
     margin-top: 25px;
+    margin-bottom: 25px;
     position: relative;
 }
-.who-wrap,.no-renling{
-    float: left;
-    padding: 5px 10px;
-    height: 25px;
-    position: relative;
-    border-radius: 15px;
-    margin-top: -5px;
-    cursor: pointer;
-    margin-left: -10px;
-    margin-right: 15px;
-}
-.no-renling span{
-    float: left;
-}
-.who-wrap:hover{
-    background-color: #f5f5f5;
-}
-.who-wrap:hover .remove-who-wrap{
-    display: block;
-}
- .remove-who-wrap{
-    position: absolute;
-    top: -7px;
-    right: -3px;
-    display: none;
-}
- .no-people-img{
-    float: left;
-    margin-right: 5px;
-}
-.no-renling{
-    display: none;
-}
-.no-renling:hover span{
-    color: #3da8f5;
-}
+
+
+
 .who-and-time img{
     width: 25px;
     height: 25px;
@@ -158,9 +105,11 @@
     float: left;
 }
 .time-wrap{
-    width: 130px;
-    height: 25px;
+    width: 150px;
+    height: 50px;
     float: left;
+    border-right: 1px solid #D5D5D5;
+    margin-right: 20px;
 }
 .time-wrap input{
     height: 25px;
@@ -168,25 +117,23 @@
     padding-left: 0;
     cursor: pointer;
     line-height: 25px;
-    float: left;
     width: 105px;
 }
 .time-wrap input::placeholder{
     color: black;
 }
-.time-wrap>img{
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 5px;
-    margin-top: 3px;
+.time-wrap>p{
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    color: gray;
 }
 .no-repeat>img,.no-remand>img{
     width: 18px;
     height: 18px;
     float: left;
     margin-right: 10px;
-    margin-top: 3px;
+    margin-top: 14px;
     position: absolute;
     top: 0px;
     left: 0;
@@ -202,36 +149,80 @@
 .no-remand .layui-select-title{
     opacity: 0;
 }
-.combox{
+/*选择人员和时间结束*/
+.style-box{
+    width: 100%;
+    margin: 20px 0;
+}
+.left-box{
+    width: 120px;
+    height: 25px;
+    float: left;
+    font-size: 14px;
+    color: #a6a6a6;
+    line-height: 25px;
+}
+.left-box span{
+    margin-left: 15px;
+}
+.right-box{
+    float: left;
+    width: 430px;
+}
+.wait-to{
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+    color: gray;
+    cursor: pointer;
+}
+.wait-to:hover{
+    background-color: #f5f5f5;
+    color: #3da8f5;
+}
+.add-something{
+    width: 100%;
+    height: 68px;
+}
+.add-something input{
+    width: 100%;
+    height: 28px;
+    margin-bottom: 10px;
+    border: 1px solid #d9d9d9;
+}
+.btn-box{
     width: 100%;
     height: 30px;
-    margin-top: 20px;
+}
+.btn-ok-style{
+    width: 74px;
+    height: 30px;
+    margin-left: 20px;
+    float: right;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
     line-height: 30px;
     font-size: 14px;
+    background-color: #3da8f5;
+    cursor: pointer;
 }
-.combox img{
-    width: 18px;
-    height: 18px;
-    vertical-align: middle;
-    float: left;
-    margin-right: 20px;
-    margin-top: 6px;
+.btn-ok-style:hover{
+    opacity: 0.8;
 }
-.combox span{
-    float: left;
-    margin-right: 15px;
+.btn-no-style{
+    float: right;
+    width: 60px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+    color: gray;
+    cursor: pointer;
 }
-.add-bz .label{
-    width: 300px;
-}
-.yxj.combox{
-    height: 36px;
-}
-.yxj.combox span{
-    line-height: 40px;
-}
-.yxj.combox img{
-    margin-top: 10px;
+.btn-no-style:hover{
+    color: #3da8f5;
 }
 /*标签 搜索框   新建标签*/
 .tags-search-build{
@@ -247,11 +238,21 @@
 .add-tag{
     position: relative;
 }
-.no-tags{
+.no-tags-wrap{
+    cursor: pointer;
+    float: left;
+    width: 430px;
+}
+.tags{
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+    color: gray;
     cursor: pointer;
 }
-.no-tags:hover{
-    color: #2B93D2;
+.tags:hover>span{
+    color: #3da8f5;
 }
 .has-tags{
 
@@ -336,6 +337,30 @@
 .tag-font{
     font-size: 14px;
     float: left;
+}
+.one-tag{
+    position: relative;
+    float: left;
+    margin-right: 10px;
+}
+.one-tag span{
+    padding: 3px 10px;
+    font-size: 14px;
+    background-color: #A1D5FA;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 19px;
+}
+
+.one-tag i{
+    position: absolute;
+    top: -10px;
+    right: -5px;
+    z-index: 100;
+    display: none;
+}
+.one-tag:hover i{
+    display: block;
 }
 /*新建标签*/
 .build-tags{
@@ -430,75 +455,92 @@
     color: #2B93D2;
     cursor: pointer;
 }
-/*具体子任务*/
-.child-task-list{
+.line{
     width: 100%;
-    height: 32px;
-    line-height: 32px;
+    height: 1px;
+    background-color: #E5E5E5;
+    margin-top: 20px;
 }
-.child-task-list .layui-form-checkbox[lay-skin=primary]{
+.combox{
+    width: 100%;
+    height: 30px;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 14px;
+}
+.combox img{
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
     float: left;
-    margin-top: 7px;
+    margin-right: 20px;
+    margin-top: 6px;
 }
-.child-task-con{
+.combox span{
     float: left;
-    margin-left: 10px;
-    width: 80%;
+    margin-right: 15px;
 }
-.child-task-con:hover{
-    background-color: #f7f7f7;
-}
-.child-task-con>span{
-    float: left;
-    font-size: 12px;
-}
-.child-task-con .dt{
-    float: left;
-    width: 40px;
+/*参与者 开始*/
+.cyz{
+    width: 100%;
     height: 20px;
-    background-color: #f5f5f5;
-    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: gray;
     line-height: 20px;
-    margin-top: 7px;
-    margin-left: 15px;
+    margin-top: 10px;
 }
-.go-detail{
-    float: right;
-    line-height: 32px;
-    cursor: pointer;
+.work-people{
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
-.go-detail:hover{
-    color: #3da8f5 !important;
-}
-.child-task-who{
+.one-work-people{
+    position: relative;
     width: 24px;
     height: 24px;
-    float: right;
-    margin-right: 10px;
+    border: 1px solid white;
+    margin-right: 8px;
+    float: left;
     border-radius: 50%;
-    margin-top: 4px;
 }
-.common-add-style{
-    width: 90%;
+.one-work-people:hover{
+    border: 1px solid #3da8f5;
 }
-.common-ok-style{
-    float: right;
-    margin-top: 15px;
+.one-work-people:nth-of-type(1):hover{
+    border: 1px solid white;
 }
-.common-no-style{
-    float: right;
-    margin-right: 10px;
-    width: 64px;
-    height: 38px;
-    text-align: center;
-    line-height: 38px;
-    margin-top: 15px;
+.one-work-people:hover .remove-work-people{
+    display: block;
+}
+.one-work-people:nth-of-type(1):hover .remove-work-people{
+    display: none;
+}
+.work-people img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.remove-work-people{
+    position: absolute;
+    right: -5px;
+    top: -4px;
     cursor: pointer;
-    color: #383838;
+    display: none;
 }
-.common-no-style:hover{
-    color: #0b84da;
+.add-work-people{
+    float: left;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    position: relative;
 }
+.add-work-people img{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+/*参与者结束*/
 .state{
     width: 100%;
     color: #A5A5A5;
@@ -528,7 +570,7 @@
     padding: 10px;
     width: 100%;
     height: 60px;
-    background-color: #EEEEEE;
+    background-color: #fff;
     min-height: 60px;
     resize: none;
     border: 0 none;
@@ -543,12 +585,17 @@
     width: 100%;
     height: 40px;
     position: relative;
+    background-color: #fff;
 }
-.publish-bottom>img{
+.publish-bottom>i{
     float: left;
-    width: 30px;
-    height: 30px;
     cursor: pointer;
+    margin-left: 10px;
+    line-height: 40px;
+    font-weight: bold;
+}
+.publish-bottom>i:hover{
+    color: #3da8f5 !important;
 }
 .publish-btn{
     width: 60px;
@@ -647,167 +694,4 @@
 .add-fujian:hover{
     opacity: 0.8;
 }
-/*任务菜单框*/
 
-.renwu-menu{
-    width: 200px;
-    padding: 0 20px 1px 20px;
-    background-color: white;
-    position: absolute;
-    top: 35px;
-    right: 0px;
-    box-shadow: 0 7px 21px rgba(0,0,0,.1);
-    color: #9F9F9F;
-}
-.scheduling-menu-title{
-    width: 100%;
-    height: 54px;
-    line-height: 54px;
-    text-align: center;
-    font-size: 16px;
-    border-bottom: 1px solid #D5D5D5;
-    margin-bottom: 22px;
-}
-.scheduling-menu-title img{
-    width: 16px;
-    height: 16px;
-    float: right;
-    margin-top: 20px;
-    cursor: pointer;
-
-}
-.menu-box{
-    width: 100%;
-    height: 22px;
-    margin-bottom: 22px;
-    line-height: 22px;
-    cursor: pointer;
-}
-.menu-box img{
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 20px;
-}
-.menu-box span{
-    float: left;
-    font-size: 14px;
-}
-.secret.menu-box{
-    height: 45px;
-    position: relative;
-    color: #9F9F9F;
-    margin-top: 10px;
-}
-.layui-form-switch{
-    margin-top: 0;
-}
-.switch{
-    float: right;
-}
-.who-can-see{
-    position: absolute;
-    bottom: 0;
-    left: 38px;
-}
-.layui-form-onswitch{
-    background-color: #017ECA;
-    border-color: #017ECA;
-}
-
-/*参与者  人员 弹框*/
-.people{
-    width: 252px;
-    height: 360px;
-    border-radius: 4px;
-    box-shadow: 0 2px 20px rgba(0,0,0,.1);
-    position: absolute;
-    top: 70px;
-    left: 95px;
-    background-color: white;
-    padding: 15px ;
-    z-index: 100;
-}
-.peoples{
-    width: 100%;
-    height: 210px;
-    padding-top: 20px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    border-bottom: 1px solid #E5E5E5;
-}
-.peoples::-webkit-scrollbar{
-    width: 1px;
-    height: 1px;
-}
-.peoples>p{
-    font-size: 12px;
-    color: #a6a6a6;
-}
-.one-people{
-    width: 100%;
-    height: 32px;
-    padding: 6px 0;
-    font-size: 14px;
-    line-height: 32px;
-    cursor: pointer;
-}
-.one-people:hover{
-    background-color: #f5f5f5;
-}
-.one-people img{
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    float: left;
-}
-.one-people span{
-    float: left;
-    margin-left: 15px;
-}
-
-#executor.special-executor i{
-    display: block;
-}
-.one-people i{
-    float: right;
-    margin-right: 5px;
-    display: none;
-}
-.add-new-people{
-    width: 100%;
-    height: 32px;
-    padding: 6px 0;
-    font-size: 14px;
-    line-height: 32px;
-    cursor: pointer;
-}
-#members.yougou i{
-    display: block;
-}
-.add-new-people img{
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    float: left;
-}
-.add-new-people span{
-    float: left;
-    margin-left: 15px;
-    color: #3da8f5;
-}
-
-
-.people-ok{
-    width: 220px;
-    height: 40px;
-    margin: 15px auto;
-    text-align: center;
-    line-height: 40px;
-    color: white;
-    background-color: #3696DC;
-    cursor: pointer;
-}
-.people-ok:hover{
-    opacity: 0.8;
-}

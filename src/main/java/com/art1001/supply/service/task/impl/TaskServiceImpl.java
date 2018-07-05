@@ -1,9 +1,7 @@
 package com.art1001.supply.service.task.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.collect.TaskCollect;
@@ -260,11 +258,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskLogVO updateTaskStartAndEndTime(Task task) {
         String content = "";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         if(task.getStartTime() != null){
-            content = TaskLogFunction.M.getName();
+            Date date = new Date(task.getStartTime());
+            content = TaskLogFunction.M.getName()+ " " + format.format(date);
         }
         if(task.getEndTime() != null){
-            content = TaskLogFunction.L.getName();
+            Date date = new Date(task.getEndTime());
+            content = TaskLogFunction.L.getName() + " " + format.format(date);
         }
         int result =  taskMapper.updateTask(task);
         TaskLogVO taskLogVO = saveTaskLog(task, content);
@@ -474,26 +475,37 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * 清除任务的开始时间和结束时间
+     * 清除任务的开始时间
      * @param task 任务的实体信息
      * @return
      */
     @Override
-    public TaskLogVO removeTaskStartAndEndTime(Task task) {
+    public TaskLogVO removeTaskStartTime(Task task) {
         StringBuilder content = new StringBuilder("");
         int result = 0;
         //设置最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //如果开始时间不为空 则清空开始时间
-        if(task.getStartTime() != null){
-            result = taskMapper.removeTaskStartTime(task);
-            content.append(TaskLogFunction.J.getName());
-        }
-        //如果截止时间不为空 则清空截止时间
-        if(task.getEndTime() != null){
-            result = taskMapper.removeTaskEndTime(task);
-            content.append(TaskLogFunction.K.getName());
-        }
+        result = taskMapper.removeTaskStartTime(task);
+        content.append(TaskLogFunction.J.getName());
+        //保存操作日志
+        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+        taskLogVO.setResult(result);
+        return taskLogVO;
+    }
+
+    /**
+     * 清除任务的结束时间
+     * @param task 任务的实体信息
+     * @return
+     */
+    @Override
+    public TaskLogVO removeTaskEndTime(Task task) {
+        StringBuilder content = new StringBuilder("");
+        int result = 0;
+        //设置最后更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        result = taskMapper.removeTaskEndTime(task);
+        content.append(TaskLogFunction.K.getName());
         //保存操作日志
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
@@ -890,9 +902,15 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int removeExecutor(String taskId) {
+    public TaskLogVO removeExecutor(String taskId) {
+        //先将任务成员关系表的执行者清掉
         taskMapper.clearExecutor(taskId);
-        return taskMapper.removeExecutor(taskId);
+        Task task = new Task();
+        task.setTaskId(taskId);
+        taskMapper.removeExecutor(taskId);
+        //拼接日志
+        String content = TaskLogFunction.A.getName();
+        return saveTaskLog(task,content);
     }
 
     /**
@@ -924,7 +942,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public void updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
+    public TaskLogVO updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
         Task task = new Task();
         task.setTaskId(taskId);
         task.setExecutor(userInfoEntity.getId());
@@ -949,6 +967,9 @@ public class TaskServiceImpl implements TaskService {
             taskMember.setType("参与者");
             taskMemberService.saveTaskMember(taskMember);
         }
+        StringBuilder content = new StringBuilder();
+        content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
+        return saveTaskLog(task,content.toString());
     }
 
     /**

@@ -432,9 +432,11 @@ and tb_user.u_id = #{id}
 	<!-- 查询不存在该任务中的成员信息 -->
 	<select id="findUserByNotExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
-		from tb_user where u_id not in
-		(select member_id from prm_task_member where public_id = #{taskId} and `type` != '创建者' and  member_id in
-		(select member_id from prm_project_member where project_id =  #{projectId}))
+		from tb_user where u_id in
+		(select member_id from prm_project_member where prm_project_member.project_id =  #{projectId} and member_id not in (
+			select member_id from prm_task_member where prm_task_member.public_id = #{taskId}
+		))
+
 	</select>
 
 	<!-- 查询任务下的所有参与者的基本信息  不保括执行者 -->
@@ -473,5 +475,17 @@ and tb_user.u_id = #{id}
 		select
 		<include refid="userAttributes"></include>
 		from tb_user where u_id = #{uId}
+	</select>
+
+	<!-- 根据用户的id反向选择用户 -->
+	<select id="reverseFindUser" resultMap="userMap">
+		select
+		<include refid="userAttributes"></include>
+		from tb_user where u_id in (
+		select member_id from prm_project_member where project_id = #{projectId} and member_id not in
+		<foreach collection="uId" separator="," open="(" close=")" item="mId">
+			#{mId}
+		</foreach>
+		)
 	</select>
 </mapper>

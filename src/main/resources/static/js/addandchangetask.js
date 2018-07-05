@@ -7,12 +7,11 @@ layui.use('form', function() {
     var form = layui.form;
     //监听提交
     form.on('submit(createTask)', function (data) {
-        console.log(222);
-      console.log( $("#"+taskMenuId));
-
-        $('#'+taskMenuId).html("dfdfd");
         //获取选中的参与者信息
-        var members = $('#memberId').val();
+        var members = [];
+        $('.work-people .one-work-people').each(function () {
+           members.push($(this).attr('value'));
+        });
         //设置任务的执行者
         var executor = $('#executorId').val();
         //设置任务开始时间
@@ -45,7 +44,7 @@ layui.use('form', function() {
             privacyPattern = "0";
         }
         var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members,"executor":executor};
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor};
         $.post(url,args,function(data){
             if(data.result == 1){
                 layer.msg("任务创建成功!");
@@ -181,18 +180,22 @@ if ($("#have-executor").val()){
             '                </span>')
     });
 
-    $(".revise-task").on("click", ".tag i", function () {
+    //移除任务的参与者
+    $("html").on("click",".remove-work-people",function () {
         $(this).parent().remove();
-        //判断 有没有标签
-        console.log($(".has-tags span").length);
-        if ($(".has-tags span").length == 0) {
-            $(".has-tags").hide();
-            $(".no-tags").show();
-        } else {
-            $(".has-tags").show();
-            $(".no-tags").hide();
-        }
     });
+    // $(".revise-task").on("click", ".tag i", function () {
+    //     $(this).parent().remove();
+    //     //判断 有没有标签
+    //     console.log($(".has-tags span").length);
+    //     if ($(".has-tags span").length == 0) {
+    //         $(".has-tags").hide();
+    //         $(".no-tags").show();
+    //     } else {
+    //         $(".has-tags").show();
+    //         $(".no-tags").hide();
+    //     }
+    // });
 
     //点击颜色，颜色出现对勾
     $(".color-pick li").click(function () {
@@ -265,15 +268,34 @@ if ($("#have-executor").val()){
     $('.people-ok').click(function () {
         // 执行者 确定
         if (zxz){
+            var content = "";
             var id = "";
             var name = "";
             var image = "";
-            for (var i=0;i<$(".one-people").length;i++){
-                if ($(".one-people").eq(i).find("i").is(":visible")) {
-                    id = $(".one-people").eq(i).find("span").attr("value");
-                    name = $(".one-people").eq(i).find("span").html();
-                    image =  $(".one-people").eq(i).find("img").attr("src");
+            var index = 0;
+            for (var i=0;i<$("#executor .one-people").length;i++){
+                if ($("#executor .one-people").eq(i).find("i").is(":visible")) {
+                    id = $("#executor .one-people").eq(i).find("span").attr("value");
+                    name = $("#executor .one-people").eq(i).find("span").html();
+                    image =  $("#executor .one-people").eq(i).find("img").attr("src");
                 }
+            }
+            if(id == ''){
+                $(".people").hide(500);
+                return false;
+            }
+            $('.work-people .one-work-people').each(function () {
+                if($(this).attr('value') == id){
+                    index ++;
+                }
+            })
+            if(index == 0){
+                content = '<div value="' + id + '" class="one-work-people">'+
+                    '<input type="hidden" value="' + name + '">'+
+                    '<img src="' + image + '">'+
+                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                    '</div>';
+                $('.work-people .add-work-people').before(content);
             }
             $(".who-wrap").css("display","block");
             $('#executorId').val(id);
@@ -283,14 +305,52 @@ if ($("#have-executor").val()){
             $(".people").hide(500);
         }else {  //参与者 确定
             var arr=[];
-            for (var i=0;i<$(".one-people").length;i++){
-                if ($(".one-people").eq(i).find("i").is(":visible")) {
-                    var value =$(".one-people").eq(i).find("span").attr("data-id");
+            var img = [];
+            var names = [];
+            for (var i=0;i<$("#executor .one-people").length;i++){
+                if ($("#executor .one-people").eq(i).find("i").is(":visible")) {
+                    var value = $("#executor .one-people").eq(i).find("span").attr("data-id");
+                    var image = $("#executor .one-people").eq(i).find("img").attr("src");
+                    var name = $("#executor .one-people").eq(i).find("span").html();
                     arr.push(value);
+                    img.push(image);
+                    names.push(name);
                 }
             }
+            //得到要移除头像列表的成员id
+            var remove = [];
+            for (var i=0;i<$("#members .one-people").length;i++){
+                if ($("#members .one-people").eq(i).find("i").is(":hidden")) {
+                    var value =$("#members .one-people").eq(i).find("span").attr("data-id");
+                    remove.push(value);
+                }
+            }
+            if(arr == '' && remove == ''){
+                return false;
+            }
+            var content = "";
+            //在成员头像列表添加头像
+            if(arr != ''){
+                for(var i = 0;i < arr.length;i++){
+                    content += '<div value = "' + arr[i] + '" class="one-work-people">'+
+                        '<input type="hidden" value="' + names[i] + '"  />'+
+                        '<img src="'+ img[i] +'">'+
+                        '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                        '</div>';
+                }
+            }
+            //移除成员头像列表头像
+            if(remove != ''){
+                for (var i = 0;i < remove.length;i++){
+                    $('.work-people .one-work-people').each(function () {
+                        if($(this).attr('value') == remove[i]){
+                            $(this).remove();
+                        }
+                    })
+                }
+            }
+            $(".add-work-people").before(content);
             //被选中的参与者id 存储
-            $('#memberId').val(arr);
             $(".no-renling").hide();
         }
         $(".people").hide(500);
@@ -316,39 +376,63 @@ if ($("#have-executor").val()){
     $(".add-work-people img").click(function (e) {
 
         zxz =false;
-        var url = "/task/findProjectAllMember";
-        var args = {"executor": $('#executorId').val(), "projectId": projectId};
+        //获取选中的人员的id
+        var isExistId = [];
+        var isExistName = [];
+        var isExistImg = [];
+        $('.work-people .one-work-people').each(function () {
+           isExistId.push($(this).attr('value'));
+           isExistName.push($(this).children('input').val());
+           isExistImg.push($(this).children('img').attr('src'));
+        });
+
+        //异步发送请求
+        var url = "/task/reverseFindUser";
+        var args = {"projectId": projectId,"uId":isExistId.toString()};
         $.post(url, args, function (data) {
             var content = "";
+
+
+
+
+
+
+
+
+
             var cyz = "";
-            var member = data.data;
+            var member = data.reversUser;
             if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
                     content += "<div class=\'one-people\'>";
-                    content += "<img src='"+IMAGE_SERVER+ member[i].memberImg +"'>";
-                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].memberName + "</span>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
+                    content += "<span data-id = '"+ member[i].id +"'>" + member[i].userName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 }
                 if($('#executorId').val() == ''){
                     cyz += '<div class="one-people">'+
-                        '<img th:src="@{/image/begintime.png}">'+
-                        '<span value="" th:name="executor">没有参与者</span>'+
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                        '<img src="/static/image/add.png">'+
+                        '<span data-id="">'+ "无参与者" +'</span>'+
+                        '<i  class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>'+
                         '</div>';
                 } else{
-                    cyz += '<div class="one-people">'+
-                        '<img src="'+ $('#executorImg').attr("src") +'">'+
-                        '<span value="'+ $('#executorId').val() +'" th:name="executor">'+ $('#showExecutor').html() +'</span>'+
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                        '</div>';
+                    for (var i = 0;i < isExistId.length;i++){
+                        cyz += '<div class="one-people">'+
+                            '<img src="' + isExistImg[i] + '">'+
+                            '<span data-id="' + isExistId[i] + '">'+ isExistName[i] +'</span>'+
+                            '<i  class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>'+
+                            '</div>';
+                    }
 
                 }
                 $('#members').html(cyz);
                 $("#executor").html(content);
                 $('#identity').html("参与者");
                 $(".people").show(500,function () {
-                   document.getElementById("people-ok").classList.add("cyz-chufa")
+                   document.getElementById("people-ok").classList.add("cyz-chufa");
+                    // document.getElementById("members").classList.add("yougou");
+
                 });
 
             } else{
@@ -358,9 +442,13 @@ if ($("#have-executor").val()){
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";
                 $("#executor").html(content);
-                $(".people").show(500);
+                $(".people").show(500,function () {
+                    // document.getElementById("members").classList.add("yougou");
+                });
             }
         }, "json");
+
+
         e.stopPropagation();
     });
 

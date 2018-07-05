@@ -160,7 +160,14 @@ public interface TaskService {
 	 * @param task 任务的实体信息
 	 * @return
 	 */
-	TaskLogVO removeTaskStartAndEndTime(Task task);
+	TaskLogVO removeTaskStartTime(Task task);
+
+	/**
+	 * 清除任务的开始时间和结束时间
+	 * @param task 任务的实体信息
+	 * @return
+	 */
+	TaskLogVO removeTaskEndTime(Task task);
 
 	/**
 	 * 添加参与者
@@ -299,7 +306,7 @@ public interface TaskService {
 	 * 移除该任务的执行者 改为待认领状态
 	 * @param taskId 任务的id
 	 */
-	int removeExecutor(String taskId);
+	TaskLogVO removeExecutor(String taskId);
 
 	/**
 	 * 更新任务执行者
@@ -308,7 +315,7 @@ public interface TaskService {
 	 * @param userInfoEntity 新的执行者的信息
 	 * @return
 	 */
-	void updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
+	TaskLogVO updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
 
 	/**
 	 * 查询该项目下的所有任务
