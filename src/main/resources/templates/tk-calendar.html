@@ -122,6 +122,7 @@
                 console.log('select触发的结束时间为：', end.format());
                 // ...
             },
+            //点击 具体 事项
             eventClick : function( event ){
                 //do something here...
                 console.log('eventClick中选中Event的id属性值为：', event.id);
@@ -130,7 +131,7 @@
                 console.log('eventClick中选中Event的end属性值为：', event.end==null?'无':event.end.format('YYYY-MM-DD HH:mm'));
                 console.log('eventClick中选中Event的color属性值为：', event.color);
                 console.log('eventClick中选中Event的className属性值为：', event.className);
-                // ...
+                reviseSchedule()
             },
             eventMouseover : function( event ) {
                 //do something here...
@@ -183,7 +184,7 @@
                     id: 1,
                     title: '这是一个all-day数据',
                     allDay: true,
-                    start: '2018-06-28',
+                    start: '2018-07-05',
                     textColor:'#383838',
                     backgroundColor :'#CDEEFD'
                 },
@@ -298,10 +299,34 @@
                 area:['600px','400px'],
                 fixed: false,
                 closeBtn: 0,
-                shade: 0,
+                // shade: 0,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: 'tk-calendar-create-rc.html'
+                content: 'tk-calendar-create-rc.html',
+                zIndex: layer.zIndex, //重点1
+                success: function(layero){
+                    layer.setTop(layero); //重点2
+                }
+            });
+        });
+    }
+    //修改日程 弹框
+    function reviseSchedule() {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area:['600px','540px'],
+                fixed: false,
+                closeBtn: 0,
+                shadeClose: true, //点击遮罩关闭
+                anim: 1,  //动画 0-6
+                content: 'tk-calendar-change-content.html',
+                zIndex: layer.zIndex, //重点1
+                success: function(layero){
+                    layer.setTop(layero); //重点2
+                }
             });
         });
     }

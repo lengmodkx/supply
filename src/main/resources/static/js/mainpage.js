@@ -308,6 +308,27 @@ function mypage() {
         });
     });
 };
+//日历 弹框
+$("").click(function () {
+    calendar()
+});
+function calendar() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '50px',
+            area:['100%','100%'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['tk-calendar.html','no']
+        });
+    });
+};
 //添加任务 弹框界面
 function addRenwu(projectId,taskMenuId,liId) {
     layui.use('layer', function(){
