@@ -433,7 +433,7 @@ and tb_user.u_id = #{id}
 	<select id="findUserByNotExistTask" resultMap="userMap">
 		select <include refid="userAttributes" ></include>
 		from tb_user where u_id in
-		(select member_id from prm_project_member where prm_project_member.project_id =  #{projectId} and member_id notyou in (
+		(select member_id from prm_project_member where prm_project_member.project_id =  #{projectId} and member_id not in (
 			select member_id from prm_task_member where prm_task_member.public_id = #{taskId}
 		))
 
