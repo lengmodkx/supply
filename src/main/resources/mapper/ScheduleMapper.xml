@@ -16,7 +16,26 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
-    
+
+	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
+		<id property="date" column="create_time" />
+		<collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList">
+			<result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+			<result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
+			<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+			<result column="start_time" property="startTime" jdbcType="BIGINT" />
+			<result column="end_time" property="endTime" jdbcType="BIGINT" />
+			<result column="repeat" property="repeat" jdbcType="VARCHAR" />
+			<result column="remind" property="remind" jdbcType="VARCHAR" />
+			<result column="address" property="address" jdbcType="VARCHAR" />
+			<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+			<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
+			<result column="create_time" property="createTime" jdbcType="BIGINT" />
+			<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		</collection>
+	</resultMap>
+
+
 	<sql id="Base_Column_List">
 				schedule_id,
 				schedule_name,
@@ -47,10 +66,10 @@
 		<include refid="whereStatement" />
 		
 		<if test="orderBy == 0">
-			order by id desc
+			order by schedule_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by id asc
+			order by schedule_id asc
 		</if>
 		
 	</select>
@@ -61,10 +80,10 @@
 		<include refid="Base_Column_List" />
 		from prm_schedule
 		<if test="orderBy == 0">
-			order by id desc
+			order by schedule_id desc
 		</if>
 		<if test="orderBy == 1">
-			order by id asc
+			order by schedule_id asc
 		</if>
 	</select>
 	
@@ -72,7 +91,7 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_schedule c where id = #{id}
+		from prm_schedule c where schedule_id = #{id}
 
 	</select>
 	
@@ -88,7 +107,7 @@
 	
 	<delete id="deleteScheduleById" parameterType="java.lang.String">
 		delete from
-		prm_schedule where id = #{id}
+		prm_schedule where schedule_id = #{id}
 	</delete>
 	
 	<insert id="saveSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
@@ -112,7 +131,7 @@
 			end_time,
 			</if>
 			<if test="repeat != null and repeat != ''">
-			repeat,
+			`repeat`,
 			</if>
 			<if test="remind != null and remind != ''">
 			remind,
@@ -196,7 +215,7 @@
 				end_time = #{endTime},
 			</if>
 			<if test="repeat != null and repeat != ''">
-				repeat = #{repeat},
+				`repeat` = #{repeat},
 			</if>
 			<if test="remind != null and remind != ''">
 				remind = #{remind},
@@ -218,8 +237,24 @@
 			</if>
 		</set>
 
-		WHERE id = #{id}
+		WHERE schedule_id = #{id}
 
 	</update>
-	
+
+	<select id="findScheduleGroupByCreateTime" resultMap="resultMap">
+		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') AS date,schedule_id,
+			schedule_name,
+			project_id,
+			start_time,
+			end_time,
+			`repeat`,
+			remind,
+			address,
+			remarks,
+			tag_id,
+			create_time,
+			update_time
+		FROM prm_schedule
+		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
+	</select>
 </mapper>

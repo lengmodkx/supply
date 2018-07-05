@@ -4,8 +4,10 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -67,6 +69,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public void saveSchedule(Schedule schedule){
+		schedule.setScheduleId(IdGen.uuid());
 		scheduleMapper.saveSchedule(schedule);
 	}
 	/**
@@ -82,6 +85,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public List<Schedule> findByIds(String[] scheduleIds) {
 		return scheduleMapper.findByIds(scheduleIds);
+	}
+
+	@Override
+	public List<ScheduleVo> findScheduleGroupByCreateTime() {
+		return scheduleMapper.findScheduleGroupByCreateTime();
 	}
 
 }

@@ -1,14 +1,22 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 
 @Controller
 @Slf4j
@@ -17,12 +25,80 @@ public class ScheduleController {
     @Resource
     private ProjectService projectService;
 
+    @Resource
+    private ScheduleService scheduleService;
+
+
     @RequestMapping("/schedule.html")
     public String share(@RequestParam String projectId, Model model){
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+        model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime());
+
         return "scheduling";
     }
+
+
+    @RequestMapping("/addschedule.html")
+    public String addschedule(@RequestParam String projectId, Model model){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+        model.addAttribute("startTime",format.format(System.currentTimeMillis()));
+        model.addAttribute("startTimeTemp",System.currentTimeMillis());
+        model.addAttribute("endTime",format.format(System.currentTimeMillis()+60*60*1000));
+        model.addAttribute("endTimeTemp",System.currentTimeMillis()+60*60*1000);
+
+        return "tk-add-calendar";
+    }
+
+    @RequestMapping("/searchPeople.html")
+    public String searchPeople(@RequestParam String projectId, Model model){
+
+        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+
+
+
+
+        return "tk-search-people";
+    }
+
+    @PostMapping("/addschedule")
+    public JSONObject addschedule(@RequestParam String scheduleName,
+                                  @RequestParam String repeat,
+                                  @RequestParam String remand,
+                                  @RequestParam(required = false) String allDay,
+                                  @RequestParam(required = false) String allPeopleDay,
+                                  @RequestParam String startTimeTemp,
+                                  @RequestParam String endTimeTemp,
+                                  @RequestParam(required = false) String memberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Schedule schedule = new Schedule();
+            schedule.setScheduleName(scheduleName);
+            schedule.setRepeat(repeat);
+            schedule.setRemind(remand);
+            if("on".equals(allDay)){
+                schedule.setStartTime(System.currentTimeMillis());
+                schedule.setEndTime(DateUtils.getEndTime());
+            }else{
+                schedule.setStartTime(DateUtils.strToLong(startTimeTemp));
+                schedule.setEndTime(DateUtils.strToLong(endTimeTemp));
+            }
+
+            schedule.setCreateTime(System.currentTimeMillis());
+            schedule.setUpdateTime(System.currentTimeMillis());
+            scheduleService.saveSchedule(schedule);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","创建成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 
 }

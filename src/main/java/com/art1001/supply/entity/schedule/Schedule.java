@@ -31,17 +31,6 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private String projectId;
 
-
-	/**
-	 * 开始时间
-	 */
-
-
-	/**
-	 * 结束时间
-	 */
-
-
 	/**
 	 * 设置任务重复
 	 */
@@ -71,14 +60,5 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private String tagId;
 
-
-	/**
-	 * 创建时间
-	 */
-
-
-	/**
-	 * 更新时间
-	 */
 
 }

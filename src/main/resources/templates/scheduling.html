@@ -20,7 +20,7 @@
 
 <div class="content-wrap-wrap boxsizing">
     <div class="content boxsizing">
-        <div id="date" style="display: none">
+        <div id="date">
             <div class="add-scheduling">
                 <div class="middle-box">
                     <img src="../static/image/adds.png"  th:src="@{/image/adds.png}" />
@@ -29,39 +29,43 @@
             </div>
             <!--//每一个折叠区域-->
             <div class="my-scheduling-box boxsizing layui-form">
-                <div class="scheduling-title">
-                    <span class="now">未来的日程</span><span>过去的日程</span>
-                </div>
-                <div class="layui-collapse my-scheduling">
-                    <div class="layui-colla-item">
-                        <div class="layui-colla-title">
-                            <span class="scheduling-date">今天</span><span class="scheduling-num">+2</span>
+                <div class="layui-tab layui-tab-brief" lay-filter="schedule">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">过去的日程</li>
+                        <li>今天的日程</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-collapse">
+                                <div class="layui-colla-item">
+                                    <h2 class="layui-colla-title">杜甫</h2>
+                                    <div class="layui-colla-content">内容区域</div>
+                                </div>
+                                <div class="layui-colla-item">
+                                    <h2 class="layui-colla-title">李清照</h2>
+                                    <div class="layui-colla-content">内容区域</div>
+                                </div>
+                                <div class="layui-colla-item">
+                                    <h2 class="layui-colla-title">鲁迅</h2>
+                                    <div class="layui-colla-content">内容区域</div>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="layui-colla-content layui-show scheduling-list">
-                            <ul>
-                                <li>
-                                    <div class="scheduling-time">
-                                        <span>8:15</span><span>——</span><span>16:15</span>
-                                    </div>
-                                    <div class="scheduling-name">
-                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="scheduling-time">
-                                        <span>8:15</span><span>——</span><span>16:15</span>
-                                    </div>
-                                    <div class="scheduling-name">
-                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
-                                    </div>
-                                </li>
-                            </ul>
+
+                        <div class="layui-tab-item">
+                            <div class="layui-collapse">
+                                <div class="layui-colla-item">
+                                    <h2 class="layui-colla-title">杜甫</h2>
+                                    <div class="layui-colla-content layui-show">内容区域</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
+
             </div>
-
-
 
         </div>
     </div>
@@ -71,12 +75,36 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
-<script>
+<script th:inline="javascript">
+
+    var projectId = [[${project.projectId}]];
+
     $(function () {
         var url = window.location.href;
         if(url.indexOf("schedule") > 0){
             $(".toper-nav ul li:nth-of-type(4)").addClass("now").siblings().removeClass("now");
         }
+    });
+
+
+    $(".add-scheduling>.middle-box").click(function (e) {
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area: ['600px', '400px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: "/schedule/addschedule.html?projectId=" + projectId
+            });
+        });
+    });
+    layui.use('element', function(){
+
     });
 </script>
 </html>
