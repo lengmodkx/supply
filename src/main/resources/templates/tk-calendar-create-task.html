@@ -9,7 +9,7 @@
 <body>
 <!-- 日历页面 创建 任务-->
 <div class="create-calendar-task">
-    <img class="close-create-calendar-task" src="../static/image/close.png" th:src="@{/image/close.png}" />
+    <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;top: 15px;"></i>
     <div class="create-calendar-task-title">创建任务</div>
     <div class="content-box boxsizing layui-form">
         <div class="content-title">
@@ -228,7 +228,7 @@
         });
 
         //点击 关闭按钮  关闭弹出层
-        $(".close-create-calendar-task").click(function () {
+        $(".close-tk").click(function () {
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             parent.layer.close(index); //再执行关闭
         });

@@ -361,4 +361,13 @@ public interface TaskService {
 	String findTaskMemberIdByTaskId(String taskId);
 
 
+	/**
+	 * 重新排序一个任务菜单的任务顺序
+	 * @param oldMenuTaskId 旧任务菜单的所有任务id
+	 * @param oldMenuId  旧任务菜单的id
+	 * @param newMenuId 新的任务菜单的id
+	 * @param newMenuTaskId 新的任务菜单的所有任务id
+	 * @param taskId 任务的id
+	 */
+	void orderOneTaskMenu(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId);
 }

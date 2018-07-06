@@ -240,4 +240,19 @@ public interface TaskMapper {
 	 */
 	@Update("update prm_task set executor = '' where task_id = #{taskId}")
     void clearExecutor(String taskId);
+
+	/**
+	 * 排序一组任务菜单的任务序号
+	 * @param taskId 任务id数组
+	 * @param order 任务的序号
+	 */
+	@Update("update prm_task set `order` = #{order} where task_id = #{taskId} ")
+    void orderOneTaskMenu(@Param("taskId") String taskId, @Param("order") int order);
+
+	/**
+	 * 根据子任务id 查询出父任务信息
+	 * @param taskId 子任务id
+	 * @return
+	 */
+	Task findTaskBySubTaskId(String taskId);
 }

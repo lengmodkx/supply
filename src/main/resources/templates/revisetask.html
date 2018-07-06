@@ -13,11 +13,15 @@
 <div id="revise-task" class="revise-task-wrap layui-form" >
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
-    <img class="zan" src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+    <div class="zan">
+        <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+        <span>+12</span>
+    </div>
+
     <div class="revise-task boxsizing ">
         <div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>
         <div class="task-name">
-            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+            <input type="checkbox" name="" title="" lay-filter = "taskComplete" lay-skin="primary" class="is-sure" th:checked="${task.taskStatus == '完成'}" th:id="taskComplete">
             <span>设计修改任务界面</span>
         </div>
         <div class="who-and-time">
@@ -147,7 +151,8 @@
         <!--具体子任务-->
         <div th:id="subTask">
             <div class="child-task-list" th:each="subTask:${subLevelTask}">
-                <input type="checkbox" name="" title="" lay-skin="primary" th:value="${subTask.taskId}">
+                <input type="checkbox" name="subTask" title="" lay-skin="primary" lay-filter = "subTask" th:value="${subTask.taskId}" th:checked="${subTask.taskStatus == '完成'}">
+                <input type="hidden" th:value="${subTask.taskName}" th:id="${subTask.taskId}" />
                 <div class="child-task-con">
                     <span th:text="${subTask.taskName}"></span>
                     <div class="dt">dt-41</div>
@@ -306,6 +311,10 @@
     var taskId = [[${task.taskId}]];
     //当前任务所在菜单id
     var taskMenuId = [[${taskMenuId}]];
+    //当前任务的状态
+    var taskStatus = [[${task.taskStatus}]]
+    //当前任务的名称
+    var taskName = [[${task.taskName}]]
     //当前任务执行者id
     var executorId = [[${executor.id}]];
     //头像某模板

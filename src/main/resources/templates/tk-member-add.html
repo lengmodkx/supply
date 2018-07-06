@@ -12,9 +12,9 @@
 
     <!--添加成员-->
     <div class="select-member" >
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;top: 10px;z-index: 200"></i>
         <div class="select-member-title">
             添加成员
-            <img class="close" src="../static/image/close.png" th:src="@{/image/close.png}">
         </div>
         <input type="text" class="search-qunzu boxsizing" placeholder="搜索企业成员">
         <p class="select-member-p">5d管理系统 企业成员</p>
@@ -39,7 +39,7 @@
                 $(this).find("i").toggle();
         });
         //点击 关闭按钮  关闭弹出层
-        $(".close").click(function () {
+        $(".close-tk").click(function () {
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             parent.layer.close(index); //再执行关闭
         });

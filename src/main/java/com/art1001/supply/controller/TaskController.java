@@ -3,6 +3,7 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
@@ -27,12 +28,15 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.data.convert.ReadingConverter;
+import org.springframework.messaging.converter.SimpleMessageConverter;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -78,6 +82,9 @@ public class TaskController {
     @Resource
     private RelationService relationService;
 
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+
 
     /**
      * 添加新任务
@@ -98,6 +105,7 @@ public class TaskController {
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
             jsonObject.put("task",taskByTaskId);
             jsonObject.put("taskLog",taskLogVO);
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskByTaskId)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
@@ -342,19 +350,18 @@ public class TaskController {
      */
     @PostMapping("resetAndCompleteTask")
     @ResponseBody
-    public JSONObject resetAndCompleteTask(@RequestParam Task task){
+    public JSONObject resetAndCompleteTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //改变任务状态
             TaskLogVO taskLogVO = taskService.resetAndCompleteTask(task);
-            if(taskLogVO.getResult() >1){
-                jsonObject.put("msg","修改成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","修改失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","修改成功!");
+            jsonObject.put("result",1);
+            jsonObject.put("taskLog",taskLogVO);
+        } catch (ServiceException e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","必须完成所有子任务!");
+            return jsonObject;
         } catch (Exception e){
             log.error("任务状态修改失败! 任务id: ,{}, \t 修改前状态:{},{}",task.getTaskId(),task.getTaskStatus(),e);
             throw new AjaxException(e);
@@ -791,9 +798,14 @@ public class TaskController {
         try {
             TaskLogVO taskLogVO = taskService.resetAndCompleteSubLevelTask(task);
             jsonObject.put("msg","状态更新成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
+            jsonObject.put("taskLog",taskLogVO);
+        } catch (ServiceException e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","父任务已经完成,不能操作子任务!");
+            return jsonObject;
         } catch (Exception e){
-            log.error("系统异常! 状态更新失败 当前任务id: ,{}{}",task.getTaskId(),e);
+            log.error("系统异常! 状态更新失败 当前任务id: {},{}",task.getTaskId(),e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -1051,7 +1063,7 @@ public class TaskController {
             jsonObject.put("taskLog",taskLogVO);
         } catch (ServiceException e){
             jsonObject.put("msg","必须完成子级任务,才能完成父级任务!");
-            jsonObject.put("result","0");
+            jsonObject.put("result",0);
         } catch (Exception e){
             log.error("系统异常,更新任务其他失败! 当前任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -1231,6 +1243,29 @@ public class TaskController {
             jsonObject.put("reversUser",list);
         } catch (Exception e){
             log.error("系统异常,操作失败!{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 任务拖住
+     * @param oldMenuTaskId 旧任务菜单的所有任务id
+     * @param newMenuTaskId 新任务菜单的所有任务id
+     * @param oldMenuId 旧菜单id
+     * @param newMenuId 新菜单id
+     * @param taskId 被移动的任务id
+     * @return
+     */
+    @PostMapping("taskOrder")
+    @ResponseBody
+    public JSONObject taskOrder(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            taskService.orderOneTaskMenu(oldMenuTaskId,newMenuTaskId,oldMenuId,newMenuId,taskId);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("任务排序失败,{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;

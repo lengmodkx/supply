@@ -34,3 +34,11 @@ a{
     opacity: 0.4;
     background-color: #F4E2C9;
 }
+.close-tk{
+    cursor: pointer;
+    position: absolute;
+    right: 5px;
+}
+.close-tk:hover{
+    color: #3da8f5 !important;
+}
