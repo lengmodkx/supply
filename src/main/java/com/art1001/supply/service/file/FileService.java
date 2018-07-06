@@ -36,7 +36,7 @@ import java.util.List;
 	 * @param parentId  上级目录id
 	 * @param multipartFile 文件
 	 */
-	 String uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception;
+	 File uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception;
 
 	 void updateFile(File file);
 
@@ -71,7 +71,7 @@ import java.util.List;
      * @param parentId 要创建的目录的父级id
      * @param fileName 创建的目录名称
      */
-	void createFolder(String projectId, String parentId, String fileName);
+	File createFolder(String projectId, String parentId, String fileName);
 
     /**
      * 查询当前文件目录下的文件夹及文件
@@ -123,9 +123,16 @@ import java.util.List;
 	void recoveryFile(String[] fileIds);
 
 	/**
-	 * 获取一个文件夹下所有的子文件
+	 * 获取一个文件夹下所有的子目录
 	 * @param fileId 要获取的文件夹id
 	 * @return List<File>
 	 */
-//	List<File> findAllChild(String fileId);
+	List<File> findChildFolder(String fileId);
+
+	List<File> findTopLevel(String projectId);
+
+	/**
+	 * 更新tagId
+	 */
+    void updateTagId(String fileId, String tagIds);
 }

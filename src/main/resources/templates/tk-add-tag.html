@@ -17,9 +17,9 @@
         </div>
         <ul class="tags-ul boxsizing" id = "tags">
             <!--这里是标签-->
-            <li class="tags-list">
-                <span class="dot"></span>
-                <span class="tag-font">aaa</span>
+            <li class="tags-list" th:each="tag:${tagList}">
+                <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
+                <span class="tag-font" th:text="${tag.tagName}"></span>
             </li>
         </ul>
     </div>
@@ -66,8 +66,6 @@
 
 
     });
-
-
 
     $(".tag-search-title img").click(function () {
         $(".build-tags").show();

@@ -5,13 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.service.tag.TagService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/tag")
 @Slf4j
 public class TagController {
@@ -19,10 +21,18 @@ public class TagController {
     @Resource
     private TagService tagService;
 
+    @RequestMapping("/tag.html")
+    public String tagPage(@RequestParam String projectId, Model model) {
+        List<Tag> tagList = tagService.findByProjectId(projectId);
+        model.addAttribute("tagList", tagList);
+        return "tk-add-tag";
+    }
+
     /**
      * 查询标签列表，根据项目
      */
     @GetMapping("/findByProjectId")
+    @ResponseBody
     public JSONObject findByProjectId(
             @RequestParam String projectId
     ) {
@@ -52,6 +62,7 @@ public class TagController {
      * 查询标签关联项
      */
     @GetMapping("/findByTag")
+    @ResponseBody
     public JSONObject findByTag(Tag tag) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -68,6 +79,7 @@ public class TagController {
     }
 
     @GetMapping("findByIds")
+    @ResponseBody
     public JSONObject findByIds(Integer[] ids) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -95,6 +107,7 @@ public class TagController {
      * 添加标签
      */
     @PostMapping("/add")
+    @ResponseBody
     public JSONObject addTag(Tag tag) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -123,6 +136,7 @@ public class TagController {
      * 删除标签
      */
     @PostMapping("/delete")
+    @ResponseBody
     public JSONObject deleteTag(@RequestParam Long tagId) {
         JSONObject jsonObject = new JSONObject();
         try {

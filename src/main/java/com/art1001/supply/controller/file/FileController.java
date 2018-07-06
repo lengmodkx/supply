@@ -3,10 +3,14 @@ package com.art1001.supply.controller.file;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
@@ -22,10 +26,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -42,6 +44,12 @@ public class FileController {
     @Resource
     private ProjectService projectService;
 
+    @Resource
+    private TagService tagService;
+
+    @Resource
+    private FileVersionService fileVersionService;
+
     /**
      * 文件列表
      *
@@ -57,7 +65,11 @@ public class FileController {
         // 项目id
         String projectId = file.getProjectId();
         // 上级id
-        String parentId = file.getParentId();
+        String parentId = file.getFileId();
+        if (StringUtils.isEmpty(file.getFileId())) {
+            parentId = "0";
+        }
+
         // 删除标识
         Integer fileDel = file.getFileDel();
         List<File> fileList = fileService.findChildFile(projectId, parentId, fileDel);
@@ -69,6 +81,22 @@ public class FileController {
         return "file";
     }
 
+    @RequestMapping("/findTopLevel")
+    @ResponseBody
+    public JSONObject findTopLevel(@RequestParam String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<File> fileList = fileService.findTopLevel(projectId);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileList);
+        } catch (Exception e) {
+            log.error("获取项目顶级目录异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "获取失败");
+        }
+        return jsonObject;
+    }
+
     /**
      * 打开下拉框
      */
@@ -78,9 +106,30 @@ public class FileController {
         return "tk-filemenu";
     }
 
+    /**
+     * 打开文件详情
+     */
     @RequestMapping("/openDownloadFile")
     public String openDownloadFile(@RequestParam String fileId, Model model) {
-        model.addAttribute("file", fileService.findFileById(fileId));
+        File file = fileService.findFileById(fileId);
+        String projectId = file.getProjectId();
+        String tagIds = file.getTagId();
+        List<Tag> tagList = new ArrayList<>();
+        if (StringUtils.isNotEmpty(tagIds)) {
+            String[] tagIdStrArr = tagIds.split(",");
+            Integer[] tagIdArr = new Integer[tagIdStrArr.length];
+            for (int i = 0; i < tagIdStrArr.length; i++) {
+                tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
+            }
+            tagList = tagService.findByIds(tagIdArr);
+        }
+
+        List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
+
+        model.addAttribute("file", file);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("fileVersionList", fileVersionList);
         return "tk-file-download";
     }
 
@@ -154,10 +203,7 @@ public class FileController {
     public JSONObject getChildFolder(@RequestParam String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            File file = new File();
-            file.setParentId(fileId);
-            file.setCatalog(1);
-            List<File> fileList = fileService.findFileList(file);
+            List<File> fileList = fileService.findChildFolder(fileId);
             jsonObject.put("result", 1);
             jsonObject.put("data", fileList);
             jsonObject.put("fileId", fileId);
@@ -189,9 +235,10 @@ public class FileController {
             if (StringUtils.isEmpty(parentId)) {
                 parentId = "0";
             }
-            fileService.createFolder(projectId, parentId, folderName);
+            File file = fileService.createFolder(projectId, parentId, folderName);
 
             jsonObject.put("result", 1);
+            jsonObject.put("data", file);
             jsonObject.put("msg", "创建成功");
         } catch (Exception e) {
             log.error("创建文件夹异常, {}", e);
@@ -222,9 +269,9 @@ public class FileController {
             if (StringUtils.isEmpty(parentId)) {
                 parentId = "0";
             }
-            String imgDir = fileService.uploadFile(projectId, parentId, file);
+            File f = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
-            jsonObject.put("data", imgDir);
+            jsonObject.put("data", f);
             jsonObject.put("msg", "上传成功");
 
         } catch (Exception e) {
@@ -247,20 +294,38 @@ public class FileController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
+            // 得到文件名
+            String originalFilename = file.getOriginalFilename();
             // 得到原来的文件
             File f = fileService.findFileById(fileId);
             // 设置文件url
-            String fileUrl = f.getFileUrl();
+            // 获取要创建文件的上级目录实体
+            String parentUrl = fileService.findProjectUrl(f.getProjectId());
+            // 重置文件名
+            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+            // 设置文件url
+            String fileUrl = parentUrl + fileName;
             // 上传oss，相同的objectName会覆盖
             AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
 
-            // 得到文件名
-            String fileName = file.getOriginalFilename();
             // 设置修改后的文件名
-            f.setFileName(fileName);
+            f.setFileName(originalFilename);
+            f.setFileUrl(fileUrl);
+            f.setSize(FileUtils.convertFileSize(file.getSize()));
 
             // 更新数据库
             fileService.updateFile(f);
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            // 修改文件版本
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(f.getFileId());
+            fileVersion.setFileUrl(fileUrl);
+            fileVersion.setFileSize(FileUtils.convertFileSize(file.getSize()));
+            Date time = Calendar.getInstance().getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String format = simpleDateFormat.format(time);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+            fileVersionService.saveFileVersion(fileVersion);
 
             // 设置返回数据
             jsonObject.put("result", 1);
@@ -388,39 +453,7 @@ public class FileController {
     }
 
     @GetMapping("/copyFile.html")
-    public String copyFilePage(@RequestParam String[] fileIds, Model model) {
-        List<File> fileList = fileService.findByIds(fileIds);
-        String projectId = fileList.get(0).getProjectId();
-        // 文件数量
-        AtomicInteger fileNum = new AtomicInteger();
-        // 文件夹数量
-        AtomicInteger folderNum = new AtomicInteger();
-        fileList.forEach(file -> {
-            if (file.getCatalog() == 1) {
-                folderNum.addAndGet(1);
-            } else {
-                fileNum.addAndGet(1);
-            }
-        });
-
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        // 获取所有参与的项目
-        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId());
-
-        model.addAttribute("fileNum", fileNum);
-        model.addAttribute("folderNum", folderNum);
-        model.addAttribute("projectId", projectId);
-        model.addAttribute("projectList", projectList);
-        return "copyFile";
-    }
-
-    /**
-     * 移动文件
-     *
-     * @param fileIds ids
-     */
-    @GetMapping("/moveFile.html")
-    public String moveFilePage(@RequestParam String[] fileIds, Model model) {
+    public String copyFilePage(@RequestParam String[] fileIds, @RequestParam String url, Model model) {
         List<File> selectFileList = fileService.findByIds(fileIds);
         String projectId = selectFileList.get(0).getProjectId();
         // 文件数量
@@ -451,6 +484,49 @@ public class FileController {
         model.addAttribute("projectId", projectId);
         model.addAttribute("projectList", projectList);
         model.addAttribute("fileList", fileList);
+        model.addAttribute("url", url);
+        model.addAttribute("fileIds", StringUtils.join(fileIds, ","));
+        return "copyFile";
+    }
+
+    /**
+     * 移动文件
+     *
+     * @param fileIds ids
+     */
+    @GetMapping("/moveFile.html")
+    public String moveFilePage(@RequestParam String[] fileIds, @RequestParam String url, Model model) {
+        List<File> selectFileList = fileService.findByIds(fileIds);
+        String projectId = selectFileList.get(0).getProjectId();
+        // 文件数量
+        AtomicInteger fileNum = new AtomicInteger();
+        // 文件夹数量
+        AtomicInteger folderNum = new AtomicInteger();
+        selectFileList.forEach(file -> {
+            if (file.getCatalog() == 1) {
+                folderNum.addAndGet(1);
+            } else {
+                fileNum.addAndGet(1);
+            }
+        });
+
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        // 获取所有参与的项目
+        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId());
+
+        // 获取项目顶级的文件夹
+        File file = new File();
+        file.setProjectId(projectId);
+        file.setParentId("0");
+        file.setCatalog(1);
+        List<File> fileList = fileService.findFileList(file);
+
+        model.addAttribute("fileMsg", fileNum + "个文件");
+        model.addAttribute("folderMsg", folderNum + "文件夹");
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("projectList", projectList);
+        model.addAttribute("fileList", fileList);
+        model.addAttribute("url", url);
         model.addAttribute("fileIds", StringUtils.join(fileIds, ","));
         return "moveFile";
     }
@@ -465,9 +541,12 @@ public class FileController {
     @ResponseBody
     public JSONObject moveFile(
             @RequestParam String[] fileIds,
-            @RequestParam String folderId
+            @RequestParam (defaultValue = "0") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
+        if (StringUtils.isEmpty(folderId)) {
+            folderId = "0";
+        }
         try {
             fileService.moveFile(fileIds, folderId);
             jsonObject.put("result", 1);
@@ -492,23 +571,19 @@ public class FileController {
             @RequestParam String[] fileIds,
             @RequestParam String folderId
     ) {
+
+        // 父级id
+        if (StringUtils.isEmpty(folderId)) {
+            folderId = "0";
+        }
+
         for (String fileId : fileIds) {
-            // 获取目标文件夹
-            File folder = fileService.findFileById(folderId);
+
             // 获取源文件
             File file = fileService.findFileById(fileId);
-            // 父级id
-            String parentId = "";
-            // 设置父级id
-            if (folder.getParentId().equals("1")) {
-                // 如果是项目的根目录则设置父级id为0
-                parentId = "0";
-            } else {
-                parentId = folder.getFileId();
-            }
 
             if (file.getCatalog() == 1) { // 文件夹
-                file.setParentId(parentId);
+                file.setParentId(folderId);
                 String fId = file.getFileId();
                 String projectId = file.getProjectId();
                 fileService.saveFile(file);
@@ -520,7 +595,7 @@ public class FileController {
                 }
 
             } else { // 文件
-                this.copyFileSave(file, parentId);
+                this.copyFileSave(file, folderId);
             }
         }
 
@@ -545,6 +620,35 @@ public class FileController {
             log.error("移入回收站异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "移入回收站失败");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping("/deleteFileTag")
+    @ResponseBody
+    public JSONObject deleteFileTag(@RequestParam String fileId, @RequestParam String tagId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            String[] tagIdArr = file.getTagId().split(",");
+            StringBuilder tagIdSB = new StringBuilder();
+            String tagIds = "";
+            for (String tId : tagIdArr) {
+                if (!tagId.equals(tId)) {
+                    tagIdSB.append(tId).append(",");
+                }
+            }
+            if (tagIdSB.length() > 0) {
+                tagIds =  tagIdSB.deleteCharAt(tagIdSB.length() - 1).toString();
+            }
+            fileService.updateTagId(fileId, tagIds);
+            jsonObject.put("result", 1);
+            jsonObject.put("message", "移除成功");
+
+        } catch (Exception e) {
+            log.error("移除标签异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("message", "移除失败");
         }
         return jsonObject;
     }

@@ -1,25 +1,5 @@
 $(function () {
-    // 点击添加标签
-    $(".no-tags").click(function (e) {
-        var url = "/task/findAllTags";
-        var args = {"projectId":projectId};
-        //异步请求获取项目下的所有标签
-        $.post(url,args,function(data){
-            var tags = data.data;
-            var content = "";
-            for(var i = 0;i < tags.length; i++){
-                content += "<li class='tags-list'>" +
-                    "<span class='dot'></span>" +
-                    "<span class='tag-font' th:value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
-                    "</li>";
-            }
-            $('#tags').html(content);
-        },"json");
-        $(".tags-search-build").show();
-        $(".tag-search").show();
-        $(".no-tags").hide();
-        e.stopPropagation();
-    });
+
     $(".tag-search-title img").click(function () {
         $(".tag-search").hide();
         $(".build-tags").show();
@@ -30,7 +10,6 @@ $(function () {
     });
     $(".close-tag").click(function () {
         $(".tags-search-build").slideUp();
-        $(".no-tags").show();
     });
     $(".has-tags>i").click(function (e) {
         $(".tags-search-build").show();
@@ -43,7 +22,7 @@ $(function () {
     $(".tags-list").click(function () {
         var tag = $(this).find(".tag-font").text();
         $(".has-tags").show()
-        $(".has-tags").prepend('<span class="tag">\n' +
+        $(".has-tags").prepend('<span class="tag" style=" background-color: #A1D5FA;">\n' +
             '                    ' + tag + '  \n' +
             '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
             '                </span>')
@@ -54,10 +33,8 @@ $(function () {
         console.log($(".has-tags span").length);
         if ($(".has-tags span").length == 0) {
             $(".has-tags").hide();
-            $(".no-tags").show();
         } else {
             $(".has-tags").show();
-            $(".no-tags").hide();
         }
     });
     //点击颜色，颜色出现对勾

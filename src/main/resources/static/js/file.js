@@ -6,7 +6,7 @@ function getQueryString(name) {
 }
 
 var projectId = $("#projectId").val();
-var parentId = getQueryString("parentId");
+var parentId = $("#parentId").val();
 
 $(function () {
     var selectNum = 0;
@@ -94,15 +94,38 @@ $(function () {
                 //上传完毕回调
                 if (data.result === 1) {
                     layer.msg(data.msg, {icon: 1, time: 1000}, function () {
-                        window.location.reload();
+                        layer.closeAll('loading');
+                        var imageService = 'https://faydan.oss-cn-beijing.aliyuncs.com/';
+                        var file = data.data;
+                        var liVal = '<li class="boxsizing one-file-wrap">\n' +
+                            '    <div class="one-file boxsizing fileList">\n' +
+                            '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">\n' +
+                            '        <img class="textFile" src="' + imageService + file.fileUrl + '" >\n' +
+                            '        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
+                            // '        <div class="img-show-operate">\n' +
+                            // '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +
+                            // '        </div>\n' +
+                            '    </div>\n' +
+                            '    <div class="one-file-name" data="' + file.fileId + '">' + file.fileName + '</div>\n' +
+                            '</li>';
+                        $("#fileListUl").append(liVal);
+                        form.render("checkbox");
+                        fileDetail()
                     });
                 } else {
+                    layer.closeAll('loading');
                     layer.msg(data.msg, {icon: 2});
+
                 }
             }
             , error: function () {
                 //请求异常回调
+                layer.closeAll('loading');
                 layer.msg('上传失败', {icon: 2});
+
+            }
+            , before: function () {
+                layer.load();
             }
         });
 
@@ -115,10 +138,11 @@ $(function () {
                 if (checks[k].checked)
                     fileIds += checks[k].value + ",";
             }
+            var obj = $(this);
             fileIds = fileIds.substring(0, fileIds.length - 1);
             $.post("/file/recoveryFile", {fileIds: fileIds}, function (data) {
                 if (data.result === 1) {
-                    window.location.reload();
+                    obj.remove();
                 } else {
                     layer.msg(data.msg, {icon: 2})
                 }
@@ -134,7 +158,6 @@ $(function () {
                     fileIds += checks[k].value + ",";
             }
             fileIds = fileIds.substring(0, fileIds.length - 1);
-            console.log(fileIds);
             cloneFile('copy', fileIds);
         });
 
@@ -147,8 +170,50 @@ $(function () {
                     fileIds += checks[k].value + ",";
             }
             fileIds = fileIds.substring(0, fileIds.length - 1);
-            console.log(fileIds);
             cloneFile('move', fileIds);
+        });
+
+        // 缩略图模式创建
+        $(".new-file-wrap input").keypress(function (e) {
+            var folderName = $(".new-file-wrap input").val();
+            if (e.which == 13) {
+                if (folderName == '') {
+                    $(".new-file").hide();
+                    $(".new-file-wrap").hide();
+                    return false
+                } else {
+                    layer.load();
+                    $.post("/file/createFolder", {
+                        projectId: projectId,
+                        parentId: parentId,
+                        folderName: folderName
+                    }, function (data) {
+                        if (data.result === 1) {
+                            layer.closeAll('loading');
+                            var file = data.data;
+                            $(".new-file-wrap").after(
+                                '<li class="boxsizing one-file-wrap layui-form">\n' +
+                                '    <div class="one-file boxsizing fileList">\n' +
+                                '       <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
+                                '       <img src="/image/nofile.png" class="folderFile">\n' +
+                                '       <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
+                                // '       <div class="img-show-operate">' +
+                                // '           <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>' +
+                                // '       </div>' +
+                                '    </div>\n' +
+                                '    <div class="one-file-name" data="'+ file.fileId +'">' + folderName + '</div>\n' +
+                                '</li>');
+                            $(".new-file").hide();
+                            $(".new-file-wrap").hide();
+                            form.render("checkbox");
+                            fileDetail()
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 1000})
+                        }
+                    });
+
+                }
+            }
         });
 
     });
@@ -196,47 +261,7 @@ $(function () {
         }
     });
 
-    // 缩略图模式创建
-    $(".new-file-wrap input").keypress(function (e) {
-        var folderName = $(".new-file-wrap input").val();
-        if (e.which == 13) {
-            if (folderName == '') {
-                $(".new-file").hide();
-                $(".new-file-wrap").hide();
-                return false
-            } else {
-                $.post("/file/createFolder", {
-                    projectId: projectId,
-                    parentId: parentId,
-                    folderName: folderName
-                }, function (data) {
-                    if (data.result === 1) {
-                        layer.msg(data.msg, {icon: 1, time: 1000}, function () {
-                            window.location.reload();
-                        });
-                    }
-                });
-                // var mydate = new Date();
-                // var str= (mydate.getMonth()+1) + "月";
-                // str += mydate.getDate() + "日";
-                // $(".new-file-wrap").after(' <li class="boxsizing one-file-wrap layui-form">\n' +
-                //     '                    <div class="one-file boxsizing">\n' +
-                //     '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
-                //     '                        <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">\n' +
-                //     '<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
-                //     '<div class="img-show-operate"> <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i></div>'+
-                //     '                    </div>\n' +
-                //     '                    <div class="one-file-name">'+$(this).val()+'</div>\n' +
-                //     '                </li>');
-                // $(".new-file").hide();
-                // $(".new-file-wrap").hide();
-                // layui.use('form', function(){
-                //     var form = layui.form;
-                //     form.render();
-                // });
-            }
-        }
-    });
+
     // 文件菜单 弹出框
     $(".show-operate").click(function () {
         var top = $(this).offset().top + 30 + 'px';
@@ -262,59 +287,39 @@ $(function () {
         });
     }
 
-    $(".fileList").each(function () {
-        // 进入下级目录
-        $(this).find(".folderFile").click(function () {
-            var fileId = $(this).parent().next().attr("data");
-            window.location.href = "/file/list.html?projectId=" + projectId + "&parentId=" + fileId;
+    function fileDetail() {
+
+        $(".fileList").each(function () {
+            // 进入下级目录
+            $(this).find(".folderFile").click(function () {
+                var fileId = $(this).parent().next().attr("data");
+                window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
+            });
+
+            // 文件点击
+            // $(this).find(".textFile").click(function () {
+            //     var fileId = $(this).parent().next().attr("data");
+            //     loadFile(fileId);
+            // });
+
+            // 下载
+            $(this).find(".img-show-download").click(function () {
+                var fileId = $(this).parent().next().attr("data");
+                location.href = "/file/downloadFile?fileId=" + fileId;
+            });
+
+            // 点击下拉箭头
+            $(this).find(".img-show-operate").click(function () {
+                var fileId = $(this).parent().next().attr("data");
+                var top = $(this).offset().top - 365 + 'px';
+                var left = $(this).offset().left - 170 + 'px';
+                headPhoto(top, left, fileId)
+            });
         });
+    }
 
-        // 文件点击
-        $(this).find(".textFile").click(function () {
-            var fileId = $(this).parent().next().attr("data");
-            loadFile(fileId);
-        });
+    fileDetail();
 
-        // 下载
-        $(this).find(".img-show-download").click(function () {
-            var fileId = $(this).parent().next().attr("data");
-            location.href = "/file/downloadFile?fileId=" + fileId;
-        });
-
-        // 点击下拉箭头
-        $(this).find(".img-show-operate").click(function () {
-            var fileId = $(this).parent().next().attr("data");
-            var top = $(this).offset().top - 365 + 'px';
-            var left = $(this).offset().left - 170 + 'px';
-            headPhoto(top, left, fileId)
-        });
-    });
-
-
-    //点击文件夹
-    // $(".one-file-wrap img").click(function () {
-    //     $(".new-file-wrap").siblings().remove();
-    //     for (var i = 0; i < 3; i++) {
-    //         $(".img-show").append('<li class="boxsizing one-file-wrap fileList" th:each="file:${fileList}">\n' +
-    //             '                    <div class="one-file boxsizing">\n' +
-    //             '                        <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
-    //             '                        <img src="/image/nofile.png">\n' +
-    //             '                        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
-    //             '                        <div class="img-show-operate">\n' +
-    //             '                            <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>\n' +
-    //             '                        </div>\n' +
-    //             '                    </div>\n' +
-    //             '                    <div class="one-file-name"  th:text="${file.fileName}">图片.zip</div>\n' +
-    //             '                    <span th:data="${file.fileId}"></span>\n' +
-    //             '                </li>')
-    //     }
-    //     // 文件库 后面 添加 “> 图片” 文字
-    //     $(".file-toper").append(' <span> <i class="layui-icon layui-icon-right" style="font-size: 14px; color: #B4B4B4;"></i> 图片 </span>')
-    //
-    //     // 点击 “文件库 > 图片” 再把点击元素的后面的兄弟元素span移除
-    //
-    //
-    // });
 
     //下载文件弹框
     function loadFile(fileId) {
@@ -327,8 +332,8 @@ $(function () {
                 area: ['100%', '100%'],
                 fixed: true,
                 shadeClose: true,
-                closeBtn: 0,
                 shade: 0,
+                closeBtn: 0,
                 anim: 1,  //动画 0-6
                 content: ['/file/openDownloadFile?fileId=' + fileId]
             });
@@ -342,6 +347,7 @@ $(function () {
 
     // 复制文件 弹框
     function cloneFile(name, fileIds) {
+        var url = window.location.href;
         layui.use('layer', function () {
             var layer = layui.layer;
             layer.open({
@@ -351,7 +357,7 @@ $(function () {
                 fixed: false,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: '/file/' + name + 'File.html?fileIds=' + fileIds
+                content: '/file/' + name + 'File.html?fileIds=' + fileIds + '&url=' + url
             });
         });
     }

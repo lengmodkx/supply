@@ -53,19 +53,19 @@
         </div>
     </div>
 
-    <div class="fonts">
+    <div class="fonts" style="display: none;">
         <input type="checkbox" name="allPeopleDay" title="所有人都有时间" lay-skin="primary" >
     </div>
     <div class="line"></div>
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
         <div class="one-work-people">
-            <input type="hidden" id="memberId" th:value="${user.id}"/>
+            <input type="hidden" id="memberId" th:value="${user.id}" th:name="memberId"/>
             <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" />
             <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
         </div>
 
-        <div class="add-work-people" th:onclick="'javascript:addPeople('+${project.projectId}+')'">
+        <div class="add-work-people" th:onclick="'javascript:addPeople(\''+${project.projectId}+'\')'">
             <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
         </div>
     </div>
@@ -94,7 +94,7 @@
 
     var startTime = [[${startTime}]];
     var endTime = [[${endTime}]];
-
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 
     layui.use('form', function(){
         var form = layui.form;
@@ -120,13 +120,14 @@
         //监听提交
         form.on('submit(scheduleCreate)', function(data){
             var params = $("#schedule-from").serialize();
-           $.post("/schedule/addschedule",params,function (data) {
-               if(data.result===1){
-                   layer.msg(data.msg,{icon:1});
-               }else{
-                   layer.msg("创建失败",{icon:5});
-               }
-           });
+               $.post("/schedule/addschedule",params,function (data) {
+                   if(data.result===1){
+                       parent.layer.msg(data.msg,{icon:1});
+                   }else{
+                       parent.layer.msg("创建失败",{icon:5});
+                   }
+               });
+            parent.layer.closeAll();
             return false;
         });
     });
@@ -221,6 +222,7 @@
 
     //添加人员 弹框
     function addPeople(projectId) {
+        console.log("xxxxxxxxxx")
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
@@ -235,6 +237,16 @@
                 content: "/schedule/searchPeople.html?projectId="+projectId
             });
         });
+    }
+
+    function bind(member) {
+        var div = '<div class="one-work-people">\n' +
+            '            <input type="hidden" id="memberId" value="'+member.memberId+'" name="memberId"/>\n' +
+            '            <img src="'+IMAGE_SERVER + member.memberImg+'" />\n' +
+            '            <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>\n' +
+            '        </div>';
+
+        $('.add-work-people').before(div);
     }
 </script>
 </html>
