@@ -10,6 +10,7 @@
 <body>
 <!--下载文件 弹框-->
 <div class="download-wrap">
+    <input type="hidden" th:value="${projectId}" id="projectId">
     <!--顶部-->
     <div class="download-toper boxsizing">
         <input type="hidden" th:value="${file.fileId}" id="fileId">
@@ -20,15 +21,14 @@
             <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
             <li>更多</li>
         </ul>
-        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;top: 20px;"></i>
+        <img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">
     </div>
     <!--左侧-->
     <div class="download-left boxsizing">
         <div class="download-left-box">
             <div class="download-left-name">
-                <img th:src="#{IMAGE_SERVER} + ${file.fileUrl}" alt="" src="">
+                <img id="bannerImage" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" alt="" src="">
             </div>
-            <div class="download-left-btn" th:data="${file.fileId}">下载文件 (<span th:text="${file.size}">1.2MB</span>)</div>
         </div>
     </div>
     <!--右侧-->
@@ -36,70 +36,28 @@
         <div class="scroll-box">
             <p class="fonts">版本信息</p>
             <div class="up-prople-info">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-                <span class="up-prople-name" th:text="${file.memberName}">谁谁谁</span>
-                <span class="up-prople-time">上传于 <span th:text="${#dates.format(file.createTime,'yyyy-MM-dd HH:mm:ss')}">6月5日8:00</span></span>
+                <ul>
+                    <li th:each="fileVersion:${fileVersionList}">
+                        <div class="fileVersion" th:data="#{IMAGE_SERVER} + ${fileVersion.fileUrl}">
+                            <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
+                            <span th:text="${fileVersion.info}"></span>
+                            <span th:text="${fileVersion.fileSize}"></span>
+                        </div>
+                    </li>
+                </ul>
             </div>
             <div class="line"></div>
-            <div class="add-tag combox">
+            <div class="add-tag  clearfix">
                 <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}"/>
-                <span>标签</span>
-                <span class="no-tags">添加标签</span>
-                <!--新建  搜索标签框-->
-                <div class="tags-search-build" style="display: none">
-                    <!--搜索标签-->
-                    <div class="tag-search" style="display: none">
-                        <div class="tag-search-title boxsizing">
-                            <input class="tag-search-input" type="text" placeholder="搜索标签">
-                            <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                        </div>
-                        <ul class="tags-ul boxsizing">
-                            <li class="tags-list">
-                                <span class="dot"></span>
-                                <span class="tag-font">标签标签</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <!--新建标签-->
-                    <div class="build-tags" style="display: none">
-                        <div class="build-tags-title boxsizing">
-                            <i class="layui-icon layui-icon-left go-return"
-                               style="font-size: 15px; color: #a6a6a6;"></i>
-                            新建标签
-                            <i class="layui-icon layui-icon-close close-tag"
-                               style="font-size: 15px; color: #a6a6a6;"></i>
-                        </div>
-                        <div class="build-tags-con boxsizing">
-                            <input class="tag-name boxsizing" type="text" placeholder="标签名称">
-                            <ul class="color-pick">
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                                <li>
-                                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                </li>
-                            </ul>
-                            <button class="tag-ok" disabled>创建</button>
-                        </div>
-
-                    </div>
+                <div>
+                    <ul class="clearfix">
+                        <li th:each="tag: ${tagList}" class="tag" th:style="'background-color: ' + ${tag.bgColor}" >
+                            <span  th:text="${tag.tagName}"></span>
+                            <i class="layui-icon layui-icon-close-fill deleteFileTag" th:data="${tag.tagId}" style="font-size: 14px; color: #1E9FFF;"></i>
+                        </li>
+                    </ul>
                 </div>
-                <div class="has-tags" style="display:none;">
-                    <i class="layui-icon layui-icon-add-circle" style="font-size: 16px; color: #a6a6a6;"></i>
-                </div>
-
+                <span class="no-tagss"><i class="layui-icon layui-icon-add-circle-fine"></i></span>
             </div>
             <div class="line"></div>
             <div class="add-guanlian combox">
@@ -109,9 +67,8 @@
             <p class="cyz">参与者</p>
             <div class="work-people boxsizing clearfix">
                 <div class="one-work-people">
-                    <img src="../static/image/add.png" th:src="@{/image/add.png}"/>
-                    <i class="layui-icon layui-icon-close-fill remove-work-people "
-                       style="font-size: 15px; color: #3da8f5;"></i>
+                    <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${file.memberImg}" th:id="${file.fileId}" th:data="${file.memberName}"/>
+                    <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
                 </div>
                 <div class="add-work-people">
                     <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
@@ -172,8 +129,8 @@
         <div class="peoples">
             <p>参与者</p>
             <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-                <span>李健</span>
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${file.fileUrl}"/>
+                <span th:text="${file.fileName}">李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
             <p>推荐</p>
@@ -198,6 +155,8 @@
 <script th:src="@{/js/filedownload.js}" src="../static/js/filedownload.js"></script>
 <script>
     var fileId = $("#fileId").val();
+    var projectId = $("#projectId").val();
+
     $(function () {
 
         layui.use(['form', 'layer', 'upload'], function () {
@@ -209,6 +168,12 @@
             form.on('submit(formDemo)', function (data) {
                 layer.msg(JSON.stringify(data.field));
                 return false;
+            });
+
+            // 关闭
+            $("#close").click(function () {
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
             });
 
             /**
@@ -240,6 +205,62 @@
                 download(fileId);
             });
 
+            // 添加标签
+            $(".no-tagss").click(function () {
+                var top= $(this).offset().top+40;
+                var left=$(this).offset().left;
+                addtag(top,left)
+            });
+            function addtag(top,left) {
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        title: false, //标题
+                        offset:[top,left],
+                        area:['250px','250px'],
+                        fixed: true,
+                        shadeClose: true,
+                        closeBtn: 0,
+                        shade: [0.1, '#fff'],
+                        anim: 1,  //动画 0-6
+                        content: "/tag/tag.html?projectId=" + projectId
+                    });
+                });
+            }
+
+
+            $(".fileVersion").each(function () {
+                $(this).click(function () {
+                    var fileUrl = $(this).attr("data");
+                    $("#bannerImage").attr("src", fileUrl);
+                });
+            });
+
+            $(".one-work-people").find("img").each(function () {
+                $(this).mouseenter(function () {
+                    var id = $(this).attr("id");
+                    var memberName = $(this).attr("data");
+                    layer.tips(memberName, '#' + id, {
+                        tips: [1, '#555'] //还可配置颜色
+                    });
+                })
+            });
+
+            $(".add-work-people").mouseenter(function () {
+                layer.tips('添加参与者', '.add-work-people', {
+                    tips: [1, '#555'] //还可配置颜色
+                });
+            });
+
+            $(".deleteFileTag").each(function () {
+                $(this).click(function () {
+                    var tagId = $(this).attr("data");
+                    $(this).parent("li").remove();
+                    $.post("/file/deleteFileTag", {fileId: fileId, tagId: tagId})
+                });
+            });
+
         });
     });
 
@@ -248,10 +269,10 @@
 
     });
 
-    $(".close-tk").click(function () {
+    $(".edit-scheduling-title img").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
-    });
+    })
 
     function download(fileId) {
         window.location.href = "/file/downloadFile?fileId=" + fileId;

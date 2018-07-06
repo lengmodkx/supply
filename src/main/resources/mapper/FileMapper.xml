@@ -176,6 +176,14 @@
 		select file_url from prm_file where parent_id = '1' and project_id = #{projectId}
 	</select>
 
+	<select id="findChildFolder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		prm_file
+		where catalog = 1 and  parent_id = #{fileId}
+	</select>
+
 	<update id="moveFile" parameterType="java.util.Map">
 		update prm_file set parent_id = #{folderId}
 		where file_id in
@@ -341,6 +349,10 @@
 
 		WHERE file_id = #{fileId}
 
+	</update>
+
+	<update id="updateTagId" parameterType="java.lang.String">
+		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
 	
 </mapper>

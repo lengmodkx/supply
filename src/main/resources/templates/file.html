@@ -47,9 +47,9 @@
                     <div class="file-caozuo moveFile">
                         <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
                     </div>
-                    <!--<div class="file-caozuo copyFile">-->
-                        <!--<i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制-->
-                    <!--</div>-->
+                    <div class="file-caozuo copyFile">
+                        <i class="layui-icon layui-icon-template " style="font-size: 16px; color: #ADADAD;"></i> 复制
+                    </div>
                     <!--<div class="file-caozuo">-->
                         <!--<i class="layui-icon layui-icon-star-fill " style="font-size: 16px; color: #ADADAD;"></i> 收藏-->
                     <!--</div>-->
@@ -68,7 +68,7 @@
 
                 <!--缩略图模式-->
                 <div class="img-show-wrap">
-                    <ul class="img-show clearfix">
+                    <ul class="img-show clearfix" id="fileListUl">
                         <li class="boxsizing new-file-wrap" style="display: none">
                             <div class="one-file">
                                 <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
@@ -81,9 +81,9 @@
                                 <img src="../static/image/nofile.png" th:class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
                                 <img src="../static/image/nofile.png" th:class="textFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}">
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
-                                <div class="img-show-operate">
-                                    <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
-                                </div>
+                                <!--<div class="img-show-operate">-->
+                                    <!--<i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>-->
+                                <!--</div>-->
                             </div>
                             <div class="one-file-name" th:text="${file.fileName}" th:data="${file.fileId}">图片222.zip</div>
                         </li>
