@@ -210,12 +210,12 @@
     font-size: 14px;
 }
 .combox img{
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     vertical-align: middle;
     float: left;
     margin-right: 20px;
-    margin-top: 6px;
+    margin-top: 5px;
 }
 .combox span{
     float: left;
@@ -246,6 +246,20 @@
 }
 .add-tag{
     position: relative;
+    width: 100%;
+    height: 30px;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+.add-tag>img{
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    float: left;
+    margin-right: 20px;
+    margin-top: 5px;
 }
 .no-tags{
     cursor: pointer;
@@ -253,18 +267,31 @@
 .no-tags:hover{
     color: #2B93D2;
 }
+.no-tagss{
+    cursor: pointer;
+}
+.no-tagss:hover{
+    color: #2B93D2;
+}
 .has-tags{
 
 }
 .tag{
+    float: left;
     padding: 0 8px;
-    height: 24px;
-    line-height: 24px;
+    height: 25px;
+    line-height: 25px;
     font-size: 12px;
     position: relative;
     border-radius: 10px;
     cursor: pointer;
-    background-color: #A1D5FA;
+    text-align: center;
+    margin-right: 10px;
+    margin-top: 4px;
+
+}
+.add-tag.combox{
+    min-height: 30px;
 }
 .tag:hover i{
     display: block;
