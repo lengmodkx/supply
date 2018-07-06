@@ -3,6 +3,7 @@ package com.art1001.supply.service.schedule;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleVo;
 
 
 /**
@@ -55,4 +56,10 @@ public interface ScheduleService {
 	public List<Schedule> findScheduleAllList();
 
     List<Schedule> findByIds(String[] scheduleIds);
+
+	/**
+	 * 根据时间分组查询日程
+	 * @return
+	 */
+	List<ScheduleVo> findScheduleGroupByCreateTime();
 }

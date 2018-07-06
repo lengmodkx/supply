@@ -23,7 +23,7 @@ public class WebSocketAction {
 
 
     @RequestMapping("/test.html")
-    public String index() {
+    public String test() {
         return "test";
     }
 
@@ -37,7 +37,7 @@ public class WebSocketAction {
     /**
      * 项目的订阅
      */
-    @SubscribeMapping("/subscribeTest")
+    @SubscribeMapping("/subscribe")
     public void project() {
         logger.info("用户订阅了我。。。");
     }
@@ -50,8 +50,6 @@ public class WebSocketAction {
     public void task() {
         logger.info("用户订阅了我。。。");
     }
-
-
 
 
     //客户端只要订阅了/topic/subscribeTest主题，调用这个方法即可

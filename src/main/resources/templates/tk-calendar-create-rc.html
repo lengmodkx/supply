@@ -29,33 +29,33 @@
         <div class="allday"><input type="checkbox" name="" title="全天" lay-skin="primary"></div>
         <div class="time-wrap">
             <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-            <input type="text" class="layui-input kaishi-time" id="beginTimes" placeholder="设置开始时间" th:value = "${#dates.format(task.startTime,'yyyy-MM-dd HH:mm')}"/>
+            <input type="text" class="layui-input kaishi-time" id="beginTimes" placeholder="设置开始时间" />
         </div>
         <div class="time-wrap">
             <img src="../static/image/overtime.png" th:src="@{/image/overtime.png}" />
-            <input type="text" class="layui-input jieshu-time" id="overTimes" placeholder="设置截止时间" th:value="${#dates.format(task.endTime,'yyyy-MM-dd HH:mm')}" />
+            <input type="text" class="layui-input jieshu-time" id="overTimes" placeholder="设置截止时间"  />
         </div>
 
         <div class="no-repeat">
-            <input type="hidden" th:value="${task.repeat}" id = "oldRepeat"/>
+            <input type="hidden"  id = "oldRepeat"/>
             <img class="repeat-img" src="../static/image/norepeat.png" th:src="@{/image/norepeat.png}" />
             <select name="repeat" lay-verify="" lay-filter = "repeat">
-                <option value="不重复" th:selected="${task.repeat == '不重复'}" th:text="${task.repeat}">不重复</option>
-                <option value="每天重复" th:selected ="${task.repeat == '每天重复'}">每天重复</option>
-                <option value="每周重复" th:selected ="${task.repeat == '每周重复'}" >每周重复</option>
-                <option value="每月重复" th:selected="${task.repeat == '每月重复'}">每月重复</option>
-                <option value="每年重复" th:selected="${task.repeat == '每年重复'}" >每年重复</option>
-                <option value="工作日重复" th:selected="${task.repeat == '工作日重复'}" >工作日重复</option>
+                <option value="不重复" >不重复</option>
+                <option value="每天重复" >每天重复</option>
+                <option value="每周重复"  >每周重复</option>
+                <option value="每月重复" >每月重复</option>
+                <option value="每年重复" >每年重复</option>
+                <option value="工作日重复" >工作日重复</option>
             </select>
         </div>
 
         <div class="no-remand ">
             <img class="remand-img" src="../static/image/noremand.png" th:src="@{/image/noremand.png}" />
-            <input type="hidden" th:value="${task.remind}" id = "oldRemind"/>
+            <input type="hidden"  id = "oldRemind"/>
             <select name="remand" lay-verify="" lay-filter = "remind">
-                <option value="不提醒" th:selected="${task.remind == '不提醒'}" >不提醒</option>
-                <option value="任务开始时提醒" th:selected="${task.remind == '任务开始时提醒'}">任务开始时提醒</option>
-                <option value="任务截止时提醒" th:selected="${task.remind == '任务截止时提醒'}" >任务截止时提醒</option>
+                <option value="不提醒" >不提醒</option>
+                <option value="任务开始时提醒" >任务开始时提醒</option>
+                <option value="任务截止时提醒" >任务截止时提醒</option>
             </select>
         </div>
     </div>
