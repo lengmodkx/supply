@@ -838,11 +838,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<UserEntity> findProjectAllMember(String projectId,String executor) {
         List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-        for (int i = 0; i < projectAllMember.size(); i++) {
-            if(projectAllMember.get(i).getId().equals(executor)){
-                projectAllMember.remove(projectAllMember.get(i));
-            }
-        }
+//        for (int i = 0; i < projectAllMember.size(); i++) {
+//            if(projectAllMember.get(i).getId().equals(executor)){
+//                projectAllMember.remove(projectAllMember.get(i));
+//            }
+//        }
         return projectAllMember;
     }
 

@@ -363,6 +363,13 @@ layui.use('form', function() {
     });
 
     // 点击添加标签
+if ($(".has-tags .tag").length==0){
+    $(".no-tags").show();
+    $(".has-tags").hide();
+} else {
+    $(".no-tags").hide();
+    $(".has-tags").show();
+}
     $(".no-tags").click(function (e) {
         var url = "/task/findAllTags";
         var args = {"projectId":projectId};
@@ -393,7 +400,14 @@ layui.use('form', function() {
     });
     $(".close-tag").click(function () {
         $(".tags-search-build").slideUp();
-        $(".no-tags").show();
+        if ($(".has-tags .tag").length==0){
+            $(".no-tags").show();
+            $(".has-tags").hide();
+        } else {
+            $(".no-tags").hide();
+            $(".has-tags").show();
+        }
+
     });
     $(".has-tags>i").click(function (e) {
         $(".tags-search-build").show();
@@ -403,14 +417,47 @@ layui.use('form', function() {
     });
 
     // 点击某个具体标签
-    $(".tags-list").click(function () {
-        var tag = $(this).find(".tag-font").text();
-        $(".has-tags").show()
-        $(".has-tags").prepend('<span class="tag">\n' +
-            '                    ' + tag + '  \n' +
+$("html").on("click",".tags-list",function () {
+    var tag = $(this).find(".tag-font").text();
+    $(".has-tags").show();
+    $(".has-tags").prepend('<span class="tag">\n' +
+        '                    ' + tag + '  \n' +
+        '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
+        '                </span>')
+});
+
+// 创建 按钮 是否 能点击
+$(".tag-name").keyup(function () {
+    if ($(this).val()==''){
+        $(".tag-ok").css({"background-color":"#ccc","cursor":"not-allowed"})
+    } else {
+        $(".tag-ok").css({"background-color":"#1E9FFF","cursor":"pointer"})
+    }
+});
+//点击创建 按钮
+
+$(".tag-ok").click(function () {
+    if ($(".tag-name").val()==''){
+        return false
+    } else {
+        var vals=$(".tag-name").val();
+        var color='';
+        $(".color-pick li i").each(function () {
+            if ($(this).is(":visible")){
+                color=$(this).parent().css("background-color")
+            }
+        });
+        $(".has-tags").show();
+        $(".has-tags").prepend('<span class="tag" style="background-color: '+color+'">\n' +
+            '                    ' + vals + '  \n' +
             '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
             '                </span>')
-    });
+
+    }
+});
+// $(".add-fuhao").click(function () {
+//     $('.no-tags').trigger("click");
+// });
 
     $(".revise-task").on("click", ".tag i", function () {
         $(this).parent().remove();
@@ -701,6 +748,65 @@ $('.people-ok').click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     });
+
+//点击 标签
+$(".tags").click(function (e) {
+    $(".tags-search-build").show();
+    e.stopPropagation()
+});
+$(".tag-search-title img").click(function () {
+    $(".build-tags").show();
+    $(".tag-search").hide()
+});
+$(".go-return").click(function () {
+    $(".build-tags").hide();
+    $(".tag-search").show()
+});
+$(".close-tag").click(function () {
+    $(".tags-search-build").hide()
+});
+
+//点击 标签 ，添加一个标签
+$(".tags-list").click(function () {
+    $(".no-tags").hide();
+    $(".tags").append('<div class="one-tag" >\n' +
+        '                           <span style="background-color: \'+$(this).find(".dot").css("background-color")+\'">'+ $(this).find(".tag-font").text()+'</span>\n' +
+        '                           <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 15px; color: #2a75ab;"></i>\n' +
+        '                       </div>')
+});
+//点击 x 移出标签
+$(".tags").on("click",".remove-tag",function (e) {
+    $(this).parent().remove();
+    if ($(".tags").find(".one-tag").length==0){
+        $(".no-tags").show()
+    }
+    e.stopPropagation()
+});
+//点击空白区域 选择标签 框 消失
+$(document).click(function(event){
+    var _con = $('.tags-search-build');  // 设置目标区域
+    if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+        $('.tags-search-build').hide(100);     //淡出消失
+    }
+});
+
+//点击 选择  颜色
+$("html").on("click",".color-pick li",function () {
+    $(".color-pick li i").hide();
+    $(this).find("i").show()
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

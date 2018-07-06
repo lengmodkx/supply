@@ -105,7 +105,7 @@ public class TaskController {
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
             jsonObject.put("task",taskByTaskId);
             jsonObject.put("taskLog",taskLogVO);
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskByTaskId)));
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskByTaskId)+"type:添加任务"));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");
