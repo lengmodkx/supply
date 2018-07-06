@@ -13,7 +13,7 @@
     <div class="create-qunzu" >
         <div class="create-qunzu-title">
             创建群组
-            <img class="close" src="../static/image/close.png" th:src="@{/image/close.png}">
+            <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
         </div>
         <input type="text" class="search-qunzu boxsizing" placeholder="请输入群组名称">
         <div class="btn-style next">下一步</div>
@@ -60,7 +60,7 @@
         });
 
         //点击 关闭按钮  关闭弹出层
-        $(".close").click(function () {
+        $(".close-tk").click(function () {
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             parent.layer.close(index); //再执行关闭
         });

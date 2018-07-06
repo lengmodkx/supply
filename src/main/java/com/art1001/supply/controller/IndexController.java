@@ -58,6 +58,12 @@ public class IndexController extends BaseController {
         return "register";
     }
 
+
+    @GetMapping("/forget.html")
+    public String forget(){
+        return "forget-pwd";
+    }
+
     /**
      * 用户登陆
      *
@@ -277,5 +283,34 @@ public class IndexController extends BaseController {
         }
         return jsonObject;
     }
+
+
+    @PostMapping("/forget")
+    @ResponseBody
+    public JSONObject forget(@RequestParam String accountName,@RequestParam String captcha){
+        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        JSONObject jsonObject = new JSONObject();
+        if(StringUtils.isEmpty(accountName)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请输入用户名！");
+            return jsonObject;
+        }
+
+        if (StringUtils.isEmpty(captcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请输入验证码！");
+            return jsonObject;
+        }
+
+        if(!kaptcha.equalsIgnoreCase(captcha)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","验证码输入错误！");
+            return jsonObject;
+        }
+
+
+        return jsonObject;
+    }
+
 
 }

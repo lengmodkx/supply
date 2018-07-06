@@ -42,43 +42,7 @@
             layer.msg(JSON.stringify(data.field));
             return false;
         });
-
-        form.on('switch(switch-filter)', function(data){
-            console.log(data.elem.checked); //开关是否开启，true或者false
-            if (data.elem.checked) {
-                $(".who-can-see").text("仅自己可见")
-            }else {
-                $(".who-can-see").text("所有成员可见")
-            }
-        });
-
-
     });
-    layui.use('element', function(){
-        var element = layui.element;
 
-    });
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#beginTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-        laydate.render({
-            elem: '#overTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-    });
-    $(function () {
-        $(".close-menu").click(function () {
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
-        });
-
-    })
 </script>
 </html>
