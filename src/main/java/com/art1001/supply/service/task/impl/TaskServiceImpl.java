@@ -225,9 +225,16 @@ public class TaskServiceImpl implements TaskService {
         if(task.getTaskStatus().equals("完成")){
             content.append(TaskLogFunction.Q.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
+        if(task.getTaskStatus().equals("未完成")){
+            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+        if(task.getTaskStatus().equals("重新开始")){
+            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+        }
+
         //查询出该父级任务下的所有子级任务
         List<Task> subLevelList = taskMapper.findSubLevelTask(task.getTaskId());
-        if(subLevelList != null){
+        if(subLevelList != null && subLevelList.size() > 0){
             //如果所有的子级任务里有未完成的则抛出异常
             for (Task t : subLevelList) {
                 if(t.getTaskStatus().equals("未完成") || t.getTaskStatus().equals("重新开始")){
@@ -235,15 +242,16 @@ public class TaskServiceImpl implements TaskService {
                 }
             }
         }
+	    if(task.getTaskStatus().equals("完成")){
+	        task.setTaskStatus("未完成");
+        } else if (task.getTaskStatus().equals("未完成")){
+	        task.setTaskStatus("完成");
+        } else if (task.getTaskStatus().equals("重新开始")){
+	        task.setTaskStatus("完成");
+        }
+        System.out.println(task.getTaskStatus());
 	    //修改任务状态
 	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        int a = 1/0;
-        if(task.getTaskStatus().equals("未完成")){
-            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("重新开始")){
-            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
         return taskLogVO;
@@ -673,16 +681,17 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public TaskLogVO resetAndCompleteSubLevelTask(Task task) {
+        Task taskByTaskId = taskMapper.findTaskBySubTaskId(task.getTaskId());
+        if(taskByTaskId.getTaskStatus().equals("完成")){
+            throw new ServiceException();
+        }
         StringBuilder content = new StringBuilder("");
         //如果子任务为完成则设置成未完成 如果子任务为未完成则设置为完成
         if(task.getTaskStatus().equals("完成")){
-            content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
         if(task.getTaskStatus().equals("未完成")){
-            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("重新开始")){
-            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
         //更新任务信息
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
@@ -1039,5 +1048,33 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String findTaskMemberIdByTaskId(String taskId) {
         return taskMapper.findTaskMemberIdByTaskId(taskId);
+    }
+
+    /**
+     * 重新排序该任务菜单的id
+     * @param oldMenuTaskId 旧任务菜单的所有任务id
+     * @param newMenuTaskId 新任务菜单的所有任务id
+     * @param oldMenuId  旧任务菜单的id
+     * @param newMenuId 新任务菜单id
+     * @param taskId 任务id
+     */
+    @Override
+    public void orderOneTaskMenu(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId) {
+        //重新排序任务的顺序 如果拖动的任务不跨越菜单,则不需要更新任务的菜单id
+        for (int i = 0; i < oldMenuTaskId.length; i++) {
+            taskMapper.orderOneTaskMenu(oldMenuTaskId[i],oldMenuTaskId.length-i);
+        }
+        //如果旧菜单id 和新菜单id 不相等,说明这次移动跨越了菜单.1 需要编排新菜单的所有任务id 2.需要更新任务的菜单id
+        if(!newMenuId.equals(oldMenuId)){
+            for (int i = 0; i < newMenuTaskId.length; i++) {
+                taskMapper.orderOneTaskMenu(newMenuTaskId[i],newMenuTaskId.length-i);
+            }
+            //更新任务的菜单id
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setTaskMenuId(newMenuId);
+            task.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateTask(task);
+        }
     }
 }

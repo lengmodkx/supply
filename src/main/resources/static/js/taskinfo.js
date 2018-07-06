@@ -1,5 +1,9 @@
 
 var zxz=false;
+
+
+
+
 layui.use('form', function() {
     var form = layui.form;
     //监听提交
@@ -41,13 +45,78 @@ layui.use('form', function() {
         var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members,"executor":executor};
         $.post(url,args,function(data){
             if(data.result == 1){
-                layer.msg("任务创建成功!");
                 //关闭遮罩层
                 //任务数回显
             }
         },"json");
         return false;
     });
+
+    /**
+     * 完成和重做子任务
+     */
+    form.on('checkbox(subTask)', function(data){
+        var subStatus = '';
+        if(data.elem.checked == false){
+            subStatus = '未完成';
+        } else{
+            subStatus = '完成';
+        }
+        var url = "/task/resetAndCompleteSubLevelTask";
+        var args = {"taskId":data.value,"taskStatus":subStatus,"taskName":$('#'+data.value).val()};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+                $('.child-task-list').children('input[type = "checkbox"]').prop("checked",true);
+                form.render();
+                return false;
+            }
+            getLog(data.taskLog);
+        },"json");
+    });
+
+    /**
+     * 重做和完成任务
+     */
+    form.on('checkbox(taskComplete)', function(data){
+        var url = "/task/resetAndCompleteTask";
+        var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+                $("#taskComplete").attr("checked",false);
+                form.render();
+                return false;
+            }
+            if(taskStatus == '未完成'){
+                taskStatus = '完成';
+            } else if (taskStatus == '完成'){
+                taskStatus = "未完成";
+            }
+            getLog(data.taskLog);
+        });
+    });
+
+    // for (var i=0;i<$("#subTask .layui-form-checkbox").length;i++) {
+    //
+    //     var classlist=  $("#subTask .layui-form-checkbox").eq(i).get(0).classList;
+    //     console.log(classlist)
+    //     if( $.inArray("layui-form-checked", classlist)==-1){
+    //
+    //         $(".task-name input").attr("disabled","disabled");
+    //         layui.use('form', function(){
+    //             var form = layui.form;
+    //             form.render(); //更新全部
+    //             //各种基于事件的操作，下面会有进一步介绍
+    //         });
+    //
+    //     }else {
+    //
+    //
+    //     }
+    // }
+
+
 
     /**
      * 重复规则下拉框监听
@@ -67,9 +136,6 @@ layui.use('form', function() {
            if(data.result == 1){
                $('#oldRepeat').val(repeat);
                getLog(data.taskLog);
-               layer.msg(data.msg);
-           } else{
-               layer.msg("规则更新失败!");
            }
         },"json");
 
@@ -90,12 +156,9 @@ layui.use('form', function() {
         }
         var url = "/task/updateTaskRemindTime";
         $.post(url,{"taskId":taskId,"remind": remind},function (data) {
-            if(data.result == 1){
+            if(data.result == 1) {
                 $('#oldRemind').val(remind);
                 getLog(data.taskLog);
-                layer.msg(data.msg);
-            } else{
-                layer.msg("提醒模式更新失败!");
             }
         },"json");
     });
@@ -116,10 +179,7 @@ layui.use('form', function() {
         $.post(url,args,function (data) {
            if(data.result == 1){
                getLog(data.taskLog);
-               layer.msg(data.msg);
                $('#oldPriority').val(priorityData.value);
-           } else{
-               layer.msg('设置失败');
            }
         },"json");
     });
@@ -138,14 +198,10 @@ layui.use('form', function() {
         $.post(url,args,function (data) {
             if(data.result == 1){
                 if (privacyData.elem.checked) {
-                    layer.msg("设置为仅自己可见");
                     $(".who-can-see").text("仅自己可见")
                 } else {
-                    layer.msg("设置为所有人可见");
                     $(".who-can-see").text("所有成员可见")
                 }
-            } else{
-                layer.msg("设置失败!");
             }
         },"json");
     });
@@ -185,9 +241,6 @@ layui.use('form', function() {
                     $.post(url,args,function(data){
                         if(data.result == 1){
                             getLog(data.taskLog);
-                            layer.msg(data.msg);
-                        } else{
-                            layer.msg('设置失败!');
                         }
                     },"json");
 
@@ -213,11 +266,8 @@ layui.use('form', function() {
                 } else{
                     var url = "/task/updateTaskStartAndEndTime";
                     $.post(url,args,function(data){
-                        if(data.result == 1){
+                        if(data.result == 1) {
                             getLog(data.taskLog);
-                            layer.msg(data.msg);
-                        } else{
-                            layer.msg('设置失败!');
                         }
                     },"json");
                 }
@@ -251,9 +301,6 @@ layui.use('form', function() {
                 $('#executorId').val('');
                 $('#executorName').html('');
                 parent.clearExecutor(taskId);
-                layer.msg("移除成功!");
-            } else{
-                layer.msg("移除失败!");
             }
         },"json");
         $(this).parent().hide();
@@ -403,11 +450,12 @@ layui.use('form', function() {
         var subTaskName = $('.creat-model-input').val();
         var url = "/task/addSubLevelTask";
         var args = {"taskName":subTaskName,"parentTaskId":taskId};
-        var content = $('#subTask').html();
+        var content = '';
         $.post(url,args,function(data){
             if(data.result == 1){
                 content += '<div class="child-task-list">'+
-                                '<input type="checkbox" name="" title="" lay-skin="primary" value = '+ data.subTaskId +'>'+
+                                '<input type="checkbox" name="" title="" lay-skin="primary" lay-filter="subTask" value = '+ data.subTaskId +'>'+
+                                '<input type="hidden" value="' + subTaskName + '" id="' + data.subTaskId + '" />'+
                                 '<div class="child-task-con">'+
                                 '<span>'+ subTaskName +'</span>'+
                                 '<div class="dt">dt-41</div>'+
@@ -415,9 +463,8 @@ layui.use('form', function() {
                                 '<i class="layui-icon layui-icon-right go-detail" style="font-size: 16px; color: #a6a6a6;"></i>'+
                                 '<img class="child-task-who" src="/image/lpb.png" th:src="@{/image/lpb.png}">'+
                             '</div>';
-                $('#subTask').html(content);
+                $('#subTask').append(content);
                 getLog(data.taskLog);
-                layer.msg(data.msg);
                 $(".click-add-child-task").slideUp(500);
                 layui.use('form', function(){
                     var form = layui.form;
@@ -425,8 +472,6 @@ layui.use('form', function() {
                     //各种基于事件的操作，下面会有进一步介绍
                 });
 
-            } else{
-                layer.msg(data.msg);
             }
         });
     });
@@ -438,6 +483,7 @@ layui.use('form', function() {
        var url = "/task/removeTaskMember";
        $(this).parent().remove();
        $.post(url,args,function (data) {
+           getLog(data.taskLog);
            //移除完成
        },"json");
    });
@@ -485,7 +531,6 @@ $('.people-ok').click(function () {
         $.post(url,args,function(data){
             if(data.result == 1){
                 parent.changeExecutor(taskId,IMAGE_SERVER+img);
-                layer.msg("执行者更新成功!");
                 getLog(data.taskLog);
                 $('#executorId').val(id);
                 $('#executorName').html(name);
@@ -494,7 +539,6 @@ $('.people-ok').click(function () {
                 $(".people").hide(500);
                 $(".who-wrap").show();
             } else{
-                layer.msg("执行者更新失败!");
             }
         },"json");
     }else {  //参与者 确定
@@ -536,8 +580,6 @@ $('.people-ok').click(function () {
                 }
                 $(".add-work-people").before(content);
                 $(".people").hide(500);
-            } else{
-                layer.msg("人员更新失败!");
             }
         },"json");
     }
@@ -619,11 +661,8 @@ $('.people-ok').click(function () {
         var url = "/task/upateTaskRemarks";
         var args = {"taskId":taskId,"remarks":remarks};
         $.post(url,args,function(data){
-           if(data.result == 1){
+           if(data.result == 1) {
                $('#oldRemarks').val(remarks);
-               layer.msg(data.msg);
-           } else{
-               layer.msg('任务内容更新失败!');
            }
         },"json");
      });
@@ -654,4 +693,15 @@ $('.people-ok').click(function () {
             '</li>';
         $('#log').html(log);
     }
+
+    /**
+     * 点击x 时关闭任务详情窗口
+     */
+    $('.close-revise-task').click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    });
+
+
+
 
