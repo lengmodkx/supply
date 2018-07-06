@@ -1,5 +1,7 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ public class ShareController {
     @Resource
     private ProjectService projectService;
 
+
+    //导航到分享界面
     @RequestMapping("/share.html")
     public String share(@RequestParam String projectId, Model model){
 
@@ -24,5 +28,20 @@ public class ShareController {
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         return "share";
     }
+
+    //添加一个分享
+    @RequestMapping("/addShare")
+    public JSONObject addShare(@RequestParam String projectId,@RequestParam String title,
+                               @RequestParam String text,@RequestParam String privacy){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 
 }

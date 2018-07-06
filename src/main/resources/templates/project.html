@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}" href="../static/css/index.css">
 </head>
 <body>
-<header th:include="common/header::frag (${user.userInfo.image})"></header>
+<header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
 <div class="content">
 

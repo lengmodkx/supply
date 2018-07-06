@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="frag (headerImg)">
+<div th:fragment="frag (headerImg,userId)">
     <div class="header" id="header">
         <div class="head-left">项目管理</div>
         <div class=" header-middle">
@@ -9,11 +9,9 @@
         </div>
         <div class="head-right">
             <span class="layui-breadcrumb" lay-separator="|">
-                <a href="">我的</a>
-                <a href="">新建</a>
-                <a href="">日历</a>
-                <a href="">消息</a>
-                <a href="">帮助</a>
+                <a th:href="@{/public/mypage.html(id=${userId})}">我的</a>
+                <a th:href="@{/public/calendar.html(id=${userId})}">日历</a>
+                <a href="#">消息</a>
             </span>
         </div>
         <img th:src="#{IMAGE_SERVER}+${headerImg}" style="width: 32px;height: 32px;position: absolute;right: 5%;top: 9px;">
