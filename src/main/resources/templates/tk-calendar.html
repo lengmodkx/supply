@@ -10,7 +10,7 @@
 <body>
 
 <div class="calendar-box">
-    <img class="close-calendar" src="../static/image/close.png" th:src="@{/image/close.png}" />
+    <i class="layui-icon layui-icon-close close-tk" style="font-size: 18px; color: #a6a6a6;top: 17px;"></i>
     <div class="calendar-box-left boxsizing layui-form">
         <div>
             <input type="checkbox" name="" title="任务" lay-skin="primary">
@@ -252,7 +252,11 @@
         createRicheng()
 
     });
-
+    //关闭 弹框
+    $(".close-tk").click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    });
 
 // 创建任务 创建日程 弹框
     function create(top,left) {

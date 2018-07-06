@@ -10,7 +10,7 @@
 <!--编辑日程 弹框-->
 <div class="edit-scheduling boxsizing layui-form">
     <div class="edit-scheduling-title">编辑日程
-        <img src="../static/image/close.png" th:src="@{/image/close.png}" />
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
     </div>
     <textarea name=""  placeholder="设计修改任务界面" class="layui-textarea"></textarea>
     <div class="begin-time abox">
@@ -99,7 +99,7 @@
         });
     });
     
-    $(".edit-scheduling-title img").click(function () {
+    $(".close-tk").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     })

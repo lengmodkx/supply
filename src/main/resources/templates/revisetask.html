@@ -13,7 +13,11 @@
 <div id="revise-task" class="revise-task-wrap layui-form" >
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
-    <img class="zan" src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+    <div class="zan">
+        <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+        <span>+12</span>
+    </div>
+
     <div class="revise-task boxsizing ">
         <div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>
         <div class="task-name">
