@@ -14,8 +14,10 @@
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
     <div class="zan">
-        <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
-        <span></span>
+        <img class = "nozan"  th:style="'display:' + (${isFabulous} ? 'block' : 'none') + ''" src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+        <img class="cancel"  th:style="'display:' + (${isFabulous} ? 'none' : 'block') + ''" src="../static/image/zan-blue.png" th:src="@{/image/zan-blue.png}" />
+        <span th:if="${task.fabulousCount > 0}" th:text="${task.fabulousCount}"></span>
+        <span th:if="${task.fabulousCount == 0}"></span>
     </div>
 
     <div class="revise-task boxsizing ">
@@ -92,9 +94,13 @@
             <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
             <span>标签</span>
             <span class="no-tags">添加标签</span>
-            <div class="has-tags">
-                <i class="layui-icon layui-icon-add-circle add-fuhao" style="font-size: 20px; color: #1E9FFF;cursor: pointer"></i>
-            </div>
+                <div class="has-tags">
+                    <span class="tag" th:if="${tagList != null}"  th:value="${tag.tagId}" th:each="tag:${tagList}" th:style="'background-color:'+${tag.bgColor}+''">
+                        <b style="font-weight: 400" th:text="${tag.tagName}"></b>
+                        <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>
+                    </span>
+                    <i class="layui-icon layui-icon-add-circle add-fuhao" style="font-size: 20px; color: #1E9FFF;cursor: pointer"></i>
+                </div>
             <!--新建  搜索标签框-->
             <div class="tags-search-build" style="display: none">
             <!--搜索标签-->

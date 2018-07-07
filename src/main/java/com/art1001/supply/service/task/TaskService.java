@@ -7,7 +7,6 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
@@ -136,7 +135,7 @@ public interface TaskService {
 	 * @param taskId 当前任务uid
 	 * @return
 	 */
-	int removeTaskTag(Tag[] tags, Tag tag, String taskId);
+	int removeTaskTag(String[] tags, Tag tag, String taskId);
 
 
 	/**
@@ -370,4 +369,11 @@ public interface TaskService {
 	 * @param taskId 任务的id
 	 */
 	void orderOneTaskMenu(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId);
+
+	/**
+	 * 根据任务的id 查询出该任务的所有标签
+	 * @param taskId 任务id
+	 * @return
+	 */
+	List<Tag> findTaskTag(String taskId);
 }

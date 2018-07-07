@@ -50,13 +50,15 @@
     width: 15px;
     height: 15px;
     vertical-align: middle;
-    margin-top: -4px;
     transition: all 0.2s;
+    float: left;
 }
 .zan span{
     font-size: 14px;
     color: #B7ACA6;
     line-height: 18px;
+    float: left;
+    margin-left: 3px;
 }
 .zan :hover{
     width: 17px;
