@@ -32,7 +32,7 @@ import com.art1001.supply.entity.base.Pager;
  * taskServiceImpl
  */
 @Service
-public abstract class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl implements TaskService {
 
 	/** taskMapper接口*/
 	@Resource
@@ -1105,5 +1105,10 @@ public abstract class TaskServiceImpl implements TaskService {
             tags[i] = Integer.valueOf(split[i]);
         }
         return tagService.findByIds(tags);
+    }
+
+    @Override
+    public List<Task> findTaskByUserId(String userId) {
+        return taskMapper.findTaskByUserId(userId);
     }
 }

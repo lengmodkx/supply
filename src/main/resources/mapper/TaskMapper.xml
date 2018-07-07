@@ -578,4 +578,11 @@
 			select parent_id from prm_task where task_id = #{taskId}
 		)
 	</select>
+
+	<select id="findTaskByUserId" resultMap="BaseResultMap"
+			parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_task where task_id in (select public_id from prm_task_member where prm_task_member.member_id = #{userId} and public_type='任务' and type='参与者')
+	</select>
 </mapper>
