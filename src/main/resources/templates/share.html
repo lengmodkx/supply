@@ -7,73 +7,304 @@
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/new-share.css}" href="../static/css/new-share.css">
+
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
 <div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
 
-<div class="content-wrap-wrap boxsizing">
-    <div class="content boxsizing">
-        <div id="share" style="display: none">
-            <div class="file-box boxsizing layui-form">
-                <div class="file-toper">
-                    <span>所有分享</span>
-                    <div class="add-share"><img src="../static/image/add.png"  th:src="@{/image/add.png}" />添加分享</div>
+<div class="share-wrap">
+    <!--左侧内容-->
+    <div class="share-left">
+        <div class="share-left-title boxsizing">
+            <div class="all-share">
+                <h2><span>所有分享</span> <i class="layui-icon layui-icon-down" style="font-size: 18px; color: #3da8f5;"></i>  </h2>
+                <div class="select-who-share" style="display: none">
+                    <ul>
+                        <li>所有分享</li>
+                        <li>我的分享</li>
+                    </ul>
+                    <div class="xian"></div>
+                    <ul class="sorting-mode">
+                        <li>安发布时间排序 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: gray;"></i> </li>
+                        <li>按回复时间排序 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: gray;"></i></li>
+                    </ul>
                 </div>
-                <div class="file-title">
-                    <div class="layui-row">
-                        <div class="layui-col-md2 layui-col-lg-2 file-name">名称</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-size">大小</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-people">创建者</div>
-                        <div class="layui-col-md3 layui-col-lg-3 file-time">更新时间</div>
-                        <div class="layui-col-md3 layui-col-lg-3 file-style">
-                            <img class="suoluetu-moshi" src="../static/image/jggpb.png"  th:src="@{/image/jggpb.png}" />
-                            <img class="liebiao-moshi" src="../static/image/lpb.png"  th:src="@{/image/lpb.png}" />
+            </div>
+            <div class="add-share">
+                <h2><span>添加分享</span><b></b><i class="layui-icon layui-icon-down" style="font-size: 18px; color: gray;"></i></h2>
+                <div class="select-doc" style="display: none">
+                    <ul>
+                        <li>普通文档</li>
+                        <li>Markdown文档</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="share-list-wrap">
+            <ul>
+                <li class="boxsizing share-list selected">
+                    <img src="../static/image/begintime.png" th:src="@{/static/image/begintime.png}">
+                    <div class="share-people-time">
+                        <h3 class="over-hidden">文件名称</h3>
+                        <p><span>谁谁</span> 发布于 <span>6月12日 14:14</span></p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--右侧内容-->
+    <div class="share-right">
+        <div class="share-right-scroll">
+            <div class="white-box boxsizing">
+                <div class="share-right-title boxsizing clearfix">
+                    <h3>名分享称</h3>
+                    <i class="layui-icon layui-icon-down show-share-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                    <div class="zan">
+                        <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+                        <span>+12</span>
+                    </div>
+                </div>
+                <p class="describtion">一段描述</p>
+                <div class="heng-line"></div>
+                <div class="add-tag clearfix ">
+                    <div class="left-box">
+                        <i class="layui-icon layui-icon-note" style="font-size: 15px; color: #a6a6a6;"></i>
+                        <span>标签</span>
+                    </div>
+                    <div class="no-tags-wrap">
+                        <div class="tags">
+                            <span class="no-tags">添加标签</span>
                         </div>
                     </div>
                 </div>
-                <!--没有文件-->
-                <div class="no-file" style="display: none">
-                    <img src="../static/image/nofile.png"  th:src="@{/image/nofile.png}" />
-                    <p>目前还没有文件～</p>
+                <div class="heng-line"></div>
+                <div class="guanlian combox">
+                    <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
+                    <span>关联内容</span>
                 </div>
-                <!--有文件-->
-                <div class="have-file">
-                    <div class="layui-row">
-                        <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-size">2.3M</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-time">谁谁谁</div>
-                        <div class="layui-col-md3 layui-col-lg-3 file-people">6月1日</div>
-                        <div class="layui-col-md3 layui-col-lg-3 file-operate">
-                            <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
-                            <!--<i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>-->
-
+                <div class="add-guanlian combox">
+                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                    <span>添加关联</span>
+                </div>
+            </div>
+            <div class="gray-box">
+                <div class="boxsizing">
+                    <p class="cyz">参与者</p>
+                    <div class="work-people boxsizing clearfix">
+                        <div class="one-work-people">
+                            <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+                            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+                        </div>
+                        <div class="add-work-people">
+                            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                         </div>
                     </div>
-
+                    <div class="heng-line"></div>
+                    <!--谁谁 干了 什么-->
+                    <div class="state">
+                        <ul id = "log">
+                            <li class="combox" th:each="taskLog:${taskLog}">
+                                <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
+                                <span th:text="${taskLog.content}">aaa</span>
+                                <div class="in-what-time" th:value = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}">2018-10-1 12:00</div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
             </div>
+
         </div>
+        <!--发布消息 框-->
+        <div class="publish boxsizing">
+            <textarea name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
+            <div class="fenge-line"></div>
+            <div class="publish-bottom">
+                <i class="layui-icon layui-icon-file upload-fujian" style="font-size: 20px; color: #B5B5B5;"></i>
+                <i class="layui-icon layui-icon-face-smile-fine" style="font-size: 20px; color: #B5B5B5;"></i>
+                <div class="publish-btn ">发布</div>
+            </div>
+            <!--上传文件框-->
+            <div class="fujian-box boxsizing" style="display: none">
+                <div class="fujian-box-title boxsizing">
+                    添加附件
+                    <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+                </div>
+                <div class="zj-up">
+                    <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>直接上传</span>
+                </div>
+                <div class="xian"></div>
+                <div class="select-up">
+                    <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>从文件库选择</span>
+                </div>
+                <div class="xian"></div>
+                <div class="fujian-box-bottom boxsizing">
+                    <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
+                    <div class="add-fujian">添加</div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
+
+<!--分享菜单 弹框-->
+<div class="scheduling-menu boxsizing layui-form" style="position: relative;top: 0;left: 0;display: none">
+    <div class="scheduling-menu-title">分享菜单
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/fzrc.png" >
+        <span>复制分享</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/fzrclj.png" >
+        <span>复制分享链接</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/gxrc.png" >
+        <span>共享分享</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/scrc.png" >
+        <span>收藏分享</span>
+    </div>
+</div>
+
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
-<script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script>
-    $(function () {
-        var url = window.location.href;
-        if(url.indexOf("share") > 0){
-            $(".toper-nav ul li:nth-of-type(2)").addClass("now").siblings().removeClass("now");
-        }
+    layui.use('form', function() {
+        var form = layui.form;
     });
+    $(function () {
+      //点击所有分享
+        $(".all-share h2").click(function (e) {
+            $(".select-who-share").slideDown();
+            e.stopPropagation()
+        });
+        $(".select-who-share ul:nth-of-type(1) li").click(function () {
+            $(".all-share h2 span").text($(this).text());
+            $(".select-who-share").slideUp();
+        });
+        $(".select-who-share .sorting-mode li").click(function () {
+            $(".select-who-share .sorting-mode li i").hide();
+            $(this).find("i").show();
+            $(".select-who-share").slideUp();
+        });
+        //点击空白  所有 分享 下拉框 隐藏
+        $(document).click(function(event){
+            var _con = $('.select-who-share');  // 设置目标区域
+            if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+                $('.select-who-share').slideUp();
+            }
+        });
+
+        //点击添加分享 后面的下箭头
+        $(".add-share h2 i").click(function (e) {
+            $(".select-doc").slideDown();
+            e.stopPropagation()
+        });
+        //点击空白
+        $(document).click(function(event){
+            var _con = $('.select-doc');  // 设置目标区域
+            if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+                $('.select-doc').slideUp();
+            }
+        });
+
+        //点击左侧 各个分享 内容
+        $("html").on("click",".share-list",function () {
+            var i=$(this).index();
+            $(this).addClass("selected").siblings().removeClass("selected");
+            $(".share-right").hide();
+            $(".share-right").eq(i).show()
+        });
+        // 点击下箭头 ，出现 分享 菜单 弹框
+        $("html").on("click",".show-share-menu",function () {
+            var top=$(this).offset().top+25;
+            var left=$(this).offset().left-120;
+            shareMenu(top,left)
+        });
+        //添加 人员 弹框
+        $("html").on("click",".add-work-people img",function () {
+            var top=$(this).offset().top-50;
+            var left=$(this).offset().left-120;
+            addpeople(top,left)
+        });
+        //添加 标签 弹框
+        $("html").on("click",".tags",function () {
+            var top=$(this).offset().top+35;
+            var left=$(this).offset().left-100;
+            addtag(top,left)
+        })
+
+
+
+    });
+   // 关闭 弹框
+    $(".close-tk").click(function () {
+        layer.closeAll('page');
+    });
+    //分享菜单 弹框
+    function shareMenu(top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false,
+                offset:[top,left],
+                area:['220px','254px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: $(".scheduling-menu")
+            });
+        });
+    }
+    //添加人员 弹框
+    function addpeople(top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area:['252px','360px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: "tk-search-people.html"
+            });
+        });
+    }
+    function addtag(top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area:['250px','250px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: "tk-add-tag.html"
+            });
+        });
+    }
 </script>
 </html>
