@@ -63,30 +63,26 @@
             <input type="radio" name="state" value="非常紧急" title="非常紧急">
         </div>
     </div>
-    <div class="add-tag combox">
-        <img th:src="@{/image/biaoqian.png}">
+    <div class="add-tag tag-box clearfix">
+        <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
         <span>标签</span>
         <span class="no-tags">添加标签</span>
+        <div class="has-tags">
+
+        </div>
         <!--新建  搜索标签框-->
         <div class="tags-search-build" style="display: none">
             <!--搜索标签-->
-            <div class="tag-search" style="display: none">
+            <div class="tag-search" >
                 <div class="tag-search-title boxsizing">
                     <input class="tag-search-input" type="text" placeholder="搜索标签">
-                    <img th:src="@{/image/adds.png}">
+                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                 </div>
                 <ul class="tags-ul boxsizing" id = "tags">
+                    <!--这里是标签-->
                     <li class="tags-list">
                         <span class="dot"></span>
-                        <span class="tag-font">标签标签</span>
-                    </li>
-                    <li class="tags-list">
-                        <span class="dot"></span>
-                        <span class="tag-font">标签标签</span>
-                    </li>
-                    <li class="tags-list">
-                        <span class="dot"></span>
-                        <span class="tag-font">标签标签</span>
+                        <span class="tag-font">aaa</span>
                     </li>
                 </ul>
             </div>
@@ -101,7 +97,7 @@
                     <input class="tag-name boxsizing" type="text" placeholder="标签名称">
                     <ul class="color-pick">
                         <li>
-                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
                         </li>
                         <li>
                             <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
@@ -119,13 +115,10 @@
                             <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
                         </li>
                     </ul>
-                    <button class="tag-ok" disabled>创建</button>
+                    <div class="tag-ok" disabled>创建</div>
                 </div>
 
             </div>
-        </div>
-        <div class="has-tags" style="display:none;">
-            <i class="layui-icon layui-icon-add-circle" style="font-size: 16px; color: #a6a6a6;"></i>
         </div>
 
     </div>

@@ -12,6 +12,12 @@ layui.use('form', function() {
         $('.work-people .one-work-people').each(function () {
            members.push($(this).attr('value'));
         });
+
+        //获取标签信息
+        var tags = [];
+        $('.tag').each(function () {
+           tags.push($(this).attr('value'));
+        });
         //设置任务的执行者
         var executor = $('#executorId').val();
         //设置任务开始时间
@@ -44,7 +50,7 @@ layui.use('form', function() {
             privacyPattern = "0";
         }
         var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor};
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor,"tagId":tags.toString()};
         $.post(url,args,function(data){
             if(data.result == 1){
                 layer.msg("任务创建成功!");
@@ -63,13 +69,13 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime',
             type: 'datetime',
-            format: 'MM-dd HH:mm'
+            format: 'MM-dd'
         });
 
         laydate.render({
             elem: '#overTime',
             type: 'datetime',
-            format: 'MM-dd HH:mm'
+            format: 'MM-dd'
         });
     });
 if ($("#have-executor").val()){
@@ -140,8 +146,8 @@ if ($("#have-executor").val()){
             var content = "";
             for(var i = 0;i < tags.length; i++){
                 content += "<li class='tags-list'>" +
-                                "<span class='dot'></span>" +
-                                "<span class='tag-font' th:value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
+                                "<span class='dot' style = 'background-color:" + tags[i].bgColor + "'></span>" +
+                                "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
                             "</li>";
             }
             $('#tags').html(content);
@@ -446,9 +452,88 @@ if ($("#have-executor").val()){
                 });
             }
         }, "json");
-
-
         e.stopPropagation();
     });
+
+// 点击某个具体标签
+$("html").on("click",".tags-list",function () {
+    var index = 0;
+    var tagId = $(this).find(".tag-font").attr("value");
+    $('.tag').each(function () {
+       if($(this).attr('value') == tagId){
+            index = 1;
+            var that = $(this);
+            that.remove();
+            return false;
+       }
+    });
+    if(index == 0){
+        var tagName = $(this).find(".tag-font").html();
+        var tagColor = $(this).find(".dot").css("background-color");
+        var content = '';
+        content += '<span class="tag" value="' + tagId + '" style="background-color:' + tagColor + '">'+
+                '<b style="font-weight: 400">' + tagName + '</b>'+
+                '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+            '</span>';
+        $('.has-tags').prepend(content);
+    }
+    if ($(".has-tags .tag").length==0){
+        $(".no-tags").show()
+    } else {
+        $(".no-tags").hide()
+    }
+});
+
+// 创建 按钮 是否 能点击
+$(".tag-name").keyup(function () {
+    if ($(this).val()==''){
+        $(".tag-ok").css({"background-color":"#ccc","cursor":"not-allowed"})
+    } else {
+        $(".tag-ok").css({"background-color":"#1E9FFF","cursor":"pointer"})
+    }
+});
+
+//点击创建 按钮
+$(".tag-ok").click(function () {
+    if ($(".tag-name").val()==''){
+        return false
+    } else {
+        var content = '';
+        var vals=$(".tag-name").val();
+        var color='';
+        $(".color-pick li i").each(function () {
+            if ($(this).is(":visible")){
+                color=$(this).parent().css("background-color")
+            }
+        });
+        var url = "/tag/add";
+        var args = {"tagName":vals,"bgColor":color,"projectId":projectId}
+        $.post(url,args,function (data) {
+            if(data.result > 0){
+                $(".has-tags").show();
+                content +=
+                    '<span class="tag" value="' + data.data + '" style="background-color:' + color + '">'+
+                    '<b style="font-weight: 400">' + vals + '</b>'+
+                    '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+                    '</span>';
+                $(".has-tags").prepend(content);
+            } else{
+                layer.msg(data.msg);
+            }
+        },"json");
+
+    }
+});
+/**
+ * 点击 X 时 移除掉该标签
+ */
+$(".tag-box").on("click", ".tag i", function () {
+    $(this).parent().remove();
+    if ($(".has-tags .tag").length==0){
+        $(".no-tags").show()
+    } else {
+        $(".no-tags").hide()
+    }
+});
 
 

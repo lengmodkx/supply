@@ -50,13 +50,15 @@
     width: 15px;
     height: 15px;
     vertical-align: middle;
-    margin-top: -4px;
     transition: all 0.2s;
+    float: left;
 }
 .zan span{
     font-size: 14px;
     color: #B7ACA6;
     line-height: 18px;
+    float: left;
+    margin-left: 3px;
 }
 .zan :hover{
     width: 17px;
@@ -203,23 +205,44 @@
     opacity: 0;
 }
 .combox{
-    width: 100%;
-    height: 30px;
-    margin-top: 20px;
-    line-height: 30px;
-    font-size: 14px;
-}
+     width: 100%;
+     height: 30px;
+     margin-top: 20px;
+     line-height: 30px;
+     font-size: 14px;
+ }
 .combox img{
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     vertical-align: middle;
     float: left;
     margin-right: 20px;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 .combox span{
     float: left;
     margin-right: 15px;
+}
+.tag-box{
+    width: 100%;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 14px;
+}
+.tag-box img{
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    float: left;
+    margin-right: 20px;
+    margin-top: 6px;
+}
+.tag-box span{
+    float: left;
+    margin-right: 15px;
+}
+.tag{
+    margin-top: 3px;
 }
 .add-bz .label{
     width: 300px;
@@ -246,20 +269,6 @@
 }
 .add-tag{
     position: relative;
-    width: 100%;
-    height: 30px;
-    margin-top: 20px;
-    line-height: 30px;
-    font-size: 14px;
-    padding-bottom: 10px;
-}
-.add-tag>img{
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    float: left;
-    margin-right: 20px;
-    margin-top: 5px;
 }
 .no-tags{
     cursor: pointer;
@@ -267,31 +276,19 @@
 .no-tags:hover{
     color: #2B93D2;
 }
-.no-tagss{
-    cursor: pointer;
-}
-.no-tagss:hover{
-    color: #2B93D2;
-}
 .has-tags{
 
 }
+
 .tag{
-    float: left;
     padding: 0 8px;
-    height: 25px;
-    line-height: 25px;
+    height: 24px;
+    line-height: 24px;
     font-size: 12px;
     position: relative;
     border-radius: 10px;
     cursor: pointer;
-    text-align: center;
-    margin-right: 10px;
-    margin-top: 4px;
-
-}
-.add-tag.combox{
-    min-height: 30px;
+    background-color: #A1D5FA;
 }
 .tag:hover i{
     display: block;

@@ -524,29 +524,67 @@ public class TaskController {
     }
 
     /**
-     * 给当前任务设置标签
+     * 从任务详情界面添加标签
      * @param tag 标签名称
      * @param taskId 当前任务id
      * @param projectId 当前任务的id
      * @return
      */
-    @PostMapping("addTaskTags")
+    @PostMapping("addTagsToTask")
     @ResponseBody
-    public JSONObject addTags(Tag tag,@RequestParam String taskId,@RequestParam String projectId){
+    public JSONObject addTagsToTask(Tag tag,String taskId,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //根据标签名称查询 当前存不存在数据库 如果存在直接绑定到当前任务,如果不存在则先插入标签 在绑定到当前任务
             int countByTagName = tagService.findCountByTagName(projectId, tag.getTagName());
             if(countByTagName == 0){
+                tag.setMemberId(ShiroAuthenticationManager.getUserId());
                 tag.setTagId(tagService.saveTag(tag));
+            } else{
+                jsonObject.put("result",0);
+                jsonObject.put("msg","标签已存在!");
+                return jsonObject;
             }
             //更新当前任务的标签信息
             TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
             if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","标签添加成功!");
                 jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("msg","标签添加成功!");
+                jsonObject.put("data",tag.getTagId());
                 jsonObject.put("taskLog",taskLogVO);
             } else{
+                jsonObject.put("data",tag.getTagId());
+                jsonObject.put("msg","标签添加失败!");
+                jsonObject.put("result",taskLogVO.getResult());
+            }
+        } catch (Exception e){
+            log.error("保存失败,标签名称为:,{},{}",tag.getTagName(),e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 在任务详情界面点击标签时附加
+     * @param tag 标签名称
+     * @param taskId 当前任务id
+     * @param projectId 当前任务的id
+     * @return
+     */
+    @PostMapping("addTaskTag")
+    @ResponseBody
+    public JSONObject addTags(Tag tag,String taskId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //更新当前任务的标签信息
+            TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,1);
+            if(taskLogVO.getResult() > 0){
+                jsonObject.put("result",taskLogVO.getResult());
+                jsonObject.put("msg","标签添加成功!");
+                jsonObject.put("data",tag.getTagId());
+                jsonObject.put("taskLog",taskLogVO);
+            } else{
+                jsonObject.put("data",tag.getTagId());
                 jsonObject.put("msg","标签添加失败!");
                 jsonObject.put("result",taskLogVO.getResult());
             }
@@ -587,17 +625,17 @@ public class TaskController {
      */
     @PostMapping("removeTaskTag")
     @ResponseBody
-    public JSONObject removeTaskTag(@RequestParam Tag[] tags,@RequestParam Tag tag,@RequestParam String taskId){
+    public JSONObject removeTaskTag(String[] tags,Tag tag,String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
             //更新该任务的标签信息
             int result = taskService.removeTaskTag(tags,tag,taskId);
             if(result > 0){
                 jsonObject.put("msg","标签移除成功!");
-                jsonObject.put("result","1");
+                jsonObject.put("result",1);
             } else{
                 jsonObject.put("msg","标签移除失败!");
-                jsonObject.put("result","0");
+                jsonObject.put("result",0);
             }
         } catch (Exception e){
             log.error("系统异常，标签移除失败！ 当前任务id： ,{},{}",taskId,e);
@@ -719,10 +757,10 @@ public class TaskController {
             int result = taskService.clickFabulous(task);
             if(result > 0){
                 jsonObject.put("msg","成功!");
-                jsonObject.put("result","1");
+                jsonObject.put("result",result);
             } else{
                 jsonObject.put("msg","失败!");
-                jsonObject.put("result","0");
+                jsonObject.put("result",result);
             }
         } catch (Exception e){
             log.error("系统异常! 点赞失败! 当前任务id: ,{},{}",task.getTaskId(),e);
@@ -744,10 +782,10 @@ public class TaskController {
             int result = taskService.cancelFabulous(task);
             if(result > 0){
                 jsonObject.put("msg","赞已取消!");
-                jsonObject.put("result","1");
+                jsonObject.put("result",1);
             } else{
                 jsonObject.put("msg","取消失败!");
-                jsonObject.put("result","0");
+                jsonObject.put("result",0);
             }
         } catch (Exception e){
             log.error("系统异常,取消赞失败! 当前任务id:,{},{}",task.getTaskId(),e);
@@ -926,8 +964,6 @@ public class TaskController {
     @GetMapping("initTask.html")
     public String initTask(Task task,String projectId,Model model){
         JSONObject jsonObject = new JSONObject();
-        //时间格式
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             //获取当前用户信息
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -939,8 +975,16 @@ public class TaskController {
             model.addAttribute("task",taskById);
             //判断当前用户有没有对该任务点赞
             boolean isFabulous = taskService.judgeFabulous(task);
+            model.addAttribute("isFabulous",isFabulous);
             //判断当前用户有没有收藏该任务
             boolean isCollect = taskService.judgeCollectTask(task);
+            model.addAttribute("isCollect",isCollect);
+            //查询任务的标签
+            List<Tag> tagList = taskService.findTaskTag(task.getTaskId());
+            if(tagList != null && tagList.size() > 0){
+                Collections.reverse(tagList);
+                model.addAttribute("tagList",tagList);
+            }
             //返回该任务的关联信息
             Map<String, List> taskRelation = taskService.findTaskRelation(task.getTaskId());
             //该任务关联的任务

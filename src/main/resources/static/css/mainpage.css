@@ -244,16 +244,22 @@ height: 1px;
     display: inline-block;
     text-align: center;
     line-height: 15px;
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
     transition: all 0.5s;
     text-indent: 3em;
+    border-radius: 3px;
+    float: left;
+    margin-left: 5px;
 }
 .one-tag:hover{
     width: 60%;
     height: 15px;
     border-radius: 2px;
     text-indent: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .assignment-top-box{
     width: 100%;

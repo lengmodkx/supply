@@ -255,4 +255,26 @@ public interface TaskMapper {
 	 * @return
 	 */
 	Task findTaskBySubTaskId(String taskId);
+
+	/**
+	 * 根据任务id 查询出任务的标签id
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Select("select tag_id from prm_task where task_id = #{taskId}")
+    String findTagIdByTaskId(String taskId);
+
+	/**
+	 * 清空该任务的标签
+	 * @param taskId 任务的id
+	 */
+	int clearTaskTag(String taskId);
+
+	/**
+	 * 查询该任务的得赞数量
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Select("select ifnull(fabulous_count,0) from prm_task where task_id = #{taskId}")
+	Integer findTaskFabulousCount(String taskId);
 }

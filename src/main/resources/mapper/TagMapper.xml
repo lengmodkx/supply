@@ -111,9 +111,7 @@
 
         insert into prm_tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="tagId != null and tagId != ''">
-                tag_id,
-            </if>
+
             <if test="tagName != null and tagName != ''">
                 tag_name,
             </if>

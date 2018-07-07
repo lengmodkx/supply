@@ -17,6 +17,7 @@ import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.collect.TaskCollectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
@@ -65,6 +66,10 @@ public class TaskServiceImpl implements TaskService {
     /** 关系层逻辑接口 */
     @Resource
     private RelationService relationService;
+
+    /** 标签的逻辑层接口 */
+    @Resource
+    private TagService tagService;
 	
 	/**
 	 * 重写方法
@@ -163,6 +168,8 @@ public class TaskServiceImpl implements TaskService {
         if(StringUtils.isEmpty(task.getExecutor())){
             task.setExecutor("");
         }
+        //设置任务的初始得赞数
+        task.setFabulousCount(0);
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -391,6 +398,7 @@ public class TaskServiceImpl implements TaskService {
         //更新到数据库
         int result = taskMapper.updateTask(task);
         TaskLogVO taskLogVO = new TaskLogVO();
+        taskLogVO.setResult(result);
         //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
         if(countByTagName == 0){
             //拼接任务操作日志内容
@@ -410,17 +418,21 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int removeTaskTag(Tag[] tags, Tag tag, String taskId) {
+    public int removeTaskTag(String[] tags, Tag tag, String taskId) {
+        if(tags.length == 1){
+            int result = taskMapper.clearTaskTag(taskId);
+            return result;
+        }
         StringBuilder taskTagsId = new StringBuilder();
         //循环标签数组
         for (int i = 0; i < tags.length ; i++) {
             //如果循环到的标签和要被删除的标签的信息一致时 清空该对象
-            if(tags[i].getTagId().equals(tag.getTagId())){
+            if(tags[i].equals(String.valueOf(tag.getTagId()))){
                 tags[i] = null;
                 continue;
             }
             //累加标签的id
-            taskTagsId.append(tags[i].getTagId()).append(",");
+            taskTagsId.append(tags[i]).append(",");
         }
         Task task = new Task();
         //设置删除后的标签id
@@ -590,17 +602,15 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int clickFabulous(Task task) {
-        //暂时不用
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        Integer taskFabulous = taskMapper.findTaskFabulousCount(task.getTaskId());
         Fabulous fabulous = new Fabulous();
         fabulous.setTaskId(task.getTaskId());
-        fabulous.setMemberId("11111");
+        fabulous.setMemberId(ShiroAuthenticationManager.getUserId());
         fabulous.setFabulousId(System.currentTimeMillis());
         //添加任务和赞的关系数据
         int result = fabulousMapper.addFabulous(fabulous);
         //更新任务得赞数量
-        task.setFabulousCount(task.getFabulousCount() + 1);
-        System.out.println(task.getFabulousCount());
+        task.setFabulousCount(taskFabulous + 1);
         return taskMapper.updateTask(task);
     }
 
@@ -611,10 +621,8 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public boolean judgeFabulous(Task task) {
-        //获取当前用户登录的id (暂时不用)
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        String member = "11111";
-        int result = fabulousMapper.judgeFabulous(task.getTaskId(),member);
+        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        int result = fabulousMapper.judgeFabulous(task.getTaskId(),memberId);
         //如果已经给该任务点赞 返回 false 否则返回true
         if(result > 0){
             return false;
@@ -630,11 +638,11 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int cancelFabulous(Task task) {
+        Integer taskFabulousCount = taskMapper.findTaskFabulousCount(task.getTaskId());
         //获取当前用户登录的id (暂时不用)
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        String memberId = "11111";
+        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         //这里要把当前任务的赞 - 1
-        task.setFabulousCount(task.getFabulousCount()-1);
+        task.setFabulousCount(taskFabulousCount - 1);
         taskMapper.updateTask(task);
         return fabulousMapper.cancelFabulous(task.getTaskId(),memberId);
     }
@@ -838,11 +846,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<UserEntity> findProjectAllMember(String projectId,String executor) {
         List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-        for (int i = 0; i < projectAllMember.size(); i++) {
-            if(projectAllMember.get(i).getId().equals(executor)){
-                projectAllMember.remove(projectAllMember.get(i));
-            }
-        }
+//        for (int i = 0; i < projectAllMember.size(); i++) {
+//            if(projectAllMember.get(i).getId().equals(executor)){
+//                projectAllMember.remove(projectAllMember.get(i));
+//            }
+//        }
         return projectAllMember;
     }
 
@@ -1076,5 +1084,28 @@ public class TaskServiceImpl implements TaskService {
             task.setUpdateTime(System.currentTimeMillis());
             taskMapper.updateTask(task);
         }
+    }
+
+    /**
+     * 查询出任务的所有标签
+     * 1.先拿出该任务绑定的所有标签id
+     * 2.把标签id 转换成数组 再根据数据去查询标签
+     * @param taskId 任务id
+     * @return
+     */
+    @Override
+    public List<Tag> findTaskTag(String taskId) {
+        //根据任务的id查询出该任务所绑定的标签id
+        String tagId = taskMapper.findTagIdByTaskId(taskId);
+        //把任务的id字符串拆成数组形式
+        if(StringUtils.isEmpty(tagId)){
+                return null;
+        }
+        String[] split = tagId.split(",");
+        Integer[] tags = new Integer[split.length];
+        for (int i = 0; i < split.length; i++) {
+            tags[i] = Integer.valueOf(split[i]);
+        }
+        return tagService.findByIds(tags);
     }
 }

@@ -513,7 +513,15 @@
 	<select id="findTaskByExecutor" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where project_id = #{projectId} and executor = #{uId}
+		from prm_task
+		<where>
+			<if test="uId != null and uId != ''">
+				and executor = #{uId}
+			</if>
+			<if test="projectId != null and projectId != ''">
+				and project_id = #{projectId}
+			</if>
+		</where>
 	</select>
 
 	<!-- 查询项目下所有待认领的任务 -->
@@ -579,4 +587,13 @@
 			select parent_id from prm_task where task_id = #{taskId}
 		)
 	</select>
+
+	<!-- 清空该任务的标签 -->
+	<update id="clearTaskTag">
+		update prm_task
+		<set>
+			tag_id = ''
+		</set>
+		where task_id = #{taskId}
+	</update>
 </mapper>
