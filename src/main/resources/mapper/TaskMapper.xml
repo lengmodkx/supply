@@ -590,6 +590,6 @@
 	<select id="findTaskByMemberId" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where member_id = #{memberId} and project_id = #{projectId}
+		from prm_task where member_id = #{memberId}
 	</select>
 </mapper>
