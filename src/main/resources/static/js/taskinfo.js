@@ -82,6 +82,11 @@ layui.use('form', function() {
         var url = "/task/resetAndCompleteTask";
         var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
         $.post(url,args,function (data) {
+            if(taskStatus == '完成'){
+                $('.add-child-task').show();
+            } else{
+                $('.add-child-task').hide();
+            }
             if(data.result == 0){
                 layer.msg(data.msg);
                 $("#taskComplete").attr("checked",false);

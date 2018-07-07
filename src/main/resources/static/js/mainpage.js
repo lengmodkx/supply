@@ -30,6 +30,11 @@ function useLayerForm(){
 
 $(function () {
 
+    $("html").on("click",".assignment-top-box",function (e) {
+        e.stopPropagation()
+        return false
+    });
+
     var url = window.location.href;
     if(url.indexOf("task") > 0){
         $(".toper-nav ul li:nth-of-type(1)").addClass("now").siblings().removeClass("now");
@@ -275,6 +280,7 @@ function lbmenu(top,left) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
+
 function updateTask(taskId,projectId){
     changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {

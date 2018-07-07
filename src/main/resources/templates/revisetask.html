@@ -173,7 +173,7 @@
         </div>
 
         <!--添加子任务-->
-        <div class="add-child-task combox">
+        <div class="add-child-task combox" th:if="${task.taskStatus == '未完成'}">
             <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             <span>添加子任务</span>
         </div>

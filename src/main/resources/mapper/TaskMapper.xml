@@ -585,4 +585,11 @@
 		<include refid="Base_Column_List" />
 		from prm_task where task_id in (select public_id from prm_task_member where prm_task_member.member_id = #{userId} and public_type='任务' and type='参与者')
 	</select>
+
+	<!-- 查询某个用户创建的所有任务 当前项目下 -->
+	<select id="findTaskByMemberId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where member_id = #{memberId} and project_id = #{projectId}
+	</select>
 </mapper>

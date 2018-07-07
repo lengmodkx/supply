@@ -379,5 +379,12 @@ public interface TaskService {
 
 	List<Task> findTaskByUserId(String userId);
 
+	/**
+	 * 查询出我创建的任务信息
+	 * @param memberId 创建者的id
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> findTaskByMemberId(String memberId,String projectId);
 
 }

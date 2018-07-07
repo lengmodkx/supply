@@ -1111,4 +1111,15 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTaskByUserId(String userId) {
         return taskMapper.findTaskByUserId(userId);
     }
+
+    /**
+     * 查询出我创建的任务id
+     * @param memberId 创建者的id
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByMemberId(String memberId, String projectId) {
+        return taskMapper.findTaskByMemberId(memberId,projectId);
+    }
 }
