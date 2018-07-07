@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.file.FileLogMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.FileLog">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="info" property="info" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_image" property="memberImage" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+				id,
+				info,
+				type,
+				member_id,
+				member_name,
+				member_image,
+				create_time
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findFileLogPagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_file_log
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+		
+	</select>
+	
+	<select id="findFileLogAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.file.FileLog">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_file_log
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+	</select>
+	
+	<select id="findFileLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_file_log c where id = #{id}
+
+	</select>
+	
+	<delete id="deleteFileLogById" parameterType="java.lang.String">
+		delete from
+		prm_file_log where id = #{id}
+	</delete>
+	
+	<insert id="saveFileLog" parameterType="com.art1001.supply.entity.file.FileLog">
+
+		insert into prm_file_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+			id,
+			</if>
+			<if test="info != null and info != ''">
+			info,
+			</if>
+			<if test="type != null and type != ''">
+			type,
+			</if>
+			<if test="memberId != null and memberId != ''">
+			member_id,
+			</if>
+			<if test="memberName != null and memberName != ''">
+			member_name,
+			</if>
+			<if test="memberImage != null and memberImage != ''">
+			member_image,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="info != null and info != ''">
+				#{info},
+			</if>
+			<if test="type != null and type != ''">
+				#{type},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				#{memberName},
+			</if>
+			<if test="memberImage != null and memberImage != ''">
+				#{memberImage},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateFileLog" parameterType="com.art1001.supply.entity.file.FileLog">
+
+		update prm_file_log
+		<set>
+			<if test="info != null and info != ''">
+				info = #{info},
+			</if>
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="memberId != null and memberId != ''">
+				member_id = #{memberId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				member_name = #{memberName},
+			</if>
+			<if test="memberImage != null and memberImage != ''">
+				member_image = #{memberImage},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>

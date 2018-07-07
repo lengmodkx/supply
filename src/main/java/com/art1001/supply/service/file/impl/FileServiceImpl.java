@@ -4,10 +4,12 @@ import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
@@ -36,6 +38,9 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private FileVersionService fileVersionService;
 
     /**
      * 查询分页file数据
@@ -73,7 +78,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
+    public File uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
         // 得到文件名
         String originalFilename = multipartFile.getOriginalFilename();
 
@@ -99,7 +104,19 @@ public class FileServiceImpl implements FileService {
         file.setCatalog(0);
         file.setParentId(parentId);
         fileService.saveFile(file);
-        return fileUrl;
+
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        // 修改文件版本
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setFileUrl(fileUrl);
+        fileVersion.setFileSize(FileUtils.convertFileSize(contentLength));
+        Date time = Calendar.getInstance().getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String format = simpleDateFormat.format(time);
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+        fileVersionService.saveFileVersion(fileVersion);
+        return file;
 
     }
 
@@ -187,7 +204,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void createFolder(String projectId, String parentId, String fileName) {
+    public File createFolder(String projectId, String parentId, String fileName) {
         // 存库
         File file = new File();
         // 拿到项目的名字作为初始化的文件名
@@ -200,6 +217,7 @@ public class FileServiceImpl implements FileService {
         // 设置目录
         file.setCatalog(1);
         fileService.saveFile(file);
+        return file;
     }
 
     @Override
@@ -293,6 +311,21 @@ public class FileServiceImpl implements FileService {
     @Override
     public void recoveryFile(String[] fileIds) {
         fileMapper.recoveryFile(fileIds);
+    }
+
+    @Override
+    public List<File> findChildFolder(String fileId) {
+        return fileMapper.findChildFolder(fileId);
+    }
+
+    @Override
+    public List<File> findTopLevel(String projectId) {
+        return fileMapper.findByProjectIdAndParentId(projectId, "0");
+    }
+
+    @Override
+    public void updateTagId(String fileId, String tagIds) {
+        fileMapper.updateTagId(fileId, tagIds);
     }
 
 }

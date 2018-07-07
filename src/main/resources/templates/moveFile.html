@@ -14,18 +14,14 @@
     </div>
     <input type="hidden" th:value="${fileIds}" id="fileIds">
     <input type="hidden" th:value="${projectId}" id="projectId">
+    <input type="hidden" th:value="${url}" id="url">
     <input type="hidden" id="parentId">
     <div class="clone-project-content">
         <div class="clone-project-left">
             <p class="title-font boxsizing">项目</p>
-            <ul class="personal-task" th:each="project: ${projectList}">
-                <li th:if="${projectId} == ${project.projectId}" class="boxsizing selected"
-                    th:text="${project.projectName}">啥啥啥任务
-                </li>
-                <li th:if="${projectId} != ${project.projectId}" class="boxsizing" th:text="${project.projectName}">
-                    啥啥啥任务
-                </li>
-
+            <ul class="personal-task projectList" th:each="project: ${projectList}">
+                <li th:if="${projectId} == ${project.projectId}" class="boxsizing selected" th:data="${project.projectId}" th:text="${project.projectName}"></li>
+                <li th:if="${projectId} != ${project.projectId}" class="boxsizing" th:data="${project.projectId}" th:text="${project.projectName}"></li>
             </ul>
         </div>
         <div class="clone-project-right-box">
@@ -37,8 +33,8 @@
                     </div>
                     <p class="boxsizing title-font">文件夹</p>
                     <div class="new-wjj boxsizing"><input type="text" placeholder="按 Enter 新建文件夹"></div>
-                    <ul th:each="file:${fileList}">
-                        <li class="boxsizing folderName">
+                    <ul>
+                        <li class="boxsizing" th:each="file:${fileList}">
                             <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>
                             <span th:text="${file.fileName}" th:data="${file.fileId}">图片</span>
                         </li>
@@ -70,104 +66,145 @@
                 return false;
             });
 
-            // 获取下层文件夹
-            $(".folderName").each(function () {
-                $(this).click(function () {
-                    var fileId = $(this).find("span").attr("data");
-                    $.post("/file/getChildFolder", {fileId: fileId}, function (data) {
-                        if (data.result === 1) {
-                            // 设置父级id
-                            $("#parentId").val(data.fileId);
-                            var fileList = data.data;
-                            $.each(fileList, function (index, file) {
+            $(".clone-ok").click(function () {
+                var fileIds = $("#fileIds").val();
+                var folderId = $("#parentId").val();
+                var url = $("#url").val();
+                $.post("/file/moveFile", {folderId: folderId, fileIds: fileIds}, function (data) {
+                    if (data.result === 1) {
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                        parent.location.href = url;
+                    }
+                });
+            });
 
-                            });
+            //点击 添加文件夹
+            $("html").on("click", ".create-wjj", function (e) {
+                $(this).parent().siblings(".new-wjj").show();
+                e.stopPropagation()
+            });
+            //点击空白区域 新建 文件夹 输入框 消失
+            $("html").on("click", ".new-wjj input", function (e) {
+                e.stopPropagation()
+            });
+
+            $("html").on("keydown",".new-wjj input",function (e) {
+                if(event.keyCode ==13){
+                    var fileName = $(this).val();
+                    var projectId = $("#projectId").val();
+                    var parentId = $("#parentId").val();
+
+                    $.post("/file/createFolder", {
+                        projectId: projectId,
+                        parentId: parentId,
+                        folderName: fileName
+                    }, function (data) {
+                        if (data.result === 1) {
+                            $(".new-wjj input").parent().siblings("ul").append('<li class="boxsizing">\n' +
+                                '    <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
+                                '    <span data="' + data.data + '">'+fileName+'</span>\n' +
+                                '</li>');
+                            $(".new-wjj input").parent().hide();
                         } else {
-                            layer.msg(data.msg, {icon: 2})
+                            layer.msg(data.msg, {icon: 2});
+                        }
+                    });
+                }
+
+            });
+
+
+            $(document).click(function (event) {
+                var _con = $('.new-wjj input');  // 设置目标区域
+                if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
+                    $('.new-wjj').hide(100);     //淡出消失
+                }
+            });
+
+            // 点击 文件夹 出现 文件夹的内容
+            $("html").on("click", ".column ul li", function () {
+                $(this).addClass("selected").siblings().removeClass("selected");
+                $(this).parent("ul").siblings().find("li").removeClass("selected");
+
+                if ($(this).parents(".column").next().length != 0) {
+                    $(this).parents(".column").nextAll().remove();
+                }
+                var parentId = $(this).find("span").attr("data");
+                $("#parentId").val(parentId);
+                var divObj = $(this).parents(".column");
+
+                layer.load();
+
+                var liText = '';
+                $.post("/file/getChildFolder", {fileId: parentId}, function (data) {
+                    if (data.result === 1) {
+                        var folderList = data.data;
+                        $.each(folderList, function (index, folder) {
+                            liText += '<li class="boxsizing">\n' +
+                                '     <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
+                                '     <span data="' + folder.fileId + '">' + folder.fileName + '</span>\n' +
+                                '</li>\n';
+                        });
+
+                        divObj.after('<div class="column">\n' +
+                            '    <div class="create-wjj-wrap">\n' +
+                            '        <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 20px; color: #a6a6a6;"></i>\n' +
+                            '    </div>\n' +
+                            '    <p class="boxsizing title-font">文件夹</p>\n' +
+                            '    <div class="new-wjj boxsizing"><input  type="text" placeholder="按 Enter 新建文件夹"></div>\n' +
+                            '    <ul>\n' +
+                            '        \n' + liText +
+                            '    </ul>\n' +
+                            '</div>');
+
+                        layer.closeAll('loading');
+                    }
+                })
+            });
+
+            // 点击项目
+            $(".projectList").each(function () {
+                $(this).find("li").click(function () {
+                    $(this).addClass("selected").siblings().removeClass("selected");
+                    $(this).parent("ul").siblings().find("li").removeClass("selected");
+                    var projectId = $(this).attr("data");
+                    var liText = '';
+
+                    layer.load();
+
+                    $.post("/file/findTopLevel", {projectId: projectId}, function (data) {
+                        if (data.result === 1) {
+                            var folderList = data.data;
+                            $.each(folderList, function (index, folder) {
+                                liText += '<li class="boxsizing">\n' +
+                                    '     <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
+                                    '     <span data="' + folder.fileId + '">' + folder.fileName + '</span>\n' +
+                                    '</li>\n';
+                            });
+
+                            $(".clone-project-right").html("").html('<div class="column">\n' +
+                                '                    <div class="create-wjj-wrap">\n' +
+                                '                        <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 20px; color: #a6a6a6;"></i>\n' +
+                                '                    </div>\n' +
+                                '                    <p class="boxsizing title-font">文件夹</p>\n' +
+                                '                    <div class="new-wjj boxsizing"><input  type="text" placeholder="按 Enter 新建文件夹"></div>\n' +
+                                '                    <ul>\n' +
+                                '                        \n' + liText +
+                                '                    </ul>\n' +
+                                '                </div>');
+
+                            layer.closeAll('loading');
                         }
                     });
                 });
             });
 
-            $(".clone-ok").click(function () {
-                var fileIds = $("#fileIds").val();
-                var folderId = $("#parentId").val();
-                console.log(fileIds, folderId);
-                $.post("/file/moveFile", {folderId: folderId, fileIds: fileIds}, function (data) {
-                    if (data.result === 1) {
-                        parent.location.reload();
-                    } else {
-                        layer.msg(data.msg, {icon: 2})
-                    }
-                });
+            // 关闭弹出层
+            $(".clone-project-foot div").click(function () {
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
             });
-        });
-        //点击 添加文件夹
-        $("html").on("click", ".create-wjj", function (e) {
-            $(this).parent().siblings(".new-wjj").show();
-            e.stopPropagation()
-        });
-        //点击空白区域 新建 文件夹 输入框 消失
-        $("html").on("click", ".new-wjj input", function (e) {
-            e.stopPropagation()
-        });
-        $("html").on("keydown", ".new-wjj input", function (e) {
-            if (event.keyCode === 13) {
-                var fileName = $(this).val();
-                var projectId = $("#projectId").val();
-                var parentId = $("#parentId").val();
-                console.log("parentId", parentId);
-                $.post("/file/createFolder", {
-                    projectId: projectId,
-                    parentId: parentId,
-                    folderName: fileName
-                }, function (data) {
-                    if (data.result === 1) {
-                        $(this).parent().siblings("ul").append('<li class="boxsizing">\n' +
-                            '                            <i class="layui-icon layui-icon-file-b" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
-                            '                            <span data="' + data.data + '">' + fileName + '</span>\n' +
-                            '                        </li>');
-                        $(this).parent().hide()
-                    } else {
-                        layer.msg(data.msg, {icon: 2});
-                    }
-                });
-            }
-        });
-        $(document).click(function (event) {
-            var _con = $('.new-wjj input');  // 设置目标区域
-            if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
-                $('.new-wjj').hide(100);     //淡出消失
-            }
-        });
-
-        // 点击 文件夹 出现 文件夹的内容
-        $("html").on("click", ".column ul li", function () {
-            $(this).addClass("selected").siblings().removeClass("selected");
-            $(this).parent("ul").siblings().find("li").removeClass("selected");
-            if ($(this).parents(".column").next().length != 0) {
-                $(this).parents(".column").nextAll().remove();
-            }
-
-            var parentIdId = $(this).attr("data");
-            console.log(parentIdId);
-
-            $(this).parents(".column").after(' <div class="column">\n' +
-                '                    <div class="create-wjj-wrap">\n' +
-                '                        <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 20px; color: #a6a6a6;"></i>\n' +
-                '                    </div>\n' +
-                '                    <p class="boxsizing title-font">文件夹</p>\n' +
-                '                    <div class="new-wjj boxsizing"><input  type="text" placeholder="按 Enter 新建文件夹"></div>\n' +
-                '                    <ul>\n' +
-                '                        \n' +
-                '                    </ul>\n' +
-                '                </div>')
-
-        });
-        // 关闭弹出层
-        $(".clone-project-foot div").click(function () {
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
         });
     });
 

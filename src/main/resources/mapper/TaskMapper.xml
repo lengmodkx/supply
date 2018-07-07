@@ -432,15 +432,7 @@
 		update prm_task
 		<set>
 			<if test="taskStatus != '' and taskStatus != null">
-				<if test="taskStatus == '未完成'.toString()">
-					task_status = '完成',
-				</if>
-				<if test="taskStatus == '重做'.toString()">
-					task_status = '完成',
-				</if>
-				<if test="taskStatus == '完成'.toString()">
-					task_status = '重新开始',
-				</if>
+				task_status = #{taskStatus},
 			</if>
 			<if test="updateTime != null">
 				update_time = #{updateTime},
@@ -577,5 +569,14 @@
 		select
 		<include refid="Base_Column_List"></include>
 		from prm_task where task_menu_id = #{menuId}
+	</select>
+
+	<!-- 根据子任务id 查询出父任务信息 -->
+	<select id="findTaskBySubTaskId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where task_id = (
+			select parent_id from prm_task where task_id = #{taskId}
+		)
 	</select>
 </mapper>

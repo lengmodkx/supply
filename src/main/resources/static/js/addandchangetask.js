@@ -49,7 +49,6 @@ layui.use('form', function() {
             if(data.result == 1){
                 layer.msg("任务创建成功!");
                 close();
-                parent.taskShow(taskMenuId,data.task);
             } else{
                 layer.msg("任务创建失败!");
             }

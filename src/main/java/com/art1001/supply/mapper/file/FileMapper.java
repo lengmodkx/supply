@@ -125,4 +125,11 @@ public interface FileMapper {
 	 * 		 folderId 目标目录id
 	 */
 	void moveFile(Map<String, Object> map);
+
+	/**
+	 * 查询子目录
+	 */
+	List<File> findChildFolder(String fileId);
+
+	void updateTagId(@Param("fileId") String fileId, @Param("tagIds") String tagIds);
 }

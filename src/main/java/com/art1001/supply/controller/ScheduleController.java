@@ -3,12 +3,12 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +27,9 @@ public class ScheduleController {
 
     @Resource
     private ScheduleService scheduleService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
 
 
     @RequestMapping("/schedule.html")
@@ -59,8 +62,7 @@ public class ScheduleController {
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
 
-
-
+        model.addAttribute("members",projectMemberService.findProjectMemberAllList());
 
         return "tk-search-people";
     }
@@ -84,8 +86,8 @@ public class ScheduleController {
                 schedule.setStartTime(System.currentTimeMillis());
                 schedule.setEndTime(DateUtils.getEndTime());
             }else{
-                schedule.setStartTime(DateUtils.strToLong(startTimeTemp));
-                schedule.setEndTime(DateUtils.strToLong(endTimeTemp));
+                schedule.setStartTime(Long.valueOf(startTimeTemp));
+                schedule.setEndTime(Long.valueOf(endTimeTemp));
             }
 
             schedule.setCreateTime(System.currentTimeMillis());

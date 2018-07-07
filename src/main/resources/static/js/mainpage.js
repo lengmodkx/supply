@@ -66,11 +66,32 @@ $(function () {
             },
             onUpdate: function (evt){ //拖拽更新节点位置发生该事件
                 console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
+                // console.log(1111111111111111);
+                // console.log(evt.to);
+                // console.log(evt.from);
+                // console.log(1111111111111111)
             },
             onEnd: function(evt){ //拖拽完毕之后发生该事件
-                console.log('onEnd.foo:', [evt.item, evt.newIndex]);
-                var id_arr;
-
+                // console.log('onEnd.foo:', [evt.item, evt.newIndex]);
+                // console.log(evt.from);
+                // console.log(evt.to);
+                // console.log(evt.item);
+                var oldMenuTaskId = [];
+                var newMenuTaskId = [];
+                var oldMenuId = $(evt.from).attr('id');
+                var newMenuId = $(evt.to).attr('id');
+                var taskId = $(evt.item).attr('id');
+                $(evt.from).children('li').each(function(){
+                   oldMenuTaskId.push($(this).attr('id'));
+                });
+                $(evt.to).children('li').each(function () {
+                   newMenuTaskId.push($(this).attr('id'));
+                });
+                var url = "/task/taskOrder";
+                var args = {oldMenuTaskId:oldMenuTaskId.toString(),newMenuTaskId:newMenuTaskId.toString(),oldMenuId:oldMenuId,newMenuId:newMenuId,taskId:taskId};
+                $.post(url,args,function (data) {
+                    //完成
+                },"json");
             }
         });
 
