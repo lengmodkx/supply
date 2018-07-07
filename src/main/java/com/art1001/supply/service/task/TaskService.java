@@ -376,4 +376,8 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Tag> findTaskTag(String taskId);
+
+	List<Task> findTaskByUserId(String userId);
+
+
 }

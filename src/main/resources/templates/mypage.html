@@ -29,29 +29,20 @@
 <!--我的页面内容部分-->
 <div class="mypage-content" style="margin-top: 50px">
   <!--近期的事-->
-    <div id="near-thing"  >
+    <div id="near-thing" style="display: none" >
         <div class="near-thing-box boxsizing">
             <div class="thing-title">
-                <span>近期的事  + </span><span>1</span>
+                <span>近期的事  + </span><span th:text="${#lists.size(taskList)}">1</span>
             </div>
             <div class="things layui-form">
                 <ul>
-                    <li class="thing-list">
+                    <li class="thing-list" th:each="task : ${taskList}">
                         <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                        <span class="what-thing">设计项目主界面——项目名称</span>
-                        <span class="dt">dt-12</span>
-                        <span class="thing-what-date">6月10日 14:14</span>
-                    </li>
-                    <li class="thing-list">
-                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                        <span class="what-thing">设计项目主界面——项目名称</span>
-                        <span class="dt">dt-12</span>
-                        <span class="thing-what-date">6月10日 14:14</span>
+                        <span class="what-thing" th:text="${task.taskName}">设计项目主界面——项目名称</span>
+                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
                     </li>
                 </ul>
-
             </div>
-
         </div>
     </div>
     <!--任务 页面-->
@@ -78,23 +69,8 @@
             </div>
 
             <div class="things layui-form">
-                <ul>
-                    <li class="thing-list">
-                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                        <span class="what-thing">设计项目主界面——项目名称</span>
-                        <span class="dt">dt-12</span>
-                        <span class="thing-what-date">6月10日 14:14</span>
-                    </li>
-                    <li class="thing-list">
-                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                        <span class="what-thing">设计项目主界面——项目名称</span>
-                        <span class="dt">dt-12</span>
-                        <span class="thing-what-date">6月10日 14:14</span>
-                    </li>
-                </ul>
 
             </div>
-
 
         </div>
     </div>
@@ -280,8 +256,23 @@
     </div>
 </div>
 </body>
+<script id="myTask" type="text/html">
+    <ul>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <li class="thing-list">
+            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+            <span class="what-thing">{{}}</span>
+            <span class="thing-what-date">{{}}</span>
+        </li>
+        {{#  }); }}
+        {{#  if(d.list.length === 0){ }}
+        无数据
+        {{#  } }}
+    </ul>
+</script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/mypage.js}" src="../static/js/mypage.js"></script>
+
 </html>

@@ -23,7 +23,6 @@ import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.shiro.filter.KickoutAuthFilter;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ import com.art1001.supply.entity.base.Pager;
  * taskServiceImpl
  */
 @Service
-public class TaskServiceImpl implements TaskService {
+public abstract class TaskServiceImpl implements TaskService {
 
 	/** taskMapper接口*/
 	@Resource
@@ -70,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
     /** 标签的逻辑层接口 */
     @Resource
     private TagService tagService;
-	
+
 	/**
 	 * 重写方法
 	 * 查询分页task数据
@@ -398,7 +397,6 @@ public class TaskServiceImpl implements TaskService {
         //更新到数据库
         int result = taskMapper.updateTask(task);
         TaskLogVO taskLogVO = new TaskLogVO();
-        taskLogVO.setResult(result);
         //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
         if(countByTagName == 0){
             //拼接任务操作日志内容

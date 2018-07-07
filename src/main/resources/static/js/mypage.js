@@ -41,7 +41,6 @@ $(function () {
         });
     });
 
-
     // 点击 导航（近期的事、任务、日程、文件、收藏） 跳转页面
     $(".my-nav-wrap li").click(function () {
         $(this).addClass("now").siblings().removeClass("now")
@@ -50,7 +49,9 @@ $(function () {
         $("#near-thing").show().siblings().hide()
     });
     $("#click-my-task").click(function () {
-        $("#my-task").show().siblings().hide()
+        $("#my-task").show().siblings().hide();
+
+
     });
     $("#click-my-scheduling").click(function () {
         $("#my-scheduling").show().siblings().hide()

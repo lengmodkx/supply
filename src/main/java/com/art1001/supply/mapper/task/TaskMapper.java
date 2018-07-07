@@ -277,4 +277,6 @@ public interface TaskMapper {
 	 */
 	@Select("select ifnull(fabulous_count,0) from prm_task where task_id = #{taskId}")
 	Integer findTaskFabulousCount(String taskId);
+
+	List<Task> findTaskByUserId(String userId);
 }
