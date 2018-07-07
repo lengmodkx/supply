@@ -42,3 +42,8 @@ a{
 .close-tk:hover{
     color: #3da8f5 !important;
 }
+.over-hidden{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
