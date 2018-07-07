@@ -14,8 +14,10 @@
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
     <div class="zan">
-        <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
-        <span>+12</span>
+        <img class = "nozan"  th:style="'display:' + (${isFabulous} ? 'block' : 'none') + ''" src="../static/image/zan.png" th:src="@{/image/zan.png}" />
+        <img class="cancel"  th:style="'display:' + (${isFabulous} ? 'none' : 'block') + ''" src="../static/image/zan-blue.png" th:src="@{/image/zan-blue.png}" />
+        <span th:if="${task.fabulousCount > 0}" th:text="${task.fabulousCount}"></span>
+        <span th:if="${task.fabulousCount == 0}"></span>
     </div>
 
     <div class="revise-task boxsizing ">
@@ -88,58 +90,66 @@
                 <input type="radio" lay-filter = "priority" name="state" value="非常紧急" title="非常紧急" th:checked="${task.priority == '非常紧急'}">
             </div>
         </div>
-        <div class="add-tag combox">
+        <div class="add-tag tag-box clearfix">
             <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
             <span>标签</span>
             <span class="no-tags">添加标签</span>
+                <div class="has-tags">
+                    <span class="tag" th:if="${tagList != null}"  th:value="${tag.tagId}" th:each="tag:${tagList}" th:style="'background-color:'+${tag.bgColor}+''">
+                        <b style="font-weight: 400" th:text="${tag.tagName}"></b>
+                        <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>
+                    </span>
+                    <i class="layui-icon layui-icon-add-circle add-fuhao" style="font-size: 20px; color: #1E9FFF;cursor: pointer"></i>
+                </div>
             <!--新建  搜索标签框-->
             <div class="tags-search-build" style="display: none">
-                <!--搜索标签-->
-                <div class="tag-search" style="display: none">
-                    <div class="tag-search-title boxsizing">
-                        <input class="tag-search-input" type="text" placeholder="搜索标签">
-                        <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-                    </div>
-                    <ul class="tags-ul boxsizing" id = "tags">
-                        <!--这里是标签-->
-                    </ul>
-                </div>
-                <!--新建标签-->
-                <div class="build-tags" style="display: none">
-                    <div class="build-tags-title boxsizing">
-                        <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
-                        新建标签
-                        <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
-                    </div>
-                    <div class="build-tags-con boxsizing">
-                        <input class="tag-name boxsizing" type="text" placeholder="标签名称">
-                        <ul class="color-pick">
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                            <li>
-                                <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                            </li>
-                        </ul>
-                        <button class="tag-ok" disabled>创建</button>
-                    </div>
-
-                </div>
+            <!--搜索标签-->
+            <div class="tag-search" >
+            <div class="tag-search-title boxsizing">
+            <input class="tag-search-input" type="text" placeholder="搜索标签">
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             </div>
-            <div class="has-tags" style="display:none;">
-                <i class="layui-icon layui-icon-add-circle" style="font-size: 16px; color: #a6a6a6;"></i>
+            <ul class="tags-ul boxsizing" id = "tags">
+            <!--这里是标签-->
+            <li class="tags-list">
+            <span class="dot"></span>
+            <span class="tag-font">aaa</span>
+            </li>
+            </ul>
+            </div>
+            <!--新建标签-->
+            <div class="build-tags" style="display: none">
+            <div class="build-tags-title boxsizing">
+            <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
+            新建标签
+            <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+            </div>
+            <div class="build-tags-con boxsizing">
+            <input class="tag-name boxsizing" type="text" placeholder="标签名称">
+            <ul class="color-pick">
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
+            </li>
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+            </li>
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+            </li>
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+            </li>
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+            </li>
+            <li>
+            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+            </li>
+            </ul>
+            <div class="tag-ok" disabled>创建</div>
+            </div>
+
+            </div>
             </div>
 
         </div>
@@ -281,7 +291,7 @@
 
     </div>
     <!--人员 参与者 弹框-->
-    <div class="people boxsizing">
+    <div class="people boxsizing" style="display: none">
         <input type="text" name="" placeholder="搜索" class="layui-input">
         <div class="peoples">
             <p id = "titles">参与者</p>

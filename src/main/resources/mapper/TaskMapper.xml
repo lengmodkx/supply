@@ -579,4 +579,13 @@
 			select parent_id from prm_task where task_id = #{taskId}
 		)
 	</select>
+
+	<!-- 清空该任务的标签 -->
+	<update id="clearTaskTag">
+		update prm_task
+		<set>
+			tag_id = ''
+		</set>
+		where task_id = #{taskId}
+	</update>
 </mapper>

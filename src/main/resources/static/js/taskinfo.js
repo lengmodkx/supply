@@ -97,25 +97,6 @@ layui.use('form', function() {
         });
     });
 
-    // for (var i=0;i<$("#subTask .layui-form-checkbox").length;i++) {
-    //
-    //     var classlist=  $("#subTask .layui-form-checkbox").eq(i).get(0).classList;
-    //     console.log(classlist)
-    //     if( $.inArray("layui-form-checked", classlist)==-1){
-    //
-    //         $(".task-name input").attr("disabled","disabled");
-    //         layui.use('form', function(){
-    //             var form = layui.form;
-    //             form.render(); //更新全部
-    //             //各种基于事件的操作，下面会有进一步介绍
-    //         });
-    //
-    //     }else {
-    //
-    //
-    //     }
-    // }
-
 
 
     /**
@@ -214,19 +195,19 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd'
         });
 
         laydate.render({
             elem: '#overTime',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd'
         });
 
         laydate.render({
             elem: '#beginTimes',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd'
             ,done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
                 var startTime = new Date(value.toString()).getTime();
@@ -253,7 +234,7 @@ layui.use('form', function() {
         laydate.render({
             elem: '#overTimes', //指定元素
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm',
+            format: 'yyyy-MM-dd',
             done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
                 var endTime = new Date(value.toString()).getTime();
@@ -363,6 +344,13 @@ layui.use('form', function() {
     });
 
     // 点击添加标签
+if ($(".has-tags .tag").length==0){
+    $(".no-tags").show();
+    $(".has-tags").hide();
+} else {
+    $(".no-tags").hide();
+    $(".has-tags").show();
+}
     $(".no-tags").click(function (e) {
         var url = "/task/findAllTags";
         var args = {"projectId":projectId};
@@ -372,8 +360,8 @@ layui.use('form', function() {
             var content = "";
             for(var i = 0;i < tags.length; i++){
                 content += "<li class='tags-list'>" +
-                                "<span class='dot'></span>" +
-                                "<span class='tag-font' th:value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
+                                "<span class='dot' style='background-color: " + tags[i].bgColor + "'></span>" +
+                                "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
                             "</li>";
             }
             $('#tags').html(content);
@@ -393,7 +381,14 @@ layui.use('form', function() {
     });
     $(".close-tag").click(function () {
         $(".tags-search-build").slideUp();
-        $(".no-tags").show();
+        if ($(".has-tags .tag").length==0){
+            $(".no-tags").show();
+            $(".has-tags").hide();
+        } else {
+            $(".no-tags").hide();
+            $(".has-tags").show();
+        }
+
     });
     $(".has-tags>i").click(function (e) {
         $(".tags-search-build").show();
@@ -403,27 +398,87 @@ layui.use('form', function() {
     });
 
     // 点击某个具体标签
-    $(".tags-list").click(function () {
-        var tag = $(this).find(".tag-font").text();
-        $(".has-tags").show()
-        $(".has-tags").prepend('<span class="tag">\n' +
-            '                    ' + tag + '  \n' +
-            '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
-            '                </span>')
+$("html").on("click",".tags-list",function () {
+    var tagId = $(this).find(".tag-font").attr("value");
+    var tags = [];
+    $('.tag').each(function () {
+        tags.push($(this).attr('value'));
     });
-
-    $(".revise-task").on("click", ".tag i", function () {
-        $(this).parent().remove();
-        //判断 有没有标签
-        console.log($(".has-tags span").length);
-        if ($(".has-tags span").length == 0) {
-            $(".has-tags").hide();
-            $(".no-tags").show();
-        } else {
-            $(".has-tags").show();
-            $(".no-tags").hide();
+    var index = 0;
+    $('.tag').each(function () {
+        if(tagId == $(this).attr('value')){
+            var that=$(this);
+            var url = "/task/removeTaskTag";
+            var args = {"tags":tags.toString(),"tagId":tagId,"taskId":taskId};
+            $.post(url,args,function (data) {
+                that.remove();
+            },"json");
+            index = 1;
         }
     });
+    if(index == 1){
+        return false;
+    }
+    var tagName = $(this).find(".tag-font").text();
+    var bgColor = $(this).find(".dot").css("background-color");
+    var url = "/task/addTaskTag";
+    var args = {"tagId":tagId,"tagName":tagName,"taskId":taskId,"projectId":projectId};
+    var content = '';
+    $.post(url,args,function (data) {
+        if(data.result > 0){
+            content += '<span class="tag" value="' + tagId + '" style="background-color:' + bgColor + '">'+
+                '<b style="font-weight: 400">' + tagName + '</b>'+
+                '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+                '</span>';
+            $(".has-tags").prepend(content);
+            $(".has-tags").show();
+        }
+    },"json");
+});
+
+// 创建 按钮 是否 能点击
+$(".tag-name").keyup(function () {
+    if ($(this).val()==''){
+        $(".tag-ok").css({"background-color":"#ccc","cursor":"not-allowed"})
+    } else {
+        $(".tag-ok").css({"background-color":"#1E9FFF","cursor":"pointer"})
+    }
+});
+
+//点击创建 按钮
+$(".tag-ok").click(function () {
+    if ($(".tag-name").val()==''){
+        return false
+    } else {
+        var content = '';
+        var vals=$(".tag-name").val();
+        var color='';
+        $(".color-pick li i").each(function () {
+            if ($(this).is(":visible")){
+                color=$(this).parent().css("background-color")
+            }
+        });
+        var url = "/task/addTagsToTask";
+        var args = {"tagName":vals,"bgColor":color,"taskId":taskId,"projectId":projectId}
+        $.post(url,args,function (data) {
+            if(data.result > 0){
+                $(".has-tags").show();
+                content +=
+                            '<span class="tag" value="' + data.data + '" style="background-color:' + color + '">'+
+                            '<b style="font-weight: 400">' + vals + '</b>'+
+                            '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+                            '</span>';
+                $(".has-tags").prepend(content);
+            } else{
+                layer.msg(data.msg);
+            }
+        },"json");
+
+    }
+});
+$(".add-fuhao").click(function () {
+    $('.no-tags').trigger("click");
+});
 
     //点击颜色，颜色出现对勾
     $(".color-pick li").click(function () {
@@ -701,6 +756,129 @@ $('.people-ok').click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     });
+
+//点击 标签
+// $(".tags").click(function (e) {
+//     $(".tags-search-build").show();
+//     e.stopPropagation()
+// });
+$(".tag-search-title img").click(function () {
+    $(".build-tags").show();
+    $(".tag-search").hide()
+});
+$(".go-return").click(function () {
+    $(".build-tags").hide();
+    $(".tag-search").show()
+});
+$(".close-tag").click(function () {
+    $(".tags-search-build").hide()
+});
+
+/**
+ * 点击 x 从任务上移除该标签
+ */
+$(".revise-task").on("click", ".tag i", function () {
+    var tagId = $(this).parent().attr("value");
+    var tags = [];
+    $('.tag').each(function () {
+        tags.push($(this).attr("value"));
+    });
+    var url = "/task/removeTaskTag";
+    var args = {"tags":tags.toString(),"tagId":tagId,"taskId":taskId};
+    $.post(url,args,function (data) {
+        //完成
+    $(this).parent().remove();
+    });
+    $(this).parent().remove();
+    //判断 有没有标签
+    console.log($(".has-tags span").length);
+    if ($(".has-tags span").length == 0) {
+        $(".has-tags").hide();
+        $(".no-tags").show();
+    } else {
+        $(".has-tags").show();
+        $(".no-tags").hide();
+    }
+});
+
+//点击 x 移出标签
+// $(".tags").on("click",".remove-tag",function (e) {
+//     // if ($(".tags").find(".one-tag").length==0){
+//     //     $(".no-tags").show()
+//     // }
+//     // e.stopPropagation()
+// });
+//点击空白区域 选择标签 框 消失
+$(document).click(function(event){
+    var _con = $('.tags-search-build');  // 设置目标区域
+    if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+        $('.tags-search-build').hide(100);     //淡出消失
+    }
+    if ($(".has-tags .tag").length==0){
+        $(".no-tags").show()
+    }
+});
+
+//点击 选择  颜色
+$("html").on("click",".color-pick li",function () {
+    $(".color-pick li i").hide();
+    $(this).find("i").show()
+});
+
+/**
+ * 给该任务点赞
+ */
+$('.zan img').click(function (e) {
+    var url = "/task/clickFabulous";
+    var args = {"taskId":taskId};
+   if(e.currentTarget.className=='nozan'){
+       $.post(url,args,function (data) {
+           if(data.result == 1){
+               var count = $('.zan').find('span').html();
+               if(count == '' || count == undefined){
+                   count = 0;
+               }
+               count = parseInt(count) +1;
+               $('.zan').find('span').html(count);
+           } else{
+               layer.msg(data.msg);
+           }
+       },"json");
+       $(".nozan").hide();
+       $(".cancel").show()
+   }else {
+       var url = "/task/cancelFabulous";
+       var args = {"taskId":taskId};
+       $.post(url,args,function (data) {
+            if(data.result > 0) {
+                var count = $('.zan').find('span').html();
+                count = parseInt(count) - 1;
+                if(count == 0 || count == undefined){
+                    $('.zan').find('span').html('');
+                } else{
+                    $('.zan').find('span').html(count);
+                }
+            }
+       },"json");
+        $(".nozan").show();
+        $(".cancel").hide()
+   }
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
