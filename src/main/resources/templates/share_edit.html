@@ -8,26 +8,32 @@
 </head>
 <body>
 <header style="border-bottom: 1px solid #eeeeee;">
-    <div style="height: 50px;line-height: 50px"> <span style="margin-left: 20px;font-size: 18px">创建分享至bim5d过程管控平台</span>
-        <i class="layui-icon layui-icon-close" style="font-size: 20px; color: gray; float: right;margin-right: 20px;cursor: pointer"></i>
+    <div style="height: 50px;line-height: 50px"><span style="margin-left: 20px;font-size: 18px">创建分享至bim5d过程管控平台</span>
+        <i class="layui-icon layui-icon-close"
+           style="font-size: 20px; color: gray; float: right;margin-right: 20px;cursor: pointer"></i>
     </div>
 </header>
 <section style="width: 80%;margin: auto;margin-top: 20px">
-    <input th:name="title" placeholder="输入文档标题" style="height: 40px;line-height: 26px;width: 100%;border: none;font-size: 15px"/>
+    <input th:name="title" placeholder="输入文档标题"
+           style="height: 40px;line-height: 26px;width: 100%;border: none;font-size: 15px"/>
     <div id="editor">
 
     </div>
 </section>
 
-<footer class="clearfix boxsizing" style="border-top: 1px solid #eeeeee;width: 80%;position: fixed;left:10%;bottom: 0;padding: 15px 0;">
+<footer class="clearfix boxsizing"
+        style="border-top: 1px solid #eeeeee;width: 80%;position: fixed;left:10%;bottom: 0;padding: 15px 0;">
     <div style="width: 50%;float: left">
+        <input type="hidden" id="projectId" th:name="projectId" th:value="${projectId}"/>
         <input type="hidden" id="privacy" th:name="privacy" th:value="0"/>
         <img src="../static/image/suo.png" th:src="@{/image/suo.png}" style="width: 20px;height: 20px">
         <span class="click-see">隐私模式:</span><br/>
         <span class="set-see all-can-see" style="margin-left: 20px">所有成员可见</span>
         <span class="set-see cyz-can-see" style="display: none;margin-left: 20px">仅参与者可见</span>
     </div>
-    <button id="schedule_create" lay-submit class="layui-btn" lay-filter="scheduleCreate" style="background-color: #017ECA;float: right">创建</button>
+    <button id="schedule_create" lay-submit class="layui-btn" lay-filter="scheduleCreate"
+            style="background-color: #017ECA;float: right">创建
+    </button>
 </footer>
 
 <!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
@@ -45,7 +51,7 @@
             $(".all-can-see").hide();
             $(".cyz-can-see").show();
             $("#privacy").val(0);
-        }else {
+        } else {
             $(".all-can-see").show();
             $(".cyz-can-see").hide();
             $("#privacy").val(1);
@@ -53,11 +59,16 @@
     });
 
     $('#schedule_create').click(function () {
-
-
-
+        var projectId = $("#projectId").val();
+        var title = $("[name = title]").val();
+        var content = editor.txt.html();
+        var isPrivacy = $("#privacy").val();
+        $.post("/share/saveShare", {projectId: projectId, title: title, content: content, isPrivacy: isPrivacy}, function (data) {
+            if (data.result === 1) {
+                window.location.href = "/share/share.html?projectId=" + projectId;
+            }
+        });
     });
-
 
 </script>
 </body>

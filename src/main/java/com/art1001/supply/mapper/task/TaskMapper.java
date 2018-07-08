@@ -277,4 +277,13 @@ public interface TaskMapper {
 	 */
 	@Select("select ifnull(fabulous_count,0) from prm_task where task_id = #{taskId}")
 	Integer findTaskFabulousCount(String taskId);
+
+	List<Task> findTaskByUserId(String userId);
+
+	/**
+	 * 查询出我创建的任务
+	 * @param memberId 用户id
+	 * @return
+	 */
+	List<Task> findTaskByMemberId(@Param("memberId") String memberId);
 }

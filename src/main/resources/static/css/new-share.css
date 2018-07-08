@@ -2,7 +2,7 @@ body,html{
     background-color: #F5F5F5;
 }
 .share-wrap{
-    width: 950px;
+    width: 945px;
     height: 470px;
     margin: 0 auto;
     background-color: white;
@@ -174,11 +174,23 @@ body,html{
     color: #a6a6a6;
 }
 /*右侧内容*/
-.share-right{
+.share-right-wrap{
     width: 614px;
     height: 100%;
     float: left;
     position: relative;
+}
+.share-right{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+
+}
+.share-right:nth-of-type(1){
+    display: block;
 }
 .share-right-scroll{
     width: 100%;
@@ -247,15 +259,30 @@ body,html{
     height: 1px;
     background-color: #E5E5E5;
 }
-/*标签*/
+/*标签 搜索框   新建标签*/
+.tags-search-build{
+    width: 250px;
+    height: 250px;
+    background-color: white;
+    position: absolute;
+    top: 30px;
+    left: 75px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    z-index: 100;
+}
 .add-tag{
     position: relative;
-    margin: 20px 0;
 }
 .no-tags-wrap{
     cursor: pointer;
     float: left;
     width: 430px;
+}
+.no-tags{
+    cursor: pointer;
+}
+.no-tags:hover{
+    color: #3da8f5;
 }
 .tags{
     width: 100%;
@@ -264,13 +291,16 @@ body,html{
     font-size: 14px;
     color: gray;
     cursor: pointer;
-    padding: 0;
 }
 .tags:hover>span{
     color: #3da8f5;
 }
 .has-tags{
+    display: none;
 
+}
+.has-tags>span{
+    margin-bottom: 10px;
 }
 .tag{
     padding: 0 8px;
@@ -291,20 +321,212 @@ body,html{
     right: -6px;
     display: none;
 }
-.left-box{
-    width: 120px;
-    height: 25px;
+.tag-search{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.tag-search-title{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 15px;
+}
+.tag-search-input{
+    width: 80%;
+    height: 100%;
+    border: 0 none;
     float: left;
+}
+.tag-search-title img{
+    width: 18px;
+    height: 18px;
+    float: right;
+    margin-right: 0;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.tags-ul{
+    width: 100%;
+    height: 200px;
+    padding-top: 50px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.tags-list{
+    width: 230px;
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+.tags-ul::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
+.tags-list:hover{
+    background-color: #f5f5f5;
+}
+.dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #3DA8F5;
+    float: left;
+    margin-right: 10px;
+    margin-top: 15px;
+}
+.tag-font{
     font-size: 14px;
-    color: #a6a6a6;
-    line-height: 25px;
-}
-.left-box span{
-    margin-left: 15px;
-}
-.right-box{
     float: left;
-    width: 430px;
+}
+.one-tag{
+    position: relative;
+    float: left;
+    margin-right: 10px;
+}
+.one-tag span{
+    padding: 3px 10px;
+    font-size: 14px;
+    background-color: #A1D5FA;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 19px;
+}
+
+.one-tag i{
+    position: absolute;
+    top: -10px;
+    right: -5px;
+    z-index: 100;
+    display: none;
+}
+.one-tag:hover i{
+    display: block;
+}
+/*新建标签*/
+.build-tags{
+    width: 100%;
+    height: 100%;
+}
+.build-tags-title{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 15px;
+    text-align: center;
+}
+.go-return{
+    float: left;
+    cursor: pointer;
+}
+.close-tag{
+    float: right;
+    cursor: pointer;
+}
+.build-tags-con{
+    width: 100%;
+    padding: 20px 15px;
+}
+.tag-name{
+    width: 100%;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #e5e5e5;
+    outline-style: none;
+}
+.color-pick{
+    width: 100%;
+    height: 24px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+.color-pick li{
+    width: 24px;
+    height: 24px;
+    float: left;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+}
+.color-pick li i{
+    display: none;
+}
+.color-pick li:nth-of-type(1){
+    background-color: #3DA8F5;
+}
+.color-pick li:nth-of-type(2){
+    background-color: #75C940;
+}
+.color-pick li:nth-of-type(3){
+    background-color: #2FBDB3;
+}
+.color-pick li:nth-of-type(4){
+    background-color: #797EC9;
+}
+.color-pick li:nth-of-type(5){
+    background-color: #FFAF38;
+}
+.color-pick li:nth-of-type(6){
+    background-color: #FF4F3E;
+}
+.tag-ok{
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+    background-color: #ccc;
+    border: 0 none;
+    outline-style: none;
+    color: white;
+    cursor: not-allowed;
+}
+.add-tag .label{
+    width: 300px;
+}
+.add-child-task span{
+    color: #2B93D2;
+    cursor: pointer;
+}
+.add-guanlian span{
+    color: #2B93D2;
+    cursor: pointer;
+}
+.line{
+    width: 100%;
+    height: 1px;
+    background-color: #E5E5E5;
+    margin-top: 20px;
+}
+.tag-box{
+    width: 100%;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 14px;
+}
+.tag-box>img{
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    float: left;
+    margin-right: 20px;
+    margin-top: 6px;
+}
+.tag-box span{
+    float: left;
+    margin-right: 15px;
+
+}
+.add-fuhao{
+    float: left;
 }
 .combox{
     width: 100%;
@@ -324,13 +546,6 @@ body,html{
 .combox span{
     float: left;
     margin-right: 15px;
-}
-.gray-box{
-    width: 100%;
-    background-color: #F5F5F5;
-}
-.gray-box>div{
-    padding: 20px 16px;
 }
 /*参与者 开始*/
 .cyz{

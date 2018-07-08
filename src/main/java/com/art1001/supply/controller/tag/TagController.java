@@ -119,9 +119,10 @@ public class TagController {
                 jsonObject.put("msg", "标签已经存在");
                 return jsonObject;
             }
-            Long tagId = tagService.saveTag(tag);
+            Tag tagId = tagService.saveTag(tag);
             jsonObject.put("result", 1);
             jsonObject.put("data", tagId);
+            jsonObject.put("tag", tag);
             jsonObject.put("msg", "添加成功");
         } catch (Exception e) {
             log.error("添加标签异常, {}", e);

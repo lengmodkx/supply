@@ -16,6 +16,13 @@ stompClient.connect({},
     }
 );
 
+//发送消息
+function send() {
+    var message = "你好啊";
+    var messageJson = JSON.stringify({ "name": message });
+    stompClient.send("/app/sendTest", {}, messageJson);
+    setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
+}
 
 //订阅消息
 function subscribe1() {

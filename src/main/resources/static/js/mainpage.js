@@ -30,6 +30,11 @@ function useLayerForm(){
 
 $(function () {
 
+    $("html").on("click",".assignment-top-box",function (e) {
+        e.stopPropagation()
+        return false
+    });
+
     var url = window.location.href;
     if(url.indexOf("task") > 0){
         $(".toper-nav ul li:nth-of-type(1)").addClass("now").siblings().removeClass("now");
@@ -98,30 +103,7 @@ $(function () {
     });
 
     firefox();
-//点击导航（设计任务、分享、文件、群聊、统计） 静态切换
-    $(".toper-nav li").click(function () {
-        $(this).addClass("now").siblings("li").removeClass("now")
-    });
-    $(".click-file").click(function () {
-        $(".view").hide();
-        $("#file").show().siblings().hide()
-    });
-    $(".click-task").click(function () {
-        $(".view").show();
-        $(".board-view>div").hide()
-    });
-    $(".click-share").click(function () {
-        $(".view").hide();
-        $("#share").show().siblings().hide()
-    });
-    $(".click-date").click(function () {
-        $(".view").hide();
-        $("#date").show().siblings().hide()
-    });
-    $(".click-chat").click(function () {
-        $(".view").hide();
-        $("#chat").show().siblings().hide()
-    });
+
 
 
     //点击添加任务按钮
@@ -275,6 +257,7 @@ function lbmenu(top,left) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
+
 function updateTask(taskId,projectId){
     changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {

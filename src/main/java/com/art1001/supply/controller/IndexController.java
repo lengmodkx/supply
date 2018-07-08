@@ -211,7 +211,7 @@ public class IndexController extends BaseController {
      * 获取图形验证码
      */
     @GetMapping("/captcha.html")
-    public void getImageCode(HttpServletResponse response) {
+    public void getImageCode(HttpServletRequest request,HttpServletResponse response) {
         ServletOutputStream out = null;
         try {
             response.setDateHeader("Expires", 0);
@@ -243,7 +243,7 @@ public class IndexController extends BaseController {
 
     @PostMapping("/code")
     @ResponseBody
-    public JSONObject code(@RequestParam String accountName,@RequestParam String captcha){
+    public JSONObject code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
         String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(accountName)){
@@ -278,8 +278,8 @@ public class IndexController extends BaseController {
         //通过短信发送验证码
         if(RegexUtils.checkMobile(accountName)){
             SendSmsUtils sendSmsUtils = new SendSmsUtils();
-            sendSmsUtils.sendSms(accountName,String.valueOf(valid));
-
+            sendSmsUtils.sendSms(accountName,"您的手机验证码为:"+String.valueOf(valid));
+            ShiroAuthenticationManager.setSessionAttribute(request.getSession().getId(),String.valueOf(valid));
         }
         return jsonObject;
     }
@@ -287,8 +287,9 @@ public class IndexController extends BaseController {
 
     @PostMapping("/forget")
     @ResponseBody
-    public JSONObject forget(@RequestParam String accountName,@RequestParam String captcha){
-        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+    public JSONObject forget(@RequestParam String accountName,@RequestParam String password,
+                             @RequestParam String code,HttpServletRequest request){
+        String  kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(accountName)){
             jsonObject.put("result",0);
@@ -296,18 +297,38 @@ public class IndexController extends BaseController {
             return jsonObject;
         }
 
-        if (StringUtils.isEmpty(captcha)){
+        if (StringUtils.isEmpty(code)){
             jsonObject.put("result",0);
-            jsonObject.put("msg","请输入验证码！");
+            jsonObject.put("msg","请输入手机验证码！");
             return jsonObject;
         }
 
-        if(!kaptcha.equalsIgnoreCase(captcha)){
+        if(!kaptcha.equalsIgnoreCase(code)){
             jsonObject.put("result",0);
-            jsonObject.put("msg","验证码输入错误！");
+            jsonObject.put("msg","手机验证码输入错误！");
             return jsonObject;
         }
 
+        UserEntity userEntity = userService.findByName(accountName);
+        if(userEntity==null){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","用户不存在，请检查");
+            return jsonObject;
+        }
+        //加密用户输入的密码，得到密码和加密盐，保存到数据库
+        UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
+        //设置添加用户的密码和加密盐
+        userEntity.setPassword(user.getPassword());
+        userEntity.setCredentialsSalt(user.getCredentialsSalt());
+        int cnt = userService.updatePassword(userEntity, password);
+
+        if (cnt > 0) {
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "密码修改成功,请重新登录");
+        } else {
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "密码修改失败");
+        }
 
         return jsonObject;
     }

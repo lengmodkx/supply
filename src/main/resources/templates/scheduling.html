@@ -38,9 +38,11 @@
                                     <h2 class="layui-colla-title" th:text="${schedulevo.date}">杜甫</h2>
                                     <div class="layui-colla-content">
                                         <ul>
-                                            <li th:each="schedule:${schedulevo.scheduleList}">
+                                            <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px">
                                                 <div class="scheduling-time">
-                                                    <span>8:15</span><span>——</span><span>16:15</span>
+                                                    <span th:text="${#calendars.format(schedule.startTime,'MM-dd HH:mm')}">8:15</span>
+                                                    <span>——</span>
+                                                    <span th:text="${#calendars.format(schedule.endTime,'MM-dd HH:mm')}">16:15</span>
                                                 </div>
                                                 <div class="scheduling-name">
                                                     <span th:text="${schedule.scheduleName}">设计项目主机</span>
@@ -53,9 +55,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>

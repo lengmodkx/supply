@@ -70,7 +70,7 @@
         </if>
     </select>
 
-    <select id="findTagByTagId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 
         select
         <include refid="Base_Column_List"/>

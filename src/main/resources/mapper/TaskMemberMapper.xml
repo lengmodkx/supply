@@ -14,7 +14,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
-    
+
 	<sql id="Base_Column_List">
 						id,
 				member_id,

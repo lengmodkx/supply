@@ -68,7 +68,7 @@ $(function () {
         $(".things").hide();
        $(".things").eq(i+1).show(400)
     });
-    
+
     //点击 文件 页面 我创建的 我参与的
     $(".icreated").click(function () {
         $(".icreated").addClass("now");
@@ -96,7 +96,7 @@ $(function () {
         $(".my-scheduling").hide();
         $(".my-scheduling").eq(i).show(400)
     })
-    
+
 //点击x 关闭弹出层
     $("html").on("click",".my-toper>i",function () {
        parent.layer.closeAll()

@@ -33,10 +33,9 @@
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
-		<id property="taskId" column="task_id"></id>
-		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="{taskId=task_id}" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor">
-		</association>
-</resultMap>
+		<id property="taskId" column="task_id"/>
+		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="{taskId=task_id}" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor"/>
+	</resultMap>
 
 	<sql id="Base_Column_List">
 						task_id,
@@ -580,12 +579,17 @@
 		)
 	</select>
 
-	<!-- 清空该任务的标签 -->
-	<update id="clearTaskTag">
-		update prm_task
-		<set>
-			tag_id = ''
-		</set>
-		where task_id = #{taskId}
-	</update>
+	<select id="findTaskByUserId" resultMap="BaseResultMap"
+			parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_task where task_id in (select public_id from prm_task_member where prm_task_member.member_id = #{userId} and public_type='任务' and type='参与者')
+	</select>
+
+	<!-- 查询某个用户创建的所有任务 当前项目下 -->
+	<select id="findTaskByMemberId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_task where member_id = #{memberId}
+	</select>
 </mapper>

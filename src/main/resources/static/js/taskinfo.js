@@ -82,6 +82,11 @@ layui.use('form', function() {
         var url = "/task/resetAndCompleteTask";
         var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
         $.post(url,args,function (data) {
+            if(taskStatus == '完成'){
+                $('.add-child-task').show();
+            } else{
+                $('.add-child-task').hide();
+            }
             if(data.result == 0){
                 layer.msg(data.msg);
                 $("#taskComplete").attr("checked",false);
@@ -593,7 +598,6 @@ $('.people-ok').click(function () {
                 $(".no-renling").hide();
                 $(".people").hide(500);
                 $(".who-wrap").show();
-            } else{
             }
         },"json");
     }else {  //参与者 确定

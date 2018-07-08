@@ -64,4 +64,11 @@ public interface ScheduleMapper {
 	 */
 	List<ScheduleVo> findScheduleGroupByCreateTime();
 
+	/**
+	 * 根据月份查询日程列表
+	 * @param date
+	 * @return
+	 */
+	List<Schedule> findScheduleList(String date);
+
 }

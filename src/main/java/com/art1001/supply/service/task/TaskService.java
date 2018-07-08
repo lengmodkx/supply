@@ -376,4 +376,14 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Tag> findTaskTag(String taskId);
+
+	List<Task> findTaskByUserId(String userId);
+
+	/**
+	 * 查询出我创建的任务信息
+	 * @param memberId 创建者的id
+	 * @return
+	 */
+	List<Task> findTaskByMemberId(String memberId);
+
 }

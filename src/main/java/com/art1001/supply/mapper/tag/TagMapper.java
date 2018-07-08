@@ -26,7 +26,7 @@ public interface TagMapper {
 	 * @param tagId
 	 * @return
 	 */
-	Tag findTagByTagId(Long tagId);
+	Tag findById(Integer tagId);
 
 	/**
 	 * 通过tagId删除tag数据

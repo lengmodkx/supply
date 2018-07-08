@@ -23,7 +23,6 @@ import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.shiro.filter.KickoutAuthFilter;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -70,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
     /** 标签的逻辑层接口 */
     @Resource
     private TagService tagService;
-	
+
 	/**
 	 * 重写方法
 	 * 查询分页task数据
@@ -398,7 +397,6 @@ public class TaskServiceImpl implements TaskService {
         //更新到数据库
         int result = taskMapper.updateTask(task);
         TaskLogVO taskLogVO = new TaskLogVO();
-        taskLogVO.setResult(result);
         //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
         if(countByTagName == 0){
             //拼接任务操作日志内容
@@ -1029,6 +1027,7 @@ public class TaskServiceImpl implements TaskService {
         taskLog.setTaskId(task.getTaskId());
         taskLog.setContent(taskLog.getMemberName() + "  " + content);
         taskLog.setCreateTime(System.currentTimeMillis());
+        taskLog.setLogType(0);
         taskLogService.saveTaskLog(taskLog);
         TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
         return taskLogVO;
@@ -1107,5 +1106,20 @@ public class TaskServiceImpl implements TaskService {
             tags[i] = Integer.valueOf(split[i]);
         }
         return tagService.findByIds(tags);
+    }
+
+    @Override
+    public List<Task> findTaskByUserId(String userId) {
+        return taskMapper.findTaskByUserId(userId);
+    }
+
+    /**
+     * 查询出我创建的任务id
+     * @param memberId 创建者的id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByMemberId(String memberId) {
+        return taskMapper.findTaskByMemberId(memberId);
     }
 }
