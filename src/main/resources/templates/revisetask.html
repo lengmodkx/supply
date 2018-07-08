@@ -335,13 +335,13 @@
     //发送消息
     function send() {
         var chat = $('#chat').val();
-        $('#chat')
         var args = {"taskId":taskId,"content":chat}
         $.post("/task/chat",args,function (data) {
         },"json");
         var messageJson = JSON.stringify({ "name": chat });
         stompClient.send("/app/sendTest",{"taskId":taskId}, messageJson);
-
+        $('#chat').val('');
+        $('#chat').focus();
         var scrollHeight = $('.revise-task').prop("scrollHeight");
         $('.revise-task').animate({scrollTop:scrollHeight}, 400);
 
@@ -353,10 +353,30 @@
         stompClient.subscribe('/topic/'+taskId, function (response) {
             var returnData = JSON.parse(response.body);
             var taskLog = JSON.parse(returnData.responseMessage);
-            alert(JSON.parse(taskLog.type).type);
-            getLog(taskLog);
-            var scrollHeight = $('.revise-task').prop("scrollHeight");
-            $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+            if(taskLog.type == '把任务执行者指派给了'){
+                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
+                $('#executorId').val(taskLog.userInfo.id);
+                $('#executorName').html(taskLog.uName);
+                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
+            }
+            if(taskLog.type == '发送消息'){
+                getLog(taskLog.object.taskLog);
+                var scrollHeight = $('.revise-task').prop("scrollHeight");
+                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+            }
+        });
+    }
+    //订阅消息
+    function subscribe1() {
+        stompClient.subscribe('/topic/subscribe', function (response) {
+            var returnData = JSON.parse(response.body);
+            var taskLog = JSON.parse(returnData.responseMessage);
+            if(taskLog.type == '把任务执行者指派给了'){
+                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
+                $('#executorId').val(taskLog.userInfo.id);
+                $('#executorName').html(taskLog.uName);
+                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
+            }
         });
     }
 

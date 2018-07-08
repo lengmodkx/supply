@@ -29,6 +29,9 @@ function subscribe1() {
     stompClient.subscribe('/topic/subscribe', function (response) {
         var returnData = JSON.parse(response.body);
         var task = JSON.parse(returnData.responseMessage);
+        if(task.type == '把任务执行者指派给了'){
+            changeExecutor(task.taskId,IMAGE_SERVER+task.userInfo.image);
+        }
         taskShow(task);
     });
 
