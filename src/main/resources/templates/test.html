@@ -53,7 +53,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe1() {
-        stompClient.subscribe('/topic/subscribeTest', function (response) {
+        stompClient.subscribe('/topic/abc', function (response) {
             setMessageInnerHTML("已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);

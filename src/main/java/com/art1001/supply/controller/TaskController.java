@@ -34,6 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.hibernate.validator.constraints.pl.REGON;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
+import org.omg.CORBA.ObjectHelper;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.messaging.converter.SimpleMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -44,10 +46,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.xml.ws.RequestWrapper;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.SimpleFormatter;
 
 /**
@@ -539,7 +538,7 @@ public class TaskController {
             int countByTagName = tagService.findCountByTagName(projectId, tag.getTagName());
             if(countByTagName == 0){
                 tag.setMemberId(ShiroAuthenticationManager.getUserId());
-                tag.setTagId(tagService.saveTag(tag));
+                tag.setTagId(tagService.saveTag(tag).getTagId());
             } else{
                 jsonObject.put("result",0);
                 jsonObject.put("msg","标签已存在!");
@@ -1255,7 +1254,7 @@ public class TaskController {
      * @param taskId 任务id
      * @param uName 新的执行者的名字
      * @param userInfoEntity 新的执行者的信息
-     * @return
+     * @return0
      */
     @PostMapping("updateTaskExecutor")
     @ResponseBody
@@ -1266,6 +1265,9 @@ public class TaskController {
             jsonObject.put("msg","修改成功");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.U.getName());
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+"}"));
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+"}"));
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
             throw new AjaxException(e);
@@ -1329,10 +1331,13 @@ public class TaskController {
             taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
             taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
             taskLog.setCreateTime(System.currentTimeMillis());
-            taskLog.setLogType(1);
             taskLogService.saveTaskLog(taskLog);
-            messagingTemplate.convertAndSend("/topic/"+taskLog.getTaskId(),new ServerMessage(JSON.toJSONString(taskLog)+",type:{type:1}"));
             jsonObject.put("result",1);
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("taskLog",taskLog);
+            taskPushType.setObject(map);
+            messagingTemplate.convertAndSend("/topic/"+taskLog.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("操作失败,{}",e);
             throw new AjaxException(e);
