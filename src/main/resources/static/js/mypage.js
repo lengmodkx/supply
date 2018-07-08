@@ -42,6 +42,61 @@ $(function () {
     });
 
 
+    // 点击 导航（近期的事、任务、日程、文件、收藏） 跳转页面
+    $(".my-nav-wrap li").click(function () {
+        $(this).addClass("now").siblings().removeClass("now")
+    });
+    $("#click-near-thing").click(function () {
+        $("#near-thing").show().siblings().hide()
+    });
+    $("#click-my-task").click(function () {
+        $("#my-task").show().siblings().hide()
+    });
+    $("#click-my-scheduling").click(function () {
+        $("#my-scheduling").show().siblings().hide()
+    });
+    $("#click-my-file").click(function () {
+        $("#my-file").show().siblings().hide()
+    });
+    $("#click-my-collect").click(function () {
+        $("#my-collect").show().siblings().hide()
+    });
+    //点击任务页面 导航
+    $(".my-task-title-left>span").click(function () {
+       var i=$(this).index();
+       $(this).addClass("now").siblings().removeClass("now");
+        $(".things").hide();
+       $(".things").eq(i+1).show(400)
+    });
+
+    //点击 文件 页面 我创建的 我参与的
+    $(".icreated").click(function () {
+        $(".icreated").addClass("now");
+        $(".ipartin").removeClass("now");
+        $(".i-in").hide();
+        $(".i-create").show(400);
+    });
+    $(".ipartin").click(function () {
+        $(".icreated").removeClass("now");
+        $(".ipartin").addClass("now");
+        $(".i-create").hide();
+        $(".i-in").show(400)
+    });
+
+    //点击收藏页面 的导航条
+    $(".collect-head>span").click(function () {
+        $(this).addClass("now").siblings().removeClass("now");
+        $(".no-collect").fadeIn(400)
+
+    });
+    //点击日程 页面 导航
+    $(".scheduling-title>span").click(function () {
+        var i=$(this).index();
+        $(this).addClass("now").siblings().removeClass("now");
+        $(".my-scheduling").hide();
+        $(".my-scheduling").eq(i).show(400)
+    })
+
 //点击x 关闭弹出层
     $("html").on("click",".my-toper>i",function () {
        parent.layer.closeAll()
