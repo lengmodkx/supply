@@ -9,10 +9,12 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -53,8 +55,8 @@ public class TagServiceImpl implements TagService {
 	 * @return
 	 */
 	@Override 
-	public Tag findTagByTagId(Long tagId){
-		return tagMapper.findTagByTagId(tagId);
+	public Tag findById(Integer tagId){
+		return tagMapper.findById(tagId);
 	}
 
 	/**
@@ -83,11 +85,13 @@ public class TagServiceImpl implements TagService {
      * @param tag 标签实体信息
      */
 	@Override
-	public Long saveTag(Tag tag){
+	public Tag saveTag(Tag tag){
 		tag.setCreateTime(System.currentTimeMillis());
 		tag.setUpdateTime(System.currentTimeMillis());
+		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+		tag.setMemberId(userEntity.getId());
 		tagMapper.saveTag(tag);
-		return tag.getTagId();
+		return tag;
     }
 	/**
 	 * 获取所有tag数据

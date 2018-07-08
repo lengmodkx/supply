@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.share.ShareMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.share.Share">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="tag_ids" property="tagIds" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
+		<result column="is_privacy" property="isPrivacy" jdbcType="INTEGER" />
+		<result column="is_del" property="isDel" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		id,
+		title,
+		content,
+		tag_ids,
+		project_id,
+		member_id,
+		member_name,
+		member_img,
+		is_privacy,
+		is_del,
+		create_time,
+		update_time
+	</sql>
+
+    <!-- 根据id查询 -->
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            prm_share
+        WHERE
+            id = #{id}
+    </select>
+
+    <!-- 查询项目的分享 -->
+    <select id="findByProjectId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+            prm_share
+        WHERE
+            project_id = #{projectId}
+        AND is_del = #{isDel}
+    </select>
+
+    <insert id="saveShare" parameterType="com.art1001.supply.entity.share.Share">
+        insert into prm_share
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="tagIds != null and tagIds != ''">
+                tag_ids,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id,
+            </if>
+            <if test="memberName != null and memberName != ''">
+                member_name,
+            </if>
+            <if test="memberImg != null and memberImg != ''">
+                member_img,
+            </if>
+            <if test="isPrivacy != null">
+                is_privacy,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="title != null and title != ''">
+                #{title},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="tagIds != null and tagIds != ''">
+                #{tagIds},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                #{memberId},
+            </if>
+            <if test="memberName != null and memberName != ''">
+                #{memberName},
+            </if>
+            <if test="memberImg != null and memberImg != ''">
+                #{memberImg},
+            </if>
+            <if test="isPrivacy != null">
+                #{isPrivacy},
+            </if>
+            <if test="isDel != null">
+                #{isDel},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateShare" parameterType="com.art1001.supply.entity.share.Share">
+        update prm_share
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="tagIds != null and tagIds != ''">
+                tag_ids = #{tagIds},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id = #{memberId},
+            </if>
+            <if test="memberName != null and memberName != ''">
+                member_name = #{memberName},
+            </if>
+            <if test="memberImg != null and memberImg != ''">
+                member_img = #{memberImg},
+            </if>
+            <if test="isPrivacy != null">
+                is_privacy = #{isPrivacy},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete
+        from
+		  prm_share
+		where
+		  id = #{id}
+    </delete>
+
+    <update id="deleteTag" parameterType="java.lang.String">
+        update prm_share
+        set
+            tag_ids = #{tagIds}
+        where
+            id = #{id}
+    </update>
+
+</mapper>

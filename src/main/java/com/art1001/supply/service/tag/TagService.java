@@ -26,7 +26,7 @@ public interface TagService {
 	 * @param tagId
 	 * @return
 	 */
-	public Tag findTagByTagId(Long tagId);
+	Tag findById(Integer tagId);
 
 	/**
 	 * 通过tagId删除tag数据
@@ -47,7 +47,7 @@ public interface TagService {
 	 *
 	 * @param tag
 	 */
-	public Long saveTag(Tag tag);
+	public Tag saveTag(Tag tag);
 
 	/**
 	 * 获取所有tag数据

@@ -92,10 +92,7 @@
 <script th:inline="javascript">
 
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-   //点击 添加 类名now 使文字变色
-   $(".my-nav-wrap li").click(function () {
-       $(this).addClass("now").siblings().removeClass("now")
-   });
+
    layui.use('element', function(){
        var element = layui.element;
 

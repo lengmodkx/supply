@@ -103,30 +103,7 @@ $(function () {
     });
 
     firefox();
-//点击导航（设计任务、分享、文件、群聊、统计） 静态切换
-    $(".toper-nav li").click(function () {
-        $(this).addClass("now").siblings("li").removeClass("now")
-    });
-    $(".click-file").click(function () {
-        $(".view").hide();
-        $("#file").show().siblings().hide()
-    });
-    $(".click-task").click(function () {
-        $(".view").show();
-        $(".board-view>div").hide()
-    });
-    $(".click-share").click(function () {
-        $(".view").hide();
-        $("#share").show().siblings().hide()
-    });
-    $(".click-date").click(function () {
-        $(".view").hide();
-        $("#date").show().siblings().hide()
-    });
-    $(".click-chat").click(function () {
-        $(".view").hide();
-        $("#chat").show().siblings().hide()
-    });
+
 
 
     //点击添加任务按钮
