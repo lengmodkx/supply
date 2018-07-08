@@ -49,6 +49,10 @@ public class TaskLog extends BaseEntity implements Serializable {
 	 */
 	private String content;
 
+	/**
+	 * 日志的类型  0: 日志  1:聊天内容
+	 */
+	private Integer logType;
 
 	/**
 	 * 创建时间

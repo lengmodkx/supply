@@ -598,7 +598,6 @@ $('.people-ok').click(function () {
                 $(".no-renling").hide();
                 $(".people").hide(500);
                 $(".who-wrap").show();
-            } else{
             }
         },"json");
     }else {  //参与者 确定

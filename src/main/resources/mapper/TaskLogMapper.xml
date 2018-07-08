@@ -9,6 +9,7 @@
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 	</resultMap>
     
@@ -19,6 +20,7 @@
 				member_name,
 				member_img,
 				content,
+				log_type,
 				create_time
 	</sql>
 
@@ -94,6 +96,9 @@
 			<if test="content != null and content != ''">
 			content,
 			</if>
+			<if test="logType != null">
+			log_type,
+			</if>
 			<if test="createTime != null ">
 			create_time,
 			</if>
@@ -118,6 +123,9 @@
 			</if>
 			<if test="content != null and content != ''">
 				#{content},
+			</if>
+			<if test="logType != null ">
+				#{logType},
 			</if>
 			<if test="createTime != null ">
 				#{createTime},
@@ -147,6 +155,9 @@
 			</if>
 			<if test="createTime != null ">
 				create_time = #{createTime},
+			</if>
+			<if test="logType != null">
+				logType = #{logType},
 			</if>
 		</set>
 

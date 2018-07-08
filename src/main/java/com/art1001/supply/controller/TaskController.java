@@ -1314,4 +1314,29 @@ public class TaskController {
         }
         return jsonObject;
     }
+
+    /**
+     * 任务的聊天室
+     * @param taskLog 任务聊天的信息
+     * @return
+     */
+    @PostMapping("chat")
+    @ResponseBody
+    public JSONObject chat(TaskLog taskLog){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            taskLog.setId(IdGen.uuid());
+            taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
+            taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
+            taskLog.setCreateTime(System.currentTimeMillis());
+            taskLog.setLogType(1);
+            taskLogService.saveTaskLog(taskLog);
+            messagingTemplate.convertAndSend("/topic/"+taskLog.getTaskId(),new ServerMessage(JSON.toJSONString(taskLog)+",type:{type:1}"));
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("操作失败,{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

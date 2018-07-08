@@ -1027,6 +1027,7 @@ public class TaskServiceImpl implements TaskService {
         taskLog.setTaskId(task.getTaskId());
         taskLog.setContent(taskLog.getMemberName() + "  " + content);
         taskLog.setCreateTime(System.currentTimeMillis());
+        taskLog.setLogType(0);
         taskLogService.saveTaskLog(taskLog);
         TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
         return taskLogVO;
