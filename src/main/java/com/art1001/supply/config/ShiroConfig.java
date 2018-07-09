@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.shiro.SecurityUtils.getSecurityManager;
 
 @Configuration
 public class ShiroConfig {
@@ -51,8 +50,8 @@ public class ShiroConfig {
         config.setMinEvictableIdleTimeMillis(30000);
         config.setSoftMinEvictableIdleTimeMillis(30000);
         config.setTestOnBorrow(true);
-//        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
-        JedisPool jedisPool = new JedisPool(config, "localhost");
+        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
+//        JedisPool jedisPool = new JedisPool(config, "localhost");
         redisManager.setJedisPool(jedisPool);
         return redisManager;
     }
@@ -119,6 +118,7 @@ public class ShiroConfig {
         sessionManager.setSessionValidationScheduler(scheduler);
         //设置名称，防止和servlet的cookie冲突
         SimpleCookie simpleCookie = new SimpleCookie("SUPPLY-SID");
+        simpleCookie.setHttpOnly(true);
         sessionManager.setSessionIdCookie(simpleCookie);
         ArrayList<SessionListener> arrayList = new ArrayList<>();
         ShiroSessionListener sessionListener = new ShiroSessionListener();
@@ -142,7 +142,7 @@ public class ShiroConfig {
         SimpleCookie simpleCookie = new SimpleCookie("SUPPLY-SID");
         simpleCookie.setMaxAge(604800);
         simpleCookie.setHttpOnly(true);
-        rememberMeManager.setCipherKey(Base64.decode("GsHaWo4m1eNbE0kNSMULhg=="));
+        rememberMeManager.setCipherKey(Base64.decode("ZDJGdVozbGhabVZ1Wnc9PQ=="));
         rememberMeManager.setCookie(simpleCookie);
         securityManager.setRememberMeManager(rememberMeManager);
         return securityManager;
@@ -155,7 +155,7 @@ public class ShiroConfig {
         //shiro的核心安全接口
         filter.setSecurityManager(securityManager());
         filter.setLoginUrl("/login.html");
-        filter.setSuccessUrl("/index.html");
+        filter.setSuccessUrl("/project/project.html");
         filter.setUnauthorizedUrl("/denied.html");
         ChainDefinitionService chainDefinitionService = new ChainDefinitionServiceImpl();
         filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());

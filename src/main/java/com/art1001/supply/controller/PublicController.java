@@ -46,8 +46,12 @@ public class PublicController {
     @PostMapping("/myAddTask")
     public JSONObject myAddTask(){
         JSONObject jsonObject = new JSONObject();
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         try {
-
+            List<Task> taskList = taskService.findTaskByMemberId(userEntity.getId());
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功");
+            jsonObject.put("data",taskList);
         }catch (Exception e){
             throw new AjaxException(e);
         }

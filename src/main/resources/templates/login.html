@@ -42,8 +42,10 @@
             var form = layui.form;
             //监听提交
             form.on('submit(Login)', function(){
+                var index = layer.load(1, {shade: [0.1,'#fff']});
                 var params = $("#loginform").serialize();
                 $.post("/login", params, function (data) {
+                    layer.close(index);
                     if(data.result===1){
                         window.location.href = "/project/project.html";
                     }else{

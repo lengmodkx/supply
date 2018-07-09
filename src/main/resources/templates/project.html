@@ -292,9 +292,9 @@
             //监听提交
             form.on('submit(Project)', function(){
                 var params = $("#projectForm").serialize();
-                console.log(params);
+                var index = layer.load(1, {shade: [0.1,'#fff']});
                 $.post("/project/addProject",params,function (data) {
-                    console.log(data);
+                   layer.close(index);
                     if(data.result===1){
                        //创建项目成功之后进入任务主界面
                         window.location.href = "/project/task.html?projectId="+data.projectId;

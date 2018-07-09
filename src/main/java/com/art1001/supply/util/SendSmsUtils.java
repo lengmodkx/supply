@@ -1,10 +1,14 @@
 package com.art1001.supply.util;
 
 import com.art1001.supply.util.httpclient.HttpProtocolHandler;
+import org.apache.shiro.codec.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +46,42 @@ public class SendSmsUtils {
         return str;
     }
 
+
+    public static void getKey(){
+        try {
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);//要生成多少位，只需要修改这里即可128, 192或256
+            SecretKey sk = kg.generateKey();
+            byte[] b = sk.getEncoded();
+            String s = byteToHexString(b);
+            System.out.println(s);
+            System.out.println("十六进制密钥长度为"+s.length());
+            System.out.println("二进制密钥的长度为"+s.length()*4);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println("没有此算法。");
+        }
+    }
+
+    public static String byteToHexString(byte[] bytes){
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < bytes.length; i++) {
+            String strHex=Integer.toHexString(bytes[i]);
+            if(strHex.length() > 3){
+                sb.append(strHex.substring(6));
+            } else {
+                if(strHex.length() < 2){
+                    sb.append("0" + strHex);
+                } else {
+                    sb.append(strHex);
+                }
+            }
+        }
+        return  sb.toString();
+    }
+
     public static void main(String[] args) {
-        SendSmsUtils c = new SendSmsUtils();
-        c.sendSms("18701053211", "您的验证码是：463279");
+//        SendSmsUtils c = new SendSmsUtils();
+//        c.sendSms("18701053211", "您的验证码是：463279");
     }
 }
