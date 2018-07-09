@@ -1196,7 +1196,7 @@ public class TaskController {
                 return jsonObject;
             }
             //获取数据信息
-            List<Task> taskList = taskService.findTaskByExecutor(uId,projectId);
+            List<Task> taskList = taskService.findTaskByExecutor(uId);
             if(taskList.size() > 0){
                 jsonObject.put("data",taskList);
                 jsonObject.put("result","1");

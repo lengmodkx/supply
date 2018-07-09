@@ -248,4 +248,40 @@
 		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date}
 
 	</select>
+
+	<!-- 查询出当前用户参与的近三天的日程 -->
+	<select id="findScheduleByUserIdAndByTreeDay">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM
+		prm_schedule
+		WHERE
+		schedule_id IN (
+		SELECT
+		public_id
+		FROM
+		prm_task_member
+		WHERE
+		member_id = ''
+		AND public_type = '日程'
+		AND type = '参与者'
+		)
+		AND (
+		SELECT
+		FROM_UNIXTIME(
+		start_time / 1000,
+		'%Y-%m-%d'
+		)
+		) &gt;= (SELECT curdate())
+		AND (
+		SELECT
+		FROM_UNIXTIME(
+		start_time / 1000,
+		'%Y-%m-%d'
+		)
+		) &lt;= (
+		SELECT
+		adddate(curdate(), '+2 days')
+		)
+	</select>
 </mapper>

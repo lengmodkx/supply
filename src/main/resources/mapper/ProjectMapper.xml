@@ -19,6 +19,19 @@
 		<association property="funcList" column="project_id" javaType="ArrayList"
 					 select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>
 	</resultMap>
+
+	<resultMap id="ProjectAndTaskByExecutor" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"></collection>
+	</resultMap>
+	<resultMap id="ProjectAndTaskByUser" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"></collection>
+	</resultMap>
+	<resultMap id="ProjectAndTaskByCreateMember" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"></collection>
+	</resultMap>
     
 	<sql id="Base_Column_List">
 		project_id,
@@ -235,5 +248,25 @@
 		<include refid="Base_Column_List" />
 		from prm_project where project_del = 0
 		order by create_time asc
+	</select>
+
+	<!-- 查询出该用户执行的任务信息和所在项目信息 -->
+	<select id="findProjectAndTaskByExecutorId" resultMap="ProjectAndTaskByExecutor">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
+	</select>
+
+	<!-- 查询出该用户参与的任务信息和所在项目信息 -->
+	<select id="findProjectAndTaskByUserId" resultMap="ProjectAndTaskByUser">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
+	</select>
+
+	<select id="findProjectAndTaskByCreateMember" resultMap="ProjectAndTaskByCreateMember">
+		select
+		<include refid="Base_Column_List"></include>
+		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
 </mapper>

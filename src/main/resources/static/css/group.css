@@ -1,0 +1,333 @@
+
+.group-box{
+    width: 350px;
+    height: 100%;
+    background-color: #F7F7F7;
+    box-shadow: -3px 0 3px rgba(0,0,0,.1);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.group-box::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
+.group-title{
+    width: 100%;
+    height: 50px;
+    position: relative;
+    text-align: center;
+    padding: 0 10px;
+}
+.group-title h3{
+    font-size: 15px;
+    line-height: 50px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.group-title>i{
+    position: absolute;
+    right: 5px;
+    top: 14px;
+}
+.group-title>i:hover{
+    color: #3da8f5 !important;
+}
+.search-box{
+    width: 320px;
+    height: 40px;
+    margin: 15px;
+}
+.search-box input{
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    padding: 8px 12px;
+
+}
+.add-new-member{
+    width: 100%;
+    height: 50px;
+    padding: 5px 12px;
+    cursor: pointer;
+    position: relative;
+}
+.lianjie{
+    position: absolute;
+    width: 90%;
+    top: 50px;
+    left: 5%;
+    background-color: white;
+    box-shadow: -3px 0 3px rgba(0,0,0,.1);
+    padding: 15px 0;
+}
+.box-border{
+    width: 80%;
+    margin: 10px auto;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    text-align: center;
+    color: #a6a6a6;
+    font-size: 14px;
+    padding: 10px;
+}
+.copy-btn{
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0 auto;
+    background-color: #5AB5F7;
+    border-radius: 3px;
+}
+.copy-btn:hover{
+    opacity: 0.8;
+}
+.add-new-member:hover{
+    background-color: #eee;
+}
+.add-new-member img{
+    width: 36px;
+    height: 36px;
+    float: left;
+    margin-right: 8px;
+    margin-top: 2px;
+}
+.add-new-member span{
+    float: left;
+    line-height: 40px;
+    color: #3da8f5;
+    font-size: 14px;
+}
+.group-people li{
+    width: 100%;
+    height: 50px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.group-people li:hover{
+    background-color: #eee;
+}
+.group-people li>img{
+    width: 36px;
+    height: 36px;
+    float: left;
+    margin-right: 8px;
+    margin-top: 2px;
+}
+.group-people-info{
+    float: left;
+}
+.group-people-info>p{
+    height: 20px;
+    width: 250px;
+    line-height: 20px;
+}
+.people-info-email{
+    font-size: 12px;
+    color: #a6a6a6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/*人员信息 框*/
+.people-info{
+    width: 320px;
+    height: 250px;
+    background-color: white;
+    box-shadow: 0 7px 21px rgba(0,0,0,.15);
+    z-index: 200;
+}
+.people-info-head{
+    width: 320px;
+    height: 96px;
+    padding: 16px;
+    position: relative;
+}
+.people-info-head>img{
+    width: 64px;
+    height: 64px;
+    float: left;
+    border-radius: 50%;
+    margin-right: 16px;
+}
+.people-info-head>i{
+    position: absolute;
+     top: 20px;
+    right: 20px;
+    cursor: pointer;
+ }
+.people-info-head>i:hover{
+    color: #3da8f5 !important;
+}
+.people-info-head-right{
+    float: left;
+    height: 100%;
+    width: 188px;
+}
+.people-info-head-right h3{
+    width: 100%;
+    height: 24px;
+    line-height: 24px;
+    font-size: 16px;
+}
+.people-info-head-right>p{
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    color: #a6a6a6;
+}
+.borders{
+    width: 300px;
+    height: 1px;
+    margin: 0 auto;
+    background-color: #E5E5E5;
+}
+.look-task{
+    width: 100%;
+    height: 40px;
+    padding: 8px 16px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.look-task:hover{
+    background-color: #f5f5f5;
+}
+.look-task img{
+    width: 16px;
+    height: 16px;
+    margin-right: 16px;
+    vertical-align: middle;
+}
+.set-qx{
+    width: 100%;
+    height: 40px;
+    padding: 8px 16px;
+   position: relative;
+}
+.look-task span{
+    line-height: 20px;
+    font-size: 14px;
+    color: gray;
+    margin-top: 5px;
+}
+.set-qx img{
+    width: 16px;
+    height: 16px;
+    margin-right: 16px;
+    vertical-align: middle;
+}
+.set-qx span{
+    line-height: 20px;
+    font-size: 14px;
+    color: gray;
+}
+.qx{
+    position: absolute;
+    right: 5px;
+    top: 10px;
+    line-height: 20px;
+    font-size: 14px;
+    color: gray;
+}
+.sixin-btn{
+    width: 290px;
+    height: 40px;
+    margin: 12px auto;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    color: white;
+    background-color: #3696DC;
+    font-size: 14px;
+    border-radius: 3px;
+}
+.sixin-btn:hover{
+    opacity: 0.8;
+}
+
+/*管理员 能 看见的 弹框*/
+.gly-can-see{
+    width: 250px;
+    height: 235px;
+    background-color: white;
+    box-shadow: 0 7px 21px rgba(0,0,0,.15);
+    z-index: 200;
+    padding: 0 15px;
+}
+.cycd-title{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    position: relative;
+}
+.cycd-title span{
+    display: inline-block;
+    width: 100%;
+    height: 49px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid #EFEEEC;
+}
+.gly-can-see .cycd-title i{
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+.gly-can-see i:hover{
+    color: #3da8f5 !important;
+}
+.member-box{
+    width: 100%;
+    height: 60px;
+    padding: 15px;
+    line-height: 30px;
+    font-size: 14px;
+    color: gray;
+}
+.member-box>div{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.member-box span{
+    float: left;
+}
+.member-box i{
+    float: right;
+}
+.a-line{
+    width: 220px;
+    height: 1px;
+    margin: 0 auto;
+    background-color: #EFEEEC;
+}
+.lv-up{
+    width: 100%;
+    padding: 15px;
+}
+.lv-up p{
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    color: gray;
+}
+.lv-up p:nth-of-type(1){
+    color: #3da8f5;
+}
+.remove-he{
+    width: 220px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #FD634D;
+    cursor: pointer;
+}

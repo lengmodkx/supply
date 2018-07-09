@@ -62,4 +62,11 @@ public interface ScheduleService {
 	 * @return
 	 */
 	List<ScheduleVo> findScheduleGroupByCreateTime();
+
+	/**
+	 * 查询该用户参与的近三天的日程
+	 * @param uId 用户Id
+	 * @return
+	 */
+    List<Schedule> findScheduleByUserIdAndByTreeDay(String uId);
 }
