@@ -91,5 +91,33 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectMapper.findProjectByMemberId(memberId);
 	}
 
+	/**
+	 * 查询出当前用户所执行的任务的 任务信息 和 项目信息
+	 * @param id 当前用户id
+	 * @return
+	 */
+	@Override
+	public List<Project> findProjectAndTaskByExecutorId(String id) {
+		return projectMapper.findProjectAndTaskByExecutorId(id);
+	}
 
+    /**
+     * 查询出当前用户所参与的任务的 任务信息 和 项目信息
+     * @param id 当前用户id
+     * @return
+     */
+    @Override
+    public List<Project> findProjectAndTaskByUserId(String id) {
+        return projectMapper.findProjectAndTaskByUserId(id);
+    }
+
+    /**
+     * 查询出当前用户所创建的任务的 任务信息 和 项目信息
+     * @param id 当前用户id
+     * @return
+     */
+    @Override
+    public List<Project> findProjectAndTaskByCreateMember(String id) {
+        return projectMapper.findProjectAndTaskByCreateMember(id);
+    }
 }

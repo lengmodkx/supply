@@ -893,12 +893,11 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 查询某个人执行的所有任务
      * @param uId 执行者的id
-     * @param projectId 项目id
      * @return
      */
     @Override
-    public List<Task> findTaskByExecutor(String uId,String projectId) {
-        return taskMapper.findTaskByExecutor(uId,projectId);
+    public List<Task> findTaskByExecutor(String uId) {
+        return taskMapper.findTaskByExecutor(uId);
     }
 
     /**
@@ -1110,9 +1109,14 @@ public class TaskServiceImpl implements TaskService {
         return tagService.findByIds(tags);
     }
 
+    /**
+     * 查询出该用户参与的近三天的任务
+     * @param userId 用户id
+     * @return
+     */
     @Override
-    public List<Task> findTaskByUserId(String userId) {
-        return taskMapper.findTaskByUserId(userId);
+    public List<Task> findTaskByUserIdAndByTreeDay(String userId) {
+        return taskMapper.findTaskByUserIdAndByTreeDay(userId);
     }
 
     /**
@@ -1123,5 +1127,90 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findTaskByMemberId(String memberId) {
         return taskMapper.findTaskByMemberId(memberId);
+    }
+
+    /**
+     * 查询出当前用户所参与的任务
+     * @param id 当前用户id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByUserId(String id) {
+        return taskMapper.findTaskByUserId(id);
+    }
+
+    /**
+     * 查询出当前用户执行的所有任务信息 并且按照创建时间或者截止时间排序
+     * @param id 用户id
+     * @param orderType 按照时间排序的类型  (创建时间,截止时间)
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByExecutorIdAndTime(String id, String orderType) {
+        return taskMapper.findTaskByExecutorIdAndTime(id,orderType);
+    }
+
+    /**
+     * 查询出该用户执行的 已经完成的任务
+     * @param id 用户id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByExecutorAndStatus(String id) {
+        return taskMapper.findTaskByExecutorAndStatus(id);
+    }
+
+    /**
+     * 查询出该用所参与的所有任务(按照任务的状态)
+     * @param id 用户id
+     * @param status 任务的状态
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByUserIdByStatus(String id, String status) {
+        return taskMapper.findTaskByUserIdByStatus(id,status);
+    }
+
+    /**
+     * 查询出该用户所参与的任务 按照时间排序
+     * @param id 用户id
+     * @param orderType 比较类型
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByUserAndTime(String id, String orderType) {
+        return taskMapper.findTaskByUserAndTime(id,orderType);
+    }
+
+    /**
+     * 查询出该用户创建的任务 (根据任务状态查询)
+     * @param id 用户id
+     * @param status 任务的状态
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByCreateMemberByStatus(String id, String status) {
+        return taskMapper.findTaskByCreateMemberByStatus(id,status);
+    }
+
+    /**
+     *查询出我创建的任务 只要未完成
+     * @param id 当前用户id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByCreateMember(String id) {
+        return taskMapper.findTaskByCreateMember(id);
+    }
+
+    /**
+     * 查询出用户创建的所有任务并且按照时间排序
+     * @param id 用户id
+     * @param orderType 排序类型
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByCreateMemberAndTime(String id, String orderType) {
+        return taskMapper.findTaskByCreateMemberAndTime(id,orderType);
     }
 }

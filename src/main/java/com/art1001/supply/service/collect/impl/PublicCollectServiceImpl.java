@@ -81,6 +81,13 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 		return publicCollectMapper.findPublicCollectAllList();
 	}
 
+	/**
+	 * 判断当前用户有没有
+	 * @param memberId 当前登录用户id
+	 * @param publicId 任务/日程/文件/分享的id
+	 * @param collectType 收藏的类型 任务/日程/文件/分享
+	 * @return
+	 */
 	@Override
 	public int judgeCollectPublic(String memberId, String publicId, String collectType) {
 		return publicCollectMapper.judgeCollectPublic(memberId,publicId,collectType);
