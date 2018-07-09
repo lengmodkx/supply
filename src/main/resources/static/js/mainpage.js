@@ -332,7 +332,30 @@ function calendar() {
             content: ['tk-calendar.html','no']
         });
     });
-};
+}
+// 群组 弹框
+$("").click(function () {
+    var left=$(window).width()-350;
+    var top=$(window).height()-100;
+    groups(top,left)
+});
+function groups(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: ['100px',left],
+            area:['350px',top+'px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['tk-group.html','no']
+        });
+    });
+}
 //添加任务 弹框界面
 function addRenwu(projectId,taskMenuId,liId) {
     layui.use('layer', function(){
