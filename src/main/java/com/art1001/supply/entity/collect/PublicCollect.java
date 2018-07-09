@@ -8,15 +8,19 @@ import lombok.Data;
  * collectEntity
  */
 @Data
-public class TaskCollect extends BaseEntity implements Serializable {
+public class PublicCollect extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-
 
 	/**
 	 * id
 	 */
 	private String id;
+
+	/**
+	 * collect_id
+	 */
+	private String collect_id;
 
 
 	/**
@@ -47,4 +51,8 @@ public class TaskCollect extends BaseEntity implements Serializable {
 	 */
 	private String memberName;
 
+	/**
+	 * 收藏类型  任务，日程 文件 分享
+	 */
+	private String collect_type;
 }

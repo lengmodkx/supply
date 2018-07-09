@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.art1001.supply.entity.collect.TaskCollect;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -15,7 +15,7 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.service.collect.TaskCollectService;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
@@ -56,7 +56,7 @@ public class TaskServiceImpl implements TaskService {
 
 	/** TaskCollectService接口  */
 	@Resource
-    private TaskCollectService taskCollectService;
+    private PublicCollectService publicCollectService;
 
     /** 用户逻辑层接口 */
     @Resource
@@ -774,7 +774,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int collectTask(Task task) {
-        TaskCollect taskCollect = new TaskCollect();
+        PublicCollect taskCollect = new PublicCollect();
         //设置收藏的id
         taskCollect.setId(IdGen.uuid());
         //暂时不用
@@ -790,7 +790,7 @@ public class TaskServiceImpl implements TaskService {
         //设置这条收藏的更新时间
         taskCollect.setUpdateTime(System.currentTimeMillis());
         //保存至数据库
-        return taskCollectService.saveTaskCollect(taskCollect);
+        return publicCollectService.savePublicCollect(taskCollect);
     }
 
     /**
@@ -804,7 +804,7 @@ public class TaskServiceImpl implements TaskService {
         //暂时不用
         //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         //如果收藏了任务返回false 负责返回true
-        int result = taskCollectService.judgeCollectTask(memberId,task.getTaskId());
+        int result = publicCollectService.judgeCollectPublic(memberId,task.getTaskId(),"任务");
         if(result > 0){
             return false;
         } else{
@@ -820,9 +820,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int cancelCollectTask(Task task) {
         //暂时不用
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        int result = taskCollectService.deleteTaskCollectById("12",task.getTaskId());
-        return 0;
+        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        int result = publicCollectService.deletePublicCollectById(memberId,task.getTaskId());
+        return result;
     }
 
     /**
