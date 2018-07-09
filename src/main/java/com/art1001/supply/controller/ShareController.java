@@ -105,39 +105,30 @@ public class ShareController {
         JSONObject jsonObject = new JSONObject();
         try {
             Share share = shareService.findById(shareId);
-            Tag tag = tagService.findById(Integer.valueOf(tagId));
-            // 判断是否有tagId
-            if (StringUtils.isNotEmpty(share.getTagIds())) {
-                String[] tagIdArr = share.getTagIds().split(",");
-                if (CommonUtils.useList(tagIdArr, tagId)) { // 已经存在，移除
-                    StringBuilder tagIds = new StringBuilder();
-                    for (String tId : tagIdArr) {
-                        if (!tagId.equals(tId)) {
-                            tagIds.append(tId).append(",");
-                        }
+            String[] tagIdArr = share.getTagIds().split(",");
+            if (CommonUtils.useList(tagIdArr, tagId)) { // 已经存在，移除
+                StringBuilder tagIds = new StringBuilder();
+                for (String tId : tagIdArr) {
+                    if (!tagId.equals(tId)) {
+                        tagIds.append(tId).append(",");
                     }
-                    if (StringUtils.isNotEmpty(tagIds)) {
-                        tagIds.deleteCharAt(tagIds.length() - 1);
-                    }
-                    shareService.deleteTag(shareId, tagIds.toString());
-                    jsonObject.put("result", 2);
-                    jsonObject.put("msg", "移除成功");
-                } else { // 不存在添加
-                    String tagIds = share.getTagIds();
-                    if (StringUtils.isNotEmpty(share.getTagIds())) {
-                        tagIds += "," + tagId;
-                    } else {
-                        tagIds = tagId;
-                    }
-                    share.setTagIds(tagIds);
-                    shareService.updateShare(share);
-                    jsonObject.put("result", 1);
-                    jsonObject.put("data", tag);
-                    jsonObject.put("msg", "添加成功");
                 }
-            } else {
-                share.setTagIds(tagId);
-                shareService.updateShare(share);
+                if (StringUtils.isNotEmpty(tagIds)) {
+                    tagIds.deleteCharAt(tagIds.length() - 1);
+                }
+                shareService.deleteTag(shareId, tagIds.toString());
+                jsonObject.put("result", 2);
+                jsonObject.put("msg", "移除成功");
+            } else { // 不存在添加
+                String tagIds = share.getTagIds();
+                if (StringUtils.isNotEmpty(share.getTagIds())) {
+                    tagIds += "," + tagId;
+                } else {
+                    tagIds = tagId;
+                }
+
+                shareService.deleteTag(shareId, tagIds);
+                Tag tag = tagService.findById(Integer.valueOf(tagId));
                 jsonObject.put("result", 1);
                 jsonObject.put("data", tag);
                 jsonObject.put("msg", "添加成功");
