@@ -2,14 +2,18 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -33,6 +37,9 @@ public class ShareController {
 
     @Resource
     private TagService tagService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
 
     //导航到分享界面
     @RequestMapping("/share.html")
@@ -66,6 +73,17 @@ public class ShareController {
     public String toAddShare(@RequestParam String projectId, Model model) {
         model.addAttribute("projectId", projectId);
         return "share_edit";
+    }
+
+    @RequestMapping("toSearchPeople")
+    public String toSearchPeople(
+            @RequestParam String projectId,
+            Model model
+    ) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        List<ProjectMember> projectMemberList = projectMemberService.findByProjectIdAndMemberId(projectId, userEntity.getId());
+        model.addAttribute("projectMemberList", projectMemberList);
+        return "tk-search-people";
     }
 
     //添加一个分享

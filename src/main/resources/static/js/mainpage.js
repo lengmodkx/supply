@@ -290,7 +290,7 @@ function headphoto(top,left) {
             content: ['tk-click-touxiang.html','no']
         });
     });
-};
+}
 //点击我的 弹出 我的页面框
 $("#mine").click(function () {
     mypage();
@@ -311,7 +311,7 @@ function mypage() {
             content: ['mypage.html','no']
         });
     });
-};
+}
 //日历 弹框
 $("").click(function () {
     calendar()
@@ -332,7 +332,7 @@ function calendar() {
             content: ['tk-calendar.html','no']
         });
     });
-};
+}
 //添加任务 弹框界面
 function addRenwu(projectId,taskMenuId,liId) {
     layui.use('layer', function(){
@@ -348,7 +348,7 @@ function addRenwu(projectId,taskMenuId,liId) {
             content: 'addtask.html?projectId='+projectId + '&taskMenuId='+ taskMenuId
         });
     });
-};
+}
 //修改任务 弹框界面
 function changeRenwu(taskId,projectId) {
     layui.use('layer', function(){
@@ -389,7 +389,7 @@ function projectMenu(top,left) {
             content: ['tk-xiangmucaidan.html','no']
         });
     });
-};
+}
 
 // 点击 帮助 弹出 帮助弹框
 $("#help").click(function () {
@@ -413,4 +413,4 @@ function help(top,left) {
             content: ['tk-help.html','no']
         });
     });
-};
+}

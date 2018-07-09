@@ -13,7 +13,7 @@
     <div class="peoples">
         <div>
             <p>项目成员</p>
-            <div class="one-people" th:each="member,memberStat:${members}" th:if="${member.memberLable==0}">
+            <div class="one-people" th:each="member:${projectMemberList}">
                 <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.memberImg}" />
                 <span th:text="${member.memberName}">李健</span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;" th:data="${memberStat.index}"></i>

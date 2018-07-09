@@ -148,7 +148,7 @@
                         <p class="cyz">参与者</p>
                         <div class="work-people boxsizing clearfix">
                             <div class="one-work-people">
-                                <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+                                <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}" />
                                 <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
                             </div>
                             <div class="add-work-people">
@@ -266,7 +266,39 @@
                 });
             });
 
+            form.render();
             addTag();
+
+            //点击创建 按钮
+            $(".tag-ok").click(function () {
+                var tagName = $(".tag-name").val();
+                if ('' === tagName){
+                    return false
+                } else {
+                    var color='';
+                    $(".color-pick li i").each(function () {
+                        if ($(this).is(":visible")){
+                            color=$(this).parent().css("background-color")
+                        }
+                    });
+
+                    $.post("/tag/add", {tagName: tagName, bgColor: color, projectId: projectId}, function (data) {
+                        if (data.result === 1) {
+                            var tag = data.tag;
+                            $("#tag_" + shareId).append(
+                                '<li class="tags-list" data="' + tag.tagId + '">\n' +
+                                '<span class="dot" style="background-color:' + tag.bgColor + '"></span>\n' +
+                                '<span class="tag-font">' + tag.tagName + '</span>\n' +
+                                '</li>'
+                            );
+                            layer.msg(data.msg, {icon: 1, time: 700});
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 700});
+                        }
+                    });
+
+                }
+            });
         });
 
         var url = window.location.href;
@@ -413,37 +445,7 @@
             }
         });
 
-        //点击创建 按钮
-        $(".tag-ok").click(function () {
-            var tagName = $(".tag-name").val();
-            if ('' === tagName){
-                return false
-            } else {
-                var color='';
-                $(".color-pick li i").each(function () {
-                    if ($(this).is(":visible")){
-                        color=$(this).parent().css("background-color")
-                    }
-                });
 
-                $.post("/tag/add", {tagName: tagName, bgColor: color, projectId: projectId}, function (data) {
-                    if (data.result === 1) {
-                        var tag = data.tag;
-                        $("#tag_" + shareId).append(
-                            '<li class="tags-list" data="' + tag.tagId + '">\n' +
-                            '<span class="dot" style="background-color:' + tag.bgColor + '"></span>\n' +
-                            '<span class="tag-font">' + tag.tagName + '</span>\n' +
-                            '</li>'
-                        );
-                        layer.msg(data.msg, {icon: 1});
-                        addTag()
-                    } else {
-                        layer.msg(data.msg, {icon: 2});
-                    }
-                });
-
-            }
-        });
         $(".add-fuhao").click(function (e) {
             $('.no-tags').trigger("click");
             e.stopPropagation();
@@ -500,7 +502,7 @@
                 closeBtn: 0,
                 shade: [0.1, '#fff'],
                 anim: 1,  //动画 0-6
-                content: "tk-search-people.html"
+                content: "/share/toSearchPeople?projectId=" + projectId
             });
         });
     }

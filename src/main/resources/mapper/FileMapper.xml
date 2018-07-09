@@ -354,5 +354,7 @@
 	<update id="updateTagId" parameterType="java.lang.String">
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
+
+
 	
 </mapper>
