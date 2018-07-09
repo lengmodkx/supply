@@ -69,13 +69,13 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTime',
             type: 'datetime',
-            format: 'MM-dd'
+            format: 'yyyy-MM-dd'
         });
 
         laydate.render({
             elem: '#overTime',
             type: 'datetime',
-            format: 'MM-dd'
+            format: 'yyyy-MM-dd'
         });
     });
 if ($("#have-executor").val()){

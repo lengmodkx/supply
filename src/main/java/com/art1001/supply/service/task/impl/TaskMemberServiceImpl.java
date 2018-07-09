@@ -247,6 +247,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 					taskMember.setMemberImg(userEntity.getUserInfo().getImage());
 					//设置当前任务id
 					taskMember.setPublicId(task.getTaskId());
+					//设置关联类型
+					taskMember.setPublicType("任务");
 					//设置更新时间
 					taskMember.setUpdateTime(System.currentTimeMillis());
 					taskMember.setType("参与者");
@@ -279,6 +281,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setMemberImg(userEntity[i].getUserInfo().getImage());
 			//设置参与者id
 			taskMember.setMemberId(userEntity[i].getId());
+			//设置关联类型
+			taskMember.setPublicType("任务");
 			//设置这条关系的创建时间
 			taskMember.setCreateTime(System.currentTimeMillis());
 			//设置任务成员的角色

@@ -970,6 +970,8 @@ public class TaskServiceImpl implements TaskService {
         taskMember.setPublicId(task.getTaskId());
         taskMember.setMemberName(uName);
         taskMember.setMemberImg(userInfoEntity.getImage());
+        //设置任务的关联类型
+        taskMember.setPublicType("任务");
         taskMember.setType("执行者");
         taskMember.setCreateTime(System.currentTimeMillis());
         taskMember.setUpdateTime(System.currentTimeMillis());
