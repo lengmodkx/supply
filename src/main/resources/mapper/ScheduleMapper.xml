@@ -15,6 +15,7 @@
 		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
@@ -36,7 +37,8 @@
 				remarks,
 				tag_id,
 				create_time,
-				update_time
+				update_time,
+				member_id
 	</sql>
 
 	<sql id="whereStatement">
@@ -139,6 +141,9 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="memberId != null ">
+				member_id,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -178,6 +183,9 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="memberId != null ">
+				#{memberId},
 			</if>
 		</trim>
 
@@ -222,6 +230,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="memberId != null ">
+				member_id = #{memberId},
 			</if>
 		</set>
 

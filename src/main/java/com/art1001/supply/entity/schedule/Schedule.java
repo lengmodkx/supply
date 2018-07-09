@@ -60,5 +60,10 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private String tagId;
 
+	/**
+	 * 创建者id
+	 */
+	private String memberId;
+
 
 }

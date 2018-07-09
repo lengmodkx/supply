@@ -50,7 +50,7 @@ function subscribe1() {
         }
         a +=   '</div>'+
             '<div class="assignment-bottom-box">'+
-            '<span class="timer">今天9:00-明天</span>'+
+            // '<span class="timer">今天9:00-明天</span>'+
             '</div>'+
             '<div class="line"></div>'+
             '</li>';

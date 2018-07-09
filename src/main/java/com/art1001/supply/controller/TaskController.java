@@ -29,6 +29,7 @@ import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.transaction.xa.EhcacheXAException;
+import net.sf.jsqlparser.expression.operators.relational.OldOracleJoinBinaryExpression;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
@@ -357,6 +358,11 @@ public class TaskController {
             jsonObject.put("msg","修改成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.S.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("Status",task.getTaskStatus());
+            taskPushType.setObject(map);
+            messagingTemplate.convertAndSend("/topic/"+task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (ServiceException e){
             jsonObject.put("result",0);
             jsonObject.put("msg","必须完成所有子任务!");
@@ -1105,7 +1111,6 @@ public class TaskController {
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
         } catch (ServiceException e){
-            jsonObject.put("msg","必须完成子级任务,才能完成父级任务!");
             jsonObject.put("result",0);
         } catch (Exception e){
             log.error("系统异常,更新任务其他失败! 当前任务id: ,{},{}",task.getTaskId(),e);
@@ -1265,9 +1270,11 @@ public class TaskController {
             jsonObject.put("msg","修改成功");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("taskLog",taskLogVO);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.U.getName());
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+"}"));
-            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+"}"));
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName) +"}"));
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+",\"taskLog\":"+JSON.toJSONString(taskLogVO) +"}"));
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
             throw new AjaxException(e);

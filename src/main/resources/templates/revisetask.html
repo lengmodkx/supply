@@ -173,7 +173,7 @@
         </div>
 
         <!--添加子任务-->
-        <div class="add-child-task combox" th:if="${task.taskStatus == '未完成'}">
+        <div class="add-child-task combox">
             <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             <span>添加子任务</span>
         </div>
@@ -358,14 +358,29 @@
                 $('#executorId').val(taskLog.userInfo.id);
                 $('#executorName').html(taskLog.uName);
                 $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
+                getLog(taskLog.taskLog);
             }
             if(taskLog.type == '发送消息'){
                 getLog(taskLog.object.taskLog);
                 var scrollHeight = $('.revise-task').prop("scrollHeight");
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
+            if(taskLog.type == '完成了任务'){
+                if(taskLog.object.Status == '完成'){
+                    $("#taskComplete").attr("checked",false);
+                    $('.add-child-task').show();
+                    //form.render();
+                } else{
+                    $("#taskComplete").attr("checked",true);
+                    $('.add-child-task').hide();
+                    //form.render();
+                }
+            }
         });
     }
+
+    layui.use('form', function(){
+        var form = layui.form;
     //订阅消息
     function subscribe1() {
         stompClient.subscribe('/topic/subscribe', function (response) {
@@ -379,6 +394,7 @@
             }
         });
     }
+    });
 
 
 
@@ -402,4 +418,11 @@
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
+<script>
+    if(taskStatus == '完成'){
+        $('.add-child-task').css('display','none');
+    } else{
+        $('.add-child-task').css('display','block');
+    }
+</script>
 </html>
