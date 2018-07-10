@@ -429,14 +429,14 @@ function yaoqing() {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '150px',
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: 'tk-share-lianjie.html'
+            content: $(".fuzhi-lianjie")
         });
     });
 }
