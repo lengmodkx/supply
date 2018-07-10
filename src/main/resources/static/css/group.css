@@ -1,9 +1,7 @@
 
 .group-box{
-    position: absolute;
-    right: -400px;
-    top: -11000px;
     width: 350px;
+    height: 100%;
     background-color: #F7F7F7;
     box-shadow: -3px 0 3px rgba(0,0,0,.1);
     overflow-y: scroll;
@@ -11,25 +9,25 @@
     z-index: 200;
     display: none;
 }
-.group-box.now{
-    transition: all 0.8s;
-    animation: righthuaru 0.8s ease-out forwards;
-    -webkit-animation:righthuaru 0.8s ease-out  forwards;
-    display: block;
-}
-@keyframes righthuaru
-{
-    0%   {right: -400px;display: none;opacity: 0;top:100px;}
-    50%  {right: -300px;display: block;opacity: 0.3;top:100px;}
-    100% {right: 0;display: block;opacity: 1;top:100px;}
-}
+/*.group-box.now{*/
+    /*transition: all 0.8s;*/
+    /*animation: righthuaru 0.8s ease-out forwards;*/
+    /*-webkit-animation:righthuaru 0.8s ease-out  forwards;*/
+    /*display: block;*/
+/*}*/
+/*@keyframes righthuaru*/
+/*{*/
+    /*0%   {right: -400px;display: none;opacity: 0;top:100px;}*/
+    /*50%  {right: -300px;display: block;opacity: 0.3;top:100px;}*/
+    /*100% {right: 0;display: block;opacity: 1;top:100px;}*/
+/*}*/
 
-@-webkit-keyframes mymove /*Safari and Chrome*/
-{
-    0%   {right: -400px;display: none;opacity: 0;top:100px;}
-    50%  {right: -300px;display: block;opacity: 0.3;top:100px;}
-    100% {right: 0;display: block;opacity: 1;top:100px;}
-}
+/*@-webkit-keyframes mymove !*Safari and Chrome*!*/
+/*{*/
+    /*0%   {right: -400px;display: none;opacity: 0;top:100px;}*/
+    /*50%  {right: -300px;display: block;opacity: 0.3;top:100px;}*/
+    /*100% {right: 0;display: block;opacity: 1;top:100px;}*/
+/*}*/
 .group-box::-webkit-scrollbar{
     width: 1px;
     height: 1px;
@@ -298,7 +296,7 @@
 /*管理员 能 看见的 弹框*/
 .gly-can-see{
     width: 250px;
-    height: 235px;
+    height: 185px;
     background-color: white;
     /*box-shadow: 0 7px 21px rgba(0,0,0,.15);*/
     margin: 0 auto;
@@ -369,9 +367,18 @@
     color: #3da8f5;
 }
 .remove-he{
-    width: 220px;
-    line-height: 50px;
-    font-size: 14px;
-    color: #FD634D;
+   width: 120px;
+    height: 40px;
+    line-height: 40px;
     cursor: pointer;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+    margin: 0 auto;
+    margin-top: 15px;
+    background-color: #03A9F4;
+}
+.remove-he:hover{
+    opacity: 0.8;
 }
