@@ -240,19 +240,6 @@ $(".close-tk").click(function () {
     layer.closeAll('page');
 });
 
-//点击邀请新成员
-$(".add-new-member").click(function (e) {
-    $(".fuzhi-lianjie").slideDown();
-    e.stopPropagation()
-});
-$(document).click(function(event){
-    var _con = $('.fuzhi-lianjie');  // 设置目标区域
-    if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
-        $('.fuzhi-lianjie').slideUp()     //淡出消失
-    }
-});
-
-
 //点击 任务列表顶部 下箭头，弹出框
 $("html").on("click",".add-new-model",function(){
     var top=$(this).offset().top +20 +'px';
@@ -355,7 +342,7 @@ function calendar() {
     });
 }
 // 群组 弹框
-$(".team").click(function () {
+$(".model-title").click(function () {
     var left=$(window).width()-350;
     var top=$(window).height()-100;
     groups(top,left);
@@ -373,7 +360,7 @@ function groups(top,left) {
             shadeClose: true,
             closeBtn: 0,
             shade: 0,
-            anim: 1,  //动画 0-6
+            anim: 0,  //动画 0-6
             content: $(".group-box")
         });
     });
@@ -398,6 +385,51 @@ function groupPeople(top,left) {
             shade: 0,
             anim: 1,  //动画 0-6
             content: $(".people-info")
+        });
+    });
+}
+//群组 人员  下箭头 弹框
+$("body").on("click",".group-people>li>i",function (e) {
+    var top=$(this).offset().top-110;
+    var left=$(this).offset().left-280;
+    groupPeopleRemove(top,left);
+    e.stopPropagation()
+});
+function groupPeopleRemove(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area:['280px','236px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: $(".gly-can-see")
+        });
+    });
+}
+//群组 邀请成员 弹框
+//点击邀请新成员
+$(".add-new-member").click(function (e) {
+    yaoqing()
+    e.stopPropagation()
+});
+function yaoqing() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '150px',
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: $(".fuzhi-lianjie")
         });
     });
 }
