@@ -231,6 +231,27 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
 
 });
 
+//群组 部分 的js
+//点击 关闭按钮  关闭弹出层
+$(".close-people").click(function () {
+    layer.close(layer.index)
+});
+$(".close-tk").click(function () {
+    layer.closeAll('page');
+});
+
+//点击邀请新成员
+$(".add-new-member").click(function (e) {
+    $(".fuzhi-lianjie").slideDown();
+    e.stopPropagation()
+});
+$(document).click(function(event){
+    var _con = $('.fuzhi-lianjie');  // 设置目标区域
+    if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+        $('.fuzhi-lianjie').slideUp()     //淡出消失
+    }
+});
+
 
 //点击 任务列表顶部 下箭头，弹出框
 $("html").on("click",".add-new-model",function(){
@@ -334,16 +355,17 @@ function calendar() {
     });
 }
 // 群组 弹框
-$("").click(function () {
+$(".team").click(function () {
     var left=$(window).width()-350;
     var top=$(window).height()-100;
-    groups(top,left)
+    groups(top,left);
+
 });
 function groups(top,left) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: ['100px',left],
             area:['350px',top+'px'],
@@ -352,7 +374,30 @@ function groups(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: ['tk-group.html','no']
+            content: $(".group-box")
+        });
+    });
+}
+// 群组 弹框 里面的 人员信息 弹框
+$("html").on("click",".group-people",function () {
+    var top=$(this).offset().top-100;
+    var left=$(this).offset().left-320;
+    groupPeople(top,left)
+});
+function groupPeople(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area:['320px','250px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: $(".people-info")
         });
     });
 }

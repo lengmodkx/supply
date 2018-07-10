@@ -52,7 +52,7 @@
     cursor: pointer;
     position: relative;
 }
-.lianjie{
+.fuzhi-lianjie{
     position: absolute;
     width: 90%;
     top: 50px;
@@ -70,6 +70,7 @@
     color: #a6a6a6;
     font-size: 14px;
     padding: 10px;
+    white-space:normal;
 }
 .copy-btn{
     width: 100px;
