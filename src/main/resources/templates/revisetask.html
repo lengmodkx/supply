@@ -85,7 +85,7 @@
             <span>优先级</span>
             <div class="layui-input-block">
                 <input type="hidden" th:value="${task.priority}" id = "oldPriority"/>
-                <input type="radio" lay-filter = "priority" name="state" value="普通" title="普通" th:checked="${task.priority == '普通'}" >
+                <input type="radio" lay-filter = "priority" name="state" value="普通" title="普通" th:checked="${task.priority == '普通'}">
                 <input type="radio" lay-filter = "priority" name="state" value="紧急" title="紧急" th:checked="${task.priority == '紧急'}">
                 <input type="radio" lay-filter = "priority" name="state" value="非常紧急" title="非常紧急" th:checked="${task.priority == '非常紧急'}">
             </div>
