@@ -181,6 +181,7 @@
 
 	</update>
 
+	<!-- 判断当前用户有没有收藏该项目 -->
 	<select id="judgeCollectPublic" resultType="java.lang.Integer">
 		select count(0) from prm_public_collect where public_id = #{publicId} and member_id = #{memberId} and collect_type = #{collectType}
 	</select>

@@ -71,4 +71,10 @@ public interface ScheduleMapper {
 	 */
 	List<Schedule> findScheduleList(String date);
 
+	/**
+	 * 查询出用户最近三天参与的日程
+	 * @param uId 用户id
+	 * @return
+	 */
+    List<Schedule> findScheduleByUserIdAndByTreeDay(String uId);
 }

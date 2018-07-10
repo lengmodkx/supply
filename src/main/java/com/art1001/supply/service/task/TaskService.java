@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
+import net.bytebuddy.dynamic.scaffold.MethodGraph;
 
 
 /**
@@ -289,11 +291,10 @@ public interface TaskService {
 
 	/**
 	 * 查询某个人执行的所有任务
-	 * @param uId
-	 * @param projectId 项目id
+	 * @param uId 当前用户id
 	 * @return
 	 */
-	List<Task> findTaskByExecutor(String uId,String projectId);
+	List<Task> findTaskByExecutor(String uId);
 
 	/**
 	 * 查询等待认领的任务
@@ -377,7 +378,12 @@ public interface TaskService {
 	 */
 	List<Tag> findTaskTag(String taskId);
 
-	List<Task> findTaskByUserId(String userId);
+	/**
+	 * 查询出该用户参与的近三天的任务
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<Task> findTaskByUserIdAndByTreeDay(String userId);
 
 	/**
 	 * 查询出我创建的任务信息
@@ -386,4 +392,64 @@ public interface TaskService {
 	 */
 	List<Task> findTaskByMemberId(String memberId);
 
+	/**
+	 * 查询出我参与的任务
+	 * @param id 当前用户id
+	 * @return
+	 */
+	List<Task> findTaskByUserId(String id);
+
+	/**
+	 * 查询出当前用户执行的所有任务信息 并且按照创建时间或者截止时间排序
+	 * @param id 用户id
+	 * @param orderType 按照时间排序的类型  (创建时间,截止时间)
+	 * @return
+	 */
+	List<Task> findTaskByExecutorIdAndTime(String id, String orderType);
+
+	/**
+	 * 查询出该用户执行的 已经完成的任务
+	 * @param id 用户id
+	 * @return
+	 */
+	List<Task> findTaskByExecutorAndStatus(String id);
+
+	/**
+	 * 查询出该用户所参与的任务(按照任务的状态)
+	 * @param id 用户id
+	 * @param status 任务的状态
+	 * @return
+	 */
+	List<Task> findTaskByUserIdByStatus(String id, String status);
+
+	/**
+	 * 查询出该用户所参与的任务 按照时间排序
+	 * @param id 用户id
+	 * @param orderType 比较类型
+	 * @return
+	 */
+	List<Task> findTaskByUserAndTime(String id, String orderType);
+
+	/**
+	 * 查询出该用户创建的任务 (根据任务状态查询)
+	 * @param id 用户id
+	 * @param status 任务的状态
+	 * @return
+	 */
+	List<Task> findTaskByCreateMemberByStatus(String id, String status);
+
+	/**
+	 *查询出我创建的任务 只要未完成
+	 * @param id 当前用户id
+	 * @return
+	 */
+	List<Task> findTaskByCreateMember(String id);
+
+	/**
+	 * 查询出用户创建的所有任务并且按照时间排序
+	 * @param id 用户id
+	 * @param orderType 排序类型
+	 * @return
+	 */
+	List<Task> findTaskByCreateMemberAndTime(String id, String orderType);
 }

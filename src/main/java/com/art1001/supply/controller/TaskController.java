@@ -996,26 +996,16 @@ public class TaskController {
             List<Task> taskList = taskRelation.get("relationTask");
             //该任务关联的文件
             List<File> fileList = taskRelation.get("relationFile");
-            if(taskList != null && taskList.size() > 0){
-                model.addAttribute("relationTask",taskList);
-            } else{
-                model.addAttribute("relationTask","无关联任务数据");
-            }
-            if(fileList != null && fileList.size() > 0){
-                jsonObject.put("relationFile",fileList);
-                model.addAttribute("relationFile",fileList);
-            } else{
-                model.addAttribute("relationFile","无关联文件数据");
-            }
+            model.addAttribute("relationTask",taskList);
+            jsonObject.put("relationFile",fileList);
+            model.addAttribute("relationFile",fileList);
             //查询出该任务的创建者信息
             UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
             model.addAttribute("taskCreate",taskCreate);
             //返回当前任务的所有子任务信息
             List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
-            if(subLevelTask != null & subLevelTask.size() > 0){
-                jsonObject.put("subLevelTask",subLevelTask);
-                model.addAttribute("subLevelTask",subLevelTask);
-            }
+            jsonObject.put("subLevelTask",subLevelTask);
+            model.addAttribute("subLevelTask",subLevelTask);
             //拿到该任务的执行者信息
             UserEntity executorInfo = userService.findExecutorByTask(task.getTaskId());
             if(executorInfo != null){
@@ -1028,11 +1018,7 @@ public class TaskController {
             }
             //查询出该任务的参与者信息
             List<UserEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者",executorInfo.getId());
-            if(participantList != null){
-                model.addAttribute("participantList",participantList);
-            } else{
-                model.addAttribute("participantList",null);
-            }
+            model.addAttribute("participantList",participantList);
             //查询出项目下的成员
             List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
             if(projectAllMember != null && projectAllMember.size() > 0){
@@ -1196,7 +1182,7 @@ public class TaskController {
                 return jsonObject;
             }
             //获取数据信息
-            List<Task> taskList = taskService.findTaskByExecutor(uId,projectId);
+            List<Task> taskList = taskService.findTaskByExecutor(uId);
             if(taskList.size() > 0){
                 jsonObject.put("data",taskList);
                 jsonObject.put("result","1");
