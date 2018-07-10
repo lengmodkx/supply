@@ -342,7 +342,7 @@ function calendar() {
     });
 }
 // 群组 弹框
-$(".model-title").click(function () {
+$(".team").click(function () {
     var left=$(window).width()-350;
     var top=$(window).height()-100;
     groups(top,left);
