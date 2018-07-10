@@ -406,7 +406,7 @@ function groupPeopleRemove(top,left) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: [top,left],
             area:['280px','185px'],
@@ -415,14 +415,14 @@ function groupPeopleRemove(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: $(".gly-can-see")
+            content: 'tk-group-remove.html'
         });
     });
 }
 //群组 邀请成员 弹框
 //点击邀请新成员
 $(".add-new-member").click(function (e) {
-    yaoqing()
+    yaoqing();
     e.stopPropagation()
 });
 function yaoqing() {
