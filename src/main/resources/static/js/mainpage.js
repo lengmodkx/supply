@@ -343,28 +343,32 @@ function calendar() {
 }
 // 群组 弹框
 $(".team").click(function () {
-    var left=$(window).width()-350;
-    var top=$(window).height()-100;
-    groups(top,left);
+    $(".group-box").css("height",$(window).height()-100+'px');
+    $(".group-box").addClass("now");
+    $("html,body").css("overflow","hidden")
 
 });
-function groups(top,left) {
-    layui.use('layer', function(){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
-            offset: ['100px',left],
-            area:['350px',top+'px'],
-            fixed: true,
-            shadeClose: true,
-            closeBtn: 0,
-            shade: 0,
-            anim: 0,  //动画 0-6
-            content: $(".group-box")
-        });
-    });
-}
+$(".group-title .close-tk").click(function () {
+    $(".group-box").removeClass("now");
+    $("html,body").css("overflow","auto")
+})
+// function groups(top,left) {
+//     layui.use('layer', function(){
+//         var layer = layui.layer;
+//         layer.open({
+//             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+//             title: false, //标题
+//             offset: ['100px',left],
+//             area:['350px',top+'px'],
+//             fixed: true,
+//             shadeClose: true,
+//             closeBtn: 0,
+//             shade: 0,
+//             anim: 0,  //动画 0-6
+//             content: $(".group-box")
+//         });
+//     });
+// }
 // 群组 弹框 里面的 人员信息 弹框
 $("html").on("click",".group-people",function () {
     var top=$(this).offset().top-100;
