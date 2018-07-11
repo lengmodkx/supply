@@ -59,4 +59,8 @@ public interface ProjectMemberService {
 
 	List<Project> findProjectByMemberId(String memberId,Integer projectDel);
 
+	/**
+	 * 根据项目id 和 用户id 查询
+	 */
+	List<ProjectMember> findByProjectIdAndMemberId(String projectId, String memberId);
 }

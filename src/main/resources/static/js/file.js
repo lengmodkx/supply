@@ -102,9 +102,9 @@ $(function () {
                             '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">\n' +
                             '        <img class="textFile" src="' + imageService + file.fileUrl + '" >\n' +
                             '        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
-                            // '        <div class="img-show-operate">\n' +
-                            // '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +
-                            // '        </div>\n' +
+                            '        <div class="img-show-operate">\n' +
+                            '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +
+                            '        </div>\n' +
                             '    </div>\n' +
                             '    <div class="one-file-name" data="' + file.fileId + '">' + file.fileName + '</div>\n' +
                             '</li>';
@@ -197,9 +197,9 @@ $(function () {
                                 '       <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
                                 '       <img src="/image/nofile.png" class="folderFile">\n' +
                                 '       <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
-                                // '       <div class="img-show-operate">' +
-                                // '           <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>' +
-                                // '       </div>' +
+                                '       <div class="img-show-operate">' +
+                                '           <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>' +
+                                '       </div>' +
                                 '    </div>\n' +
                                 '    <div class="one-file-name" data="'+ file.fileId +'">' + folderName + '</div>\n' +
                                 '</li>');
@@ -280,7 +280,6 @@ $(function () {
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,
-                shade: 0,
                 anim: 1,  //动画 0-6
                 content: ['/file/optionFile?fileId=' + fileId]
             });
@@ -297,10 +296,10 @@ $(function () {
             });
 
             // 文件点击
-            // $(this).find(".textFile").click(function () {
-            //     var fileId = $(this).parent().next().attr("data");
-            //     loadFile(fileId);
-            // });
+            $(this).find(".textFile").click(function () {
+                var fileId = $(this).parent().next().attr("data");
+                loadFile(fileId);
+            });
 
             // 下载
             $(this).find(".img-show-download").click(function () {

@@ -87,4 +87,9 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		return projectMemberMapper.findProjectByMemberId(memberId,projectDel);
 	}
 
+	@Override
+	public List<ProjectMember> findByProjectIdAndMemberId(String projectId, String memberId) {
+		return projectMemberMapper.findByProjectIdAndMemberId(projectId, memberId);
+	}
+
 }
