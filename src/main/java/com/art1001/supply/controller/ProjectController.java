@@ -251,7 +251,6 @@ public class ProjectController {
     @ResponseBody
     public JSONObject updateProject(Project project){
         JSONObject jsonObject = new JSONObject();
-
         try {
             projectService.updateProject(project);
             jsonObject.put("result",1);
@@ -478,6 +477,7 @@ public class ProjectController {
             model.addAttribute("fileList", fileList);
             model.addAttribute("project",project);
             model.addAttribute("taskGroups",taskGroups);
+            model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             model.addAttribute("taskMenus",taskMenu);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         }catch (Exception e){

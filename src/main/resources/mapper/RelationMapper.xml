@@ -11,6 +11,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="lable" property="lable" jdbcType="INTEGER" />
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
+		<result column="order" property="order" jdbcType="INTEGER" />
 	</resultMap>
 
 	<!-- 根据菜单查询 分组,项目信息的resultMap -->
@@ -34,7 +35,8 @@
 				create_time,
 				update_time,
 				lable,
-				relation_del
+				relation_del,
+				`order`
 	</sql>
 
 	<sql id="whereStatement">
@@ -120,6 +122,9 @@
 			<if test="relationDel != null ">
 				relation_del,
 			</if>
+			<if test="order != null ">
+				`order`,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -147,6 +152,9 @@
 			</if>
 			<if test="relationDel != null ">
 				#{relationDel},
+			</if>
+			<if test="order != null ">
+				#{order},
 			</if>
 		</trim>
 
@@ -180,10 +188,11 @@
 			<if test="relationDel != null ">
 				relation_del = #{relationDel},
 			</if>
+			<if test="order != null ">
+				`order` = #{order},
+			</if>
 		</set>
-
 		WHERE relation_id = #{relationId}
-
 	</update>
 
 

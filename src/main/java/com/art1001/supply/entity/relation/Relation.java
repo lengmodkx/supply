@@ -51,11 +51,16 @@ public class Relation extends BaseEntity implements Serializable {
 
 	private List<Task> taskList;
 
+	/**
+	 * 菜单的当前顺序
+	 */
+	private Integer order;
+
 	public Relation(){
 
 	}
 
-	public Relation(String relationId, String relationName, String parentId, Integer lable, Integer relationDel,Long createTime,Long endTime) {
+	public Relation(String relationId, String relationName, String parentId, Integer lable, Integer relationDel,Long createTime,Long endTime,Integer order) {
 		this.relationId = relationId;
 		this.relationName = relationName;
 		this.parentId = parentId;
@@ -64,5 +69,6 @@ public class Relation extends BaseEntity implements Serializable {
 		this.relationDel = relationDel;
 		this.setCreateTime(createTime);
 		this.setEndTime(endTime);
+		this.order = order;
 	}
 }

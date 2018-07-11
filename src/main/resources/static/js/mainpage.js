@@ -182,6 +182,11 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
             ulIdNum++;
             var ulId='list'+ulIdNum;
             var modelTitle=$(".creat-model-input").val();
+            var url = "/relation/addMenu";
+            var args = {"parentId":groupId,"relationName":modelTitle};
+            $.post(url,args,function (data) {
+
+            },"json");
             // 新 的 任务列表
             $(".creat-model").before('<div class="model boxsizing">\n' +
                 '        <div class="model-title">\n' +

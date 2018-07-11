@@ -288,6 +288,7 @@ public interface TaskMapper {
 	/**
 	 * 清空该任务的标签
 	 * @param taskId 任务的id
+	 * @return
 	 */
 	int clearTaskTag(String taskId);
 

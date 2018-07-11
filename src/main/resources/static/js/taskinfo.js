@@ -425,6 +425,7 @@ if ($(".has-tags .tag").length==0){
 
     // 点击某个具体标签
 $("html").on("click",".tags-list",function () {
+    $(".has-tags").show();
     var tagId = $(this).find(".tag-font").attr("value");
     var tags = [];
     $('.tag').each(function () {
@@ -451,15 +452,14 @@ $("html").on("click",".tags-list",function () {
     var args = {"tagId":tagId,"tagName":tagName,"taskId":taskId,"projectId":projectId};
     var content = '';
     $.post(url,args,function (data) {
-        if(data.result > 0){
-            content += '<span class="tag" value="' + tagId + '" style="background-color:' + bgColor + '">'+
-                '<b style="font-weight: 400">' + tagName + '</b>'+
-                '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-                '</span>';
-            $(".has-tags").prepend(content);
-            $(".has-tags").show();
-        }
+        $(".no-tags").hide();
+        content += '<span class="tag" value="' + tagId + '" style="background-color:' + bgColor + '">'+
+            '<b style="font-weight: 400">' + tagName + '</b>'+
+            '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+            '</span>';
+        $(".has-tags").prepend(content);
     },"json");
+
 });
 
 // 创建 按钮 是否 能点击
@@ -782,11 +782,6 @@ $('.people-ok').click(function () {
         parent.layer.close(index); //再执行关闭
     });
 
-//点击 标签
-// $(".tags").click(function (e) {
-//     $(".tags-search-build").show();
-//     e.stopPropagation()
-// });
 $(".tag-search-title img").click(function () {
     $(".build-tags").show();
     $(".tag-search").hide()
@@ -816,7 +811,6 @@ $(".revise-task").on("click", ".tag i", function () {
     });
     $(this).parent().remove();
     //判断 有没有标签
-    console.log($(".has-tags span").length);
     if ($(".has-tags span").length == 0) {
         $(".has-tags").hide();
         $(".no-tags").show();
@@ -826,13 +820,6 @@ $(".revise-task").on("click", ".tag i", function () {
     }
 });
 
-//点击 x 移出标签
-// $(".tags").on("click",".remove-tag",function (e) {
-//     // if ($(".tags").find(".one-tag").length==0){
-//     //     $(".no-tags").show()
-//     // }
-//     // e.stopPropagation()
-// });
 //点击空白区域 选择标签 框 消失
 $(document).click(function(event){
     var _con = $('.tags-search-build');  // 设置目标区域
