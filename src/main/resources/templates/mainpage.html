@@ -102,12 +102,8 @@
     </ul>
 </div>
 <!--邀请新成员-->
-<div class="fuzhi-lianjie" style="display: none">
-    <i class="layui-icon layui-icon-close close-people" style="font-size: 20px; color: #a6a6a6;"></i>
-    <div class="box-border boxsizing" th:text="${#request.getRemoteAddr()}">
-        http://www.baidu.com/adkasd?fjkalsfj=kds13
-    </div>
-    <div class="copy-btn">复制链接</div>
+<div class="search_prople fuzhi-lianjie boxsizing" style="display: none">
+    <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword">
 </div>
 <!--点击群组中的 人 出现的弹框-->
 <!--<div style="display: none" class="people-info">-->
@@ -185,6 +181,15 @@
 
 
    });
+
+   $('.keyword').keyup(function (e) {
+       var index = layer.load(1, {shade: [0.1,'#fff']});
+        $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
+            layer.close(index);
+        });
+
+   });
+
 </script>
 
 

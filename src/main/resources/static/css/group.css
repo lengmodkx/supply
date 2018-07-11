@@ -74,10 +74,11 @@
     position: relative;
 }
 .fuzhi-lianjie{
-   width: 350px;
+    width: 350px;
+    height: 300px;
     background-color: white;
     box-shadow: -3px 0 3px rgba(0,0,0,.1);
-    padding: 15px 0;
+    padding: 15px 20px;
     position: relative;
 }
 .fuzhi-lianjie>i{
