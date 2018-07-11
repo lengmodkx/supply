@@ -78,8 +78,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 	 * @return
 	 */
 	@Override
-	public List<ProjectMember> findProjectMemberAllList(){
-		return projectMemberMapper.findProjectMemberAllList();
+	public List<ProjectMember> findProjectMemberAllList(ProjectMember projectMember){
+		return projectMemberMapper.findProjectMemberAllList(projectMember);
 	}
 
 	@Override

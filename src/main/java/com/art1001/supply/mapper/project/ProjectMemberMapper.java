@@ -55,7 +55,7 @@ public interface ProjectMemberMapper {
 	 * 
 	 * @return
 	 */
-	List<ProjectMember> findProjectMemberAllList();
+	List<ProjectMember> findProjectMemberAllList(ProjectMember projectMember);
 
 	List<Project> findProjectByMemberId(@Param("memberId") String memberId, @Param("projectDel") Integer projectDel);
 
