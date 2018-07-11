@@ -12,6 +12,7 @@ import com.art1001.supply.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,9 +40,20 @@ public class ScheduleController {
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime());
-
         return "scheduling";
     }
+
+    /**
+     * 在日历上创建日程
+     * @param model
+     * @return
+     */
+    @GetMapping("calendarCreateSchedule.html")
+    public String calendarCreateSchedule(Model model){
+        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        return "tk-calendar-create-rc";
+    }
+
 
 
     @RequestMapping("/addschedule.html")

@@ -1217,4 +1217,15 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTaskByCreateMemberAndTime(String id, String orderType) {
         return taskMapper.findTaskByCreateMemberAndTime(id,orderType);
     }
+
+    /**
+     * 查询该用户在日历上创建的所有任务
+     * @param uId 用户id
+     * @return
+     */
+    @Override
+    public List<Task> findTaskByCalendar(String uId) {
+        return taskMapper.findTaskByCalendar(uId);
+
+    }
 }

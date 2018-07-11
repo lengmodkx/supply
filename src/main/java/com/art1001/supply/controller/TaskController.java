@@ -1036,11 +1036,11 @@ public class TaskController {
             //获取当前用户信息
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             model.addAttribute("user",userEntity);
-            //当前项目信息
-            model.addAttribute("projectId",projectId);
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
             model.addAttribute("task",taskById);
+            //当前项目信息
+            model.addAttribute("projectId",taskById.getProjectId());
             //判断当前用户有没有对该任务点赞
             boolean isFabulous = taskService.judgeFabulous(task);
             model.addAttribute("isFabulous",isFabulous);

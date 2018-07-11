@@ -16,11 +16,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 @Slf4j
@@ -49,9 +51,33 @@ public class PublicController {
         return "mypage";
     }
 
+    /**
+     * 跳转到日历界面
+     * @return
+     */
     @GetMapping("calendar.html")
     public String calendar(){
         return "tk-calendar";
+    }
+
+    /**
+     * 获取日历上的任务数据
+     * @return
+     */
+    @PostMapping("taskCalendar")
+    @ResponseBody
+    public JSONObject taskCalendar(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String uId = ShiroAuthenticationManager.getUserId();
+            List<Task> taskList = taskService.findTaskByCalendar(uId);
+            jsonObject.put("data",taskList);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 
 

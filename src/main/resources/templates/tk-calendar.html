@@ -129,13 +129,14 @@
             //点击 具体 事项
             eventClick : function( event ){
                 //do something here...
-                console.log('eventClick中选中Event的id属性值为：', event.id);
-                console.log('eventClick中选中Event的title属性值为：', event.title);
-                console.log('eventClick中选中Event的start属性值为：', event.start.format('YYYY-MM-DD HH:mm'));
-                console.log('eventClick中选中Event的end属性值为：', event.end==null?'无':event.end.format('YYYY-MM-DD HH:mm'));
-                console.log('eventClick中选中Event的color属性值为：', event.color);
-                console.log('eventClick中选中Event的className属性值为：', event.className);
-                reviseSchedule()
+                // console.log('eventClick中选中Event的id属性值为：', event.id);
+                // console.log('eventClick中选中Event的title属性值为：', event.title);
+                // console.log('eventClick中选中Event的start属性值为：', event.start.format('YYYY-MM-DD HH:mm'));
+                // console.log('eventClick中选中Event的end属性值为：', event.end==null?'无':event.end.format('YYYY-MM-DD HH:mm'));
+                // console.log('eventClick中选中Event的color属性值为：', event.color);
+                // console.log('eventClick中选中Event的className属性值为：', event.className);
+                changeRenwu(event.id);
+                //reviseSchedule()
             },
             eventMouseover : function( event ) {
                 //do something here...
@@ -184,14 +185,6 @@
                 // ...
             },
             events: [
-                {
-                    id: 1,
-                    title: '这是一个all-day数据',
-                    allDay: true,
-                    start: '2018-07-05',
-                    textColor:'#383838',
-                    backgroundColor :'#CDEEFD'
-                },
                 {
                     id: 2,
                     title: '开始时间为12PM',
@@ -297,6 +290,25 @@
             });
         });
     }
+
+    //修改任务 弹框界面
+    function changeRenwu(taskId,projectId) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset: '20px',
+                area:['600px','600px'],
+                fixed: false,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
+            });
+        });
+    }
+
     //创建日程 弹框
     function createRicheng() {
         layui.use('layer', function(){
@@ -310,7 +322,7 @@
                 // shade: 0,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: 'tk-calendar-create-rc.html',
+                content: '/schedule/calendarCreateSchedule.html',
                 zIndex: layer.zIndex, //重点1
                 success: function(layero){
                     layer.setTop(layero); //重点2
@@ -339,18 +351,35 @@
         });
     }
 
+    $(function () {
+       var url = "/public/taskCalendar";
+       var arr = [];
+       $.post(url,function (data) {
+           var task = data.data;
+           for(var i = 0;i < task.length;i++){
+               arr.push({id:task[i].taskId,title:task[i].taskName,start:new Date(task[i].taskCalendar),backgroundColor: '#33FFFF',
+                   borderColor: '#00CCFF'});
+           }
+           $('#calendar').fullCalendar('addEventSource',arr);
+       },"json");
+    });
+
     /**
      * 添加任务完成后在日历显示任务信息
      */
     function showTask(task){
-        var content = '';
-        content +='<td class="fc-event-container" value="' + task.taskId + '">'+
-            '<a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable" style="background-color:#CDEEFD;color:#383838">'+
-                '<div class="fc-content"> <span class="fc-title">' + task.taskName + '</span></div><div class="fc-resizer fc-end-resizer">'+
-                '</div>'+
-            '</a>'+
-        '</td>';
+        var arr=[];
+        $('#calendar').fullCalendar('addEventSource', [
+           {
+               id: task.taskId,
+               title: task.taskName,
+               allDay: true,
+               backgroundColor: '#33FFFF',
+               start: new Date(task.taskCalendar),
+           },]);
     }
+
+
 
 
 </script>

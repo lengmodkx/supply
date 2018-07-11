@@ -731,4 +731,10 @@
 		</set>
 		where task_id = #{taskId}
 	</update>
+
+	<!-- 根据用户查询出该用户执行的和创建的所有任务 -->
+	<select id="findTaskByCalendar" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"></include>
+		from prm_task where executor = #{uId} or member_id = #{uId}
+	</select>
 </mapper>
