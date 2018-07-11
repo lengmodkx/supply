@@ -21,7 +21,6 @@
 <div class="content-wrap-wrap boxsizing">
    <div class="content boxsizing">
        <input type="hidden" th:value="${project.projectId}" id="projectId">
-
         <!--产品设计任务页面-->
         <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
@@ -97,6 +96,8 @@
        var element = layui.element;
 
    });
+
+   $('.creat-model-ok').click()
 
    $("#fileButton").click(function () {
        var projectId = getQueryString("projectId");

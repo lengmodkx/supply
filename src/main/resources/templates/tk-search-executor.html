@@ -13,9 +13,9 @@
     <div class="peoples">
         <div>
             <p>项目成员</p>
-            <div class="one-people" th:each="member:${data}" th:id="${member.id}">
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.userInfo.image}" />
-                <span th:text="${member.userName}"></span>
+            <div class="one-people" th:id="${executor.id}" th:each="executor:${data}">
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
+                <span th:text="${executor.userName}"></span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
         </div>
@@ -34,29 +34,26 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
-    var members = [[${members}]];
     $(".people-ok").click(function (e) {
-        var id = [];
-        var names = [];
-        var img = [];
+        var id = '';
+        var img = '';
+        var name = '';
         for (var i=0;i<$(".one-people").length;i++){
             if ($(".one-people").eq(i).find("i").is(":visible")) {
-                var value = $(".one-people").eq(i).attr("id");
-                var image = $(".one-people").eq(i).find("img").attr("src");
-                var name = $(".one-people").eq(i).find("span").html();
-                id.push(value);
-                img.push(image);
-                names.push(name);
+                id = $(".one-people").eq(i).attr("id");
+                img = $(".one-people").eq(i).children('img').attr('src');
+                name = $(".one-people").eq(i).children('span').html();
             }
         }
-        //跟新参与者的头像
-        parent.addMember(id,names,img);
+        parent.changeExecutor(id,name,img);
         parent.layer.closeAll();
   });
 
   $(".one-people").click(function (e) {
-      $(this).find('i').toggle();
+      $(".one-people").find("i").hide();
+      $(this).find("i").show();
   });
+
 
 
 </script>

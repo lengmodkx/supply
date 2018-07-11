@@ -373,4 +373,19 @@ public interface TaskMapper {
 	 * @return
 	 */
 	List<Task> findTaskByCreateMemberAndTime(@Param("uId") String id,@Param("orderType") String orderType);
+
+	/**
+	 * 查询任务的名称
+	 * @param taskId 任务id
+	 */
+	@Select("select task_name from prm_task where task_id = #{taskId}")
+    String findTaskNameById(String taskId);
+
+	/**
+	 * 根据任务id 查询出任务的层级
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Select("select level from prm_task where task_id = #{taskId}")
+    Integer findTaskLevelById(String taskId);
 }
