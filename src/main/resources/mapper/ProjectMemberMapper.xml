@@ -105,14 +105,13 @@
 
 	</select>
 
-	<select id="findByProjectIdAndMemberId" resultMap="BaseResultMap" parameterType="java.lang.String">
+	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
 		from
 			prm_project_member
 		where
 			project_id = #{projectId}
-		and member_id = #{memberId}
 	</select>
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
