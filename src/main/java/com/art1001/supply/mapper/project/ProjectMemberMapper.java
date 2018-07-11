@@ -62,6 +62,6 @@ public interface ProjectMemberMapper {
 	/**
 	 * 根据项目id 和 用户id 查询
 	 */
-	List<ProjectMember> findByProjectIdAndMemberId(@Param("projectId") String projectId, @Param("memberId") String memberId);
+	List<ProjectMember> findByProjectId(@Param("projectId") String projectId);
 
 }

@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
@@ -67,6 +68,7 @@ public class BindingServiceImpl implements BindingService {
 	 */
 	@Override
 	public void saveBinding(Binding binding){
+		binding.setId(IdGen.uuid());
 		bindingMapper.saveBinding(binding);
 	}
 	/**

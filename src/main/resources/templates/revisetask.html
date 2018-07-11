@@ -72,8 +72,9 @@
             </div>
         </div>
 
-
         <div class="heng-line"></div>
+
+
         <div class="add-bz combox">
             <img src="../static/image/beizhu.png" th:src="@{/image/beizhu.png}" />
             <span>备注</span>
@@ -193,6 +194,109 @@
             <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             <span>添加关联</span>
         </div>
+
+
+        <!--关联 部分-->
+        <div class="related-box">
+            <div class="flex-box">任务 <span></span></div>
+            <ul class="related-rw">
+                <li class="boxsizing">
+                    <div class="check-box"><input type="checkbox" name="" lay-skin="primary"></div>
+                    <div class="related-rw-info">
+                        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                        <span>任务名称</span>
+                    </div>
+                    <div class="related-rw-describe over-hidden">任务描述任务描述任务描述任务描述任务描述任务描述</div>
+                    <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <!--取消关联框-->
+                    <div class="related-menu" style="display: none">
+                        <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                        <div class="related-menu-title">关联菜单</div>
+                        <ul>
+                            <!--<li class="boxsizing">-->
+                            <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                            <!--<span>复制链接</span>-->
+                            <!--</li>-->
+                            <li class="boxsizing">
+                                <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                <span>取消关联</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="flex-box">文件 <span></span></div>
+            <ul class="related-wj">
+                <li class="boxsizing">
+                    <div class="related-wj-info">
+                        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                        <span>sandkasfjas.jpg</span>
+                    </div>
+                    <div class="related-rw-describe over-hidden">bim5d管理平台</div>
+                    <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <!--取消关联框-->
+                    <div class="related-menu" style="display: none">
+                        <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                        <div class="related-menu-title">关联菜单</div>
+                        <ul>
+                            <!--<li class="boxsizing">-->
+                            <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                            <!--<span>复制链接</span>-->
+                            <!--</li>-->
+                            <li class="boxsizing">
+                                <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                <span>取消关联</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="flex-box">日程 <span></span></div>
+            <ul class="related-rc">
+                <li class="boxsizing">
+                    <div class="related-rc-top">
+                        <div class="related-rc-info">
+                            <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                            <span>kasdkasjdk</span>
+                        </div>
+                        <div class="related-rw-describe over-hidden">bim5d管理平台</div>
+                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                    </div>
+                    <div class="related-rc-down">
+                        <span>2018-12-25 12:00</span>
+                        <span>—</span>
+                        <span>2018-12-25 12:00</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="flex-box">分享 <span></span></div>
+            <ul class="related-rc">
+                <li class="boxsizing">
+                    <div class="related-rc-top">
+                        <div class="related-rc-info">
+                            <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                            <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                            <span>kasdkasjdk</span>
+                        </div>
+                        <div class="related-rw-describe over-hidden">bim5d管理平台</div>
+                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                    </div>
+                    <div class="related-rc-down">
+                        <span>2018-12-25 12:00</span>
+                        <span>—</span>
+                        <span>2018-12-25 12:00</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+
+
+
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
@@ -428,5 +532,13 @@
     } else if(taskStatus == '未完成'){
         $('.add-child-task').css('display','block');
     }
+    
+    $("body").on("click",".show-cancel-related",function () {
+        $(".related-menu").slideUp();
+        $(this).parents("li").find(".related-menu").slideDown();
+    });
+    $("body").on("click",".close-related-menu",function () {
+        $(this).parents(".related-menu").slideUp();
+    });
 </script>
 </html>

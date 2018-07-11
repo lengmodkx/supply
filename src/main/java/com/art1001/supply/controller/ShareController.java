@@ -11,6 +11,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import com.sun.org.apache.xpath.internal.operations.Mod;
@@ -40,6 +41,9 @@ public class ShareController {
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private TaskMemberService taskMemberService;
 
     //导航到分享界面
     @RequestMapping("/share.html")
@@ -75,15 +79,41 @@ public class ShareController {
         return "share_edit";
     }
 
+    /**
+     * 打开项目成员弹窗
+     */
     @RequestMapping("toSearchPeople")
     public String toSearchPeople(
             @RequestParam String projectId,
+            @RequestParam String shareId,
             Model model
     ) {
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        List<ProjectMember> projectMemberList = projectMemberService.findByProjectIdAndMemberId(projectId, userEntity.getId());
+        List<ProjectMember> projectMemberList = projectMemberService.findByProjectId(projectId);
         model.addAttribute("projectMemberList", projectMemberList);
-        return "tk-search-people";
+        model.addAttribute("shareId", shareId);
+        return "tk-share-people";
+    }
+
+    /**
+     * 添加项目成员
+     */
+    @RequestMapping("/addShareMember")
+    @ResponseBody
+    public JSONObject addShareMember(
+            @RequestParam String shareId,
+            @RequestParam String memberId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+//            taskMemberService.saveTaskMember();
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "添加成功");
+        } catch (Exception e) {
+            log.error("添加参与者异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "添加失败");
+        }
+        return jsonObject;
     }
 
     //添加一个分享

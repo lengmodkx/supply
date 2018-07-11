@@ -58,11 +58,32 @@ $(function () {
         });
     });
 
+
+    var el = document.getElementById("menuList");
+    Sortable.create(el,{
+        group:"menus",
+        animation: 150 ,//动画参数
+
+        onChoose:function f() {  //列表单元被选中的回调函数
+            console.log('列表单元被选中的回调函数')
+
+        },
+        onUpdate: function (evt){ //拖拽更新节点位置发生该事件
+            console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
+
+        },
+        onEnd: function(evt){ //拖拽完毕之后发生该事件
+
+        }
+    });
+
+
     // 拖拽函数
     $(".taskList").each(function (data,item) {
+        console.log($(item).attr('id'));
         var el = document.getElementById($(item).attr('id'));
         Sortable.create(el,{
-            group:"words",
+            group:"tasks",
             animation: 150 ,//动画参数
 
             onChoose:function f() {  //列表单元被选中的回调函数
@@ -71,16 +92,9 @@ $(function () {
             },
             onUpdate: function (evt){ //拖拽更新节点位置发生该事件
                 console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
-                // console.log(1111111111111111);
-                // console.log(evt.to);
-                // console.log(evt.from);
-                // console.log(1111111111111111)
+
             },
             onEnd: function(evt){ //拖拽完毕之后发生该事件
-                // console.log('onEnd.foo:', [evt.item, evt.newIndex]);
-                // console.log(evt.from);
-                // console.log(evt.to);
-                // console.log(evt.item);
                 var oldMenuTaskId = [];
                 var newMenuTaskId = [];
                 var oldMenuId = $(evt.from).attr('id');
@@ -402,13 +416,12 @@ function yaoqing() {
         var layer = layui.layer;
         layer.open({
             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
+            title: "邀请新成员", //标题
             offset: '150px',
             fixed: false,
             shadeClose: true, //点击遮罩关闭
-            closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: $(".fuzhi-lianjie")
+            content: $(".search_prople")
         });
     });
 }

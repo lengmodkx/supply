@@ -36,14 +36,4 @@ public class Binding extends BaseEntity implements Serializable {
 	 */
 	private String publicType;
 
-
-	/**
-	 * 创建时间
-	 */
-
-
-	/**
-	 * 更新时间
-	 */
-
 }
