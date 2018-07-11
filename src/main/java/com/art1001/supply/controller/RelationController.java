@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.dtgrid.model.Column;
 import com.art1001.supply.dtgrid.model.Pager;
 import com.art1001.supply.dtgrid.util.ExportUtils;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.relation.RelationService;
@@ -15,7 +17,9 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +47,11 @@ public class RelationController {
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+
     /**
      * 添加分组/分组下的菜单
      * @param relation
@@ -164,7 +173,13 @@ public class RelationController {
     public JSONObject addMenu(String parentId, Relation relation){
         JSONObject jsonObject = new JSONObject();
         try {
+            relation.setRelationId(IdGen.uuid());
             relationService.addMenu(parentId,relation);
+            TaskPushType taskPushType = new TaskPushType("添加菜单");
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("menu",relation);
+            taskPushType.setObject(map);
+            simpMessagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
             jsonObject.put("msg","添加成功!");
             jsonObject.put("result","1");
         } catch (Exception e){

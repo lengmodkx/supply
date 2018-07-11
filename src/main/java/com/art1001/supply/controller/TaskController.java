@@ -26,6 +26,7 @@ import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
@@ -98,8 +99,10 @@ public class TaskController {
      * @return
      */
     @GetMapping("createCalendarTasktk.html")
-    public String createCalendarTasktk(Model model){
+    public String createCalendarTasktk(Model model,String rq){
         try {
+            Date date = DateUtils.parseDate(rq);
+            model.addAttribute("date",date.getTime());
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
             //查询出该用户所参与的项目
             model.addAttribute("projectList",projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId()));
@@ -159,9 +162,13 @@ public class TaskController {
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.R.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("task",taskByTaskId);
+            taskPushType.setObject(map);
             jsonObject.put("task",taskByTaskId);
             jsonObject.put("taskLog",taskLogVO);
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskByTaskId)));
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskPushType)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");

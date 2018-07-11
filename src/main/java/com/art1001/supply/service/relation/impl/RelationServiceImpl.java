@@ -121,7 +121,6 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void addMenu(String parentId, Relation relation) {
-		relation.setRelationId(IdGen.uuid());
 		relation.setParentId(parentId);
 		relation.setLable(1);
 		relation.setRelationDel(0);
