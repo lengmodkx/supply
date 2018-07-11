@@ -8,6 +8,7 @@
 </head>
 <body>
 <!-- 日历页面 创建 任务-->
+<input th:if="${date != null}" type="hidden" th:value="${date}" id="rq"/>
 <div class="create-calendar-task">
     <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;top: 15px;"></i>
     <div class="create-calendar-task-title">创建任务</div>
@@ -378,6 +379,10 @@
         $('.work-people .one-work-people').each(function () {
             members.push($(this).attr('value'));
         });
+        var taskCalendar
+        if($('#rq').val() != null && $('#rq').val() != undefined){
+            taskCalendar = $('#rq').val();
+        }
         //设置任务的执行者
         var executor = $('.who-wrap input[type="hidden"]').val();
         //设置任务开始时间
@@ -408,13 +413,12 @@
             privacyPattern = "0";
         }
         var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor};
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor,"taskCalendar":taskCalendar};
         $.post(url,args,function(data){
             if(data.result == 1){
-                layer.msg("任务创建成功!");
+                parent.showTask(data.task);
                 parent.layer.closeAll();
             } else{
-                layer.msg("任务创建失败!");
             }
         },"json");
         return false;

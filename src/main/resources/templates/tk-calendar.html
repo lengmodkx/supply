@@ -51,6 +51,9 @@
 <script th:src="@{/js/jquery-ui-1.10.2.custom.min.js}" src="../static/js/jquery-ui-1.10.2.custom.min.js"></script>
 <script th:src="@{/js/fullcalendar.min.js}" src="../static/js/fullcalendar.min.js"></script>
 <script>
+    var rq;
+</script>
+<script>
     layui.use('form', function(){
         var form = layui.form;
 
@@ -105,7 +108,8 @@
             aspectRatio: 1.7,
 
             dayClick : function( date ) {
-                // console.log('dayClick触发的时间为：', date.format());
+                //console.log('dayClick触发的时间为：', date.format());
+                rq = date.format();
                 console.log($(this).height());
                 create($(this).offset().top+$(this).height(),$(this).offset().left)
 
@@ -289,7 +293,7 @@
                 closeBtn: 0,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: '/task/createCalendarTasktk.html'
+                content: '/task/createCalendarTasktk.html?rq='+rq
             });
         });
     }
@@ -333,6 +337,19 @@
                 }
             });
         });
+    }
+
+    /**
+     * 添加任务完成后在日历显示任务信息
+     */
+    function showTask(task){
+        var content = '';
+        content +='<td class="fc-event-container" value="' + task.taskId + '">'+
+            '<a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable" style="background-color:#CDEEFD;color:#383838">'+
+                '<div class="fc-content"> <span class="fc-title">' + task.taskName + '</span></div><div class="fc-resizer fc-end-resizer">'+
+                '</div>'+
+            '</a>'+
+        '</td>';
     }
 
 

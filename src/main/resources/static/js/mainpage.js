@@ -58,11 +58,32 @@ $(function () {
         });
     });
 
+
+    var el = document.getElementById("menuList");
+    Sortable.create(el,{
+        group:"menus",
+        animation: 150 ,//动画参数
+
+        onChoose:function f() {  //列表单元被选中的回调函数
+            console.log('列表单元被选中的回调函数')
+
+        },
+        onUpdate: function (evt){ //拖拽更新节点位置发生该事件
+            console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
+
+        },
+        onEnd: function(evt){ //拖拽完毕之后发生该事件
+
+        }
+    });
+
+
     // 拖拽函数
     $(".taskList").each(function (data,item) {
+        console.log($(item).attr('id'));
         var el = document.getElementById($(item).attr('id'));
         Sortable.create(el,{
-            group:"words",
+            group:"tasks",
             animation: 150 ,//动画参数
 
             onChoose:function f() {  //列表单元被选中的回调函数
@@ -71,16 +92,9 @@ $(function () {
             },
             onUpdate: function (evt){ //拖拽更新节点位置发生该事件
                 console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
-                // console.log(1111111111111111);
-                // console.log(evt.to);
-                // console.log(evt.from);
-                // console.log(1111111111111111)
+
             },
             onEnd: function(evt){ //拖拽完毕之后发生该事件
-                // console.log('onEnd.foo:', [evt.item, evt.newIndex]);
-                // console.log(evt.from);
-                // console.log(evt.to);
-                // console.log(evt.item);
                 var oldMenuTaskId = [];
                 var newMenuTaskId = [];
                 var oldMenuId = $(evt.from).attr('id');
@@ -182,43 +196,13 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
             ulIdNum++;
             var ulId='list'+ulIdNum;
             var modelTitle=$(".creat-model-input").val();
+            var url = "/relation/addMenu";
+            var args = {"parentId":groupId,"relationName":modelTitle};
+            $.post(url,args,function (data) {
+
+            },"json");
             // 新 的 任务列表
-            $(".creat-model").before('<div class="model boxsizing">\n' +
-                '        <div class="model-title">\n' +
-                '            <span> ' + modelTitle + ' </span>\n' +
-                '            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>\n' +
-                '            <!--点击下箭头出现的内容-->\n' +
-                '            <div class="lbmenu">\n' +
-                '                <div class="lbmenu-title">\n' +
-                '                    <p>菜单列表</p>\n' +
-                '                    <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>\n' +
-                '                </div>\n' +
-                '                <div class="lbmenu-add">\n' +
-                '                    <div class="lbmenu-add-content">\n' +
-                '                        <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>\n' +
-                '                        在此处添加新列表\n' +
-                '                    </div>\n' +
-                '                </div>\n' +
-                '                <div class="lbmenu-remove">\n' +
-                '                    <div class="lbmenu-add-content">\n' +
-                '                        <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>\n' +
-                '                        本列表所有任务移到回收站\n' +
-                '                    </div>\n' +
-                '                </div>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '        <!--任务列表-->\n' +
-                '        <div class="ul-wrap layui-form">\n' +
-                '        <ul id="'+ulId+'">\n' +
-                '        </ul>\n' +
-                '        </div>\n' +
-                '        <!--添加任务按钮-->\n' +
-                '        <div class="add-assignment">\n' +
-                '            <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>\n' +
-                '            <span>添加任务</span>\n' +
-                '        </div>\n' +
-                '\n' +
-                '    </div>');
+
             firefox();
             // 拖拽函数
             Sortable.create(document.getElementById(ulId),{
@@ -432,13 +416,12 @@ function yaoqing() {
         var layer = layui.layer;
         layer.open({
             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
+            title: "邀请新成员", //标题
             offset: '150px',
             fixed: false,
             shadeClose: true, //点击遮罩关闭
-            closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: $(".fuzhi-lianjie")
+            content: $(".search_prople")
         });
     });
 }

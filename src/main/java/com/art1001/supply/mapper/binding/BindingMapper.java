@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * bindingmapper接口
@@ -55,4 +56,11 @@ public interface BindingMapper {
 	 */
 	List<Binding> findBindingAllList();
 
+	/**
+	 * 通过
+	 * @param publicId
+	 * @param publicType
+	 * @return
+	 */
+	List<Binding> findBindingList(@Param("publicId")String publicId,@Param("publicType")String publicType);
 }

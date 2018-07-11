@@ -25,9 +25,9 @@
         <!--产品设计任务页面-->
         <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
-               <ul class="board-scrum-stages boxsizing">
+               <ul class="board-scrum-stages boxsizing" id="menuList">
                    <!--待处理-->
-                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}"  onclick="">
+                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}">
                        <div class="model-title">
                            <span th:text="${taskMenu.relationName}">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
@@ -102,12 +102,17 @@
     </ul>
 </div>
 <!--邀请新成员-->
-<div class="fuzhi-lianjie" style="display: none">
-    <i class="layui-icon layui-icon-close close-people" style="font-size: 20px; color: #a6a6a6;"></i>
-    <div class="box-border boxsizing" th:text="${#request.getRemoteAddr()}">
-        http://www.baidu.com/adkasd?fjkalsfj=kds13
+<div class="search_prople fuzhi-lianjie boxsizing" style="display: none">
+    <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword">
+    <div class="people-box">
+        <ul>
+            <li>
+                <img src="" >
+                <span class="people-name"></span>
+                <span class="people-state"></span>
+            </li>
+        </ul>
     </div>
-    <div class="copy-btn">复制链接</div>
 </div>
 <!--点击群组中的 人 出现的弹框-->
 <!--<div style="display: none" class="people-info">-->
@@ -146,6 +151,7 @@
 <script th:inline="javascript">
 
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    var groupId = [[${currentGroup}]];
 
    layui.use('element', function(){
        var element = layui.element;
@@ -184,6 +190,15 @@
 
 
    });
+
+   $('.keyword').keyup(function (e) {
+       var index = layer.load(1, {shade: [0.1,'#fff']});
+        $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
+            layer.close(index);
+        });
+
+   });
+
 </script>
 
 

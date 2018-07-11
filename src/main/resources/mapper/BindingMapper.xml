@@ -10,7 +10,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
-    
+
 	<sql id="Base_Column_List">
 				id,
 				public_id,
@@ -142,5 +142,14 @@
 		WHERE id = #{id}
 
 	</update>
-	
+
+
+	<select id="findBindingList" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_binding
+        where public_id = #{publicId} and public_type = #{publicType}
+	</select>
+
+
 </mapper>

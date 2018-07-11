@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>stomp</title>
@@ -14,13 +14,17 @@ Welcome<br/><input id="text" type="text" />
 <button onclick="closeWebSocket()">关闭WebSocket连接</button>
 <hr/>
 <div id="message"></div>
-</body>
+<div id="view"></div>
+<div th:include="test_moban::test" id="test" style="display:none;"></div>
 
+</body>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script type="text/javascript">
     // 建立连接对象（还未发起连接）
-    var socket = new SockJS("http://localhost:8081/webSocketServer");
+    var socket = new SockJS("http://localhost:8080/webSocketServer");
 
     // 获取 STOMP 子协议的客户端对象
     var stompClient = Stomp.over(socket);
@@ -73,6 +77,23 @@ Welcome<br/><input id="text" type="text" />
     function setMessageInnerHTML(innerHTML) {
         document.getElementById('message').innerHTML += innerHTML + '<br/>';
     }
+
+
+    //第三步：渲染模版
+    var data = { //数据
+        "title":"Layui常用模块"
+        ,"list":[{"modname":"弹层","alias":"layer","site":"layer.layui.com"},{"modname":"表单","alias":"form"}]
+    };
+    var getTpl = $('#test').html();
+    console.log(getTpl);
+    var view = document.getElementById('view');
+    layui.use('laytpl', function() {
+        var laytpl = layui.laytpl;
+        laytpl(getTpl).render(data, function(html){
+            view.innerHTML = html;
+        });
+    });
+
 
 </script>
 

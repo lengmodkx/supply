@@ -172,4 +172,9 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private TaskMember taskMember;
 
+	/**
+	 * 任务的日历日期
+	 */
+	private Long taskCalendar;
+
 }

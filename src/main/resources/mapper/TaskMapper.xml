@@ -30,6 +30,7 @@
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
+		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
@@ -64,7 +65,8 @@
 				fabulous_count,
 				privacy_pattern,
 				other,
-				`order`
+				`order`,
+				task_calendar
 	</sql>
 
 	<sql id="whereStatement">
@@ -201,6 +203,9 @@
 			<if test="order != null">
 				`order`,
 			</if>
+			<if test="taskCalendar != null">
+				`task_calendar`,
+			</if>
 
 		</trim>
 
@@ -286,6 +291,9 @@
 			</if>
 			<if test="order != null">
 				#{order},
+			</if>
+			<if test="taskCalendar != null">
+				#{taskCalendar},
 			</if>
 		</trim>
 
@@ -375,6 +383,9 @@
 			</if>
 			<if test="other != null">
 				`order` = #{order},
+			</if>
+			<if test="taskCalendar != null">
+				task_calendar = #{taskCalendar},
 			</if>
 		</set>
 		WHERE task_id = #{taskId}
@@ -711,4 +722,13 @@
 			order by create_time
 		</if>
 	</select>
+
+	<!-- 清空该任务的标签 -->
+	<update id="clearTaskTag">
+		update prm_task
+		<set>
+			tag_id = ''
+		</set>
+		where task_id = #{taskId}
+	</update>
 </mapper>
