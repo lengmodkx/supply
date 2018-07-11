@@ -18,9 +18,9 @@ public class AliyunOss {
 
     // TODO 开发使用
     private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-    private static String accessKeyId = "LTAIqk28Y76sRtVQ";
-    private static String accessKeySecret = "95Gjw4otcqgADeixghuOcDU2oqTLrU";
-    private static String bucketName = "faydan";
+    private static String accessKeyId = "LTAIP4MyTAbONGJx";
+    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
+    private static String bucketName = "art1001-bim-5d";
 
     // TODO 正式使用
 //    private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";

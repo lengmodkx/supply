@@ -231,6 +231,14 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
 
 });
 
+//群组 部分 的js
+//点击 关闭按钮  关闭弹出层
+$(".close-people").click(function () {
+    layer.close(layer.index)
+});
+$(".close-tk").click(function () {
+    layer.closeAll('page');
+});
 
 //点击 任务列表顶部 下箭头，弹出框
 $("html").on("click",".add-new-model",function(){
@@ -334,16 +342,24 @@ function calendar() {
     });
 }
 // 群组 弹框
-$("").click(function () {
+$(".team").click(function () {
     var left=$(window).width()-350;
     var top=$(window).height()-100;
     groups(top,left)
+    // $(".group-box").css("height",$(window).height()-100+'px');
+    // $(".group-box").addClass("now");
+    // $("html,body").css("overflow","hidden")
+
 });
+// $(".group-title .close-tk").click(function () {
+//     $(".group-box").removeClass("now");
+//     $("html,body").css("overflow","auto")
+// })
 function groups(top,left) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
-            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: ['100px',left],
             area:['350px',top+'px'],
@@ -351,8 +367,76 @@ function groups(top,left) {
             shadeClose: true,
             closeBtn: 0,
             shade: 0,
+            anim: 0,  //动画 0-6
+            content: $(".group-box")
+        });
+    });
+}
+// 群组 弹框 里面的 人员信息 弹框
+// $("html").on("click",".group-people",function () {
+//     var top=$(this).offset().top-100;
+//     var left=$(this).offset().left-320;
+//     groupPeople(top,left)
+// });
+// function groupPeople(top,left) {
+//     layui.use('layer', function(){
+//         var layer = layui.layer;
+//         layer.open({
+//             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+//             title: false, //标题
+//             offset: [top,left],
+//             area:['320px','250px'],
+//             fixed: true,
+//             shadeClose: true,
+//             closeBtn: 0,
+//             shade: 0,
+//             anim: 1,  //动画 0-6
+//             content: $(".people-info")
+//         });
+//     });
+// }
+//群组 人员  下箭头 弹框
+$("body").on("click",".group-people>li>i",function (e) {
+    var top=$(this).offset().top-110;
+    var left=$(this).offset().left-280;
+    groupPeopleRemove(top,left);
+    e.stopPropagation()
+});
+function groupPeopleRemove(top,left) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area:['280px','185px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
             anim: 1,  //动画 0-6
-            content: ['tk-group.html','no']
+            content: 'tk-group-remove.html'
+        });
+    });
+}
+//群组 邀请成员 弹框
+//点击邀请新成员
+$(".add-new-member").click(function (e) {
+    yaoqing();
+    e.stopPropagation()
+});
+function yaoqing() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '150px',
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: $(".fuzhi-lianjie")
         });
     });
 }
