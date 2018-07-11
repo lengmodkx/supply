@@ -44,7 +44,7 @@
 	</select>
 	
 	<select id="findBindingAllList" resultMap="BaseResultMap"
-		parameterType="com.leimingtech.core.entity.base.Binding">
+		parameterType="com.art1001.supply.entity.binding.Binding">
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_binding
@@ -69,7 +69,7 @@
 		prm_binding where id = #{id}
 	</delete>
 	
-	<insert id="saveBinding" parameterType="com.leimingtech.core.entity.base.Binding">
+	<insert id="saveBinding" parameterType="com.art1001.supply.entity.binding.Binding">
 
 		insert into prm_binding
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -118,7 +118,7 @@
 
 	</insert>
 	
-	<update id="updateBinding" parameterType="com.leimingtech.core.entity.base.Binding">
+	<update id="updateBinding" parameterType="com.art1001.supply.entity.binding.Binding">
 
 		update prm_binding
 		<set>
