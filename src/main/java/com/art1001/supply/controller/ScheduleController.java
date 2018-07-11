@@ -1,6 +1,7 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -61,8 +62,9 @@ public class ScheduleController {
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
-
-        model.addAttribute("members",projectMemberService.findProjectMemberAllList());
+        ProjectMember projectMember = new ProjectMember();
+        projectMember.setProjectId(projectId);
+        model.addAttribute("members",projectMemberService.findProjectMemberAllList(projectMember));
 
         return "tk-search-people";
     }

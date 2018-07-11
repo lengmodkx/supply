@@ -402,12 +402,14 @@ function groups(top,left) {
 // }
 //群组 人员  下箭头 弹框
 $("body").on("click",".group-people>li>i",function (e) {
+    e.stopPropagation();
     var top=$(this).offset().top-110;
     var left=$(this).offset().left-280;
     groupPeopleRemove(top,left);
-    e.stopPropagation()
+
 });
 function groupPeopleRemove(top,left) {
+
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -453,7 +455,7 @@ function addRenwu(projectId,taskMenuId,liId) {
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
-            area:['460px','600px'],
+            area:['600px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6

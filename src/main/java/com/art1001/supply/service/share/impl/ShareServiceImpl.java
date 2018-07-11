@@ -3,6 +3,8 @@ package com.art1001.supply.service.share.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.share.ShareMapper;
 import com.art1001.supply.service.share.ShareService;
@@ -90,6 +92,7 @@ public class ShareServiceImpl implements ShareService {
         share.setUpdateTime(System.currentTimeMillis());
 
         shareMapper.saveShare(share);
+
         return share;
 	}
 

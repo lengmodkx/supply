@@ -470,7 +470,9 @@ public class ProjectController {
             relation1.setParentId(taskGroups.get(0).getRelationId());
             relation1.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation1);
-
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setProjectId(projectId);
+            List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
 
             Project project = projectService.findProjectByProjectId(projectId);
             List<File> fileList = fileService.findChildFile(projectId, "0", 0);
@@ -480,6 +482,7 @@ public class ProjectController {
             model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             model.addAttribute("taskMenus",taskMenu);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+            model.addAttribute("projectMembers",memberAllList);
         }catch (Exception e){
             throw new SystemException(e);
         }
@@ -510,7 +513,11 @@ public class ProjectController {
         return "tk-caidanliebiao";
     }
 
-
+    /**
+     * 查找用户
+     * @param keyword
+     * @return
+     */
     @PostMapping("/searchMember")
     public JSONObject searchMember(@RequestParam String keyword){
         JSONObject jsonObject = new JSONObject();
@@ -525,6 +532,22 @@ public class ProjectController {
         return jsonObject;
     }
 
-
+    /**
+     * 删除项目成员
+     * @param id
+     * @return
+     */
+    @PostMapping("/deleteProjectMember")
+    public JSONObject deleteProjectMember(@RequestParam String id){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            projectMemberService.deleteProjectMemberById(id);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","删除成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 
 }

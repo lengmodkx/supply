@@ -68,6 +68,28 @@ public class FileController {
         String parentId = file.getFileId();
         if (StringUtils.isEmpty(file.getFileId())) {
             parentId = "0";
+        } else {
+            File fileById = fileService.findFileById(parentId);
+            if (fileById.getCatalog() != 1) { // 目录
+                String tagIds = fileById.getTagId();
+                List<Tag> tagList = new ArrayList<>();
+                if (StringUtils.isNotEmpty(tagIds)) {
+                    String[] tagIdStrArr = tagIds.split(",");
+                    Integer[] tagIdArr = new Integer[tagIdStrArr.length];
+                    for (int i = 0; i < tagIdStrArr.length; i++) {
+                        tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
+                    }
+                    tagList = tagService.findByIds(tagIdArr);
+                }
+
+                List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
+
+                model.addAttribute("file", fileById);
+                model.addAttribute("projectId", projectId);
+                model.addAttribute("tagList", tagList);
+                model.addAttribute("fileVersionList", fileVersionList);
+                return "tk-file-download";
+            }
         }
 
         // 删除标识
@@ -109,29 +131,29 @@ public class FileController {
     /**
      * 打开文件详情
      */
-    @RequestMapping("/openDownloadFile")
-    public String openDownloadFile(@RequestParam String fileId, Model model) {
-        File file = fileService.findFileById(fileId);
-        String projectId = file.getProjectId();
-        String tagIds = file.getTagId();
-        List<Tag> tagList = new ArrayList<>();
-        if (StringUtils.isNotEmpty(tagIds)) {
-            String[] tagIdStrArr = tagIds.split(",");
-            Integer[] tagIdArr = new Integer[tagIdStrArr.length];
-            for (int i = 0; i < tagIdStrArr.length; i++) {
-                tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
-            }
-            tagList = tagService.findByIds(tagIdArr);
-        }
-
-        List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
-
-        model.addAttribute("file", file);
-        model.addAttribute("projectId", projectId);
-        model.addAttribute("tagList", tagList);
-        model.addAttribute("fileVersionList", fileVersionList);
-        return "tk-file-download";
-    }
+//    @RequestMapping("/openDownloadFile")
+//    public String openDownloadFile(@RequestParam String fileId, Model model) {
+//        File file = fileService.findFileById(fileId);
+//        String projectId = file.getProjectId();
+//        String tagIds = file.getTagId();
+//        List<Tag> tagList = new ArrayList<>();
+//        if (StringUtils.isNotEmpty(tagIds)) {
+//            String[] tagIdStrArr = tagIds.split(",");
+//            Integer[] tagIdArr = new Integer[tagIdStrArr.length];
+//            for (int i = 0; i < tagIdStrArr.length; i++) {
+//                tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
+//            }
+//            tagList = tagService.findByIds(tagIdArr);
+//        }
+//
+//        List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
+//
+//        model.addAttribute("file", file);
+//        model.addAttribute("projectId", projectId);
+//        model.addAttribute("tagList", tagList);
+//        model.addAttribute("fileVersionList", fileVersionList);
+//        return "tk-file-download";
+//    }
 
     /**
      * 文件目录
@@ -649,6 +671,35 @@ public class FileController {
             log.error("移除标签异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("message", "移除失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询用户创建的文件
+     */
+    @RequestMapping("/findByMember")
+    @ResponseBody
+    public JSONObject findByMember() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            if (userEntity != null) {
+                File file = new File();
+                file.setMemberId(userEntity.getId());
+                file.setFileDel(0);
+                List<File> fileList = fileService.findFileList(file);
+                jsonObject.put("result", 1);
+                jsonObject.put("fileList", fileList);
+                jsonObject.put("msg", "获取成功");
+            } else {
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "登陆过时");
+            }
+        } catch (Exception e) {
+            log.error("获取用户相关文件异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "获取失败");
         }
         return jsonObject;
     }

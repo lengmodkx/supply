@@ -81,7 +81,8 @@
     <select id="findCountByTagName" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(0) FROM prm_tag
 		WHERE
-		tag_name = #{tagName}
+		  tag_name = #{tagName}
+		and project_id = #{projectId}
 	</select>
 
     <select id="findByProjectId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -144,9 +145,6 @@
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="tagId != null and tagId != ''">
-                #{tagId},
-            </if>
             <if test="tagName != null and tagName != ''">
                 #{tagName},
             </if>

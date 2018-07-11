@@ -19,9 +19,10 @@
         <!--<img th:src="@{/image/fzrc.png}" src="../static/image/fzrc.png" >-->
         <!--<span>复制文件</span>-->
     <!--</div>-->
-    <div class="menu-box edit-rc">
+    <div class="menu-box edit-rc copyUrl">
         <img th:src="@{/image/fzrclj.png}" src="../static/image/fzrclj.png" >
         <span>复制文件链接</span>
+        <input type="hidden" id="clipboard">
     </div>
     <!--<div class="menu-box edit-rc">-->
         <!--<img th:src="@{/image/gxrc.png}" src="../static/image/gxrc.png" >-->
@@ -53,7 +54,15 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
 
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = parent.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return "";
+    }
+
     var fileId = $("#fileId").val();
+    var projectId = getQueryString("projectId");
 
     layui.use('form', function(){
         var form = layui.form;
@@ -82,6 +91,20 @@
                     layer.msg(data.msg, {icon: 2})
                 }
             });
+        });
+        
+        // 复制文件链接
+        $(".copyUrl").click(function () {
+            var host = window.location.host;
+            var url = host + "/file/list.html" + "?projectId=" + projectId + "&fileId=" + fileId;
+            var oInput = document.createElement('input');
+            oInput.value = url;
+            document.body.appendChild(oInput);
+            oInput.select(); // 选择对象
+            document.execCommand("Copy"); // 执行浏览器复制命令
+            oInput.className = 'oInput';
+            oInput.style.display='none';
+            layer.msg("复制成功", {icon: 1, time: 700})
         });
 
     });
