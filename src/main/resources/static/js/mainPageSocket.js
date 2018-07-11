@@ -64,7 +64,7 @@ function subscribe1() {
     }
 
     function showMenu(menu){
-        $(".creat-model").before('<div class="model boxsizing">\n' +
+        $(".creat-model").before('<li class="model boxsizing">\n' +
             '        <div class="model-title">\n' +
             '            <span> ' + menu.relationName + ' </span>\n' +
             '            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>\n' +
@@ -99,6 +99,6 @@ function subscribe1() {
             '            <span>添加任务</span>\n' +
             '        </div>\n' +
             '\n' +
-            '    </div>');
+            '    </li>');
     }
 }
