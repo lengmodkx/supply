@@ -237,7 +237,6 @@ public class TaskServiceImpl implements TaskService {
         if(task.getTaskStatus().equals("重新开始")){
             content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
-
         //查询出该父级任务下的所有子级任务
         List<Task> subLevelList = taskMapper.findSubLevelTask(task.getTaskId());
         if(subLevelList != null && subLevelList.size() > 0){
@@ -677,6 +676,11 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(parentTaskId);
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         taskLogVO.setResult(result);
+        //查询父任务的任务名称
+        String parentTask = taskMapper.findTaskNameById(parentTaskId);
+        content = new StringBuilder("");
+        content.append(TaskLogFunction.A15.getName()).append(" ").append(parentTask).append(TaskLogFunction.A16.getName()).append(" ").append(subLevel.getTaskName());
+        saveTaskLog(subLevel,content.toString());
         return taskLogVO;
     }
 

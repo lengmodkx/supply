@@ -113,5 +113,17 @@ public interface RelationMapper {
 	 */
 	int findMenuTaskMaxOrder(String taskMenuId);
 
+	/**
+	 * 查询某个项目下的所有分组信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Relation> findAllGroupInfoByProjectId(String projectId);
 
+	/**
+	 * 查询出某个分组中的所有菜单信息
+	 * @param groupId 分组的id
+	 * @return
+	 */
+	List<Relation> findAllMenuInfoByGroupId(String groupId);
 }

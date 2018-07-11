@@ -509,4 +509,22 @@ public class ProjectController {
     public String menuList(){
         return "tk-caidanliebiao";
     }
+
+
+    @PostMapping("/searchMember")
+    public JSONObject searchMember(@RequestParam String keyword){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            UserEntity userEntity = userService.findByKey(keyword);
+            jsonObject.put("data",userEntity);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
 }

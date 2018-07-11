@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mynearthing.css}" href="../static/css/mynearthing.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mycollect.css}" href="../static/css/mycollect.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/myfile.css}" href="../static/css/myfile.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mytask.css}" href="../static/css/mytask.css">
 </head>
 <body>
@@ -31,24 +31,66 @@
   <!--近期的事-->
     <div id="near-thing" style="display: none" >
         <div class="near-thing-box boxsizing">
-            <div class="thing-title">
-                <span>近期的事  + </span><span th:text="${#lists.size(taskList)}">1</span>
+            <div class="thing-title boxsizing">
+               <div> <span>近期的事  + </span><span th:text="${#lists.size(taskList)}">1</span></div>
             </div>
             <div class="things layui-form">
-                <ul>
+                <!--任务-->
+                <ul class="rw">
                     <li class="thing-list" th:each="task : ${taskList}">
-                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                        <span class="what-thing" th:text="${task.taskName}">设计项目主界面——项目名称</span>
-                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                       <div class="urgent-state"></div>
+                        <div class="things-info boxsizing">
+                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                            <div class="rw-span-wrap">
+                                <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                <span class="what-thing" >属于5d管理系统</span>
+                            </div>
+                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            <span class="thing-what-date">—</span>
+                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                           </div>
+
+                    </li>
+                </ul>
+                <!--日程-->
+                <ul class="rc">
+                    <li class="thing-list" th:each="task : ${taskList}">
+                        <div class="things-info boxsizing">
+                            <img src="../static/image/rc.png" th:src="@{/image/rc.png}">
+                            <div class="rc-span-wrap">
+                                <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                <span class="what-thing" >属于5d管理系统</span>
+                            </div>
+                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            <span class="thing-what-date">—</span>
+                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                        </div>
+
                     </li>
                 </ul>
             </div>
         </div>
+        <div style="display: none" class="state-tk">
+            <ul>
+                <li class="boxsizing putong">
+                    <span>普通</span>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 18px; color: #a6a6a6;"></i>
+                </li>
+                <li class="boxsizing jinji">
+                    <span>紧急</span>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 18px; color: #a6a6a6;"></i>
+                </li>
+                <li class="boxsizing very-jinji">
+                    <span>非常紧急</span>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 18px; color: #a6a6a6;"></i>
+                </li>
+            </ul>
+        </div>
     </div>
     <!--任务 页面-->
     <div id="my-task"  style="display: none" >
-        <div class="my-task-box boxsizing layui-form">
-            <div class="my-task-title">
+        <div class="my-task-box  layui-form">
+            <div class="my-task-title boxsizing">
                 <div class="my-task-title-left">
                     <span class="now">我执行的</span>
                     <span>我创建的</span>
@@ -56,9 +98,12 @@
                 </div>
                 <div class="my-task-title-right">
                     <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
-                    <span class="yxjpx">按优先级排序</span>
-
-
+                    <select name="" lay-verify="">
+                        <option value="" selected>按优先级排序</option>
+                        <option value="">按截止时间排序</option>
+                        <option value="" >按创建时间最近排序</option>
+                        <option value="">按项目名称排序</option>
+                    </select>
                     <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
                     <select name="" lay-verify="">
                         <option value="" selected>未完成</option>
@@ -72,51 +117,55 @@
             <div class="things-wrap">
                 <div class="things layui-form">
                     <ul>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
-                        </li>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
+                        <li class="thing-list" th:each="task : ${taskList}">
+                            <div class="urgent-state"></div>
+                            <div class="things-info boxsizing">
+                                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                <div class="rw-span-wrap">
+                                    <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                    <span class="what-thing" >属于5d管理系统</span>
+                                </div>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                <span class="thing-what-date">—</span>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            </div>
                         </li>
                     </ul>
 
                 </div>
                 <div class="things layui-form" style="display: none">
                     <ul>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
+                        <li class="thing-list" th:each="task : ${taskList}">
+                            <div class="urgent-state"></div>
+                            <div class="things-info boxsizing">
+                                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                <div class="rw-span-wrap">
+                                    <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                    <span class="what-thing" >属于5d管理系统</span>
+                                </div>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                <span class="thing-what-date">—</span>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            </div>
+
                         </li>
                     </ul>
 
                 </div >
                 <div class="things layui-form" style="display: none">
                     <ul>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
-                        </li>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
-                        </li>
-                        <li class="thing-list">
-                            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                            <span class="what-thing">设计项目主界面——项目名称</span>
-                            <span class="dt">dt-12</span>
-                            <span class="thing-what-date">6月10日 14:14</span>
+                        <li class="thing-list" th:each="task : ${taskList}">
+                            <div class="urgent-state"></div>
+                            <div class="things-info boxsizing">
+                                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                <div class="rw-span-wrap">
+                                    <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                    <span class="what-thing" >属于5d管理系统</span>
+                                </div>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                <span class="thing-what-date">—</span>
+                                <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            </div>
                         </li>
                     </ul>
 
@@ -127,6 +176,7 @@
 
 
         </div>
+    </div>
     </div>
     <!--日程页面-->
     <div id="my-scheduling"  style="display: none" >
@@ -254,17 +304,6 @@
             <div class="file-toper">
                 <span class="now icreated">我创建的</span><span class="ipartin">我参与的</span>
             </div>
-            <div class="file-title">
-                <div class="layui-row">
-                    <div class="layui-col-md2 layui-col-lg-2 file-name">名称</div>
-                    <div class="layui-col-md4 layui-col-lg-4 file-size">大小</div>
-                    <div class="layui-col-md4 layui-col-lg-4 file-time">更新时间</div>
-                    <div class="layui-col-md2 layui-col-lg-2 file-style">
-                        <img src="../static/image/jggpb.png" th:src="@{/image/jggpb.png}" />
-                        <img src="../static/image/lpb.png" th:src="@{/image/lpb.png}" />
-                    </div>
-                </div>
-            </div>
             <!--没有文件-->
             <div class="no-file" style="display: none">
                 <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}" />
@@ -272,30 +311,30 @@
             </div>
             <!--有文件-->
             <div class="have-file">
-                <div class="i-create">
-                    <div class="layui-row">
-                        <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >6.5任务</div>
-                        <div class="layui-col-md4 layui-col-lg-4 file-size">2.3M</div>
-                        <div class="layui-col-md4 layui-col-lg-4 file-time">6月1日</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-operate">
-                            <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
-                            <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="i-in" style="display: none">
-                    <div class="layui-row">
-                        <div class="layui-col-md2 layui-col-lg-2 file-name"><input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >参与任务</div>
-                        <div class="layui-col-md4 layui-col-lg-4 file-size">4.7M</div>
-                        <div class="layui-col-md4 layui-col-lg-4 file-time">7月2日</div>
-                        <div class="layui-col-md2 layui-col-lg-2 file-operate">
-                            <i class="layui-icon layui-icon-down show-operate" style="font-size: 18px; color: #ADADAD;"></i>
-                            <i class="layui-icon layui-icon-download-circle download" style="font-size: 18px; color: #ADADAD;"></i>
-                        </div>
-                    </div>
-                </div>
 
-
+                <!--缩略图模式-->
+                <div class="img-show-wrap">
+                    <ul class="img-show clearfix" id="fileListUl">
+                        <li class="boxsizing new-file-wrap" style="display: none">
+                            <div class="one-file">
+                                <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
+                            </div>
+                            <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
+                        </li>
+                        <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
+                            <div class="one-file boxsizing fileList">
+                                <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
+                                <img src="../static/image/nofile.png" th:class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                                <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
+                                <i class="layui-icon layui-icon-about img-show-more" style="font-size: 20px; color: #ADADAD;"></i>
+                                <!--<div class="img-show-operate">-->
+                                <!--<i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="one-file-name" th:text="${file.fileName}" th:data="${file.fileId}">图片222.zip</div>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!--文件菜单 弹框-->
             <div class="scheduling-menu boxsizing layui-form" style="display:none;">
@@ -336,21 +375,55 @@
         </div>
     </div>
     <!--收藏页面-->
-    <div id="my-collect"  style="display: none" >
+    <div id="my-collect"  style="display: block" >
         <div class="my-collect">
             <div class="collect-head">
                 <span class="now">所有收藏</span> <span>任务</span> <span>分享</span>
                 <span>文件</span> <span>日程</span>
-                <div class="collect-search">
-                    <input type="text" class="boxsizing">
-                    <i class="layui-icon layui-icon-search" style="font-size: 18px; color: #E2E2E2;"></i>
-                </div>
             </div>
             <!--没有收藏-->
-            <div class="no-collect">
+            <div class="no-collect" style="display: none">
                 <img src="../static/image/nocollect.png" th:src="@{/image/nocollect.png}" />
                 <p>还没有任何收藏</p>
                 <p>你可以收藏有价值的任务、分享、文件、日程和有关账册！</p>
+            </div>
+            <!--有收藏-->
+            <div class="has-collect">
+                <ul class="rc-collect">
+                    <li>
+                        <div class="collect-item-top">
+                            <span class="collect-item-top-date">7月10日</span>
+                            <span class="collect-item-top-remove">取消收藏</span>
+                        </div>
+                        <div class="collect-item-middle clearfix">
+                            <div class="collect-item-middle-img">
+                                <img src="../static/image/rcwhite.png" th:src="@{/image/rcwhite.png}">
+                            </div>
+                            <p class="collect-item-name">收藏日程名称</p>
+                        </div>
+                        <div class="collect-item-bottom">
+                            <span>1月8日 12:00</span>
+                            <span>—</span>
+                            <span>2月8日 12:00</span>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="rw-collect">
+                    <li>
+                        <div class="collect-item-top">
+                            <span class="collect-item-top-date">7月10日</span>
+                            <span class="collect-item-top-remove">取消收藏</span>
+                        </div>
+                        <div class="collect-item-middle clearfix">
+                            <div class="collect-item-middle-img">
+                                <img src="../static/image/rcwhite.png" th:src="@{/image/rcwhite.png}">
+                            </div>
+                            <img class="collect-item-touxiang" src="../static/image/lpb.png" th:src="@{/image/lpb.png}">
+                            <p class="collect-item-name">收藏任务名称</p>
+                            <div class="collect-item-right">昨天18:00</div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

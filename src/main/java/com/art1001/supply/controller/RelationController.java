@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 项目，任务分组，菜单之间的关系处理
@@ -404,6 +405,46 @@ public class RelationController {
             relationService.menuAllTaskToRecycleBin(relationId);
         } catch (Exception e) {
             log.error("系统异常,移入回收站失败!", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取该项目下的所有分组信息
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("projectAllGroup")
+    @ResponseBody
+    public JSONObject projectAllGroup(String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Relation> groupList = relationService.findAllGroupInfoByProjectId(projectId);
+            jsonObject.put("data",groupList);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询出某个分组下的所有菜单信息
+     * @param groupId
+     * @return
+     */
+    @PostMapping("groupAllMenu")
+    @ResponseBody
+    public JSONObject groupAllMenu(String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Relation> menuList = relationService.findAllMenuInfoByGroupId(groupId);
+            jsonObject.put("data",menuList);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;

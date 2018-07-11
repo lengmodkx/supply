@@ -149,4 +149,18 @@ public interface RelationService {
 	 * @param taskMenuId 菜单id
 	 */
 	int findMenuTaskMaxOrder(String taskMenuId);
+
+	/**
+	 * 查询出某个项目下的所有分组信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Relation> findAllGroupInfoByProjectId(String projectId);
+
+	/**
+	 * 查询出某个分组下的所有菜单信息
+	 * @param groupId 分组id
+	 * @return
+	 */
+	List<Relation> findAllMenuInfoByGroupId(String groupId);
 }

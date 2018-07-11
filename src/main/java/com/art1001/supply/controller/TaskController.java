@@ -18,6 +18,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
@@ -82,8 +83,63 @@ public class TaskController {
     @Resource
     private RelationService relationService;
 
+    /** 项目的逻辑层接口 */
+    @Resource
+    private ProjectService projectService;
+
+    /** 用于订阅推送消息 */
     @Resource
     private SimpMessagingTemplate messagingTemplate;
+
+
+    /**
+     * 在日历上创建任务
+     * @param model
+     * @return
+     */
+    @GetMapping("createCalendarTasktk.html")
+    public String createCalendarTasktk(Model model){
+        try {
+            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+            //查询出该用户所参与的项目
+            model.addAttribute("projectList",projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId()));
+        } catch (Exception e){
+            log.error("系统异常,{}",e);
+            throw new SystemException(e);
+        }
+        return "tk-calendar-create-task";
+    }
+
+    /**
+     * 在日历上创建任务时获取项目的人员信息
+     * @param projectId 项目id
+     * @return
+     */
+    @GetMapping("addPeople.html")
+    public String addPeople(String projectId,String executorId,String type,Model model){
+        try {
+            List<UserEntity> userList = userService.findProjectAllMember(projectId);
+            for (int i = 0;i < userList.size();i++){
+                //如果没有执行者跳出循环
+                if(StringUtils.isEmpty(executorId)){
+                    break;
+                }
+                //查询完所有的成员信息后 过滤掉当前的执行者信息
+                if(userList.get(i).getId().equals(executorId)){
+                    userList.remove(i);
+                }
+            }
+            model.addAttribute("data",userList);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败!");
+            throw new SystemException(e);
+        }
+        if(type.equals("1")){
+            return "tk-search-executor";
+        } else{
+            return "tk-search-people";
+        }
+    }
 
 
     /**
@@ -365,7 +421,7 @@ public class TaskController {
             messagingTemplate.convertAndSend("/topic/"+task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (ServiceException e){
             jsonObject.put("result",0);
-            jsonObject.put("msg","必须完成所有子任务!");
+            jsonObject.put("msg",e.getMessage());
             return jsonObject;
         } catch (Exception e){
             log.error("任务状态修改失败! 任务id: ,{}, \t 修改前状态:{},{}",task.getTaskId(),task.getTaskStatus(),e);
@@ -996,26 +1052,16 @@ public class TaskController {
             List<Task> taskList = taskRelation.get("relationTask");
             //该任务关联的文件
             List<File> fileList = taskRelation.get("relationFile");
-            if(taskList != null && taskList.size() > 0){
-                model.addAttribute("relationTask",taskList);
-            } else{
-                model.addAttribute("relationTask","无关联任务数据");
-            }
-            if(fileList != null && fileList.size() > 0){
-                jsonObject.put("relationFile",fileList);
-                model.addAttribute("relationFile",fileList);
-            } else{
-                model.addAttribute("relationFile","无关联文件数据");
-            }
+            model.addAttribute("relationTask",taskList);
+            jsonObject.put("relationFile",fileList);
+            model.addAttribute("relationFile",fileList);
             //查询出该任务的创建者信息
             UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
             model.addAttribute("taskCreate",taskCreate);
             //返回当前任务的所有子任务信息
             List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
-            if(subLevelTask != null & subLevelTask.size() > 0){
-                jsonObject.put("subLevelTask",subLevelTask);
-                model.addAttribute("subLevelTask",subLevelTask);
-            }
+            jsonObject.put("subLevelTask",subLevelTask);
+            model.addAttribute("subLevelTask",subLevelTask);
             //拿到该任务的执行者信息
             UserEntity executorInfo = userService.findExecutorByTask(task.getTaskId());
             if(executorInfo != null){
@@ -1028,11 +1074,7 @@ public class TaskController {
             }
             //查询出该任务的参与者信息
             List<UserEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者",executorInfo.getId());
-            if(participantList != null){
-                model.addAttribute("participantList",participantList);
-            } else{
-                model.addAttribute("participantList",null);
-            }
+            model.addAttribute("participantList",participantList);
             //查询出项目下的成员
             List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
             if(projectAllMember != null && projectAllMember.size() > 0){
@@ -1046,12 +1088,14 @@ public class TaskController {
                 projectAllMember.add(userEntity1);
                 model.addAttribute("members",projectAllMember);
             }
-            //查询出该任务所在的位置信息
-            Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
-            //根据菜单信息查询出该任务的所在的分组 和 项目信息
-            TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
-            model.addAttribute("menuRelation",menuRelation);
-            model.addAttribute("taskMenuVo",taskMenuVO);
+            if(taskById.getParentId() == null){
+                //查询出该任务所在的位置信息
+                Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
+                //根据菜单信息查询出该任务的所在的分组 和 项目信息
+                TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
+                model.addAttribute("menuRelation",menuRelation);
+                model.addAttribute("taskMenuVo",taskMenuVO);
+            }
             //查询出该任务的日志信息
             List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
             Collections.reverse(logList);

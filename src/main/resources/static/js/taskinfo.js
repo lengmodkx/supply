@@ -1,9 +1,6 @@
 
 var zxz=false;
 
-
-
-
 layui.use('form', function() {
     var form = layui.form;
     //监听提交
@@ -79,27 +76,51 @@ layui.use('form', function() {
      * 重做和完成任务
      */
     form.on('checkbox(taskComplete)', function(data){
-        var url = "/task/resetAndCompleteTask";
-        var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
-        $.post(url,args,function (data) {
-            if(taskStatus == '完成'){
-                $('.add-child-task').show();
-            } else{
-                $('.add-child-task').hide();
-            }
-            if(data.result == 0){
-                layer.msg(data.msg);
-                $("#taskComplete").attr("checked",false);
-                form.render();
-                return false;
-            }
-            if(taskStatus == '未完成'){
-                taskStatus = '完成';
-            } else if (taskStatus == '完成'){
-                taskStatus = "未完成";
-            }
-            getLog(data.taskLog);
-        });
+        if(parentId == 0){
+            var url = "/task/resetAndCompleteTask";
+            var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
+            $.post(url,args,function (data) {
+                if(taskStatus == '完成'){
+                    $('.add-child-task').show();
+                } else{
+                    $('.add-child-task').hide();
+                }
+                if(data.result == 0){
+                    layer.msg(data.msg);
+                    $("#taskComplete").attr("checked",false);
+                    form.render();
+                    return false;
+                }
+                if(taskStatus == '未完成'){
+                    taskStatus = '完成';
+                } else if (taskStatus == '完成'){
+                    taskStatus = "未完成";
+                }
+                getLog(data.taskLog);
+            });
+        } else{
+            var url = "/task/resetAndCompleteSubLevelTask";
+            var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
+            $.post(url,args,function (data) {
+                if(taskStatus == '完成'){
+                    $('.add-child-task').show();
+                } else{
+                    $('.add-child-task').hide();
+                }
+                if(data.result == 0){
+                    layer.msg(data.msg);
+                    $("#taskComplete").prop('checked',true);
+                    form.render();
+                    return false;
+                }
+                if(taskStatus == '未完成'){
+                    taskStatus = '完成';
+                } else if (taskStatus == '完成'){
+                    taskStatus = "未完成";
+                }
+                getLog(data.taskLog);
+            },"json");
+        }
     });
 
 
@@ -867,9 +888,14 @@ $('.zan img').click(function (e) {
         $(".nozan").show();
         $(".cancel").hide()
    }
+});
 
-
-
+/**
+ * 点击子任务右边的箭头的时候跳转到 子任务详情页
+ */
+$('.go-detail').click(function () {
+    var childTaskId = $(this).prev().prev().attr('id');
+    location.href = '/task/initTask.html?taskId='+childTaskId+'&projectId='+ projectId;
 });
 
 

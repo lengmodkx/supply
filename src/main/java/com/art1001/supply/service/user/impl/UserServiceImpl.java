@@ -268,4 +268,9 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
         map.put("uId",uId);
         return userMapper.reverseFindUser(map);
     }
+
+    @Override
+    public UserEntity findByKey(String keyword) {
+        return userMapper.findByKey(keyword);
+    }
 }

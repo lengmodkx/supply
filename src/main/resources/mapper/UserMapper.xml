@@ -488,4 +488,38 @@ and tb_user.u_id = #{id}
 		</foreach>
 		)
 	</select>
+
+
+	<select id="findByKey" parameterType="String" resultMap="userMap">
+		SELECT u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			u.u_organization_id,
+			u.u_partment_id,
+			u.u_organization_lable,
+			r.r_id,
+			r.r_name,
+			r.r_key,
+			r.r_status,
+			r.r_description,
+			r.r_create_time,
+			r.r_update_time,
+			i.u_sex,
+			i.u_birthday,
+			i.u_image,
+			i.u_telephone,
+			i.u_email,
+			i.u_address,
+			i.u_create_time
+		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
+		where u.u_account_name like CONCAT('%',#{keyword},'%')
+	</select>
 </mapper>
