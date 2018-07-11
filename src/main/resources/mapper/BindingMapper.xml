@@ -6,7 +6,7 @@
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<result column="bind_id" property="bindId" jdbcType="VARCHAR" />
-		<result column="public_type" property="publicType" jdbcType="" />
+		<result column="public_type" property="publicType" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
