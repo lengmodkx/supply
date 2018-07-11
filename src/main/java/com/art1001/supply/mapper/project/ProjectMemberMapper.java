@@ -55,8 +55,13 @@ public interface ProjectMemberMapper {
 	 * 
 	 * @return
 	 */
-	List<ProjectMember> findProjectMemberAllList();
+	List<ProjectMember> findProjectMemberAllList(ProjectMember projectMember);
 
 	List<Project> findProjectByMemberId(@Param("memberId") String memberId, @Param("projectDel") Integer projectDel);
+
+	/**
+	 * 根据项目id 和 用户id 查询
+	 */
+	List<ProjectMember> findByProjectIdAndMemberId(@Param("projectId") String projectId, @Param("memberId") String memberId);
 
 }

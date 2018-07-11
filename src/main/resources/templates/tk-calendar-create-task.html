@@ -22,35 +22,25 @@
                 <div class=" style-box">
                     <i class="layui-icon layui-icon-down down" style="font-size: 16px; color: gray;"></i>
                     <h3>项目</h3>
-                    <select name=""  lay-filter="project">
-                        <option value="">请选择</option>
-                        <optgroup label="星标项目">
-                            <option value="bim新手指导？">bim新手指导？</option>
-                        </optgroup>
-                        <optgroup label="非星标项目">
-                            <option value="你的任务">你的任务</option>
-                            <option value="你的任务">你的任务？</option>
-                        </optgroup>
+                    <select id="project"  lay-filter="project">
+                        <option value="" selected="selected">请选择</option>
+                        <option th:value="${project.projectId}" th:each="project:${projectList}" th:text="${project.projectName}"></option>
                     </select>
                 </div>
                 <div class="line"></div>
                 <div class=" style-box">
                     <i class="layui-icon layui-icon-down down" style="font-size: 16px; color: gray;"></i>
                     <h3>分组</h3>
-                    <select name="city" lay-verify="" lay-filter="groups">
-                        <option value="ui">ui</option>
-                        <option value="前端">前端</option>
-                        <option value="Java">Java</option>
+                    <select id="city" lay-verify="" lay-filter="groups">
+                        <option value="" selected="selected">请选择</option>
                     </select>
                 </div>
                 <div class="line"></div>
                 <div class=" style-box">
                     <i class="layui-icon layui-icon-down down" style="font-size: 16px; color: gray;"></i>
                     <h3>列表</h3>
-                    <select name="city" lay-verify="" lay-filter="list">
-                        <option value="待处理">待处理</option>
-                        <option value="进行中">进行中</option>
-                        <option value="已完成">已完成</option>
+                    <select id="menu" lay-verify="" lay-filter="list">
+                        <option value="" selected="selected">请选择</option>
                     </select>
                 </div>
                 <div class="line"></div>
@@ -63,11 +53,11 @@
             <div class="content-title-box">
                 <img src="../static/image/imgs.jpg" th:src="@{/image/close.png}" />
                 <div>
-                    <span class="title-one">过程过控平台</span>
+                    <span class="title-one">请选择</span>
                     <span>·</span>
-                    <span class="title-two">测试分组</span>
+                    <span class="title-two">选择分组</span>
                     <span>·</span>
-                    <span class="title-three">待处理</span>
+                    <span class="title-three">选择菜单</span>
                 </div>
                 <i class="layui-icon layui-icon-down" style="font-size: 16px; color: gray;"></i>
             </div>
@@ -77,9 +67,9 @@
 
         <div class="who-and-time">
             <div class="who-wrap">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                <input type="hidden" th:value="${executor.id}"/>
-                <span th:text="${executor.userName}"></span>
+                <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}"/>
+                <input type="hidden" th:value="${user.id}"/>
+                <span th:text="${user.userName}"></span>
                 <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
             </div>
             <div class="no-renling">
@@ -88,33 +78,33 @@
             </div>
             <div class="time-wrap">
                 <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-                <input type="text" class="layui-input kaishi-time" id="beginTimes" placeholder="设置开始时间" th:value = "${#dates.format(task.startTime,'yyyy-MM-dd HH:mm')}"/>
+                <input type="text" class="layui-input kaishi-time" id="beginTimes" placeholder="设置开始时间"/>
             </div>
             <div class="time-wrap">
                 <img src="../static/image/overtime.png" th:src="@{/image/overtime.png}" />
-                <input type="text" class="layui-input jieshu-time" id="overTimes" placeholder="设置截止时间" th:value="${#dates.format(task.endTime,'yyyy-MM-dd HH:mm')}" />
+                <input type="text" class="layui-input jieshu-time" id="overTimes" placeholder="设置截止时间"/>
             </div>
 
             <div class="no-repeat">
-                <input type="hidden" th:value="${task.repeat}" id = "oldRepeat"/>
+                <input type="hidden" id = "oldRepeat"/>
                 <img class="repeat-img" src="../static/image/norepeat.png" th:src="@{/image/norepeat.png}" />
                 <select name="repeat" lay-verify="" lay-filter = "repeat">
-                    <option value="不重复" th:selected="${task.repeat == '不重复'}" th:text="${task.repeat}">不重复</option>
-                    <option value="每天重复" th:selected ="${task.repeat == '每天重复'}">每天重复</option>
-                    <option value="每周重复" th:selected ="${task.repeat == '每周重复'}" >每周重复</option>
-                    <option value="每月重复" th:selected="${task.repeat == '每月重复'}">每月重复</option>
-                    <option value="每年重复" th:selected="${task.repeat == '每年重复'}" >每年重复</option>
-                    <option value="工作日重复" th:selected="${task.repeat == '工作日重复'}" >工作日重复</option>
+                    <option value="不重复">不重复</option>
+                    <option value="每天重复">每天重复</option>
+                    <option value="每周重复" >每周重复</option>
+                    <option value="每月重复">每月重复</option>
+                    <option value="每年重复">每年重复</option>
+                    <option value="工作日重复">工作日重复</option>
                 </select>
             </div>
 
             <div class="no-remand ">
                 <img class="remand-img" src="../static/image/noremand.png" th:src="@{/image/noremand.png}" />
-                <input type="hidden" th:value="${task.remind}" id = "oldRemind"/>
+                <input type="hidden" id = "oldRemind"/>
                 <select name="remand" lay-verify="" lay-filter = "remind">
-                    <option value="不提醒" th:selected="${task.remind == '不提醒'}" >不提醒</option>
-                    <option value="任务开始时提醒" th:selected="${task.remind == '任务开始时提醒'}">任务开始时提醒</option>
-                    <option value="任务截止时提醒" th:selected="${task.remind == '任务截止时提醒'}" >任务截止时提醒</option>
+                    <option value="不提醒">不提醒</option>
+                    <option value="任务开始时提醒">任务开始时提醒</option>
+                    <option value="任务截止时提醒">任务截止时提醒</option>
                 </select>
             </div>
         </div>
@@ -124,7 +114,7 @@
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix">
             <div class="one-work-people">
-                <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+                <img src="../static/image/add.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
             <div class="add-work-people">
@@ -136,10 +126,10 @@
     </div>
     <div class="footer boxsizing">
         <div class="foot-left">
-            <img src="../static/image/suo.png" >
+            <img src="../static/image/suo.png">
             <span class="click-see">隐私模式:</span>
-            <span class="set-see all-can-see">所有成员可见</span>
-            <span class="set-see cyz-can-see" style="display: none">仅参与者可见</span>
+            <span class="set-see all-can-see" th:value="1">所有成员可见</span>
+            <span class="set-see cyz-can-see" style="display: none" th:value="0">仅参与者可见</span>
         </div>
         <div class="create-ok">创建</div>
 
@@ -159,16 +149,52 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
-            return false;
+            // layer.msg(JSON.stringify(data.field));
+            // return false;
         });
+
+        /**
+         * 当选中了项目时 根据选中的项目获取分组信息
+         */
         form.on('select(project)', function(data){
-            console.log(data.value); //得到被选中的值
-            project=data.value
+            //console.log(data.value); //得到被选中的值
+            project=data.value;
+            if(project == ''){
+                return false;
+            }
+            var url = "/relation/projectAllGroup";
+            var args = {"projectId":project};
+            var content = '';
+            $.post(url,args,function(data){
+                var group = data.data;
+                for(var i = 0;i < group.length;i++){
+                        content+= '<option value="' + group[i].relationId + '">' + group[i].relationName + '</option>'
+                }
+                $('#city').append(content);
+                form.render('select');
+            },"json");
         });
+
+        /**
+         * 当选中了分组的时候触发事件
+         */
         form.on('select(groups)', function(data){
             console.log(data.value); //得到被选中的值
-            groups=data.value
+            groups=data.value;
+            if(groups == ''){
+                return false;
+            }
+            var url = "/relation/groupAllMenu";
+            var args = {"groupId":groups};
+            var content = '';
+            $.post(url,args,function(data){
+                var menu = data.data;
+                for(var i = 0;i < menu.length;i++){
+                        content+= '<option value="' + menu[i].relationId + '">' + menu[i].relationName + '</option>'
+                }
+                $('#menu').append(content);
+                form.render('select');
+            },"json");
         });
         form.on('select(list)', function(data){
             console.log(data.value); //得到被选中的值
@@ -199,12 +225,12 @@
         laydate.render({
             elem: '#beginTimes', //指定元素
             type:'datetime',
-            format:'M月d日 H:00'
+            format:'yyyy-MM-dd HH:00'
         });
         laydate.render({
             elem: '#overTimes', //指定元素
             type:'datetime',
-            format:'M月d日 H:00'
+            format:'yyyy-MM-dd HH:00'
         });
     });
     $(function () {
@@ -219,9 +245,9 @@
         });
         //点击 选择位置 的确定按钮
         $(".create-calendar-task-ok").click(function (e) {
-            $(".title-one").text(project);
-            $(".title-two").text(groups);
-            $(".title-three").text(list);
+            $(".title-one").text($("#project").find("option:selected").text());
+            $(".title-two").text($("#city").find("option:selected").text());
+            $(".title-three").text($("#menu").find("option:selected").text());
             $(".select-position").hide();
             e.stopPropagation()
 
@@ -232,6 +258,7 @@
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             parent.layer.close(index); //再执行关闭
         });
+
         //所有成员可见  参与者可见
         $(".click-see").click(function () {
             if ($(".all-can-see").is(":visible")) {
@@ -256,35 +283,142 @@
         // 点击 x 出现待认领
         $(".remove-who-wrap").click(function () {
             $(".who-wrap").hide();
-            $(".no-renling").show()
+            $(".no-renling").show();
         });
         //点击添加人员 出现 弹框
         $(".add-work-people img").click(function () {
-            addpeople()
-        })
+            if(project == undefined){
+                layer.msg("必须选择一个项目!");
+                return false;
+            }
+            var executorId = $('.who-wrap input[type="hidden"]').val();
+            addpeople(executorId,'2');
+        });
+
+        //点击待认领的时候
+        $('.no-renling').click(function () {
+            if(project == undefined){
+                layer.msg("必须选择一个项目!");
+                return false;
+            }
+            addpeople('','1');
+        });
 
     });
 
     //添加人员 弹框
-    function addpeople() {
-        layui.use('layer', function(){
+    function addpeople(executorId,type) {
+        layui.use('layer', function () {
             var layer = layui.layer;
             layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
-                offset:[0,0],
-                area:['252px','360px'],
+                offset: [0, 0],
+                area: ['252px', '360px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,
                 shade: [0.1, '#fff'],
                 anim: 1,  //动画 0-6
-                content: "tk-search-people.html"
+                content: "addPeople.html?projectId=" + project + "&executorId="+executorId+"&type="+type
             });
         });
     }
 
+    /**
+     * 更新任务的执行者的头像,名字,id
+     * @param id 新的执行者的id
+     * @param name 新的执行者的名字
+     * @param img 新的执行者的头像
+     */
+    function changeExecutor(id,name,img){
+        $('.who-wrap input[type="hidden"]').val(id);
+        $('.who-wrap').children('img').attr('src',img);
+        $('.who-wrap').children('span').html(name);
+        $(".who-wrap").css("display","block");
+    }
 
+    /**
+     * 添加添加选择完成后的参与者小头像
+     * @param id 参与者id
+     * @param name 参与者名称
+     * @param img 参与者头像
+     */
+    function addMember(id,name,img){
+        var content = '';
+        if(id != ''){
+            for(var i = 0;i < id.length;i++){
+                content += '<div value = "' + id[i] + '" class="one-work-people">'+
+                    '<input type="hidden" value="' + name[i] + '"  />'+
+                    '<img src="'+ img[i] +'">'+
+                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                    '</div>';
+            }
+        }
+        $(".add-work-people").before(content);
+    }
+
+    /**
+     * 点击参与者右上角的 X 的时候 移除该参与者
+     */
+    $("html").on("click",".remove-work-people",function () {
+       $(this).parent().remove();
+    });
+
+    /**
+     * 单击创建任务时的触发事件
+     */
+    $('.create-ok').click(function () {
+        if(list == undefined || list == ''){
+            layer.msg("请您选择一个任务菜单");
+            return false;
+        }
+        //获取选中的参与者信息
+        var members = [];
+        $('.work-people .one-work-people').each(function () {
+            members.push($(this).attr('value'));
+        });
+        //设置任务的执行者
+        var executor = $('.who-wrap input[type="hidden"]').val();
+        //设置任务开始时间
+        var beginTime = $('#beginTimes').val();
+        if(beginTime != null && beginTime != ''){
+            var startTime = new Date(beginTime.toString()).getTime();
+        } else {
+            startTime = null;
+        }
+        //设置任务结束时间
+        var overTime = $('#overTimes').val();
+        if(overTime != null && overTime != ''){
+            var endTime = new Date(overTime.toString()).getTime();
+        } else{
+            endTime = null;
+        }
+        //设置任务的内容
+        var taskName = $(".task-neirong ").val();
+        //设置重复模式
+        var repeat = $('[name = "repeat"]').val();
+        //设置任务提醒
+        var remind = $('[name="remand"]').val();
+        //设置隐私模式
+        var privacyPattern = "";
+        if($('#privacyPattern').prop('checked')) {
+            privacyPattern = "1";
+        } else{
+            privacyPattern = "0";
+        }
+        var url = "/task/saveTask";
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor};
+        $.post(url,args,function(data){
+            if(data.result == 1){
+                layer.msg("任务创建成功!");
+                parent.layer.closeAll();
+            } else{
+                layer.msg("任务创建失败!");
+            }
+        },"json");
+        return false;
+    });
 
 </script>
 </html>

@@ -271,4 +271,20 @@
 	<select id="findMenuTaskMaxOrder" resultType="java.lang.Integer">
 		select IFNULL(max(`order`),0) from prm_task where prm_task.task_menu_id = #{taskMenuId}
 	</select>
+
+	<!-- 查询出某个项目下的某个分组信息 -->
+	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" ></include>
+		from prm_relation
+		where parent_id = '0' and project_id = #{projectId}
+	</select>
+
+	<!-- 查询出某个分组中的所有菜单 -->
+	<select id="findAllMenuInfoByGroupId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" ></include>
+		from prm_relation
+		where parent_id = #{groupId}
+	</select>
 </mapper>

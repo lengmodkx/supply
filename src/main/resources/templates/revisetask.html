@@ -21,7 +21,7 @@
     </div>
 
     <div class="revise-task boxsizing ">
-        <div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>
+        <!--<div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>-->
         <div class="task-name">
             <input type="checkbox" name="" title="" lay-filter = "taskComplete" lay-skin="primary" class="is-sure" th:checked="${task.taskStatus == '完成'}" th:id="taskComplete">
             <span>设计修改任务界面</span>
@@ -154,10 +154,11 @@
 
         </div>
         <div class="heng-line"></div>
-        <div class="child-task combox">
+        <div class="child-task combox" th:if="${task.parentId == '0'}">
             <img src="../static/image/zrw.png" th:src="@{/image/zrw.png}" />
             <span>子任务</span>
         </div>
+
         <!--具体子任务-->
         <div th:id="subTask">
             <div class="child-task-list" th:each="subTask:${subLevelTask}">
@@ -173,7 +174,7 @@
         </div>
 
         <!--添加子任务-->
-        <div class="add-child-task combox">
+        <div class="add-child-task combox" th:if="${task.parentId == '0'}">
             <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
             <span>添加子任务</span>
         </div>
@@ -350,6 +351,7 @@
 
     //订阅消息
     function subscribe() {
+        var form = layui.form;
         stompClient.subscribe('/topic/'+taskId, function (response) {
             var returnData = JSON.parse(response.body);
             var taskLog = JSON.parse(returnData.responseMessage);
@@ -367,13 +369,13 @@
             }
             if(taskLog.type == '完成了任务'){
                 if(taskLog.object.Status == '完成'){
-                    $("#taskComplete").attr("checked",false);
-                    $('.add-child-task').show();
-                    //form.render();
-                } else{
                     $("#taskComplete").attr("checked",true);
+                    $('.add-child-task').show();
+                    form.render();
+                } else{
+                    $("#taskComplete").attr("checked",false);
                     $('.add-child-task').hide();
-                    //form.render();
+                    form.render();
                 }
             }
         });
@@ -404,6 +406,8 @@
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
+    //当前任务的父级id
+    var parentId = [[${task.parentId}]]
     //当前任务id
     var taskId = [[${task.taskId}]];
     //当前任务所在菜单id
@@ -421,7 +425,7 @@
 <script>
     if(taskStatus == '完成'){
         $('.add-child-task').css('display','none');
-    } else{
+    } else if(taskStatus == '未完成'){
         $('.add-child-task').css('display','block');
     }
 </script>

@@ -22,7 +22,6 @@
 <div class="content-wrap-wrap boxsizing">
    <div class="content boxsizing">
        <input type="hidden" th:value="${project.projectId}" id="projectId">
-
         <!--产品设计任务页面-->
         <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
@@ -92,20 +91,20 @@
         <span>邀请新成员</span>
     </div>
     <ul class="group-people">
-        <li class="boxsizing">
-            <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+        <li class="boxsizing" th:each="projectMember:${projectMembers}">
+            <img th:src="#{IMAGE_SERVER}+${projectMember.memberImg}">
             <div class="group-people-info">
-                <p class="people-info-name">名字</p>
-                <p class="people-info-email">abc1321555.com</p>
+                <p class="people-info-name" th:text="${projectMember.memberName}">名字</p>
+                <p class="people-info-email" th:text="${projectMember.memberEmail}">abc1321555.com</p>
             </div>
-            <i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;"></i>
+            <i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" th:if="${projectMember.memberLable==0}" th:data="${projectMember.id}"></i>
         </li>
     </ul>
 </div>
 <!--邀请新成员-->
 <div class="fuzhi-lianjie" style="display: none">
     <i class="layui-icon layui-icon-close close-people" style="font-size: 20px; color: #a6a6a6;"></i>
-    <div class="box-border boxsizing">
+    <div class="box-border boxsizing" th:text="${#request.getRemoteAddr()}">
         http://www.baidu.com/adkasd?fjkalsfj=kds13
     </div>
     <div class="copy-btn">复制链接</div>
@@ -153,6 +152,8 @@
 
    });
 
+   $('.creat-model-ok').click()
+
    $("#fileButton").click(function () {
        var projectId = getQueryString("projectId");
        $("#file").load("/file/list.html?projectId=" + projectId);
@@ -176,6 +177,13 @@
        var div = $('#'+taskId + ' div').first();
        $(div).children('img:eq(0)').attr('src','/image/add.png');
    }
+
+
+   $('.remove-he').click(function (e) {
+       $.post("");
+
+
+   });
 </script>
 
 

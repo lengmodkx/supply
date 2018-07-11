@@ -49,7 +49,17 @@ $(function () {
     $("#click-near-thing").click(function () {
         $("#near-thing").show().siblings().hide()
     });
+
+    /**
+     * 点击我的任务 触发事件
+     */
     $("#click-my-task").click(function () {
+        var url = '/public/myExecutorTask';
+        var args = {"status":"未完成","orderType":"1"};
+        $.post(url,args,function (data) {
+            for (var i = 0;i < data.length;i++){
+            }
+        },"json");
         $("#my-task").show().siblings().hide()
     });
     $("#click-my-scheduling").click(function () {

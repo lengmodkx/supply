@@ -317,4 +317,24 @@ public class RelationServiceImpl implements RelationService {
 	public int findMenuTaskMaxOrder(String taskMenuId) {
 		return relationMapper.findMenuTaskMaxOrder(taskMenuId);
 	}
+
+	/**
+	 * 查询出项目下的所有分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<Relation> findAllGroupInfoByProjectId(String projectId) {
+		return relationMapper.findAllGroupInfoByProjectId(projectId);
+	}
+
+	/**
+	 * 查询出某个分组下的所有菜单信息
+	 * @param groupId 分组id
+	 * @return
+	 */
+	@Override
+	public List<Relation> findAllMenuInfoByGroupId(String groupId) {
+		return relationMapper.findAllMenuInfoByGroupId(groupId);
+	}
 }

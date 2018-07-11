@@ -90,12 +90,11 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_project_member
-		<if test="orderBy == 0">
-			order by id desc
+		where 1=1
+		<if test="projectId != null and projectId != ''">
+			and project_id = #{projectId}
 		</if>
-		<if test="orderBy == 1">
-			order by id asc
-		</if>
+		order by member_lable desc
 	</select>
 	
 	<select id="findProjectMemberById" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -104,6 +103,16 @@
 		<include refid="Base_Column_List" />
 		from prm_project_member c where id = #{id}
 
+	</select>
+
+	<select id="findByProjectIdAndMemberId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from
+			prm_project_member
+		where
+			project_id = #{projectId}
+		and member_id = #{memberId}
 	</select>
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
