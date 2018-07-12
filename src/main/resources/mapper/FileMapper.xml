@@ -23,6 +23,7 @@
 	<sql id="Base_Column_List">
 				file_id,
 				file_name,
+				ext,
 				file_url,
 				project_id,
 				member_id,
