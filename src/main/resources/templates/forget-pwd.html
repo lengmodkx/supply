@@ -38,7 +38,43 @@
     function changeCaptcha() {
         $(".pic-code").attr("src","/captcha.html");
     }
+    //点击发送验证码，按钮倒计时
+    !(function () {
+        var n=60;
+        var isSend =false;
+        $(".msg-code").click(function () {
+            if(isSend){
+                return;
+            }else {
+                getCode()
+            }
 
+        });
+        function getCode() {
+
+            isSend =true;
+            var timer= setInterval(function () {
+                n--;
+                $(".msg-code").html(n +'秒后重新发送');
+                if (n ===0){
+                    clearInterval(timer);
+                    canClick()
+                }
+            },1000);
+            if(isSend){
+                $(".msg-code").onclick="";
+                $(".msg-code").css({"background-color":"#9B9B9B","cursor":"not-allowed"});
+                $(".msg-code").html("60秒后重新发送")
+            }
+        }
+        function  canClick() {
+            isSend =false;
+            n=60;
+            $(".msg-code").html('短信验证');
+            $(".msg-code").onclick="getCode";
+            $(".msg-code").css({"background-color":"#017ECA","cursor":"pointer"})
+        }
+    })()
     $(function () {
         //点击显示隐藏密码
         // $(".seepwd").click(function () {
