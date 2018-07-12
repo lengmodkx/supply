@@ -99,6 +99,12 @@
     font-size: 14px;
     color: #a6a6a6;
 }
+.people-box li>i{
+    float: right;
+    display: none;
+    line-height: 24px;
+    margin-left: 5px;
+}
 .fuzhi-lianjie{
     width: 350px;
     height: 300px;
