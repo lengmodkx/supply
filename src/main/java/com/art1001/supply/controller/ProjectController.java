@@ -466,11 +466,14 @@ public class ProjectController {
             relation.setLable(0);
             List<Relation> taskGroups = relationService.findRelationAllList(relation);
 
-            //取第0个任务分组的菜单
-            Relation relation1 = new Relation();
-            relation1.setParentId(taskGroups.get(0).getRelationId());
-            relation1.setLable(1);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+            if(taskGroups != null && taskGroups.size() >= 0){
+                //取第0个任务分组的菜单
+                Relation relation1 = new Relation();
+                relation1.setParentId(taskGroups.get(0).getRelationId());
+                relation1.setLable(1);
+                List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+                model.addAttribute("taskMenus",taskMenu);
+            }
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(projectId);
             List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
@@ -481,7 +484,6 @@ public class ProjectController {
             model.addAttribute("project",project);
             model.addAttribute("taskGroups",taskGroups);
             model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
-            model.addAttribute("taskMenus",taskMenu);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
             model.addAttribute("projectMembers",memberAllList);
         }catch (Exception e){

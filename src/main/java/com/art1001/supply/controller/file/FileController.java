@@ -324,7 +324,7 @@ public class FileController {
             // 获取要创建文件的上级目录实体
             String parentUrl = fileService.findProjectUrl(f.getProjectId());
             // 重置文件名
-            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
             // 设置文件url
             String fileUrl = parentUrl + fileName;
             // 上传oss，相同的objectName会覆盖
@@ -332,6 +332,7 @@ public class FileController {
 
             // 设置修改后的文件名
             f.setFileName(originalFilename);
+            f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".")));
             f.setFileUrl(fileUrl);
             f.setSize(FileUtils.convertFileSize(file.getSize()));
 

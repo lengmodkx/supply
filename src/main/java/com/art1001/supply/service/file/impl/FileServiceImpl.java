@@ -90,11 +90,14 @@ public class FileServiceImpl implements FileService {
         String fileUrl = parentUrl + fileName;
         // 上传oss
         AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
+        // 获取后缀名
+        String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
 
         // 写库
         File file = new File();
         // 用原本的文件名
         file.setFileName(originalFilename);
+        file.setExt(ext);
         file.setProjectId(projectId);
         file.setFileUrl(fileUrl);
 
