@@ -332,6 +332,7 @@ public class FileController {
 
             // 设置修改后的文件名
             f.setFileName(originalFilename);
+            f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length() - 1));
             f.setFileUrl(fileUrl);
             f.setSize(FileUtils.convertFileSize(file.getSize()));
 
