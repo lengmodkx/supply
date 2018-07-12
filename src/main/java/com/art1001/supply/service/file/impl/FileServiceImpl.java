@@ -91,7 +91,7 @@ public class FileServiceImpl implements FileService {
         // 上传oss
         AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
         // 获取后缀名
-        String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length() - 1);
+        String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
 
         // 写库
         File file = new File();
