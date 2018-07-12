@@ -409,6 +409,7 @@ function groupPeopleRemove(top,left,nodeName) {
 //群组 邀请成员 弹框
 //点击邀请新成员
 $(".add-new-member").click(function (e) {
+    $('.invitation').html('');
     yaoqing();
     e.stopPropagation()
 });

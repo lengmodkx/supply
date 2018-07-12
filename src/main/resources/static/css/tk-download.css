@@ -56,13 +56,10 @@
     justify-content: center;
     align-items: center;
 }
-.download-left-box{
-    width: 230px;
-    height: 300px;
-}
+
 .download-left-name{
-    width: 230px;
-    height: 230px;
+    width: 800px;
+    height: 600px;
     display: flex;
     justify-content: center;
     align-items: center;

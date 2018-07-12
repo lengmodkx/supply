@@ -5,6 +5,7 @@
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
 		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="ext" property="ext" jdbcType="VARCHAR" />
 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
@@ -22,6 +23,7 @@
 	<sql id="Base_Column_List">
 				file_id,
 				file_name,
+				ext,
 				file_url,
 				project_id,
 				member_id,
@@ -135,6 +137,9 @@
 			<if test="fileName != null and fileName != ''">
 				and file_name = #{fileName}
 			</if>
+			<if test="ext != null and ext != ''">
+				and ext = #{ext}
+			</if>
 			<if test="fileUrl != null and fileUrl != ''">
 				and file_url = #{fileUrl}
 			</if>
@@ -216,6 +221,9 @@
 			<if test="fileName != null and fileName != ''">
 			file_name,
 			</if>
+			<if test="ext != null and ext != ''">
+				ext,
+			</if>
 			<if test="fileUrl != null and fileUrl != ''">
 			file_url,
 			</if>
@@ -261,6 +269,9 @@
 			</if>
 			<if test="fileName != null and fileName != ''">
 				#{fileName},
+			</if>
+			<if test="ext != null and ext != ''">
+				#{ext},
 			</if>
 			<if test="fileUrl != null and fileUrl != ''">
 				#{fileUrl},
@@ -308,6 +319,9 @@
 		<set>
 			<if test="fileName != null and fileName != ''">
 				file_name = #{fileName},
+			</if>
+			<if test="ext != null and ext != ''">
+				ext = #{ext},
 			</if>
 			<if test="fileUrl != null and fileUrl != ''">
 				file_url = #{fileUrl},

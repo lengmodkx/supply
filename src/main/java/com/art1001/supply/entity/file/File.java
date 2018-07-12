@@ -27,6 +27,11 @@ public class File extends BaseEntity implements Serializable {
      */
     private String fileName;
 
+    /**
+     * 文件后缀名
+     */
+    private String ext;
+
 
     /**
      * 文件路径
