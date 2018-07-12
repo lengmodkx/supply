@@ -138,5 +138,5 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	List<UserEntity> reverseFindUser(Map<String,Object> map);
 
 	//根据关键字模糊查询用户
-	UserEntity findByKey(String keyword);
+	List<UserEntity> findByKey(String keyword);
 }

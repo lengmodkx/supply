@@ -104,5 +104,5 @@ public interface UserService {
 	List<UserEntity> reverseFindUser(String projectId,String[] uId);
 
 	//根据关键字模糊查询用户
-	UserEntity findByKey(String keyword);
+	List<UserEntity> findByKey(String keyword);
 }

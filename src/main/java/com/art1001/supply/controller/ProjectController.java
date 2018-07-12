@@ -317,6 +317,7 @@ public class ProjectController {
 
                 jsonObject.put("result",1);
                 jsonObject.put("msg","添加成功");
+                jsonObject.put("data",projectMemberService.findByProjectId(projectId));
             }
         }catch (Exception e){
             throw new AjaxException(e);
@@ -507,6 +508,18 @@ public class ProjectController {
         return "addtask";
     }
 
+    @GetMapping("/removePeople.html")
+    public String removePeople(@RequestParam String nodeName,Model model){
+        try {
+            model.addAttribute("nodeName",nodeName);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
+        return "tk-group-remove";
+    }
+
+
 
     @GetMapping("/menuList.html")
     public String menuList(){
@@ -519,10 +532,11 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/searchMember")
+    @ResponseBody
     public JSONObject searchMember(@RequestParam String keyword){
         JSONObject jsonObject = new JSONObject();
         try{
-            UserEntity userEntity = userService.findByKey(keyword);
+            List<UserEntity> userEntity = userService.findByKey(keyword);
             jsonObject.put("data",userEntity);
             jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
@@ -538,6 +552,7 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/deleteProjectMember")
+    @ResponseBody
     public JSONObject deleteProjectMember(@RequestParam String id){
         JSONObject jsonObject = new JSONObject();
         try{
@@ -549,5 +564,8 @@ public class ProjectController {
         }
         return jsonObject;
     }
+
+
+
 
 }
