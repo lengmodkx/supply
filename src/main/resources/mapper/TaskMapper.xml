@@ -31,6 +31,10 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project">
+			<id property="projectId" column="project_id"></id>
+			<result property="projectName" column="project_name"></result>
+		</association>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
@@ -60,6 +64,36 @@
 				task_del,
 				create_time,
 				update_time,
+				remind_time,
+				repetition_time,
+				fabulous_count,
+				privacy_pattern,
+				other,
+				`order`,
+				task_calendar
+	</sql>
+	<sql id="Base_Column_List2">
+						task_id,
+				prm_task.project_id,
+				task_name,
+				prm_task.start_time,
+				prm_task.end_time,
+				`repeat`,
+				remind,
+				remarks,
+				priority,
+				tag_id,
+				`level`,
+				parent_id,
+				prm_task.member_id,
+				executor,
+				task_type,
+				task_menu_id,
+				task_status,
+				task_code,
+				task_del,
+				prm_task.create_time,
+				prm_task.update_time,
 				remind_time,
 				repetition_time,
 				fabulous_count,
@@ -522,8 +556,17 @@
 	<!-- 查询某个执行者的所有任务 -->
 	<select id="findTaskByExecutor" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where executor = #{uId} and task_status = '未完成'
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where executor = #{uId} and task_status = '未完成'
+		<if test="orderType != null and orderType != ''">
+			<if test="orderType == '2'.toString()">
+				order by end_time asc
+			</if>
+			<if test="orderType == '3'.toString()">
+				order by prm_project.create_time desc
+			</if>
+		</if>
 	</select>
 
 	<!-- 查询项目下所有待认领的任务 -->
@@ -571,14 +614,14 @@
 	<select id="findTaskByProjectAndStatusAndUser" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and task_id in(select task_id from prm_task_member where member_id = #{memberId} and `type` = '参与者' public_type = '任务')  and task_status = '未完成'
+		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and task_id in(select public_id from prm_task_member where member_id = #{memberId} and `type` = '参与者' and public_type = '任务')  and task_status = '未完成'
 	</select>
 
-	<!-- 查询出项目下的指定执行者 并且是未完成的任务 -->
+	<!-- 查询出项目下的指定创建者 并且是未完成的任务 -->
 	<select id="findTaskByProjectAndStatusAndCreateMember" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and member_id = #{memberId} and task_status = '未完成'
+		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and  member_id = #{memberId} and task_status = '未完成'
 	</select>
 
 	<!-- 按照优先级查询任务 -->
@@ -639,8 +682,17 @@
 	<!-- 查询出我参与的所有任务 -->
 	<select id="findTaskByUserId" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and memberId = #{uId})
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and member_id = #{id})
+		<if test="orderType != null and orderType != ''">
+			<if test="orderType == '2'.toString()">
+				order by end_time
+			</if>
+			<if test="orderType == '3'.toString()">
+				order by prm_task.create_time desc
+			</if>
+		</if>
 	</select>
 
 
@@ -653,30 +705,33 @@
 
 	<!-- 查询某个用户的执行的所有任务 并且排序 -->
 	<select id="findTaskByExecutorIdAndTime" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"></include>
-		from prm_task where executor = #{uId}
-		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">
+		select <include refid="Base_Column_List2"></include>,
+		,prm_project.project_name
+		from prm_task inner join prm_project on prm_task.project_id = prm_project.project_id where prm_task.executor = #{uId}
+		<if test="orderType == 2">
 			order by end_time
 		</if>
-		<if test="orderType != null and orderType != '' and orderType == '3'.toString()">
-			order by create_time
+		<if test="and orderType == 3">
+			order by create_time desc
 		</if>
 	</select>
 
 	<!-- 查询出某个用户执行的所有完成的任务 -->
 	<select id="findTaskByExecutorAndStatus" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where executor = #{id} and task_status = '完成'
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where executor = #{id} and task_status = '完成'
 	</select>
 
 	<!-- 查询出某个用户参与的所有任务  (根据任务状态查询) -->
 	<select id="findTaskByUserIdByStatus" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and memberId = #{uId})
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and prm_task.member_id = #{uId})
 		<if test="status != null and status != ''">
-			task_status = #{status}
+			and task_status = #{status}
 		</if>
 	</select>
 
@@ -690,25 +745,33 @@
 			order by end_time
 		</if>
 		<if test="orderType != null and orderType != '' and orderType == '3'.toString()">
-			order by create_time
+			order by create_time desc
 		</if>
 	</select>
 
 	<!-- 查询出该用户创建的任务 (根据任务状态查询) -->
 	<select id="findTaskByCreateMemberByStatus" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where member_id = #{uId}
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id = #{uId}
 		<if test="status != null and status != ''">
-			task_status = #{status}
+			and task_status = #{status}
 		</if>
 	</select>
 
 	<!-- 查询出某个用户创建的所有任务 (只要未完成的) -->
 	<select id="findTaskByCreateMember" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
-		from prm_task where member_id = #{id} and task_status = '未完成'
+		<include refid="Base_Column_List2"></include>
+		,prm_project.project_name
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id = #{id} and task_status = '未完成'
+		<if test="orderType == '2'.toString()">
+			order by end_time
+		</if>
+		<if test="orderType == '3'.toString()">
+			order by prm_task.create_time desc
+		</if>
 	</select>
 
 	<!-- 查询某个用户的创建的所有任务 并且排序 -->

@@ -413,7 +413,7 @@
             }
         });
         var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor,"taskCalendar":taskCalendar};
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":"普通","privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor,"taskCalendar":taskCalendar};
         $.post(url,args,function(data){
             if(data.result == 1){
                 parent.showTask(data.task);

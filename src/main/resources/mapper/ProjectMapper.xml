@@ -22,15 +22,15 @@
 
 	<resultMap id="ProjectAndTaskByExecutor" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"></collection>
 	</resultMap>
 	<resultMap id="ProjectAndTaskByUser" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"></collection>
 	</resultMap>
 	<resultMap id="ProjectAndTaskByCreateMember" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=member_id}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"></collection>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -254,6 +254,7 @@
 	<select id="findProjectAndTaskByExecutorId" resultMap="ProjectAndTaskByExecutor">
 		select
 		<include refid="Base_Column_List"></include>
+		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
 
@@ -261,12 +262,14 @@
 	<select id="findProjectAndTaskByUserId" resultMap="ProjectAndTaskByUser">
 		select
 		<include refid="Base_Column_List"></include>
+		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
 
 	<select id="findProjectAndTaskByCreateMember" resultMap="ProjectAndTaskByCreateMember">
 		select
 		<include refid="Base_Column_List"></include>
+		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
 </mapper>

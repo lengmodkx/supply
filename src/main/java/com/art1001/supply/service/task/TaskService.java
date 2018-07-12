@@ -292,9 +292,10 @@ public interface TaskService {
 	/**
 	 * 查询某个人执行的所有任务
 	 * @param uId 当前用户id
+	 * @param orderType 任务的排序类型
 	 * @return
 	 */
-	List<Task> findTaskByExecutor(String uId);
+	List<Task> findTaskByExecutor(String uId,String orderType);
 
 	/**
 	 * 查询等待认领的任务
@@ -395,9 +396,10 @@ public interface TaskService {
 	/**
 	 * 查询出我参与的任务
 	 * @param id 当前用户id
+	 *
 	 * @return
 	 */
-	List<Task> findTaskByUserId(String id);
+	List<Task> findTaskByUserId(String id,String orderType);
 
 	/**
 	 * 查询出当前用户执行的所有任务信息 并且按照创建时间或者截止时间排序
@@ -441,9 +443,10 @@ public interface TaskService {
 	/**
 	 *查询出我创建的任务 只要未完成
 	 * @param id 当前用户id
+	 * @param orderType 排序类型
 	 * @return
 	 */
-	List<Task> findTaskByCreateMember(String id);
+	List<Task> findTaskByCreateMember(String id,String orderType);
 
 	/**
 	 * 查询出用户创建的所有任务并且按照时间排序

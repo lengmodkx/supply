@@ -1,9 +1,61 @@
 
-
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    }
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
+}
 $(function () {
 
     layui.use('form', function(){
         var form = layui.form;
+
+        /**
+         * 监听任务的完成状态下拉框
+         */
+        form.on('select(task)', function (data) {
+            var status = '';
+            var type = '';
+            var url = '';
+            if ($('#status').val() == '1') {
+                status = '未完成';
+            } else {
+                status = '完成';
+            }
+            var args = {"status": status, "orderType": $('#orderType').val()};
+            $('.my-task-title-left').children('span').each(function () {
+                if ($(this).attr("class") == 'now') {
+                    type = $(this).html();
+                }
+            });
+            if (type == '我创建的') {
+                url = '/public/myAddTask';
+            }
+            if (type == '我执行的') {
+                url = '/public/myExecutorTask';
+            }
+            if (type == '我参与的') {
+                url = '/public/myJoinTask';
+            }
+
+            $.post(url, args, function (data) {
+                var task = data.data;
+                appendStr(task,data.orderType);
+            }, "json");
+        });
 
         //监听提交
         form.on('submit(formDemo)', function(data){
@@ -18,6 +70,35 @@ $(function () {
             }else {
                 $(".who-can-see").text("所有成员可见")
             }
+        });
+
+        /**
+         * 完成任务 监听
+         */
+        form.on('checkbox(complete)', function(data){
+            // console.log(data.elem.value); //得到checkbox原始DOM对象
+          var inputs= $("#" +data.elem.value);
+console.log(inputs)
+
+            // console.log(data.elem.checked); //是否被选中，true或者false
+            // console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+            // console.log(data.othis); //得到美化后的DOM对象
+            var status = '';
+            var url = "/task/resetAndCompleteTask";
+            if(data.elem.checked == true){
+                status = '未完成';
+            } else{
+                status = '完成';
+            }
+            var args = {"taskId":data.value,"taskStatus":status};
+            $.post(url,args,function (data) {
+                if(data.result == 0){
+                    inputs.siblings(".layui-form-checkbox").removeClass('layui-form-checked');
+                    layer.msg(data.msg);
+                } else{
+                    inputs.parents(".thing-list").remove();
+                }
+            },"json");
         });
 
     });
@@ -56,9 +137,10 @@ $(function () {
     $("#click-my-task").click(function () {
         var url = '/public/myExecutorTask';
         var args = {"status":"未完成","orderType":"1"};
+        var content = '';
         $.post(url,args,function (data) {
-            for (var i = 0;i < data.length;i++){
-            }
+            var task = data.data;
+            appendStr(task);
         },"json");
         $("#my-task").show().siblings().hide()
     });
@@ -142,8 +224,8 @@ $(function () {
     $(".my-task-title-left>span").click(function () {
        var i=$(this).index();
        $(this).addClass("now").siblings().removeClass("now");
-        $(".things").hide();
-       $(".things").eq(i+1).show(400)
+       //  $(".things").hide();
+       // $(".things").eq(i+1).show(400)
     });
 
     //点击 文件 页面 我创建的 我参与的
@@ -198,4 +280,139 @@ $(function () {
             });
         });
     }
+
+    /**
+     * 点击  我执行的, 我参与的,我创建的 事件
+     */
+    $('.my-task-title-left').click(function () {
+        $(this).children('span').each(function () {
+           if($(this).attr("class") == 'now'){
+               var type = $(this).html();
+               var status = '';
+               if($('#status').val() == '1'){
+                   status = '未完成';
+               } else{
+                   status = '完成';
+               }
+               var url;
+               var args;
+               args = {"status":status,"orderType":$('#orderType').val()};
+               if(type == '我创建的'){
+                   url = '/public/myAddTask';
+               }
+               if(type == '我执行的'){
+                   url = '/public/myExecutorTask';
+               }
+               if(type == '我参与的'){
+                   url = '/public/myJoinTask';
+               }
+               $.post(url,args,function (data) {
+                    var task = data.data;
+                    appendStr(task,data.orderType);
+               },"json");
+           }
+        });
+    });
+
+    /**
+     * 拼接我的任务的字符串
+     * @param task
+     */
+    function appendStr(task,orderType){
+        var content = '';
+        if(orderType == '4'){
+            for (var i = 0;i < task.length;i++){
+                content += '<div>'+
+                    '<p class="pro-name">' + task[i].projectName + '</p>'+
+                    '<ul id="executorTask">';
+                for (var j = 0;j < task[i].taskList.length;j++){
+                    content+= '<li class="thing-list">' +
+                    '<div class="urgent-state"></div>' +
+                    '<div class="things-info boxsizing">';
+                    if(task[i].taskList[j].taskStatus == '完成'){
+                    content += '<input  id="' + task[i].taskList[j].taskId + '"  type="checkbox" checked="checked" value="' + task[i].taskList[j].taskId + '" name="" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
+
+                    } else{
+                        content += '<input id="' + task[i].taskId + '" type="checkbox" value="' + task[i].taskList[j].taskId + '" name="" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
+                    }
+                    content += '<div class="rw-span-wrap">' +
+                    '<span class="what-thing" >' +task[i].taskList[j].taskName + '</span>' +
+                    '<span class="what-thing" >' + task[i].projectName + '</span>' +
+                    '</div>';
+                    if ((task[i].taskList[j].startTime == '' || task[i].taskList[j].startTime == null) && (task[i].taskList[j].endTime == '' || task[i].taskList[j].endTime == null)) {
+                        content += '<span class="thing-what-date aa" ></span>' +
+                            '<span class="thing-what-date"></span>' +
+                            '<span class="thing-what-date"></span>' +
+                            '</div>' +
+                            '</li>';
+                        continue;
+                    }
+                    if (task[i].taskList[j].startTime == '' || task[i].taskList[j].startTime == null) {
+                        content += '<span class="thing-what-date" >' + new Date(task[i].taskList[j].endTime).format('yyyy-MM-dd') + '   结束' + '</span>'
+                        continue;
+                    }
+                    if (task[i].taskList[j].endTime == '' || task[i].taskList[j].endTime == null) {
+                        content += '<span class="thing-what-date" >' + new Date(task[i].taskList[j].startTime).format('yyyy-MM-dd') + '   开始' + '</span>'
+                        continue;
+                    }
+
+                    content += '<span class="thing-what-date" >' + new Date(task[i].taskList[j].endTime).format('yyyy-MM-dd') + '</span>' +
+                        '<span class="thing-what-date">—</span>' +
+                        '<span class="thing-what-date">' + new Date(task[i].taskList[j].startTime).format('yyyy-MM-dd') + '</span>' +
+                        '</div>' +
+                        '</li>';
+                }
+            content += '</ul>'+
+                '</div>';
+            }
+            $('#projectTask').html(content);
+            var form = layui.form;
+            form.render();
+        } else{
+            content += '<div>'+
+                '<ul id="executorTask">';
+            for(var i = 0;i < task.length;i++) {
+                content +=
+                    '<li class="thing-list" >' +
+                    '<div class="urgent-state"></div>' +
+                    '<div class="things-info boxsizing">';
+                if(task[i].taskStatus == '完成'){
+                    content += '<input id="' + task[i].taskId + '"  type="checkbox" checked="checked" name="" value="' + task[i].taskId + '" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
+
+                } else{
+                    content += '<input id="' + task[i].taskId + '" type="checkbox" name="" value="' + task[i].taskId + '" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
+                }
+                    content += '<div class="rw-span-wrap">' +
+                    '<span class="what-thing" >' + task[i].taskName + '</span>' +
+                    '<span class="what-thing" >' + task[i].project.projectName + '</span>' +
+                    '</div>';
+                if ((task[i].startTime == '' || task[i].startTime == null) && (task[i].endTime == '' || task[i].endTime == null)) {
+                    content += '<span class="thing-what-date aa" ></span>' +
+                        '<span class="thing-what-date"></span>' +
+                        '<span class="thing-what-date"></span>' +
+                        '</div>' +
+                        '</li>';
+                    continue;
+                }
+                if (task[i].startTime == '' || task[i].startTime == null) {
+                    content += '<span class="thing-what-date" >' + new Date(task[i].endTime).format('yyyy-MM-dd') + '   结束' + '</span>'
+                    continue;
+                }
+                if (task[i].endTime == '' || task[i].endTime == null) {
+                    content += '<span class="thing-what-date" >' + new Date(task[i].startTime).format('yyyy-MM-dd') + '   开始' + '</span>'
+                    continue;
+                }
+
+                content += '<span class="thing-what-date" >' + new Date(task[i].endTime).format('yyyy-MM-dd') + '</span>' +
+                    '<span class="thing-what-date">—</span>' +
+                    '<span class="thing-what-date">' + new Date(task[i].startTime).format('yyyy-MM-dd') + '</span>' +
+                    '</div>' +
+                    '</li>';
+            }
+            $('#projectTask').html(content);
+            var form = layui.form;
+            form.render();
+        }
+    }
+
 });
