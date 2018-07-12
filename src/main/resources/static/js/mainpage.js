@@ -384,11 +384,12 @@ $("body").on("click",".group-people>li>i",function (e) {
     e.stopPropagation();
     var top=$(this).offset().top-110;
     var left=$(this).offset().left-280;
-    groupPeopleRemove(top,left);
+    var temp = $(this).attr('id');
+    console.log(temp);
+    groupPeopleRemove(top,left,temp);
 
 });
-function groupPeopleRemove(top,left) {
-
+function groupPeopleRemove(top,left,nodeName) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
@@ -401,7 +402,7 @@ function groupPeopleRemove(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: 'tk-group-remove.html'
+            content: '/project/removePeople.html?nodeName='+nodeName
         });
     });
 }

@@ -95,9 +95,9 @@
             <img th:src="#{IMAGE_SERVER}+${projectMember.memberImg}">
             <div class="group-people-info">
                 <p class="people-info-name" th:text="${projectMember.memberName}">名字</p>
-                <p class="people-info-email" th:text="${projectMember.memberEmail}">abc1321555.com</p>
+                <p class="people-info-email"></p>
             </div>
-            <i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" th:if="${projectMember.memberLable==0}" th:data="${projectMember.id}"></i>
+            <i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" th:if="${projectMember.memberLable==0}" th:id="${projectMember.id}"></i>
         </li>
     </ul>
 </div>
@@ -105,13 +105,7 @@
 <div class="search_prople fuzhi-lianjie boxsizing" style="display: none">
     <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword">
     <div class="people-box">
-        <ul>
-            <li>
-                <img src="" >
-                <span class="people-name"></span>
-                <span class="people-state"></span>
-            </li>
-        </ul>
+        <ul class="invitation"></ul>
     </div>
 </div>
 <!--点击群组中的 人 出现的弹框-->
@@ -152,6 +146,7 @@
 
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     var groupId = [[${currentGroup}]];
+    var projectId = [[${project.projectId}]];
 
    layui.use('element', function(){
        var element = layui.element;
@@ -192,14 +187,55 @@
    });
 
    $('.keyword').keyup(function (e) {
+       $('.invitation').html('');
        var index = layer.load(1, {shade: [0.1,'#fff']});
         $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
-            layer.close(index);
-        });
+            parent.layer.close(index);
+            if(data.result===1){
+                 for(var i=0;i<data.data.length;i++){
+                     var user = data.data[i];
+                     var li = '<li>\n' +
+                         '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
+                         '            <span class="people-name">'+user.userName+'</span>\n' +
+                         '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
+                         '        </li>';
+                     $('.invitation').append(li);
+                 }
+            }else{
 
+            }
+        });
    });
 
+
+
+    $("html").on("click",".people-box .people-state",function () {
+        var id = $(this).attr('data');
+        console.log($(this).attr('data'));
+        console.log($(this).siblings('img').attr('src'));
+        console.log($(this).siblings('span').text());
+
+        $.post('/project/addProjectMember',{"projectId":projectId,"memberIds":id},function (data) {
+           if(data.result===1){
+               $('.group-people').html('');
+               for(var i=0;i<data.data.length;i++) {
+                   var projectMember = data.data[i];
+                   var li = '<li class="boxsizing">\n' +
+                       '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
+                       '            <div class="group-people-info">\n' +
+                       '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
+                       '                <p class="people-info-email"></p></div>';
+                        if(projectMember.memberLable===0){
+                            li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
+                        }else{
+                            li += '</li>';
+                        }
+
+                   $('.group-people').append(li);
+               }
+           }
+           $(this).removeClass("no-join")
+        });
+    })
 </script>
-
-
 </html>
