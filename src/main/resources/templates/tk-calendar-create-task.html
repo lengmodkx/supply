@@ -407,11 +407,11 @@
         var remind = $('[name="remand"]').val();
         //设置隐私模式
         var privacyPattern = "";
-        if($('#privacyPattern').prop('checked')) {
-            privacyPattern = "1";
-        } else{
-            privacyPattern = "0";
-        }
+        $(".foot-left .set-see").each(function () {
+            if ($(this).is(":visible")) {
+                privacyPattern=$(this).attr("value")
+            }
+        });
         var url = "/task/saveTask";
         var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"privacyPattern":privacyPattern,"taskMenuId":list,"projectId" : project,"members":members.toString(),"executor":executor,"taskCalendar":taskCalendar};
         $.post(url,args,function(data){

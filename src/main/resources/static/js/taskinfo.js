@@ -3,51 +3,52 @@ var zxz=false;
 
 layui.use('form', function() {
     var form = layui.form;
-    //监听提交
-    form.on('submit(createTask)', function (data) {
-        //获取选中的参与者信息
-        var members = $('#memberId').val();
-        //设置任务的执行者
-        var executor = $('#executorId').val();
-        //设置任务开始时间
-        var beginTime = $('#beginTime').val();
-        if(beginTime != null && beginTime != ''){
-            var startTime = new Date(beginTime.toString()).getTime();
-        } else {
-            startTime = null;
-        }
-        //设置任务结束时间
-        var overTime = $('#overTime').val();
-        if(overTime != null && overTime != ''){
-            var endTime = new Date(overTime.toString()).getTime();
-        } else{
-            endTime = null;
-        }
-        //设置任务的内容
-        var taskName = $("#taskName").val();
-        //设置重复模式
-        var repeat = $('#repeat').val();
-        //设置任务提醒
-        var remind = $('#remand').val();
-        //设置任务优先级
-        var priority = $('input[name="state"]:checked').val();
-        //设置隐私模式
-        var privacyPattern = "";
-        if($('#privacyPattern').prop('checked')) {
-            privacyPattern = "1";
-        } else{
-            privacyPattern = "0";
-        }
-        var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members,"executor":executor};
-        $.post(url,args,function(data){
-            if(data.result == 1){
-                //关闭遮罩层
-                //任务数回显
-            }
-        },"json");
-        return false;
-    });
+    // //监听提交
+    // form.on('submit(createTask)', function (data) {
+    //     //获取选中的参与者信息
+    //     var members = $('#memberId').val();
+    //     //设置任务的执行者
+    //     var executor = $('#executorId').val();
+    //     //设置任务开始时间
+    //     var beginTime = $('#beginTime').val();
+    //     if(beginTime != null && beginTime != ''){
+    //         var startTime = new Date(beginTime.toString()).getTime();
+    //     } else {
+    //         startTime = null;
+    //     }
+    //     //设置任务结束时间
+    //     var overTime = $('#overTime').val();
+    //     if(overTime != null && overTime != ''){
+    //         var endTime = new Date(overTime.toString()).getTime();
+    //     } else{
+    //         endTime = null;
+    //     }
+    //     //设置任务的内容
+    //     var taskName = $("#taskName").val();
+    //     //设置重复模式
+    //     var repeat = $('#repeat').val();
+    //     //设置任务提醒
+    //     var remind = $('#remand').val();
+    //     //设置任务优先级
+    //     var priority = $('input[name="state"]:checked').val();
+    //     //设置隐私模式
+    //     var privacyPattern = "";
+    //     if($('#privacyPattern').prop('checked')) {
+    //         al
+    //         privacyPattern = "1";
+    //     } else{
+    //         privacyPattern = "0";
+    //     }
+    //     var url = "/task/saveTask";
+    //     var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members,"executor":executor};
+    //     $.post(url,args,function(data){
+    //         if(data.result == 1){
+    //             //关闭遮罩层
+    //             //任务数回显
+    //         }
+    //     },"json");
+    //     return false;
+    // });
 
     /**
      * 完成和重做子任务
@@ -197,8 +198,10 @@ layui.use('form', function() {
     form.on('switch(switch-filter)', function (privacyData) {
         //console.log(privacyData.elem.checked); //开关是否开启，true或者false
         var url = '/task/settingUpPrivacyPatterns';
-        var privacyPattern = 1;
+        var privacyPattern
         if(privacyData.elem.checked){
+            privacyPattern = 1;
+        } else{
             privacyPattern = 0;
         }
         var args = {"taskId":$('#taskId').val(),"privacyPattern":privacyPattern};

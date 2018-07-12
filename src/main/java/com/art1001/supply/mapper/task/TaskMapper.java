@@ -389,4 +389,11 @@ public interface TaskMapper {
 	 */
 	@Select("select level from prm_task where task_id = #{taskId}")
     Integer findTaskLevelById(String taskId);
+
+	/**
+	 * 根据用户查询出该用户执行的和创建的附有日历日期的所有任务
+	 * @param uId 用户
+	 * @return
+	 */
+    List<Task> findTaskByCalendar(String uId);
 }

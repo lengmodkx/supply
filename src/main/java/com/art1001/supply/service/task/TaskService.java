@@ -452,4 +452,11 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Task> findTaskByCreateMemberAndTime(String id, String orderType);
+
+	/**
+	 * 查询该用户在日历上创建的所有任务
+	 * @param uId 用户id
+	 * @return
+	 */
+	List<Task> findTaskByCalendar(String uId);
 }
