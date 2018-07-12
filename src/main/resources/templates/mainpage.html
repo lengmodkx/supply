@@ -197,7 +197,7 @@
                      var li = '<li>\n' +
                          '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
                          '            <span class="people-name">'+user.userName+'</span>\n' +
-                         '            <span class="people-state" data="'+user.id+'">添加</span>\n' +
+                         '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
                          '        </li>';
                      $('.invitation').append(li);
                  }
@@ -234,6 +234,7 @@
                    $('.group-people').append(li);
                }
            }
+           $(this).removeClass("no-join")
         });
     })
 </script>

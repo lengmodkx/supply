@@ -97,7 +97,20 @@
 .people-state{
     float: right;
     font-size: 14px;
-    color: #a6a6a6;
+   color: #a6a6a6;
+}
+.people-state.no-join{
+    cursor: pointer;
+    color: #3da8f5;
+    padding-left: 8px;
+    padding-right: 8px;
+    line-height: 22px;
+    border: 1px solid #3da8f5;
+    border-radius: 4px;
+}
+.no-join:hover{
+    background-color: #3da8f5;
+    color: #fff;
 }
 .people-box li>i{
     float: right;
