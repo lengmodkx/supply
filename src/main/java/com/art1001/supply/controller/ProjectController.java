@@ -466,9 +466,9 @@ public class ProjectController {
             relation.setLable(0);
             List<Relation> taskGroups = relationService.findRelationAllList(relation);
 
-            //取第0个任务分组的菜单
-            Relation relation1 = new Relation();
             if(taskGroups != null && taskGroups.size() >= 0){
+                //取第0个任务分组的菜单
+                Relation relation1 = new Relation();
                 relation1.setParentId(taskGroups.get(0).getRelationId());
                 relation1.setLable(1);
                 List<Relation> taskMenu = relationService.findRelationAllList(relation1);
