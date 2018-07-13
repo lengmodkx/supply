@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskCollect;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -133,7 +134,7 @@ public interface TaskMapper {
 	 * @param task
 	 * @return
 	 */
-    int SettingUpPrivacyPatterns(Task task);
+    int settingUpPrivacyPatterns(Task task);
 
 	/**
 	 * 根据任务的状态查询多条任务信息
@@ -393,4 +394,5 @@ public interface TaskMapper {
 	 * @return
 	 */
     List<Task> findTaskByCalendar(String uId);
+
 }

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.art1001.supply.mapper.task.TaskCollectMapper" >
+  <resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskCollect" >
+    <constructor >
+      <idArg column="id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="member_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="task_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="update_time" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="member_img" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="member_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, task_id, create_time, update_time, member_img, member_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from prm_task_collect
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from prm_task_collect
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.art1001.supply.entity.task.TaskCollect" >
+    insert into prm_task_collect (id, member_id, task_id, 
+      create_time, update_time, member_img, 
+      member_name)
+    values (#{id,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{memberImg,jdbcType=VARCHAR}, 
+      #{memberName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.art1001.supply.entity.task.TaskCollect" >
+    insert into prm_task_collect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="taskId != null" >
+        task_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="memberImg != null" >
+        member_img,
+      </if>
+      <if test="memberName != null" >
+        member_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="memberImg != null" >
+        #{memberImg,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.art1001.supply.entity.task.TaskCollect" >
+    update prm_task_collect
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        task_id = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="memberImg != null" >
+        member_img = #{memberImg,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        member_name = #{memberName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.art1001.supply.entity.task.TaskCollect" >
+    update prm_task_collect
+    set member_id = #{memberId,jdbcType=VARCHAR},
+      task_id = #{taskId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      member_img = #{memberImg,jdbcType=VARCHAR},
+      member_name = #{memberName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 根据用户id 查询 该用户收藏的所有任务 -->
+  <select id="findMyCollectTask" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from prm_task where task_id in (select task_id from prm_task_collect where member_id = #{uId})
+  </select>
+</mapper>
