@@ -835,8 +835,8 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int SettingUpPrivacyPatterns(Task task) {
-        return taskMapper.SettingUpPrivacyPatterns(task);
+    public int settingUpPrivacyPatterns(Task task) {
+        return taskMapper.settingUpPrivacyPatterns(task);
     }
 
     /**
@@ -1228,6 +1228,5 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findTaskByCalendar(String uId) {
         return taskMapper.findTaskByCalendar(uId);
-
     }
 }

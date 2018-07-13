@@ -986,7 +986,7 @@ public class TaskController {
     public JSONObject settingUpPrivacyPatterns(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.SettingUpPrivacyPatterns(task);
+            taskService.settingUpPrivacyPatterns(task);
             jsonObject.put("msg","修改成功!");
             jsonObject.put("result",1);
         } catch (Exception e){
