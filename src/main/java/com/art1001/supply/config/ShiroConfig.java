@@ -50,8 +50,8 @@ public class ShiroConfig {
         config.setMinEvictableIdleTimeMillis(30000);
         config.setSoftMinEvictableIdleTimeMillis(30000);
         config.setTestOnBorrow(true);
-//        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
-        JedisPool jedisPool = new JedisPool(config, "localhost");
+        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
+//        JedisPool jedisPool = new JedisPool(config, "localhost");
         redisManager.setJedisPool(jedisPool);
         return redisManager;
     }

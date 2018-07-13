@@ -76,9 +76,7 @@
                             <div class="one-file boxsizing fileList">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and ${file.ext eq '.jpg'}"/>
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.png'}"/>
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.jpeg'}"/>
+                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
                                 <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '..doc'}"/>
                                 <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.docx'}"/>
                                 <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xls'}"/>
