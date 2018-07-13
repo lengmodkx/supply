@@ -7,6 +7,7 @@ import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.project.ProjectService;
@@ -23,8 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -58,10 +62,7 @@ public class FileController {
      *             isDel     删除标识 默认为0
      */
     @GetMapping("/list.html")
-    public String list(
-            File file,
-            Model model
-    ) {
+    public String list(File file, Model model) {
         // 项目id
         String projectId = file.getProjectId();
         // 上级id
@@ -88,6 +89,7 @@ public class FileController {
                 model.addAttribute("projectId", projectId);
                 model.addAttribute("tagList", tagList);
                 model.addAttribute("fileVersionList", fileVersionList);
+                model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
                 return "tk-file-download";
             }
         }
@@ -825,5 +827,36 @@ public class FileController {
 
         file.setFileUrl(fileUrl);
         fileService.saveFile(file);
+    }
+
+    @RequestMapping(value = "/pdfStreamHandeler")
+    @ResponseBody
+    public void pdfStreamHandeler(@RequestParam String fileId, HttpServletResponse response) {
+        File file = fileService.findFileById(fileId);
+        try{
+            ServletOutputStream sos = response.getOutputStream();
+            URL url = new URL(Constants.OSS_URL + file.getFileUrl());
+
+            HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
+
+            httpUrl.connect();
+            //获取网络输入流
+            BufferedInputStream bis = new BufferedInputStream(httpUrl.getInputStream());
+            int b;
+            while((b = bis.read())!=-1) {
+                sos.write(b);
+            }
+            sos.close();
+            bis.close();
+        } catch (Exception e) {
+            log.error("关闭文件IOException!");
+            throw new SystemException(e);
+        }
+    }
+
+    @RequestMapping("/viewer.html")
+    public String pdfViewer(String fileId,Model model){
+        model.addAttribute("fileId",fileId);
+        return "viewer";
     }
 }

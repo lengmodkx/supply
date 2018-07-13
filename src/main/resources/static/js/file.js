@@ -95,12 +95,11 @@ $(function () {
                 if (data.result === 1) {
                     layer.msg(data.msg, {icon: 1, time: 1000}, function () {
                         layer.closeAll('loading');
-                        var imageService = 'https://faydan.oss-cn-beijing.aliyuncs.com/';
                         var file = data.data;
                         var liVal = '<li class="boxsizing one-file-wrap">\n' +
                             '    <div class="one-file boxsizing fileList">\n' +
                             '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">\n' +
-                            '        <img class="textFile" src="' + imageService + file.fileUrl + '" >\n' +
+                            '        <img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >\n' +
                             '        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
                             '        <div class="img-show-operate">\n' +
                             '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +

@@ -3,6 +3,8 @@ package com.art1001.supply.entity.file;
 import com.art1001.supply.entity.base.BaseEntity;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import lombok.Data;
@@ -90,5 +92,18 @@ public class File extends BaseEntity implements Serializable {
      * 标签id
      */
     private String tagId;
+
+
+    private String fileUrlTemp;
+
+    public String getFileUrlTemp(){
+        try {
+            return URLEncoder.encode("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/"+fileUrl,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
 }
