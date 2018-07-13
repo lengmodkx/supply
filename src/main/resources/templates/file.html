@@ -91,7 +91,7 @@
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
                                 </div>
                             </div>
-                            <div class="one-file-name" th:text="${file.fileName}" th:data="${file.fileId}">图片222.zip</div>
+                            <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:data="${file.fileId}">图片222.zip</div>
                         </li>
                     </ul>
                 </div>
