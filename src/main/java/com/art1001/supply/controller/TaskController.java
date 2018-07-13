@@ -958,26 +958,6 @@ public class TaskController {
     }
 
     /**
-     * 取消收藏任务
-     * @param task 任务的信息
-     * @return
-     */
-    @PostMapping("cancelCollectTask")
-    @ResponseBody
-    public JSONObject cancelCollectTask(Task task){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            taskService.cancelCollectTask(task);
-            jsonObject.put("msg","取消收藏成功");
-            jsonObject.put("result","1");
-        } catch (Exception  e){
-            log.error("系统异常,取消收藏失败! 当前任务id: ,{},{}",task.getTaskId(),e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-    /**
      * 修改任务的隐私模式
      * @param task 任务的实体信息
      */
