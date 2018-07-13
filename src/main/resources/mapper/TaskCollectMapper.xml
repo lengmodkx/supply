@@ -121,6 +121,6 @@
   <select id="findMyCollectTask" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"></include>
-    from prm_task where task_id in (select task_id from prm_task_collect where member_id = #{uId})
+    from prm_task_collect where member_id = #{uId}
   </select>
 </mapper>

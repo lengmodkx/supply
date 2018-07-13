@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -59,4 +60,21 @@ public interface PublicCollectMapper {
 	 * @return
 	 */
 	int judgeCollectPublic(@Param("memberId") String memberId,@Param("publicId") String publicId,@Param("collectType") String collectType);
+
+	/**
+	 * 收藏mapper层
+	 * 数据: 查询出某个用户收藏的所用任务
+	 * @param memberId 用户id
+	 * @return 返回收藏集合
+	 */
+	List<PublicCollect> findMyCollectTask(String memberId);
+
+	/**
+	 * 收藏mapper层
+	 * 数据: 根据收藏id 删除一条记录
+	 * @param publicCollectId 收藏记录的id
+	 * @return 返回受影响行数
+	 */
+	@Delete("delete from prm_public_collect where id = #{publicCollectId}")
+    int cancelCollectTask(String publicCollectId);
 }
