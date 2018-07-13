@@ -50,10 +50,13 @@ $(function () {
             if (type == '我参与的') {
                 url = '/public/myJoinTask';
             }
-
             $.post(url, args, function (data) {
                 var task = data.data;
-                appendStr(task,data.orderType);
+                if(task != ''){
+                    appendStr(task,data.orderType);
+                } else{
+                    notDataStr(task);
+                }
             }, "json");
         });
 
@@ -140,7 +143,11 @@ console.log(inputs)
         var content = '';
         $.post(url,args,function (data) {
             var task = data.data;
-            appendStr(task);
+            if(task != ''){
+                appendStr(task);
+            } else{
+                notDataStr(task);
+            }
         },"json");
         $("#my-task").show().siblings().hide()
     });
@@ -149,9 +156,6 @@ console.log(inputs)
     });
     $("#click-my-file").click(function () {
         $("#my-file").show().siblings().hide()
-    });
-    $("#click-my-collect").click(function () {
-        $("#my-collect").show().siblings().hide()
     });
 
     //点击近期的事 页面  中的 紧急选择条
@@ -180,9 +184,9 @@ console.log(inputs)
     }
     //点击 任务 li 出现 修改任务 弹框
     $("html").on("click",".rw-span-wrap",function () {
-        changerw()
+        changerw($(this).attr("value"))
     });
-    function changerw() {
+    function changerw(taskId) {
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
@@ -193,7 +197,7 @@ console.log(inputs)
                 shadeClose: true, //点击遮罩关闭
                 closeBtn: 0,
                 anim: 1,  //动画 0-6
-                content: "revisetask.html"
+                content: "/task/initTask.html?taskId="+taskId
             });
         });
     }
@@ -245,7 +249,6 @@ console.log(inputs)
     //点击收藏页面 的导航条
     $(".collect-head>span").click(function () {
         $(this).addClass("now").siblings().removeClass("now");
-        $(".no-collect").fadeIn(400)
 
     });
     //点击日程 页面 导航
@@ -308,7 +311,11 @@ console.log(inputs)
                }
                $.post(url,args,function (data) {
                     var task = data.data;
-                    appendStr(task,data.orderType);
+                    if(task != ''){
+                        appendStr(task,data.orderType);
+                    } else{
+                        notDataStr(task);
+                    }
                },"json");
            }
         });
@@ -335,7 +342,7 @@ console.log(inputs)
                     } else{
                         content += '<input id="' + task[i].taskId + '" type="checkbox" value="' + task[i].taskList[j].taskId + '" name="" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
                     }
-                    content += '<div class="rw-span-wrap">' +
+                    content += '<div class="rw-span-wrap" value="' + task[i].taskList[j].taskId + '">' +
                     '<span class="what-thing" >' +task[i].taskList[j].taskName + '</span>' +
                     '<span class="what-thing" >' + task[i].projectName + '</span>' +
                     '</div>';
@@ -382,7 +389,7 @@ console.log(inputs)
                 } else{
                     content += '<input id="' + task[i].taskId + '" type="checkbox" name="" value="' + task[i].taskId + '" title="" lay-skin="primary" lay-filter = "complete" class="is-sure" >';
                 }
-                    content += '<div class="rw-span-wrap">' +
+                    content += '<div class="rw-span-wrap" value = "' + task[i].taskId + '">' +
                     '<span class="what-thing" >' + task[i].taskName + '</span>' +
                     '<span class="what-thing" >' + task[i].project.projectName + '</span>' +
                     '</div>';
@@ -412,6 +419,20 @@ console.log(inputs)
             $('#projectTask').html(content);
             var form = layui.form;
             form.render();
+        }
+    }
+
+    function notDataStr(t){
+
+        var content = '';
+        if(t.orderType != '4') {
+            content += '<li class="thing-list">' +
+                '<div class="urgent-state"></div><div class="things-info boxsizing">' +
+                '<span class="what-thing">' + '没有数据' + '</span><span class="what-thing"></span></div><span class="thing-what-date aa"></span>' +
+                '<span class="thing-what-date"></span><span class="thing-what-date"></span>' +
+                '</div>' +
+                '</li>';
+            $('#executorTask').html(content);
         }
     }
 

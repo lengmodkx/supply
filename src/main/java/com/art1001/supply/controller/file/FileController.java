@@ -5,14 +5,17 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -58,10 +64,7 @@ public class FileController {
      *             isDel     删除标识 默认为0
      */
     @GetMapping("/list.html")
-    public String list(
-            File file,
-            Model model
-    ) {
+    public String list(File file, Model model) {
         // 项目id
         String projectId = file.getProjectId();
         // 上级id
@@ -83,11 +86,16 @@ public class FileController {
                 }
 
                 List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
+                List<Tag> tags = tagService.findByProjectId(projectId);
 
                 model.addAttribute("file", fileById);
                 model.addAttribute("projectId", projectId);
+                // 文件的tag
                 model.addAttribute("tagList", tagList);
+                // 项目的tag
+                model.addAttribute("tags", tags);
                 model.addAttribute("fileVersionList", fileVersionList);
+                model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
                 return "tk-file-download";
             }
         }
@@ -127,33 +135,6 @@ public class FileController {
         model.addAttribute("fileId", fileId);
         return "tk-filemenu";
     }
-
-    /**
-     * 打开文件详情
-     */
-//    @RequestMapping("/openDownloadFile")
-//    public String openDownloadFile(@RequestParam String fileId, Model model) {
-//        File file = fileService.findFileById(fileId);
-//        String projectId = file.getProjectId();
-//        String tagIds = file.getTagId();
-//        List<Tag> tagList = new ArrayList<>();
-//        if (StringUtils.isNotEmpty(tagIds)) {
-//            String[] tagIdStrArr = tagIds.split(",");
-//            Integer[] tagIdArr = new Integer[tagIdStrArr.length];
-//            for (int i = 0; i < tagIdStrArr.length; i++) {
-//                tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
-//            }
-//            tagList = tagService.findByIds(tagIdArr);
-//        }
-//
-//        List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
-//
-//        model.addAttribute("file", file);
-//        model.addAttribute("projectId", projectId);
-//        model.addAttribute("tagList", tagList);
-//        model.addAttribute("fileVersionList", fileVersionList);
-//        return "tk-file-download";
-//    }
 
     /**
      * 文件目录
@@ -267,8 +248,6 @@ public class FileController {
             jsonObject.put("result", 0);
             jsonObject.put("msg", "创建失败");
         }
-
-
         return jsonObject;
     }
 
@@ -676,6 +655,96 @@ public class FileController {
         return jsonObject;
     }
 
+    @RequestMapping("/addTag")
+    @ResponseBody
+    public JSONObject addTag(
+            @RequestParam String fileId, // 文件id
+            @RequestParam String tagId   // 标签id
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            if (StringUtils.isNotEmpty(file.getTagId())) {
+                String[] tagIdArr = file.getTagId().split(",");
+                if (CommonUtils.useList(tagIdArr, tagId)) { // 已经存在，移除
+                    StringBuilder tagIds = new StringBuilder();
+                    for (String tId : tagIdArr) {
+                        if (!tagId.equals(tId)) {
+                            tagIds.append(tId).append(",");
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(tagIds)) {
+                        tagIds.deleteCharAt(tagIds.length() - 1);
+                    }
+                    fileService.updateTagId(fileId, tagIds.toString());
+                    jsonObject.put("result", 2);
+                    jsonObject.put("msg", "移除成功");
+                } else { // 不存在添加
+                    String tagIds = file.getTagId();
+                    if (StringUtils.isNotEmpty(file.getTagId())) {
+                        tagIds += "," + tagId;
+                    } else {
+                        tagIds = tagId;
+                    }
+                    fileService.updateTagId(fileId, tagIds);
+                    Tag tag = tagService.findById(Integer.valueOf(tagId));
+                    jsonObject.put("result", 1);
+                    jsonObject.put("data", tag);
+                    jsonObject.put("msg", "添加成功");
+                }
+            } else {
+                String tagIds = file.getTagId();
+                if (StringUtils.isNotEmpty(tagIds)) {
+                    tagIds += "," + tagId;
+                } else {
+                    tagIds = tagId;
+                }
+                fileService.updateTagId(fileId, tagIds);
+                Tag tag = tagService.findById(Integer.valueOf(tagId));
+                jsonObject.put("result", 1);
+                jsonObject.put("data", tag);
+                jsonObject.put("msg", "添加成功");
+            }
+
+
+        } catch (Exception e) {
+            log.error("添加标签异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "添加失败");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping("/deleteTag")
+    @ResponseBody
+    public JSONObject deleteTag(
+            @RequestParam String fileId, // 文件id
+            @RequestParam String tagId   // 标签id
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            String[] tagIdArr = file.getTagId().split(",");
+            StringBuilder tagIds = new StringBuilder();
+            for (String tId : tagIdArr) {
+                if (!tagId.equals(tId)) {
+                    tagIds.append(tId).append(",");
+                }
+            }
+            if (StringUtils.isNotEmpty(tagIds)) {
+                tagIds.deleteCharAt(tagIds.length() - 1);
+            }
+            fileService.updateTagId(fileId, tagIds.toString());
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "移除成功");
+        } catch (Exception e) {
+            log.error("移除标签异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "移除失败");
+        }
+        return jsonObject;
+    }
+
     /**
      * 查询用户创建的文件
      */
@@ -825,5 +894,36 @@ public class FileController {
 
         file.setFileUrl(fileUrl);
         fileService.saveFile(file);
+    }
+
+    @RequestMapping(value = "/pdfStreamHandeler")
+    @ResponseBody
+    public void pdfStreamHandeler(@RequestParam String fileId, HttpServletResponse response) {
+        File file = fileService.findFileById(fileId);
+        try{
+            ServletOutputStream sos = response.getOutputStream();
+            URL url = new URL(Constants.OSS_URL + file.getFileUrl());
+
+            HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
+
+            httpUrl.connect();
+            //获取网络输入流
+            BufferedInputStream bis = new BufferedInputStream(httpUrl.getInputStream());
+            int b;
+            while((b = bis.read())!=-1) {
+                sos.write(b);
+            }
+            sos.close();
+            bis.close();
+        } catch (Exception e) {
+            log.error("关闭文件IOException!");
+            throw new SystemException(e);
+        }
+    }
+
+    @RequestMapping("/viewer.html")
+    public String pdfViewer(String fileId,Model model){
+        model.addAttribute("fileId",fileId);
+        return "viewer";
     }
 }

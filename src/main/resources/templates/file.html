@@ -76,9 +76,7 @@
                             <div class="one-file boxsizing fileList">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and ${file.ext eq '.jpg'}"/>
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.png'}"/>
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.jpeg'}"/>
+                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
                                 <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '..doc'}"/>
                                 <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.docx'}"/>
                                 <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xls'}"/>
@@ -93,7 +91,7 @@
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
                                 </div>
                             </div>
-                            <div class="one-file-name" th:text="${file.fileName}" th:data="${file.fileId}">图片222.zip</div>
+                            <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:data="${file.fileId}">图片222.zip</div>
                         </li>
                     </ul>
                 </div>
@@ -102,6 +100,9 @@
     </div>
 </div>
 </body>
+<script th:inline="javascript">
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+</script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
