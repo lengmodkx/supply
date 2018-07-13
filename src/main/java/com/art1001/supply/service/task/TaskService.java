@@ -8,6 +8,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
@@ -258,7 +259,7 @@ public interface TaskService {
 	 * @param task 任务的实体信息
 	 * @return
 	 */
-	int SettingUpPrivacyPatterns(Task task);
+	int settingUpPrivacyPatterns(Task task);
 
 	/**
 	 * 查询当前项目下的所有成员信息
@@ -462,4 +463,5 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Task> findTaskByCalendar(String uId);
+
 }

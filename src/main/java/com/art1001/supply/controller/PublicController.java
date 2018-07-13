@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.task.TaskCollectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,10 @@ public class PublicController {
     /** 项目的逻辑层接口 */
     @Resource
     private ProjectService projectService;
+
+    /** 任务收藏的逻辑层接口 */
+    @Resource
+    private TaskCollectService taskCollectService;
 
     @GetMapping("mypage.html")
     public String my(Model model){
@@ -229,6 +235,26 @@ public class PublicController {
                 jsonObject.put("data",taskList);
             }
         }catch (Exception e){
+            log.error("系统异常,数据拉取失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询当前用户收藏的所有任务
+     * @return
+     */
+    @PostMapping("myCollectTask")
+    @ResponseBody
+    public JSONObject myCollectTask(){
+        JSONObject jsonObject = new JSONObject();
+        String memberId = ShiroAuthenticationManager.getUserId();
+        try {
+            List<TaskCollect> taskList = taskCollectService.findMyCollectTask(memberId);
+            jsonObject.put("data",taskList);
+            jsonObject.put("result",1);
+        } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
             throw new AjaxException(e);
         }

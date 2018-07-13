@@ -108,10 +108,18 @@ if ($("#have-executor").val()){
             var member = data.data;
             var executor = "";
             var content = "";
-            for(var i = 0;i < member.length;i++){
-                content += "<div class='one-people'>";
-                content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
-                content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+            if(member != null){
+                for(var i = 0;i < member.length;i++){
+                    content += "<div class='one-people'>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
+                    content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+                    content += "</div>";
+                }
+            } else{
+                content +=  "<div class='one-people'>";
+                content += "<img src='/static/image/add.png'>";
+                content += "<span value = ''>没有成员</span>";
                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                 content += "</div>";
             }
@@ -396,15 +404,6 @@ if ($("#have-executor").val()){
         var args = {"projectId": projectId,"uId":isExistId.toString()};
         $.post(url, args, function (data) {
             var content = "";
-
-
-
-
-
-
-
-
-
             var cyz = "";
             var member = data.reversUser;
             if (member != null && member.length > 0) {
@@ -437,9 +436,7 @@ if ($("#have-executor").val()){
                 $(".people").show(500,function () {
                    document.getElementById("people-ok").classList.add("cyz-chufa");
                     // document.getElementById("members").classList.add("yougou");
-
                 });
-
             } else{
                     content += "<div class=\'one-people\'>";
                     content += "<img th:src='\@{add.png}\'>";

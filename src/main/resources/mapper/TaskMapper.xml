@@ -800,4 +800,6 @@
 		select <include refid="Base_Column_List"></include>
 		from prm_task where executor = #{uId} or member_id = #{uId}
 	</select>
+
+
 </mapper>
