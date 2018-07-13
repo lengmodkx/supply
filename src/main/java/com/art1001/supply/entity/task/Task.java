@@ -2,6 +2,8 @@ package com.art1001.supply.entity.task;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.art1001.supply.entity.project.Project;
 import lombok.Data;
 
 /**
@@ -176,5 +178,10 @@ public class Task extends BaseEntity implements Serializable {
 	 * 任务的日历日期
 	 */
 	private Long taskCalendar;
+
+	/**
+	 * 该任务所在的项目
+	 */
+	private Project project;
 
 }

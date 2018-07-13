@@ -86,6 +86,7 @@ public class PublicController {
      * @return
      */
     @PostMapping("/myAddTask")
+    @ResponseBody
     public JSONObject myAddTask(String status,String orderType){
         JSONObject jsonObject = new JSONObject();
         List<Task> taskList = new ArrayList<Task>();
@@ -101,18 +102,20 @@ public class PublicController {
             //如果按照项目名查询需要查询出所有项目和所有项目下的任务信息
             if(orderType.equals("4")){
                 List<Project> projectList = projectService.findProjectAndTaskByCreateMember(userEntity.getId());
+                jsonObject.put("orderType","4");
                 jsonObject.put("result",1);
                 jsonObject.put("msg","获取成功!");
-                jsonObject.put("data",taskList);
+                jsonObject.put("data",projectList);
+                return jsonObject;
             } else{
                 //1.按照优先级排序 2.按照截止时间排序 3.按照创建时间排序
                 if(orderType.equals("1")){
                     //查询出所有我创建的任务 (不查询项目信息)
-                    taskList = taskService.findTaskByCreateMember(userEntity.getId());
+                    taskList = taskService.findTaskByCreateMember(userEntity.getId(),null);
                     //排序任务
-                    taskList = orderTask(taskList);
+                    orderTask(taskList);
                 } else{
-                    taskList = taskService.findTaskByCreateMemberAndTime(userEntity.getId(),orderType);
+                    taskList = taskService.findTaskByCreateMember(userEntity.getId(),orderType);
                 }
                 jsonObject.put("result",1);
                 jsonObject.put("msg","获取成功");
@@ -134,6 +137,7 @@ public class PublicController {
      * @return
      */
     @PostMapping("/myJoinTask")
+    @ResponseBody
     public JSONObject myJoinTask(String status,String orderType){
 
         JSONObject jsonObject = new JSONObject();
@@ -150,18 +154,20 @@ public class PublicController {
             //如果按照项目名查询需要查询出所有项目和所有项目下的任务信息
             if(orderType.equals("4")){
                 List<Project> projectList = projectService.findProjectAndTaskByUserId(userEntity.getId());
+                jsonObject.put("orderType","4");
                 jsonObject.put("result",1);
                 jsonObject.put("msg","获取成功!");
-                jsonObject.put("data",taskList);
+                jsonObject.put("data",projectList);
+                return jsonObject;
             } else{
                 //1.按照优先级排序 2.按照截止时间排序 3.按照创建时间排序
                 if(orderType.equals("1")){
                     //查询出所有我参与的任务 (不查询项目信息)
-                    taskList = taskService.findTaskByUserId(userEntity.getId());
+                    taskList = taskService.findTaskByUserId(userEntity.getId(),null);
                     //排序任务
-                    taskList = orderTask(taskList);
+                    orderTask(taskList);
                 } else{
-                    taskList = taskService.findTaskByUserAndTime(userEntity.getId(),orderType);
+                    taskList = taskService.findTaskByUserId(userEntity.getId(),orderType);
                 }
                 jsonObject.put("result",1);
                 jsonObject.put("msg","获取成功");
@@ -182,6 +188,7 @@ public class PublicController {
      * @return
      */
     @PostMapping("/myExecutorTask")
+    @ResponseBody
     public JSONObject myExecutorTask(String status,String orderType){
         JSONObject jsonObject = new JSONObject();
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -196,19 +203,26 @@ public class PublicController {
             }
             //如果按照项目名查询需要查询出所有项目和所有项目下的任务信息
             if(orderType.equals("4")){
-                List<Project> projectList = projectService.findProjectAndTaskByUserId(userEntity.getId());
+                List<Project> projectList = projectService.findProjectAndTaskByExecutorId(userEntity.getId());
                 jsonObject.put("result",1);
+                jsonObject.put("orderType","4");
                 jsonObject.put("msg","获取成功!");
-                jsonObject.put("data",taskList);
+                jsonObject.put("data",projectList);
+                return jsonObject;
             } else{
                 //1.按照优先级排序 2.按照截止时间排序 3.按照创建时间排序
                 if(orderType.equals("1")){
-                    //查询出所有我执行的任务 (不查询项目信息)
-                    taskList = taskService.findTaskByExecutor(userEntity.getId());
-                    //排序任务
-                    taskList = orderTask(taskList);
+                    //查询出所有我执行的任务
+                    taskList = taskService.findTaskByExecutor(userEntity.getId(),null);
+                    if(!taskList.isEmpty()){
+                        //排序任务
+                        orderTask(taskList);
+                    }
+                    for (Task t : taskList) {
+                        System.out.println(t.getTaskId()+"\t" + t.getPriority());
+                    }
                 } else{
-                    taskList = taskService.findTaskByExecutorIdAndTime(userEntity.getId(),orderType);
+                    taskList = taskService.findTaskByExecutor(userEntity.getId(),orderType);
                 }
                 jsonObject.put("result",1);
                 jsonObject.put("msg","获取成功");
@@ -226,12 +240,12 @@ public class PublicController {
      * @param taskList
      * @return
      */
-    public List<Task> orderTask(List<Task> taskList){
-        for (int i = taskList.size()-1;i>0;i--) {
+    public void orderTask(List<Task> taskList){
+        for (int i = taskList.size()-1;i > 0;i--) {
             for (int j = taskList.size() - 1; j > 0; j--) {
                 if (taskList.get(j).getPriority().equals("非常紧急")) {
                     Task task = taskList.get(j - 1);
-                    taskList.set(j - 1, taskList.get(i));
+                    taskList.set(j - 1, taskList.get(j));
                     taskList.set(j, task);
                 }
                 if (taskList.get(j).getPriority().equals("紧急")) {
@@ -243,7 +257,6 @@ public class PublicController {
                 }
             }
         }
-        return taskList;
     }
 
 

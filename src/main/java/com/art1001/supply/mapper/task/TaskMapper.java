@@ -158,9 +158,10 @@ public interface TaskMapper {
 	/**
 	 * 查询某个人执行的所有任务
 	 * @param uId 执行者的id
+	 * @param orderType 排序类型
 	 * @return
 	 */
-	List<Task> findTaskByExecutor(@Param("uId") String uId);
+	List<Task> findTaskByExecutor(@Param("uId") String uId,@Param("orderType") String orderType);
 
 	/**
 	 * 查询该项目下所有未被认领的任务
@@ -197,17 +198,19 @@ public interface TaskMapper {
 
 	/**
 	 * 查询项目下所有指定执行者任务信息 (只要未完成)
+	 * @param memberId 当前用户id
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<Task> findTaskByProjectAndStatusAndExecutor(@Param("projectId") String projectId,@Param("memberId") String memberId);
+	List<Task> findTaskByProjectAndStatusAndExecutor(@Param("projectId")String projectId,@Param("memberId") String memberId);
 
 	/**
 	 * 查询项目下所有指定参与者任务信息 (只要未完成)
+	 * @param memberId 成员id
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<Task> findTaskByProjectAndStatusAndUser(@Param("projectId") String projectId,@Param("memberId") String memberId);
+	List<Task> findTaskByProjectAndStatusAndUser(@Param("projectId")String projectId,@Param("memberId") String memberId);
 
 	/**
 	 * 查询项目下所有指定参与者任务信息 (只要未完成)
@@ -215,7 +218,7 @@ public interface TaskMapper {
 	 * @param memberId 当前用户id
 	 * @return
 	 */
-	List<Task> findTaskByProjectAndStatusAndCreateMember(@Param("projectId") String projectId,@Param("memberId") String memberId);
+	List<Task> findTaskByProjectAndStatusAndCreateMember(@Param("projectId")String projectId,@Param("memberId") String memberId);
 	/**
 	 * 查询项目下的指定的优先级的任务
 	 * @param projectId 项目id
@@ -315,19 +318,12 @@ public interface TaskMapper {
 	List<Task> findTaskByMemberId(@Param("memberId") String memberId);
 
 	/**
-	 * 查询出我参与的所有任务
+	 * 查询出我参与的任务
 	 * @param id 当前用户id
+	 * @param orderType 排序类型
 	 * @return
 	 */
-	List<Task> findTaskByUserId(String id);
-
-	/**
-	 * 查询出当前用户执行的所有任务信息 并且按照创建时间或者截止时间排序
-	 * @param uId 用户id
-	 * @param orderType 按照时间排序的类型  (创建时间,截止时间)
-	 * @return
-	 */
-	List<Task> findTaskByExecutorIdAndTime(@Param("uId") String uId, @Param("orderType") String orderType);
+	List<Task> findTaskByUserId(@Param("id") String id,@Param("orderType")String orderType);
 
 	/**
 	 * 查询出该用户执行的 已经完成的任务
@@ -342,7 +338,7 @@ public interface TaskMapper {
 	 * @param status 任务的状态
 	 * @return
 	 */
-	List<Task> findTaskByUserIdByStatus(@Param("uId") String id,@Param("stauts") String status);
+	List<Task> findTaskByUserIdByStatus(@Param("uId") String id,@Param("status") String status);
 
 	/**
 	 * 查询出任务的
@@ -358,14 +354,15 @@ public interface TaskMapper {
 	 * @param status 任务的状态
 	 * @return
 	 */
-	List<Task> findTaskByCreateMemberByStatus(@Param("uId") String id,@Param("stauts") String status);
+	List<Task> findTaskByCreateMemberByStatus(@Param("uId") String id,@Param("status") String status);
 
 	/**
 	 * 查询出我创建的任务  (只要未完成的)
 	 * @param id 用户id
+	 * @param orderType 排序类型
 	 * @return
 	 */
-	List<Task> findTaskByCreateMember(String id);
+	List<Task> findTaskByCreateMember(@Param("id") String id,@Param("orderType") String orderType);
 
 	/**
 	 * 查询出用户创建的所有任务并且按照时间排序

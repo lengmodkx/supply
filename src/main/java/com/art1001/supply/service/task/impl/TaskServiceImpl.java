@@ -900,8 +900,8 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public List<Task> findTaskByExecutor(String uId) {
-        return taskMapper.findTaskByExecutor(uId);
+    public List<Task> findTaskByExecutor(String uId,String orderType) {
+        return taskMapper.findTaskByExecutor(uId,orderType);
     }
 
     /**
@@ -1134,13 +1134,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * 查询出当前用户所参与的任务
+     * 查询出我参与的任务
      * @param id 当前用户id
+     * @param orderType 排序类型
      * @return
      */
     @Override
-    public List<Task> findTaskByUserId(String id) {
-        return taskMapper.findTaskByUserId(id);
+    public List<Task> findTaskByUserId(String id,String orderType) {
+        return taskMapper.findTaskByUserId(id,orderType);
     }
 
     /**
@@ -1151,7 +1152,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public List<Task> findTaskByExecutorIdAndTime(String id, String orderType) {
-        return taskMapper.findTaskByExecutorIdAndTime(id,orderType);
+        return null; //taskMapper.findTaskByExecutorIdAndTime(id,orderType);
     }
 
     /**
@@ -1200,11 +1201,12 @@ public class TaskServiceImpl implements TaskService {
     /**
      *查询出我创建的任务 只要未完成
      * @param id 当前用户id
+     * @param orderType 排序类型
      * @return
      */
     @Override
-    public List<Task> findTaskByCreateMember(String id) {
-        return taskMapper.findTaskByCreateMember(id);
+    public List<Task> findTaskByCreateMember(String id,String orderType) {
+        return taskMapper.findTaskByCreateMember(id,orderType);
     }
 
     /**
