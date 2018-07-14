@@ -36,7 +36,7 @@
     });
 
     $('.remove-he').click(function (e) {
-        $.post('/project/deleteProjectMember',{"id":nodeName},function (data) {
+        $.post('/project/delProjectMember',{"id":nodeName},function (data) {
             parent.layer.close(parent.layer.getFrameIndex(window.name));
             if(data.result===1){
                 parent.$('#'+nodeName).parent().remove();

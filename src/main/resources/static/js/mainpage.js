@@ -80,7 +80,6 @@ $(function () {
 
     // 拖拽函数
     $(".taskList").each(function (data,item) {
-        console.log($(item).attr('id'));
         var el = document.getElementById($(item).attr('id'));
         Sortable.create(el,{
             group:"tasks",

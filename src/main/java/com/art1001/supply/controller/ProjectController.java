@@ -16,6 +16,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectFuncService;
@@ -77,6 +78,8 @@ public class ProjectController {
     @Resource
     private TagService tagService;
 
+    @Resource
+    private BindingService bindingService;
     @Resource
     private SimpMessagingTemplate messagingTemplate;
     @RequestMapping("/project.html")
@@ -547,27 +550,4 @@ public class ProjectController {
         }
         return jsonObject;
     }
-
-    /**
-     * 删除项目成员
-     * @param id
-     * @return
-     */
-    @PostMapping("/deleteProjectMember")
-    @ResponseBody
-    public JSONObject deleteProjectMember(@RequestParam String id){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            projectMemberService.deleteProjectMemberById(id);
-            jsonObject.put("result",1);
-            jsonObject.put("msg","删除成功");
-        }catch (Exception e){
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-
-
-
 }

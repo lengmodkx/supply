@@ -197,7 +197,7 @@
 
 
         <!--关联 部分-->
-        <div class="related-box" style="display: none">
+        <div class="related-box">
             <div class="flex-box">任务 <span></span></div>
             <ul class="related-rw">
                 <li class="boxsizing">
@@ -487,6 +487,8 @@
 
     layui.use('form', function(){
         var form = layui.form;
+    });
+
     //订阅消息
     function subscribe1() {
         stompClient.subscribe('/topic/subscribe', function (response) {
@@ -500,8 +502,6 @@
             }
         });
     }
-    });
-
 
 
 </script>
