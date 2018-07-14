@@ -788,7 +788,7 @@ public class TaskServiceImpl implements TaskService {
         //设置收藏的项目的id
         taskCollect.setProjectId(task.getProjectId());
         //设置收藏的任务id
-        taskCollect.setTaskId(task.getTaskId());
+        //taskCollect.setTaskId(task.getTaskId());
         //设置这条收藏的创建时间
         taskCollect.setCreateTime(System.currentTimeMillis());
         //设置这条收藏的更新时间
@@ -823,7 +823,6 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int cancelCollectTask(Task task) {
-        //暂时不用
         String memberId = ShiroAuthenticationManager.getUserEntity().getId();
         int result = publicCollectService.deletePublicCollectById(memberId,task.getTaskId());
         return result;

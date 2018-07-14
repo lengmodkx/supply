@@ -21,13 +21,4 @@ public interface TaskCollectMapper {
 //
 //    int updateByPrimaryKey(TaskCollect record);
 
-    /**
-     * 任务收藏mapper层
-     * 数据: 查询出某个用户收藏的所用任务
-     * 功能: 返回数据给逻辑层进行处理
-     * @param memberId 用户id
-     * @return 返回收藏集合
-     */
-    List<TaskCollect> findMyCollectTask(String memberId);
-
 }

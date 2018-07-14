@@ -5,6 +5,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.SystemException;
@@ -14,6 +15,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -84,10 +86,14 @@ public class FileController {
                 }
 
                 List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
+                List<Tag> tags = tagService.findByProjectId(projectId);
 
                 model.addAttribute("file", fileById);
                 model.addAttribute("projectId", projectId);
+                // 文件的tag
                 model.addAttribute("tagList", tagList);
+                // 项目的tag
+                model.addAttribute("tags", tags);
                 model.addAttribute("fileVersionList", fileVersionList);
                 model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
                 return "tk-file-download";
@@ -674,6 +680,96 @@ public class FileController {
             log.error("移除标签异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("message", "移除失败");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping("/addTag")
+    @ResponseBody
+    public JSONObject addTag(
+            @RequestParam String fileId, // 文件id
+            @RequestParam String tagId   // 标签id
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            if (StringUtils.isNotEmpty(file.getTagId())) {
+                String[] tagIdArr = file.getTagId().split(",");
+                if (CommonUtils.useList(tagIdArr, tagId)) { // 已经存在，移除
+                    StringBuilder tagIds = new StringBuilder();
+                    for (String tId : tagIdArr) {
+                        if (!tagId.equals(tId)) {
+                            tagIds.append(tId).append(",");
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(tagIds)) {
+                        tagIds.deleteCharAt(tagIds.length() - 1);
+                    }
+                    fileService.updateTagId(fileId, tagIds.toString());
+                    jsonObject.put("result", 2);
+                    jsonObject.put("msg", "移除成功");
+                } else { // 不存在添加
+                    String tagIds = file.getTagId();
+                    if (StringUtils.isNotEmpty(file.getTagId())) {
+                        tagIds += "," + tagId;
+                    } else {
+                        tagIds = tagId;
+                    }
+                    fileService.updateTagId(fileId, tagIds);
+                    Tag tag = tagService.findById(Integer.valueOf(tagId));
+                    jsonObject.put("result", 1);
+                    jsonObject.put("data", tag);
+                    jsonObject.put("msg", "添加成功");
+                }
+            } else {
+                String tagIds = file.getTagId();
+                if (StringUtils.isNotEmpty(tagIds)) {
+                    tagIds += "," + tagId;
+                } else {
+                    tagIds = tagId;
+                }
+                fileService.updateTagId(fileId, tagIds);
+                Tag tag = tagService.findById(Integer.valueOf(tagId));
+                jsonObject.put("result", 1);
+                jsonObject.put("data", tag);
+                jsonObject.put("msg", "添加成功");
+            }
+
+
+        } catch (Exception e) {
+            log.error("添加标签异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "添加失败");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping("/deleteTag")
+    @ResponseBody
+    public JSONObject deleteTag(
+            @RequestParam String fileId, // 文件id
+            @RequestParam String tagId   // 标签id
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            String[] tagIdArr = file.getTagId().split(",");
+            StringBuilder tagIds = new StringBuilder();
+            for (String tId : tagIdArr) {
+                if (!tagId.equals(tId)) {
+                    tagIds.append(tId).append(",");
+                }
+            }
+            if (StringUtils.isNotEmpty(tagIds)) {
+                tagIds.deleteCharAt(tagIds.length() - 1);
+            }
+            fileService.updateTagId(fileId, tagIds.toString());
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "移除成功");
+        } catch (Exception e) {
+            log.error("移除标签异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "移除失败");
         }
         return jsonObject;
     }

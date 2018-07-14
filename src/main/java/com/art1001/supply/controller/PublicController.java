@@ -1,12 +1,14 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskCollectService;
@@ -45,7 +47,7 @@ public class PublicController {
 
     /** 任务收藏的逻辑层接口 */
     @Resource
-    private TaskCollectService taskCollectService;
+    private PublicCollectService publicCollectService;
 
     @GetMapping("mypage.html")
     public String my(Model model){
@@ -251,11 +253,30 @@ public class PublicController {
         JSONObject jsonObject = new JSONObject();
         String memberId = ShiroAuthenticationManager.getUserId();
         try {
-            List<TaskCollect> taskList = taskCollectService.findMyCollectTask(memberId);
+            List<PublicCollect> taskList = publicCollectService.findMyCollectTask(memberId);
             jsonObject.put("data",taskList);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 取消收藏当前的任务
+     * @param publicCollectId 收藏id
+     * @return
+     */
+    @PostMapping("cancelCollectTask")
+    @ResponseBody
+    public JSONObject cancelCollectTask(String publicCollectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = publicCollectService.cancelCollectTask(publicCollectId);
+            jsonObject.put("result",result);
+        } catch (Exception e){
+            log.error("系统异常,取消失败,{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;

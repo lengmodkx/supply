@@ -20,7 +20,7 @@ public class PublicCollect extends BaseEntity implements Serializable {
 	/**
 	 * collect_id
 	 */
-	private String collect_id;
+	private String publicId;
 
 
 	/**
@@ -36,11 +36,6 @@ public class PublicCollect extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 任务id
-	 */
-	private String taskId;
-
-	/**
 	 * 用户头像
 	 */
 	private String memberImg;
@@ -54,5 +49,5 @@ public class PublicCollect extends BaseEntity implements Serializable {
 	/**
 	 * 收藏类型  任务，日程 文件 分享
 	 */
-	private String collect_type;
+	private String collectType;
 }

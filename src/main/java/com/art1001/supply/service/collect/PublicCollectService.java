@@ -64,4 +64,20 @@ public interface PublicCollectService {
 	 * @return
 	 */
 	int judgeCollectPublic(@Param("memberId") String memberId, @Param("publicId") String publicId, @Param("collectType") String collectType);
+
+	/**
+	 * 数据: 根据用户id查询该用户收藏的所有任务
+	 * 功能: 实现查询我的收藏的任务 功能
+	 * @param memberId 用户id
+	 * @return 藏实体集合
+	 */
+	List<PublicCollect> findMyCollectTask(String memberId);
+
+	/**
+	 * 数据: 删除该条收藏记录
+	 * 功能: 用户对当前任务取消收藏
+	 * @param publicCollectId 该条收藏记录id
+	 * @return 返回影响行数
+	 */
+	int cancelCollectTask(String publicCollectId);
 }

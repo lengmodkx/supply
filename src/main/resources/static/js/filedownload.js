@@ -11,22 +11,13 @@ $(function () {
     $(".close-tag").click(function () {
         $(".tags-search-build").slideUp();
     });
-    $(".has-tags>i").click(function (e) {
+    $(".add-fuhao").click(function (e) {
         $(".tags-search-build").show();
         $(".tag-search").show();
 
         e.stopPropagation();
     });
 
-    // 点击某个具体标签
-    $(".tags-list").click(function () {
-        var tag = $(this).find(".tag-font").text();
-        $(".has-tags").show()
-        $(".has-tags").prepend('<span class="tag" style=" background-color: #A1D5FA;">\n' +
-            '                    ' + tag + '  \n' +
-            '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
-            '                </span>')
-    });
     $(".revise-task").on("click", ".tag i", function () {
         $(this).parent().remove();
         //判断 有没有标签

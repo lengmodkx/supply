@@ -93,4 +93,29 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 		return publicCollectMapper.judgeCollectPublic(memberId,publicId,collectType);
 	}
 
+	/**
+	 * 重写接口方法
+	 * 数据: 查询该用户收藏的所有任务
+	 * 功能: 查看我收藏的任务
+	 * 数据处理:
+	 * @param memberId 用户id
+	 * @return 返回收藏实体类集合信息
+	 */
+	@Override
+	public List<PublicCollect> findMyCollectTask(String memberId) {
+		return publicCollectMapper.findMyCollectTask(memberId);
+	}
+
+	/**
+	 * 重写接口 取消收藏任务的方法
+	 * 数据: 根据收藏记录的id 删除一条收藏记录
+	 * 功能: 取消任务收藏
+	 * 数据处理:
+	 * @param publicCollectId 该条收藏记录id
+	 * @return
+	 */
+	@Override
+	public int cancelCollectTask(String publicCollectId) {
+		return publicCollectMapper.cancelCollectTask(publicCollectId);
+	}
 }

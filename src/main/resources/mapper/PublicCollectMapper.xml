@@ -17,10 +17,9 @@
 
 	<sql id="Base_Column_List">
 				id,
-		        collect_id,
 				member_id,
+				public_id,
 				project_id,
-				task_id,
 				create_time,
 				update_time,
 				member_img,
@@ -184,6 +183,12 @@
 	<!-- 判断当前用户有没有收藏该项目 -->
 	<select id="judgeCollectPublic" resultType="java.lang.Integer">
 		select count(0) from prm_public_collect where public_id = #{publicId} and member_id = #{memberId} and collect_type = #{collectType}
+	</select>
+
+	<!-- 查询当前用户收藏的所有任务 -->
+	<select id="findMyCollectTask" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"></include>
+		from prm_public_collect where member_id = #{uId} and collect_type = '任务'
 	</select>
 	
 </mapper>
