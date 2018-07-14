@@ -97,5 +97,10 @@ public class Binding extends BaseEntity implements Serializable {
 	 */
 	private String menuName;
 
+	/**
+	 * 任务的完成状态
+	 */
+	private String taskStatus;
+
 
 }

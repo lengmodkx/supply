@@ -7,9 +7,16 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.binding.BindingVO;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -24,7 +31,15 @@ public class BindingServiceImpl implements BindingService {
 	/** bindingMapper接口*/
 	@Resource
 	private BindingMapper bindingMapper;
-	
+
+	@Resource
+	private TaskService taskService;
+	@Resource
+	private FileService fileService;
+	@Resource
+	private ShareService shareService;
+	@Resource
+	private ScheduleService scheduleService;
 	/**
 	 * 查询分页binding数据
 	 * 
@@ -88,13 +103,34 @@ public class BindingServiceImpl implements BindingService {
 
 	/**
 	 * 功能: 查询出该目标关联的所有信息
-	 * 数据处理: 关联信息分为四种 (任务,分享,日程,文件) 需要分成四个集合然后按照关联时间排序 再放入统一的数组
+	 * 数据处理:
 	 * @param  publicId 目标id
 	 * @return 返回关联数据
 	 */
 	@Override
 	public List<Binding> listBindingInfoByPublicId(String publicId) {
 		List<Binding> list = bindingMapper.listBindingInfoByPublicId(publicId);
-		return list;
+		List bindings = new ArrayList();
+		for (Binding b : list) {
+			BindingVO bvo = new BindingVO();
+			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_TASK_NAME)){
+				bvo.setTask(taskService.findTaskByTaskId(b.getBindId()));
+				bvo.setPublicType(BindingConstants.BINDING_TASK_NAME);
+			}
+			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_FILE_NAME)){
+				bvo.setFile(fileService.findFileById(b.getBindId()));
+				bvo.setPublicType(BindingConstants.BINDING_FILE_NAME);
+			}
+			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_SCHEDULE_NAME)){
+				bvo.setSchedule(scheduleService.findScheduleById(b.getBindId()));
+				bvo.setPublicType(BindingConstants.BINDING_SCHEDULE_NAME);
+			}
+			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_SHARE_NAME)){
+				bvo.setShare(shareService.findById(b.getBindId()));
+				bvo.setPublicType(BindingConstants.BINDING_SHARE_NAME);
+			}
+			bindings.add(bvo);
+		}
+		return bindings;
 	}
 }

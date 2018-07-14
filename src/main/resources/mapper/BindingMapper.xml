@@ -17,6 +17,8 @@
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
 		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
+		<association property=""
 
 	</resultMap>
 
@@ -210,11 +212,17 @@
         where public_id = #{publicId} and public_type = #{publicType}
 	</select>
 
-	<!-- 查询出该目标的所有关联信息 -->
+	<!--&lt;!&ndash; 查询出该目标的所有关联信息 &ndash;&gt;-->
+	<!--<select id="listBindingInfoByPublicId" resultMap="BaseResultMap">-->
+		  <!--select <include refid="Base_Column_List"></include>-->
+		   <!--,project_name,relation_name,prm_task.task_status-->
+		  <!--from prm_binding left join prm_project on prm_binding.project_id = prm_project.project_id left join prm_relation on prm_binding.group_id = prm_relation.relation_id left join prm_task on prm_binding.public_id = prm_task.task_id-->
+		<!--where prm_binding.public_id = #{publicId} order by prm_binding.create_time desc-->
+	<!--</select>-->
+
 	<select id="listBindingInfoByPublicId" resultMap="BaseResultMap">
-		  select <include refid="Base_Column_List"></include>
-		   ,project_name,relation_name
-		  from prm_binding left join prm_project on prm_binding.project_id = prm_project.project_id left join prm_relation on prm_binding.group_id = prm_relation.relation_id  where prm_binding.public_id = #{publicId} order by prm_binding.create_time desc
+		select <include refid="Base_Column_List"></include>
+		from prm_binding where public_id = #{publicId} order by prm_binding.create_time desc
 	</select>
 
 
