@@ -9,15 +9,30 @@
 		<result column="public_type" property="publicType" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
+		<result column="menuId" property="menu_id" jdbcType="VARCHAR" />
+		<result column="bind_name" property="bindName" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+
 	</resultMap>
 
 	<sql id="Base_Column_List">
 				id,
 				public_id,
 				bind_id,
+				bind_name,
 				public_type,
-				create_time,
-				update_time
+				prm_binding.create_time,
+				prm_binding.update_time,
+				image,
+				prm_binding.public_id,
+				group_id,
+				menu_id,
+				share_link
 	</sql>
 
 	<sql id="whereStatement">
@@ -92,6 +107,22 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="projectId != null ">
+				project_id,
+			</if>
+			<if test="groupId != null ">
+				group_id,
+			</if>
+			<if test="menuId != null ">
+				menu_id,
+			</if>
+			<if test="image != null ">
+				image,
+			</if>
+			<if test="shareLink != null ">
+				share_link,
+			</if>
+
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -113,6 +144,21 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="image != null ">
+				#{image},
+			</if>
+			<if test="projectId != null ">
+				#{projectId},
+			</if>
+			<if test="groupId != null ">
+				#{groupId},
+			</if>
+			<if test="menuId != null ">
+				#{menuId},
+			</if>
+			<if test="shareLink != null ">
+				#{shareLink},
 			</if>
 		</trim>
 
@@ -137,10 +183,23 @@
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
+			<if test="image != null ">
+				iamge = #{image},
+			</if>
+			<if test="projectId != null ">
+				project_id = #{projectId},
+			</if>
+			<if test="groupId != null ">
+				group_id = #{groupId},
+			</if>
+			<if test="menuId != null ">
+				menu_id = #{menuId},
+			</if>
+			<if test="shareLink != null ">
+				share_link = #{shareLink},
+			</if>
 		</set>
-
 		WHERE id = #{id}
-
 	</update>
 
 
@@ -149,6 +208,13 @@
 		<include refid="Base_Column_List" />
 		from prm_binding
         where public_id = #{publicId} and public_type = #{publicType}
+	</select>
+
+	<!-- 查询出该目标的所有关联信息 -->
+	<select id="listBindingInfoByPublicId" resultMap="BaseResultMap">
+		  select <include refid="Base_Column_List"></include>
+		   ,project_name,relation_name
+		  from prm_binding left join prm_project on prm_binding.project_id = prm_project.project_id left join prm_relation on prm_binding.group_id = prm_relation.relation_id  where prm_binding.public_id = #{publicId} order by prm_binding.create_time desc
 	</select>
 
 

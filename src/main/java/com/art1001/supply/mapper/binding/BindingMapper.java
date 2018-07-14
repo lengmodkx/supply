@@ -63,4 +63,11 @@ public interface BindingMapper {
 	 * @return
 	 */
 	List<Binding> findBindingList(@Param("publicId")String publicId,@Param("publicType")String publicType);
+
+	/**
+	 * 查询出该目标的所有关联信息
+	 * @param publicId 目标id
+	 * @return 该目标关联数据
+	 */
+	List<Binding> listBindingInfoByPublicId(String publicId);
 }

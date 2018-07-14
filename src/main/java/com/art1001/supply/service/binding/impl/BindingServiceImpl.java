@@ -1,8 +1,13 @@
 package com.art1001.supply.service.binding.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.util.IdGen;
@@ -80,5 +85,16 @@ public class BindingServiceImpl implements BindingService {
 	public List<Binding> findBindingAllList(){
 		return bindingMapper.findBindingAllList();
 	}
-	
+
+	/**
+	 * 功能: 查询出该目标关联的所有信息
+	 * 数据处理: 关联信息分为四种 (任务,分享,日程,文件) 需要分成四个集合然后按照关联时间排序 再放入统一的数组
+	 * @param  publicId 目标id
+	 * @return 返回关联数据
+	 */
+	@Override
+	public List<Binding> listBindingInfoByPublicId(String publicId) {
+		List<Binding> list = bindingMapper.listBindingInfoByPublicId(publicId);
+		return list;
+	}
 }

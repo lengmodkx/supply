@@ -57,17 +57,11 @@ public interface PublicCollectMapper {
 
 	/**
 	 * 判断当前用户有没有收藏该任务
+	 * @param memberId
+	 * @param publicId 收藏的
 	 * @return
 	 */
 	int judgeCollectPublic(@Param("memberId") String memberId,@Param("publicId") String publicId,@Param("collectType") String collectType);
-
-	/**
-	 * 收藏mapper层
-	 * 数据: 查询出某个用户收藏的所用任务
-	 * @param memberId 用户id
-	 * @return 返回收藏集合
-	 */
-	List<PublicCollect> findMyCollectTask(String memberId);
 
 	/**
 	 * 收藏mapper层
@@ -77,4 +71,13 @@ public interface PublicCollectMapper {
 	 */
 	@Delete("delete from prm_public_collect where id = #{publicCollectId}")
     int cancelCollectTask(String publicCollectId);
+
+	/**
+	 * 收藏mapper层
+	 * 数据: 查询出某个用户收藏的所用任务
+	 * @param memberId 用户id
+	 * @param type 要查询的类型
+	 * @return 返回收藏集合
+	 */
+    List<PublicCollect> findMyCollect(@Param("memberId") String memberId,@Param("type") String type);
 }

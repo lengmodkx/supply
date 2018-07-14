@@ -1,9 +1,11 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.user.UserEntity;
@@ -14,6 +16,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskCollectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +29,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Controller
@@ -135,8 +139,6 @@ public class PublicController {
         }catch (Exception e){
             throw new AjaxException(e);
         }
-
-
         return jsonObject;
     }
 
@@ -244,24 +246,26 @@ public class PublicController {
     }
 
     /**
-     * 查询当前用户收藏的所有任务
+     * 实现 页面的我的收藏 数据填充
+     * 根据类型查询当前用户的收藏
      * @return
      */
-    @PostMapping("myCollectTask")
+    @PostMapping("myCollect")
     @ResponseBody
-    public JSONObject myCollectTask(){
+    public JSONObject myCollectTask(String type){
         JSONObject jsonObject = new JSONObject();
         String memberId = ShiroAuthenticationManager.getUserId();
         try {
-            List<PublicCollect> taskList = publicCollectService.findMyCollectTask(memberId);
-            jsonObject.put("data",taskList);
-            jsonObject.put("result",1);
+//            List<PublicCollect> taskList = publicCollectService.listMyCollect(memberId,type);
+//            jsonObject.put("data",taskList);
+//            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
             throw new AjaxException(e);
         }
         return jsonObject;
     }
+
 
     /**
      * 取消收藏当前的任务
@@ -305,6 +309,4 @@ public class PublicController {
             }
         }
     }
-
-
 }

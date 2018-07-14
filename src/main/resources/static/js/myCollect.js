@@ -41,26 +41,15 @@ $('.collect-head').click(function () {
             if(type == '任务'){
                 var url = "/public/myCollectTask";
             }
+            if(type == '分享'){
+                var url = "public/myCollectShare";
+            }
             $.post(url,function(data){
-                var collectTask = data.data;
+                var collect = data.data;
                 var content = '';
-                if(collectTask != ''){
-                    for(var i = 0;i < collectTask.length;i++){
-                        content += '<li data-id="' + collectTask[i].id + '">'+
-                        '<div class="collect-item-top">'+
-                            '<span class="collect-item-top-date">' + new Date(collectTask[i].createTime).format('M月d日') + '</span>'+
-                        '<span class="collect-item-top-remove">取消收藏</span>'+
-                            '</div>'+
-                            '<div class="collect-item-middle clearfix">'+
-                            '<div class="collect-item-middle-img">'+
-                            '<img src="/image/rw-white.png">'+
-                            '</div>'+
-                            '<img class="collect-item-touxiang" src="'+IMAGE_SERVER+collectTask[i].memberImg+'">'+
-                            '<p class="collect-item-name">' + collectTask[i].memberName + '</p>'+
-                        '</div>'+
-                        '</li>';
-                    }
-                    $('.rw-collect').html(content);
+                if(collect != ''){
+                    $('.no-collect').hide();
+                    appendStr(collect,type);
                 } else{
                     $('.no-collect').show();
                 }
@@ -68,3 +57,30 @@ $('.collect-head').click(function () {
         }
     });
 });
+
+/**
+ * 拼接字符串
+ * @param list 数据
+ * @param type 查询的类型
+ */
+function appendStr(list,type) {
+    var content = '';
+    if(type == '任务'){
+        for (var i = 0; i < collectTask.length; i++) {
+            content += '<li data-id="' + collectTask[i].id + '">' +
+                '<div class="collect-item-top">' +
+                '<span class="collect-item-top-date">' + new Date(collectTask[i].createTime).format('M月d日') + '</span>' +
+                '<span class="collect-item-top-remove">取消收藏</span>' +
+                '</div>' +
+                '<div class="collect-item-middle clearfix">' +
+                '<div class="collect-item-middle-img">' +
+                '<img src="/image/rw-white.png">' +
+                '</div>' +
+                '<img class="collect-item-touxiang" src="' + IMAGE_SERVER + collectTask[i].memberImg + '">' +
+                '<p class="collect-item-name">' + collectTask[i].memberName + '</p>' +
+                '</div>' +
+                '</li>';
+        }
+        $('.rw-collect').html(content);
+    }
+}

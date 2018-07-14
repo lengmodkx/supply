@@ -95,15 +95,15 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 
 	/**
 	 * 重写接口方法
-	 * 数据: 查询该用户收藏的所有任务
-	 * 功能: 查看我收藏的任务
-	 * 数据处理:
+	 * 数据: 根据收藏类型查询该用户的所有收藏
+	 * 功能: 查看我的收藏
+	 * 逻辑处理:
 	 * @param memberId 用户id
 	 * @return 返回收藏实体类集合信息
 	 */
 	@Override
-	public List<PublicCollect> findMyCollectTask(String memberId) {
-		return publicCollectMapper.findMyCollectTask(memberId);
+	public List<PublicCollect> findMyCollect(String memberId,String type) {
+		return publicCollectMapper.findMyCollect(memberId,type);
 	}
 
 	/**

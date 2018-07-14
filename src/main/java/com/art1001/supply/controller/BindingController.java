@@ -66,10 +66,4 @@ public class BindingController {
         return jsonObject;
     }
 
-
-
-
-
-
-
 }

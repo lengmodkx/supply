@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
@@ -17,6 +19,7 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -87,6 +90,10 @@ public class TaskController {
     /** 项目的逻辑层接口 */
     @Resource
     private ProjectService projectService;
+
+    /** 关联绑定的逻辑层接口 */
+    @Resource
+    private BindingService bindingService;
 
     /** 用于订阅推送消息 */
     @Resource
@@ -1033,15 +1040,9 @@ public class TaskController {
                 Collections.reverse(tagList);
                 model.addAttribute("tagList",tagList);
             }
-            //返回该任务的关联信息
-            Map<String, List> taskRelation = taskService.findTaskRelation(task.getTaskId());
-            //该任务关联的任务
-            List<Task> taskList = taskRelation.get("relationTask");
-            //该任务关联的文件
-            List<File> fileList = taskRelation.get("relationFile");
-            model.addAttribute("relationTask",taskList);
-            jsonObject.put("relationFile",fileList);
-            model.addAttribute("relationFile",fileList);
+            //查询出任务的关联信息
+            List<Binding> bindings = bindingService.listBindingInfoByPublicId(task.getTaskId());
+            model.addAttribute("bindings",bindings);
             //查询出该任务的创建者信息
             UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
             model.addAttribute("taskCreate",taskCreate);

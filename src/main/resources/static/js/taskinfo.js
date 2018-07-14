@@ -888,6 +888,41 @@ $('.go-detail').click(function () {
     location.href = '/task/initTask.html?taskId='+childTaskId+'&projectId='+ projectId;
 });
 
+/**
+ * 点击关联的任务
+ */
+$('.related-rw .boxsizing').click(function () {
+    changeRenwu($(this).attr("data-id"),projectId);
+});
+
+$('.related-wj .boxsizing').click(function () {
+
+});
+
+//修改任务 弹框界面
+function changeRenwu(taskId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        location.href = "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId;
+    });
+}
+$(function () {
+    if ($(".related-rc-wrap .related-rc li").length>0){
+        $(".related-rc-wrap").show()
+    } else {
+        $(".related-rc-wrap").hide()
+    }
+    if ($(".related-fx-wrap .related-rc li").length>0){
+        $(".related-fx-wrap").show()
+    } else {
+        $(".related-fx-wrap").hide()
+    }
+    if ($(".related-wj-wrap .related-wj li").length>0){
+        $(".related-wj-wrap").show()
+    } else {
+        $(".related-wj-wrap").hide()
+    }
+});
 
 
 

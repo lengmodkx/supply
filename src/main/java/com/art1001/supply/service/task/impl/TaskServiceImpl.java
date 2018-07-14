@@ -27,6 +27,8 @@ import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * taskServiceImpl
@@ -847,11 +849,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<UserEntity> findProjectAllMember(String projectId,String executor) {
         List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-//        for (int i = 0; i < projectAllMember.size(); i++) {
-//            if(projectAllMember.get(i).getId().equals(executor)){
-//                projectAllMember.remove(projectAllMember.get(i));
-//            }
-//        }
         return projectAllMember;
     }
 

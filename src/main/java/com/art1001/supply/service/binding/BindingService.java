@@ -52,5 +52,13 @@ public interface BindingService {
 	 * @return
 	 */
 	public List<Binding> findBindingAllList();
-	
+
+	/**
+	 * 查询该目标的关联
+	 * 数据: 查询出目标的关联的所有数据
+	 * 功能: 页面上看到任务 或者 日程 详情页的关联信息
+	 * @param  publicId 目标id
+	 * @return 返回关联的集合
+	 */
+	List<Binding> listBindingInfoByPublicId(String publicId);
 }

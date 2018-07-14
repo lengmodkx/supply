@@ -3,6 +3,7 @@ package com.art1001.supply.service.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.share.Share;
 import org.apache.ibatis.annotations.Param;
 
 
@@ -66,12 +67,13 @@ public interface PublicCollectService {
 	int judgeCollectPublic(@Param("memberId") String memberId, @Param("publicId") String publicId, @Param("collectType") String collectType);
 
 	/**
-	 * 数据: 根据用户id查询该用户收藏的所有任务
-	 * 功能: 实现查询我的收藏的任务 功能
+	 * 数据: 根据用户id查询该用户的收藏
+	 * 功能: 实现查询我的收藏功能
 	 * @param memberId 用户id
-	 * @return 藏实体集合
+	 * @param type 需要查询的收藏的类型(任务,分享,日程,文件)
+	 * @return 收藏实体集合
 	 */
-	List<PublicCollect> findMyCollectTask(String memberId);
+	List<PublicCollect> findMyCollect(String memberId,String type);
 
 	/**
 	 * 数据: 删除该条收藏记录
@@ -80,4 +82,5 @@ public interface PublicCollectService {
 	 * @return 返回影响行数
 	 */
 	int cancelCollectTask(String publicCollectId);
+
 }
