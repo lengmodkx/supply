@@ -431,7 +431,7 @@ height: 1px;
 }
 .rw-content{
     width: 100%;
-    height: 70px;
+    height: 60px;
     padding: 16px;
     border: 1px solid #d9d9d9;
     border-radius: 3px;
@@ -439,7 +439,7 @@ height: 1px;
     z-index: 20;
 }
 .rw-content.layui-textarea{
-    min-height: 70px;
+    min-height: 60px;
 }
 .who-create{
     width: 100%;

@@ -101,12 +101,12 @@
 
                 if(phoneNum||email){
                     var params = $("#registerForm").serialize();
-                    console.log(params);
-
+                    var index = layer.load(1, {shade: [0.1,'#fff']});
                     $.post("/register", params, function (data) {
+                        layer.close(index);
                         if(data.result===1){//注册成功跳转到登陆界面
                             layer.msg(data.msg,{icon: 1});
-                            window.location.href = "/login.html";
+                            window.location.href = "/";
                         }else{
                             changeCaptcha();
                             layer.msg(data.msg,{icon: 5});

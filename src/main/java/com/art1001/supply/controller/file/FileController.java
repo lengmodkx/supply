@@ -137,6 +137,33 @@ public class FileController {
     }
 
     /**
+     * 打开文件详情
+     */
+    @GetMapping("/fileDetail.htlm")
+    public String openDownloadFile(@RequestParam String fileId, Model model) {
+        File file = fileService.findFileById(fileId);
+        String projectId = file.getProjectId();
+        String tagIds = file.getTagId();
+        List<Tag> tagList = new ArrayList<>();
+        if (StringUtils.isNotEmpty(tagIds)) {
+            String[] tagIdStrArr = tagIds.split(",");
+            Integer[] tagIdArr = new Integer[tagIdStrArr.length];
+            for (int i = 0; i < tagIdStrArr.length; i++) {
+                tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
+            }
+            tagList = tagService.findByIds(tagIdArr);
+        }
+
+        List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
+
+        model.addAttribute("file", file);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("fileVersionList", fileVersionList);
+        return "tk-file-download";
+    }
+
+    /**
      * 文件目录
      *
      * @param file 文件
@@ -248,6 +275,8 @@ public class FileController {
             jsonObject.put("result", 0);
             jsonObject.put("msg", "创建失败");
         }
+
+
         return jsonObject;
     }
 

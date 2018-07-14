@@ -41,7 +41,7 @@
                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
                                        <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                        <img class="assignment-tx" th:if="${task.taskMember != null}" src="../static/image/add.png"  th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
-                                       <img class="assignment-tx" th:if="${task.taskMember == null}" src="/image/add.png" th:src="@{/image/add.png}"/>
+                                       <img class="assignment-tx" th:if="${task.taskMember == null}" src="../image/add.png" th:src="@{/image/add.png}"/>
                                    </div>
                                    <div class="assignment-bottom-box">
                                        <!--<span class="timer">今天9:00-明天</span>-->
