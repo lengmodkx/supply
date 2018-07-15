@@ -18,10 +18,8 @@
 		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<association property="project" column="public_id" javaType="com.art1001.supply.entity.project.Project">
-			<id column="project_id" property="projectId"></id>
-			<result property="projectName" column="project_name"></result>
-		</association>
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+		select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -29,17 +27,17 @@
 				file_name,
 				ext,
 				file_url,
-				prm_file.project_id,
-				prm_file.member_id,
-				prm_file.member_name,
-				prm_file.member_img,
+				project_id,
+				member_id,
+				member_name,
+				member_img,
 			    `catalog`,
 				`size`,
-				prm_file.parent_id,
-				prm_file.file_del,
-				prm_file.tag_id,
-				prm_file.create_time,
-				prm_file.update_time
+				parent_id,
+				file_del,
+				tag_id,
+				create_time,
+				update_time
 	</sql>
 
 	<sql id="whereStatement">
@@ -80,8 +78,9 @@
 	
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
-		<include refid="Base_Column_List" />,prm_project.project_name
-		from prm_file left join prm_project on prm_file.project_id = prm_project.project_id where file_id = #{fileId}
+		<include refid="Base_Column_List" />
+		from prm_file where
+		file_id = #{fileId}
 	</select>
 
 	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">

@@ -31,10 +31,8 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
-		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project">
-			<id property="projectId" column="project_id"></id>
-			<result property="projectName" column="project_name"></result>
-		</association>
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
@@ -142,8 +140,8 @@
 	<!-- 根据任务id 查询任务的信息 和执行者的信息 -->
 	<select id="findTaskByTaskId" resultMap="findMenuTaskMemberInfo" parameterType="java.lang.String">
 	SELECT
-	<include refid="Base_Column_List"></include>,prm_project.project_name
-	from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.task_id = #{taskId}
+	<include refid="Base_Column_List"/>
+	from prm_task where prm_task.task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">

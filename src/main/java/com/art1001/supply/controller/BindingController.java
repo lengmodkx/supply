@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.project.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,9 @@ public class BindingController {
 
     @Resource
     private BindingService bindingService;
+
+    @Resource
+    private ProjectService projectService;
 
     /**
      * 任务,日程，文件，分享与任务,日程，文件，分享的绑定关系
@@ -65,5 +69,11 @@ public class BindingController {
         }
         return jsonObject;
     }
+
+    @RequestMapping("/relevance.html")
+    public String bindpage(){
+        return "tk-relevance";
+    }
+
 
 }

@@ -16,6 +16,8 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">

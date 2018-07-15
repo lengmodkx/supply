@@ -2,6 +2,8 @@ package com.art1001.supply.entity.schedule;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.art1001.supply.entity.project.Project;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -65,5 +67,5 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private String memberId;
 
-
+	private Project project;
 }
