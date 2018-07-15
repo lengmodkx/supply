@@ -108,7 +108,7 @@ public class BindingServiceImpl implements BindingService {
 	 * @return 返回关联数据
 	 */
 	@Override
-	public List<Binding> listBindingInfoByPublicId(String publicId) {
+	public List listBindingInfoByPublicId(String publicId) {
 		List<Binding> list = bindingMapper.listBindingInfoByPublicId(publicId);
 		List bindings = new ArrayList();
 		for (Binding b : list) {

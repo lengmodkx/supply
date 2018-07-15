@@ -205,10 +205,10 @@
                         <input type="checkbox" th:value = "${bindings.task.taskId}" lay-filter="bindTask" name="" th:checked="${bindings.task.taskStatus == '完成'}" lay-skin="primary">
                     </div>
                     <div class="related-rw-info">
-                        <!--<img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+ ${bindings.taskimage}">-->
+                        <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+ ${bindings.task.taskMember.memberImg}">
                         <span th:text="${bindings.task.taskName}"></span>
                     </div>
-                    <!--<div class="related-rw-describe over-hidden" th:text = "${bindings.projectName}"></div>-->
+                    <div class="related-rw-describe over-hidden" th:text = "${bindings.task.project.projectName}"></div>
                     <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                     <!--取消关联框-->
                     <div class="related-menu" style="display: none">
@@ -231,12 +231,22 @@
             <div class="related-wj-wrap">
                 <div class="flex-box">文件 <span></span></div>
                 <ul class="related-wj">
-                    <li class="boxsizing" th:data-id = "${bindings.bindId}" th:if="${bindings.publicType == '文件'}"  th:each="bindings:${bindings}">
+                    <li class="boxsizing" th:data-id = "${bindings.file.fileId}" th:if="${bindings.publicType == '文件'}"  th:each="bindings:${bindings}">
                         <div class="related-wj-info">
-                            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+ ${bindings.image}">
-                            <span th:text = "${bindings.bindName}"></span>
+                            <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${bindings.file.catalog eq 1}">
+                            <img class="folderFile" th:src="#{IMAGE_SERVER} + ${bindings.file.fileUrl}" th:if="${bindings.file.catalog eq 0}and (${bindings.file.ext eq '.jpg'} or ${bindings.file.ext eq '.png'} or ${bindings.file.ext eq '.jpeg'})"/>
+                            <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '..doc'}"/>
+                            <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.docx'}"/>
+                            <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xls'}"/>
+                            <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xlsx'}"/>
+                            <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pptx'}"/>
+                            <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.ppt'}"/>
+                            <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pdf'}"/>
+                            <img class="folderFile" th:src="@{/image/zip.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.zip'}"/>
+                            <img class="folderFile" th:src="@{/image/rar.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.rar'}"/>
+                            <span th:text = "${bindings.file.fileName}"></span>
                         </div>
-                        <div class="related-rw-describe over-hidden" th:text="${bindings.projectName}"></div>
+                        <div class="related-rw-describe over-hidden" th:text="${bindings.file.project.projectName}"></div>
                         <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                         <!--取消关联框-->
                         <div class="related-menu" style="display: none">
@@ -257,50 +267,50 @@
                 </ul>
             </div>
 
-        <!--日程-->
-            <div class="related-rc-wrap">
-                <div class="flex-box">日程 <span></span></div>
-                <ul class="related-rc">
-                    <li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">
-                        <div class="related-rc-top">
-                            <div class="related-rc-info">
-                                <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                                <span th:text="${bindings.bindName}"></span>
-                            </div>
-                            <div class="related-rw-describe over-hidden" th:text="${bindings.projectName}"></div>
-                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                        </div>
-                        <!--<div class="related-rc-down">-->
-                        <!--<span>2018-12-25 12:00</span>-->
-                        <!--<span>—</span>-->
-                        <!--<span>2018-12-25 12:00</span>-->
+        <!--&lt;!&ndash;日程&ndash;&gt;-->
+            <!--<div class="related-rc-wrap">-->
+                <!--<div class="flex-box">日程 <span></span></div>-->
+                <!--<ul class="related-rc">-->
+                    <!--<li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">-->
+                        <!--<div class="related-rc-top">-->
+                            <!--<div class="related-rc-info">-->
+                                <!--<i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>-->
+                                <!--<span th:text="${bindings.bindName}"></span>-->
+                            <!--</div>-->
+                            <!--<div class="related-rw-describe over-hidden" th:text="${bindings.projectName}"></div>-->
+                            <!--<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>-->
                         <!--</div>-->
-                    </li>
-                </ul>
-            </div>
+                        <!--&lt;!&ndash;<div class="related-rc-down">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>—</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</div>-->
 
-            <!--分享-->
-            <div class="related-fx-wrap">
-            <div class="flex-box" >分享 <span></span></div>
-            <ul class="related-rc">
-                <li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">
-                    <div class="related-rc-top">
-                        <div class="related-rc-info">
-                            <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.image}">
-                            <span th:text="${bindings.bindName}"></span>
-                        </div>
-                        <div class="related-rw-describe over-hidden">bim5d管理平台</div>
-                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                    </div>
-                    <!--<div class="related-rc-down">-->
-                        <!--<span>2018-12-25 12:00</span>-->
-                        <!--<span>—</span>-->
-                        <!--<span>2018-12-25 12:00</span>-->
+            <!--&lt;!&ndash;分享&ndash;&gt;-->
+            <!--<div class="related-fx-wrap">-->
+            <!--<div class="flex-box" >分享 <span></span></div>-->
+            <!--<ul class="related-rc">-->
+                <!--<li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">-->
+                    <!--<div class="related-rc-top">-->
+                        <!--<div class="related-rc-info">-->
+                            <!--<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>-->
+                            <!--<img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.image}">-->
+                            <!--<span th:text="${bindings.bindName}"></span>-->
+                        <!--</div>-->
+                        <!--<div class="related-rw-describe over-hidden">bim5d管理平台</div>-->
+                        <!--<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>-->
                     <!--</div>-->
-                </li>
-            </ul>
-        </div>
+                    <!--&lt;!&ndash;<div class="related-rc-down">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>—</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
         </div>
 
 

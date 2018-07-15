@@ -44,33 +44,33 @@
 
 	<sql id="Base_Column_List">
 						task_id,
-				project_id,
+				prm_task.project_id,
 				task_name,
-				start_time,
-				end_time,
-				`repeat`,
-				remind,
-				remarks,
-				priority,
-				tag_id,
-				`level`,
-				parent_id,
-				member_id,
-				executor,
-				task_type,
-				task_menu_id,
-				task_status,
-				task_code,
-				task_del,
-				create_time,
-				update_time,
-				remind_time,
-				repetition_time,
-				fabulous_count,
-				privacy_pattern,
-				other,
-				`order`,
-				task_calendar
+				prm_task.start_time,
+				prm_task.end_time,
+				prm_task.`repeat`,
+				prm_task.remind,
+				prm_task.remarks,
+				prm_task.priority,
+				prm_task.tag_id,
+				prm_task.`level`,
+				prm_task.parent_id,
+				prm_task.member_id,
+				prm_task.executor,
+				prm_task.task_type,
+				prm_task.task_menu_id,
+				prm_task.task_status,
+				prm_task.task_code,
+				prm_task.task_del,
+				prm_task.create_time,
+				prm_task.update_time,
+				prm_task.remind_time,
+				prm_task.repetition_time,
+				prm_task.fabulous_count,
+				prm_task.privacy_pattern,
+				prm_task.other,
+				prm_task.order,
+				prm_task.task_calendar
 	</sql>
 	<sql id="Base_Column_List2">
 						task_id,
@@ -139,11 +139,11 @@
 		</if>
 	</select>
 
-	<!-- 根据任务id 查询任务的信息 和执行者的信息i -->
+	<!-- 根据任务id 查询任务的信息 和执行者的信息 -->
 	<select id="findTaskByTaskId" resultMap="findMenuTaskMemberInfo" parameterType="java.lang.String">
 	SELECT
-	<include refid="Base_Column_List"></include>
-	from prm_task where prm_task.task_id = #{taskId}
+	<include refid="Base_Column_List"></include>,prm_project.project_name
+	from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
@@ -684,7 +684,7 @@
 		select
 		<include refid="Base_Column_List2"></include>
 		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and member_id = #{id})
+		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and member_id = #{id}) and task_status = '未完成'
 		<if test="orderType != null and orderType != ''">
 			<if test="orderType == '2'.toString()">
 				order by end_time

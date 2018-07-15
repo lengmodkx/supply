@@ -18,8 +18,6 @@
 		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
 		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
-		<association property=""
-
 	</resultMap>
 
 	<sql id="Base_Column_List">

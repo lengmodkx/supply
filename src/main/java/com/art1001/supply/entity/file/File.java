@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import com.art1001.supply.entity.project.Project;
 import lombok.Data;
 
 /**
@@ -87,6 +88,10 @@ public class File extends BaseEntity implements Serializable {
      */
     private Integer fileDel = 0;
 
+    /**
+     * 该文件的附属项目的实体信息
+     */
+    private Project project;
 
     /**
      * 标签id

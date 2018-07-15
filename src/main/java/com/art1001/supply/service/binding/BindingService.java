@@ -3,6 +3,7 @@ package com.art1001.supply.service.binding;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.binding.BindingVO;
 
 /**
  * bindingService接口
@@ -60,5 +61,5 @@ public interface BindingService {
 	 * @param  publicId 目标id
 	 * @return 返回关联的集合
 	 */
-	List<Binding> listBindingInfoByPublicId(String publicId);
+	List<BindingVO> listBindingInfoByPublicId(String publicId);
 }

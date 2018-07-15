@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
 /**
@@ -183,5 +184,10 @@ public class Task extends BaseEntity implements Serializable {
 	 * 该任务所在的项目
 	 */
 	private Project project;
+
+	/**
+	 * 该任务的执行者
+	 */
+	private UserEntity taskExecutorInfo;
 
 }
