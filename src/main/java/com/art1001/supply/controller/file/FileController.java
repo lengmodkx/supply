@@ -139,7 +139,7 @@ public class FileController {
     /**
      * 打开文件详情
      */
-    @GetMapping("/fileDetail.htlm")
+    @GetMapping("/fileDetail.html")
     public String openDownloadFile(@RequestParam String fileId, Model model) {
         File file = fileService.findFileById(fileId);
         String projectId = file.getProjectId();

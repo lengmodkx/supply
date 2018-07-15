@@ -1,16 +1,25 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.task.TaskLogVO;
+import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.project.ProjectService;
+import org.apache.logging.log4j.message.SimpleMessage;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/binding")
@@ -21,6 +30,10 @@ public class BindingController {
 
     @Resource
     private ProjectService projectService;
+
+    /** 用于订阅推送消息 */
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
 
     /**
      * 任务,日程，文件，分享与任务,日程，文件，分享的绑定关系
@@ -52,18 +65,23 @@ public class BindingController {
 
     /**
      *
-     * @param Id 绑定id
+     * @param id 绑定id
      * @return
      */
     @RequestMapping("/deleteBinding")
     @ResponseBody
-    public JSONObject deleteBinding(@RequestParam String Id){
+    public JSONObject deleteBinding(@RequestParam String id){
         JSONObject jsonObject = new JSONObject();
 
         try {
-            bindingService.deleteBindingById(Id);
+            TaskLogVO taskLogVO = bindingService.deleteBindingById(id);
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A17.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("taskLog",taskLogVO);
+            taskPushType.setObject(map);
+            messagingTemplate.convertAndSend("/topic/"+ taskLogVO.getTask().getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){
             throw new AjaxException(e);
         }

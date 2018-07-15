@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.binding.BindingVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
@@ -423,8 +424,10 @@ public class TaskController {
     public JSONObject resetAndCompleteTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
+            //根据任务id 查询出该任务的实体信息
+            Task taskInfo = taskService.findTaskByTaskId(task.getTaskId());
             //改变任务状态
-            TaskLogVO taskLogVO = taskService.resetAndCompleteTask(task);
+            TaskLogVO taskLogVO = taskService.resetAndCompleteTask(taskInfo);
             jsonObject.put("msg","修改成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);

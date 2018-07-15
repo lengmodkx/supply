@@ -14,6 +14,7 @@ import lombok.Data;
  **/
 @Data
 public class BindingVO {
+    private String id;
     private Task task;
     private Share share;
     private File file;

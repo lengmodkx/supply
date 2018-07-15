@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Service;
 
 /**
  * taskmapper接口
@@ -395,4 +396,11 @@ public interface TaskMapper {
 	 */
     List<Task> findTaskByCalendar(String uId);
 
+	/**
+	 * 根据id 查询名称
+	 * @param taskId 任务的id
+	 * @return 任务名称字段信息
+	 */
+	@Select("select task_name from prm_task where task_id = #{taskId}")
+	String getTaskNameById(String taskId);
 }

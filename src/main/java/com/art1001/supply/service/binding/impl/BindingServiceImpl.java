@@ -10,6 +10,10 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVO;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskLog;
+import com.art1001.supply.entity.task.TaskLogVO;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.service.binding.BindingService;
@@ -40,6 +44,7 @@ public class BindingServiceImpl implements BindingService {
 	private ShareService shareService;
 	@Resource
 	private ScheduleService scheduleService;
+
 	/**
 	 * 查询分页binding数据
 	 * 
@@ -64,12 +69,26 @@ public class BindingServiceImpl implements BindingService {
 
 	/**
 	 * 通过id删除binding数据
-	 * 
 	 * @param id
 	 */
 	@Override
-	public void deleteBindingById(String id){
-		bindingMapper.deleteBindingById(id);
+	public TaskLogVO deleteBindingById(String id){
+        Binding bindingById = bindingMapper.findBindingById(id);
+        Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getBindId());
+        bindingMapper.deleteBindingById(id);
+        if(BindingConstants.BINDING_TASK_NAME.equals(bindingById.getPublicType())){
+            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A7.getName()+" "+ taskByTaskId.getTaskName());
+        }
+        if(BindingConstants.BINDING_FILE_NAME.equals(bindingById.getPublicType())){
+            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A6.getName()+" "+ taskByTaskId.getTaskName());
+        }
+        if(BindingConstants.BINDING_SCHEDULE_NAME.equals(bindingById.getPublicType())){
+            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A5.getName()+" "+ taskByTaskId.getTaskName());
+        }
+        if(BindingConstants.BINDING_SHARE_NAME.equals(bindingById.getPublicType())){
+            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A4.getName()+" "+ taskByTaskId.getTaskName());
+        }
+        return null;
 	}
 
 	/**
@@ -113,6 +132,7 @@ public class BindingServiceImpl implements BindingService {
 		List bindings = new ArrayList();
 		for (Binding b : list) {
 			BindingVO bvo = new BindingVO();
+			bvo.setId(b.getId());
 			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_TASK_NAME)){
 				bvo.setTask(taskService.findTaskByTaskId(b.getBindId()));
 				bvo.setPublicType(BindingConstants.BINDING_TASK_NAME);

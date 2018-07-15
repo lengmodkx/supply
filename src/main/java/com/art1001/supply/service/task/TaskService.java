@@ -464,4 +464,10 @@ public interface TaskService {
 	 */
 	List<Task> findTaskByCalendar(String uId);
 
+	/**
+	 * 根据任务的id 查询出任务的名称
+	 * @param taskId 任务id
+	 * @return 任务名称
+	 */
+	String getTaskNameById(String taskId);
 }

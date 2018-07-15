@@ -1225,4 +1225,14 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTaskByCalendar(String uId) {
         return taskMapper.findTaskByCalendar(uId);
     }
+
+    /**
+     * 根据任务的id查询任务的名称
+     * @param taskId 任务id
+     * @return 任务的名称
+     */
+    @Override
+    public String getTaskNameById(String taskId) {
+        return taskMapper.getTaskNameById(taskId);
+    }
 }

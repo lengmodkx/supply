@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingVO;
+import com.art1001.supply.entity.task.TaskLogVO;
 
 /**
  * bindingService接口
@@ -31,7 +32,7 @@ public interface BindingService {
 	 * 
 	 * @param id
 	 */
-	public void deleteBindingById(String id);
+	public TaskLogVO deleteBindingById(String id);
 
 	/**
 	 * 修改binding数据
@@ -61,5 +62,5 @@ public interface BindingService {
 	 * @param  publicId 目标id
 	 * @return 返回关联的集合
 	 */
-	List<BindingVO> listBindingInfoByPublicId(String publicId);
+	List listBindingInfoByPublicId(String publicId);
 }

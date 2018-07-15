@@ -200,7 +200,7 @@
         <div class="related-box" th:if="${bindings.size() != 0}">
             <div class="flex-box">任务 <span></span></div>
             <ul class="related-rw">
-                <li class="boxsizing" th:data-id="${bindings.task.taskId}" th:if="${bindings.publicType == '任务'}"  th:each="bindings:${bindings}">
+                <li class="boxsizing"   th:each="bindings:${bindings}" th:if="${bindings.publicType == '任务'}" th:data-id="${bindings.task.taskId}">
                     <div class="check-box" th:value="${bindings.task.taskName}">
                         <input type="checkbox" th:value = "${bindings.task.taskId}" lay-filter="bindTask" name="" th:checked="${bindings.task.taskStatus == '完成'}" lay-skin="primary">
                     </div>
@@ -219,7 +219,7 @@
                             <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                             <!--<span>复制链接</span>-->
                             <!--</li>-->
-                            <li class="boxsizing">
+                            <li class="boxsizing cancle" th:data-id="${bindings.id}">
                                 <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                 <span>取消关联</span>
                             </li>
@@ -267,50 +267,50 @@
                 </ul>
             </div>
 
-        <!--&lt;!&ndash;日程&ndash;&gt;-->
-            <!--<div class="related-rc-wrap">-->
-                <!--<div class="flex-box">日程 <span></span></div>-->
-                <!--<ul class="related-rc">-->
-                    <!--<li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">-->
-                        <!--<div class="related-rc-top">-->
-                            <!--<div class="related-rc-info">-->
-                                <!--<i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>-->
-                                <!--<span th:text="${bindings.bindName}"></span>-->
-                            <!--</div>-->
-                            <!--<div class="related-rw-describe over-hidden" th:text="${bindings.projectName}"></div>-->
-                            <!--<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>-->
+        <!--日程-->
+            <div class="related-rc-wrap">
+                <div class="flex-box">日程 <span></span></div>
+                <ul class="related-rc">
+                    <li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">
+                        <div class="related-rc-top">
+                            <div class="related-rc-info">
+                                <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                <span th:text="${bindings.schedule.scheduleName}"></span>
+                            </div>
+                            <div class="related-rw-describe over-hidden" th:text="${bindings.schedule.project.projectName}"></div>
+                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                        </div>
+                        <!--<div class="related-rc-down">-->
+                        <!--<span>2018-12-25 12:00</span>-->
+                        <!--<span>—</span>-->
+                        <!--<span>2018-12-25 12:00</span>-->
                         <!--</div>-->
-                        <!--&lt;!&ndash;<div class="related-rc-down">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>—</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</div>-->
+                    </li>
+                </ul>
+            </div>
 
-            <!--&lt;!&ndash;分享&ndash;&gt;-->
-            <!--<div class="related-fx-wrap">-->
-            <!--<div class="flex-box" >分享 <span></span></div>-->
-            <!--<ul class="related-rc">-->
-                <!--<li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">-->
-                    <!--<div class="related-rc-top">-->
-                        <!--<div class="related-rc-info">-->
-                            <!--<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>-->
-                            <!--<img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.image}">-->
-                            <!--<span th:text="${bindings.bindName}"></span>-->
-                        <!--</div>-->
-                        <!--<div class="related-rw-describe over-hidden">bim5d管理平台</div>-->
-                        <!--<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>-->
+            <!--分享-->
+            <div class="related-fx-wrap">
+            <div class="flex-box" >分享 <span></span></div>
+            <ul class="related-rc">
+                <li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">
+                    <div class="related-rc-top">
+                        <div class="related-rc-info">
+                            <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.share.memberImg}">
+                            <span th:text="${bindings.share.title}"></span>
+                        </div>
+                        <div class="related-rw-describe over-hidden" th:text="${bindings.share.project.projectName}"></div>
+                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                    </div>
+                    <!--<div class="related-rc-down">-->
+                        <!--<span>2018-12-25 12:00</span>-->
+                        <!--<span>—</span>-->
+                        <!--<span>2018-12-25 12:00</span>-->
                     <!--</div>-->
-                    <!--&lt;!&ndash;<div class="related-rc-down">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>—</span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span>2018-12-25 12:00</span>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--</li>-->
-            <!--</ul>-->
-        <!--</div>-->
+                </li>
+            </ul>
+        </div>
         </div>
 
 
@@ -502,6 +502,7 @@
                     form.render();
                 }
             }
+            if(taskLog)
         });
     }
 

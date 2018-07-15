@@ -51,10 +51,7 @@ layui.use('form', function() {
     // });
 
     form.on('checkbox(bindTask)', function(data){
-        //console.log(data.elem); //得到checkbox原始DOM对象
-        // console.log(data.elem.checked); //是否被选中，true或者false
-        // console.log(data.value); //复选框value值，也可以通过data.elem.value得到
-        // console.log(data.othis); //得到美化后的DOM对象
+        var val=data.value
         var url = "/task/resetAndCompleteTask";
         var args = {"taskId":data.value,"taskStatus":taskStatus};
         $.post(url,args,function (data) {
@@ -64,12 +61,6 @@ layui.use('form', function() {
                 form.render();
                 return false;
             }
-            if(taskStatus == '未完成'){
-                taskStatus = '完成';
-            } else if (taskStatus == '完成'){
-                taskStatus = "未完成";
-            }
-            getLog(data.taskLog);
         },"json")
     });
 
@@ -904,6 +895,22 @@ $('.zan img').click(function (e) {
 });
 
 /**
+ * 取消关联 的单击事件
+ */
+$('.boxsizing .cancle').click(function () {
+    var id = $(this).attr("data-id");
+    var url = "/binding/deleteBinding";
+    var args = {"id":id};
+    $.post(url,args,function (data) {
+        if(data.result == 1){
+            layer.msg(data.msg);
+        } else{
+            layer.msg("系统异常,取消失败!");
+        }
+    },"json");
+});
+
+/**
  * 点击子任务右边的箭头的时候跳转到 子任务详情页
  */
 $('.go-detail').click(function () {
@@ -918,8 +925,8 @@ $('.related-rw .boxsizing .related-rw-info').click(function () {
     changeRenwu($(this).parent() .attr("data-id"),projectId);
 });
 
-$('.related-wj .boxsizing').click(function () {
-    location.href = "/file/fileDetail.html?fileId="+$(this).attr("data-id");
+$('.related-wj .related-wj-info').click(function () {
+    location.href = "/file/fileDetail.html?fileId="+$(this).parent().attr("data-id");
 });
 
 //修改任务 弹框界面
@@ -929,6 +936,8 @@ function changeRenwu(taskId,projectId) {
         location.href = "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId;
     });
 }
+
+
 
 
 /**
