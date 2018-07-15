@@ -51,5 +51,116 @@ $(function () {
                 $(this).hide();
             }
         }
-    })
+    });
+
+    // 任务 界面
+    // 点击 ，显示后面的
+    $("html").on("click",".show-next .style-li",function () {
+        $(this).parent().siblings(".task-ul").show();
+        $(this).parent().siblings(".task-ul").append(' <li class="show-next-li">\n' +
+            '                                <div class="title-create-style boxsizing">\n' +
+            '                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>\n' +
+            '                                    <span>创建新任务</span>\n' +
+            '                                </div>\n' +
+            '                                <ul class="a-task-box ">\n' +
+            '                                    <li class="group-name">快速入门</li>\n' +
+            '                                    <li class="a-task-li selected">\n' +
+            '                                        <span></span>\n' +
+            '                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">\n' +
+            '                                        <p class="over-hidden">这是一条任务名称</p>\n' +
+            '                                    </li>\n' +
+            '                                    <li class="a-task-li">\n' +
+            '                                        <span></span>\n' +
+            '                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">\n' +
+            '                                        <p class="over-hidden">这是一条任务名称</p>\n' +
+            '                                    </li>\n' +
+            '                                </ul>\n' +
+            '                            </li>')
+    });
+    $("html").on("click",".show-next-li .a-task-li",function (){
+        $(this).parents(".show-next-li").nextAll().remove();
+        $(this).parents(".show-next-li").after(' <li class="show-next-li">\n' +
+            '                                <div class="title-create-style boxsizing">\n' +
+            '                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>\n' +
+            '                                    <span>创建子任务</span>\n' +
+            '                                </div>\n' +
+            '                                <ul class="a-task-box">\n' +
+            '                                    <li class="group-name">子任务</li>\n' +
+            '                                    <li class="a-task-li">\n' +
+            '                                        <span></span>\n' +
+            '                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">\n' +
+            '                                        <p class="over-hidden">这是一条任务名称</p>\n' +
+            '                                    </li>\n' +
+            '                                </ul>\n' +
+            '                            </li>');
+        $(this).parents(".scroll-box-heng").scrollLeft(parseInt( $(this).parents(".task-ul").width()));
+
+    });
+
+    // 文件 页面
+    // 点击 显示 后面 的内容
+    $("html").on("click",".show-next-wj .wj-li",function () {
+        $(this).parents(".show-next-wj").siblings(".task-ul").show();
+        $(this).parents(".show-next-wj").siblings(".task-ul").html("");
+        $(this).parents(".show-next-wj").siblings(".task-ul").append(' <li class="show-next-wj-li">\n' +
+            '                                <div class="paper-file">\n' +
+            '                                    <div class="up-add">\n' +
+            '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件夹</p>\n' +
+            '                                        <ul>\n' +
+            '                                            <li class="wj-li over-hidden">\n' +
+            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+            '                                                <span >123132</span>\n' +
+            '                                            </li>\n' +
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件</p>\n' +
+            '                                        <ul>\n' +
+            '                                            <li class="wj-li over-hidden">\n' +
+            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+            '                                                <span >123132</span>\n' +
+            '                                            </li>\n' +
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                </div>\n' +
+            '\n' +
+            '                            </li>')
+    });
+    $("html").on("click",".show-next-wj-li .wj-li",function () {
+        $(this).parents(".show-next-wj-li").nextAll().remove();
+        $(this).parents(".show-next-wj-li").after(' <li class="show-next-wj-li">\n' +
+            '                                <div class="paper-file">\n' +
+            '                                    <div class="up-add">\n' +
+            '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件夹</p>\n' +
+            '                                        <ul>\n' +
+            '                                            <li class="wj-li over-hidden">\n' +
+            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+            '                                                <span >123132</span>\n' +
+            '                                            </li>\n' +
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件</p>\n' +
+            '                                        <ul>\n' +
+            '                                            <li class="wj-li over-hidden">\n' +
+            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+            '                                                <span >123132</span>\n' +
+            '                                            </li>\n' +
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                </div>\n' +
+            '                            </li>');
+        $(this).parents(".scroll-box-heng").scrollLeft(parseInt( $(this).parents(".task-ul").width()));
+
+    });
+
+
 });

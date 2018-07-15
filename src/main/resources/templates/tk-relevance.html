@@ -53,7 +53,7 @@
                 <div class="over-hidden-box">
                     <div class="scroll-box-heng">
                         <!--项目中的任务分组-->
-                        <ul class="style-ul">
+                        <ul class="style-ul show-next">
                             <li class="group-name"><p>任务分组</p></li>
                             <li class="style-li"><span>开发任务</span></li>
                             <li class="style-li"><span>ui任务</span></li>
@@ -62,41 +62,41 @@
                             <li class="style-li"><span>已完成任务</span></li>
                         </ul>
                         <!--具体 任务-->
-                        <ul class="task-ul">
-                            <li>
-                                <div class="title-create-style boxsizing">
-                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>
-                                    <span>创建新任务</span>
-                                </div>
-                                <ul class="a-task-box">
-                                    <li class="group-name">快速入门</li>
-                                    <li class="a-task-li selected">
-                                        <span></span>
-                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">
-                                        <p class="over-hidden">这是一条任务名称</p>
-                                    </li>
-                                    <li class="a-task-li">
-                                        <span></span>
-                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">
-                                        <p class="over-hidden">这是一条任务名称</p>
-                                    </li>
-                                </ul>
-                            </li>
+                        <ul class="task-ul" style="display: none">
+                            <!--<li class="show-next-li">-->
+                                <!--<div class="title-create-style boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>-->
+                                    <!--<span>创建新任务</span>-->
+                                <!--</div>-->
+                                <!--<ul class="a-task-box ">-->
+                                    <!--<li class="group-name">快速入门</li>-->
+                                    <!--<li class="a-task-li selected">-->
+                                        <!--<span></span>-->
+                                        <!--<img src="../static/image/person.png" th:src="@{/image/person.png}">-->
+                                        <!--<p class="over-hidden">这是一条任务名称</p>-->
+                                    <!--</li>-->
+                                    <!--<li class="a-task-li">-->
+                                        <!--<span></span>-->
+                                        <!--<img src="../static/image/person.png" th:src="@{/image/person.png}">-->
+                                        <!--<p class="over-hidden">这是一条任务名称</p>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                            <!--</li>-->
 
-                            <li>
-                                <div class="title-create-style boxsizing">
-                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>
-                                    <span>创建子任务</span>
-                                </div>
-                                <ul class="a-task-box">
-                                    <li class="group-name">子任务</li>
-                                    <li class="a-task-li">
-                                        <span></span>
-                                        <img src="../static/image/person.png" th:src="@{/image/person.png}">
-                                        <p class="over-hidden">这是一条任务名称</p>
-                                    </li>
-                                </ul>
-                            </li>
+                            <!--<li class="show-next-li">-->
+                                <!--<div class="title-create-style boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>-->
+                                    <!--<span>创建子任务</span>-->
+                                <!--</div>-->
+                                <!--<ul class="a-task-box">-->
+                                    <!--<li class="group-name">子任务</li>-->
+                                    <!--<li class="a-task-li">-->
+                                        <!--<span></span>-->
+                                        <!--<img src="../static/image/person.png" th:src="@{/image/person.png}">-->
+                                        <!--<p class="over-hidden">这是一条任务名称</p>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                            <!--</li>-->
                         </ul>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                 <div class="over-hidden-box">
                     <div class="scroll-box-heng">
                         <!--文件夹 第一层-->
-                        <div class="paper-file">
+                        <div class="paper-file show-next-wj">
                             <div class="up-add">
                                 <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>
                                 <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>
@@ -213,61 +213,61 @@
                             </div>
                         </div>
                         <!--具体 任务-->
-                        <ul class="task-ul">
-                            <li>
-                                <div class="paper-file">
-                                    <div class="up-add">
-                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>
-                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>
-                                    </div>
-                                    <div class="wjj-wrap">
-                                        <p>文件夹</p>
-                                        <ul>
-                                            <li class="wj-li over-hidden">
-                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">
-                                                <span >123132</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="wjj-wrap">
-                                        <p>文件</p>
-                                        <ul>
-                                            <li class="wj-li over-hidden">
-                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">
-                                                <span >123132</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                        <ul class="task-ul" style="display: none">
+                            <!--<li class="show-next-wj-li">-->
+                                <!--<div class="paper-file">-->
+                                    <!--<div class="up-add">-->
+                                        <!--<i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>-->
+                                        <!--<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>-->
+                                    <!--</div>-->
+                                    <!--<div class="wjj-wrap">-->
+                                        <!--<p>文件夹</p>-->
+                                        <!--<ul>-->
+                                            <!--<li class="wj-li over-hidden">-->
+                                                <!--<img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">-->
+                                                <!--<span >123132</span>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                    <!--<div class="wjj-wrap">-->
+                                        <!--<p>文件</p>-->
+                                        <!--<ul>-->
+                                            <!--<li class="wj-li over-hidden">-->
+                                                <!--<img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">-->
+                                                <!--<span >123132</span>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                            </li>
+                            <!--</li>-->
 
-                            <li>
-                                <div class="paper-file">
-                                    <div class="up-add">
-                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>
-                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>
-                                    </div>
-                                    <div class="wjj-wrap">
-                                        <p>文件夹</p>
-                                        <ul>
-                                            <li class="wj-li over-hidden">
-                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">
-                                                <span >123132</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="wjj-wrap">
-                                        <p>文件</p>
-                                        <ul>
-                                            <li class="wj-li over-hidden">
-                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">
-                                                <span >123132</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
+                            <!--<li class="show-next-wj-li">-->
+                                <!--<div class="paper-file">-->
+                                    <!--<div class="up-add">-->
+                                        <!--<i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>-->
+                                        <!--<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>-->
+                                    <!--</div>-->
+                                    <!--<div class="wjj-wrap">-->
+                                        <!--<p>文件夹</p>-->
+                                        <!--<ul>-->
+                                            <!--<li class="wj-li over-hidden">-->
+                                                <!--<img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">-->
+                                                <!--<span >123132</span>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                    <!--<div class="wjj-wrap">-->
+                                        <!--<p>文件</p>-->
+                                        <!--<ul>-->
+                                            <!--<li class="wj-li over-hidden">-->
+                                                <!--<img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">-->
+                                                <!--<span >123132</span>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</li>-->
                         </ul>
                     </div>
                 </div>
