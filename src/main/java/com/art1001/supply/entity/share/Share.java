@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import lombok.Data;
 
@@ -71,4 +72,5 @@ public class Share extends BaseEntity implements Serializable {
 
 	private List<Tag> tagList = new ArrayList<>();
 
+	private Project project;
 }
