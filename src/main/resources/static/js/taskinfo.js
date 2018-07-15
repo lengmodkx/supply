@@ -50,6 +50,29 @@ layui.use('form', function() {
     //     return false;
     // });
 
+    form.on('checkbox(bindTask)', function(data){
+        //console.log(data.elem); //得到checkbox原始DOM对象
+        // console.log(data.elem.checked); //是否被选中，true或者false
+        // console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+        // console.log(data.othis); //得到美化后的DOM对象
+        var url = "/task/resetAndCompleteTask";
+        var args = {"taskId":data.value,"taskStatus":taskStatus};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+                $(this).attr("checked",false);
+                form.render();
+                return false;
+            }
+            if(taskStatus == '未完成'){
+                taskStatus = '完成';
+            } else if (taskStatus == '完成'){
+                taskStatus = "未完成";
+            }
+            getLog(data.taskLog);
+        },"json")
+    });
+
     /**
      * 完成和重做子任务
      */
@@ -891,12 +914,12 @@ $('.go-detail').click(function () {
 /**
  * 点击关联的任务
  */
-$('.related-rw .boxsizing').click(function () {
-    changeRenwu($(this).attr("data-id"),projectId);
+$('.related-rw .boxsizing .related-rw-info').click(function () {
+    changeRenwu($(this).parent() .attr("data-id"),projectId);
 });
 
 $('.related-wj .boxsizing').click(function () {
-
+    location.href = "/file/fileDetail.html?fileId="+$(this).attr("data-id");
 });
 
 //修改任务 弹框界面
@@ -906,6 +929,11 @@ function changeRenwu(taskId,projectId) {
         location.href = "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId;
     });
 }
+
+
+/**
+ * 控制关联模块的显示
+ */
 $(function () {
     if ($(".related-rc-wrap .related-rc li").length>0){
         $(".related-rc-wrap").show()

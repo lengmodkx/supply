@@ -200,13 +200,15 @@
         <div class="related-box" th:if="${bindings.size() != 0}">
             <div class="flex-box">任务 <span></span></div>
             <ul class="related-rw">
-                <li class="boxsizing" th:data-id="${bindings.bindId}" th:if="${bindings.publicType == '任务'}"  th:each="bindings:${bindings}">
-                    <div class="check-box"><input type="checkbox" name="" lay-skin="primary"></div>
-                    <div class="related-rw-info">
-                        <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+ ${bindings.image}">
-                        <span th:text="${bindings.bindName}"></span>
+                <li class="boxsizing" th:data-id="${bindings.task.taskId}" th:if="${bindings.publicType == '任务'}"  th:each="bindings:${bindings}">
+                    <div class="check-box" th:value="${bindings.task.taskName}">
+                        <input type="checkbox" th:value = "${bindings.task.taskId}" lay-filter="bindTask" name="" th:checked="${bindings.task.taskStatus == '完成'}" lay-skin="primary">
                     </div>
-                    <div class="related-rw-describe over-hidden" th:text = "${bindings.projectName}"></div>
+                    <div class="related-rw-info">
+                        <!--<img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+ ${bindings.taskimage}">-->
+                        <span th:text="${bindings.task.taskName}"></span>
+                    </div>
+                    <!--<div class="related-rw-describe over-hidden" th:text = "${bindings.projectName}"></div>-->
                     <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                     <!--取消关联框-->
                     <div class="related-menu" style="display: none">
