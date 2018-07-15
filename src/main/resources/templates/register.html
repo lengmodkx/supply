@@ -35,7 +35,7 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
-    
+
     function changeCaptcha() {
         $(".pic-code").attr("src","/captcha.html");
     }
@@ -55,6 +55,7 @@
             var n=60;
             var isSend =false;
             $(".get-sms-code").click(function () {
+
                 if(isSend){
                     return;
                 }else {
@@ -63,7 +64,6 @@
 
             });
             function getCode() {
-
                 isSend =true;
                 var timer= setInterval(function () {
                     n--;
@@ -86,7 +86,7 @@
                 $(".get-sms-code").onclick="getCode";
                 $(".get-sms-code").css("background-color","#017ECA")
             }
-        })()
+        })();
 
 
         layui.use('form', function(){

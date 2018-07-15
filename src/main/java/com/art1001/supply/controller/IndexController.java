@@ -281,6 +281,8 @@ public class IndexController extends BaseController {
             sendSmsUtils.sendSms(accountName,"您的手机验证码为:"+String.valueOf(valid));
             ShiroAuthenticationManager.setSessionAttribute(request.getSession().getId(),String.valueOf(valid));
         }
+        jsonObject.put("result",1);
+        jsonObject.put("msg","发送成功");
         return jsonObject;
     }
 

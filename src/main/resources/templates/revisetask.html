@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head >
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
+    <title>修改任务</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
@@ -231,7 +232,7 @@
             <div class="related-wj-wrap">
                 <div class="flex-box">文件 <span></span></div>
                 <ul class="related-wj">
-                    <li class="boxsizing" th:data-id = "${bindings.file.fileId}" th:if="${bindings.publicType == '文件'}"  th:each="bindings:${bindings}">
+                    <li class="boxsizing" th:each="bindings:${bindings}" th:data-id = "${bindings.file.fileId}" th:if="${bindings.publicType == '文件'}"  >
                         <div class="related-wj-info">
                             <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${bindings.file.catalog eq 1}">
                             <img class="folderFile" th:src="#{IMAGE_SERVER} + ${bindings.file.fileUrl}" th:if="${bindings.file.catalog eq 0}and (${bindings.file.ext eq '.jpg'} or ${bindings.file.ext eq '.png'} or ${bindings.file.ext eq '.jpeg'})"/>
@@ -437,8 +438,6 @@
 
 </div>
 </body>
-<script th:src="@{/js/sockjs.js}" src="../static/js/sockjs.js"></script>
-<script th:src="@{/js/stomp.js}" src="../static/js/stomp.js"></script>
 <script>
     // 建立连接对象（还未发起连接）
     var socket = new SockJS("http://localhost:8080/webSocketServer");
@@ -526,8 +525,7 @@
 
 
 </script>
-<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
-<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
@@ -561,5 +559,21 @@
     $("body").on("click",".close-related-menu",function () {
         $(this).parents(".related-menu").slideUp();
     });
+
+    $('.add-guanlian').click(function (e) {
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area:['800px','540px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: ['/binding/relevance.html','no']
+        });
+
+    });
+
 </script>
 </html>
