@@ -66,22 +66,24 @@ public class BindingController {
     /**
      *
      * @param id 绑定id
+     * @param bId 绑定目标id
      * @return
      */
     @RequestMapping("/deleteBinding")
     @ResponseBody
-    public JSONObject deleteBinding(@RequestParam String id){
+    public JSONObject deleteBinding(@RequestParam String id,String bId){
         JSONObject jsonObject = new JSONObject();
 
         try {
             TaskLogVO taskLogVO = bindingService.deleteBindingById(id);
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A17.getName());
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskLog",taskLogVO);
-            taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+ taskLogVO.getTask().getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+//            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A17.getName());
+//            Map<String,Object> map = new HashMap<String,Object>();
+//            map.put("taskLog",taskLogVO);
+//            map.put("bId",bId);
+//            taskPushType.setObject(map);
+            //messagingTemplate.convertAndSend("/topic/"+ taskLogVO.getTask().getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){
             throw new AjaxException(e);
         }

@@ -219,7 +219,7 @@
                             <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                             <!--<span>复制链接</span>-->
                             <!--</li>-->
-                            <li class="boxsizing cancle" th:data-id="${bindings.id}">
+                            <li class="boxsizing cancle" th:data-binding-id = "${bindings.task.taskId}" th:data-id="${bindings.id}">
                                 <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                 <span>取消关联</span>
                             </li>
@@ -249,7 +249,7 @@
                         <div class="related-rw-describe over-hidden" th:text="${bindings.file.project.projectName}"></div>
                         <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                         <!--取消关联框-->
-                        <div class="related-menu" style="display: none">
+                        <div class="related-menu">
                             <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
                             <div class="related-menu-title">关联菜单</div>
                             <ul>
@@ -257,7 +257,7 @@
                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                 <!--<span>复制链接</span>-->
                                 <!--</li>-->
-                                <li class="boxsizing">
+                                <li class="boxsizing cancle" th:data-binding-id = "${bindings.file.fileId}" th:data-id="${bindings.id}">
                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                     <span>取消关联</span>
                                 </li>
@@ -280,11 +280,11 @@
                             <div class="related-rw-describe over-hidden" th:text="${bindings.schedule.project.projectName}"></div>
                             <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                         </div>
-                        <!--<div class="related-rc-down">-->
-                        <!--<span>2018-12-25 12:00</span>-->
-                        <!--<span>—</span>-->
-                        <!--<span>2018-12-25 12:00</span>-->
-                        <!--</div>-->
+                        <div class="related-rc-down">
+                        <span th:text="${#dates.format(bindings.schedule.startTime,'yyyy-MM-dd')}"></span>
+                        <span>—</span>
+                        <span th:text="${#dates.format(bindings.schedule.endTime,'yyyy-MM-dd')}"></span>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -491,18 +491,21 @@
                 var scrollHeight = $('.revise-task').prop("scrollHeight");
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
-            if(taskLog.type == '完成了任务'){
-                if(taskLog.object.Status == '完成'){
-                    $("#taskComplete").attr("checked",true);
-                    $('.add-child-task').show();
-                    form.render();
-                } else{
-                    $("#taskComplete").attr("checked",false);
-                    $('.add-child-task').hide();
-                    form.render();
-                }
-            }
-            //if(taskLog)
+            // if(taskLog.type == '取消了关联'){
+            //     getLog(taskLog.object.taskLog);
+            //
+            // }
+            // if(taskLog.type == '完成了任务'){
+            //     if(taskLog.object.Status == '完成'){
+            //         $("#taskComplete").attr("checked",true);
+            //         $('.add-child-task').show();
+            //         form.render();
+            //     } else{
+            //         $("#taskComplete").attr("checked",false);
+            //         $('.add-child-task').hide();
+            //         form.render();
+            //     }
+            // }
         });
     }
 

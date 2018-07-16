@@ -899,10 +899,12 @@ $('.zan img').click(function (e) {
  */
 $('.boxsizing .cancle').click(function () {
     var id = $(this).attr("data-id");
+    var bId = $(this).attr("data-binding-id");
     var url = "/binding/deleteBinding";
-    var args = {"id":id};
+    var args = {"id":id,"bId":bId};
     $.post(url,args,function (data) {
         if(data.result == 1){
+            location.reload();
             layer.msg(data.msg);
         } else{
             layer.msg("系统异常,取消失败!");

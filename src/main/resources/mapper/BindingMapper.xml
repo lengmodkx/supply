@@ -26,10 +26,10 @@
 				bind_id,
 				bind_name,
 				public_type,
-				prm_binding.create_time,
-				prm_binding.update_time,
+				create_time,
+				update_time,
 				image,
-				prm_binding.public_id,
+			    public_id,
 				group_id,
 				menu_id,
 				share_link

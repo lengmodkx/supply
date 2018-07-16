@@ -74,7 +74,7 @@ public class BindingServiceImpl implements BindingService {
 	@Override
 	public TaskLogVO deleteBindingById(String id){
         Binding bindingById = bindingMapper.findBindingById(id);
-        Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getBindId());
+        Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getPublicId());
         bindingMapper.deleteBindingById(id);
         if(BindingConstants.BINDING_TASK_NAME.equals(bindingById.getPublicType())){
             return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A7.getName()+" "+ taskByTaskId.getTaskName());
