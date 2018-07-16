@@ -172,6 +172,9 @@ html,body{
 .msg-code:hover{
     opacity: 0.8;
 }
+
+.btn-disabled { pointer-events: none; }
+
 .martop{
     margin-top: 25px;
 }

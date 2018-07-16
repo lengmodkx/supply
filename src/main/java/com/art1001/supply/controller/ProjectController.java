@@ -550,4 +550,10 @@ public class ProjectController {
         }
         return jsonObject;
     }
+
+    @GetMapping("/test.html")
+    public String test(){
+        return "test2";
+    }
+
 }

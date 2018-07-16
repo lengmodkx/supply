@@ -11,150 +11,105 @@
 <div class="login-box">
     <h1>5D管理系统</h1>
     <p>忘记密码</p>
-    <form id="registerForm" class="layui-form">
+    <form id="resetPwdForm" class="layui-form">
         <div class="phone-num-box">
-            <input type="text" name="accountName" required lay-verify="required" placeholder="手机号或邮箱" autocomplete="off" class="layui-input phoneOrEmail">
+            <input type="text" name="accountName" id="accountName" required lay-verify="required" placeholder="手机号或邮箱" autocomplete="off" class="layui-input phoneOrEmail">
         </div>
 
         <div class="pic-code-box">
-            <input type="text" name="captcha"  required lay-verify="required" placeholder="验证码" autocomplete="off" class="layui-input">
+            <input type="text" name="captcha"  id="captcha" required lay-verify="required" placeholder="验证码" autocomplete="off" class="layui-input">
             <img src="/captcha.html" class="pic-code" onclick="changeCaptcha()">
         </div>
         <div class="pic-code-box">
             <input type="text" name=""  required lay-verify="required" placeholder="短信验证" autocomplete="off" class="layui-input">
-           <div class="msg-code">短信验证</div>
+            <div class="msg-code" id="msg-code">免费获取验证码</div>
         </div>
         <div class="pwd-box">
             <input type="password" name="password" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
         </div>
-        <button id="register" lay-submit class="layui-btn layui-btn-fluid martop" lay-filter="Register" style="background-color: #017ECA">重置密码</button>
+        <button id="register" lay-submit class="layui-btn layui-btn-fluid martop" lay-filter="resetPwd" style="background-color: #017ECA">重置密码</button>
     </form>
 </div>
 
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:src="@{/js/getcode.js}" src="../static/js/getcode.js"></script>
 <script>
-    
+
     function changeCaptcha() {
         $(".pic-code").attr("src","/captcha.html");
     }
-    //点击发送验证码，按钮倒计时
-    !(function () {
-        var n=60;
-        var isSend =false;
-        $(".msg-code").click(function () {
-            if(isSend){
-                return;
-            }else {
-                getCode()
-            }
 
+    var countdown=60;
+    $(".msg-code").click(function () {
+        var accountName = $("#accountName").val();
+        var captcha = $("#captcha").val();
+        var obj = $(this);
+        if (accountName===''){
+            layer.msg("请输入手机号",{icon:5});
+            return false;
+        }
+
+        if(captcha===''){
+            layer.msg("请输入图形验证码",{icon:5});
+            return false;
+        }
+
+        $.post("/code",{"accountName":accountName,"captcha":captcha},function (data) {
+            if(data.result===1){
+                settime(obj);
+                layer.msg(data.msg,{icon:1});
+            }else{
+                layer.msg(data.msg,{icon:5});
+            }
         });
-        function getCode() {
 
-            isSend =true;
-            var timer= setInterval(function () {
-                n--;
-                $(".msg-code").html(n +'秒后重新发送');
-                if (n ===0){
-                    clearInterval(timer);
-                    canClick()
-                }
-            },1000);
-            if(isSend){
-                $(".msg-code").onclick="";
-                $(".msg-code").css({"background-color":"#9B9B9B","cursor":"not-allowed"});
-                $(".msg-code").html("60秒后重新发送")
-            }
+    });
+
+    function settime(obj) { //发送验证码倒计时
+        if (countdown === 0) {
+            obj.removeClass('btn-disabled');
+            obj.text("免费获取验证码");
+            countdown = 60;
+            return;
+        } else {
+            obj.addClass('btn-disabled');
+            obj.text("重新发送(" + countdown + ")");
+            countdown--;
         }
-        function  canClick() {
-            isSend =false;
-            n=60;
-            $(".msg-code").html('短信验证');
-            $(".msg-code").onclick="getCode";
-            $(".msg-code").css({"background-color":"#017ECA","cursor":"pointer"})
-        }
-    })()
-    $(function () {
-        //点击显示隐藏密码
-        // $(".seepwd").click(function () {
-        //     if($(".pwd").attr("type")=="password"){
-        //         $(".pwd").attr("type","text")
-        //     }else {
-        //         $(".pwd").attr("type","password")
-        //     }
-        // });
+        setTimeout(function() {settime(obj)},1000)
+    }
 
-        //点击发送验证码，按钮倒计时
-        !(function () {
-            var n=60;
-            var isSend =false;
-            $(".get-sms-code").click(function () {
-                if(isSend){
-                    return;
-                }else {
-                    getCode()
-                }
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(resetPwd)', function(){
+            var regsj=/^[1][3,4,5,7,8][0-9]{9}$/;
+            var regyx=/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+            var phoneNum = regsj.test(accountName);
+            var email=regyx.test(accountName);
 
-            });
-            function getCode() {
-
-                isSend =true;
-                var timer= setInterval(function () {
-                    n--;
-                    $(".get-sms-code").html(n +'秒后重新发送');
-                    if (n ===0){
-                        clearInterval(timer);
-                        canClick()
+            if(phoneNum||email){
+                var params = $("#resetPwdForm").serialize();
+                var index = layer.load(1, {shade: [0.1,'#fff']});
+                $.post("/forget", params, function (data) {
+                    layer.close(index);
+                    if(data.result===1){
+                        layer.msg(data.msg,{icon: 1});
+                        window.location.href = "/";
+                    }else{
+                        changeCaptcha();
+                        layer.msg(data.msg,{icon: 5});
                     }
-                },1000);
-                if(isSend){
-                    $(".get-sms-code").onclick="";
-                    $(".get-sms-code").css("background-color","#9B9B9B");
-                    $(".get-sms-code").html("60秒后重新发送")
-                }
+                })
+            }else{
+                layer.msg("请输入正确的手机号或邮箱",{icon: 5});
             }
-            function  canClick() {
-                isSend =false;
-                n=60;
-                $(".get-sms-code").html('获取验证码');
-                $(".get-sms-code").onclick="getCode";
-                $(".get-sms-code").css("background-color","#017ECA")
-            }
-        })()
-
-
-        layui.use('form', function(){
-            var form = layui.form;
-
-            //监听提交
-            form.on('submit(Register)', function(){
-                var regsj=/^[1][3,4,5,7,8][0-9]{9}$/;
-                var regyx=/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
-                var phoneNum = regsj.test($(".phoneOrEmail").val());
-                var email=regyx.test($(".phoneOrEmail").val());
-
-                if(phoneNum||email){
-                    var params = $("#registerForm").serialize();
-                    console.log(params);
-
-                    $.post("/register", params, function (data) {
-                        if(data.result===1){//注册成功跳转到登陆界面
-                            layer.msg(data.msg,{icon: 1});
-                            window.location.href = "/login.html";
-                        }else{
-                            changeCaptcha();
-                            layer.msg(data.msg,{icon: 5});
-                        }
-                    })
-                }else{
-                    console.log("xxx");
-                    layer.msg("请输入正确的手机号或邮箱",{icon: 5});
-                }
-                return false;
-            });
+            return false;
         });
-    })
+    });
+
+
 </script>
 </body>
 </html>

@@ -1044,7 +1044,7 @@ public class TaskController {
                 model.addAttribute("tagList",tagList);
             }
             //查询出任务的关联信息
-            List bindings = bindingService.listBindingInfoByPublicId(task.getTaskId());
+            List<BindingVO> bindings = bindingService.listBindingInfoByPublicId(task.getTaskId());
             model.addAttribute("bindings",bindings);
             //查询出该任务的创建者信息
             UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
