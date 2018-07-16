@@ -10,8 +10,6 @@
 		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="collect_type" property="collectType" jdbcType="VARCHAR" />
 	</resultMap>
 
@@ -22,8 +20,6 @@
 				project_id,
 				create_time,
 				update_time,
-				member_img,
-				member_name,
 				collect_type
 	</sql>
 
@@ -93,20 +89,11 @@
 			<if test="projectId != null and projectId != ''">
 			project_id,
 			</if>
-			<if test="taskId != null and taskId != ''">
-			task_id,
-			</if>
 			<if test="createTime != null ">
 			create_time,
 			</if>
 			<if test="updateTime != null ">
 			update_time,
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-			member_img,
-			</if>
-			<if test="memberName != null and memberName != ''">
-			member_name,
 			</if>
 			<if test="collectType != null and collectType != ''">
 				collect_type,
@@ -127,20 +114,11 @@
 			<if test="projectId != null and projectId != ''">
 				#{projectId},
 			</if>
-			<if test="taskId != null and taskId != ''">
-				#{taskId},
-			</if>
 			<if test="createTime != null ">
 				#{createTime},
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				#{memberImg},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				#{memberName},
 			</if>
 			<if test="collectType != null and collectType != ''">
 				#{collectType},
@@ -150,7 +128,6 @@
 	</insert>
 
 	<update id="updatePublicCollect" parameterType="com.art1001.supply.entity.collect.PublicCollect">
-
 		update prm_public_collect
 		<set>
 			<if test="publicId != null and publicId != ''">
@@ -168,12 +145,6 @@
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
-			<if test="memberImg != null and memberImg != ''">
-				member_img = #{memberImg},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				member_name = #{memberName},
-			</if>
 		</set>
 
 		WHERE id = #{id}
@@ -186,9 +157,13 @@
 	</select>
 
 	<!-- 查询当前用户收藏的所有任务 -->
-	<select id="findMyCollectTask" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"></include>
-		from prm_public_collect where member_id = #{uId} and collect_type = '任务'
+	<select id="listMyCollect" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from prm_public_collect where member_id = #{memberId}
+		<if test="type != null and type != ''">
+			and collect_type = #{type}
+		</if>
+		order by create_time desc
 	</select>
 	
 </mapper>

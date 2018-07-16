@@ -959,7 +959,7 @@ public class TaskController {
         try {
             taskService.collectTask(task);
             jsonObject.put("msg","收藏成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,任务收藏失败! 当前任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);

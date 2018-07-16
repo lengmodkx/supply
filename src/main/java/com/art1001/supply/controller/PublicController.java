@@ -3,6 +3,7 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
@@ -52,6 +53,11 @@ public class PublicController {
     /** 任务收藏的逻辑层接口 */
     @Resource
     private PublicCollectService publicCollectService;
+
+    /**
+     * 所有收藏的常量
+     */
+    static final String allCollect = "所有收藏";
 
     @GetMapping("mypage.html")
     public String my(Model model){
@@ -253,12 +259,16 @@ public class PublicController {
     @PostMapping("myCollect")
     @ResponseBody
     public JSONObject myCollectTask(String type){
+        //如果查询类型为所有收藏 则 设置为null
+        if(allCollect.equals(type)){
+            type = null;
+        }
         JSONObject jsonObject = new JSONObject();
         String memberId = ShiroAuthenticationManager.getUserId();
         try {
-//            List<PublicCollect> taskList = publicCollectService.listMyCollect(memberId,type);
-//            jsonObject.put("data",taskList);
-//            jsonObject.put("result",1);
+            List<PublicCollectVO> taskList = publicCollectService.listMyCollect(memberId,type);
+            jsonObject.put("data",taskList);
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
             throw new AjaxException(e);
@@ -268,7 +278,7 @@ public class PublicController {
 
 
     /**
-     * 取消收藏当前的任务
+     * 取消收藏
      * @param publicCollectId 收藏id
      * @return
      */

@@ -82,7 +82,7 @@
     display: none;
 }
 .has-collect li:hover .collect-item-top-remove{
-    display: block;
+    display: inline-block;
     color: #3da8f5;
 }
 .collect-item-top-remove{

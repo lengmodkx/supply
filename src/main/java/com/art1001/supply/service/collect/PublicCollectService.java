@@ -3,6 +3,7 @@ package com.art1001.supply.service.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.share.Share;
 import org.apache.ibatis.annotations.Param;
 
@@ -83,4 +84,11 @@ public interface PublicCollectService {
 	 */
 	int cancelCollectTask(String publicCollectId);
 
+	/**
+	 * 根据类型查询出收藏的数据
+	 * @param memberId 当前用户id
+	 * @param type 收藏的类型 (任务,文件,日程,分享)
+	 * @return 收藏实体信息的集合
+	 */
+	List<PublicCollectVO> listMyCollect(String memberId, String type);
 }

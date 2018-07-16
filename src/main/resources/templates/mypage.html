@@ -29,7 +29,7 @@
 <!--我的页面内容部分-->
 <div class="mypage-content" style="margin-top: 50px">
   <!--近期的事-->
-    <div id="near-thing" style="display: none" >
+    <div id="near-thing" style="display: block" >
         <div class="near-thing-box boxsizing">
             <div class="thing-title boxsizing">
                <div> <span>近期的事  + </span><span th:text="${#lists.size(taskList)}">1</span></div>
@@ -426,7 +426,7 @@
         </div>
     </div>
     <!--收藏页面-->
-    <div id="my-collect"  style="display: block" >
+    <div id="my-collect"  style="display: none" >
         <div class="my-collect">
             <div class="collect-head">
                 <span class="now">所有收藏</span> <span>任务</span> <span>分享</span>
@@ -441,23 +441,23 @@
             <!--有收藏-->
             <div class="has-collect">
                 <ul class="rc-collect">
-                    <li>
-                        <div class="collect-item-top">
-                            <span class="collect-item-top-date">7月10日</span>
-                            <span class="collect-item-top-remove">取消收藏</span>
-                        </div>
-                        <div class="collect-item-middle clearfix">
-                            <div class="collect-item-middle-img">
-                                <img src="../static/image/rcwhite.png" th:src="@{/image/rcwhite.png}">
-                            </div>
-                            <p class="collect-item-name">收藏日程名称</p>
-                        </div>
-                        <div class="collect-item-bottom">
-                            <span>1月8日 12:00</span>
-                            <span>—</span>
-                            <span>2月8日 12:00</span>
-                        </div>
-                    </li>
+                    <!--<li>-->
+                        <!--<div class="collect-item-top">-->
+                            <!--<span class="collect-item-top-date">7月10日</span>-->
+                            <!--<span class="collect-item-top-remove">取消收藏</span>-->
+                        <!--</div>-->
+                        <!--<div class="collect-item-middle clearfix">-->
+                            <!--<div class="collect-item-middle-img">-->
+                                <!--<img src="../static/image/rcwhite.png" th:src="@{/image/rcwhite.png}">-->
+                            <!--</div>-->
+                            <!--<p class="collect-item-name">收藏日程名称</p>-->
+                        <!--</div>-->
+                        <!--<div class="collect-item-bottom">-->
+                            <!--<span>1月8日 12:00</span>-->
+                            <!--<span>—</span>-->
+                            <!--<span>2月8日 12:00</span>-->
+                        <!--</div>-->
+                    <!--</li>-->
                 </ul>
                 <ul class="rw-collect">
 

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
@@ -780,23 +781,22 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public int collectTask(Task task) {
-        PublicCollect taskCollect = new PublicCollect();
+        PublicCollect publicCollect = new PublicCollect();
         //设置收藏的id
-        taskCollect.setId(IdGen.uuid());
-        //暂时不用
-        //taskCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
-        //taskCollect.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
-        //taskCollect.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
+        publicCollect.setId(IdGen.uuid());
+        publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
         //设置收藏的项目的id
-        taskCollect.setProjectId(task.getProjectId());
+        publicCollect.setProjectId(task.getProjectId());
         //设置收藏的任务id
-        //taskCollect.setTaskId(task.getTaskId());
+        publicCollect.setPublicId(task.getTaskId());
+        //设置收藏的类型
+        publicCollect.setCollectType(BindingConstants.BINDING_TASK_NAME);
         //设置这条收藏的创建时间
-        taskCollect.setCreateTime(System.currentTimeMillis());
+        publicCollect.setCreateTime(System.currentTimeMillis());
         //设置这条收藏的更新时间
-        taskCollect.setUpdateTime(System.currentTimeMillis());
+        publicCollect.setUpdateTime(System.currentTimeMillis());
         //保存至数据库
-        return publicCollectService.savePublicCollect(taskCollect);
+        return publicCollectService.savePublicCollect(publicCollect);
     }
 
     /**

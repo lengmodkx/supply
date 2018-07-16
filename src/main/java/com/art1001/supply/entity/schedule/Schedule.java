@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -67,5 +68,13 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private String memberId;
 
+	/**
+	 * 创建者信息
+	 */
+	private UserEntity userEntity;
+
+	/**
+	 * 所在的项目信息
+	 */
 	private Project project;
 }

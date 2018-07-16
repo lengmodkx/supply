@@ -18,6 +18,8 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">

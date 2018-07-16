@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
 /**
@@ -63,6 +64,21 @@ public class Share extends BaseEntity implements Serializable {
 	 * 头像
 	 */
 	private String memberImg;
+
+	/**
+	 * 分享的创建者信息
+	 */
+	private UserEntity userEntity;
+
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+
+	/**
+	 * 更新时间
+	 */
+	private Long updateTime;
 
 	/**
 	 * 私密

@@ -33,10 +33,10 @@
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+		<association property="taskExecutorInfo" javaType="com.art1001.supply.entity.user.UserEntity" column="{taskId=task_id}" select="com.art1001.supply.mapper.user.UserMapper.findExecutorByTask"/>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
-		<id property="taskId" column="task_id"/>
 		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="{taskId=task_id}" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor"/>
 	</resultMap>
 

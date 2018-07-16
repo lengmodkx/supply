@@ -20,6 +20,8 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 		select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">

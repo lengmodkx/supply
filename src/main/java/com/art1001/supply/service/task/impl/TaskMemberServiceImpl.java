@@ -204,10 +204,11 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 			taskMember.setCreateTime(System.currentTimeMillis());
 			taskMember.setUpdateTime(System.currentTimeMillis());
 			if(str.equals("创建者")){
-				taskMember.setType("创建者");
+				taskMember.setType(str);
 				taskMember.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
 				taskMember.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
 				taskMember.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+				taskMember.setPublicType("任务");
 				taskMemberMapper.saveTaskMember(taskMember);
 				continue;
 			}
@@ -218,6 +219,7 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 					taskMember.setMemberId(userById.getId());
 					taskMember.setMemberName(userById.getUserName());
 					taskMember.setMemberImg(userById.getUserInfo().getImage());
+					taskMember.setPublicType("任务");
 					taskMemberMapper.saveTaskMember(taskMember);
 				}
 			}

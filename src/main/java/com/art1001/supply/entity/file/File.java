@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
 /**
@@ -97,6 +98,11 @@ public class File extends BaseEntity implements Serializable {
      * 标签id
      */
     private String tagId;
+
+    /**
+     * 文件创建者信息
+     */
+    private UserEntity userEntity;
 
 
     private String fileUrlTemp;

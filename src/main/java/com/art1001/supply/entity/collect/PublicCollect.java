@@ -36,17 +36,6 @@ public class PublicCollect extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 用户头像
-	 */
-	private String memberImg;
-
-
-	/**
-	 * 用户名
-	 */
-	private String memberName;
-
-	/**
 	 * 收藏类型  任务，日程 文件 分享
 	 */
 	private String collectType;
