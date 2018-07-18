@@ -1,5 +1,9 @@
 
 $(function () {
+    $(".close-tk").click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    });
    //点击 任务 分享 日程 文件 切换 页面
     $(".one-level-nav li").click(function () {
         $(this).addClass("now").siblings().removeClass("now");

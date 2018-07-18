@@ -3,12 +3,12 @@ html,body{
 }
 /*头部*/
 .header{
-    width: 90%;
-    height: 50px;
-    padding: 0 5%;
-    background-color: white;
-    line-height: 50px;
-    position: relative;
+    /*width: 90%;*/
+    /*height: 50px;*/
+    /*padding: 0 5%;*/
+    /*background-color: white;*/
+    /*line-height: 50px;*/
+    /*position: relative;*/
 }
 .header-left{
     font-size: 16px;
@@ -87,6 +87,7 @@ html,body{
 .content{
     width: 80%;
     margin: 0 auto;
+    margin-top: 60px;
 }
 .titles{
     width: 100%;

@@ -216,7 +216,7 @@ if ($("#have-executor").val()){
         $(this).siblings().find("i").hide()
     });
     //点击空白区域 添加标签消失
-    $(document).click(function (event) {
+    $(".new-assignment").click(function (event) {
         var _con = $('.tags-search-build');   // 设置目标区域
         if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失
@@ -370,7 +370,7 @@ if ($("#have-executor").val()){
     });
 
     //点击空白区域 添加人员消失
-    $(document).click(function (event) {
+    $(".new-assignment").click(function (event) {
         var _con = $('.people ');   // 设置目标区域
         if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失

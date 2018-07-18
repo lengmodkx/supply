@@ -2,15 +2,18 @@ body,html{
     background-color: #F5F5F5;
 }
 .share-wrap{
-    width: 945px;
-    height: 470px;
+    width: 1180px;
+    min-height: 470px;
     margin: 0 auto;
     background-color: white;
+    box-shadow: 0 2px 3px rgba(0,0,0,.1);
+    margin-top: 120px !important;
+    display: flex;
 }
 .share-left{
     width: 330px;
     height: 100%;
-    float: left;
+    /*float: left;*/
     border-right: 1px solid rgba(0,0,0,.1);
 }
 .share-left-title{
@@ -138,11 +141,12 @@ body,html{
     height: 80px;
     position: relative;
     cursor: pointer;
-    padding: 16px 48px 20px 16px;
+    padding: 16px 16px 20px 16px;
     border-bottom: 1px solid rgb(238, 238, 238);
 }
 .selected.share-list{
     background-color: #F7F7F7;
+    display: flex;
 }
 .share-list>img{
     width: 30px;
@@ -175,15 +179,16 @@ body,html{
 }
 /*右侧内容*/
 .share-right-wrap{
-    width: 614px;
+    width: 100%;
     height: 100%;
-    float: left;
-    position: relative;
+    /*float: left;*/
+    /*position: relative;*/
 }
 .share-right{
     width: 100%;
-    height: 100%;
-    position: absolute;
+    min-height: 470px;
+    /*position: absolute;*/
+    position: relative;
     top: 0;
     left: 0;
     display: none;
@@ -204,6 +209,9 @@ body,html{
 }
 .white-box{
     width: 100%;
+    padding: 0 20px;
+}
+.gray-box {
     padding: 0 20px;
 }
 .share-right-title{
