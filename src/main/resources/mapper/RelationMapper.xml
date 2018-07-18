@@ -296,4 +296,10 @@
 		from prm_relation
 		where parent_id = #{groupId}
 	</select>
+
+	<!-- 根据菜单id 查询出该菜单的id 及菜单下的所有任务信息 -->
+	<select id="getRelationAndAllTaskInfo" resultMap="BaseResultMapVo">
+		select <include refid="Base_Column_List"/>
+		from prm_relation where relation_id = #{id}
+	</select>
 </mapper>

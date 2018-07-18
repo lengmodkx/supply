@@ -83,4 +83,18 @@ public interface ProjectMapper {
 	 * @return
 	 */
     List<Project> findProjectAndTaskByCreateMember(String id);
+
+	/**
+	 * 查询出用户参与的所有项目信息
+	 * @param uId 用户id
+	 * @return 项目实体信息集合
+	 */
+	List<Project> listProjectByUid(String uId);
+
+	/**
+	 * 查询出用户收藏的所有项目信息
+	 * @param uId 用户的id
+	 * @return 用户收藏的所有项目信息
+	 */
+	List<Project> listProjectByUserCollect(String uId);
 }

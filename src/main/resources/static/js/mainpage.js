@@ -73,6 +73,7 @@ $(function () {
 
         },
         onEnd: function(evt){ //拖拽完毕之后发生该事件
+            console.log(evt.from)
 
         }
     });
@@ -171,6 +172,9 @@ $(function () {
         }
     });
 
+    $("#menuList").change(function () {
+
+    });
 
 
 
@@ -206,7 +210,21 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
             // 拖拽函数
             Sortable.create(document.getElementById(ulId),{
                 group:"words",
-                animation: 150 //动画参数
+                animation: 150, //动画参数
+                onChoose:function f() {  //列表单元被选中的回调函数
+                    console.log('列表单元被选中的回调函数')
+
+                },
+                onUpdate: function (evt){ //拖拽更新节点位置发生该事件
+                    console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
+
+                },
+                onEnd: function(evt) { //拖拽完毕之后发生该事件
+                    $(evt.from).children('li').each(function () {
+                        var id = $(this).find('.taskList').attr('id');
+                        alert(id);
+                    });
+                }
             });
 
         }
@@ -250,6 +268,7 @@ function lbmenu(top,left) {
 //点击 具体 任务 出现修改任务 弹窗
 
 function updateTask(taskId,projectId){
+    console.log(taskId)
     changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {
         $(".fujian-box").slideDown()

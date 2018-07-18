@@ -511,6 +511,7 @@ $(".tag-ok").click(function () {
                             '<b style="font-weight: 400">' + vals + '</b>'+
                             '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
                             '</span>';
+                $('.no-tags').hide();
                 $(".has-tags").prepend(content);
             } else{
                 layer.msg(data.msg);
@@ -547,7 +548,7 @@ $(".add-fuhao").click(function () {
     $(".common-ok-style").click(function () {
         var subTaskName = $('.creat-model-input').val();
         var url = "/task/addSubLevelTask";
-        var args = {"taskName":subTaskName,"parentTaskId":taskId};
+        var args = {"taskName":subTaskName,"parentTaskId":taskId,"projectId":projectId};
         var content = '';
         $.post(url,args,function(data){
             if(data.result == 1){
@@ -897,7 +898,7 @@ $('.zan img').click(function (e) {
 /**
  * 取消关联 的单击事件
  */
-$('.boxsizing .cancle').click(function () {
+$("html").on("click",".boxsizing .cancle",function () {
     var id = $(this).attr("data-id");
     var bId = $(this).attr("data-binding-id");
     var url = "/binding/deleteBinding";
@@ -952,6 +953,28 @@ $('.renwu-menu .sc').click(function () {
     },"json");
 });
 
+/**
+ * 搜索标签
+ */
+$('.tag-search-input').keyup(function () {
+    var tagName = $(this).val();
+    var url = "/tag/searchTag";
+    var args = {"tagName":tagName};
+    $.post(url,args,function (data) {
+        var tags = data.data;
+        var content  = "";
+        if(data.result > 0){
+            $('#tags').html('');
+            for(var i = 0;i < tags.length;i++){
+                content += "<li class='tags-list'>" +
+                "<span class='dot' style='background-color: " + tags[i].bgColor + "'></span>" +
+                "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
+                "</li>";
+            }
+        }
+        $('#tags').html(content);
+    },"json");
+});
 
 
 
@@ -975,6 +998,123 @@ $(function () {
         $(".related-wj-wrap").hide()
     }
 });
+
+/**
+ * 追加关联字符串
+ */
+function addBindingStr(binding,type,bindId){
+    var content = "";
+    if(type == '任务'){
+        content += '<li class="boxsizing" data-id="' + binding.taskId + '">'+
+            '<div class="check-box" value="' + binding.taskName + '">';
+            if(binding.taskStatus == '完成'){
+                content += '<input type="checkbox" value = "' + binding.taskId + '" lay-filter="bindTask" name="" lay-skin="primary" checked = "checked">';
+            } else{
+                content += '<input type="checkbox" value = "' + binding.taskId + '" lay-filter="bindTask" name="" lay-skin="primary">';
+            }
+            content += '</div>'+
+            '<div class="related-rw-info">';
+            if(binding.executor == ''){
+                content += '<img src="/image/add.png">';
+            } else{
+                content += '<img src="' + IMAGE_SERVER + binding.taskMember.memberImg + '">';
+            }
+            content += '<span>'+' '+ binding.taskName + '</span>'+
+            '</div>'+
+            '<div class="related-rw-describe over-hidden">' + binding.project.projectName  + '</div>'+
+            '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
+            '<div class="related-menu" style="display: none">'+
+            '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
+            '<div class="related-menu-title">关联菜单</div>'+
+            '<ul>'+
+            // <!--<li class="boxsizing">-->
+            // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+            // <!--<span>复制链接</span>-->
+            // <!--</li>-->
+            '<li class="boxsizing cancle" data-binding-id = "' + binding.taskId + '" data-id="' + bindId + '">'+
+            '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
+            '<span>取消关联</span>'+
+            '</li>'+
+            '</ul>'+
+            '</div>'+
+            '</li>';
+            $('#bind .related-box').show();
+            $('.related-rw').prepend(content);
+            var form = layui.form;
+            form.render();
+    }
+    // if(type == '文件'){
+    // <li class="boxsizing" th:each="bindings:${bindings}" th:data-id = "${bindings.file.fileId}" th:if="${bindings.publicType == '文件'}"  >
+    //         <div class="related-wj-info">
+    //         <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${bindings.file.catalog eq 1}">
+    //         <img class="folderFile" th:src="#{IMAGE_SERVER} + ${bindings.file.fileUrl}" th:if="${bindings.file.catalog eq 0}and (${bindings.file.ext eq '.jpg'} or ${bindings.file.ext eq '.png'} or ${bindings.file.ext eq '.jpeg'})"/>
+    //         <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '..doc'}"/>
+    //         <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.docx'}"/>
+    //         <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xls'}"/>
+    //         <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xlsx'}"/>
+    //         <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pptx'}"/>
+    //         <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.ppt'}"/>
+    //         <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pdf'}"/>
+    //         <img class="folderFile" th:src="@{/image/zip.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.zip'}"/>
+    //         <img class="folderFile" th:src="@{/image/rar.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.rar'}"/>
+    //         <span th:text = "${bindings.file.fileName}"></span>
+    //         </div>
+    //         <div class="related-rw-describe over-hidden" th:text="${bindings.file.project.projectName}"></div>
+    //         <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+    //         <!--取消关联框-->
+    //         <div class="related-menu">
+    //         <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+    //         <div class="related-menu-title">关联菜单</div>
+    //         <ul>
+    //         <!--<li class="boxsizing">-->
+    //         <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+    //         <!--<span>复制链接</span>-->
+    //         <!--</li>-->
+    //         <li class="boxsizing cancle" th:data-binding-id = "${bindings.file.fileId}" th:data-id="${bindings.id}">
+    //         <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+    //         <span>取消关联</span>
+    //         </li>
+    //         </ul>
+    //         </div>
+    //         </li>
+    // }
+    // if(type == '日程'){
+    // <li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">
+    //         <div class="related-rc-top">
+    //         <div class="related-rc-info">
+    //         <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+    //         <span th:text="${bindings.schedule.scheduleName}"></span>
+    //         </div>
+    //         <div class="related-rw-describe over-hidden" th:text="${bindings.schedule.project.projectName}"></div>
+    //         <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+    //         </div>
+    //         <div class="related-rc-down">
+    //         <span th:text="${#dates.format(bindings.schedule.startTime,'yyyy-MM-dd')}"></span>
+    //         <span>—</span>
+    //     <span th:text="${#dates.format(bindings.schedule.endTime,'yyyy-MM-dd')}"></span>
+    //         </div>
+    //         </li>
+    // }
+    // if(type == '分享'){
+    // <li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">
+    //         <div class="related-rc-top">
+    //         <div class="related-rc-info">
+    //         <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+    //         <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.share.memberImg}">
+    //         <span th:text="${bindings.share.title}"></span>
+    //         </div>
+    //         <div class="related-rw-describe over-hidden" th:text="${bindings.share.project.projectName}"></div>
+    //         <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+    //         </div>
+    //         <!--<div class="related-rc-down">-->
+    //         <!--<span>2018-12-25 12:00</span>-->
+    //     <!--<span>—</span>-->
+    //     <!--<span>2018-12-25 12:00</span>-->
+    //     <!--</div>-->
+    //     </li>
+    // }
+
+}
 
 
 

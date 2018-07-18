@@ -120,4 +120,25 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> findProjectAndTaskByCreateMember(String id) {
         return projectMapper.findProjectAndTaskByCreateMember(id);
     }
+
+	/**
+	 * 查询出用户参与的所有项目信息
+	 * @param uId 用户id
+	 * @return 项目实体集合
+	 */
+	@Override
+	public List<Project> listProjectByUid(String uId) {
+		return projectMapper.listProjectByUid(uId);
+	}
+
+	/**
+	 * 数据:查询出当前用户收藏的所有项目
+	 * 功能:添加关联页面展示 星标项目
+	 * @param uId 用户id
+	 * @return 用户收藏的所有项目信息
+	 */
+	@Override
+	public List<Project> listProjectByUserCollect(String uId) {
+		return projectMapper.listProjectByUserCollect(uId);
+	}
 }

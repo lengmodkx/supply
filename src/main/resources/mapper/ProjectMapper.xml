@@ -272,4 +272,16 @@
 		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
+
+	<!-- 查询某个用户参与的所有项目信息 -->
+	<select id="listProjectByUid" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from prm_project where project_id in (select project_id from prm_project_member where prm_project_member.member_id = #{uId})
+	</select>
+
+	<!-- 查询出用户收藏的所有项目信息 -->
+	<select id="listProjectByUserCollect" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_project where project_id in (select prm_project_collect.project_id from prm_project_collect where prm_project_collect.member_id = #{uId})
+	</select>
 </mapper>

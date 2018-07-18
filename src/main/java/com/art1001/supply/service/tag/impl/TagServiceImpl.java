@@ -145,4 +145,13 @@ public class TagServiceImpl implements TagService {
 		return tagMapper.findByIds(idArr);
 	}
 
+	/**
+	 * 根据用户输入的标签名称模糊查询出标签
+	 * @param tagName 标签名称
+	 * @return 标签集合
+	 */
+	@Override
+	public List<Tag> searchTag(String tagName) {
+		return tagMapper.searchTag(tagName);
+	}
 }
