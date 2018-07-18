@@ -1,6 +1,6 @@
 package com.art1001.supply.service.relation.impl;
 
-import java.util.List;
+import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.relation.Relation;
@@ -14,6 +14,7 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -335,5 +336,40 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Relation> findAllMenuInfoByGroupId(String groupId) {
 		return relationMapper.findAllMenuInfoByGroupId(groupId);
+	}
+
+	/**
+	 * 实现方法 根据分组id 查询出该分组下的所有任务信息
+	 * @param id 分组id
+	 * @return 任务实体信息集合
+	 */
+	@Override
+	public List<Relation> findGroupAllTask(String id) {
+		List<Relation> allMenuInfoByGroupId = findAllMenuInfoByGroupId(id);
+		List<Relation> totalTask = new ArrayList<Relation>();
+		if(!allMenuInfoByGroupId.isEmpty()){
+			for (Relation relation : allMenuInfoByGroupId){
+				Relation relations = getRelationAndAllTaskInfo(relation.getRelationId());
+				//按照任务的创建时间排序任务
+				Collections.sort(relations.getTaskList(), new Comparator<Task>() {
+					@Override
+					public int compare(Task o1, Task o2) {
+						Date date1 = new Date(o1.getCreateTime());
+						Date date2 = new Date(o2.getCreateTime());
+						if(date1.after(date2)){
+							return 1;
+						}
+						return -1;
+					}
+				});
+				totalTask.add(relations);
+			}
+		}
+		return totalTask;
+	}
+
+	@Override
+	public Relation getRelationAndAllTaskInfo(String relationId) {
+		return relationMapper.getRelationAndAllTaskInfo(relationId);
 	}
 }

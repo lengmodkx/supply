@@ -33,9 +33,11 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import net.sf.jsqlparser.expression.operators.relational.OldOracleJoinBinaryExpression;
+import net.sf.jsqlparser.statement.select.ExceptOp;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
@@ -886,6 +888,7 @@ public class TaskController {
         try {
             //保存子任务信息至数据库
             subLevel.setTaskId(IdGen.uuid());
+            subLevel.setProjectId(projectId);
             TaskLogVO taskLogVO = taskService.addSubLevelTasks(parentTaskId,subLevel);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加成功!");
@@ -1155,35 +1158,34 @@ public class TaskController {
     }
 
     /**
-     * 智能分组  查询出 三个组的数据 分别为
-     * 1.今天的任务
-     * 2.未完成的任务
-     * 3.已完成的任务
-     *
-     * @param status 需要查询的任务状态
-     * @param projectId 任务的id
-     * @return
+     * @param id 任务的分组id  也可能是要按照智能分组的方式查询
+     * @param projectId 当前选中项目的id
+     * 在添加任务关联的时候查询任务
+     * 1. 可以按照任务的分组查询任务
+     * 2. 可以根据 智能分组的方式查询任务  智能分组包括(今天的任务,完成的任务,未完成的任务)
+     * @return 结果集
      */
-    @PostMapping("intelligenceGroup")
+    @PostMapping("findRelationTask")
     @ResponseBody
-    public JSONObject intelligenceGroup(@RequestParam String status,@RequestParam String projectId){
+    public JSONObject findRelationTask(String id,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(StringUtils.isEmpty(status)){
-                jsonObject.put("msg","请选择状态信息!");
-                return  jsonObject;
-            }
-            //获取分组数据
-            List<Task> taskList = taskService.intelligenceGroup(status,projectId);
-            if(taskList.size() > 0){
-                jsonObject.put("data",taskList);
-                jsonObject.put("result","1");
+            //如果id为 智能分组的选项 则按照智能分组的方式查询任务
+            if(TaskStatusConstant.COMPLETE_TASK.equals(id) || TaskStatusConstant.CURRENT_DAY_TASK.equals(id) || TaskStatusConstant.HANG_IN_THE_AIR_TASK.equals(id)){
+                List<Task> task = taskService.intelligenceGroup(id, projectId);
+                jsonObject.put("data",task);
+                jsonObject.put("result",1);
+                return jsonObject;
             } else{
-                jsonObject.put("msg","没有数据!");
+                //查询出该分组下的所有任务信息
+                List<Relation> relations = relationService.findGroupAllTask(id);
+                jsonObject.put("data",relations);
+                jsonObject.put("result",1);
             }
         } catch (Exception e){
-            log.error("系统异常! 数据获取失败,{}",e);
-            throw new AjaxException(e);
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,数据获取失败!");
         }
         return jsonObject;
     }
@@ -1336,21 +1338,34 @@ public class TaskController {
         return jsonObject;
     }
 
+
     /**
-     * 任务拖住
-     * @param oldMenuTaskId 旧任务菜单的所有任务id
-     * @param newMenuTaskId 新任务菜单的所有任务id
-     * @param oldMenuId 旧菜单id
-     * @param newMenuId 新菜单id
-     * @param taskId 被移动的任务id
+     *
+     * @param taskId 当前移动的任务的id
+     * @param menuId 任务移动后的菜单Id
+     * @param taskIds 任务移动之后的菜单组下面的全部任务id
      * @return
      */
     @PostMapping("taskOrder")
     @ResponseBody
-    public JSONObject taskOrder(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId){
+    public JSONObject taskOrder(String taskId,String menuId,String[] taskIds){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.orderOneTaskMenu(oldMenuTaskId,newMenuTaskId,oldMenuId,newMenuId,taskId);
+            //先更新任务菜单id
+            Task task = new Task();
+            task.setUpdateTime(System.currentTimeMillis());
+            task.setTaskId(taskId);
+            task.setTaskMenuId(menuId);
+            taskService.updateTask(task);
+            //排序菜单中的任务
+            for(int i=taskIds.length-1;i>=0;i--){
+                Task task1 = new Task();
+                task1.setUpdateTime(System.currentTimeMillis());
+                task1.setTaskId(taskIds[i]);
+                task1.setOrder(i);
+                taskService.updateTask(task1);
+            }
+
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("任务排序失败,{}",e);
@@ -1383,6 +1398,26 @@ public class TaskController {
         } catch (Exception e){
             log.error("操作失败,{}",e);
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询出该任务的所有子任务信息
+     * @param taskId 任务的id
+     * @return 任务实体信息集合
+     */
+    @PostMapping("findTaskByFatherTask")
+    @ResponseBody
+    public JSONObject findTaskByFatherTask(String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Task> taskByFatherTask = taskService.findTaskByFatherTask(taskId);
+            jsonObject.put("data",taskByFatherTask);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("msg","数据获取失败!");
+            jsonObject.put("result",0);
         }
         return jsonObject;
     }

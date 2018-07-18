@@ -1,5 +1,5 @@
 // 建立连接对象（还未发起连接）
-var socket = new SockJs("http://localhost:8080/webSocketServer");
+var socket = new SockJS("http://localhost:8080/webSocketServer");
 // 获取 STOMP 子协议的客户端对象
 var stompClient = Stomp.over(socket);
 

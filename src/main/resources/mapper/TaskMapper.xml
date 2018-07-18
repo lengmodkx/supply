@@ -33,11 +33,10 @@
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-		<association property="taskExecutorInfo" javaType="com.art1001.supply.entity.user.UserEntity" column="{taskId=task_id}" select="com.art1001.supply.mapper.user.UserMapper.findExecutorByTask"/>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task" extends="BaseResultMap">
-		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="{taskId=task_id}" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor"/>
+		<association property="taskMember" javaType="com.art1001.supply.entity.task.TaskMember" column="task_id" select="com.art1001.supply.mapper.task.TaskMemberMapper.findTaskExecutor"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -335,9 +334,6 @@
 
 		update prm_task
 		<set>
-			<if test="taskId != null and taskId != ''">
-				task_id = #{taskId},
-			</if>
 			<if test="projectId != null and projectId != ''">
 				project_id = #{projectId},
 			</if>
@@ -413,7 +409,7 @@
 			<if test="other != null">
 				other = #{other},
 			</if>
-			<if test="other != null">
+			<if test="order != null">
 				`order` = #{order},
 			</if>
 			<if test="taskCalendar != null">
@@ -506,12 +502,18 @@
 	</select>
 
 	<!-- 查询某个任务的全部子任务信息 -->
-	<select id="findSubLevelTask" resultMap="BaseResultMap">
+	<select id="findSubLevelTask" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List"></include>
 		from prm_task where parent_id = #{taskId}
 	</select>
 
+	<select id="findSubTaskCount" resultType="java.lang.Integer" >
+		select count(0) from prm_task where parent_id = #{taskId}
+		<if test="taskStatus != '' and taskStatus != null">
+			and task_status = #{taskStatus}
+		</if>
+	</select>
 	<!-- 更改当前任务的隐私模式 -->
 	<update id="SettingUpPrivacyPatterns">
 		update prm_task
@@ -546,9 +548,9 @@
 	<!-- 查询当前菜单下的全部任务信息 -->
 	<select id="taskMenu" resultMap="findMenuTaskMemberInfo">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		from prm_task
-		where prm_task.task_menu_id = #{menuId} order by prm_task.order desc
+		where prm_task.task_menu_id = #{menuId} order by prm_task.order asc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->

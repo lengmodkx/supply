@@ -32,7 +32,7 @@ public interface BindingService {
 	 * 
 	 * @param id
 	 */
-	public TaskLogVO deleteBindingById(String id);
+	public void deleteBindingById(String id);
 
 	/**
 	 * 修改binding数据
@@ -63,4 +63,12 @@ public interface BindingService {
 	 * @return 返回关联的集合
 	 */
 	List listBindingInfoByPublicId(String publicId);
+
+	/**
+	 * 查询要关联的信息  在库中存不存在
+	 * @param publicId 关联的信息id
+	 * @param bindId 被关联的信息id
+	 * @return 库中的记录行数
+	 */
+	int getBindingRecord(String publicId, String bindId);
 }

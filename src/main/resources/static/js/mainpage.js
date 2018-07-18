@@ -59,60 +59,44 @@ $(function () {
     });
 
 
-    var el = document.getElementById("menuList");
-    Sortable.create(el,{
-        group:"menus",
-        animation: 150 ,//动画参数
+    $('.sortable').sortable({
+        cursor:"move",
+        items:'.tile',
+        axis: 'x',
+        tolerance: 'pointer',
+        placeholder: 'model',
+        stop:function (event,ui) {
+            console.log(ui);
+            var ids = $('.sortable').sortable('toArray');
+            $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
 
-        onChoose:function f() {  //列表单元被选中的回调函数
-            console.log('列表单元被选中的回调函数')
-
-        },
-        onUpdate: function (evt){ //拖拽更新节点位置发生该事件
-            console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
-
-        },
-        onEnd: function(evt){ //拖拽完毕之后发生该事件
-
+            });
         }
     });
 
-
-    // 拖拽函数
     $(".taskList").each(function (data,item) {
-        var el = document.getElementById($(item).attr('id'));
-        Sortable.create(el,{
-            group:"tasks",
-            animation: 150 ,//动画参数
-
-            onChoose:function f() {  //列表单元被选中的回调函数
-                console.log('列表单元被选中的回调函数')
-
-            },
-            onUpdate: function (evt){ //拖拽更新节点位置发生该事件
-                console.log('onUpdate.foo:', [evt.item, evt.newIndex]);
-
-            },
-            onEnd: function(evt){ //拖拽完毕之后发生该事件
-                var oldMenuTaskId = [];
-                var newMenuTaskId = [];
-                var oldMenuId = $(evt.from).attr('id');
-                var newMenuId = $(evt.to).attr('id');
-                var taskId = $(evt.item).attr('id');
-                $(evt.from).children('li').each(function(){
-                   oldMenuTaskId.push($(this).attr('id'));
-                });
-                $(evt.to).children('li').each(function () {
-                   newMenuTaskId.push($(this).attr('id'));
-                });
-                var url = "/task/taskOrder";
-                var args = {oldMenuTaskId:oldMenuTaskId.toString(),newMenuTaskId:newMenuTaskId.toString(),oldMenuId:oldMenuId,newMenuId:newMenuId,taskId:taskId};
-                $.post(url,args,function (data) {
-                    //完成
-                },"json");
+        var sortable = $(item);
+        sortable.sortable({
+            cursor:"move",
+            items:'.task-card-mode',
+            tolerance: 'pointer',
+            placeholder: 'task-card-mode2',
+            dropOnEmpty:true,
+            forcePlaceholderSize: true,
+            connectWith:'.taskList',
+            receive: function(event, ui) {
+              console.log(ui);
+              var item = ui.item;
+              var menuId = ui.item.parent().attr('id');
+              var taskIds = sortable.sortable('toArray').toString();
+              console.log(menuId);
+              var url = "/task/taskOrder";
+              var params = {"taskId":item.context.id,"menuId":menuId,"taskIds":taskIds};
+              $.post(url,params,function (data) {
+                  console.log(data);
+              });
             }
         });
-
     });
 
     firefox();
@@ -203,12 +187,6 @@ var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
             // 新 的 任务列表
 
             firefox();
-            // 拖拽函数
-            Sortable.create(document.getElementById(ulId),{
-                group:"words",
-                animation: 150 //动画参数
-            });
-
         }
     });
 

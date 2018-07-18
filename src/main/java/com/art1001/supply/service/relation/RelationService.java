@@ -3,6 +3,7 @@ package com.art1001.supply.service.relation;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserInfoEntity;
 
@@ -163,4 +164,17 @@ public interface RelationService {
 	 * @return
 	 */
 	List<Relation> findAllMenuInfoByGroupId(String groupId);
+
+	/**
+	 * 根据分组id 查询出该分组下的所有任务信息
+	 * @param id 分组id
+	 * @return 任务实体信息集合
+	 */
+	List<Relation> findGroupAllTask(String id);
+
+	/**
+	 * @param id 菜单id
+	 * 根据菜单的id 查询出该菜单的信息及菜单下的所有任务信息
+	 */
+	Relation getRelationAndAllTaskInfo(String id);
 }

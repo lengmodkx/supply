@@ -25,41 +25,58 @@
         <!--产品设计任务页面-->
         <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
-               <ul class="board-scrum-stages boxsizing" id="menuList">
+               <ul class="board-scrum-stages boxsizing sortable">
                    <!--待处理-->
-                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}">
-                       <div class="model-title">
+                   <li class="model tile boxsizing" th:each="taskMenu:${taskMenus}" th:id="${taskMenu.relationId}">
+                       <div class="model-title boxsizing">
                            <span th:text="${taskMenu.relationName}">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
                            <!--点击下箭头出现的内容-->
                        </div>
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
-                           <ul th:id="${taskMenu.relationId}" class="taskList">
-                               <li class="assignment" th:each="task:${taskMenu.taskList}" th:id="${task.taskId}" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                       <img class="assignment-tx" th:if="${task.taskMember != null}" src="../static/image/add.png"  th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
-                                       <img class="assignment-tx" th:if="${task.taskMember == null}" src="../image/add.png" th:src="@{/image/add.png}"/>
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <!--<span class="timer">今天9:00-明天</span>-->
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
+                           <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="tasklist+${taskMenu.relationId}">
+                               <li class="task-card-mode clearfix"
+                                   th:each="task:${taskMenu.taskList}"
+                                   th:id="${task.taskId}"
+                                   th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
+                                  <div class="task-card">
+                                      <!--//左边框线-->
+                                      <div class="task-priority" th:if="${task.priority=='普通'}" th:classappend="bg-priority-0"></div>
+                                      <div class="task-priority" th:if="${task.priority=='紧急'}" th:classappend="bg-priority-1"></div>
+                                      <div class="task-priority" th:if="${task.priority=='非常紧急'}" th:classappend="bg-priority-2"></div>
+                                      <div class="task-check-box">
+                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />
+                                      </div>
+                                      <div class="task-content-set">
+                                          <header class="assignment-top-box boxsizing clearfix">
+                                              <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
+                                              <img class="assignment-tx" th:if="${task.taskMember != null}" th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
+                                          </header>
+                                          <section class="assignment-bottom-box clearfix">
+                                                  <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
+                                                  <img  th:if="${task.remind!='不提醒'}" th:src="@{/image/zhong.png}"/>
+                                                  <img  th:if="${task.remarks!=null}" src="../static/image/file.png" th:src="@{/image/file.png}">
+                                                  <!--<span class="span-img">-->
+                                                    <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
+                                                      <!--<span class="over-hidden">0/2</span>-->
+                                                  <!--</span>-->
+                                                  <!--<img  src="../static/image/fujian.png" th:src="@{/image/fujian.png}">-->
+                                          </section>
+                                      </div>
+                                  </div>
                                </li>
                            </ul>
                        </div>
                        <!--添加任务按钮-->
                        <div class="add-assignment" th:data="${project.projectId}">
-                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+                           <i class="layui-icon layui-icon-add-circle add-icon"></i>
                            <span>添加任务</span>
                        </div>
                    </li>
 
                    <!--新建任务列表-->
-                   <div class="creat-model boxsizing">
+                   <li class="creat-model boxsizing">
                        <div class="noclick-creat-model">
                            <i class="layui-icon layui-icon-add-circle" style="font-size: 22px; color: #AEAEAE;"></i>
                            <span>新建任务列表</span>
@@ -71,7 +88,7 @@
                                <div class="creat-model-no">取消</div>
                            </div>
                        </div>
-                   </div>
+                   </li>
                </ul>
              </div>
           </div>
@@ -108,100 +125,70 @@
         <ul class="invitation"></ul>
     </div>
 </div>
-<!--点击群组中的 人 出现的弹框-->
-<!--<div style="display: none" class="people-info">-->
-    <!--<div class="people-info-head boxsizing">-->
-        <!--<img src="../static/image/begintime.png" >-->
-        <!--<div class="people-info-head-right">-->
-            <!--<h3>名字</h3>-->
-            <!--<p class="over-hidden">13155aslmd.com</p>-->
-            <!--<p class="over-hidden">最后登陆于2013年3月3日12:00</p>-->
-        <!--</div>-->
-        <!--<i class="layui-icon layui-icon-close close-people" style="font-size: 20px; color: #a6a6a6;"></i>-->
-    <!--</div>-->
-    <!--<div class="borders"></div>-->
-    <!--<div class="look-task boxsizing">-->
-        <!--<img src="../static/image/xmxx.png" th:src="@{/image/xmxx.png}">-->
-        <!--<span>查看成员项目内任务</span>-->
-    <!--</div>-->
-    <!--<div class="set-qx boxsizing">-->
-        <!--<img src="../static/image/xmxx.png" th:src="@{/image/xmxx.png}">-->
-        <!--<span>查看成员项目内任务</span>-->
-        <!--<p class="qx">拥有者</p>-->
-    <!--</div>-->
-    <!--<div class="sixin-btn">私信</div>-->
-<!--</div>-->
-
-
-<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
-<script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
-
-</body>
 <script th:inline="javascript">
 
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     var groupId = [[${currentGroup}]];
     var projectId = [[${project.projectId}]];
 
-   layui.use('element', function(){
-       var element = layui.element;
+    layui.use('element', function(){
+        var element = layui.element;
 
-   });
+    });
 
-   $('.creat-model-ok').click()
+    $('.creat-model-ok').click()
 
-   $("#fileButton").click(function () {
-       var projectId = getQueryString("projectId");
-       $("#file").load("/file/list.html?projectId=" + projectId);
-   });
-
-
-   function getQueryString(name)
-   {
-       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-       var r = window.location.search.substr(1).match(reg);
-       if(r!=null)return  unescape(r[2]);
-       return null;
-   }
-
-   function changeExecutor(taskId,image){
-       var div = $('#'+taskId + ' div').first();
-       $(div).children('img:eq(0)').attr('src',image);
-   }
-
-   function clearExecutor(taskId){
-       var div = $('#'+taskId + ' div').first();
-       $(div).children('img:eq(0)').attr('src','/image/add.png');
-   }
+    $("#fileButton").click(function () {
+        var projectId = getQueryString("projectId");
+        $("#file").load("/file/list.html?projectId=" + projectId);
+    });
 
 
-   $('.remove-he').click(function (e) {
-       $.post("");
+    function getQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]);
+        return null;
+    }
+
+    function changeExecutor(taskId,image){
+        var div = $('#'+taskId + ' div').first();
+        $(div).children('img:eq(0)').attr('src',image);
+    }
+
+    function clearExecutor(taskId){
+        var div = $('#'+taskId + ' div').first();
+        $(div).children('img:eq(0)').attr('src','/image/add.png');
+    }
 
 
-   });
+    $('.remove-he').click(function (e) {
+        $.post("");
 
-   $('.keyword').keyup(function (e) {
-       $('.invitation').html('');
-       var index = layer.load(1, {shade: [0.1,'#fff']});
+
+    });
+
+    $('.keyword').keyup(function (e) {
+        $('.invitation').html('');
+        var index = layer.load(1, {shade: [0.1,'#fff']});
         $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
             parent.layer.close(index);
             if(data.result===1){
-                 for(var i=0;i<data.data.length;i++){
-                     var user = data.data[i];
-                     var li = '<li>\n' +
-                         '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
-                         '            <span class="people-name">'+user.userName+'</span>\n' +
-                         '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
-                         '        </li>';
-                     $('.invitation').append(li);
-                 }
+                for(var i=0;i<data.data.length;i++){
+                    var user = data.data[i];
+                    var li = '<li>\n' +
+                        '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
+                        '            <span class="people-name">'+user.userName+'</span>\n' +
+                        '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
+                        '        </li>';
+                    $('.invitation').append(li);
+                }
             }else{
 
             }
         });
-   });
+    });
 
 
 
@@ -212,26 +199,32 @@
         console.log($(this).siblings('span').text());
 
         $.post('/project/addProjectMember',{"projectId":projectId,"memberIds":id},function (data) {
-           if(data.result===1){
-               $('.group-people').html('');
-               for(var i=0;i<data.data.length;i++) {
-                   var projectMember = data.data[i];
-                   var li = '<li class="boxsizing">\n' +
-                       '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
-                       '            <div class="group-people-info">\n' +
-                       '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
-                       '                <p class="people-info-email"></p></div>';
-                        if(projectMember.memberLable===0){
-                            li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
-                        }else{
-                            li += '</li>';
-                        }
+            if(data.result===1){
+                $('.group-people').html('');
+                for(var i=0;i<data.data.length;i++) {
+                    var projectMember = data.data[i];
+                    var li = '<li class="boxsizing">\n' +
+                        '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
+                        '            <div class="group-people-info">\n' +
+                        '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
+                        '                <p class="people-info-email"></p></div>';
+                    if(projectMember.memberLable===0){
+                        li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
+                    }else{
+                        li += '</li>';
+                    }
 
-                   $('.group-people').append(li);
-               }
-           }
-           $(this).removeClass("no-join")
+                    $('.group-people').append(li);
+                }
+            }
+            $(this).removeClass("no-join")
         });
     })
 </script>
+<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
+<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
+<script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
+
+</body>
+
 </html>

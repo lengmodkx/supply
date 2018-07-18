@@ -126,4 +126,11 @@ public interface RelationMapper {
 	 * @return
 	 */
 	List<Relation> findAllMenuInfoByGroupId(String groupId);
+
+	/**
+	 * 根据菜单id 查询出该菜单的id 及菜单下的所有任务信息
+	 * @param relationId 菜单id
+	 * @return
+	 */
+	Relation getRelationAndAllTaskInfo(String relationId);
 }

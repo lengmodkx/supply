@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.service.tag.TagService;
+import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -148,6 +149,27 @@ public class TagController {
             log.error("删除标签异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "删除失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 模糊查询标签
+     * @return
+     */
+    @PostMapping("searchTag")
+    @ResponseBody
+    public JSONObject searchTag(String tagName){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Tag> listTag = tagService.searchTag(tagName);
+            jsonObject.put("data",listTag);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
         }
         return jsonObject;
     }

@@ -43,44 +43,35 @@
             <!--任务 整个 的 盒子-->
             <div  class="rw-box">
                 <!--项目-->
-                <ul class="style-ul">
-                    <li class="group-name"><p>星标项目</p></li>
-                    <li class="style-li"><span>Teambition 新手引导</span></li>
+                <ul class="style-ul project-ul">
+                    <!--<li class="group-name"><p>星标项目</p></li>-->
+                    <!--<li class="style-li"><span>Teambition 新手引导</span></li>-->
                     <li class="group-name"><p>个人项目</p></li>
-                    <li class="style-li"><span>bim5d过程管控平台</span></li>
-                    <li class="style-li"><span>阿拉丁bug管理系统</span></li>
+                    <li class="style-li p" th:each="project,p:${projectList}" th:data-id = "${project.projectId}" th:text="${project.projectName}" th:classappend="${p.first}? 'style-li selected'"><span></span></li>
                 </ul>
                 <div class="over-hidden-box">
                     <div class="scroll-box-heng">
                         <!--项目中的任务分组-->
-                        <ul class="style-ul show-next">
+                        <ul class="style-ul show-next" id="groups">
                             <li class="group-name"><p>任务分组</p></li>
-                            <li class="style-li"><span>开发任务</span></li>
-                            <li class="style-li"><span>ui任务</span></li>
+                            <div>
+                                <li class="style-li groupId" th:each="groups:${groups}" th:data-id = "${groups.relationId}"><span th:text="${groups.relationName}"></span></li>
+                            </div>
                             <li class="group-name"><p>智能分组</p></li>
-                            <li class="style-li"><span>未完成任务</span></li>
-                            <li class="style-li"><span>已完成任务</span></li>
+                            <li class="style-li groupId" th:data-id = '今天的任务'><span>今天的任务</span></li>
+                            <li class="style-li groupId" th:data-id = '未完成任务'><span>未完成任务</span></li>
+                            <li class="style-li groupId" th:data-id = '已完成任务'><span>已完成任务</span></li>
                         </ul>
                         <!--具体 任务-->
-                        <ul class="task-ul" style="display: none">
-                            <!--<li class="show-next-li">-->
-                                <!--<div class="title-create-style boxsizing">-->
-                                    <!--<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>-->
-                                    <!--<span>创建新任务</span>-->
-                                <!--</div>-->
-                                <!--<ul class="a-task-box ">-->
-                                    <!--<li class="group-name">快速入门</li>-->
-                                    <!--<li class="a-task-li selected">-->
-                                        <!--<span></span>-->
-                                        <!--<img src="../static/image/person.png" th:src="@{/image/person.png}">-->
-                                        <!--<p class="over-hidden">这是一条任务名称</p>-->
-                                    <!--</li>-->
-                                    <!--<li class="a-task-li">-->
-                                        <!--<span></span>-->
-                                        <!--<img src="../static/image/person.png" th:src="@{/image/person.png}">-->
-                                        <!--<p class="over-hidden">这是一条任务名称</p>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
+                        <ul class="task-ul">
+                            <li class="show-next-li">
+                                <div class="title-create-style boxsizing">
+                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>
+                                    <span>创建新任务</span>
+                                </div>
+                                <ul class="a-task-box">
+
+                                </ul>
                             <!--</li>-->
 
                             <!--<li class="show-next-li">-->
@@ -289,9 +280,20 @@
 </div>
 
 </body>
+
+<script th:inline="javascript">
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+</script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script src="../static/js/relevance.js" th:src="@{/js/relevance.js}"></script>
+
+<script th:inline="javascript">
+    //从哪个任务跳转过来的任务id
+    var taskId = [[${taskId}]];
+
+</script>
 <script>
     layui.use('form', function(){
         var form = layui.form;

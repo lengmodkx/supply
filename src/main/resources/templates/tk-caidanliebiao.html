@@ -7,22 +7,79 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
 </head>
 <body>
+
 <div class="lbmenu">
-    <div class="lbmenu-title">
-        <p>菜单列表</p>
-        <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
-    </div>
-    <div class="lbmenu-add">
-        <div class="lbmenu-add-content">
-            <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-            在此处添加新列表
+    <!--整个 列表 导航-->
+    <div class="lbmenu-nav" >
+        <div class="lbmenu-title boxsizing">
+            <p>菜单列表</p>
+            <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
         </div>
-    </div>
-    <div class="lbmenu-remove">
-        <div class="lbmenu-add-content">
+        <div class="lbmenu-add">
+            <div class="lbmenu-add-content edit-list">
+                <i class="layui-icon layui-icon-edit " style="font-size: 16px; color: gray;"></i>
+                编辑列表
+            </div>
+            <div class="lbmenu-add-content">
+                <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
+                在此处添加新列表
+            </div>
+        </div>
+        <div class="lbmenu-add">
+            <div class="lbmenu-add-content">
+                <i class="layui-icon layui-icon-username " style="font-size: 16px; color: gray;"></i>
+                设置本列表所有任务执行者
+            </div>
+            <div class="lbmenu-add-content">
+                <i class="layui-icon layui-icon-log " style="font-size: 16px; color: gray;"></i>
+                设置本列表所有任务截止时间
+            </div>
+            <div class="lbmenu-add-content">
+                <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: gray;"></i>
+                移动本列表所有任务
+            </div>
+            <div class="lbmenu-add-content">
+                <i class="layui-icon layui-icon-template " style="font-size: 16px; color: gray;"></i>
+                复制本列表所有任务
+            </div>
+            <div class="lbmenu-add-content remove-all-task">
+                <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
+                本列表所有任务移到回收站
+            </div>
+        </div>
+        <div class="lbmenu-add-content remove-this-list" style="margin-top: 5px">
             <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-            本列表所有任务移到回收站
+            删除本列表
         </div>
+    </div>
+    <!--编辑列表-->
+    <div class="lbmenu-con-edit" style="display: none">
+        <div class="lbmenu-title boxsizing">
+            <i class="layui-icon layui-icon-left return" style="font-size: 16px; color: #A6A6A6;"></i>
+            <p>编辑列表</p>
+            <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+        </div>
+        <input class="boxsizing white-input" type="text">
+        <div class="save-btn">保存</div>
+    </div>
+    <!--删除列表-->
+    <div class="lbmenu-con-remove" style="display: none">
+        <div class="lbmenu-title boxsizing">
+            <i class="layui-icon layui-icon-left return" style="font-size: 16px; color: #A6A6A6;"></i>
+            <p>删除列表</p>
+            <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+        </div>
+        <p class="style-p boxsizing">请先清空此列表上的任务，然后再删除这个列表</p>
+    </div>
+    <!--所有任务移到回收站-->
+    <div class="lbmenu-con-remove-all" style="display: none">
+        <div class="lbmenu-title boxsizing">
+            <i class="layui-icon layui-icon-left return" style="font-size: 16px; color: #A6A6A6;"></i>
+            <p>删除列表</p>
+            <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
+        </div>
+        <p class="style-p boxsizing">您确定要把列表下的所有任务移到回收站吗？</p>
+        <div class="clear-btn">移动到回收站</div>
     </div>
 </div>
 
@@ -48,8 +105,6 @@
             }
         });
 
-
-
     });
     layui.use('element', function(){
         var element = layui.element;
@@ -73,6 +128,28 @@
     $(".lbmenu-close").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
+    });
+    // 点击 编辑 列表
+    $(".edit-list").click(function () {
+        $(".lbmenu-nav").hide();
+        $(".lbmenu-con-edit").show();
+        $(".lbmenu-con-edit").siblings().hide();
+    });
+    // 点击 所有 任务 移到回收站
+    $(".remove-all-task").click(function () {
+        $(".lbmenu-nav").hide();
+        $(".lbmenu-con-remove-all").show();
+        $(".lbmenu-con-remove-all").siblings().hide();
+    });
+    //点击 删除 本列表
+    $(".remove-this-list").click(function () {
+        $(".lbmenu-nav").hide();
+        $(".lbmenu-con-remove").show();
+        $(".lbmenu-con-remove").siblings().hide();
+    });
+    //点击 返回
+    $(".return").click(function () {
+        $(".lbmenu-nav").show().siblings().hide()
     })
 </script>
 </html>

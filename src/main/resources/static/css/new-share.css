@@ -814,3 +814,8 @@ body,html{
     float: left;
     font-size: 14px;
 }
+
+.gray-box{
+    width: 100%;
+    padding: 10px 16px;
+}

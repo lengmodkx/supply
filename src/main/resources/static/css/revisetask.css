@@ -263,7 +263,7 @@
     background-color: white;
     position: absolute;
     top: 30px;
-    left: 75px;
+    left:0;
     box-shadow: 0 2px 20px rgba(0,0,0,.1);
     z-index: 100;
 }
@@ -882,6 +882,7 @@
 }
 .related-rw-info span{
     font-size: 14px;
+    margin-left: 5px;
 }
 .related-rw-describe{
     width: 170px;

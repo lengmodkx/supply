@@ -216,7 +216,7 @@ if ($("#have-executor").val()){
         $(this).siblings().find("i").hide()
     });
     //点击空白区域 添加标签消失
-    $(document).click(function (event) {
+    $(".new-assignment").click(function (event) {
         var _con = $('.tags-search-build');   // 设置目标区域
         if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失
@@ -370,7 +370,7 @@ if ($("#have-executor").val()){
     });
 
     //点击空白区域 添加人员消失
-    $(document).click(function (event) {
+    $(".new-assignment").click(function (event) {
         var _con = $('.people ');   // 设置目标区域
         if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
             //$('#divTop').slideUp('slow');   //滑动消失
@@ -509,10 +509,11 @@ $(".tag-ok").click(function () {
             if(data.result > 0){
                 $(".has-tags").show();
                 content +=
-                    '<span class="tag" value="' + data.data + '" style="background-color:' + color + '">'+
+                    '<span class="tag" value="' + data.data.tagId + '" style="background-color:' + color + '">'+
                     '<b style="font-weight: 400">' + vals + '</b>'+
                     '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
                     '</span>';
+                $('.no-tags').hide();
                 $(".has-tags").prepend(content);
             } else{
                 layer.msg(data.msg);
@@ -532,6 +533,7 @@ $(".tag-box").on("click", ".tag i", function () {
         $(".no-tags").hide()
     }
 });
+
 
 
 

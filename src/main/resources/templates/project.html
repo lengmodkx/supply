@@ -133,12 +133,7 @@
     </div>
 
 </div>
-</body>
-<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
-<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script th:src="@{/js/sockjs.js}" src="../static/js/sockjs.js"></script>
-<script th:src="@{/js/stomp.js}" src="../static/js/stomp.js"></script>
-
+<script th:src="@{/js/project.js}" src="../static/js/project.js"></script>
 <script type="text/javascript" th:inline="javascript">
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     layui.use('element', function(){
@@ -257,7 +252,7 @@
         } else {
             $(".complete-wrap").show()
         }
-    //项目回收站 显示隐藏
+        //项目回收站 显示隐藏
         $(".show-recycle-bin").click(function () {
             if ($(".recycle-bin").is(':visible')) {
                 $(".recycle-bin").hide();
@@ -294,9 +289,9 @@
                 var params = $("#projectForm").serialize();
                 var index = layer.load(1, {shade: [0.1,'#fff']});
                 $.post("/project/addProject",params,function (data) {
-                   layer.close(index);
+                    layer.close(index);
                     if(data.result===1){
-                       //创建项目成功之后进入任务主界面
+                        //创建项目成功之后进入任务主界面
                         window.location.href = "/project/task.html?projectId="+data.projectId;
                     }else{
                         layer.msg(data.msg,{icon:5});
@@ -324,5 +319,6 @@
         '    </form>\n' +
         '</div>'
 </script>
-<script th:src="@{/js/project.js}" src="../static/js/project.js"></script>
+
+</body>
 </html>

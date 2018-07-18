@@ -30,6 +30,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -202,13 +203,14 @@ public class ProjectController {
 
             //初始化菜单
             String[] menus  = new String[]{"待处理","进行中","已完成"};
-            for (String menu:menus) {
+            for (int i=0;i<menus.length;i++) {
                 Relation relation1 = new Relation();
                 relation1.setProjectId(project.getProjectId());
-                relation1.setRelationName(menu);
+                relation1.setRelationName(menus[i]);
                 relation1.setParentId(relation.getRelationId());
                 relation1.setLable(1);
                 relation1.setRelationDel(0);
+                relation1.setOrder(i);
                 relation1.setCreateTime(System.currentTimeMillis());
                 relation1.setUpdateTime(System.currentTimeMillis());
                 relationService.saveRelation(relation1);
@@ -244,6 +246,29 @@ public class ProjectController {
 
         return jsonObject;
     }
+
+    @RequestMapping("/updateMenusOrder")
+    @ResponseBody
+    public JSONObject updateMenusOrder(String[] ids){
+           JSONObject jsonObject = new JSONObject();
+           try {
+                for(int i=0;i<ids.length;i++){
+                    Relation relation = new Relation();
+                    relation.setRelationId(ids[i]);
+                    relation.setOrder(i);
+                    relation.setUpdateTime(System.currentTimeMillis());
+                    relationService.updateRelation(relation);
+                }
+                jsonObject.put("result",1);
+                jsonObject.put("msg",0);
+           }catch (Exception e){
+               throw new AjaxException(e);
+           }
+        return jsonObject;
+    }
+
+
+
 
     /**
      * 更新项目
@@ -469,24 +494,23 @@ public class ProjectController {
             relation.setLable(0);
             List<Relation> taskGroups = relationService.findRelationAllList(relation);
 
-            if(taskGroups != null && taskGroups.size() >= 0){
+            if(taskGroups != null && taskGroups.size() != 0){
                 //取第0个任务分组的菜单
                 Relation relation1 = new Relation();
                 relation1.setParentId(taskGroups.get(0).getRelationId());
                 relation1.setLable(1);
                 List<Relation> taskMenu = relationService.findRelationAllList(relation1);
                 model.addAttribute("taskMenus",taskMenu);
+                model.addAttribute("taskGroups",taskGroups);
+                model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             }
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(projectId);
             List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
-
             Project project = projectService.findProjectByProjectId(projectId);
             List<File> fileList = fileService.findChildFile(projectId, "0", 0);
             model.addAttribute("fileList", fileList);
             model.addAttribute("project",project);
-            model.addAttribute("taskGroups",taskGroups);
-            model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
             model.addAttribute("projectMembers",memberAllList);
         }catch (Exception e){
