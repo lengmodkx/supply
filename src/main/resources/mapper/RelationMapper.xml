@@ -77,7 +77,7 @@
 		<if test="parentId != null and parentId !=''">
 			and parent_id = #{parentId}
 		</if>
-		order by create_time asc
+		order by `order` asc
 	</select>
 	
 	<select id="findRelationByRelationId" resultMap="BaseResultMap" parameterType="java.lang.String">

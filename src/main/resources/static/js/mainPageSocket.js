@@ -41,26 +41,37 @@ function subscribe1() {
     });
 
     function taskShow(task) {
-        var a = '<li class="assignment" id = "'+ task.taskId +'" onclick="javascript:updateTask(\''+ task.taskId +'\',\''+ task.projectId+'\')">'+
-            '<div class="assignment-top-box boxsizing">'+
-            '<input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >'+
-            '<div class="layui-unselect layui-form-checkbox" lay-skin="primary">'+
-            '<i class="layui-icon layui-icon-ok"></i>'+
-            '</div>'+
-            '<span class="assignment-title">'+task.taskName+'</span>';
-        if(task.taskMember == null){
-            a += '<img class="assignment-tx" src="/image/add.png" />';
-        } else{
-            a += '<img class="assignment-tx" src="'+IMAGE_SERVER + task.taskMember.memberImg+'" />';
+        var a = '<li class="task-card-mode clearfix" id="'+task.taskId+'" onclick="javascript:updateTask('+task.taskId+','+task.projectId+')">\n' +
+            '                                  <div class="task-card">\n' +
+            '                                      <!--//左边框线-->\n' +
+            '                                      <div class="task-priority bg-priority-0"></div>\n' +
+            '                                      <div class="task-check-box">\n' +
+            '                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />\n' +
+            '                                      </div>\n' +
+            '                                      <div class="task-content-set">\n' +
+            '                                          <header class="assignment-top-box boxsizing clearfix">\n' +
+            '                                              <span class="assignment-title">'+task.taskName+'</span>';
+        if(task.taskMember != null) {
+                a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.taskMember.memberImg + '" /></header><section class="assignment-bottom-box clearfix">';
         }
-        a +=   '</div>'+
-            '<div class="assignment-bottom-box">'+
-            // '<span class="timer">今天9:00-明天</span>'+
-            '</div>'+
-            '<div class="line"></div>'+
-            '</li>';
-        var old = $('#'+task.taskMenuId).html();
-        $('#'+task.taskMenuId).html(a).append(old);
+
+        if(task.repeat!=='不重复'){
+            a+='<span class="how-repeat">'+task.repeat+'</span>';
+        }
+
+        if(task.remind!=='不提醒'){
+            a+=' <img src="/image/zhong.png"/>';
+        }
+
+        if (task.remarks!==null&&task.remarks!==''){
+            a+='<img  src="/image/file.png">';
+        }
+
+        $('.tasklist'+task.taskMenuId).append(a);
+        layui.use('form', function() {
+            var form = layui.form;
+            form.render();
+        });
     }
 
     function showMenu(menu){

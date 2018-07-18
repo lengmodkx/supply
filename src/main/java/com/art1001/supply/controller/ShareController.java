@@ -126,12 +126,16 @@ public class ShareController {
             @RequestParam Integer isPrivacy
     ){
         JSONObject jsonObject = new JSONObject();
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         try {
             Share share = new Share();
             share.setTitle(title);
             share.setContent(content);
             share.setProjectId(projectId);
             share.setIsPrivacy(isPrivacy);
+            share.setMemberId(userEntity.getId());
+            share.setMemberImg(userEntity.getUserInfo().getImage());
+            share.setMemberName(userEntity.getUserName());
             shareService.saveShare(share);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "保存成功");

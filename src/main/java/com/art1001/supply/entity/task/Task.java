@@ -190,4 +190,12 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private UserEntity taskExecutorInfo;
 
+	/**
+	 * 是否绑定任务，日程，文件，分享
+	 */
+	private int is_bind;
+
+	private int taskCount;
+
+	private int notFinishCount;
 }

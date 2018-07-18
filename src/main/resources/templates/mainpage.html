@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/group.css}" href="../static/css/group.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/addtask.css}" href="../static/css/addtask.css">
 </head>
 <body>
 <!--头部-->
@@ -26,202 +25,58 @@
         <!--产品设计任务页面-->
         <div class="view boxsizing">
              <div class="board-scrum-view boxsizing">
-               <ul class="board-scrum-stages boxsizing" id="menuList">
+               <ul class="board-scrum-stages boxsizing sortable">
                    <!--待处理-->
-                   <li class="model boxsizing" th:each="taskMenu:${taskMenus}">
-                       <div class="model-title">
+                   <li class="model tile boxsizing" th:each="taskMenu:${taskMenus}" th:id="${taskMenu.relationId}">
+                       <div class="model-title boxsizing">
                            <span th:text="${taskMenu.relationName}">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
                            <!--点击下箭头出现的内容-->
                        </div>
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
-                           <ul th:id="${taskMenu.relationId}" class="taskList">
-                               <li class="assignment" th:each="task:${taskMenu.taskList}" th:id="${task.taskId}" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
-                                   <div class="assignment-top-box boxsizing">
-                                       <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                                       <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                       <img class="assignment-tx" th:if="${task.taskMember != null}" src="../static/image/add.png"  th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
-                                       <img class="assignment-tx" th:if="${task.taskMember == null}" src="../image/add.png" th:src="@{/image/add.png}"/>
-                                   </div>
-                                   <div class="assignment-bottom-box">
-                                       <!--<span class="timer">今天9:00-明天</span>-->
-                                   </div>
-                                   <!--//左边框线-->
-                                   <div class="line"></div>
+                           <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="tasklist+${taskMenu.relationId}">
+                               <li class="task-card-mode clearfix"
+                                   th:each="task:${taskMenu.taskList}"
+                                   th:id="${task.taskId}"
+                                   th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
+                                  <div class="task-card">
+                                      <!--//左边框线-->
+                                      <div class="task-priority" th:if="${task.priority=='普通'}" th:classappend="bg-priority-0"></div>
+                                      <div class="task-priority" th:if="${task.priority=='紧急'}" th:classappend="bg-priority-1"></div>
+                                      <div class="task-priority" th:if="${task.priority=='非常紧急'}" th:classappend="bg-priority-2"></div>
+                                      <div class="task-check-box">
+                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />
+                                      </div>
+                                      <div class="task-content-set">
+                                          <header class="assignment-top-box boxsizing clearfix">
+                                              <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
+                                              <img class="assignment-tx" th:if="${task.taskMember != null}" th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
+                                          </header>
+                                          <section class="assignment-bottom-box clearfix">
+                                                  <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
+                                                  <img  th:if="${task.remind!='不提醒'}" th:src="@{/image/zhong.png}"/>
+                                                  <img  th:if="${task.remarks!=null}" src="../static/image/file.png" th:src="@{/image/file.png}">
+                                                  <!--<span class="span-img">-->
+                                                    <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
+                                                      <!--<span class="over-hidden">0/2</span>-->
+                                                  <!--</span>-->
+                                                  <!--<img  src="../static/image/fujian.png" th:src="@{/image/fujian.png}">-->
+                                          </section>
+                                      </div>
+                                  </div>
                                </li>
                            </ul>
-                           <!--添加任务 框-->
-                           <div class="add-task-box boxsizing" style="display: none">
-                               <form class="new-assignment boxsizing layui-form">
-    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" id="taskName"
-              class="layui-textarea rw-content boxsizing"></textarea>
-                                   <div class="who-and-time">
-                                       <input type="hidden" id="have-executor" th:value="${user.id}">
-                                       <div class="who-wrap">
-                                           <input th:name="userId" th:value="${user.id}" type="hidden"/>
-                                           <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}" th:id="executorImg"/>
-                                           <input type="hidden" th:id="executorId" th:value="${user.id}"/>
-                                           <input type="hidden" th:id="executorName" th:value="${user.userName}"/>
-                                           <span th:text="${user.userName}" id = "showExecutor">谁谁谁</span>
-                                           <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
-                                       </div>
-                                       <div class="no-renling">
-                                           <i class="layui-icon layui-icon-username no-people-img" style="font-size: 20px; color: #A6A6A6;"></i>
-                                           <span>待认领</span>
-                                       </div>
-                                   </div>
-                                   <div class="show-develop">
-                                       <i class="layui-icon layui-icon-more" style="font-size: 20px; color: #a6a6a6;"></i>
-                                       <span>更多</span>
-                                   </div>
-                                   <div class="develop" style="display: none">
-                                       <div class="begin-time abox">
-                                           <img th:src="@{/image/begintime.png}"/>
-                                           <input type="text" class="layui-input" id="beginTime"th:name="startTime"  placeholder="开始时间">
-                                       </div>
-                                       <div class="over-time abox">
-                                           <img th:src="@{/image/begintime.png}"/>
-                                           <input type="text" class="layui-input" id="overTime" th:name="endTime" placeholder="截止时间">
-                                       </div>
-                                       <div class="norepeat abox">
-                                           <img th:src="@{/image/norepeat.png}">
-                                           <select name="repeat" lay-verify="" id = "repeat">
-                                               <option value="不重复">不重复</option>
-                                               <option value="每天重复">每天重复</option>
-                                               <option value="每周重复">每周重复</option>
-                                               <option value="每月重复">每月重复</option>
-                                               <option value="每年重复">每年重复</option>
-                                               <option value="工作日重复">工作日重复</option>
-                                           </select>
-                                       </div>
-                                       <div class="noremand abox">
-                                           <img th:src="@{/image/noremand.png}">
-                                           <select name="remand" lay-verify="" id = "remand">
-                                               <option value="不提醒">不提醒</option>
-                                               <option value="任务开始时提醒">任务开始时提醒</option>
-                                               <option value="任务截止时提醒">任务截止时提醒</option>
-                                           </select>
-                                       </div>
-                                       <div class="pri layui-form">
-                                           <div class="layui-input-block">
-                                               <input type="radio" name="state" value="普通" title="普通" checked = "checked">
-                                               <input type="radio" name="state" value="紧急" title="紧急">
-                                               <input type="radio" name="state" value="非常紧急" title="非常紧急">
-                                           </div>
-                                       </div>
-                                       <div class="add-tag tag-box clearfix">
-                                           <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
-                                           <span>标签</span>
-                                           <span class="no-tags">添加标签</span>
-                                           <div class="has-tags">
-
-                                           </div>
-                                           <!--新建  搜索标签框-->
-                                           <div class="tags-search-build" style="display: none">
-                                               <!--搜索标签-->
-                                               <div class="tag-search" >
-                                                   <div class="tag-search-title boxsizing">
-                                                       <input class="tag-search-input" type="text" placeholder="搜索标签">
-                                                       <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-                                                   </div>
-                                                   <ul class="tags-ul boxsizing" id = "tags">
-                                                       <!--这里是标签-->
-                                                       <li class="tags-list">
-                                                           <span class="dot"></span>
-                                                           <span class="tag-font">aaa</span>
-                                                       </li>
-                                                   </ul>
-                                               </div>
-                                               <!--新建标签-->
-                                               <div class="build-tags" style="display: none">
-                                                   <div class="build-tags-title boxsizing">
-                                                       <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
-                                                       新建标签
-                                                       <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
-                                                   </div>
-                                                   <div class="build-tags-con boxsizing">
-                                                       <input class="tag-name boxsizing" type="text" placeholder="标签名称">
-                                                       <ul class="color-pick">
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
-                                                           </li>
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                                           </li>
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                                           </li>
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                                           </li>
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                                           </li>
-                                                           <li>
-                                                               <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-                                                           </li>
-                                                       </ul>
-                                                       <div class="tag-ok" disabled>创建</div>
-                                                   </div>
-
-                                               </div>
-                                           </div>
-
-                                       </div>
-                                   </div>
-                                   <div class="heng-line"></div>
-                                   <p class="cyz">参与者</p>
-                                   <div class="work-people boxsizing clearfix">
-                                       <div class="one-work-people" th:value="${user.id}">
-                                           <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}">
-                                           <input type="hidden" th:value="${user.userName}" />
-                                           <i class="layui-icon layui-icon-close-fill remove-work-people "
-                                              style="font-size: 15px; color: #3da8f5;"></i>
-                                       </div>
-                                       <div class="add-work-people ">
-                                           <img th:src="@{/image/adds.png}">
-                                       </div>
-                                   </div>
-                                   <!--人员 参与者 弹框-->
-                                   <div>
-                                       <input type="hidden" id = "memberId" />
-                                       <div class="people boxsizing" style="display: none" >
-                                           <input type="text" name="" placeholder="搜索" class="layui-input">
-                                           <div class="peoples">
-                                               <p id = "identity">参与者</p>
-                                               <div id = "members" >
-
-                                               </div>
-                                               <p>推荐</p>
-                                               <div id = "executor">
-                                                   <!--项目成员列表-->
-                                               </div>
-                                           </div>
-                                           <div id="people-ok" class="people-ok">确定</div>
-                                       </div>
-                                   </div>
-                                   <div class="heng-line"></div>
-                                   <div class="secret abox layui-form">
-                                       <img th:src="@{/image/suo.png}">
-                                       <span>隐私模式</span>
-                                       <div class="who-can-see">所有成员可见</div>
-                                       <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
-                                   </div>
-
-
-                               </form>
-                           </div>
                        </div>
                        <!--添加任务按钮-->
                        <div class="add-assignment" th:data="${project.projectId}">
-                           <i class="layui-icon layui-icon-add-circle add-icon" style="font-size: 22px; color: #80BEE4;"></i>
+                           <i class="layui-icon layui-icon-add-circle add-icon"></i>
                            <span>添加任务</span>
                        </div>
                    </li>
 
                    <!--新建任务列表-->
-                   <div class="creat-model boxsizing">
+                   <li class="creat-model boxsizing">
                        <div class="noclick-creat-model">
                            <i class="layui-icon layui-icon-add-circle" style="font-size: 22px; color: #AEAEAE;"></i>
                            <span>新建任务列表</span>
@@ -233,7 +88,7 @@
                                <div class="creat-model-no">取消</div>
                            </div>
                        </div>
-                   </div>
+                   </li>
                </ul>
              </div>
           </div>
@@ -270,111 +125,70 @@
         <ul class="invitation"></ul>
     </div>
 </div>
-<!--点击群组中的 人 出现的弹框-->
-<!--<div style="display: none" class="people-info">-->
-    <!--<div class="people-info-head boxsizing">-->
-        <!--<img src="../static/image/begintime.png" >-->
-        <!--<div class="people-info-head-right">-->
-            <!--<h3>名字</h3>-->
-            <!--<p class="over-hidden">13155aslmd.com</p>-->
-            <!--<p class="over-hidden">最后登陆于2013年3月3日12:00</p>-->
-        <!--</div>-->
-        <!--<i class="layui-icon layui-icon-close close-people" style="font-size: 20px; color: #a6a6a6;"></i>-->
-    <!--</div>-->
-    <!--<div class="borders"></div>-->
-    <!--<div class="look-task boxsizing">-->
-        <!--<img src="../static/image/xmxx.png" th:src="@{/image/xmxx.png}">-->
-        <!--<span>查看成员项目内任务</span>-->
-    <!--</div>-->
-    <!--<div class="set-qx boxsizing">-->
-        <!--<img src="../static/image/xmxx.png" th:src="@{/image/xmxx.png}">-->
-        <!--<span>查看成员项目内任务</span>-->
-        <!--<p class="qx">拥有者</p>-->
-    <!--</div>-->
-    <!--<div class="sixin-btn">私信</div>-->
-<!--</div>-->
-
-
-<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
-<script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
-<script th:inline="javascript">
-    //当前项目id
-    var projectId = [[${projectId}]];
-    //当前任务所在菜单id
-    var taskMenuId = [[${taskMenuId}]];
-    //当前任务执行者id
-    var executorId = $("span[name = 'executor']").attr("value");
-    //头像某模板
-    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-
-</script>
-<script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
-
-</body>
 <script th:inline="javascript">
 
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     var groupId = [[${currentGroup}]];
     var projectId = [[${project.projectId}]];
-   layui.use('element', function(){
-       var element = layui.element;
 
-   });
+    layui.use('element', function(){
+        var element = layui.element;
 
-   $('.creat-model-ok').click()
+    });
 
-   $("#fileButton").click(function () {
-       var projectId = getQueryString("projectId");
-       $("#file").load("/file/list.html?projectId=" + projectId);
-   });
+    $('.creat-model-ok').click()
 
-
-   function getQueryString(name)
-   {
-       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-       var r = window.location.search.substr(1).match(reg);
-       if(r!=null)return  unescape(r[2]);
-       return null;
-   }
-
-   function changeExecutor(taskId,image){
-       var div = $('#'+taskId + ' div').first();
-       $(div).children('img:eq(0)').attr('src',image);
-   }
-
-   function clearExecutor(taskId){
-       var div = $('#'+taskId + ' div').first();
-       $(div).children('img:eq(0)').attr('src','/image/add.png');
-   }
+    $("#fileButton").click(function () {
+        var projectId = getQueryString("projectId");
+        $("#file").load("/file/list.html?projectId=" + projectId);
+    });
 
 
-   $('.remove-he').click(function (e) {
-       $.post("");
+    function getQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]);
+        return null;
+    }
+
+    function changeExecutor(taskId,image){
+        var div = $('#'+taskId + ' div').first();
+        $(div).children('img:eq(0)').attr('src',image);
+    }
+
+    function clearExecutor(taskId){
+        var div = $('#'+taskId + ' div').first();
+        $(div).children('img:eq(0)').attr('src','/image/add.png');
+    }
 
 
-   });
+    $('.remove-he').click(function (e) {
+        $.post("");
 
-   $('.keyword').keyup(function (e) {
-       $('.invitation').html('');
-       var index = layer.load(1, {shade: [0.1,'#fff']});
+
+    });
+
+    $('.keyword').keyup(function (e) {
+        $('.invitation').html('');
+        var index = layer.load(1, {shade: [0.1,'#fff']});
         $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
             parent.layer.close(index);
             if(data.result===1){
-                 for(var i=0;i<data.data.length;i++){
-                     var user = data.data[i];
-                     var li = '<li>\n' +
-                         '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
-                         '            <span class="people-name">'+user.userName+'</span>\n' +
-                         '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
-                         '        </li>';
-                     $('.invitation').append(li);
-                 }
+                for(var i=0;i<data.data.length;i++){
+                    var user = data.data[i];
+                    var li = '<li>\n' +
+                        '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
+                        '            <span class="people-name">'+user.userName+'</span>\n' +
+                        '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
+                        '        </li>';
+                    $('.invitation').append(li);
+                }
             }else{
 
             }
         });
-   });
+    });
 
 
 
@@ -385,26 +199,32 @@
         console.log($(this).siblings('span').text());
 
         $.post('/project/addProjectMember',{"projectId":projectId,"memberIds":id},function (data) {
-           if(data.result===1){
-               $('.group-people').html('');
-               for(var i=0;i<data.data.length;i++) {
-                   var projectMember = data.data[i];
-                   var li = '<li class="boxsizing">\n' +
-                       '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
-                       '            <div class="group-people-info">\n' +
-                       '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
-                       '                <p class="people-info-email"></p></div>';
-                        if(projectMember.memberLable===0){
-                            li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
-                        }else{
-                            li += '</li>';
-                        }
+            if(data.result===1){
+                $('.group-people').html('');
+                for(var i=0;i<data.data.length;i++) {
+                    var projectMember = data.data[i];
+                    var li = '<li class="boxsizing">\n' +
+                        '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
+                        '            <div class="group-people-info">\n' +
+                        '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
+                        '                <p class="people-info-email"></p></div>';
+                    if(projectMember.memberLable===0){
+                        li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
+                    }else{
+                        li += '</li>';
+                    }
 
-                   $('.group-people').append(li);
-               }
-           }
-           $(this).removeClass("no-join")
+                    $('.group-people').append(li);
+                }
+            }
+            $(this).removeClass("no-join")
         });
     })
 </script>
+<script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
+<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
+<script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
+
+</body>
+
 </html>

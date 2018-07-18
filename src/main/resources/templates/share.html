@@ -34,19 +34,22 @@
                 </div>
             </div>
             <div class="add-share">
-                <h2><span><a th:href="@{/share/toAddShare.html(projectId=${project.projectId})}" href="/share/toAddShare.html">添加分享</a></span><b></b><i class="layui-icon layui-icon-down" style="font-size: 18px; color: gray;"></i></h2>
-                <div class="select-doc" style="display: none">
-                    <ul>
-                        <li>普通文档</li>
-                        <li>Markdown文档</li>
-                    </ul>
-                </div>
+                <h2><span>
+                    <i class="layui-icon layui-icon-add-circle add-icon"></i>
+                    <a th:href="@{/share/toAddShare.html(projectId=${project.projectId})}" style="color:#3da8f5;font-size: 14px;line-height: 43px;margin-left: 5px">添加分享</a></span>
+                    <!--<i class="layui-icon layui-icon-down" style="font-size: 18px; color: gray;"></i>--></h2>
+                <!--<div class="select-doc" style="display: none">-->
+                    <!--<ul>-->
+                        <!--<li>普通文档</li>-->
+                        <!--<li>Markdown文档</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
             </div>
         </div>
         <div class="share-list-wrap">
             <ul>
                 <li class="boxsizing share-list" th:each="share: ${shareList}" th:data="${share.id}">
-                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                    <img th:src="#{IMAGE_SERVER}+${share.memberImg}"/>
                     <div class="share-people-time">
                         <h3 class="over-hidden" th:text="${share.title}"></h3>
                         <p><span th:text="${share.memberName}"></span> 发布于 <span th:text="${#dates.format(share.createTime,'yyyy-MM-dd HH:mm')}"></span></p>
@@ -159,10 +162,10 @@
                         <!--谁谁 干了 什么-->
                         <div class="state">
                             <ul id = "log">
-                                <li class="combox" th:each="taskLog:${taskLog}">
+                                <li class="combox">
                                     <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
-                                    <span th:text="${taskLog.content}">aaa</span>
-                                    <div class="in-what-time" th:value = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}">2018-10-1 12:00</div>
+                                    <span >aaa</span>
+                                    <div class="in-what-time" >2018-10-1 12:00</div>
                                 </li>
                             </ul>
                         </div>
