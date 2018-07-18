@@ -78,7 +78,14 @@
 		from prm_binding c where id = #{id}
 
 	</select>
-	
+
+	<select id="findBindingCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+
+		select
+		count(0)
+		from prm_binding c where public_id = #{publicId}
+
+	</select>
 	<delete id="deleteBindingById" parameterType="java.lang.String">
 		delete from
 		prm_binding where id = #{id}

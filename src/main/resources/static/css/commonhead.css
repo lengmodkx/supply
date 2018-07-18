@@ -1,6 +1,13 @@
 a:hover {
   text-decoration: none !important;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /*头部*/
 .header {
   width: 100%;
@@ -32,6 +39,7 @@ a:hover {
   /*left: 50%;*/
   /*margin-left: -150px;*/
   display: inline-block;
+  position: relative;
 }
 
 .header-middle .search-input {
@@ -202,8 +210,8 @@ a:hover {
   font-size: 16px;
 }
 
-.header-middle .logo {
-  height: 14px;
+.head-left .logo {
+  height: 45px;
 }
 
 /*.toper-nav li:nth-of-type(1){*/

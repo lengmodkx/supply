@@ -403,4 +403,12 @@ public interface TaskMapper {
 	 */
 	@Select("select task_name from prm_task where task_id = #{taskId}")
 	String getTaskNameById(String taskId);
+
+	/**
+	 * 查询子任务的数量/子任务完成或者未完成的数量
+	 * @param taskId
+	 * @param taskStatus
+	 * @return
+	 */
+	int findSubTaskCount(@Param("taskId")String taskId,@Param("taskStatus")String taskStatus);
 }

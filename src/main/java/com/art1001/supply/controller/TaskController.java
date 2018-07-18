@@ -1338,21 +1338,34 @@ public class TaskController {
         return jsonObject;
     }
 
+
     /**
-     * 任务拖住
-     * @param oldMenuTaskId 旧任务菜单的所有任务id
-     * @param newMenuTaskId 新任务菜单的所有任务id
-     * @param oldMenuId 旧菜单id
-     * @param newMenuId 新菜单id
-     * @param taskId 被移动的任务id
+     *
+     * @param taskId 当前移动的任务的id
+     * @param menuId 任务移动后的菜单Id
+     * @param taskIds 任务移动之后的菜单组下面的全部任务id
      * @return
      */
     @PostMapping("taskOrder")
     @ResponseBody
-    public JSONObject taskOrder(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId){
+    public JSONObject taskOrder(String taskId,String menuId,String[] taskIds){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.orderOneTaskMenu(oldMenuTaskId,newMenuTaskId,oldMenuId,newMenuId,taskId);
+            //先更新任务菜单id
+            Task task = new Task();
+            task.setUpdateTime(System.currentTimeMillis());
+            task.setTaskId(taskId);
+            task.setTaskMenuId(menuId);
+            taskService.updateTask(task);
+            //排序菜单中的任务
+            for(int i=taskIds.length-1;i>=0;i--){
+                Task task1 = new Task();
+                task1.setUpdateTime(System.currentTimeMillis());
+                task1.setTaskId(taskIds[i]);
+                task1.setOrder(i);
+                taskService.updateTask(task1);
+            }
+
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("任务排序失败,{}",e);

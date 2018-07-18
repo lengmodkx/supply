@@ -63,7 +63,9 @@
         var title = $("[name = title]").val();
         var content = editor.txt.html();
         var isPrivacy = $("#privacy").val();
+        var index = layer.load(1, {shade: [0.1,'#fff']});
         $.post("/share/saveShare", {projectId: projectId, title: title, content: content, isPrivacy: isPrivacy}, function (data) {
+            layer.close(index);
             if (data.result === 1) {
                 window.location.href = "/share/share.html?projectId=" + projectId;
             }
