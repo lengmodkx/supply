@@ -26,9 +26,24 @@ function useLayerForm(){
             }
         });
     });
-};
+}
 
 $(function () {
+    $(".ul-wrap").css("max-height",parseInt($(".view").css("height"))-100+'px');
+    $(document).click(function(event){
+        var _con = $('.add-task-box');  // 设置目标区域
+        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+            $('.add-task-box').hide(200);     //淡出消失
+            $(".add-assignment").show()
+        }
+    });
+    $(".content-wrap-wrap").on("click",".add-task-box",function (e) {
+       e.stopPropagation()
+    });
+    $(".content-wrap-wrap").on("click",".show-develop",function () {
+        $(this).hide();
+       $(this).siblings(".develop").slideDown();
+    });
 
     $("html").on("click",".assignment-top-box",function (e) {
         e.stopPropagation()
@@ -120,12 +135,16 @@ $(function () {
 
 
     //点击添加任务按钮
-    $("html").on("click",".add-assignment",function(){
+    $("html").on("click",".add-assignment",function(e){
         liId=$(this).siblings(".ul-wrap").children(".taskList").children(":first").attr("id");
-        addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"),liId);
+        $(this).siblings(".ul-wrap").find(".add-task-box").show();
+        $(this).hide();
+        $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top)
+        // addRenwu($('.add-assignment').attr("data"),$(this).siblings('.ul-wrap').children("ul").attr("id"),liId);
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
+        e.stopPropagation()
     });
 
 
@@ -139,21 +158,21 @@ $(function () {
     });
     //创建任务按钮 点击事件
     $(".new-assignment-ok").click(function (e) {
-        if($(".rw-content").val()==""){
-            $(".rw-content").focus();
+        if($(this).parents(".add-task-box").find(".rw-content").val()==""){
+            $(this).parents(".add-task-box").find(".rw-content").focus();
             e.preventDefault();
         }else {
             // 去掉时间前面的 年, 分钟，秒。
             var starTime=$("#beginTime").val().slice(5).substr(0,10);
             var overTime=$("#overTime").val().slice(5).substr(0,10);
             //一条新的任务
-            that.siblings(".ul-wrap").children("ul").append('<li class="assignment layui-form">\n' +
+            $(this).parents(".add-task-box").siblings(".taskList").append('<li class="assignment layui-form">\n' +
                 '            <div class="tags boxsizing">\n' +
                 '                <span class="one-tag">'+ $(".add-bq input").val()+'</span>\n' +
                 '            </div>\n' +
                 '            <div class="assignment-top-box boxsizing">\n' +
                 '                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >\n' +
-                '                <span class="assignment-title">'+$(".rw-content").val()+'</span>\n' +
+                '                <span class="assignment-title">'+$(this).parents(".add-task-box").find(".rw-content").val()+'</span>\n' +
                 '                <img class="assignment-tx" src="" >\n' +
                 '            </div>\n' +
                 '            <div class="assignment-bottom-box">\n' +
