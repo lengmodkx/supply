@@ -4,17 +4,18 @@
     <div class="header" id="header">
         <div class="head-left">项目管理</div>
         <div class=" header-middle">
-            <input type="text"  class="layui-input search-input boxsizing"/>
-            <i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>
+            <!--<input type="text"  class="layui-input search-input boxsizing"/>-->
+            <!--<i class="layui-icon layui-icon-search search" style="font-size: 25px; color: #AAAAAA;"></i>-->
+            <img src="/image/logo.png" class="logo" alt="">
         </div>
         <div class="head-right">
-            <span class="layui-breadcrumb" lay-separator="|">
+            <span class="layui-breadcrumb" lay-separator="">
                 <a th:href="@{/public/mypage.html}">我的</a>
                 <a th:href="@{/public/calendar.html(id=${userId})}">日历</a>
                 <a href="#">消息</a>
             </span>
+            <img th:src="#{IMAGE_SERVER}+${headerImg}" class="avatar">
         </div>
-        <img th:src="#{IMAGE_SERVER}+${headerImg}" style="width: 32px;height: 32px;position: absolute;right: 5%;top: 9px;">
     </div>
 </div>
 
