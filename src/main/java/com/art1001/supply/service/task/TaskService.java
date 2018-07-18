@@ -270,7 +270,7 @@ public interface TaskService {
 	List<UserEntity> findProjectAllMember(String projectId,String executor);
 
 	/**
-	 * 智能分组 分别为  查询 今天的任务 , 完成的任务, 未完成的任务
+	 * 智能分组 分别为  查询 今天的任务 , 已完成任务, 未完成任务
 	 * @param status 任务状态条件
 	 * @param projectId 项目id
 	 * @return
@@ -442,7 +442,7 @@ public interface TaskService {
 	List<Task> findTaskByCreateMemberByStatus(String id, String status);
 
 	/**
-	 *查询出我创建的任务 只要未完成
+	 * 查询出我创建的任务 只要未完成
 	 * @param id 当前用户id
 	 * @param orderType 排序类型
 	 * @return

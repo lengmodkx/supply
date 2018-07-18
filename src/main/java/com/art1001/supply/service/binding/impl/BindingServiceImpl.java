@@ -72,23 +72,26 @@ public class BindingServiceImpl implements BindingService {
 	 * @param id
 	 */
 	@Override
-	public TaskLogVO deleteBindingById(String id){
+	public void deleteBindingById(String id){
+		//根据关联数据id  查出该条数据
         Binding bindingById = bindingMapper.findBindingById(id);
-        Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getPublicId());
+        //删除关联记录
+        //根据查出的bindingById 取出被关联的信息id  然后根据id  查询出实体信息
+        //Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getBindId());
         bindingMapper.deleteBindingById(id);
-        if(BindingConstants.BINDING_TASK_NAME.equals(bindingById.getPublicType())){
-            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A7.getName()+" "+ taskByTaskId.getTaskName());
-        }
-        if(BindingConstants.BINDING_FILE_NAME.equals(bindingById.getPublicType())){
-            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A6.getName()+" "+ taskByTaskId.getTaskName());
-        }
-        if(BindingConstants.BINDING_SCHEDULE_NAME.equals(bindingById.getPublicType())){
-            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A5.getName()+" "+ taskByTaskId.getTaskName());
-        }
-        if(BindingConstants.BINDING_SHARE_NAME.equals(bindingById.getPublicType())){
-            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A4.getName()+" "+ taskByTaskId.getTaskName());
-        }
-        return null;
+        //保存操作日志
+//        if(BindingConstants.BINDING_TASK_NAME.equals(bindingById.getPublicType())){
+//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A7.getName()+" "+ taskByTaskId.getTaskName());
+//        }
+//        if(BindingConstants.BINDING_FILE_NAME.equals(bindingById.getPublicType())){
+//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A6.getName()+" "+ taskByTaskId.getTaskName());
+//        }
+//        if(BindingConstants.BINDING_SCHEDULE_NAME.equals(bindingById.getPublicType())){
+//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A5.getName()+" "+ taskByTaskId.getTaskName());
+//        }
+//        if(BindingConstants.BINDING_SHARE_NAME.equals(bindingById.getPublicType())){
+//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A4.getName()+" "+ taskByTaskId.getTaskName());
+//        }
 	}
 
 	/**
@@ -107,7 +110,6 @@ public class BindingServiceImpl implements BindingService {
 	 */
 	@Override
 	public void saveBinding(Binding binding){
-		binding.setId(IdGen.uuid());
 		bindingMapper.saveBinding(binding);
 	}
 	/**
@@ -152,5 +154,16 @@ public class BindingServiceImpl implements BindingService {
 			bindings.add(bvo);
 		}
 		return bindings;
+	}
+
+	/**
+	 * 实现方法  查询库中存不存在此条关联记录
+	 * @param publicId 关联的信息id
+	 * @param bindId 被关联的信息id
+	 * @return
+	 */
+	@Override
+	public int getBindingRecord(String publicId, String bindId) {
+		return bindingMapper.getBindingRecord(publicId,bindId);
 	}
 }

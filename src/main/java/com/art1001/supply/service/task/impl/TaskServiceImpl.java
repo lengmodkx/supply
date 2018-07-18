@@ -388,6 +388,9 @@ public class TaskServiceImpl implements TaskService {
     public TaskLogVO addTaskTags(Tag tag,String taskId,int countByTagName) {
         //先查询出当前任务原有的标签id信息
         String taskTag = taskMapper.findTaskTagByTaskId(taskId);
+        if(taskTag == null){
+            taskTag = "";
+        }
         //将原有标签id和新添加的标签id拼接在一起存入数据库
         StringBuilder newTaskTag = new StringBuilder();
         newTaskTag.append(taskTag).append(tag.getTagId()).append(",");
@@ -862,9 +865,14 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> intelligenceGroup(String status,String projectId) {
         List<Task> taskList = new ArrayList<Task>();
         //如果状态为空,就查询今天的任务 否则 按照任务的状态查询任务
-        if(StringUtils.isEmpty(status)){
+        if(TaskStatusConstant.CURRENT_DAY_TASK.equals(status)){
             taskList = taskMapper.findTaskByToday(projectId);
         } else{
+            if(TaskStatusConstant.HANG_IN_THE_AIR_TASK.equals(status)){
+                status = "未完成";
+            } else{
+                status = "完成";
+            }
             taskList = taskMapper.findTaskByStatus(status,projectId);
         }
         return taskList;

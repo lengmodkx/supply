@@ -215,4 +215,10 @@
 
     </update>
 
+    <!-- 模糊查询标签 -->
+    <select id="searchTag" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from prm_tag where tag_name like concat('%',#{tagName},'%')
+    </select>
+
 </mapper>

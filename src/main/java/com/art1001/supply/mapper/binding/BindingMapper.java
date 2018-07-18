@@ -70,4 +70,12 @@ public interface BindingMapper {
 	 * @return 该目标关联数据
 	 */
 	List<Binding> listBindingInfoByPublicId(String publicId);
+
+	/**
+	 * 查询库中存不存在 该条记录
+	 * @param publicId 关联的信息id
+	 * @param bindId 被关联的信息id
+	 * @return 库中的记录行数
+	 */
+    int getBindingRecord(@Param("publicId") String publicId,@Param("bindId") String bindId);
 }

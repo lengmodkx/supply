@@ -223,5 +223,10 @@
 		from prm_binding where public_id = #{publicId} order by prm_binding.create_time desc
 	</select>
 
+	<!-- 查询出此条关联在库中的记录数 -->
+	<select id="getBindingRecord" resultType="java.lang.Integer">
+		select count(0) from prm_binding where public_id = #{publicId} and bind_id = #{bindId}
+	</select>
+
 
 </mapper>

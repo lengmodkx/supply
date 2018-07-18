@@ -75,4 +75,11 @@ public interface TagService {
 	 * 根据多个id查询标签
 	 */
 	List<Tag> findByIds(Integer[] idArr);
+
+	/**
+	 * 搜索标签
+	 * @param tagName 标签名称
+	 * @return 标签实体集合
+	 */
+    List<Tag> searchTag(String tagName);
 }

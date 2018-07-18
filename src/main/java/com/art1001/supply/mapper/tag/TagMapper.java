@@ -71,4 +71,10 @@ public interface TagMapper {
 	 */
     List<Tag> findByIds(Integer[] idArr);
 
+	/**
+	 * 模糊查询标签
+	 * @param tagName 标签名称
+	 * @return 标签集合数据
+	 */
+	List<Tag> searchTag(String tagName);
 }
