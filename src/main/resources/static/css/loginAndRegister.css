@@ -2,7 +2,7 @@ html,body{
     background-color: #FEFCFC;
 }
 .login-box{
-    width: 25%;
+    width: 340px;
     margin: 0 auto;
     margin-top: 1%;
 }
@@ -74,6 +74,34 @@ html,body{
     outline-style: none;
     cursor: pointer;
 }
+.right-jiantou{
+    font-size: 18px;
+   position: absolute;
+    top: 0px;
+    margin-left: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+#login{
+    position: relative;
+}
+#login:hover{
+    padding-right: 30px;
+}
+#login:hover>i{
+    visibility: visible;
+    opacity: 1;
+    margin-left: 5px;
+}
+#register:hover{
+    padding-right: 30px;
+}
+#register:hover>i{
+    visibility: visible;
+    opacity: 1;
+    margin-left: 5px;
+}
 .fonts{
     width: 100%;
     height: 25px;
@@ -109,7 +137,112 @@ html,body{
 .qq-weixin .qq{
     float: right;
 }
-
+#register{
+    position: relative;
+}
+.horizontal-line{
+    width: 100%;
+    height: 1px;
+    background-color: #d9d9d9;
+   margin: 25px 0;
+}
+.login-for-weixin{
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    border: 1px solid #32C25A;
+    border-radius: 3px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.login-for-weixin:hover{
+    background-color: #32C25A;
+}
+.login-for-weixin:hover span{
+    display: none;
+}
+.login-for-weixin:hover i{
+    opacity: 1;
+    margin-left: -10px;
+}
+.login-for-weixin span{
+    font-size: 16px;
+    color: #32C25A;
+}
+.login-for-weixin .icon-weixin{
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    opacity: 0;
+    margin-left: 20px;
+    transition: 0.3s;
+}
+.other-register{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+}
+.other-register>div{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #F5F5F5;
+    text-align: center;
+    line-height: 50px;
+    transition: 0.2s;
+    cursor: pointer;
+    font-size: 14px;
+}
+.weixin-box:hover{
+    background-color: #52AC43;
+}
+.weixin-box:hover .icon-weixin{
+    color: white;
+}
+.weixin-box .icon-weixin{
+    color: #52AC43;
+    transition: 0.2s;
+    font-size: 20px;
+}
+.icon-pinpaibiaoshi-dingding{
+    color: #3DA8F5;
+    transition: 0.2s;
+    font-size: 20px;
+}
+.dingding-box:hover{
+    background-color: #3DA8F5;
+}
+.dingding-box:hover .icon-pinpaibiaoshi-dingding{
+    color: #fff;
+}
+.icon-weibo{
+    color: #D73034;
+    transition: 0.2s;
+    font-size: 20px;
+}
+.weibo-box:hover{
+    background-color:#D73034;
+}
+.weibo-box:hover .icon-weibo{
+   color:#fff;
+}
+.icon-msnui-more{
+    color: grey;
+    transition: 0.2s;
+    font-size: 20px;
+}
+.more-box:hover{
+    background-color: gray;
+    color: #fff;
+}
+.more-box:hover span{
+    display: block !important;
+}
+.more-box:hover .icon-msnui-more{
+    display: none;
+}
 /*注册*/
 .pic-code-box,.sms-code-box{
     width: 100%;
@@ -180,10 +313,10 @@ html,body{
 }
 @media screen and (max-width: 1466px){
     .user-name-box, .pwd-box, .phone-num-box{
-        margin-top: 22px;
+        margin-top: 25px;
     }
     .pic-code-box, .sms-code-box{
-        margin-top: 22px;
+        margin-top: 25px;
     }
 
 }
