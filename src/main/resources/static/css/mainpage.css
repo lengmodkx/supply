@@ -119,25 +119,20 @@ body{
 }
 
 .ul-wrap{
-    width: 260px;
+    width: 100%;
     max-height: 390px;
     overflow-y: scroll;
     margin-bottom: 10px;
 }
-/*.ul-wrap::-webkit-scrollbar{*/
-    /*width: 1px;*/
-    /*height: 100%;*/
-/*}*/
+
 .model .ul-wrap>ul{
     min-height: 2px;
 }
 .model .ul-wrap::-webkit-scrollbar{
-width: 1px;
-height: 1px;
+    width: 1px;
+    height: 1px;
 }
-/*.model:nth-last-child(1){*/
-    /*margin-right: 0;*/
-/*}*/
+
 .model-title{
     width: 100%;
     font-size: 14px;
@@ -310,6 +305,7 @@ height: 1px;
     width: 200px;
     padding: 12px 0;
     line-height: 20px;
+    cursor: pointer;
 }
 
 .task-componet{

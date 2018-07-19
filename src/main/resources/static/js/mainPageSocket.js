@@ -1,5 +1,5 @@
 // 建立连接对象（还未发起连接）
-var socket = new SockJS("http://192.168.31.184:8080/webSocketServer");
+var socket = new SockJS("http://localhost:8080/webSocketServer");
 // 获取 STOMP 子协议的客户端对象
 var stompClient = Stomp.over(socket);
 
@@ -16,36 +16,42 @@ stompClient.connect({},
     }
 );
 
-//发送消息
-function send() {
+    //发送消息
+    function send() {
     var message = "你好啊";
     var messageJson = JSON.stringify({ "name": message });
     stompClient.send("/app/sendTest", {}, messageJson);
     setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
 }
 
-//订阅消息
-function subscribe1() {
+    //订阅消息
+    function subscribe1() {
     stompClient.subscribe('/topic/subscribe', function (response) {
         var returnData = JSON.parse(response.body);
         var task = JSON.parse(returnData.responseMessage);
-        if(task.type == '创建了任务'){
+        console.log(task);
+        if(task.type === '创建了任务'){
             taskShow(task.object.task);
         }
-        if(task.type == '把任务执行者指派给了'){
+        if(task.type === '把任务执行者指派给了'){
             changeExecutor(task.taskId,IMAGE_SERVER+task.userInfo.image);
         }
-        if(task.type == '添加菜单'){
+        if(task.type ==='添加菜单'){
             showMenu(task.object.menu);
         }
+        if(task.type==='更新菜单名称'){
+            $('#'+task.menuId+' .relationName').html(task.menuName);
+        }
+
+
     });
 
     function taskShow(task) {
-        var a = '<li class="task-card-mode clearfix" id="'+task.taskId+'" onclick="javascript:updateTask('+task.taskId+','+task.projectId+')">\n' +
+        var a = '<li class="task-card-mode clearfix" id="'+task.taskId+'">\n' +
             '                                  <div class="task-card">\n' +
             '                                      <!--//左边框线-->\n' +
             '                                      <div class="task-priority bg-priority-0"></div>\n' +
-            '                                      <div class="task-check-box">\n' +
+            '                                      <div class="task-check-box" onclick="javascript:updateTask(\'+task.taskId+\',\'+task.projectId+\')">\n' +
             '                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />\n' +
             '                                      </div>\n' +
             '                                      <div class="task-content-set">\n' +
@@ -66,6 +72,7 @@ function subscribe1() {
         if (task.remarks!==null&&task.remarks!==''){
             a+='<img  src="/image/file.png">';
         }
+
 
         $('.tasklist'+task.taskMenuId).append(a);
         layui.use('form', function() {

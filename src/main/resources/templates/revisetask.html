@@ -24,8 +24,8 @@
     <div class="revise-task boxsizing ">
         <!--<div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>-->
         <div class="task-name">
-            <input type="checkbox" name="" title="" lay-filter = "taskComplete" lay-skin="primary" class="is-sure" th:checked="${task.taskStatus == '完成'}" th:id="taskComplete">
-            <span>设计修改任务界面</span>
+            <input type="checkbox" lay-filter = "taskComplete" lay-skin="primary" class="is-sure"  th:id="taskComplete">
+            <input type="text" th:value="${task.taskName}" class="task_name boxsizing layui-input"/>
         </div>
         <div class="who-and-time">
             <input type="hidden" id="have-executor" th:value="${executor.id}">

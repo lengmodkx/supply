@@ -1,6 +1,7 @@
 /*添加任务界面*/
 .add-task-box{
-    width: 100%;
+    width: 260px;
+    border-radius: 5px;
     padding: 10px 0 10px 10px;
     background-color: white;
 }

@@ -59,8 +59,8 @@
             <p>编辑列表</p>
             <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
         </div>
-        <input class="boxsizing white-input" type="text">
-        <div class="save-btn">保存</div>
+        <input class="boxsizing white-input" type="text" th:value="${menuName}"/>
+        <div class="save-btn" th:id="${menuId}">保存</div>
     </div>
     <!--删除列表-->
     <div class="lbmenu-con-remove" style="display: none">
@@ -151,5 +151,18 @@
     $(".return").click(function () {
         $(".lbmenu-nav").show().siblings().hide()
     })
+    
+    $(".save-btn").click(function (e) {
+        var menuId = $(this).attr('id');
+        var menuName = $(".white-input").val();
+
+        $.post("/project/updateMenuName",{"menuId":menuId,"menuName":menuName},function (data) {
+            console.log(data);
+            parent.layer.closeAll();
+        });
+    });
+    
+    
+    
 </script>
 </html>

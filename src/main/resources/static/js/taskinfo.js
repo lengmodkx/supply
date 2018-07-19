@@ -765,6 +765,19 @@ $('.people-ok').click(function () {
         },"json");
      });
 
+//监听任务内容的光标离开事件
+    $('.task_name').blur(function(){
+        var taskId = $('#taskId').val();
+        var taskName = $('#task_name').val();
+        var url = "/task/upateTaskContent";
+        var args = {"taskId":taskId,"taskName":taskName};
+        $.post(url,args,function(data){
+            console.log(data);
+        },"json");
+    });
+
+
+
     /**
      * 添加任务操作日志的方法
      * @param taskLogVO 任务日志对象

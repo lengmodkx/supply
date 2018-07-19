@@ -8,12 +8,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/addtask.css}" href="../static/css/addtask.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" href="../static/css/bootstrap.min.css">
 </head>
 
 <body>
 <!--添加任务界面-->
-<form class="new-assignment boxsizing layui-form">
+<div class="new-assignment boxsizing layui-form">
     <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" id="taskName"
               class="layui-textarea rw-content boxsizing"></textarea>
     <div class="who-and-time">
@@ -165,15 +164,12 @@
         <div class="who-can-see">所有成员可见</div>
     </div>
     <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
-
-</form>
+</div>
 
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
 
 <script th:inline="javascript">
     //当前项目id
