@@ -2,47 +2,78 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
-    <title>登陆</title>
+    <title>我的收藏</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mycollect.css}" href="../static/css/mycollect.css">
 </head>
 <body>
-<div class="my-collect">
-    <div class="collect-head">
-       <span class="now">所有收藏</span> <span>任务</span> <span>分享</span>
-        <span>文件</span> <span>日程</span> <span>记账</span>
-        <div class="collect-search">
-            <input type="text" class="boxsizing">
-            <i class="layui-icon layui-icon-search" style="font-size: 18px; color: #E2E2E2;"></i>
+<div class="my-toper" >
+    <div class="my-nav-wrap">
+        <ul>
+            <li id="click-near-thing">近期的事</li>
+            <li id="click-my-task">任务</li>
+            <li id="click-my-scheduling">日程</li>
+            <li id="click-my-file" >文件</li>
+            <li id="click-my-collect" class="now">收藏</li>
+        </ul>
+    </div>
+    <i class="layui-icon layui-icon-close" style="font-size: 20px; color: gray;"></i>
+</div>
+<div class="mypage-content" style="margin-top: 50px">
+    <!--收藏页面-->
+    <div id="my-collect"  >
+        <div class="my-collect">
+            <div class="collect-head">
+                <span class="now">所有收藏</span> <span>任务</span> <span>分享</span>
+                <span>文件</span> <span>日程</span>
+            </div>
+            <!--没有收藏-->
+            <div class="no-collect" style="display: none">
+                <img src="../static/image/nocollect.png" th:src="@{/image/nocollect.png}" />
+                <p>还没有任何收藏</p>
+                <p>你可以收藏有价值的任务、分享、文件、日程和有关账册！</p>
+            </div>
+            <!--有收藏-->
+            <div class="has-collect">
+                <ul class="rc-collect">
+                    <!--<li>-->
+                    <!--<div class="collect-item-top">-->
+                    <!--<span class="collect-item-top-date">7月10日</span>-->
+                    <!--<span class="collect-item-top-remove">取消收藏</span>-->
+                    <!--</div>-->
+                    <!--<div class="collect-item-middle clearfix">-->
+                    <!--<div class="collect-item-middle-img">-->
+                    <!--<img src="../static/image/rcwhite.png" th:src="@{/image/rcwhite.png}">-->
+                    <!--</div>-->
+                    <!--<p class="collect-item-name">收藏日程名称</p>-->
+                    <!--</div>-->
+                    <!--<div class="collect-item-bottom">-->
+                    <!--<span>1月8日 12:00</span>-->
+                    <!--<span>—</span>-->
+                    <!--<span>2月8日 12:00</span>-->
+                    <!--</div>-->
+                    <!--</li>-->
+                </ul>
+                <ul class="rw-collect">
+
+                </ul>
+            </div>
         </div>
     </div>
-    <!--没有收藏-->
-    <div class="no-collect">
-        <img src="../static/image/nocollect.png" >
-        <p>还没有任何收藏</p>
-        <p>你可以收藏有价值的任务、分享、文件、日程和有关账册！</p>
-    </div>
-</div>
-
-
-
-
-
 </div>
 </body>
-<!--<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>-->
-<!--<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>-->
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
     layui.use('form', function(){
         var form = layui.form;
-
         //监听提交
         form.on('submit(formDemo)', function(data){
             layer.msg(JSON.stringify(data.field));
             return false;
         });
-
         form.on('switch(switch-filter)', function(data){
             console.log(data.elem.checked); //开关是否开启，true或者false
             if (data.elem.checked) {
@@ -51,28 +82,25 @@
                 $(".who-can-see").text("所有成员可见")
             }
         });
-
-
-
-    });
-    layui.use('element', function(){
-        var element = layui.element;
-
-    });
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#beginTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-        laydate.render({
-            elem: '#overTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
     });
 </script>
+<script id="myTask" type="text/html">
+    <ul>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <li class="thing-list">
+            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+            <span class="what-thing">{{}}</span>
+            <span class="thing-what-date">{{}}</span>
+        </li>
+        {{#  }); }}
+        {{#  if(d.list.length === 0){ }}
+        无数据
+        {{#  } }}
+    </ul>
+</script>
+<script th:inline="javascript">
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+</script>
+<script th:src="@{/js/mypage.js}" src="../static/js/mypage.js"></script>
+<script th:src="@{/js/myCollect.js}" src="../static/js/myCollect.js" ></script>
 </html>
