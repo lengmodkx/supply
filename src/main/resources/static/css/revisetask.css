@@ -88,9 +88,23 @@
 .task-name .layui-form-checkbox[lay-skin=primary] i{
     width: 14px;
     height: 14px;
-    border-radius: 50%;
     margin-top: 2px;
 }
+.task_name{
+    float: left;
+    margin-left: 15px;
+    border: 0 none;
+    outline-style: none;
+    width: 300px;
+    height: 20px;
+    padding-left: 10px;
+}
+
+.task_name:focus{
+    background-color: #e5e5e5;
+}
+
+
 .is-sure{
     width: 14px;
     height: 14px;

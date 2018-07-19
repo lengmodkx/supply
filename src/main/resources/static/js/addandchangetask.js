@@ -3,6 +3,7 @@ function close() {
     parent.layer.close(index); //再执行关闭
 }
 var zxz=false;
+
 layui.use('form', function() {
     var form = layui.form;
     //监听提交
@@ -49,10 +50,11 @@ layui.use('form', function() {
         } else{
             privacyPattern = "0";
         }
+
         var url = "/task/saveTask";
         var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor,"tagId":tags.toString()};
         $.post(url,args,function(data){
-            if(data.result == 1){
+            if(data.result === 1){
                 layer.msg("任务创建成功!");
                 close();
             } else{

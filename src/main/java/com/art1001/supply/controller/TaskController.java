@@ -324,14 +324,11 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.updateTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","更新成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","更新失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","更新成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
+            jsonObject.put("type","更新任务");
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(jsonObject.toString()));
         } catch (Exception e){
             log.error("系统异常,更新任务内容失败! 当前任务: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);

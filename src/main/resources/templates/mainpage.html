@@ -30,8 +30,9 @@
                    <!--待处理-->
                    <li class="model tile boxsizing" th:each="taskMenu:${taskMenus}" th:id="${taskMenu.relationId}">
                        <div class="model-title boxsizing">
-                           <span th:text="${taskMenu.relationName}">待处理</span>
-                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"></i>
+                           <span th:text="${taskMenu.relationName}" th:class="relationName">待处理</span>
+                           <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"
+                              th:id="${taskMenu.relationId}" th:data="${taskMenu.relationName}"></i>
                            <!--点击下箭头出现的内容-->
                        </div>
                        <!--任务列表-->
@@ -39,17 +40,16 @@
                            <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="tasklist+${taskMenu.relationId}">
                                <li class="task-card-mode clearfix"
                                    th:each="task:${taskMenu.taskList}"
-                                   th:id="${task.taskId}"
-                                   th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
+                                   th:id="${task.taskId}">
                                   <div class="task-card">
                                       <!--//左边框线-->
                                       <div class="task-priority" th:if="${task.priority=='普通'}" th:classappend="bg-priority-0"></div>
                                       <div class="task-priority" th:if="${task.priority=='紧急'}" th:classappend="bg-priority-1"></div>
                                       <div class="task-priority" th:if="${task.priority=='非常紧急'}" th:classappend="bg-priority-2"></div>
                                       <div class="task-check-box">
-                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />
+                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
-                                      <div class="task-content-set">
+                                      <div class="task-content-set" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
                                           <header class="assignment-top-box boxsizing clearfix">
                                               <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                               <img class="assignment-tx" th:if="${task.taskMember != null}" th:src="#{IMAGE_SERVER}+${task.taskMember.memberImg}" />
@@ -68,11 +68,10 @@
                                   </div>
                                </li>
                            </ul>
-                           <!--添加任务 框-->
-                           <div class="add-task-box boxsizing" style="display: none">
-                               <form class="new-assignment boxsizing layui-form">
-    <textarea th:name="taskName" required lay-verify="required" placeholder="任务内容" id="taskName"
-              class="layui-textarea rw-content boxsizing"></textarea>
+                           <!--添加任务框-->
+                           <div class="add-task-box boxsizing" style="display: none" >
+                               <div class="new-assignment boxsizing layui-form">
+                                    <textarea placeholder="任务内容" th:id="taskName+${taskMenu.relationId}" class="layui-textarea rw-content boxsizing"></textarea>
                                    <div class="who-and-time">
                                        <input type="hidden" id="have-executor" th:value="${user.id}">
                                        <div class="who-wrap">
@@ -181,16 +180,14 @@
                                                        </ul>
                                                        <div class="tag-ok" disabled>创建</div>
                                                    </div>
-
                                                </div>
                                            </div>
-
                                        </div>
                                    </div>
                                    <div class="heng-line"></div>
                                    <p class="cyz">参与者</p>
                                    <div class="work-people boxsizing clearfix">
-                                       <div class="one-work-people" th:value="${user.id}">
+                                       <div class="one-work-people" th:classappend="work-people+${taskMenu.relationId}" th:value="${user.id}">
                                            <img th:src="#{IMAGE_SERVER} + ${user.userInfo.image}">
                                            <input type="hidden" th:value="${user.userName}" />
                                            <i class="layui-icon layui-icon-close-fill remove-work-people "
@@ -223,11 +220,11 @@
                                        <img th:src="@{/image/suo.png}">
                                        <span>隐私模式</span>
                                        <div class="who-can-see">所有成员可见</div>
-                                       <div class="layui-btn layui-btn-normal new-assignment-ok" lay-submit lay-filter="createTask">创建</div>
+                                       <div class="layui-btn layui-btn-normal new-assignment-ok"
+                                            th:onclick="'javascript:addTask(\''+ ${taskMenu.relationId} +'\')'"
+                                       >创建</div>
                                    </div>
-
-
-                               </form>
+                               </div>
                            </div>
                        </div>
 
@@ -295,8 +292,17 @@
     var groupId = [[${currentGroup}]];
     var projectId = [[${project.projectId}]];
 
-    layui.use('element', function(){
+    //当前任务所在菜单id
+    var taskMenuId = [[${taskMenuId}]];
+    //当前任务执行者id
+    var executorId = $("span[name = 'executor']").attr("value");
+
+    layui.use(['element','form'], function(){
         var element = layui.element;
+        var form = layui.form;
+        form.on('checkbox(finish_task)', function(data){
+            console.log(data);
+        });
 
     });
 
@@ -383,13 +389,69 @@
             }
             $(this).removeClass("no-join")
         });
-    })
+    });
+
+
+    function addTask(taskMenuId) {
+        //获取选中的参与者信息
+        var members = [];
+        $('.work-people .work-people'+taskMenuId).each(function () {
+            members.push($(this).attr('value'));
+        });
+
+        //获取标签信息
+        var tags = [];
+        $('.tag').each(function () {
+            tags.push($(this).attr('value'));
+        });
+        //设置任务的执行者
+        var executor = $('#executorId').val();
+        //设置任务开始时间
+        var beginTime = $('#beginTime').val();
+        if(beginTime != null && beginTime != ''){
+            var startTime = new Date(beginTime.toString()).getTime();
+        } else {
+            startTime = null;
+        }
+        //设置任务结束时间
+        var overTime = $('#overTime').val();
+        if(overTime != null && overTime != ''){
+            var endTime = new Date(overTime.toString()).getTime();
+        } else{
+            endTime = null;
+        }
+        //设置任务的内容
+        var taskName = $("#taskName"+taskMenuId).val();
+        //设置重复模式
+        var repeat = $('#repeat').val();
+        //设置任务提醒
+        var remind = $('#remand').val();
+        //设置任务优先级
+        var priority = $('input[name="state"]:checked').val();
+        //设置隐私模式
+        var privacyPattern = "";
+        if($('#privacyPattern').prop('checked')) {
+            privacyPattern = "1";
+        } else{
+            privacyPattern = "0";
+        }
+
+        var url = "/task/saveTask";
+        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor,"tagId":tags.toString()};
+        $.post(url,args,function(data){
+            if(data.result === 1){
+                layer.msg("任务创建成功!");
+                close();
+            } else{
+                layer.msg("任务创建失败!");
+            }
+        },"json");
+    }
 </script>
 <script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 <script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 <script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
-
 </body>
 
 </html>

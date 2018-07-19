@@ -551,9 +551,36 @@ public class ProjectController {
 
 
     @GetMapping("/menuList.html")
-    public String menuList(){
+    public String menuList(@RequestParam String menuId,@RequestParam String menuName,Model model){
+        model.addAttribute("menuId",menuId);
+        model.addAttribute("menuName",menuName);
         return "tk-caidanliebiao";
     }
+
+    @PostMapping("/updateMenuName")
+    @ResponseBody
+    public JSONObject updateMenuName(@RequestParam String menuId,@RequestParam String menuName){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            Relation relation = new Relation();
+            relation.setRelationId(menuId);
+            relation.setRelationName(menuName);
+            relationService.updateRelation(relation);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","修改成功");
+            jsonObject.put("menuId",menuId);
+            jsonObject.put("menuName",menuName);
+            jsonObject.put("type","更新菜单名称");
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(jsonObject.toString()));
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+
+        return jsonObject;
+    }
+
+
+
 
     /**
      * 查找用户

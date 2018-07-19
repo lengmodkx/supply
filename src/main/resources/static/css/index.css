@@ -1,55 +1,7 @@
 html,body{
     background-color: #FEFCFC;
 }
-/*头部*/
-.header{
-    /*width: 90%;*/
-    /*height: 50px;*/
-    /*padding: 0 5%;*/
-    /*background-color: white;*/
-    /*line-height: 50px;*/
-    /*position: relative;*/
-}
-.header-left{
-    font-size: 16px;
-}
-.header-middle{
-    /*position: relative;*/
-}
-.search-input{
-    width: 300px;
-    height: 35px;
-    margin-top: 7px;
-    padding-left: 35px;
-    background-color: #EEEEEE;
-    border-radius: 5px;
-}
-.search{
-    position: absolute;
-    left: 5px;
-    top: 7px;
-    line-height: 35px;
-}
 
-/*右侧头像和下拉栏*/
-.head-photo-wrap{
-    position: absolute;
-    width: 60px;
-    height: 40px;
-    top: 5px;
-    right: 5%;
-
-}
-.head-photo{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    float: right;
-    cursor: pointer;
-}
-.head-photo-wrap:hover .vertical-nav{
-    display: block;
-}
 .vertical-nav{
     width: 230px;
     height: 345px;

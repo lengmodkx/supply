@@ -121,6 +121,7 @@ $(function () {
 
     //点击添加任务按钮
     $("html").on("click",".add-assignment",function(e){
+        e.stopPropagation();
         liId=$(this).siblings(".ul-wrap").children(".taskList").children(":first").attr("id");
         $(this).siblings(".ul-wrap").find(".add-task-box").slideDown();
         $(this).hide();
@@ -129,7 +130,6 @@ $(function () {
         if($(".rw-content").val()==""){
             $(".new-assignment-ok").css({"background-color":"gray","cursor":"auto"})
         }
-        e.stopPropagation()
     });
 
 
@@ -210,22 +210,24 @@ $(".close-tk").click(function () {
 $("html").on("click",".add-new-model",function(){
     var top=$(this).offset().top +20 +'px';
     var left=$(this).offset().left -125 +'px';
-     lbmenu(top,left)
+    var menuId = $(this).attr('id');
+    var menuName = $(this).siblings('.relationName').text();
+    lbmenu(top,left,menuId,menuName);
 });
-function lbmenu(top,left) {
+function lbmenu(top,left,menuId,menuName) {
     layui.use('layer', function(){
         var layer = layui.layer;
         layer.open({
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: [top,left],
-            area:['250px','150px'],
+            area:['250px','400px'],
             fixed: true,
             shadeClose: true,
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: ['menuList.html','no']
+            content: ['menuList.html?menuId='+menuId+"&menuName="+menuName,'no']
         });
     });
 };
