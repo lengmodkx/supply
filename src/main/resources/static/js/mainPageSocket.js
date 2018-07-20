@@ -55,9 +55,9 @@ stompClient.connect({},
             '                                      <div class="task-content-set">\n' +
             '                                          <header class="assignment-top-box boxsizing clearfix">\n' +
             '                                              <span class="assignment-title">'+task.taskName+'</span>';
-        // if(task.executorInfo != null) {
-        //         a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" /></header><section class="assignment-bottom-box clearfix">';
-        // }
+        if(task.executorInfo != null) {
+                a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" /></header><section class="assignment-bottom-box clearfix">';
+        }
 
         if(task.repeat!=='不重复'){
             a+='<span class="how-repeat">'+task.repeat+'</span>';
