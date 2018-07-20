@@ -521,7 +521,7 @@ function addRenwu(addBox,taskMenuId) {
 
 
 $('.ul-wrap').on('click','.no-tags',function () {
-    var top=$(this).offset().top-350;
+    var top=$(this).offset().top-250;
     var left=$(this).offset().left;
     layer.open({
         type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
@@ -529,12 +529,13 @@ $('.ul-wrap').on('click','.no-tags',function () {
         offset: [top,left],
         area:['230px','250px'],
         fixed: false,
-        shadeClose: false, //点击遮罩关闭
-        shade:0,
+        shadeClose: true, //点击遮罩关闭
+        shade:[0.1,'#fff'],
         closeBtn: 0,
         anim: 1,  //动画 0-6
-        content: $('.tags-search-build')
+        content: $('.tags-search-build').html()
     });
+    console.log("xxxxxx");
 });
 
 
