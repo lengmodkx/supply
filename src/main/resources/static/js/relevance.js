@@ -4,7 +4,7 @@ $(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     });
-   //点击 任务 分享 日程 文件 切换 页面
+    // //点击 任务 分享 日程 文件 切换 页面
     $(".one-level-nav li").click(function () {
         $(this).addClass("now").siblings().removeClass("now");
         var i=$(this).index();
@@ -21,10 +21,10 @@ $(function () {
     $("html").on("click",".wj-li ",function () {
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
-            $(this).find("img").attr("src","../static/image/wjj-b.png")
+            $(this).find("img").attr("src","/image/wjj-b.png")
         }else {
             $(this).addClass("selected");
-            $(this).find("img").attr("src","../static/image/wjj-fff.png")
+            $(this).find("img").attr("src","/image/wjj-fff.png")
         }
     });
     //点击显示 隐藏 过去 日程
@@ -151,25 +151,67 @@ $(function () {
 
 });
 
+/**
+ * 点击 任务 分享 文件 日程 时候会加载项目信息
+ */
+$('.one-level-nav>li').click(function(){
+    var j=$(this).index();
+    var item = $(this).children('span').html();
+    var args= {"label":2};
+    var url = "/project/projectList";
+    $.post(url,args,function(data){
+        var project = data.data;
+        var content = '';
+        content += '<li class="group-name"><p>' + '个人项目' + '</p></li>'
+        for(var i = 0;i < project.length;i++){
+            if(i == 0){
+                content += '<li class="style-li p style-li selected" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+            } else{
+                content += '<li class="style-li p" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+            }
+        }
+        console.log($(".body-box>div").eq(j).attr("class"))
+        $(".body-box>div").eq(j).children(".style-ul ").html(content)
+    },"json");
+});
+
 
 
 /**
  * 点击一个项目的时候 加载这个项目下的所有分组
  */
-$(".project-ul .style-li").click(function(){
+$("html").on("click",".style-ul li",function (){
     $('.a-task-box').html('');
-   var projectId = $(this).attr('data-id');
-   var url = "/relation/projectAllGroup";
-   var args = {"projectId":projectId};
-   var content = "";
-   $.post(url,args,function (data) {
-       var group = data.data;
-       for (var i = 0;i < group.length;i++){
-           content += '<li class="style-li groupId" data-id = "' + group[i].relationId + '"><span>' + group[i].relationName + '</span></li>'
-       }
-       var list = $('#groups>div')
-       list.html(content);
-   },"json")
+    var projectId = $(this).attr('data-id');
+    var url = '';
+    var args = {};
+    var type = $('.one-level-nav .now').children('span').html();
+    if(type == '任务'){
+        url = "/relation/projectAllGroup";
+        args = {"projectId":projectId};
+    }
+    if(type ==  '文件'){
+        url = "/file/projectList";
+        args = {"projectId":projectId};
+        alert(url);
+    }
+    if(type == '日程'){
+
+    }
+    if(type == '分享'){
+
+    }
+    var content = "";
+    $.post(url,args,function (data) {
+        var item = data.data;
+        if(type == '任务'){
+            var list = $('#groups>div')
+            list.html(addGroups(item,type));
+        }
+        if(type == '文件'){
+            addGroups(item,type);
+        }
+    },"json")
 });
 
 /**
@@ -249,9 +291,9 @@ function addStr(relation,id){
         for(var i = 0;i < relation.length;i++){
             content += '<li class="a-task-li" data-id="' + relation[i].taskId + '">'+
                 '<span></span>'+
-                '<img src="' + IMAGE_SERVER + relation[i].taskExecutorInfo.userInfo.image + '">'+
+                '<img src="' + IMAGE_SERVER + relation[i].executorInfo.userInfo.image + '">'+
                 '<p class="over-hidden">' + relation[i].taskName + '</p>'+
-            '</li>';
+                '</li>';
         }
     } else{
         for(var i = 0;i < relation.length;i++){
@@ -260,13 +302,13 @@ function addStr(relation,id){
                 //这里开始循环任务
                 for(var j = 0;j < relation[i].taskList.length;j++){
                     content += '                                    <li class="a-task-li"  data-id = '+ relation[i].taskList[j].taskId +'>' +
-                    '                                        <span></span>' +
-                    '                                        <img src="' + IMAGE_SERVER + relation[i].taskList[j].taskMember.memberImg + '">' +
-                    '                                        <p class="over-hidden">' + relation[i].taskList[j].taskName + '</p>' +
-                    '                                    </li>';
+                        '                                        <span></span>' +
+                        '                                        <img src="' + IMAGE_SERVER + relation[i].taskList[j].executorInfo.userInfo.image+ '">' +
+                        '                                        <p class="over-hidden">' + relation[i].taskList[j].taskName + '</p>' +
+                        '                                    </li>';
                 }
                 content += '                                </ul>' +
-                '                            </li>';
+                    '                            </li>';
             }
         }
     }
@@ -310,4 +352,65 @@ function addSubTask(subTask,that) {
     }
     that.parents(".show-next-li").after(content);
     that.parents(".scroll-box-heng").scrollLeft(parseInt( that.parents(".task-ul").width()));
+}
+
+/**
+ * 点项目之后弹出来的信息
+ */
+function addGroups(item,type){
+    var content = '';
+    var content2 = '';
+    if(type == '任务'){
+        for(var i = 0;i < item.length;i++){
+            content += '<li class="style-li groupId" data-id = "' + item[i].relationId + '"><span>' + item[i].relationName + '</span></li>';
+        }
+
+    }
+    if(type == "文件"){
+        for(var i = 0;i < item.length;i++){
+            if(item[i].catalog == 1){
+                content += '<li class="wj-li over-hidden">'+
+                    '<img src="/image/wjj-b.png">'+
+                    '<span >' + item[i].fileName + '</span>'+
+                    '</li>';
+            } else{
+                content2 += '<li class="wj-li over-hidden">'
+                if(item[i].catalog == 0 && (item[i].ext == '.jpg' || item[i].ext == '.png' || item[i].ext == '.jpeg')){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '..doc'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.docx'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.xls'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.xlsx'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.pptx'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.ppt'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.pdf'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.zip'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+                }
+                if(item[i].catalog == 0 && item[i].ext == '.rar'){
+                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+                }
+                content2 +=  '<span >' + item[i].fileName + '</span>'+
+                    '</li>';
+            }
+        }
+        $('.wjj-wrap .wjj').html(content);
+        $('.wj-wrap .wj').html(content2);
+    }
+    return content;
 }

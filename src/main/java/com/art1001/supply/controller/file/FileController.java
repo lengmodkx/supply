@@ -8,6 +8,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
@@ -195,7 +196,7 @@ public class FileController {
     }
 
     /**
-     * 文件目录
+     * 文件
      *
      * @param file 文件
      *             projectId 项目id
@@ -572,7 +573,7 @@ public class FileController {
     @ResponseBody
     public JSONObject moveFile(
             @RequestParam String[] fileIds,
-            @RequestParam (defaultValue = "0") String folderId
+            @RequestParam(defaultValue = "0") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
         if (StringUtils.isEmpty(folderId)) {
@@ -593,7 +594,7 @@ public class FileController {
     /**
      * 复制文件
      *
-     * @param fileIds   多个文件id
+     * @param fileIds  多个文件id
      * @param folderId 目标文件夹id
      */
     @RequestMapping("/copyFile")
@@ -670,7 +671,7 @@ public class FileController {
                 }
             }
             if (tagIdSB.length() > 0) {
-                tagIds =  tagIdSB.deleteCharAt(tagIdSB.length() - 1).toString();
+                tagIds = tagIdSB.deleteCharAt(tagIdSB.length() - 1).toString();
             }
             fileService.updateTagId(fileId, tagIds);
             jsonObject.put("result", 1);
@@ -869,7 +870,7 @@ public class FileController {
      */
     private void copyFolder(Map<String, List<File>> map) {
         Map<String, List<File>> fileMap = new HashMap<>();
-        for (Map.Entry<String, List<File>> entry: map.entrySet()) {
+        for (Map.Entry<String, List<File>> entry : map.entrySet()) {
             // 得到键，即parentId
             String parentId = entry.getKey();
             // 得到值，即FileList
@@ -929,7 +930,7 @@ public class FileController {
     @ResponseBody
     public void pdfStreamHandeler(@RequestParam String fileId, HttpServletResponse response) {
         File file = fileService.findFileById(fileId);
-        try{
+        try {
             ServletOutputStream sos = response.getOutputStream();
             URL url = new URL(Constants.OSS_URL + file.getFileUrl());
 
@@ -939,7 +940,7 @@ public class FileController {
             //获取网络输入流
             BufferedInputStream bis = new BufferedInputStream(httpUrl.getInputStream());
             int b;
-            while((b = bis.read())!=-1) {
+            while ((b = bis.read()) != -1) {
                 sos.write(b);
             }
             sos.close();
@@ -950,9 +951,30 @@ public class FileController {
         }
     }
 
+
     @RequestMapping("/viewer.html")
-    public String pdfViewer(String fileId,Model model){
-        model.addAttribute("fileId",fileId);
+    public String pdfViewer(String fileId, Model model) {
+        model.addAttribute("fileId", fileId);
         return "viewer";
+    }
+
+    /**
+     * 异步获取文件列表
+     *
+     * @param projectId projectId 项目id
+     */
+    @PostMapping("/fileList")
+    @ResponseBody
+    public JSONObject projectList(String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            jsonObject.put("fileList",fileService.findChildFile(projectId,"0",0));
+            jsonObject.put("projectId", projectId);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 }

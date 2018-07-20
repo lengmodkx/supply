@@ -331,4 +331,13 @@ public class FileServiceImpl implements FileService {
         fileMapper.updateTagId(fileId, tagIds);
     }
 
+    /**
+     * 功能:根据项目id 查询出项目下的所有文件数据
+     * @param projectId 项目的id
+     * @return 返回该项目下的所有文件数据
+     */
+    @Override
+    public List<File> findFileByProjectId(String projectId) {
+        return fileMapper.findFileByProjectId(projectId);
+    }
 }

@@ -602,9 +602,20 @@ public class ProjectController {
         return jsonObject;
     }
 
-    @GetMapping("/test.html")
-    public String test(){
-        return "test2";
+    @PostMapping("findProjectFile")
+    @ResponseBody
+    public JSONObject findProjectFile(String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<File> list = fileService.findFileByProjectId(projectId);
+            jsonObject.put("data",list);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,拉取失败,{}",e);
+            jsonObject.put("msg","数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
     }
 
 }

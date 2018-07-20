@@ -937,7 +937,7 @@ $('.go-detail').click(function () {
 /**
  * 点击关联的任务
  */
-$('.related-rw .boxsizing .related-rw-info').click(function () {
+$("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
     changeRenwu($(this).parent() .attr("data-id"),projectId);
 });
 
@@ -1030,7 +1030,7 @@ function addBindingStr(binding,type,bindId){
             if(binding.executor == ''){
                 content += '<img src="/image/add.png">';
             } else{
-                content += '<img src="' + IMAGE_SERVER + binding.taskMember.memberImg + '">';
+                content += '<img src="' + IMAGE_SERVER + binding.executorInfo.userInfo.image+ '">';
             }
             content += '<span>'+' '+ binding.taskName + '</span>'+
             '</div>'+
@@ -1073,7 +1073,7 @@ function addBindingStr(binding,type,bindId){
         if(binding.catalog == 0 && binding.ext == '.docx'){
             content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
         }
-        if(bindingcatalog == 0 && binding.ext == '.xls'){
+        if(binding.catalog == 0 && binding.ext == '.xls'){
             content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
         }
         if(binding.catalog == 0 && binding.ext == '.xlsx'){

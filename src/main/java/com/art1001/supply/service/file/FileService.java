@@ -135,4 +135,11 @@ import java.util.List;
 	 * 更新tagId
 	 */
     void updateTagId(String fileId, String tagIds);
+
+	/**
+	 * 根据项目id 查询出项目下的所有文件
+	 * @param projectId 项目的id
+	 * @return 文件信息集合
+	 */
+	List<File> findFileByProjectId(String projectId);
 }

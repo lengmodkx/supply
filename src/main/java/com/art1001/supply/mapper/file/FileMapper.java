@@ -132,4 +132,11 @@ public interface FileMapper {
 	List<File> findChildFolder(String fileId);
 
 	void updateTagId(@Param("fileId") String fileId, @Param("tagIds") String tagIds);
+
+	/**
+	 * 根据项目id 查询出该项目的所有文件信息
+	 * @param projectId 项目id
+	 * @return 项目的所有文件信息
+	 */
+    List<File> findFileByProjectId(String projectId);
 }

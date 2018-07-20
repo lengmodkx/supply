@@ -282,7 +282,7 @@
 	</select>
 
 	<!-- 查询出某个项目下的某个分组信息 -->
-	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMap">
+	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
 		select
 		<include refid="Base_Column_List" ></include>
 		from prm_relation
@@ -290,7 +290,7 @@
 	</select>
 
 	<!-- 查询出某个分组中的所有菜单 -->
-	<select id="findAllMenuInfoByGroupId" resultMap="BaseResultMap">
+	<select id="findAllMenuInfoByGroupId" resultMap="BaseResultMapVo">
 		select
 		<include refid="Base_Column_List" ></include>
 		from prm_relation

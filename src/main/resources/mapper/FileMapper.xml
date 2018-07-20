@@ -374,6 +374,12 @@
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
 
+	<!-- 根据项目id 查询文件信息 -->
+	<select id="findFileByProjectId" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_file where project_id = #{projectId}
+	</select>
+
 
 	
 </mapper>

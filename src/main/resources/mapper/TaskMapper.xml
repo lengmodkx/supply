@@ -185,7 +185,7 @@
 	</select>
 
 	<!-- 根据任务id 查询任务的信息 和执行者的信息 -->
-	<select id="findTaskByTaskId" resultMap="findMenuTaskMemberInfo" parameterType="java.lang.String">
+	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
 	SELECT
 	<include refid="Base_Column_List"/>
 	from prm_task where prm_task.task_id = #{taskId}
@@ -530,7 +530,7 @@
 	</update>
 
 	<!-- 判断当前菜单有没有任务 -->
-	<select id="findTaskByMenuId">
+	<select id="findTaskByMenuId" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select count(task_id) from prm_task where task_menu_id = #{taskMenuId}
 	</select>
 
