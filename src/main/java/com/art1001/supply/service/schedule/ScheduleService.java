@@ -61,7 +61,7 @@ public interface ScheduleService {
 	 * 根据时间分组查询日程
 	 * @return
 	 */
-	List<ScheduleVo> findScheduleGroupByCreateTime();
+	List<Schedule> findScheduleGroupByCreateTime(Long currTime,String projectId);
 
 	/**
 	 * 查询该用户参与的近三天的日程
@@ -69,4 +69,18 @@ public interface ScheduleService {
 	 * @return
 	 */
     List<Schedule> findScheduleByUserIdAndByTreeDay(String uId);
+
+	/**
+	 * 根据项目id 查询出该项目下的所有日程信息
+	 * @param projectId 项目id
+	 * @return 日程的实体信息集合
+	 */
+	List<Schedule> findScheduleListByProjectId(String projectId);
+
+	/**
+	 * 查询以前的日程
+	 * @param currTime 当前的时间
+	 * @return
+	 */
+	List<Schedule> findBeforeSchedule(long currTime,String projectId);
 }

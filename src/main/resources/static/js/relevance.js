@@ -1,4 +1,24 @@
 
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    }
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
+}
+var arr=[];
 $(function () {
     $(".close-tk").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
@@ -6,6 +26,7 @@ $(function () {
     });
     // //点击 任务 分享 日程 文件 切换 页面
     $(".one-level-nav li").click(function () {
+        arr.splice(0,arr.length);
         $(this).addClass("now").siblings().removeClass("now");
         var i=$(this).index();
         $(".body-box>div").eq(i).show().siblings().hide();
@@ -16,9 +37,12 @@ $(function () {
         $(this).parent("div").siblings(".style-li").removeClass("selected")
     });
     $("html").on("click",".a-task-li ",function () {
+        arr.push($(this));
+        console.log(arr);
         $(this).addClass("selected").siblings().removeClass("selected")
     });
     $("html").on("click",".wj-li ",function () {
+        arr.push($(this));
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
             $(this).find("img").attr("src","/image/wjj-b.png")
@@ -184,22 +208,19 @@ $("html").on("click",".style-ul li",function (){
     $('.a-task-box').html('');
     var projectId = $(this).attr('data-id');
     var url = '';
-    var args = {};
+    var args = {"projectId":projectId};
     var type = $('.one-level-nav .now').children('span').html();
     if(type == '任务'){
         url = "/relation/projectAllGroup";
-        args = {"projectId":projectId};
     }
     if(type ==  '文件'){
-        url = "/file/projectList";
-        args = {"projectId":projectId};
-        alert(url);
+        url = "/file/fileList";
     }
     if(type == '日程'){
-
+        url = "/schedule/scheduleList";
     }
     if(type == '分享'){
-
+        url = "/share/shareByProjectId";
     }
     var content = "";
     $.post(url,args,function (data) {
@@ -209,6 +230,16 @@ $("html").on("click",".style-ul li",function (){
             list.html(addGroups(item,type));
         }
         if(type == '文件'){
+            if(item != ''){
+                addGroups(item,type);
+            } else{
+                return false;
+            }
+        }
+        if(type == "日程"){
+            addGroups(item,type);
+        }
+        if(type == "分享"){
             addGroups(item,type);
         }
     },"json")
@@ -257,14 +288,27 @@ $("html").on("click",".a-task-box .a-task-li",function () {
  * 点击确定关联
  */
 $('.ok-btn').click(function () {
-    var bindId = $('.task-ul .selected:last').attr('data-id');
-    if(bindId == '' || bindId == undefined){
-        layer.msg("必须选择关联内容!");
-        return false;
-    }
+    var bindId = '';
+
     var publicType = $('.one-level-nav .now').children('span').html();
     if(publicType == '' || publicType == undefined){
         layer.msg("请选择关联内容的类型!");
+        return false;
+    }
+    if(publicType == '任务'){
+        bindId = arr[arr.length-1].attr("data-id");
+    }
+    if(publicType == '文件'){
+        bindId  =arr[arr.length-1].attr("data-id");
+    }
+    if(publicType == '日程'){
+        bindId = arr[arr.length-1].attr("data-id");
+    }
+    if(publicType == '分享'){
+        bindId = arr[arr.length-1].attr("data-id");
+    }
+    if(bindId == '' || bindId == undefined){
+        layer.msg("必须选择关联内容!");
         return false;
     }
     var args = {"publicId":taskId,"bindId":bindId,"publicType":publicType};
@@ -278,6 +322,26 @@ $('.ok-btn').click(function () {
         }
     },"json");
 });
+
+/**
+ * 点击文件夹 加载该文件夹下的所有文件
+ */
+$("html").on("click",".wjj li",function () {
+    var fileId = $(this).attr('data-id');
+    var that = $(this);
+    var projectId = $('.project-ul .selected').attr('data-id');
+    var url = "/file/findChildFile";
+    var args = {"projectId":projectId,"fileId":fileId};
+    $.post(url,args,function (data) {
+        var item = data.data;
+        if(item != ''){
+            addFileStr(item,that);
+        } else{
+            return false;
+        }
+    },"json");
+});
+
 
 /**
  * 拼接任务的字符串
@@ -357,7 +421,7 @@ function addSubTask(subTask,that) {
 /**
  * 点项目之后弹出来的信息
  */
-function addGroups(item,type){
+function addGroups(item,type,that){
     var content = '';
     var content2 = '';
     if(type == '任务'){
@@ -369,48 +433,150 @@ function addGroups(item,type){
     if(type == "文件"){
         for(var i = 0;i < item.length;i++){
             if(item[i].catalog == 1){
-                content += '<li class="wj-li over-hidden">'+
+                content += '<li class="wj-li over-hidden" data-id = ' + item[i].fileId +  '>'+
                     '<img src="/image/wjj-b.png">'+
                     '<span >' + item[i].fileName + '</span>'+
                     '</li>';
             } else{
-                content2 += '<li class="wj-li over-hidden">'
+                content2 += '<li class="wj-li over-hidden" data-id = '+ item[i].fileId +'>'
                 if(item[i].catalog == 0 && (item[i].ext == '.jpg' || item[i].ext == '.png' || item[i].ext == '.jpeg')){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '..doc'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.docx'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.xls'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.xlsx'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.pptx'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.ppt'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.pdf'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.zip'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/zip.png" />';
                 }
                 if(item[i].catalog == 0 && item[i].ext == '.rar'){
-                    content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
                 }
                 content2 +=  '<span >' + item[i].fileName + '</span>'+
                     '</li>';
             }
+
         }
         $('.wjj-wrap .wjj').html(content);
         $('.wj-wrap .wj').html(content2);
+        that.parents(".paper-file,.show-next-wj .wjj-wrap").after(content);
+        that.parents(".scroll-box-heng").scrollLeft(parseInt( that.parents(".task-ul").width()));
+    }
+    if(type == "日程"){
+        var schedule = item.data;
+        var beoforeSchedule = item.before;
+        for(var i = 0;i < beoforeSchedule.length;i++){
+            content += '<li class="a-task-li" data-id = '+ beoforeSchedule[i].scheduleId +'>'+
+                '<i class="layui-icon layui-icon-date" style="font-size: 20px; color: gray;"></i>'+
+                '<p>' + beoforeSchedule[i].scheduleName + '</p>'+
+                '<div class="over-hidden rc-time">'+
+                '<span title="' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+            '<span>—</span>'+
+            '<span title="' + new Date(beoforeSchedule[i].endTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+            '</div>'+
+            '</li>';
+        }
+        $('.coming-rc-ul,.new-rc').html(content);
+    }
+    if(type == "分享"){
+        for(var i = 0;i < item.length;i++){
+               content += '<li class="a-task-li " data-id = '+ item[i].id +'>'+
+                '<i class="layui-icon  layui-icon-list" style="font-size: 20px; color: gray;"></i>'+
+                '<p class="over-hidden">' + item[i].title + '</p>'+
+                '</li>';
+        }
+        $('.share-ul').html(content);
     }
     return content;
+}
+
+
+function addFileStr(item,that){
+    var content = '';
+    var content2 = '';
+    for(var i = 0;i < item.length;i++){
+        if(item[i].catalog == 1){
+            content += '<li class="wj-li over-hidden" data-id = ' + item[i].fileId +  '>'+
+                '<img src="/image/wjj-b.png">'+
+                '<span >' + item[i].fileName + '</span>'+
+                '</li>';
+        } else{
+            content2 += '<li class="wj-li over-hidden" data-id = ' + item[i].fileId + '>'
+            if(item[i].catalog == 0 && (item[i].ext == '.jpg' || item[i].ext == '.png' || item[i].ext == '.jpeg')){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '..doc'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.docx'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.xls'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.xlsx'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.pptx'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.ppt'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.pdf'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.zip'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+            }
+            if(item[i].catalog == 0 && item[i].ext == '.rar'){
+                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+            }
+            content2 +=  '<span >' + item[i].fileName + '</span>'+
+                '</li>';
+        }
+        var li='<li class="show-next-wj-li">\n' +
+            '                                <div class="paper-file">\n' +
+            '                                    <div class="up-add">\n' +
+            '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件夹</p>\n' +
+            '                                        <ul>\n'+
+
+            content +
+
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="wjj-wrap">\n' +
+            '                                        <p>文件</p>\n' +
+            '                                        <ul>\n' +
+            content2+
+            '                                        </ul>\n' +
+            '                                    </div>\n' +
+            '                                </div>\n' +
+            '\n' +
+            '                            </li>'
+    }
+    that.parents(".show-next-wj").siblings(".task-ul").html(li);
+    // that.parents(".paper-file,.show-next-wj .wjj-wrap").after(content);
+    that.parents(".scroll-box-heng").scrollLeft(parseInt( that.parents(".task-ul").width()));
 }

@@ -4,13 +4,19 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -33,6 +39,9 @@ import java.util.Objects;
 public class BindingController {
 
     @Resource
+    private ScheduleService scheduleService;
+
+    @Resource
     private BindingService bindingService;
 
     @Resource
@@ -46,6 +55,9 @@ public class BindingController {
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private FileService fileService;
 
     /** 用于订阅推送消息 */
     @Resource
@@ -85,10 +97,22 @@ public class BindingController {
             jsonObject.put("result",1);
             jsonObject.put("msg","保存成功");
             TaskPushType taskPushType = new TaskPushType("关联");
-            Map<String,Object> map = new HashMap<String,Object>(16);
+            Map<String,Object> map = new HashMap<String,Object>(5);
             map.put("publicType",publicType);
             taskPushType.setObject(map);
-            map.put("bindingInfo",taskService.findTaskByTaskId(bindId));
+            if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                Task bindingInfo = taskService.findTaskByTaskId(bindId);
+                bindingInfo.setCreatorInfo(null);
+                map.put("bindingInfo",bindingInfo);
+            }
+            if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
+                File bindingInfo = fileService.findFileById(bindId);
+                map.put("bindingInfo",bindingInfo);
+            }
+            if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
+               Schedule bindingInfo = scheduleService.findScheduleById(bindId);
+               map.put("bindingInfo",bindingInfo);
+            }
             map.put("bindId",binding.getId());
             messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){

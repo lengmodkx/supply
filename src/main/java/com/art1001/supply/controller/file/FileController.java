@@ -968,12 +968,28 @@ public class FileController {
     public JSONObject projectList(String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-            jsonObject.put("fileList",fileService.findChildFile(projectId,"0",0));
+            jsonObject.put("data",fileService.findChildFile(projectId,"0",0));
             jsonObject.put("projectId", projectId);
             jsonObject.put("result",1);
         }catch (Exception e){
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取该文件夹下的 所有文件和子文件夹
+     */
+    @PostMapping("findChildFile")
+    @ResponseBody
+    public JSONObject findChildFile(String projectId,String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",fileService.findChildFile(projectId,fileId,0));
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,文件拉取失败,{}",e);
         }
         return jsonObject;
     }

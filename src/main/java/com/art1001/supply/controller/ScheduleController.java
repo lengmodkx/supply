@@ -1,5 +1,6 @@
 package com.art1001.supply.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -12,13 +13,13 @@ import com.art1001.supply.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -39,7 +40,7 @@ public class ScheduleController {
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
-        model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime());
+        model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,null));
         return "scheduling";
     }
 
@@ -111,6 +112,22 @@ public class ScheduleController {
             jsonObject.put("msg","创建成功");
         }catch (Exception e){
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("scheduleList")
+    @ResponseBody
+    public JSONObject scheduleList(String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Map<String,List> map = new HashMap<String,List>();
+            map.put("data",scheduleService.findScheduleGroupByCreateTime(System.currentTimeMillis(),projectId));
+            map.put("before",scheduleService.findBeforeSchedule(System.currentTimeMillis(),projectId));
+            jsonObject.put("data",map);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,数据拉取失败,{}",e);
         }
         return jsonObject;
     }

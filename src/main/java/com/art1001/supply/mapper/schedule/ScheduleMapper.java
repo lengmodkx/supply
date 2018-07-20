@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * schedulemapper接口
@@ -62,7 +63,7 @@ public interface ScheduleMapper {
 	 * 根据时间分组查询日程
 	 * @return
 	 */
-	List<ScheduleVo> findScheduleGroupByCreateTime();
+	List<Schedule> findScheduleGroupByCreateTime(@Param("currTime") Long currTime,@Param("projectId") String projectId);
 
 	/**
 	 * 根据月份查询日程列表
@@ -77,4 +78,18 @@ public interface ScheduleMapper {
 	 * @return
 	 */
     List<Schedule> findScheduleByUserIdAndByTreeDay(String uId);
+
+	/**
+	 * 查询出该项目下的所有日程信息
+	 * @param projectId 项目的id
+	 * @return 日程的实体信息集合
+	 */
+	List<Schedule> findScheduleListByProjectId(String projectId);
+
+	/**
+	 * 查询出过去的日程
+	 * @param currTime 当前系统时间
+	 * @return 日程的实体信息集合
+	 */
+	List<Schedule> findBeforeSchedule(@Param("currTime") long currTime,@Param("projectId") String projectId);
 }

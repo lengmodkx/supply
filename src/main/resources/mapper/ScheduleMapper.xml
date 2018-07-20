@@ -243,8 +243,17 @@
 		WHERE schedule_id = #{id}
 
 	</update>
+
 	<select id="findScheduleGroupByCreateTime" resultMap="resultMap">
 		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') as date from prm_schedule
+		<where>
+			<if test="currTime != null and currTime != ''">
+				and start_time > #{currTime}
+			</if>
+			<if test="projectId != null and projectId != ''">
+				and project_id = #{projectId}
+			</if>
+		</where>
 		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
 	</select>
 	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -288,4 +297,16 @@
 		adddate(curdate(), '+2 days')
 		)
 	</select>
+
+	<!-- 根据项目id 查询出该项目下的所有日程信息 -->
+	<select id="findScheduleListByProjectId" resultType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_schedule where project_id = #{projectId}
+	</select>
+
+	<select id="findBeforeSchedule" resultMap="BaseResultMap" >
+		select <include refid="Base_Column_List" />
+		from prm_schedule where project_id = #{projectId} and start_time <![CDATA[<]]> #{currTime}
+	</select>
+
 </mapper>

@@ -197,4 +197,9 @@
             id = #{id}
     </update>
 
+    <select id="shareByProjectId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from prm_share where project_id = #{projectId}
+    </select>
+
 </mapper>

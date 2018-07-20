@@ -45,4 +45,10 @@ public interface ShareMapper {
      */
     void deleteTag(@Param("id") String id, @Param("tagIds") String tagIds);
 
+    /**
+     * 根据项目id 返回所有的分享
+     * @param projectId 项目id
+     * @return 分享信息集合
+     */
+    List<Share> shareByProjectId(String projectId);
 }

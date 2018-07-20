@@ -88,8 +88,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 
 	@Override
-	public List<ScheduleVo> findScheduleGroupByCreateTime() {
-		return scheduleMapper.findScheduleGroupByCreateTime();
+	public List<Schedule> findScheduleGroupByCreateTime(Long currTime,String projectId) {
+		return scheduleMapper.findScheduleGroupByCreateTime(currTime,projectId);
 	}
 
 	/**
@@ -100,5 +100,25 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public List<Schedule> findScheduleByUserIdAndByTreeDay(String uId) {
 		return scheduleMapper.findScheduleByUserIdAndByTreeDay(uId);
+	}
+
+	/**
+	 * 数据:根据项目查询出该项目下的所有日程信息
+	 * @param projectId 项目id
+	 * @return 日程的实体集合
+	 */
+	@Override
+	public List<Schedule> findScheduleListByProjectId(String projectId) {
+		return scheduleMapper.findScheduleListByProjectId(projectId);
+	}
+
+	/**
+	 * 查询以前的日程
+	 * @param currTime 当前的时间
+	 * @return 返回日程信息
+	 */
+	@Override
+	public List<Schedule> findBeforeSchedule(long currTime,String projectId) {
+		return scheduleMapper.findBeforeSchedule(currTime,projectId);
 	}
 }

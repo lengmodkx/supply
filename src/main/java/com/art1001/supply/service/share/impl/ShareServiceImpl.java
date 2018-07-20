@@ -96,4 +96,13 @@ public class ShareServiceImpl implements ShareService {
         return share;
 	}
 
+	/**
+	 * 根据项目id 查询出项目下的所有分享信息
+	 * @param projectId 项目id
+	 * @return 返回分享信息  集合
+	 */
+	@Override
+	public List<Share> shareByProjectId(String projectId) {
+		return shareMapper.shareByProjectId(projectId);
+	}
 }

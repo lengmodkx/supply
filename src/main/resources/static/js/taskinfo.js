@@ -989,29 +989,6 @@ $('.tag-search-input').keyup(function () {
     },"json");
 });
 
-
-
-/**
- * 控制关联模块的显示
- */
-$(function () {
-    if ($(".related-rc-wrap .related-rc li").length>0){
-        $(".related-rc-wrap").show()
-    } else {
-        $(".related-rc-wrap").hide()
-    }
-    if ($(".related-fx-wrap .related-rc li").length>0){
-        $(".related-fx-wrap").show()
-    } else {
-        $(".related-fx-wrap").hide()
-    }
-    if ($(".related-wj-wrap .related-wj li").length>0){
-        $(".related-wj-wrap").show()
-    } else {
-        $(".related-wj-wrap").hide()
-    }
-});
-
 /**
  * 追加关联字符串
  */

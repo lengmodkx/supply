@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -244,6 +245,22 @@ public class ShareController {
             log.error("移除标签异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "移除失败");
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("shareByProjectId")
+    @ResponseBody
+    public JSONObject shareByProjectId(String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Share> list = shareService.shareByProjectId(projectId);
+            jsonObject.put("data",list);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("result",0);
+            log.error("系统异常,数据拉取失败!");
         }
         return jsonObject;
     }

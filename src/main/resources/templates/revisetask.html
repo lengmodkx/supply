@@ -196,38 +196,38 @@
         <div id = "bind">
             <!--关联 部分-->
             <div class="related-box" th:style="'display:' + @{(${bindingVo!=null} ? 'block':'none')}">
-                <div class="related-wj-wrap" th:if="${bindingVo.publicType=='任务'}">
-                    <div class="flex-box">任务 <span></span></div>
-                    <ul class="related-rw">
-                        <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
-                            <div class="check-box" th:value="${task.taskName}">
-                                <input type="checkbox" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
-                            </div>
-                            <div class="related-rw-info">
-                                <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
-                                <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
-                                <span th:text="${task.taskName}"></span>
-                            </div>
-                            <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
-                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                            <!--取消关联框-->
-                            <div class="related-menu" style="display: none">
-                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
-                                <div class="related-menu-title">关联菜单</div>
-                                <ul>
-                                    <!--<li class="boxsizing">-->
-                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-                                    <!--<span>复制链接</span>-->
-                                    <!--</li>-->
-                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
-                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
-                                        <span>取消关联</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <div class="related-wj-wrap">
+                    <div class="flex-box" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
+                 <ul class="related-rw">
+                    <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
+                        <div class="check-box" th:value="${task.taskName}">
+                            <input type="checkbox" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
+                        </div>
+                        <div class="related-rw-info">
+                            <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
+                            <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
+                            <span th:text="${task.taskName}"></span>
+                        </div>
+                        <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
+                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <!--取消关联框-->
+                        <div class="related-menu" style="display: none">
+                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                            <div class="related-menu-title">关联菜单</div>
+                            <ul>
+                                <!--<li class="boxsizing">-->
+                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                <!--<span>复制链接</span>-->
+                                <!--</li>-->
+                                <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                    <span>取消关联</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
                 <!--文件-->
                 <div class="related-wj-wrap" th:if="${bindingVo.publicType=='文件'}">
                     <div class="flex-box">文件 <span></span></div>
@@ -463,8 +463,7 @@
     }
     
     $("body").on("click",".show-cancel-related",function () {
-        $(".related-menu").slideUp();
-        $(this).parents("li").find(".related-menu").slideDown();
+        $(this).parents("li").find(".related-menu").slideToggle();
     });
     $("body").on("click",".close-related-menu",function () {
         $(this).parents(".related-menu").slideUp();

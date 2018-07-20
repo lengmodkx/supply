@@ -41,4 +41,11 @@ public interface ShareService {
 	 * 移除标签
 	 */
     void deleteTag(String shareId, String tagIds);
+
+	/**
+	 * 根据项目id 查询分享
+	 * @param projectId 项目id
+	 * @return 分享的实体集合
+	 */
+	List<Share> shareByProjectId(String projectId);
 }
