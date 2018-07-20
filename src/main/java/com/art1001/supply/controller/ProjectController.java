@@ -616,4 +616,19 @@ public class ProjectController {
         return jsonObject;
     }
 
+    /**
+     * 查询项目成员
+     */
+    public void findProjectMember(String projectId){
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        try{
+            List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
+
+
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+    }
+
 }
