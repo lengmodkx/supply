@@ -137,18 +137,16 @@ public class TaskController {
 
     /**
      * 添加新任务
-     * @param project 得到当前项目的实体信息
      * @param task 任务实体信息
      * @return
      */
     @PostMapping("saveTask")
     @ResponseBody
-    public JSONObject saveTask(Project project,Task task,String[] members){
+    public JSONObject saveTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
-            task.setTaskId(IdGen.uuid());
-            TaskLogVO taskLogVO = taskService.saveTask(members,project,task);
+            TaskLogVO taskLogVO = taskService.saveTask(task);
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());

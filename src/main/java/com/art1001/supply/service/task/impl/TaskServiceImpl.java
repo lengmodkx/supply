@@ -148,28 +148,22 @@ public class TaskServiceImpl implements TaskService {
 	/**
 	 * 重写方法
 	 * 将添加的任务信息保存至数据库
-     * @param memberId 该任务的参与者
-     * @param project 当前项目的实体信息
      * @param task task信息
      */
 	@Override
-	public TaskLogVO saveTask(String[] memberId, Project project, Task task) {
-        //获取当前登录用户的id
+	public TaskLogVO saveTask(Task task) {
+        task.setTaskId(IdGen.uuid());
+	    //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
         //初始创建任务设置为父任务
         task.setParentId("0");
         //设置任务的创建者
         task.setMemberId(id);
-        //设置所在项目
-        task.setProjectId(project.getProjectId());
+
         //设置该任务的初始状态
         task.setTaskStatus("未完成");
         //设置该任务是否删除 0 未删除 1 已删除
         task.setTaskDel(0);
-        //如果没有设置执行者 则 为空字符串
-        if(StringUtils.isEmpty(task.getExecutor())){
-            task.setExecutor("");
-        }
         //设置任务的初始得赞数
         task.setFabulousCount(0);
         //设置该任务的创建时间
@@ -178,16 +172,9 @@ public class TaskServiceImpl implements TaskService {
         task.setUpdateTime(System.currentTimeMillis());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
-        if(maxOrder == null){
-            maxOrder = 0;
-        } else{
-            maxOrder += 1;
-        }
-        task.setOrder(maxOrder);
+        task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
-        //将任务的参与者信息保存至 (任务-参与者 [task_member] ) 关系表中
-        taskMemberService.saveManyTaskeMmber(memberId,task);
         //拿到TaskLog对象并且保存
         return saveTaskLog(task, TaskLogFunction.R.getName() + task.getTaskName());
     }

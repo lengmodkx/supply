@@ -37,7 +37,7 @@
                        </div>
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
-                           <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="tasklist+${taskMenu.relationId}">
+                           <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="taskList+${taskMenu.relationId}">
                                <li class="task-card-mode clearfix"
                                    th:each="task:${taskMenu.taskList}"
                                    th:id="${task.taskId}">
@@ -75,7 +75,6 @@
 
                            </div>
                        </div>
-
 
                        <!--添加任务按钮-->
                        <div class="add-assignment" th:data="${project.projectId}">
@@ -140,11 +139,6 @@
     var groupId = [[${currentGroup}]];
     var projectId = [[${project.projectId}]];
 
-    //当前任务所在菜单id
-    var taskMenuId = [[${taskMenuId}]];
-    //当前任务执行者id
-    var executorId = $("span[name = 'executor']").attr("value");
-
     layui.use(['element','form'], function(){
         var element = layui.element;
         var form = layui.form;
@@ -153,8 +147,6 @@
         });
 
     });
-
-    $('.creat-model-ok').click()
 
     $("#fileButton").click(function () {
         var projectId = getQueryString("projectId");
@@ -180,12 +172,6 @@
         $(div).children('img:eq(0)').attr('src','/image/add.png');
     }
 
-
-    $('.remove-he').click(function (e) {
-        $.post("");
-
-
-    });
 
     $('.keyword').keyup(function (e) {
         $('.invitation').html('');

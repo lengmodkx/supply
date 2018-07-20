@@ -42,8 +42,6 @@ stompClient.connect({},
         if(task.type==='更新菜单名称'){
             $('#'+task.menuId+' .relationName').html(task.menuName);
         }
-
-
     });
 
     function taskShow(task) {
@@ -73,12 +71,8 @@ stompClient.connect({},
             a+='<img  src="/image/file.png">';
         }
 
-
-        $('.tasklist'+task.taskMenuId).append(a);
-        layui.use('form', function() {
-            var form = layui.form;
-            form.render();
-        });
+        $('.taskList'+task.taskMenuId).append(a);
+        layui.form.render();
     }
 
     function showMenu(menu){

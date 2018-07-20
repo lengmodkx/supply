@@ -1,19 +1,15 @@
 package com.art1001.supply.service.task;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
 
 
 /**
@@ -55,7 +51,7 @@ public interface TaskService {
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public TaskLogVO saveTask(String[] memberId,Project project,Task task);
+	public TaskLogVO saveTask(Task task);
 
 	/**
 	 * 获取所有task数据

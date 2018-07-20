@@ -371,10 +371,12 @@ $("html").on("click",".add-assignment",function(e){
     e.stopPropagation();
     liId=$(this).siblings(".ul-wrap").children(".taskList").children(":first").attr("id");
     var addBox = $(this).siblings(".ul-wrap").find(".add-task-box");
-    addRenwu(addBox,$(this).attr('data'));
+    addRenwu(addBox,addBox.attr('data'));
+    $(".add-task-box").hide();
+    $(".add-assignment").show();
     $(this).siblings(".ul-wrap").find(".add-task-box").slideDown();
     $(this).hide();
-    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+110);
+    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+394);
 });
 
 
@@ -467,16 +469,11 @@ function addRenwu(addBox,taskMenuId) {
 
         addBox.html(taskItem);
         layui.form.render();
-        $(".new-assignment-ok").click(function () {
-            alert(11)
-        })
-    // $('html').on('click','.new-assignment-ok',function () {
-    //     console.log("xxxxxxx");
-    //     addTask($(this).attr('data'));
-    // });
 };
 
-
+$('.model').on('click','.new-assignment-ok',function () {
+    addTask($(this).attr('data'));
+});
 function addTask(taskMenuId) {
     //获取选中的参与者信息
     var members = [];
@@ -522,13 +519,12 @@ function addTask(taskMenuId) {
     }
 
     var url = "/task/saveTask";
-    var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor,"tagId":tags.toString()};
+    var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"taskUIds":members.toString(),"executor":executor,"tagId":tags.toString()};
     $.post(url,args,function(data){
         if(data.result === 1){
-            layer.msg("任务创建成功!");
-            close();
+            layer.msg("任务创建成功!",{icon:1});
         } else{
-            layer.msg("任务创建失败!");
+            layer.msg("任务创建失败!",{icon:5});
         }
     },"json");
 }
