@@ -210,11 +210,11 @@
 	</update>
 
 
-	<select id="findBindingList" resultMap="BaseResultMap">
+	<select id="findBindingList" resultMap="BaseResultMap" parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_binding
-        where public_id = #{publicId} and public_type = #{publicType}
+        where public_id = #{publicId}
 	</select>
 
 	<!--&lt;!&ndash; 查询出该目标的所有关联信息 &ndash;&gt;-->

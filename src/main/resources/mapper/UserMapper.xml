@@ -218,7 +218,7 @@
 		where u.u_id = ${id}
 		 -->
 	</select>
-	
+
 	<insert id="insert" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="id">
 		insert ignore into tb_user (
 			u_id,
@@ -348,37 +348,33 @@
 	<!-- 查询指定id的人员信息 -->
 	<select id="findManyUserById" resultMap="userMap">
 		SELECT
-		tb_user.u_id,
-		u_name,
-		u_account_name,
-		u_password,
-		u_delete_status,
-		u_locked,
-		u_description,
-		u_credentials_salt,
-		u_creator_name,
-		tb_user.u_create_time,
-		u_update_time,
-		u_organization_id,
-		u_partment_id,
-		u_organization_lable,
-		tb_user_info.u_id u_id1,
-		u_sex,
-		u_birthday,
-		u_telephone,
-		u_email,
-		u_image,
-		u_address,
-		tb_user_info.u_create_time u_create_time1
+			u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			i.u_sex,
+			i.u_birthday,
+			i.u_telephone,
+			i.u_email,
+			i.u_image,
+			i.u_address
 		FROM
-		tb_user,
-		tb_user_info
+			tb_user u,tb_user_info i
 		WHERE
-		tb_user.u_id = tb_user_info.u_id
-		and tb_user.u_id in
-		<foreach collection="array" item = "u_id" open="(" separator="," close=")">
-			#{u_id}
-		</foreach>
+			u.u_id = i.u_id and u.u_id in (
+				<if test="memberIds！=null and memberIds!=''">
+					<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
+						#{id}
+					</foreach>
+				</if>
+			)
 	</select>
 
 	<!-- 查询指定项目下所有的成员信息 -->
@@ -413,12 +409,11 @@
 	u_image,
 	u_address,
 	tb_user_info.u_create_time u_create_time1
-FROM
-	tb_user,
-	tb_user_info
-WHERE
-	tb_user.u_id = tb_user_info.u_id
-and tb_user.u_id = #{id}
+	FROM
+		tb_user,
+		tb_user_info
+	WHERE
+		tb_user.u_id = tb_user_info.u_id and tb_user.u_id = #{id}
 	</select>
 
 	<!-- 查询存在该任务中的成员信息 -->
@@ -456,14 +451,14 @@ and tb_user.u_id = #{id}
 
 	<!-- 根据id 查询用户的注册信息 -->
 	<select id="findUserInfoByUserId" resultMap="userInfo">
-		select <include refid="userInfoAttributes"></include>
+		select <include refid="userInfoAttributes"/>
 		from tb_user_info where u_id = #{uId}
 	</select>
 
 	<!-- 查询出某个任务的创建者信息 -->
 	<select id="findTaskCreate" resultMap="userMap">
 		  select
-		  <include refid="userAttributes"></include>
+		  <include refid="userAttributes"/>
 		  from tb_user where u_id =
 		  (
 			select prm_task_member.member_id from prm_task_member where `type` = '创建者' and  public_id = #{taskId}
@@ -473,7 +468,7 @@ and tb_user.u_id = #{id}
 	<!-- 根据用户id查询出用户信息 -->
 	<select id="findUserById" resultMap="userMap">
 		select
-		<include refid="userAttributes"></include>
+		<include refid="userAttributes"/>
 		from tb_user where u_id = #{uId}
 	</select>
 

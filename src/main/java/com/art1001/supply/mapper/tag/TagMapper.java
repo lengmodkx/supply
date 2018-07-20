@@ -77,4 +77,7 @@ public interface TagMapper {
 	 * @return 标签集合数据
 	 */
 	List<Tag> searchTag(String tagName);
+
+
+	List<Tag> findTagByTagIds(String tagIds);
 }

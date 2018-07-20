@@ -60,10 +60,10 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 
 	/**
 	 * 查询多个指定id的用户
-	 * @param memberId 用户id的数组
+	 * @param memberIds 逗号隔开的用户id
 	 * @return
 	 */
-    List<UserEntity> findManyUserById(String[] memberId);
+    List<UserEntity> findManyUserById(String memberIds);
 
 	/**
 	 * 根据项目id 查询该项目下所有的用户信息

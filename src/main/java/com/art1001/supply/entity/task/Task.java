@@ -2,8 +2,11 @@ package com.art1001.supply.entity.task;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.List;
 
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
@@ -74,7 +77,7 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private String tagId;
 
-
+	private List<Tag> tagList;
 	/**
 	 * 任务的层级
 	 */
@@ -98,6 +101,10 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private String executor;
 
+	/**
+	 * 参与者
+	 */
+	private String taskUIds;
 
 	/**
 	 * 任务类型
@@ -171,11 +178,6 @@ public class Task extends BaseEntity implements Serializable {
 	private Integer order;
 
 	/**
-	 * 任务成员关系的信息
-	 */
-	private TaskMember taskMember;
-
-	/**
 	 * 任务的日历日期
 	 */
 	private Long taskCalendar;
@@ -186,16 +188,23 @@ public class Task extends BaseEntity implements Serializable {
 	private Project project;
 
 	/**
+	 * 该任务的创建者
+	 */
+	private UserEntity creatorInfo;
+	/**
 	 * 该任务的执行者
 	 */
-	private UserEntity taskExecutorInfo;
+	private UserEntity executorInfo;
 
 	/**
-	 * 是否绑定任务，日程，文件，分享
+	 * 该任务的参与者
 	 */
-	private int is_bind;
+	private List<UserEntity> joinInfo;
 
-	private int taskCount;
+	/**
+	 * 该任务的子任务
+	 */
 
-	private int notFinishCount;
+	private List<Task> taskList;
+
 }

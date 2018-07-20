@@ -41,10 +41,10 @@ public interface UserService {
 
 	/**
 	 * 根据id查询多个用户
-	 * @param memberId 用户id的数组
+	 * @param memberIds 用户id的数组
 	 * @return
 	 */
-    List<UserEntity> findManyUserById(String[] memberId);
+    List<UserEntity> findManyUserById(String memberIds);
 
 	/**
 	 * 根据项目id查找该项目下所有的成员信息
