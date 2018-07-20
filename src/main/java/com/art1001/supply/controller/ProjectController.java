@@ -80,8 +80,6 @@ public class ProjectController {
     private TagService tagService;
 
     @Resource
-    private BindingService bindingService;
-    @Resource
     private SimpMessagingTemplate messagingTemplate;
     @RequestMapping("/project.html")
     public String home(Model model){
