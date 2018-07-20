@@ -32,7 +32,7 @@ public class TagController {
     /**
      * 查询标签列表，根据项目
      */
-    @GetMapping("/findByProjectId")
+    @PostMapping("/findByProjectId")
     @ResponseBody
     public JSONObject findByProjectId(
             @RequestParam String projectId

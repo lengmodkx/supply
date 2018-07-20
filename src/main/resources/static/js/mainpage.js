@@ -37,13 +37,6 @@ $(function () {
             $(".add-assignment").show();
         }
     });
-    $(".content-wrap-wrap").on("click",".add-task-box",function (e) {
-        e.stopPropagation()
-    });
-    $(".content-wrap-wrap").on("click",".show-develop ",function () {
-        $(this).hide();
-        $(this).siblings(".develop").show();
-    });
 
 
     $("html").on("click",".assignment-top-box",function (e) {
@@ -97,7 +90,6 @@ $(function () {
             items:'.task-card-mode',
             tolerance: 'pointer',
             placeholder: 'task-card-mode2',
-            dropOnEmpty:true,
             forcePlaceholderSize: true,
             connectWith:'.taskList',
             receive: function(event, ui) {
@@ -452,11 +444,6 @@ function addRenwu(addBox,taskMenuId) {
         '                    <img src="/image/adds.png" />\n' +
         '                </div>\n' +
         '                <ul class="tags-ul boxsizing" id = "tags">\n' +
-        '                    <!--这里是标签-->\n' +
-        '                    <li class="tags-list">\n' +
-        '                        <span class="dot"></span>\n' +
-        '                        <span class="tag-font">aaa</span>\n' +
-        '                    </li>\n' +
         '                </ul>\n' +
         '            </div>\n' +
         '            <!--新建标签-->\n' +
@@ -490,7 +477,6 @@ function addRenwu(addBox,taskMenuId) {
         '                    </ul>\n' +
         '                    <div class="tag-ok" disabled>创建</div>\n' +
         '                </div>\n' +
-        '\n' +
         '            </div>\n' +
         '        </div>\n'+
         '                                   <div class="heng-line"></div>\n' +
@@ -506,6 +492,22 @@ function addRenwu(addBox,taskMenuId) {
         '                                           <img src="/image/adds.png">\n' +
         '                                       </div>\n' +
         '                                   </div>\n'+
+        '        <div>\n' +
+        '        <input type="hidden" id = "memberId" />\n' +
+        '        <div class="people boxsizing" style="display: none" >\n' +
+        '            <input type="text" name="" placeholder="搜索" class="layui-input">\n' +
+        '            <div class="peoples">\n' +
+        '                <p id = "identity">参与者</p>\n' +
+        '                <div id = "members" >\n' +
+        '                </div>\n' +
+        '                <p>推荐</p>\n' +
+        '                <div id = "executor">\n' +
+        '                    <!--项目成员列表-->\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div id="people-ok" class="people-ok">确定</div>\n' +
+        '        </div>\n' +
+        '    </div>\n'+
         '                                   <div class="heng-line"></div>\n' +
         '                                   <div class="secret abox layui-form">\n' +
         '                                       <img src="/image/suo.png">\n' +
@@ -557,7 +559,20 @@ $('.ul-wrap').on('click','.no-tags',function () {
         shade:[0.1,'#fff'],
         closeBtn: 0,
         anim: 1,  //动画 0-6
-        content: $('.tags-search-build').html()
+        content: $('.tags-search-build').html(),
+        success: function(layero, index){
+            $.post('/tag/findByProjectId',{"projectId":projectId},function (data) {
+                if(data.result===1&&data.data!=null){
+                    for(var i=0;i<data.data.length;i++){
+                        var li = '<li class="tags-list">\n' +
+                            '        <span class="dot"></span>\n' +
+                            '        <span class="tag-font">'+data.data[i]+'</span>\n' +
+                            '     </li>';
+                        $('.tags-ul').append(li);
+                    }
+                }
+            });
+        }
     });
 });
 
