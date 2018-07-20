@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
 </head>
-<body style="background-color: white">
+<body style="background-color: white;border-radius: 5px">
 <!--设计修改任务界面-->
 <input type="hidden" th:value="${task.taskId}" id = "taskId" />
 <div id="revise-task" class="revise-task-wrap layui-form" >
@@ -28,15 +28,14 @@
             <input type="text" th:value="${task.taskName}" class="task_name boxsizing layui-input"/>
         </div>
         <div class="who-and-time">
-            <input type="hidden" id="have-executor" th:value="${executor.id}">
-            <!--<input type="hidden" id="have-executor-img" th:value="${executor.userInfo.image}">-->
-            <div class="who-wrap" >
-                <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" id = "executorImg" th:if="${executor.userInfo != null}"/>
-                <input type="hidden" th:value="${executor.id}" id = "executorId"/>
-                <span th:text="${executor.userName}" id = "executorName"></span>
+            <input type="hidden" id="have-executor" th:value="${task.executor}">
+            <div class="who-wrap" th:if="${task.executorInfo != null}">
+                <input type="hidden" th:value="${task.executor}" id = "executorId"/>
+                <img th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" id = "executorImg" />
+                <span th:text="${task.executorInfo.userName}" id = "executorName"></span>
                 <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>
             </div>
-            <div class="no-renling" style="display: none">
+            <div class="no-renling" th:if="${task.executorInfo == null}">
                 <i class="layui-icon layui-icon-username no-people-img" style="font-size: 20px; color: #A6A6A6;"></i>
                 <span>待认领</span>
             </div>
@@ -61,7 +60,6 @@
                     <option value="工作日重复" th:selected="${task.repeat == '工作日重复'}" >工作日重复</option>
                 </select>
             </div>
-
             <div class="no-remand ">
                 <img src="../static/image/noremand.png" th:src="@{/image/noremand.png}" />
                 <input type="hidden" th:value="${task.remind}" id = "oldRemind"/>
@@ -96,8 +94,8 @@
             <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
             <span>标签</span>
             <span class="no-tags">添加标签</span>
-                <div class="has-tags">
-                    <span class="tag" th:if="${tagList != null}"  th:value="${tag.tagId}" th:each="tag:${tagList}" th:style="'background-color:'+${tag.bgColor}+''">
+                <div class="has-tags" th:if="${task.tagList != null}">
+                    <span class="tag" th:each="tag:${task.tagList}"  th:value="${tag.tagId}"  th:style="'background-color:'+${tag.bgColor}+''">
                         <b style="font-weight: 400" th:text="${tag.tagName}"></b>
                         <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>
                     </span>
@@ -105,52 +103,51 @@
                 </div>
             <!--新建  搜索标签框-->
             <div class="tags-search-build" style="display: none">
-            <!--搜索标签-->
-            <div class="tag-search" >
-            <div class="tag-search-title boxsizing">
-            <input class="tag-search-input" type="text" placeholder="搜索标签">
-            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-            </div>
-            <ul class="tags-ul boxsizing" id = "tags">
-            <!--这里是标签-->
-            <li class="tags-list">
-            <span class="dot"></span>
-            <span class="tag-font">aaa</span>
-            </li>
-            </ul>
+                <!--搜索标签-->
+                <div class="tag-search" >
+                    <div class="tag-search-title boxsizing">
+                    <input class="tag-search-input" type="text" placeholder="搜索标签">
+                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                </div>
+                <ul class="tags-ul boxsizing" id = "tags">
+                    <!--这里是标签-->
+                    <li class="tags-list">
+                        <span class="dot"></span>
+                        <span class="tag-font">aaa</span>
+                    </li>
+                </ul>
             </div>
             <!--新建标签-->
             <div class="build-tags" style="display: none">
-            <div class="build-tags-title boxsizing">
-            <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
-            新建标签
-            <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+                <div class="build-tags-title boxsizing">
+                    <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
+                    新建标签
+                    <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+                </div>
+                <div class="build-tags-con boxsizing">
+                <input class="tag-name boxsizing" type="text" placeholder="标签名称">
+                <ul class="color-pick">
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
+                    </li>
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                    <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                </ul>
+                <div class="tag-ok" disabled>创建</div>
             </div>
-            <div class="build-tags-con boxsizing">
-            <input class="tag-name boxsizing" type="text" placeholder="标签名称">
-            <ul class="color-pick">
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
-            </li>
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-            </li>
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-            </li>
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-            </li>
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-            </li>
-            <li>
-            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
-            </li>
-            </ul>
-            <div class="tag-ok" disabled>创建</div>
-            </div>
-
             </div>
             </div>
 
@@ -163,12 +160,11 @@
 
         <!--具体子任务-->
         <div th:id="subTask">
-            <div class="child-task-list" th:each="subTask:${subLevelTask}">
+            <div class="child-task-list" th:each="subTask:${task.taskList}">
                 <input type="checkbox" name="subTask" title="" lay-skin="primary" lay-filter = "subTask" th:value="${subTask.taskId}" th:checked="${subTask.taskStatus == '完成'}">
                 <input type="hidden" th:value="${subTask.taskName}" th:id="${subTask.taskId}" />
                 <div class="child-task-con">
                     <span th:text="${subTask.taskName}"></span>
-                    <div class="dt">dt-41</div>
                 </div>
                 <i class="layui-icon layui-icon-right go-detail" style="font-size: 16px; color: #a6a6a6;"></i>
                 <img class="child-task-who" src="../static/image/lpb.png" th:src="@{/image/lpb.png}">
@@ -199,57 +195,59 @@
 
         <div id = "bind">
             <!--关联 部分-->
-            <div class="related-box" th:style="'display:' + @{(${bindings.size()} ? 'block':'none')}">
-                <div class="flex-box">任务 <span></span></div>
-                <ul class="related-rw">
-                    <li class="boxsizing"   th:each="bindings:${bindings}" th:if="${bindings.publicType == '任务'}" th:data-id="${bindings.task.taskId}">
-                        <div class="check-box" th:value="${bindings.task.taskName}">
-                            <input type="checkbox" th:value = "${bindings.task.taskId}" lay-filter="bindTask" name="" th:checked="${bindings.task.taskStatus == '完成'}" lay-skin="primary">
-                        </div>
-                        <div class="related-rw-info">
-                            <img src="../static/image/begintime.png" th:if="${bindings.task.executor != ''}" th:src="#{IMAGE_SERVER}+ ${bindings.task.taskMember.memberImg}">
-                            <img th:if="${bindings.task.executor == ''}" th:src="@{/image/add.png}">
-                            <span th:text="${bindings.task.taskName}"></span>
-                        </div>
-                        <div class="related-rw-describe over-hidden" th:text = "${bindings.task.project.projectName}"></div>
-                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                        <!--取消关联框-->
-                        <div class="related-menu" style="display: none">
-                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
-                            <div class="related-menu-title">关联菜单</div>
-                            <ul>
-                                <!--<li class="boxsizing">-->
-                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-                                <!--<span>复制链接</span>-->
-                                <!--</li>-->
-                                <li class="boxsizing cancle" th:data-binding-id = "${bindings.task.taskId}" th:data-id="${bindings.id}">
-                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
-                                    <span>取消关联</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-    <!--文件-->
-                <div class="related-wj-wrap">
+            <div class="related-box" th:style="'display:' + @{(${bindingVo!=null} ? 'block':'none')}">
+                <div class="related-wj-wrap" th:if="${bindingVo.publicType=='任务'}">
+                    <div class="flex-box">任务 <span></span></div>
+                    <ul class="related-rw">
+                        <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
+                            <div class="check-box" th:value="${task.taskName}">
+                                <input type="checkbox" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
+                            </div>
+                            <div class="related-rw-info">
+                                <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
+                                <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
+                                <span th:text="${task.taskName}"></span>
+                            </div>
+                            <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
+                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                            <!--取消关联框-->
+                            <div class="related-menu" style="display: none">
+                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                <div class="related-menu-title">关联菜单</div>
+                                <ul>
+                                    <!--<li class="boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                    <!--<span>复制链接</span>-->
+                                    <!--</li>-->
+                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                        <span>取消关联</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!--文件-->
+                <div class="related-wj-wrap" th:if="${bindingVo.publicType=='文件'}">
                     <div class="flex-box">文件 <span></span></div>
                     <ul class="related-wj">
-                        <li class="boxsizing" th:each="bindings:${bindings}" th:data-id = "${bindings.file.fileId}" th:if="${bindings.publicType == '文件'}"  >
+                        <li class="boxsizing" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
                             <div class="related-wj-info">
-                                <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${bindings.file.catalog eq 1}">
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${bindings.file.fileUrl}" th:if="${bindings.file.catalog eq 0}and (${bindings.file.ext eq '.jpg'} or ${bindings.file.ext eq '.png'} or ${bindings.file.ext eq '.jpeg'})"/>
-                                <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '..doc'}"/>
-                                <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.docx'}"/>
-                                <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xls'}"/>
-                                <img class="folderFile" th:src="@{/image/excel.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.xlsx'}"/>
-                                <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pptx'}"/>
-                                <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.ppt'}"/>
-                                <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.pdf'}"/>
-                                <img class="folderFile" th:src="@{/image/zip.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.zip'}"/>
-                                <img class="folderFile" th:src="@{/image/rar.png}" th:if="${bindings.file.catalog eq 0} and ${bindings.file.ext eq '.rar'}"/>
-                                <span th:text = "${bindings.file.fileName}"></span>
+                                <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
+                                <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '..doc'}"/>
+                                <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.docx'}"/>
+                                <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xls'}"/>
+                                <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xlsx'}"/>
+                                <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pptx'}"/>
+                                <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.ppt'}"/>
+                                <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
+                                <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
+                                <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
+                                <span th:text = "${file.fileName}"></span>
                             </div>
-                            <div class="related-rw-describe over-hidden" th:text="${bindings.file.project.projectName}"></div>
+                            <div class="related-rw-describe over-hidden" th:text="${file.project.projectName}"></div>
                             <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             <!--取消关联框-->
                             <div class="related-menu">
@@ -260,7 +258,7 @@
                                     <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                     <!--<span>复制链接</span>-->
                                     <!--</li>-->
-                                    <li class="boxsizing cancle" th:data-binding-id = "${bindings.file.fileId}" th:data-id="${bindings.id}">
+                                    <li class="boxsizing cancle" th:data-binding-id = "${file.fileId}" th:data-id="${id}">
                                         <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                         <span>取消关联</span>
                                     </li>
@@ -270,40 +268,40 @@
                     </ul>
                 </div>
 
-            <!--日程-->
-                <div class="related-rc-wrap">
+                <!--日程-->
+                <div class="related-rc-wrap" th:if="${bindingVo.publicType=='日程'}">
                     <div class="flex-box">日程 <span></span></div>
                     <ul class="related-rc">
-                        <li class="boxsizing" th:if="${bindings.publicType == '日程'}"  th:each="bindings:${bindings}">
+                        <li class="boxsizing"  th:each="schedule:${bindingVo.scheduleList}" >
                             <div class="related-rc-top">
                                 <div class="related-rc-info">
                                     <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                                    <span th:text="${bindings.schedule.scheduleName}"></span>
+                                    <span th:text="${schedule.scheduleName}"></span>
                                 </div>
-                                <div class="related-rw-describe over-hidden" th:text="${bindings.schedule.project.projectName}"></div>
+                                <div class="related-rw-describe over-hidden" th:text="${schedule.project.projectName}"></div>
                                 <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
                             <div class="related-rc-down">
-                            <span th:text="${#dates.format(bindings.schedule.startTime,'yyyy-MM-dd')}"></span>
+                            <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
                             <span>—</span>
-                            <span th:text="${#dates.format(bindings.schedule.endTime,'yyyy-MM-dd')}"></span>
+                            <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
                             </div>
                         </li>
                     </ul>
                 </div>
 
                 <!--分享-->
-                <div class="related-fx-wrap">
-                <div class="flex-box" >分享 <span></span></div>
-                <ul class="related-rc">
-                    <li class="boxsizing" th:if="${bindings.publicType == '分享'}" th:each="bindings:${bindings}">
+                <div class="related-fx-wrap" th:if="${bindingVo.publicType=='分享'}">
+                    <div class="flex-box" >分享 <span></span></div>
+                    <ul class="related-rc">
+                    <li class="boxsizing"  th:each="share:${bindingVo.shareList}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
                                 <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${bindings.share.memberImg}">
-                                <span th:text="${bindings.share.title}"></span>
+                                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
+                                <span th:text="${share.title}"></span>
                             </div>
-                            <div class="related-rw-describe over-hidden" th:text="${bindings.share.project.projectName}"></div>
+                            <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
                             <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                         </div>
                         <!--<div class="related-rc-down">-->
@@ -313,23 +311,20 @@
                         <!--</div>-->
                     </li>
                 </ul>
-            </div>
+                </div>
             </div>
         </div>
-
-
-
 
 
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <div class="one-work-people" th:if="${executor.id != ''}">
-                <img src="../static/image/add.png" th:value="${executor.id}"  th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
+            <div class="one-work-people" th:if="${task.executor != ''}">
+                <img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
-            <div class="one-work-people" th:id="${participant.id}" th:if="${participantList != null}" th:each="participant:${participantList}">
-                <img src="../static/image/add.png" th:value="${participant.id}" th:src="#{IMAGE_SERVER}+${participant.userInfo.image}" />
+            <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:id="${joininfo.id}">
+                <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
             </div>
 
@@ -340,10 +335,10 @@
         <div class="heng-line"></div>
         <div class="state">
             <ul id = "log">
-                <li class="combox" th:each="taskLog:${taskLog}">
-                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${taskLog.memberImg}" />
-                    <span th:text="${taskLog.content}"></span>
-                    <div class="in-what-time" th:text = "${#dates.format(taskLog.createTime,'yyyy-MM-dd HH:mm')}"></div>
+                <li class="combox" th:each="tasklog:${taskLog}">
+                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.memberImg}" />
+                    <span th:text="${tasklog.content}"></span>
+                    <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                 </li>
             </ul>
         </div>
@@ -354,7 +349,7 @@
         <div class="fenge-line"></div>
         <div class="publish-bottom">
             <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}" />
-            <div class="publish-btn " th:onclick="'javascript:send()'">发布</div>
+            <div class="publish-btn">发布</div>
         </div>
         <!--上传文件框-->
         <div class="fujian-box boxsizing" style="display: none">
@@ -441,100 +436,6 @@
 
 </div>
 </body>
-<script>
-    // 建立连接对象（还未发起连接）
-    var socket = new SockJS("http://192.168.31.184:8080/webSocketServer");
-    // 获取 STOMP 子协议的客户端对象
-    var stompClient = Stomp.over(socket);
-
-    // 向服务器发起websocket连接并发送CONNECT帧
-    stompClient.connect({},
-        function connectCallback(frame) {
-            // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
-            console.log("连接成功");
-            subscribe();
-        },
-        function errorCallBack(error) {
-            // 连接失败时（服务器响应 ERROR 帧）的回调方法
-            console.log("连接失败");
-        }
-    );
-    //发送消息
-    function send() {
-        var chat = $('#chat').val();
-        var args = {"taskId":taskId,"content":chat}
-        $.post("/task/chat",args,function (data) {
-        },"json");
-        var messageJson = JSON.stringify({ "name": chat });
-        stompClient.send("/app/sendTest",{"taskId":taskId}, messageJson);
-        $('#chat').val('');
-        $('#chat').focus();
-        var scrollHeight = $('.revise-task').prop("scrollHeight");
-        $('.revise-task').animate({scrollTop:scrollHeight}, 400);
-
-
-    }
-
-    //订阅消息
-    function subscribe() {
-        var form = layui.form;
-        stompClient.subscribe('/topic/'+taskId, function (response) {
-            var returnData = JSON.parse(response.body);
-            var taskLog = JSON.parse(returnData.responseMessage);
-            if(taskLog.type == '把任务执行者指派给了'){
-                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
-                $('#executorId').val(taskLog.userInfo.id);
-                $('#executorName').html(taskLog.uName);
-                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
-                getLog(taskLog.taskLog);
-            }
-            if(taskLog.type == '发送消息'){
-                getLog(taskLog.object.taskLog);
-                var scrollHeight = $('.revise-task').prop("scrollHeight");
-                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
-            }
-            if(taskLog.type == '关联'){
-                addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bindId);
-            }
-            // if(taskLog.type == '取消了关联'){
-            //     getLog(taskLog.object.taskLog);
-            //
-            // }
-            // if(taskLog.type == '完成了任务'){
-            //     if(taskLog.object.Status == '完成'){
-            //         $("#taskComplete").attr("checked",true);
-            //         $('.add-child-task').show();
-            //         form.render();
-            //     } else{
-            //         $("#taskComplete").attr("checked",false);
-            //         $('.add-child-task').hide();
-            //         form.render();
-            //     }
-            // }
-        });
-    }
-
-    layui.use('form', function(){
-        var form = layui.form;
-    //订阅消息
-    function subscribe1() {
-        stompClient.subscribe('/topic/subscribe', function (response) {
-            var returnData = JSON.parse(response.body);
-            var taskLog = JSON.parse(returnData.responseMessage);
-            if(taskLog.type == '把任务执行者指派给了'){
-                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
-                $('#executorId').val(taskLog.userInfo.id);
-                $('#executorName').html(taskLog.uName);
-                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
-            }
-        });
-    }
-    });
-
-
-
-</script>
-
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
@@ -543,13 +444,13 @@
     //当前任务id
     var taskId = [[${task.taskId}]];
     //当前任务所在菜单id
-    var taskMenuId = [[${taskMenuId}]];
+    var taskMenuId = [[${task.taskMenuId}]];
     //当前任务的状态
     var taskStatus = [[${task.taskStatus}]]
     //当前任务的名称
     var taskName = [[${task.taskName}]]
     //当前任务执行者id
-    var executorId = [[${executor.id}]];
+    var executor = [[${task.executor}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 </script>
@@ -582,6 +483,79 @@
             content: ['/binding/relevance.html?taskId='+taskId,'no']
         });
     });
+
+</script>
+<script th:inline="javascript">
+    // 建立连接对象（还未发起连接）
+    var socket = new SockJS('http://localhost:8080/webSocketServer');
+    // 获取 STOMP 子协议的客户端对象
+    var stompClient = Stomp.over(socket);
+
+    // 向服务器发起websocket连接并发送CONNECT帧
+    stompClient.connect({},
+        function connectCallback(frame) {
+            // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
+            console.log("连接成功");
+            subscribe();
+        },
+        function errorCallBack(error) {
+            // 连接失败时（服务器响应 ERROR 帧）的回调方法
+            console.log("连接失败");
+        }
+    );
+    //发送消息
+    $('.publish-btn').click(function (e) {
+        var chat = $('#chat').val();
+        var args = {"taskId":taskId,"content":chat}
+        $.post("/task/chat",args,function (data) {
+        },"json");
+        var messageJson = JSON.stringify({ "name": chat });
+        stompClient.send("/app/sendTest",{"taskId":taskId}, messageJson);
+        $('#chat').val('');
+        $('#chat').focus();
+        var scrollHeight = $('.revise-task').prop("scrollHeight");
+        $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+    });
+
+
+
+    //订阅消息
+    function subscribe() {
+        stompClient.subscribe('/topic/'+taskId, function (response) {
+            var returnData = JSON.parse(response.body);
+            var taskLog = JSON.parse(returnData.responseMessage);
+            if(taskLog.type == '把任务执行者指派给了'){
+                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
+                $('#executorId').val(taskLog.userInfo.id);
+                $('#executorName').html(taskLog.uName);
+                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
+                getLog(taskLog.taskLog);
+            }
+            if(taskLog.type == '发送消息'){
+                getLog(taskLog.object.taskLog);
+                var scrollHeight = $('.revise-task').prop("scrollHeight");
+                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+            }
+            if(taskLog.type == '关联'){
+                addbindingtr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bindId);
+            }
+            // if(taskLog.type == '取消了关联'){
+            //     getLog(taskLog.object.taskLog);
+            //
+            // }
+            // if(taskLog.type == '完成了任务'){
+            //     if(taskLog.object.Status == '完成'){
+            //         $("#taskComplete").attr("checked",true);
+            //         $('.add-child-task').show();
+            //         form.render();
+            //     } else{
+            //         $("#taskComplete").attr("checked",false);
+            //         $('.add-child-task').hide();
+            //         form.render();
+            //     }
+            // }
+        });
+    }
 
 </script>
 </html>

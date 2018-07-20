@@ -1,12 +1,9 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.binding.Binding;
-import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.binding.BindingVO;
+import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
@@ -21,7 +18,6 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
@@ -32,31 +28,15 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
-import io.netty.handler.codec.json.JsonObjectDecoder;
-import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.transaction.xa.EhcacheXAException;
-import net.sf.jsqlparser.expression.operators.relational.OldOracleJoinBinaryExpression;
-import net.sf.jsqlparser.statement.select.ExceptOp;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.SecurityUtils;
-import org.hibernate.validator.constraints.pl.REGON;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
-import org.omg.CORBA.ObjectHelper;
-import org.springframework.data.convert.ReadingConverter;
-import org.springframework.messaging.converter.SimpleMessageConverter;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.xml.ws.RequestWrapper;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.SimpleFormatter;
 
 /**
  * 任务控制器，关于任务的操作
@@ -196,7 +176,7 @@ public class TaskController {
      */
     @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addAndRemoveTaskMember(Task task,String[] addUserEntity,String[] removeUserEntity){
+    public JSONObject addAndRemoveTaskMember(Task task,String addUserEntity,String removeUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
@@ -1021,7 +1001,6 @@ public class TaskController {
      */
     @GetMapping("initTask.html")
     public String initTask(Task task,String projectId,Model model){
-        JSONObject jsonObject = new JSONObject();
         try {
             //获取当前用户信息
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -1037,48 +1016,12 @@ public class TaskController {
             //判断当前用户有没有收藏该任务
             boolean isCollect = taskService.judgeCollectTask(task);
             model.addAttribute("isCollect",isCollect);
-            //查询任务的标签
-            List<Tag> tagList = taskService.findTaskTag(task.getTaskId());
-            if(tagList != null && tagList.size() > 0){
-                Collections.reverse(tagList);
-                model.addAttribute("tagList",tagList);
-            }
+
             //查询出任务的关联信息
-            List<BindingVO> bindings = bindingService.listBindingInfoByPublicId(task.getTaskId());
-            model.addAttribute("bindings",bindings);
-            //查询出该任务的创建者信息
-            UserEntity taskCreate = userService.findTaskCreate(task.getTaskId());
-            model.addAttribute("taskCreate",taskCreate);
-            //返回当前任务的所有子任务信息
-            List<Task> subLevelTask = taskService.findTaskByFatherTask(task.getTaskId());
-            jsonObject.put("subLevelTask",subLevelTask);
-            model.addAttribute("subLevelTask",subLevelTask);
-            //拿到该任务的执行者信息
-            UserEntity executorInfo = userService.findExecutorByTask(task.getTaskId());
-            if(executorInfo != null){
-                model.addAttribute("executor",executorInfo);
-            } else{
-                executorInfo = new UserEntity();
-                executorInfo.setUserName("待认领");
-                executorInfo.setId("");
-                model.addAttribute("executor",executorInfo);
-            }
-            //查询出该任务的参与者信息
-            List<UserEntity> participantList = taskMemberService.findTaskMemberInfo(task.getTaskId(),"参与者",executorInfo.getId());
-            model.addAttribute("participantList",participantList);
-            //查询出项目下的成员
-            List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-            if(projectAllMember != null && projectAllMember.size() > 0){
-                model.addAttribute("members",projectAllMember);
-            } else{
-                if(projectAllMember == null){
-                    projectAllMember = new ArrayList<UserEntity>();
-                }
-                UserEntity userEntity1 = new UserEntity();
-                userEntity1.setUserName("该项目下没有成员");
-                projectAllMember.add(userEntity1);
-                model.addAttribute("members",projectAllMember);
-            }
+            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
+            model.addAttribute("bindingVo",bindingVo);
+
+
             if(taskById.getParentId() == null){
                 //查询出该任务所在的位置信息
                 Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());

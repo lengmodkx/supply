@@ -226,7 +226,8 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		}
 		//循环参与者信息把信息放到任务和参与者的实体类对象中
 		if(member != null && member.length > 0){
-			List<UserEntity> manyUserById = userService.findManyUserById(member);
+			//wangayfeng
+			List<UserEntity> manyUserById = userService.findManyUserById(member.toString());
 			if(manyUserById != null && manyUserById.size() > 0) {
 				for (UserEntity userEntity : manyUserById) {
 					if(task.getExecutor().equals("")){

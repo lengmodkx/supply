@@ -59,10 +59,9 @@ public interface BindingMapper {
 	/**
 	 * 通过
 	 * @param publicId
-	 * @param publicType
 	 * @return
 	 */
-	List<Binding> findBindingList(@Param("publicId")String publicId,@Param("publicType")String publicType);
+	List<Binding> findBindingList(@Param("publicId")String publicId);
 
 	/**
 	 * 查询出该目标的所有关联信息

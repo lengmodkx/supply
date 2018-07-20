@@ -543,43 +543,41 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
+    public TaskLogVO addAndRemoveTaskMember(Task task, String addUserEntity, String removeUserEntity) {
         StringBuilder content = new StringBuilder("");
-        if(addUserEntity != null && addUserEntity.length > 0){
-            List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
-            UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
-            //向任务成员表中添加数据
-            if(addUserEntity != null){
-                taskMemberService.addManyMemberInfo(addUser,task);
-                //循环用来拼接log日志字符串
-                content.append(TaskLogFunction.C.getName()).append(" ");
-                for (int i = 0; i < addUserEntity.length; i++) {
-                    if(i == addUserEntity.length - 1){
-                        content.append(addUser[i].getUserName());
-                    } else{
-                        content.append(addUser[i].getUserName()).append(",");
-                    }
-                }
-            }
-        }
-        if(removeUserEntity != null && removeUserEntity.length > 0) {
-            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
-            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
-            if (removeUserEntity != null) {
-                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
-                if (!StringUtils.isEmpty(content.toString())) {
-                    content.append(",");
-                }
-                content.append(TaskLogFunction.B.getName()).append(" ");
-                for (int i = 0; i < removeUserEntity.length; i++) {
-                    if (i == removeUserEntity.length - 1) {
-                        content.append(removeUser[i].getUserName());
-                    } else {
-                        content.append(removeUser[i].getUserName()).append(",");
-                    }
-                }
-            }
-        }
+        List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
+        UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
+        //向任务成员表中添加数据
+//        if(addUserEntity != null){
+//            taskMemberService.addManyMemberInfo(addUser,task);
+//            //循环用来拼接log日志字符串
+//            content.append(TaskLogFunction.C.getName()).append(" ");
+//            for (int i = 0; i < addUserEntity.length; i++) {
+//                if(i == addUserEntity.length - 1){
+//                    content.append(addUser[i].getUserName());
+//                } else{
+//                    content.append(addUser[i].getUserName()).append(",");
+//                }
+//            }
+//        }
+//        if(removeUserEntity != null && removeUserEntity.length > 0) {
+//            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
+//            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
+//            if (removeUserEntity != null) {
+//                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
+//                if (!StringUtils.isEmpty(content.toString())) {
+//                    content.append(",");
+//                }
+//                content.append(TaskLogFunction.B.getName()).append(" ");
+//                for (int i = 0; i < removeUserEntity.length; i++) {
+//                    if (i == removeUserEntity.length - 1) {
+//                        content.append(removeUser[i].getUserName());
+//                    } else {
+//                        content.append(removeUser[i].getUserName()).append(",");
+//                    }
+//                }
+//            }
+//        }
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
         return taskLogVO;
     }

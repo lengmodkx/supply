@@ -6,6 +6,8 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author heshaohua
  * @Title: BindingVO
@@ -13,11 +15,11 @@ import lombok.Data;
  * @date 2018/7/14 18:55
  **/
 @Data
-public class BindingVO {
+public class BindingVo {
     private String id;
-    private Task task;
-    private Share share;
-    private File file;
-    private Schedule schedule;
+    private List<Task> taskList;
+    private List<Share> shareList;
+    private List<File> fileList;
+    private List<Schedule> scheduleList;
     private String publicType;
 }
