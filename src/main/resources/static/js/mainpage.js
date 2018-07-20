@@ -30,7 +30,7 @@ function useLayerForm(){
 
 $(function () {
     $(".ul-wrap").css("max-height",parseInt($(".view").css("height"))-100+'px');
-    $(document).click(function(event){
+    $(".content-wrap-wrap").click(function(event){
         var _con = $('.add-task-box');  // 设置目标区域
         if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
             $('.add-task-box').slideUp(200);     //淡出消失
@@ -513,13 +513,37 @@ function addRenwu(addBox,taskMenuId) {
         '                                       <div class="who-can-see">所有成员可见</div>\n' +
         '                                       <div class="layui-btn layui-btn-normal new-assignment-ok" data="'+taskMenuId+'">创建</div>\n' +
         '                                   </div>\n' +
-        '                               </div>';
+        '                               </div>\n' +
+        '<div class="tk-people" style="display: none">\n'+
+        '<div class="people boxsizing" >\n' +
+        '    <input type="text" name="" placeholder="搜索" class="layui-input">\n' +
+        '    <div class="peoples">\n' +
+        '        <div>\n' +
+        '            <p>项目成员</p>\n' +
+        '            <div class="one-people" th:each="member:${data}" th:id="${member.id}">\n' +
+        '                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.userInfo.image}" />\n' +
+        '                <span th:text="${member.userName}"></span>\n' +
+        '                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+        '        <p>推荐</p>\n' +
+        '        <div id = "noExecutor">\n' +
+        '\n' +
+        '        </div>\n' +
+        '        <div class="add-new-people">\n' +
+        '            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />\n' +
+        '            <span>邀请新成员</span>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
+        '    <div class="people-ok">确定</div>\n' +
+        '</div>\n'+
+        '</div>';
 
         addBox.html(taskItem);
         layui.form.render();
 };
 
-
+//标签 框
 $('.ul-wrap').on('click','.no-tags',function () {
     var top=$(this).offset().top-250;
     var left=$(this).offset().left;
@@ -535,15 +559,29 @@ $('.ul-wrap').on('click','.no-tags',function () {
         anim: 1,  //动画 0-6
         content: $('.tags-search-build').html()
     });
-    console.log("xxxxxx");
 });
 
 
-$('.model').on('click','.no-add-work-people',function () {
-
+$('.model').on('click','.add-work-people ',function () {
+    var top=$(this).offset().top-250;
+    var left=$(this).offset().left;
+    people(top,left)
 });
-
-
+// 人员 框
+function people(top,left){
+    layer.open({
+        type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        title: false, //标题
+        offset: [top,left],
+        area:['252px','360px'],
+        fixed: false,
+        shadeClose: true, //点击遮罩关闭
+        shade:[0.1,'#fff'],
+        closeBtn: 0,
+        anim: 1,  //动画 0-6
+        content: $('.tk-people').html()
+    });
+}
 
 $('.model').on('click','.new-assignment-ok',function () {
 
