@@ -31,7 +31,7 @@ stompClient.connect({},
         var task = JSON.parse(returnData.responseMessage);
         console.log(task);
         if(task.type === '创建了任务'){
-            taskShow(task.object.task);
+            taskShow(task.task);
         }
         if(task.type === '把任务执行者指派给了'){
             changeExecutor(task.taskId,IMAGE_SERVER+task.userInfo.image);
@@ -49,15 +49,15 @@ stompClient.connect({},
             '                                  <div class="task-card">\n' +
             '                                      <!--//左边框线-->\n' +
             '                                      <div class="task-priority bg-priority-0"></div>\n' +
-            '                                      <div class="task-check-box" onclick="javascript:updateTask(\'+task.taskId+\',\'+task.projectId+\')">\n' +
+            '                                      <div class="task-check-box" onclick="javascript:updateTask('+task.taskId+','+task.projectId+')">\n' +
             '                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />\n' +
             '                                      </div>\n' +
             '                                      <div class="task-content-set">\n' +
             '                                          <header class="assignment-top-box boxsizing clearfix">\n' +
             '                                              <span class="assignment-title">'+task.taskName+'</span>';
-        if(task.taskMember != null) {
-                a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.taskMember.memberImg + '" /></header><section class="assignment-bottom-box clearfix">';
-        }
+        // if(task.executorInfo != null) {
+        //         a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" /></header><section class="assignment-bottom-box clearfix">';
+        // }
 
         if(task.repeat!=='不重复'){
             a+='<span class="how-repeat">'+task.repeat+'</span>';
@@ -65,10 +65,6 @@ stompClient.connect({},
 
         if(task.remind!=='不提醒'){
             a+=' <img src="/image/zhong.png"/>';
-        }
-
-        if (task.remarks!==null&&task.remarks!==''){
-            a+='<img  src="/image/file.png">';
         }
 
         $('.taskList'+task.taskMenuId).append(a);

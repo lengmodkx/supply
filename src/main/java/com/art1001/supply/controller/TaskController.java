@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
@@ -146,17 +147,14 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
-            TaskLogVO taskLogVO = taskService.saveTask(task);
+            taskService.saveTask(task);
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.R.getName());
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("task",taskByTaskId);
-            taskPushType.setObject(map);
-            jsonObject.put("task",taskByTaskId);
-            jsonObject.put("taskLog",taskLogVO);
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSONObject.toJSONString(taskPushType)));
+            JSONObject object = new JSONObject();
+            object.put("task",taskByTaskId);
+            object.put("type","创建了任务");
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
             jsonObject.put("result","0");

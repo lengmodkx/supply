@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.task;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.List;
