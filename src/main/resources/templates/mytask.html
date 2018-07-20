@@ -2,54 +2,171 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
-    <title>登陆</title>
+    <title>我的任务</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mynearthing.css}" href="../static/css/mynearthing.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mytask.css}" href="../static/css/mytask.css">
 </head>
 <body>
-<div class="my-task-box boxsizing layui-form">
-    <div class="my-task-title">
-       <div class="my-task-title-left">
-           <span class="now">我执行的</span>
-           <span>我创建的</span>
-           <span>我参与的</span>
-       </div>
-        <div class="my-task-title-right">
-            <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
-            <span class="yxjpx">按优先级排序</span>
-
-
-            <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
-            <select name="" lay-verify="">
-                <option value="" selected>未完成</option>
-                <option value="">已完成</option>
-            </select>
-
-        </div>
-    </div>
-
-    <div class="things layui-form">
+<div class="my-toper" >
+    <div class="my-nav-wrap">
         <ul>
-            <li class="thing-list">
-                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                <span class="what-thing">设计项目主界面——项目名称</span>
-                <span class="dt">dt-12</span>
-                <span class="thing-what-date">6月10日 14:14</span>
-            </li>
-            <li class="thing-list">
-                <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
-                <span class="what-thing">设计项目主界面——项目名称</span>
-                <span class="dt">dt-12</span>
-                <span class="thing-what-date">6月10日 14:14</span>
-            </li>
+            <li id="click-near-thing" >近期的事</li>
+            <li id="click-my-task" class="now">任务</li>
+            <li id="click-my-scheduling">日程</li>
+            <li id="click-my-file">文件</li>
+            <li id="click-my-collect">收藏</li>
         </ul>
-
     </div>
-
-
+    <i class="layui-icon layui-icon-close" style="font-size: 20px; color: gray;"></i>
 </div>
+<div class="mypage-content" style="margin-top: 50px">
+    <!--任务 页面-->
+    <div id="my-task">
+        <div class="my-task-box  layui-form">
+            <div class="my-task-title boxsizing">
+                <div class="my-task-title-left">
+                    <span class="now">我执行的</span>
+                    <span>我创建的</span>
+                    <span>我参与的</span>
+                </div>
+                <div class="my-task-title-right">
+                    <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
+                    <select name="" lay-verify="" lay-filter="task"  id = "orderType">
+                        <option value="1" selected>按优先级排序</option>
+                        <option value="2">按截止时间排序</option>
+                        <option value="3" >按创建时间最近排序</option>
+                        <option value="4">按项目名称排序</option>
+                    </select>
+                    <i class="layui-icon layui-icon-down" style="font-size: 16px; color: #D0D0D0;float: right"></i>
+                    <select name="" id = "status" lay-filter="task" lay-verify="">
+                        <option value="1" selected>未完成</option>
+                        <option value="2">已完成</option>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="things layui-form">
+                <div class="things-wrap">
+                    <div class="things layui-form" id="projectTask">
+                        <div>
+                            <p class="pro-name"></p>
+                            <ul id="executorTask">
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="pro-name"></p>
+                            <ul id="executorTask">
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="pro-name"></p>
+                            <ul id="executorTask">
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="pro-name"></p>
+                            <ul id="executorTask">
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="things layui-form" style="display: none">
+                            <ul>
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+
+                                </li>
+                            </ul>
+
+                        </div >
+                        <div class="things layui-form" style="display: none">
+                            <ul>
+                                <li class="thing-list" th:each="task : ${taskList}">
+                                    <div class="urgent-state"></div>
+                                    <div class="things-info boxsizing">
+                                        <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+                                        <div class="rw-span-wrap">
+                                            <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                            <span class="what-thing" >属于5d管理系统</span>
+                                        </div>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                        <span class="thing-what-date">—</span>
+                                        <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> </div>
+</div>
+
 
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -57,13 +174,11 @@
 <script>
     layui.use('form', function(){
         var form = layui.form;
-
         //监听提交
         form.on('submit(formDemo)', function(data){
             layer.msg(JSON.stringify(data.field));
             return false;
         });
-
         form.on('switch(switch-filter)', function(data){
             console.log(data.elem.checked); //开关是否开启，true或者false
             if (data.elem.checked) {
@@ -72,9 +187,25 @@
                 $(".who-can-see").text("所有成员可见")
             }
         });
-
-
-
     });
 </script>
+<script id="myTask" type="text/html">
+    <ul>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <li class="thing-list">
+            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+            <span class="what-thing">{{}}</span>
+            <span class="thing-what-date">{{}}</span>
+        </li>
+        {{#  }); }}
+        {{#  if(d.list.length === 0){ }}
+        无数据
+        {{#  } }}
+    </ul>
+</script>
+<script th:inline="javascript">
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+</script>
+<script th:src="@{/js/mypage.js}" src="../static/js/mypage.js"></script>
+<script th:src="@{/js/myCollect.js}" src="../static/js/myCollect.js" ></script>
 </html>

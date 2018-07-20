@@ -2,156 +2,161 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
-    <title>登陆</title>
+    <title>我的日程</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
 </head>
 <body>
-<div class="add-scheduling">
-    <div class="middle-box">
-        <img src="../static/image/adds.png" >
-        添加日程
+<div class="my-toper" >
+    <div class="my-nav-wrap">
+        <ul>
+            <li id="click-near-thing">近期的事</li>
+            <li id="click-my-task">任务</li>
+            <li id="click-my-scheduling" class="now">日程</li>
+            <li id="click-my-file">文件</li>
+            <li id="click-my-collect">收藏</li>
+        </ul>
     </div>
+    <i class="layui-icon layui-icon-close" style="font-size: 20px; color: gray;"></i>
 </div>
-<!--//每一个折叠区域-->
-<div class="my-scheduling-box boxsizing layui-form">
-    <div class="scheduling-title">
-        <span class="now">未来的日程</span><span>过去的日程</span>
-    </div>
-    <div class="layui-collapse my-scheduling">
-        <div class="layui-colla-item">
-            <div class="layui-colla-title">
-                <span class="scheduling-date">今天</span><span class="scheduling-num">+2</span>
-            </div>
-            <div class="layui-colla-content layui-show scheduling-list">
-               <ul>
-                   <li>
-                       <div class="scheduling-time">
-                           <span>8:15</span><span>——</span><span>16:15</span>
-                       </div>
-                       <div class="scheduling-name">
-                           <span>设计项目主机</span><span>——</span><span>项目名称</span>
-                       </div>
-                       <div class="scheduling-dt">dt-12</div>
-                   </li>
-                   <li>
-                       <div class="scheduling-time">
-                           <span>8:15</span><span>——</span><span>16:15</span>
-                       </div>
-                       <div class="scheduling-name">
-                           <span>设计项目主机</span><span>——</span><span>项目名称</span>
-                       </div>
-                       <div class="scheduling-dt">dt-12</div>
-                   </li>
-               </ul>
+<div class="mypage-content" style="margin-top: 50px">
+    <!--日程页面-->
+    <div id="my-scheduling"   >
+        <div class="add-scheduling">
+            <div class="middle-box">
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                添加日程
             </div>
         </div>
+        <!--//每一个折叠区域-->
+        <div class="my-scheduling-box boxsizing layui-form">
+            <div class="scheduling-title">
+                <span class="now">未来的日程</span><span>过去的日程</span>
+            </div>
+            <div class="my-scheduling-wrap">
+                <div class="layui-collapse my-scheduling">
+                    <div class="layui-colla-item">
+                        <div class="layui-colla-title">
+                            <span class="scheduling-date">今天</span><span class="scheduling-num">+2</span>
+                        </div>
+                        <div class="layui-colla-content layui-show scheduling-list">
+                            <ul>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                    <div class="scheduling-dt">dt-12</div>
+                                </li>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                    <div class="scheduling-dt">dt-12</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-collapse my-scheduling" style="display: none">
+                    <div class="layui-colla-item">
+                        <div class="layui-colla-title">
+                            <span class="scheduling-date">昨天</span><span class="scheduling-num">+2</span>
+                        </div>
+                        <div class="layui-colla-content layui-show scheduling-list">
+                            <ul>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                    <div class="scheduling-dt">dt-12</div>
+                                </li>
+                                <li>
+                                    <div class="scheduling-time">
+                                        <span>8:15</span><span>——</span><span>16:15</span>
+                                    </div>
+                                    <div class="scheduling-name">
+                                        <span>设计项目主机</span><span>——</span><span>项目名称</span>
+                                    </div>
+                                    <div class="scheduling-dt">dt-12</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!--日程菜单 弹框-->
+        <div style="display: none" class="scheduling-menu boxsizing layui-form">
+            <div class="scheduling-menu-title">日程菜单</div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/bjrc.png" th:src="@{/image/bjrc.png}" />
+                <span>编辑日程</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
+                <span>复制日程</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
+                <span>复制日程链接</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
+                <span>共享日程</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
+                <span>收藏日程</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
+                <span>移动日程</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
+                <span>移到回收站</span>
+            </div>
+            <div class="heng-line"></div>
+            <div class="secret menu-box layui-form">
+                <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
+                <span>隐私模式</span>
+                <div class="switch">
+                    <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
+                </div>
+                <div class="who-can-see">所有成员可见</div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 
-<!--编辑日程 弹框-->
-<div class="edit-scheduling boxsizing layui-form">
-    <div class="edit-scheduling-title">编辑日程</div>
-    <textarea name=""  placeholder="设计修改任务界面" class="layui-textarea"></textarea>
-    <div class="begin-time abox">
-        <img src="../static/image/begintime.png" >
-        <input type="text" class="layui-input" id="beginTime" placeholder="设置开始时间">
-    </div>
-    <div class="over-time abox">
-        <img src="../static/image/begintime.png" >
-        <input type="text" class="layui-input" id="overTime" placeholder="设置截止时间">
-    </div>
-    <div class="no-repeat abox">
-        <img src="../static/image/norepeat.png" >
-        <select name="repeat" lay-verify="">
-            <option value="repeat-no">不重复</option>
-            <option value="repeat-day">每天重复</option>
-            <option value="repeat-week">每周重复</option>
-            <option value="repeat-mouth">每月重复</option>
-            <option value="repeat-year">每年重复</option>
-            <option value="repeat-workday">工作日重复</option>
-        </select>
-    </div>
-    <div class="no-remand abox">
-        <img src="../static/image/noremand.png" >
-        <select name="remand" lay-verify="">
-            <option value="remand-no">不提醒</option>
-            <option value="remand-over">任务截止时提醒</option>
-            <option value="remand-begin">任务开始时提醒</option>
-        </select>
-    </div>
-    <div class="heng-line"></div>
-    <p class="cyz">参与者</p>
-    <div class="work-people boxsizing clearfix">
-        <div class="one-work-people">
-            <img src="../static/image/add.png" >
-            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
-        </div>
-        <div class="add-work-people">
-            <img src="../static/image/adds.png" >
-        </div>
-    </div>
-    <div class="heng-line"></div>
-    <div class="edit-scheduling-ok">保存</div>
-</div>
 
-<!--日程菜单 弹框-->
-<div class="scheduling-menu boxsizing layui-form">
-    <div class="scheduling-menu-title">日程菜单</div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/bjrc.png" >
-        <span>编辑日程</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/fzrc.png" >
-        <span>复制日程</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/fzrclj.png" >
-        <span>复制日程链接</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/gxrc.png" >
-        <span>共享日程</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/scrc.png" >
-        <span>收藏日程</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/ydrc.png" >
-        <span>移动日程</span>
-    </div>
-    <div class="menu-box edit-rc">
-        <img src="../static/image/hsz.png" >
-        <span>移到回收站</span>
-    </div>
-    <div class="heng-line"></div>
-    <div class="secret menu-box layui-form">
-        <img src="../static/image/suo.png" >
-        <span>隐私模式</span>
-        <div class="switch">
-            <input type="checkbox" name="" lay-skin="switch" lay-filter="switch-filter">
-        </div>
-        <div class="who-can-see">所有成员可见</div>
-    </div>
-
-</div>
 </body>
-<!--<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>-->
-<!--<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>-->
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script>
     layui.use('form', function(){
         var form = layui.form;
-
         //监听提交
         form.on('submit(formDemo)', function(data){
             layer.msg(JSON.stringify(data.field));
             return false;
         });
-
         form.on('switch(switch-filter)', function(data){
             console.log(data.elem.checked); //开关是否开启，true或者false
             if (data.elem.checked) {
@@ -160,28 +165,25 @@
                 $(".who-can-see").text("所有成员可见")
             }
         });
-
-
-
-    });
-    layui.use('element', function(){
-        var element = layui.element;
-
-    });
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#beginTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-        laydate.render({
-            elem: '#overTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
     });
 </script>
+<script id="myTask" type="text/html">
+    <ul>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <li class="thing-list">
+            <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
+            <span class="what-thing">{{}}</span>
+            <span class="thing-what-date">{{}}</span>
+        </li>
+        {{#  }); }}
+        {{#  if(d.list.length === 0){ }}
+        无数据
+        {{#  } }}
+    </ul>
+</script>
+<script th:inline="javascript">
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+</script>
+<script th:src="@{/js/mypage.js}" src="../static/js/mypage.js"></script>
+<script th:src="@{/js/myCollect.js}" src="../static/js/myCollect.js" ></script>
 </html>
