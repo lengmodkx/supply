@@ -576,6 +576,11 @@ public class TaskController {
         return jsonObject;
     }
 
+    @GetMapping("tagHtml.html")
+    public String tagHtml(){
+        return "tk-add-tag";
+    }
+
     /**
      * 从任务详情界面添加标签
      * @param tag 标签名称

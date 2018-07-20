@@ -34,7 +34,7 @@ $(function () {
         var _con = $('.add-task-box');  // 设置目标区域
         if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
             $('.add-task-box').slideUp(200);     //淡出消失
-            $(".add-assignment").show()
+            $(".add-assignment").show();
         }
     });
     $(".content-wrap-wrap").on("click",".add-task-box",function (e) {
@@ -444,7 +444,55 @@ function addRenwu(addBox,taskMenuId) {
         '                                           <span>标签</span>\n' +
         '                                           <span class="no-tags">添加标签</span>\n' +
         '                                           <div class="has-tags"></div>\n' +
-        '                                   </div>\n'+
+        '                                   </div><div class="tags-search-build" style="display: none">\n' +
+        '            <!--搜索标签-->\n' +
+        '            <div class="tag-search" >\n' +
+        '                <div class="tag-search-title boxsizing">\n' +
+        '                    <input class="tag-search-input" type="text" placeholder="搜索标签">\n' +
+        '                    <img src="/image/adds.png" />\n' +
+        '                </div>\n' +
+        '                <ul class="tags-ul boxsizing" id = "tags">\n' +
+        '                    <!--这里是标签-->\n' +
+        '                    <li class="tags-list">\n' +
+        '                        <span class="dot"></span>\n' +
+        '                        <span class="tag-font">aaa</span>\n' +
+        '                    </li>\n' +
+        '                </ul>\n' +
+        '            </div>\n' +
+        '            <!--新建标签-->\n' +
+        '            <div class="build-tags" style="display: none">\n' +
+        '                <div class="build-tags-title boxsizing">\n' +
+        '                    <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>\n' +
+        '                    新建标签\n' +
+        '                    <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>\n' +
+        '                </div>\n' +
+        '                <div class="build-tags-con boxsizing">\n' +
+        '                    <input class="tag-name boxsizing" type="text" placeholder="标签名称">\n' +
+        '                    <ul class="color-pick">\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>\n' +
+        '                        </li>\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
+        '                        </li>\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
+        '                        </li>\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
+        '                        </li>\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
+        '                        </li>\n' +
+        '                        <li>\n' +
+        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
+        '                        </li>\n' +
+        '                    </ul>\n' +
+        '                    <div class="tag-ok" disabled>创建</div>\n' +
+        '                </div>\n' +
+        '\n' +
+        '            </div>\n' +
+        '        </div>\n'+
         '                                   <div class="heng-line"></div>\n' +
         '                                   <p class="cyz">参与者</p>\n' +
         '                                   <div class="work-people boxsizing clearfix">\n' +
@@ -471,7 +519,38 @@ function addRenwu(addBox,taskMenuId) {
         layui.form.render();
 };
 
+
+$('.ul-wrap').on('click','.no-tags',function () {
+    var top=$(this).offset().top-350;
+    var left=$(this).offset().left;
+    layer.open({
+        type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        title: false, //标题
+        offset: [top,left],
+        area:['230px','250px'],
+        fixed: false,
+        shadeClose: false, //点击遮罩关闭
+        shade:0,
+        closeBtn: 0,
+        anim: 1,  //动画 0-6
+        content: $('.tags-search-build')
+    });
+});
+
+
+$('.model').on('click','.no-add-work-people',function () {
+
+});
+
+
+
 $('.model').on('click','.new-assignment-ok',function () {
+
+    var taskName = $("#taskName").val();
+    if(taskName===null||taskName===''||taskName===undefined){
+        layer.msg("请输入任务名称",{icon:5});
+        return false;
+    }
     addTask($(this).attr('data'));
 });
 function addTask(taskMenuId) {
@@ -523,6 +602,7 @@ function addTask(taskMenuId) {
     $.post(url,args,function(data){
         if(data.result === 1){
             layer.msg("任务创建成功!",{icon:1});
+            $("#taskName").val('');
         } else{
             layer.msg("任务创建失败!",{icon:5});
         }
