@@ -43,6 +43,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 项目控制器
@@ -619,16 +620,21 @@ public class ProjectController {
     /**
      * 查询项目成员
      */
-    public void findProjectMember(String projectId){
+    @PostMapping("findProjectMember")
+    @ResponseBody
+    public JSONObject findProjectMember(String projectId){
+        JSONObject jsonObject = new JSONObject();
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         try{
             List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
-
-
-
+            List<ProjectMember>  memberFilter = projectMembers.stream().filter(projectMember -> !projectMember.getMemberId().equals(userEntity.getId())).distinct().collect(Collectors.toList());
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功");
+            jsonObject.put("members",memberFilter);
+            jsonObject.put("user",userEntity);
         }catch (Exception e){
             throw new AjaxException(e);
         }
+        return jsonObject;
     }
-
 }

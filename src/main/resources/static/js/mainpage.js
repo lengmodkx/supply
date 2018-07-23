@@ -521,20 +521,13 @@ function addRenwu(addBox,taskMenuId) {
         '    <input type="text" name="" placeholder="搜索" class="layui-input">\n' +
         '    <div class="peoples">\n' +
         '        <div>\n' +
-        '            <p>项目成员</p>\n' +
-        '            <div class="one-people" th:each="member:${data}" th:id="${member.id}">\n' +
-        '                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.userInfo.image}" />\n' +
-        '                <span th:text="${member.userName}"></span>\n' +
-        '                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>\n' +
+        '            <p>参与者</p>\n' +
+        '            <div class="invisit-people">\n' +
         '            </div>\n' +
         '        </div>\n' +
         '        <p>推荐</p>\n' +
-        '        <div id = "noExecutor">\n' +
+        '        <div class = "noExecutor">\n' +
         '\n' +
-        '        </div>\n' +
-        '        <div class="add-new-people">\n' +
-        '            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />\n' +
-        '            <span>邀请新成员</span>\n' +
         '        </div>\n' +
         '    </div>\n' +
         '    <div class="people-ok">确定</div>\n' +
@@ -561,6 +554,7 @@ $('.ul-wrap').on('click','.no-tags',function () {
         anim: 1,  //动画 0-6
         content: $('.tags-search-build').html(),
         success: function(layero, index){
+            $('.tags-ul').html('');
             $.post('/tag/findByProjectId',{"projectId":projectId},function (data) {
                 if(data.result===1&&data.data!=null){
                     for(var i=0;i<data.data.length;i++){
@@ -578,7 +572,7 @@ $('.ul-wrap').on('click','.no-tags',function () {
 
 
 $('.model').on('click','.add-work-people ',function () {
-    var top=$(this).offset().top-250;
+    var top=$(this).offset().top-360;
     var left=$(this).offset().left;
     people(top,left)
 });
@@ -594,7 +588,26 @@ function people(top,left){
         shade:[0.1,'#fff'],
         closeBtn: 0,
         anim: 1,  //动画 0-6
-        content: $('.tk-people').html()
+        content: $('.tk-people').html(),
+        success:function (layero, index) {
+            $(".invisit-people").html('');
+            $(".noExecutor").html('');
+            $.post('/project/findProjectMember',{"projectId":projectId},function (data) {
+                if(data.result===1){
+                    var div = '<img src="'+IMAGE_SERVER+data.user.userInfo.image+'"/>' +
+                        '<span>'+data.user.userName+'</span>' +
+                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>';
+                    $(".invisit-people").append(div);
+
+                    for(var i=0;i<data.members.length;i++){
+                        var div_people = '<div class="one-people"><img src="'+IMAGE_SERVER+data.members[i].memberImg+'"/>' +
+                            '<span>'+data.members[i].memberName+'</span>' +
+                            '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
+                        $(".noExecutor").append(div_people);
+                    }
+                }
+            });
+        }
     });
 }
 
