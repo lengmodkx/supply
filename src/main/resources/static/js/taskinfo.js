@@ -1,4 +1,22 @@
-
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    }
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
+}
 var zxz=false;
 
 layui.use('form', function() {
@@ -911,11 +929,10 @@ $('.zan img').click(function (e) {
 /**
  * 取消关联 的单击事件
  */
-$("html").on("click",".boxsizing .cancle",function () {
+$("html").on("click",".cancle",function (e) {
     var id = $(this).attr("data-id");
-    var bId = $(this).attr("data-binding-id");
     var url = "/binding/deleteBinding";
-    var args = {"id":id,"bId":bId};
+    var args = {"bId":id};
     $.post(url,args,function (data) {
         if(data.result == 1){
             location.reload();
@@ -924,6 +941,7 @@ $("html").on("click",".boxsizing .cancle",function () {
             layer.msg("系统异常,取消失败!");
         }
     },"json");
+    e.stopPropagation()
 });
 
 /**
@@ -993,150 +1011,177 @@ $('.tag-search-input').keyup(function () {
  * 追加关联字符串
  */
 function addBindingStr(binding,type,bindId){
+    alert(bindId);
     var content = "";
     if(type == '任务'){
-        content += '<li class="boxsizing" data-id="' + binding.taskId + '">'+
-            '<div class="check-box" value="' + binding.taskName + '">';
-            if(binding.taskStatus == '完成'){
-                content += '<input type="checkbox" value = "' + binding.taskId + '" lay-filter="bindTask" name="" lay-skin="primary" checked = "checked">';
-            } else{
-                content += '<input type="checkbox" value = "' + binding.taskId + '" lay-filter="bindTask" name="" lay-skin="primary">';
+        for(var i = 0;i < binding.length;i++){
+            content += '<li class="boxsizing" data-id="' + binding[i].taskId + '">'+
+                '<div class="check-box" value="' + binding[i].taskName + '">';
+                if(binding[i].taskStatus == '完成'){
+                    content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" checked = "checked">';
+                } else{
+                    content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary">';
+                }
+                content += '</div>'+
+                '<div class="related-rw-info">';
+                if(binding[i].executor == ''){
+                    content += '<img src="/image/add.png">';
+                } else{
+                    content += '<img src="' + IMAGE_SERVER + binding[i].executorInfo.userInfo.image+ '">';
+                }
+                content += '<span>'+' '+ binding[i].taskName + '</span>'+
+                '</div>'+
+                '<div class="related-rw-describe over-hidden">' + binding[i].project.projectName  + '</div>'+
+                '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
+                '<div class="related-menu" style="display: none">'+
+                '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
+                '<div class="related-menu-title">关联菜单</div>'+
+                '<ul>'+
+                // <!--<li class="boxsizing">-->
+                // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                // <!--<span>复制链接</span>-->
+                // <!--</li>-->
+                '<li class="boxsizing cancle" data-binding-id = "' + binding[i].taskId + '" data-id="' + bindId[i] + '">'+
+                '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
+                '<span>取消关联</span>'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</li>';
+                $('.related-rw-wrap').show();
+                $('.related-rw').prepend(content);
+                var form = layui.form;
+                form.render();
             }
-            content += '</div>'+
-            '<div class="related-rw-info">';
-            if(binding.executor == ''){
-                content += '<img src="/image/add.png">';
-            } else{
-                content += '<img src="' + IMAGE_SERVER + binding.executorInfo.userInfo.image+ '">';
-            }
-            content += '<span>'+' '+ binding.taskName + '</span>'+
-            '</div>'+
-            '<div class="related-rw-describe over-hidden">' + binding.project.projectName  + '</div>'+
-            '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
-            '<div class="related-menu" style="display: none">'+
-            '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
-            '<div class="related-menu-title">关联菜单</div>'+
-            '<ul>'+
-            // <!--<li class="boxsizing">-->
-            // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-            // <!--<span>复制链接</span>-->
-            // <!--</li>-->
-            '<li class="boxsizing cancle" data-binding-id = "' + binding.taskId + '" data-id="' + bindId + '">'+
-            '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
-            '<span>取消关联</span>'+
-            '</li>'+
-            '</ul>'+
-            '</div>'+
-            '</li>';
-            $('#bind .related-box').show();
-            $('.related-rw').prepend(content);
-            var form = layui.form;
-            form.render();
     }
     if(type == '文件'){
-
-        content += '<li class="boxsizing" data-id = "' + binding.fileId + '">'+
-            '<div class="related-wj-info">'+
-            '<img class="folderFile" src="/image/nofile.png">';
-        if(binding.catalog == 1){
-            content += '<img style="transform: scale(1.3)" class="folderFile" src="/image/nofile.png">';
+        for(var i = 0;i < binding.length;i++){
+            content += '<li class="boxsizing" data-id = "' + binding[i].fileId + '">'+
+                '<div class="related-wj-info">';
+            if(binding[i].catalog == 1){
+                content += '<img class="folderFile" src="/image/nofile.png">';
+            }
+            if(binding[i].catalog == 0 && (binding[i].ext == '.jpg' || binding[i].ext == '.png' || binding[i].ext == '.jpeg')){
+                content += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + binding[i].fileUrl + '"/>';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '..doc'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.docx'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.xls'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.xlsx'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.pptx'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.ppt'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.pdf'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.zip'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+            }
+            if(binding[i].catalog == 0 && binding[i].ext == '.rar'){
+                content += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+            }
+            content += '<span>' + binding[i].fileName + '</span>'+
+                '</div>'+
+                '<div class="related-rw-describe over-hidden">' + binding[i].project.projectName + '</div>'+
+                '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
+                '<div class="related-menu"  style="display: none">'+
+                '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
+                '<div class="related-menu-title" >'+'关联菜单'+'</div>'+
+                '<ul>'+
+                // '<!--<li class="boxsizing">-->'
+                // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                // <!--<span>复制链接</span>-->
+                // <!--</li>-->
+                '<li class="boxsizing cancle" data-binding-id = "' + binding[i].fileId + '" data-id="' + bindId[i] + '">'+
+                '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
+                '<span>取消关联</span>'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</li>';
+            $('.related-wj-wrap').show();
+            $('.related-wj').prepend(content);
+            var form = layui.form;
+            form.render();
         }
-        if(binding.catalog == 0 && (binding.ext == '.jpg' || binding.ext == '.png' || binding.ext == '.jpeg')){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + binding.fileUrl + '"/>';
-        }
-        if(binding.catalog == 0 && binding.ext == '..doc'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.docx'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.xls'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.xlsx'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.pptx'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.ppt'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.pdf'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.zip'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/zip.png" />';
-        }
-        if(binding.catalog == 0 && binding.ext == '.rar'){
-            content += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/rar.png" />';
-        }
-        content += '<span>' + binding.fileName + '</span>'+
-            '</div>'+
-            '<div class="related-rw-describe over-hidden">' + binding.project.projectName + '</div>'+
-            '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
-            '<div class="related-menu">'+
-            '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
-            '<div class="related-menu-title">'+'关联菜单'+'</div>'+
-            '<ul>'+
-            // '<!--<li class="boxsizing">-->'
-            // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-            // <!--<span>复制链接</span>-->
-            // <!--</li>-->
-            '<li class="boxsizing cancle" data-binding-id = "' + binding.fileId + '" data-id="' + bindId + '">'+
-            '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
-            '<span>取消关联</span>'+
-            '</li>'+
-            '</ul>'+
-            '</div>'+
-            '</li>';
-        $('#bind .related-box').show();
-        $('.related-wj').prepend(content);
-        var form = layui.form;
-        form.render();
     }
     if(type == '日程'){
+        for(var i = 0;i < binding.length;i++){
             content += '<li class="boxsizing">'+
             '<div class="related-rc-top">'+
             '<div class="related-rc-info">'+
             '<i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+
-            '<span>' + binding.scheduleName + '</span>'+
+            '<span>' + binding[i].scheduleName + '</span>'+
             '</div>'+
-            '<div class="related-rw-describe over-hidden">' + binding.project.projectName + '</div>'+
+            '<div class="related-rw-describe over-hidden">' + binding[i].project.projectName + '</div>'+
             '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
             '</div>'+
             '<div class="related-rc-down">'+
-            '<span>' + new Date(binding.startTime).format('yyyy-MM-dd') + '</span>'+
+            '<span>' + new Date(binding[i].startTime).format('yyyy-MM-dd') + '</span>'+
             '<span>—</span>'+
-            '<span>' + new Date(binding.endTime).format('yyyy-MM-dd') + '</span>'+
+            '<span>' + new Date(binding[i].endTime).format('yyyy-MM-dd') + '</span>'+
             '</div>'+
+                '<div class="related-menu" style="display: none">'+
+                '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
+                '<div class="related-menu-title">关联菜单</div>'+
+                '<ul>'+
+                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
+                '<span>取消关联</span>'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
             '</li>';
-        $('#bind .related-box').show();
+        }
+        $('.related-rc-wrap').show();
         $('.related-rc').prepend(content);
         var form = layui.form;
         form.render();
     }
     if(type == '分享'){
-        content += '<li class="boxsizing">'+
-                '<div class="related-rc-top">'+
-                '<div class="related-rc-info">'+
-                '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+
-                '<img src="' + IMAGE_SERVER + binding.memberImg + '">'+
-                '<span>' + binding.title + '</span>'+
-                '</div>'+
-                '<div class="related-rw-describe over-hidden">' + binding.project.projectName + '</div>'+
-                '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
-                '</div>'+
-            //     '<!--<div class="related-rc-down">-->'
-            //     <!--<span>2018-12-25 12:00</span>-->'
-            // <!--<span>—</span>-->
-            // <!--<span>2018-12-25 12:00</span>-->
-            // <!--</div>-->
-                '</li>';
-        $('#bind .related-box').show();
-        $('.related-fw').prepend(content);
-        var form = layui.form;
-        form.render();
+        for(var i = 0;i < binding.length;i++){
+            content += '<li class="boxsizing">'+
+                    '<div class="related-rc-top">'+
+                    '<div class="related-rc-info">'+
+                    '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+
+                    '<img src="' + IMAGE_SERVER + binding[i].userEntity.userInfo.image + '">'+
+                    '<span>' + binding[i].title + '</span>'+
+                    '</div>'+
+                    '<div class="related-rw-describe over-hidden">' + binding[i].project.projectName + '</div>'+
+                    '<i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>'+
+                    '</div>'+
+                        '<div class="related-menu" style="display: none">'+
+                        '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
+                        '<div class="related-menu-title">关联菜单</div>'+
+                        '<ul>'+
+                        '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                        '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
+                        '<span>取消关联</span>'+
+                        '</li>'+
+                        '</ul>'+
+                        '</div>'+
+                //     '<!--<div class="related-rc-down">-->'
+                //     <!--<span>2018-12-25 12:00</span>-->'
+                // <!--<span>—</span>-->
+                // <!--<span>2018-12-25 12:00</span>-->
+                // <!--</div>-->
+                    '</li>';
+            $('.related-fx-wrap').show();
+            $('.related-fw').prepend(content);
+            var form = layui.form;
+            form.render();
+        }
     }
 
 }

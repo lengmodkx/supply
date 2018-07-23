@@ -304,9 +304,18 @@
 		from prm_schedule where project_id = #{projectId}
 	</select>
 
+	<!-- 查询出未来的日程 或者 过去的日程 -->
 	<select id="findBeforeSchedule" resultMap="BaseResultMap" >
 		select <include refid="Base_Column_List" />
-		from prm_schedule where project_id = #{projectId} and start_time <![CDATA[<]]> #{currTime}
+		from prm_schedule where project_id = #{projectId}
+		<if test="ident != null">
+			<if test="ident == 0">
+	  			and start_time <![CDATA[>]]> #{currTime}
+			</if>
+			<if test="ident == 1">
+				and start_time <![CDATA[<]]> #{currTime}
+			</if>
+		</if>
 	</select>
 
 </mapper>

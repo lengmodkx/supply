@@ -44,12 +44,10 @@
             <div  class="rw-box">
                 <!--项目-->
                 <ul class="style-ul project-ul">
-                    <!--<li class="group-name"><p>星标项目</p></li>-->
-                    <!--<li class="style-li"><span>Teambition 新手引导</span></li>-->
                     <li class="group-name"><p>个人项目</p></li>
                     <li class="style-li p" th:each="project,p:${projectList}" th:data-id = "${project.projectId}" th:text="${project.projectName}" th:classappend="${p.first}? 'style-li selected'"><span></span></li>
                 </ul>
-                <div class="over-hidden-box">
+                <div class="over-hidden-box qwer">
                     <div class="scroll-box-heng">
                         <!--项目中的任务分组-->
                         <ul class="style-ul show-next" id="groups">
@@ -95,13 +93,7 @@
         <!--分享 整个 盒子-->
             <div style="display: none" class="fx-box">
                 <!--项目-->
-                <ul class="style-ul">
-                    <li class="group-name"><p>星标项目</p></li>
-                    <li class="style-li"><span>Teambition 新手引导</span></li>
-                    <li class="group-name"><p>个人项目</p></li>
-                    <li class="style-li"><span>bim5d过程管控平台</span></li>
-                    <li class="style-li"><span>阿拉丁bug管理系统</span></li>
-                </ul>
+                <ul class="style-ul"></ul>
                <div class="a-share-box">
                    <div class="title-create-style boxsizing">
                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>
@@ -120,13 +112,7 @@
             <!--日程 整个 盒子-->
             <div style="display: none" class="rc-box">
                 <!--项目-->
-                <ul class="style-ul">
-                    <li class="group-name"><p>星标项目</p></li>
-                    <li class="style-li"><span>Teambition 新手引导</span></li>
-                    <li class="group-name"><p>个人项目</p></li>
-                    <li class="style-li"><span>bim5d过程管控平台</span></li>
-                    <li class="style-li"><span>阿拉丁bug管理系统</span></li>
-                </ul>
+                <ul class="style-ul"></ul>
                 <div class="a-share-box">
                     <div class="title-create-style boxsizing">
                         <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>
@@ -134,7 +120,7 @@
                     </div>
                     <div class="scroll-box">
                         <div class="coming-rc">
-                            <div class="rc-box-title">未来的日程 · <span>2</span></div>
+                            <div class="rc-box-title">未来的日程 · <span class="new-rc-count">2</span></div>
                             <ul class="coming-rc-ul new-rc">
                                 <li class="a-task-li selected">
                                     <i class="layui-icon layui-icon-date" style="font-size: 20px; color: gray;"></i>
@@ -168,14 +154,8 @@
             <!--文件 整个 盒子-->
             <div style="display: none"  class="wj-box">
                 <!--项目-->
-                <ul class="style-ul">
-                    <li class="group-name"><p>星标项目</p></li>
-                    <li class="style-li"><span>Teambition 新手引导</span></li>
-                    <li class="group-name"><p>个人项目</p></li>
-                    <li class="style-li"><span>bim5d过程管控平台</span></li>
-                    <li class="style-li"><span>阿拉丁bug管理系统</span></li>
-                </ul>
-                <div class="over-hidden-box">
+                <ul class="style-ul"></ul>
+                <div class="over-hidden-box qwer">
                     <div class="scroll-box-heng">
                         <!--文件夹 第一层-->
                         <div class="paper-file show-next-wj">

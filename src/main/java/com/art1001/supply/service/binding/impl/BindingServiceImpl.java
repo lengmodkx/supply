@@ -165,7 +165,7 @@ public class BindingServiceImpl implements BindingService {
 	 * @return
 	 */
 	@Override
-	public int getBindingRecord(String publicId, String bindId) {
+	public String[] getBindingRecord(String publicId, String[] bindId) {
 		return bindingMapper.getBindingRecord(publicId,bindId);
 	}
 }

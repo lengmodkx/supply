@@ -195,9 +195,8 @@
 
         <div id = "bind">
             <!--关联 部分-->
-            <div class="related-box" th:style="'display:' + @{(${bindingVo!=null} ? 'block':'none')}">
-                <div class="related-wj-wrap">
-                    <div class="flex-box" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
+            <div class="related-box">
+                    <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
                  <ul class="related-rw">
                     <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
                         <div class="check-box" th:value="${task.taskName}">
@@ -227,9 +226,8 @@
                         </div>
                     </li>
                 </ul>
-            </div>
                 <!--文件-->
-                <div class="related-wj-wrap" th:if="${bindingVo.publicType=='文件'}">
+                <div class="related-wj-wrap" th:style="'display:' + @{(${bindingVo.fileList != null} ? 'block':'none')}">
                     <div class="flex-box">文件 <span></span></div>
                     <ul class="related-wj">
                         <li class="boxsizing" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
@@ -250,7 +248,7 @@
                             <div class="related-rw-describe over-hidden" th:text="${file.project.projectName}"></div>
                             <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             <!--取消关联框-->
-                            <div class="related-menu">
+                            <div class="related-menu" style="display: none">
                                 <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
                                 <div class="related-menu-title">关联菜单</div>
                                 <ul>
@@ -269,7 +267,7 @@
                 </div>
 
                 <!--日程-->
-                <div class="related-rc-wrap" th:if="${bindingVo.publicType=='日程'}">
+                <div class="related-rc-wrap" th:style="'display:' + @{(${bindingVo.scheduleList != null} ? 'block':'none')}">
                     <div class="flex-box">日程 <span></span></div>
                     <ul class="related-rc">
                         <li class="boxsizing"  th:each="schedule:${bindingVo.scheduleList}" >
@@ -286,14 +284,28 @@
                             <span>—</span>
                             <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
                             </div>
+                            <div class="related-menu" style="display: none">
+                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                <div class="related-menu-title">关联菜单</div>
+                                <ul>
+                                    <!--<li class="boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                    <!--<span>复制链接</span>-->
+                                    <!--</li>-->
+                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                        <span>取消关联</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>
 
                 <!--分享-->
-                <div class="related-fx-wrap" th:if="${bindingVo.publicType=='分享'}">
+                <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
-                    <ul class="related-rc">
+                    <ul class="related-fw">
                     <li class="boxsizing"  th:each="share:${bindingVo.shareList}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
@@ -309,6 +321,20 @@
                             <!--<span>—</span>-->
                             <!--<span>2018-12-25 12:00</span>-->
                         <!--</div>-->
+                        <div class="related-menu" style="display: none">
+                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                            <div class="related-menu-title">关联菜单</div>
+                            <ul>
+                                <!--<li class="boxsizing">-->
+                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                <!--<span>复制链接</span>-->
+                                <!--</li>-->
+                                <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                    <span>取消关联</span>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
                 </div>

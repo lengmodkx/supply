@@ -89,7 +89,9 @@ public interface ScheduleMapper {
 	/**
 	 * 查询出过去的日程
 	 * @param currTime 当前系统时间
+	 * @param projectId 项目的id
+	 * @param ident 标识  (0 查询大于当前时间的日程, 1 查询出小于当前时间的日程)
 	 * @return 日程的实体信息集合
 	 */
-	List<Schedule> findBeforeSchedule(@Param("currTime") long currTime,@Param("projectId") String projectId);
+	List<Schedule> findBeforeSchedule(@Param("currTime") long currTime,@Param("projectId") String projectId,@Param("ident")int ident);
 }

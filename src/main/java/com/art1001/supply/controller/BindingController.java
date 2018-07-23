@@ -9,6 +9,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.exception.AjaxException;
@@ -17,6 +18,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -29,10 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequestMapping("/binding")
@@ -59,6 +58,9 @@ public class BindingController {
     @Resource
     private FileService fileService;
 
+    @Resource
+    private ShareService shareService;
+
     /** 用于订阅推送消息 */
     @Resource
     private SimpMessagingTemplate messagingTemplate;
@@ -72,49 +74,78 @@ public class BindingController {
      */
     @RequestMapping("/saveBinding")
     @ResponseBody
-    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId,@RequestParam String publicType){
+    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId[],@RequestParam String publicType){
         JSONObject jsonObject = new JSONObject();
+        List<String> bindList1 = Arrays.asList(bindId);
+        List<String> bindList = new ArrayList<String>(bindList1);
         Binding binding = new Binding();
         try {
-            //判断是不是和自己关联
-            if(Objects.equals(publicId,bindId)){
-                jsonObject.put("msg","不能和自己关联!");
-                jsonObject.put("result",0);
-                return jsonObject;
+            for(int i = 0;i < bindList.size();i++){
+                //判断是不是和自己关联
+                if(Objects.equals(publicId,bindList.get(i))){
+                    bindList.remove(i);
+                }
             }
             //查询记录表中有没有存在该条关联记录
-            int recordCount = bindingService.getBindingRecord(publicId,bindId);
-            if(recordCount > 0){
-                jsonObject.put("msg","已存在关联信息,不能重复关联!");
-                jsonObject.put("result",0);
-                return jsonObject;
+            String[] record = bindingService.getBindingRecord(publicId,bindId);
+            //如果大于0 说明一定有关联信息重复
+            for(int i = 0;i < record.length;i++){
+                for(int j = 0;j < bindList.size();j++){
+                    if(Objects.equals(record[i],bindList.get(j))){
+                        bindList.remove(j);
+                    }
+                }
             }
-            binding.setId(IdGen.uuid());
-            binding.setPublicId(publicId);
-            binding.setBindId(bindId);
-            binding.setPublicType(publicType);
-            bindingService.saveBinding(binding);
-            jsonObject.put("result",1);
-            jsonObject.put("msg","保存成功");
+            //数据推送包装类
             TaskPushType taskPushType = new TaskPushType("关联");
-            Map<String,Object> map = new HashMap<String,Object>(5);
-            map.put("publicType",publicType);
-            taskPushType.setObject(map);
-            if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
-                Task bindingInfo = taskService.findTaskByTaskId(bindId);
-                bindingInfo.setCreatorInfo(null);
-                map.put("bindingInfo",bindingInfo);
+            Map<String,Object> map = new HashMap<String,Object>();
+            List bInfo = new ArrayList();
+            List<String> bId = new ArrayList<String>();
+            for (int i = 0;i < bindList.size();i++){
+                if(bindList.get(i) != null){
+                    //设置该条绑定关系的id
+                    binding.setId(IdGen.uuid());
+                    //设置 谁绑定 的id
+                    binding.setPublicId(publicId);
+                    //设置被绑定的 信息的id
+                    binding.setBindId(bindList.get(i));
+                    //设置绑定的类型
+                    binding.setPublicType(publicType);
+                    bindingService.saveBinding(binding);
+                    bId.add(binding.getBindId());
+                    jsonObject.put("result",1);
+                    jsonObject.put("msg","保存成功");
+
+                    if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                        Task bindingInfo = taskService.findTaskByTaskId(bindList.get(i));
+                        bindingInfo.setCreatorInfo(null);
+                        bInfo.add(bindingInfo);
+                    }
+
+                    if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
+                        File bindingInfo = fileService.findFileById(bindList.get(i));
+                        bInfo.add(bindingInfo);
+                    }
+
+                    if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
+                        Schedule bindingInfo = scheduleService.findScheduleById(bindList.get(i));
+                        bInfo.add(bindingInfo);
+                    }
+
+                    if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                        Share bindingInfo = shareService.findById(bindList.get(i));
+                        bInfo.add(bindingInfo);
+                    }
+
+                    map.put("bindingInfo",bInfo);
+                    map.put("publicType",publicType);
+                    map.put("bindId",bId);
+                    taskPushType.setObject(map);
+                }
             }
-            if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
-                File bindingInfo = fileService.findFileById(bindId);
-                map.put("bindingInfo",bindingInfo);
+            if(map.size() > 0){
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
             }
-            if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
-               Schedule bindingInfo = scheduleService.findScheduleById(bindId);
-               map.put("bindingInfo",bindingInfo);
-            }
-            map.put("bindId",binding.getId());
-            messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){
             throw new AjaxException(e);
         }

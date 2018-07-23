@@ -122,8 +122,10 @@ public class ScheduleController {
         JSONObject jsonObject = new JSONObject();
         try {
             Map<String,List> map = new HashMap<String,List>();
-            map.put("data",scheduleService.findScheduleGroupByCreateTime(System.currentTimeMillis(),projectId));
-            map.put("before",scheduleService.findBeforeSchedule(System.currentTimeMillis(),projectId));
+            //查询出未来的日程
+            map.put("data",scheduleService.findBeforeSchedule(System.currentTimeMillis(),projectId,0));
+            //查询出过去的日程
+            map.put("before",scheduleService.findBeforeSchedule(System.currentTimeMillis(),projectId,1));
             jsonObject.put("data",map);
         } catch (Exception e){
             jsonObject.put("result",0);

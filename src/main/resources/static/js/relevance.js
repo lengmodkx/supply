@@ -43,13 +43,21 @@ $(function () {
     });
     $("html").on("click",".wj-li ",function () {
         arr.push($(this));
-        if ($(this).hasClass("selected")) {
-            $(this).removeClass("selected");
-            $(this).find("img").attr("src","/image/wjj-b.png")
-        }else {
-            $(this).addClass("selected");
+        if ($(this).parent().attr("class")=='wjj'){
+            $(".wj").find(".wj-li").removeClass("selected");
+            $(this).addClass("selected").siblings().removeClass("selected");
+            $(this).siblings().find("img").attr("src","/image/wjj-b.png");
             $(this).find("img").attr("src","/image/wjj-fff.png")
+        } else {
+            $(".wjj").find(".wj-li").removeClass("selected");
+            $('.wjj').find("img").attr("src","/image/wjj-b.png");
+            if ($(this).hasClass("selected")) {
+                $(this).removeClass("selected");
+            }else {
+                $(this).addClass("selected");
+            }
         }
+
     });
     //点击显示 隐藏 过去 日程
     $("html").on("click",".is-show",function () {
@@ -112,62 +120,62 @@ $(function () {
     $("html").on("click",".show-next-wj .wj-li",function () {
         $(this).parents(".show-next-wj").siblings(".task-ul").show();
         $(this).parents(".show-next-wj").siblings(".task-ul").html("");
-        $(this).parents(".show-next-wj").siblings(".task-ul").append(' <li class="show-next-wj-li">\n' +
-            '                                <div class="paper-file">\n' +
-            '                                    <div class="up-add">\n' +
-            '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
-            '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
-            '                                    </div>\n' +
-            '                                    <div class="wjj-wrap">\n' +
-            '                                        <p>文件夹</p>\n' +
-            '                                        <ul>\n' +
-            '                                            <li class="wj-li over-hidden">\n' +
-            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
-            '                                                <span >123132</span>\n' +
-            '                                            </li>\n' +
-            '                                        </ul>\n' +
-            '                                    </div>\n' +
-            '                                    <div class="wjj-wrap">\n' +
-            '                                        <p>文件</p>\n' +
-            '                                        <ul>\n' +
-            '                                            <li class="wj-li over-hidden">\n' +
-            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
-            '                                                <span >123132</span>\n' +
-            '                                            </li>\n' +
-            '                                        </ul>\n' +
-            '                                    </div>\n' +
-            '                                </div>\n' +
-            '\n' +
-            '                            </li>')
+        // $(this).parents(".show-next-wj").siblings(".task-ul").append(' <li class="show-next-wj-li">\n' +
+        //     '                                <div class="paper-file">\n' +
+        //     '                                    <div class="up-add">\n' +
+        //     '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
+        //     '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
+        //     '                                    </div>\n' +
+        //     '                                    <div class="wjj-wrap">\n' +
+        //     '                                        <p>文件夹</p>\n' +
+        //     '                                        <ul>\n' +
+        //     '                                            <li class="wj-li over-hidden">\n' +
+        //     '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+        //     '                                                <span >123132</span>\n' +
+        //     '                                            </li>\n' +
+        //     '                                        </ul>\n' +
+        //     '                                    </div>\n' +
+        //     '                                    <div class="wjj-wrap">\n' +
+        //     '                                        <p>文件</p>\n' +
+        //     '                                        <ul>\n' +
+        //     '                                            <li class="wj-li over-hidden">\n' +
+        //     '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+        //     '                                                <span >123132</span>\n' +
+        //     '                                            </li>\n' +
+        //     '                                        </ul>\n' +
+        //     '                                    </div>\n' +
+        //     '                                </div>\n' +
+        //     '\n' +
+        //     '                            </li>')
     });
     $("html").on("click",".show-next-wj-li .wj-li",function () {
         $(this).parents(".show-next-wj-li").nextAll().remove();
-        $(this).parents(".show-next-wj-li").after(' <li class="show-next-wj-li">\n' +
-            '                                <div class="paper-file">\n' +
-            '                                    <div class="up-add">\n' +
-            '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
-            '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
-            '                                    </div>\n' +
-            '                                    <div class="wjj-wrap">\n' +
-            '                                        <p>文件夹</p>\n' +
-            '                                        <ul>\n' +
-            '                                            <li class="wj-li over-hidden">\n' +
-            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
-            '                                                <span >123132</span>\n' +
-            '                                            </li>\n' +
-            '                                        </ul>\n' +
-            '                                    </div>\n' +
-            '                                    <div class="wjj-wrap">\n' +
-            '                                        <p>文件</p>\n' +
-            '                                        <ul>\n' +
-            '                                            <li class="wj-li over-hidden">\n' +
-            '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
-            '                                                <span >123132</span>\n' +
-            '                                            </li>\n' +
-            '                                        </ul>\n' +
-            '                                    </div>\n' +
-            '                                </div>\n' +
-            '                            </li>');
+        // $(this).parents(".show-next-wj-li").after(' <li class="show-next-wj-li">\n' +
+        //     '                                <div class="paper-file">\n' +
+        //     '                                    <div class="up-add">\n' +
+        //     '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
+        //     '                                        <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: gray;"></i>\n' +
+        //     '                                    </div>\n' +
+        //     '                                    <div class="wjj-wrap">\n' +
+        //     '                                        <p>文件夹</p>\n' +
+        //     '                                        <ul>\n' +
+        //     '                                            <li class="wj-li over-hidden">\n' +
+        //     '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+        //     '                                                <span >123132</span>\n' +
+        //     '                                            </li>\n' +
+        //     '                                        </ul>\n' +
+        //     '                                    </div>\n' +
+        //     '                                    <div class="wjj-wrap">\n' +
+        //     '                                        <p>文件</p>\n' +
+        //     '                                        <ul>\n' +
+        //     '                                            <li class="wj-li over-hidden">\n' +
+        //     '                                                <img src="../static/image/wjj-b.png" th:src="@{/image/wjj-b.png}">\n' +
+        //     '                                                <span >123132</span>\n' +
+        //     '                                            </li>\n' +
+        //     '                                        </ul>\n' +
+        //     '                                    </div>\n' +
+        //     '                                </div>\n' +
+        //     '                            </li>');
         $(this).parents(".scroll-box-heng").scrollLeft(parseInt( $(this).parents(".task-ul").width()));
 
     });
@@ -183,20 +191,43 @@ $('.one-level-nav>li').click(function(){
     var item = $(this).children('span').html();
     var args= {"label":2};
     var url = "/project/projectList";
-    $.post(url,args,function(data){
-        var project = data.data;
-        var content = '';
-        content += '<li class="group-name"><p>' + '个人项目' + '</p></li>'
-        for(var i = 0;i < project.length;i++){
-            if(i == 0){
-                content += '<li class="style-li p style-li selected" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
-            } else{
-                content += '<li class="style-li p" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+    if ($(".body-box>div").eq(j).children(".style-ul").html()) {
+        return false
+    }else {
+        $.post(url,args,function(data){
+            var project = data.data;
+            var content = '';
+            content += '<li class="group-name"><p>' + '个人项目' + '</p></li>';
+            for(var i = 0;i < project.length;i++){
+                if(i == 0){
+                    content += '<li class="style-li p style-li selected" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+                } else{
+                    content += '<li class="style-li p" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+                }
+                if(i == 0){
+                    var url = "";
+                    var args = {"projectId":project[0].projectId};
+                    if(item == '文件'){
+                        url = "/file/fileList";
+                    }
+                    if(item == '任务'){
+                        url = "/relation/projectAllGroup";
+                    }
+                    if(item == '日程'){
+                        url = "/schedule/scheduleList";
+                    }
+                    if(item == '分享'){
+                        url = "/share/shareByProjectId";
+                    }
+                    $.post(url,args,function(data){
+                        addGroups(data.data,item);
+                    },"json");
+                }
             }
-        }
-        console.log($(".body-box>div").eq(j).attr("class"))
-        $(".body-box>div").eq(j).children(".style-ul ").html(content)
-    },"json");
+            $(".body-box>div").eq(j).children(".style-ul ").html(content)
+        },"json");
+    }
+
 });
 
 
@@ -288,7 +319,7 @@ $("html").on("click",".a-task-box .a-task-li",function () {
  * 点击确定关联
  */
 $('.ok-btn').click(function () {
-    var bindId = '';
+    var bindId = [];
 
     var publicType = $('.one-level-nav .now').children('span').html();
     if(publicType == '' || publicType == undefined){
@@ -299,7 +330,9 @@ $('.ok-btn').click(function () {
         bindId = arr[arr.length-1].attr("data-id");
     }
     if(publicType == '文件'){
-        bindId  =arr[arr.length-1].attr("data-id");
+        $('.wj .wj-li.selected').each(function (i,n) {
+            bindId.push($(n).attr('data-id'));
+        })
     }
     if(publicType == '日程'){
         bindId = arr[arr.length-1].attr("data-id");
@@ -311,15 +344,11 @@ $('.ok-btn').click(function () {
         layer.msg("必须选择关联内容!");
         return false;
     }
-    var args = {"publicId":taskId,"bindId":bindId,"publicType":publicType};
+    var args = {"publicId":taskId,"bindId":bindId.toString(),"publicType":publicType};
     var url = "/binding/saveBinding";
     $.post(url,args,function (data) {
-        if(data.result == 1){
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
-        } else{
-            layer.msg(data.msg);
-        }
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
     },"json");
 });
 
@@ -482,18 +511,19 @@ function addGroups(item,type,that){
     if(type == "日程"){
         var schedule = item.data;
         var beoforeSchedule = item.before;
-        for(var i = 0;i < beoforeSchedule.length;i++){
-            content += '<li class="a-task-li" data-id = '+ beoforeSchedule[i].scheduleId +'>'+
+        for(var i = 0;i < schedule.length;i++){
+            content += '<li class="a-task-li" data-id = '+ schedule[i].scheduleId +'>'+
                 '<i class="layui-icon layui-icon-date" style="font-size: 20px; color: gray;"></i>'+
-                '<p>' + beoforeSchedule[i].scheduleName + '</p>'+
+                '<p>' + schedule[i].scheduleName + '</p>'+
                 '<div class="over-hidden rc-time">'+
-                '<span title="' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+                '<span title="' + new Date(schedule[i].startTime).format('yyyy-MM-dd') + '">' + new Date(schedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
             '<span>—</span>'+
-            '<span title="' + new Date(beoforeSchedule[i].endTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+            '<span title="' + new Date(schedule[i].endTime).format('yyyy-MM-dd') + '">' + new Date(schedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
             '</div>'+
             '</li>';
         }
-        $('.coming-rc-ul,.new-rc').html(content);
+        $('.new-rc-count').html(schedule.length);
+        $('.new-rc').html(content);
     }
     if(type == "分享"){
         for(var i = 0;i < item.length;i++){

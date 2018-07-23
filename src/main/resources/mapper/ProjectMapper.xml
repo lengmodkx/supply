@@ -242,11 +242,12 @@
 	</update>
 
 
+	<!-- 查询我参与的所有项目 -->
 	<select id="findProjectByMemberId" resultMap="BaseResultMap"
 			parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_project where project_del = 0
+		from prm_project where project_del = 0 and project_id in (select project_id from prm_project_member where prm_project.member_id = #{memberId})
 		order by create_time asc
 	</select>
 

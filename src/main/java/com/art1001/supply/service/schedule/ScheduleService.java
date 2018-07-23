@@ -80,7 +80,9 @@ public interface ScheduleService {
 	/**
 	 * 查询以前的日程
 	 * @param currTime 当前的时间
+	 * @param projectId 项目id
+	 * @param identification 标识  (用来区分 是查询出小于当前时间的还是大于当前时间的  0 大于 1 小于)
 	 * @return
 	 */
-	List<Schedule> findBeforeSchedule(long currTime,String projectId);
+	List<Schedule> findBeforeSchedule(long currTime,String projectId,int identification);
 }

@@ -66,8 +66,8 @@ public interface BindingService {
 	/**
 	 * 查询要关联的信息  在库中存不存在
 	 * @param publicId 关联的信息id
-	 * @param bindId 被关联的信息id
+	 * @param bindId 被关联的信息id数组
 	 * @return 库中的记录行数
 	 */
-	int getBindingRecord(String publicId, String bindId);
+	String[] getBindingRecord(String publicId, String[] bindId);
 }

@@ -115,10 +115,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 	/**
 	 * 查询以前的日程
 	 * @param currTime 当前的时间
+	 * @param identification 标识
 	 * @return 返回日程信息
 	 */
 	@Override
-	public List<Schedule> findBeforeSchedule(long currTime,String projectId) {
-		return scheduleMapper.findBeforeSchedule(currTime,projectId);
+	public List<Schedule> findBeforeSchedule(long currTime,String projectId,int identification) {
+		System.out.println(identification);
+		return scheduleMapper.findBeforeSchedule(currTime,projectId,identification);
 	}
 }

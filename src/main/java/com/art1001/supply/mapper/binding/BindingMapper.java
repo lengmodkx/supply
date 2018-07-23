@@ -76,5 +76,5 @@ public interface BindingMapper {
 	 * @param bindId 被关联的信息id
 	 * @return 库中的记录行数
 	 */
-    int getBindingRecord(@Param("publicId") String publicId,@Param("bindId") String bindId);
+    String[] getBindingRecord(@Param("publicId") String publicId,@Param("bindId") String[] bindId);
 }
