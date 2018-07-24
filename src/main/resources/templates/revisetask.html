@@ -243,6 +243,7 @@
                                 <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
                                 <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
                                 <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
+                                <img class="folderFile" th:src="@{/image/defaultFile.png}" th:th:unless="${file.ext eq '.rar'} or ${file.ext eq '.png'} or ${file.ext eq '.jpg'} or ${file.ext eq '.jpeg'} or ${file.ext eq '..doc'} or ${file.ext eq '.docx'} or ${file.ext eq '.xls'} or ${file.ext eq '.xlsx'} or ${file.ext eq '.pptx'} or ${file.ext eq '.ppt'} or ${file.ext eq '.zip'} or ${file.ext eq '.rar'} or ${file.ext eq '.pdf'}"/>
                                 <span th:text = "${file.fileName}"></span>
                             </div>
                             <div class="related-rw-describe over-hidden" th:text="${file.project.projectName}"></div>
@@ -256,7 +257,7 @@
                                     <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                     <!--<span>复制链接</span>-->
                                     <!--</li>-->
-                                    <li class="boxsizing cancle" th:data-binding-id = "${file.fileId}" th:data-id="${id}">
+                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
                                         <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                         <span>取消关联</span>
                                     </li>
@@ -562,7 +563,7 @@
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
             if(taskLog.type == '关联'){
-                addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bindId);
+                addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bId);
             }
             // if(taskLog.type == '取消了关联'){
             //     getLog(taskLog.object.taskLog);

@@ -68,8 +68,8 @@ public class BindingServiceImpl implements BindingService {
 	 */
 	@Override
 	public void deleteBindingById(String id){
-		//根据关联数据id  查出该条数据
-        Binding bindingById = bindingMapper.findBindingById(id);
+//		//根据关联数据id  查出该条数据
+//        Binding bindingById = bindingMapper.findBindingById(id);
         //删除关联记录
         //根据查出的bindingById 取出被关联的信息id  然后根据id  查询出实体信息
         //Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getBindId());

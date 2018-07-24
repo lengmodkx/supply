@@ -47,7 +47,8 @@ $(function () {
             $(".wj").find(".wj-li").removeClass("selected");
             $(this).addClass("selected").siblings().removeClass("selected");
             $(this).siblings().find("img").attr("src","/image/wjj-b.png");
-            $(this).find("img").attr("src","/image/wjj-fff.png")
+            $(this).find("img").attr("src","/image/wjj-fff.png");
+            $(this).parents(".show-next-wj-li").nextAll().remove();
         } else {
             $(".wjj").find(".wj-li").removeClass("selected");
             $('.wjj').find("img").attr("src","/image/wjj-b.png");
@@ -383,9 +384,13 @@ function addStr(relation,id){
     if(id == '今天的任务' || id == '未完成任务' || id == '已完成任务'){
         for(var i = 0;i < relation.length;i++){
             content += '<li class="a-task-li" data-id="' + relation[i].taskId + '">'+
-                '<span></span>'+
-                '<img src="' + IMAGE_SERVER + relation[i].executorInfo.userInfo.image + '">'+
-                '<p class="over-hidden">' + relation[i].taskName + '</p>'+
+                '<span></span>';
+            if(relation[i].executorInfo == null){
+                content += '<img src="/image/add.png">';
+            } else{
+                content += '<img src="' + IMAGE_SERVER + relation[i].executorInfo.userInfo.image + '">';
+            }
+            content += '<p class="over-hidden">' + relation[i].taskName + '</p>'+
                 '</li>';
         }
     } else{
@@ -415,25 +420,23 @@ function addSubTask(subTask,that) {
     var content = "";
     if(subTask != ''){
         content += ' <li class="show-next-li">\n' +
-            '                                <div class="title-create-style boxsizing">\n' +
-            '                                    <i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>\n' +
-            '                                    <span>创建子任务</span>\n' +
-            '                                </div>\n' +
-            '                                <ul class="a-task-box">\n';
+                    '<div class="title-create-style boxsizing">\n' +
+                    '<i class="layui-icon layui-icon-add-circle" style="font-size: 20px; color: #3AA7F5;"></i>\n' +
+                    '<span>创建子任务</span>\n' +
+                    '</div>\n' +
+                    '<ul class="a-task-box">\n';
+
         for (var i = 0; i < subTask.length; i++) {
-            content += '                                    <li class="group-name">子任务</li>\n' +
-                '                                    <li class="a-task-li" data-id = "' + subTask[i].taskId + '">\n' +
-                '                                        <span></span>\n';
+            content += '<li class="a-task-li" data-id = "' + subTask[i].taskId + '">\n' +
+                       '<span></span>\n';
             if (subTask[i].taskExecutorInfo == null) {
-                content += '                                        <img src="/image/add.png">\n';
+                content += '<img src="/image/add.png">\n';
             } else {
-                content += '                                        <img src="' + IMAGE_SERVER + subTask[i].taskExecutorInfo.userInfo.image + '">\n';
+                content += '<img src="' + IMAGE_SERVER + subTask[i].taskExecutorInfo.userInfo.image + '">\n';
 
             }
-            content += '                                        <p class="over-hidden">' + subTask[i].taskName + '</p>\n' +
-                '                                    </li>\n' +
-                '                                </ul>\n' +
-                '                            </li>'
+            content += '<p class="over-hidden">' + subTask[i].taskName + '</p>\n' +
+                        '</li>\n';
         }
     } else{
         content += '<li class="show-next-li">\n' +
@@ -469,34 +472,34 @@ function addGroups(item,type,that){
             } else{
                 content2 += '<li class="wj-li over-hidden" data-id = '+ item[i].fileId +'>'
                 if(item[i].catalog == 0 && (item[i].ext == '.jpg' || item[i].ext == '.png' || item[i].ext == '.jpeg')){
-                    content2 += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '..doc'){
+
+                    content2 += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item[i].fileUrl + '"/>';
+                } else if(item[i].catalog == 0 && item[i].ext == '..doc'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.docx'){
-                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.xls'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.xls'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.xlsx'){
+                } else if (item[i].catalog == 0 && item[i].ext == '.xlsx'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.pptx'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.pptx'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.ppt'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.ppt'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.pdf'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.pdf'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.zip'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.zip'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/zip.png" />';
-                }
-                if(item[i].catalog == 0 && item[i].ext == '.rar'){
+                } else if(item[i].catalog == 0 && item[i].ext == '.rar'){
+
                     content2 += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+                } else {
+                    content2 += '<img class="folderFile collect-item-touxiang" src="/image/defaultFile.png" />';
                 }
                 content2 +=  '<span >' + item[i].fileName + '</span>'+
                     '</li>';
@@ -537,7 +540,7 @@ function addGroups(item,type,that){
     return content;
 }
 
-
+var li;
 function addFileStr(item,that){
     var content = '';
     var content2 = '';
@@ -548,41 +551,41 @@ function addFileStr(item,that){
                 '<span >' + item[i].fileName + '</span>'+
                 '</li>';
         } else{
-            content2 += '<li class="wj-li over-hidden" data-id = ' + item[i].fileId + '>'
+            content2 += '<li class="wj-li over-hidden" data-id = ' + item[i].fileId + '>';
             if(item[i].catalog == 0 && (item[i].ext == '.jpg' || item[i].ext == '.png' || item[i].ext == '.jpeg')){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item.fileUrl + '"/>';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '..doc'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.docx'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.xls'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.xlsx'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/excel.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.pptx'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.ppt'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.pdf'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.zip'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/zip.png" />';
-            }
-            if(item[i].catalog == 0 && item[i].ext == '.rar'){
-                content2 += '<img style="transform: scale(1.3)" class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + item[i].fileUrl + '"/>';
+            } else if(item[i].catalog == 0 && item[i].ext == '..doc'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.xls'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            } else if (item[i].catalog == 0 && item[i].ext == '.xlsx'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.pptx'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.ppt'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.pdf'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.zip'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+            } else if(item[i].catalog == 0 && item[i].ext == '.rar'){
+
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+            } else {
+                content2 += '<img class="folderFile collect-item-touxiang" src="/image/defaultFile.png" />';
             }
             content2 +=  '<span >' + item[i].fileName + '</span>'+
                 '</li>';
         }
-        var li='<li class="show-next-wj-li">\n' +
+        li='<li class="show-next-wj-li">\n' +
             '                                <div class="paper-file">\n' +
             '                                    <div class="up-add">\n' +
             '                                        <i class="layui-icon layui-icon-upload-circle" style="font-size: 20px; color: gray;"></i>\n' +
@@ -590,7 +593,7 @@ function addFileStr(item,that){
             '                                    </div>\n' +
             '                                    <div class="wjj-wrap">\n' +
             '                                        <p>文件夹</p>\n' +
-            '                                        <ul>\n'+
+            '                                        <ul class="wjj">\n'+
 
             content +
 
@@ -598,7 +601,7 @@ function addFileStr(item,that){
             '                                    </div>\n' +
             '                                    <div class="wjj-wrap">\n' +
             '                                        <p>文件</p>\n' +
-            '                                        <ul>\n' +
+            '                                        <ul class = "wj">\n' +
             content2+
             '                                        </ul>\n' +
             '                                    </div>\n' +
@@ -606,7 +609,12 @@ function addFileStr(item,that){
             '\n' +
             '                            </li>'
     }
-    that.parents(".show-next-wj").siblings(".task-ul").html(li);
+ if (that.parents(".paper-file").parent().attr("class")=='show-next-wj-li') {
+        that.parents(".show-next-wj-li").after(li)
+ }else {
+     that.parents(".show-next-wj").siblings(".task-ul").html(li);
+ }
+
     // that.parents(".paper-file,.show-next-wj .wjj-wrap").after(content);
     that.parents(".scroll-box-heng").scrollLeft(parseInt( that.parents(".task-ul").width()));
 }

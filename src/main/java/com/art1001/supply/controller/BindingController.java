@@ -23,6 +23,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 @Controller
+@Slf4j
 @RequestMapping("/binding")
 public class BindingController {
 
@@ -78,7 +80,6 @@ public class BindingController {
         JSONObject jsonObject = new JSONObject();
         List<String> bindList1 = Arrays.asList(bindId);
         List<String> bindList = new ArrayList<String>(bindList1);
-        Binding binding = new Binding();
         try {
             for(int i = 0;i < bindList.size();i++){
                 //判断是不是和自己关联
@@ -103,6 +104,7 @@ public class BindingController {
             List<String> bId = new ArrayList<String>();
             for (int i = 0;i < bindList.size();i++){
                 if(bindList.get(i) != null){
+                    Binding binding = new Binding();
                     //设置该条绑定关系的id
                     binding.setId(IdGen.uuid());
                     //设置 谁绑定 的id
@@ -112,7 +114,7 @@ public class BindingController {
                     //设置绑定的类型
                     binding.setPublicType(publicType);
                     bindingService.saveBinding(binding);
-                    bId.add(binding.getBindId());
+                    bId.add(binding.getId());
                     jsonObject.put("result",1);
                     jsonObject.put("msg","保存成功");
 
@@ -139,7 +141,7 @@ public class BindingController {
 
                     map.put("bindingInfo",bInfo);
                     map.put("publicType",publicType);
-                    map.put("bindId",bId);
+                    map.put("bId",bId);
                     taskPushType.setObject(map);
                 }
             }
@@ -161,14 +163,16 @@ public class BindingController {
      */
     @RequestMapping("/deleteBinding")
     @ResponseBody
-    public JSONObject deleteBinding(@RequestParam String id,String bId){
+    public JSONObject deleteBinding(String bId){
         JSONObject jsonObject = new JSONObject();
         try {
-            bindingService.deleteBindingById(id);
+            bindingService.deleteBindingById(bId);
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
         }catch (Exception e){
-            throw new AjaxException(e);
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,关联删除失败,请重试.");
+            log.error("系统异常,取消失败,{}",e);
         }
         return jsonObject;
     }
