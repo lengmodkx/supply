@@ -39,8 +39,11 @@ stompClient.connect({},
         if(task.type ==='添加菜单'){
             showMenu(task.object.menu);
         }
-        if(task.type==='更新菜单名称'){
+        if(task.type == '更新菜单名称'){
             $('#'+task.menuId+' .relationName').html(task.menuName);
+        }
+        if(task.type == '更新任务名称为'){
+            $('#'+task.object.taskId+' .assignment-title').html(task.object.taskName);
         }
     });
 

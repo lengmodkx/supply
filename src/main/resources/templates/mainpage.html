@@ -45,7 +45,7 @@
                                       <div class="task-priority" th:if="${task.priority=='紧急'}" th:classappend="bg-priority-1"></div>
                                       <div class="task-priority" th:if="${task.priority=='非常紧急'}" th:classappend="bg-priority-2"></div>
                                       <div class="task-check-box">
-                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
+                                          <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
                                       <div class="task-content-set" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
                                           <header class="assignment-top-box boxsizing clearfix">

@@ -410,7 +410,7 @@ public class TaskController {
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("Status",task.getTaskStatus());
             taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            //messagingTemplate.convertAndSend("/topic/"+task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (ServiceException e){
             jsonObject.put("result",0);
             jsonObject.put("msg",e.getMessage());
@@ -697,80 +697,6 @@ public class TaskController {
             }
         } catch (Exception e){
             log.error("系统异常，标签移除失败！ 当前任务id： ,{},{}",taskId,e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-
-    /**
-     * 给当前任务添加依赖关系
-     * @param task 关联任务的实体信息
-     * @param file 关联文件的实体信息
-     * @param share 关联分享的实体信息
-     * @param schedule 关联日程的实体信息
-     * @param taskMember 关联关系信息
-     * @param taskId 当前被操作的任务uid
-     * @return
-     */
-    @PostMapping("addTaskRely")
-    @ResponseBody
-    public JSONObject addTaskRely(@RequestParam Task task,
-                                  @RequestParam File file,
-                                  @RequestParam Share share,
-                                  @RequestParam Schedule schedule,
-                                  @RequestParam TaskMember taskMember,
-                                  @RequestParam String taskId
-    ){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            TaskLogVO taskLogVO = taskMemberService.saveTaskMember(task,file,share,schedule,taskMember,taskId);
-            if(taskLogVO.getResult() >0){
-                jsonObject.put("msg","关联成功!");
-                jsonObject.put("result",taskLogVO.getResult());
-                jsonObject.put("taskLog",taskLogVO);
-            }
-        } catch (Exception e){
-            log.error("系统异常,关联失败! 当前任务id ,{},{}",taskId,e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-
-    /**
-     * 移除依赖关系
-     * @param task 关联的任务
-     * @param file 关联的文件
-     * @param share 关联的分享
-     * @param schedule 关联的日程
-     * @param taskId 当前任务的id
-     * @param taskRelyId  当前依赖的id
-     * @return
-     */
-    @PostMapping("removeTaskRely")
-    @ResponseBody
-    public JSONObject removeTaskRely(@RequestParam Task task,
-                                     @RequestParam File file,
-                                     @RequestParam Share share,
-                                     @RequestParam Schedule schedule,
-                                     @RequestParam String taskId,
-                                     @RequestParam String taskRelyId
-    ){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            //删除关联关系
-            TaskLogVO taskLogVO = taskMemberService.deleteTaskMemberById(task, file, share, schedule, taskId, taskRelyId);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","删除成功");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","删除失败");
-                jsonObject.put("result","0");
-            }
-        } catch (Exception e){
-            log.error("系统异常,关联关系删除失败!  任务关联id:,{},{}",taskRelyId,e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -1364,6 +1290,45 @@ public class TaskController {
         } catch (Exception e){
             jsonObject.put("msg","数据获取失败!");
             jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更新任务的名称
+     * @param taskId 任务的id
+     * @param projectId 项目id
+     * @param taskName 任务的名称
+     * @return
+     */
+    @PostMapping("updateTaskName")
+    @ResponseBody
+    public JSONObject updateTaskName(String taskId,String projectId,String taskName){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //设置任务实体信息
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setTaskName(taskName);
+            task.setUpdateTime(System.currentTimeMillis());
+            //更新任务
+            TaskLogVO taskLogVO = taskService.updateTask(task);
+            //推送数据
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A18.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("taskLog",taskLogVO);
+            map.put("taskName",taskName);
+            taskPushType.setObject(map);
+            //推送至任务的详情界面
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            map.put("taskId",taskId);
+            map.remove("taskLog");
+            //推送至主页面
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,更新失败,{}",e);
         }
         return jsonObject;
     }

@@ -82,7 +82,7 @@
         select
         <include refid="Base_Column_List"/>
         from prm_tag where tag_id in(
-        <if test="tagIds！=null and tagIds!=''">
+        <if test="tagIds != null and tagIds != ''">
             <foreach collection="tagIds.split(',')" item="tagId" index="index" separator=",">
                 #{tagId}
             </foreach>

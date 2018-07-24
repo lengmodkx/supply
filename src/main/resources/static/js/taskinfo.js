@@ -156,7 +156,19 @@ layui.use('form', function() {
         }
     });
 
-
+    /**
+     * 更新任务的名称
+     */
+    $('.task_name').blur(function(){
+        var taskName = $('.task_name').val();
+        var url = "/task/updateTaskName";
+        var args = {"taskId":taskId,"taskName":taskName,"projectId":projectId};
+        $.post(url,args,function(data){
+            if(data.result == 0){
+                layer.msg("系统异常,更新失败,请重试!");
+            }
+        },"json");
+    })
 
     /**
      * 重复规则下拉框监听

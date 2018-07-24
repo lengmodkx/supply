@@ -120,10 +120,6 @@ public class TaskServiceImpl implements TaskService {
 	    TaskLogVO taskLogVO = new TaskLogVO();
 	    //任务更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        //更新任务内容
-        if(task.getTaskName() != null && task.getTaskName() != ""){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.T.getName());
-        }
         //更新任务优先级
         if(task.getPriority() != null && task.getPriority() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName() + " " + task.getPriority());
@@ -139,6 +135,10 @@ public class TaskServiceImpl implements TaskService {
         //更新任务其他
         if(task.getOther() != null && task.getOther() != ""){
             taskLogVO = saveTaskLog(task,TaskLogFunction.G.getName());
+        }
+        //更新任务的名称
+        if(!StringUtils.isEmpty(task.getTaskName())){
+            taskLogVO = saveTaskLog(task,TaskLogFunction.A18.getName()+ task.getTaskName());
         }
         int result = taskMapper.updateTask(task);
         taskLogVO.setResult(result);
@@ -244,7 +244,6 @@ public class TaskServiceImpl implements TaskService {
         } else if (task.getTaskStatus().equals("重新开始")){
 	        task.setTaskStatus("完成");
         }
-        System.out.println(task.getTaskStatus());
 	    //修改任务状态
 	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
         TaskLogVO taskLogVO = saveTaskLog(task, content.toString());

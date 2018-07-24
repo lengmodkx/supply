@@ -24,7 +24,7 @@
     <div class="revise-task boxsizing ">
         <!--<div class="revise-task-title" th:text="${taskMenuVo.projectName}"><span class="what-task" th:text="${taskMenuVo.taskGroupName}"></span><span class="what-test" th:text="${menuRelation.relationName}"></span></div>-->
         <div class="task-name">
-            <input type="checkbox" lay-filter = "taskComplete" lay-skin="primary" class="is-sure"  th:id="taskComplete">
+            <input type="checkbox" lay-filter = "taskComplete" lay-skin="primary" th:checked="${task.taskStatus == '完成'}" class="is-sure"  th:id="taskComplete">
             <input type="text" th:value="${task.taskName}" class="task_name boxsizing layui-input"/>
         </div>
         <div class="who-and-time">
@@ -564,6 +564,10 @@
             }
             if(taskLog.type == '关联'){
                 addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bId);
+            }
+            if(taskLog.type == '更新任务名称为'){
+                $('.task_name').val(taskLog.object.taskName);
+                getLog(taskLog.object.taskLog);
             }
             // if(taskLog.type == '取消了关联'){
             //     getLog(taskLog.object.taskLog);

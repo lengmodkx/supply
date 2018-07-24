@@ -47,7 +47,8 @@ public enum TaskLogFunction {
     A14(39,"发送消息"),
     A15(40,"在父任务"),
     A16(41,"下创建了任务"),
-    A17(42,"取消了关联");
+    A17(42,"取消了关联"),
+    A18(43,"更新任务名称为");
 
 
     private String name;
