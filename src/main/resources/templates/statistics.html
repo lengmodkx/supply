@@ -9,6 +9,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/statistics.css}" href="../static/css/statistics.css">
 </head>
 <body>
+<header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
+
+<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
 <div class="statistics-wrap">
     <div class="title-style">
         <h3>总量概览</h3>
@@ -136,9 +139,7 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/jquery.circliful.min.js}" src="../static/js/jquery.circliful.min.js"></script>
 <script>
-
-
-        layui.use('form', function() {
+        layui.use(['element','form'], function() {
             var form = layui.form;
         });
         $('.circle').circliful();

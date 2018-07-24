@@ -18,11 +18,16 @@ public class StatisticsController {
     private ProjectService projectService;
 
     @RequestMapping("/statistics.html")
-    public String share(@RequestParam String projectId, Model model){
+    public String statistics(@RequestParam String projectId, Model model){
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         return "statistics";
+    }
+
+    @RequestMapping("/statisticsDetail.html")
+    public String statisticsDetail(){
+        return "tk-statistics-details";
     }
 
 }

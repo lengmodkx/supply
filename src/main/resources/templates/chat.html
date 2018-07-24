@@ -14,9 +14,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
 </head>
 <body>
-<header th:include="common/header::frag (${user.userInfo.image})"></header>
+<header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
-<div th:include="common/toper::frag (${user.userInfo.projectName})"></div>
+<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
 
 <div class="content-wrap-wrap boxsizing">
     <div class="content boxsizing">
@@ -54,6 +54,7 @@
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script>
+    layui.use(['element','form'], function() {});
     $(function () {
         var url = window.location.href;
         if(url.indexOf("chat") > 0){
