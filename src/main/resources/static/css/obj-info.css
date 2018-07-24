@@ -1,0 +1,83 @@
+
+.obj-info-box{
+    width: 500px;
+    height: 400px;
+    background-color: white;
+}
+.obj-info-top{
+    width: 100%;
+    height: 47px;
+    border-bottom: 1px solid #EBEBEB;
+    text-align: center;
+    line-height: 47px;
+    font-size: 16px;
+    position: relative;
+}
+.obj-info-top .return-select-tpl{
+    position: absolute;
+    left: 5px;
+    cursor: pointer;
+}
+.obj-info-top i:hover{
+    color: #3da8f5 !important;
+}
+.obj-info-top .close-tk{
+    position: absolute;
+    right: 5px;
+}
+.obj-info-center{
+    width: 100%;
+    height: 310px;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.obj-info-center p{
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    color: gray;
+    padding: 25px 0;
+    font-size: 14px;
+}
+.obj-info-center p span{
+    color: #383838;
+    padding: 0 3px;
+}
+.obj-info-center input{
+    width: 330px;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    background-color: white;
+    margin: 10px auto;
+}
+
+
+
+.obj-info-bottom{
+    width: 100%;
+    height: 60px;
+    position: relative;
+    border-top: 1px solid #EBEBEB;
+}
+.create-success{
+    width: 150px;
+    height: 38px;
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    background-color: #3DA8F5;
+    text-align: center;
+    line-height: 38px;
+    font-size: 15px;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.create-success:hover{
+    opacity: 0.8;
+}
