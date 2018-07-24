@@ -1289,15 +1289,20 @@ public class TaskController {
      */
     @PostMapping("taskOrder")
     @ResponseBody
-    public JSONObject taskOrder(String taskId,String menuId,String[] taskIds){
+    public JSONObject taskOrder(@RequestParam(required = false) String taskId,
+                                @RequestParam(required = false) String menuId,
+                                @RequestParam String[] taskIds){
         JSONObject jsonObject = new JSONObject();
         try {
             //先更新任务菜单id
-            Task task = new Task();
-            task.setUpdateTime(System.currentTimeMillis());
-            task.setTaskId(taskId);
-            task.setTaskMenuId(menuId);
-            taskService.updateTask(task);
+            if(StringUtils.isNotEmpty(taskId)&&StringUtils.isNotEmpty(menuId)){
+                Task task = new Task();
+                task.setUpdateTime(System.currentTimeMillis());
+                task.setTaskId(taskId);
+                task.setTaskMenuId(menuId);
+                taskService.updateTask(task);
+            }
+
             //排序菜单中的任务
             for(int i=taskIds.length-1;i>=0;i--){
                 Task task1 = new Task();

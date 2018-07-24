@@ -113,6 +113,7 @@ public class RelationController {
      * @return
      */
     @RequestMapping("/delRelation")
+    @ResponseBody
     public JSONObject delRelation(@RequestParam String relationId,
                                   @RequestParam String parentId){
         JSONObject jsonObject = new JSONObject();
@@ -124,16 +125,9 @@ public class RelationController {
                 jsonObject.put("msg","删除成功");
             }else {
                 //删除分组的菜单
-                int task = taskService.findTaskByMenuId(relationId);
-                //判断菜单下面是否有任务，如果有的话提示用户不可以删除菜单，否则可以直接删除
-                if(task==0){
-                    relationService.deletenMenuByRelationId(relationId);
-                    jsonObject.put("result",1);
-                    jsonObject.put("msg","删除成功");
-                }else{
-                    jsonObject.put("result",0);
-                    jsonObject.put("msg","请先清空此列表上的任务，然后再删除这个列表");
-                }
+                relationService.deleteRelationByRelationId(relationId);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","删除成功");
             }
         }catch (Exception e){
             log.error("删除关系异常",e);
@@ -164,16 +158,18 @@ public class RelationController {
 
     /**
      * 添加菜单
+     * @param projectId 项目id
      * @param parentId 父级分组id
      * @param relation 菜单信息
      * @return
      */
     @PostMapping("addMenu")
     @ResponseBody
-    public JSONObject addMenu(String parentId, Relation relation){
+    public JSONObject addMenu(String projectId,String parentId, Relation relation){
         JSONObject jsonObject = new JSONObject();
         try {
             relation.setRelationId(IdGen.uuid());
+            relation.setProjectId(projectId);
             relationService.addMenu(parentId,relation);
             TaskPushType taskPushType = new TaskPushType("添加菜单");
             Map<String,Object> map = new HashMap<String,Object>();

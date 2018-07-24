@@ -4,67 +4,6 @@ function close() {
 }
 var zxz=false;
 
-layui.use('form', function() {
-    var form = layui.form;
-    //监听提交
-    form.on('submit(createTask)', function (data) {
-        //获取选中的参与者信息
-        var members = [];
-        $('.work-people .one-work-people').each(function () {
-           members.push($(this).attr('value'));
-        });
-
-        //获取标签信息
-        var tags = [];
-        $('.tag').each(function () {
-           tags.push($(this).attr('value'));
-        });
-        //设置任务的执行者
-        var executor = $('#executorId').val();
-        //设置任务开始时间
-        var beginTime = $('#beginTime').val();
-        if(beginTime != null && beginTime != ''){
-            var startTime = new Date(beginTime.toString()).getTime();
-        } else {
-            startTime = null;
-        }
-        //设置任务结束时间
-        var overTime = $('#overTime').val();
-        if(overTime != null && overTime != ''){
-            var endTime = new Date(overTime.toString()).getTime();
-        } else{
-            endTime = null;
-        }
-        //设置任务的内容
-        var taskName = $("#taskName").val();
-        //设置重复模式
-        var repeat = $('#repeat').val();
-        //设置任务提醒
-        var remind = $('#remand').val();
-        //设置任务优先级
-        var priority = $('input[name="state"]:checked').val();
-        //设置隐私模式
-        var privacyPattern = "";
-        if($('#privacyPattern').prop('checked')) {
-            privacyPattern = "1";
-        } else{
-            privacyPattern = "0";
-        }
-
-        var url = "/task/saveTask";
-        var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members.toString(),"executor":executor,"tagId":tags.toString()};
-        $.post(url,args,function(data){
-            if(data.result === 1){
-                layer.msg("任务创建成功!");
-                close();
-            } else{
-                layer.msg("任务创建失败!");
-            }
-        },"json");
-        return false;
-    });
-});
-
     layui.use('laydate', function () {
         var laydate = layui.laydate;
 
@@ -87,56 +26,48 @@ if ($("#have-executor").val()){
     $(".who-wrap").hide();
     $(".no-renling").show()
 }
-    //点击 认领人 的x 号， 移出认领人 ，待认领出现
-    $(".remove-who-wrap").click(function () {
-        $(this).parent().hide();
-        $('#executorId').val('');
-        $('#showExecutor').html("待认领");
-        if ($(".who-and-time").find(".who-wrap").css("display") == "none") {
-            $(".no-renling").show();
-        } else {
-            $(".no-renling").hide();
-        }
-    });
+
+
+
 
     //点击 待认领 出现 人员名单
-    $(".no-renling").click(function (e) {
-        zxz=true;
-        $('#identity').html("执行者");
-        var url = "/task/findProjectAllMember";
-        var args = {"projectId": projectId,"executor":executorId};
-        //异步请求项目人员名单
-        $.post(url,args,function(data){
-            var member = data.data;
-            var executor = "";
-            var content = "";
-            if(member != null){
-                for(var i = 0;i < member.length;i++){
-                    content += "<div class='one-people'>";
-                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
-                    content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
-                    content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-                    content += "</div>";
-                }
-            } else{
-                content +=  "<div class='one-people'>";
-                content += "<img src='/static/image/add.png'>";
-                content += "<span value = ''>没有成员</span>";
-                content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-                content += "</div>";
-            }
-            executor+=
-            "<div class='one-people'>"+
-            "<img th:src='\@{}\'>"+
-            "<span value = ''>待认领</span>"+
-            "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
-            "</div>";
-            $('#members').html(executor);
-            $('#executor').html(content);
-        });
-        $(".people").show(500)
-        e.stopPropagation()
-    });
+// $('.model').on('click','.no-renling',function (e) {
+//     zxz=true;
+//     $('#identity').html("执行者");
+//     var url = "/task/findProjectAllMember";
+//     var args = {"projectId": projectId,"executor":executorId};
+//     //异步请求项目人员名单
+//     $.post(url,args,function(data){
+//         var member = data.data;
+//         var executor = "";
+//         var content = "";
+//         if(member != null){
+//             for(var i = 0;i < member.length;i++){
+//                 content += "<div class='one-people'>";
+//                 content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
+//                 content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
+//                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+//                 content += "</div>";
+//             }
+//         } else{
+//             content +=  "<div class='one-people'>";
+//             content += "<img src='/static/image/add.png'>";
+//             content += "<span value = ''>没有成员</span>";
+//             content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
+//             content += "</div>";
+//         }
+//         executor+=
+//             "<div class='one-people'>"+
+//             "<img th:src='\@{}\'>"+
+//             "<span value = ''>待认领</span>"+
+//             "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
+//             "</div>";
+//         $('#members').html(executor);
+//         $('#executor').html(content);
+//     });
+//     $(".people").show(500)
+//     e.stopPropagation()
+// });
 
     // 点击  任务菜单出现隐藏
     $(".assignment-menu-show").click(function () {
@@ -166,24 +97,7 @@ if ($("#have-executor").val()){
         },"json");
         e.stopPropagation();
     });
-    $(".tag-search-title img").click(function () {
-        $(".tag-search").hide();
-        $(".build-tags").show();
-    });
-    $(".go-return").click(function () {
-        $(".tag-search").show();
-        $(".build-tags").hide();
-    });
-    $(".close-tag").click(function () {
-        $(".tags-search-build").slideUp();
-        $(".no-tags").show();
-    });
-    $(".has-tags>i").click(function (e) {
-        $(".tags-search-build").show();
-        $(".tag-search").show();
 
-        e.stopPropagation();
-    });
 
     // 点击某个具体标签
     $(".tags-list").click(function () {
@@ -199,18 +113,7 @@ if ($("#have-executor").val()){
     $("html").on("click",".remove-work-people",function () {
         $(this).parent().remove();
     });
-    // $(".revise-task").on("click", ".tag i", function () {
-    //     $(this).parent().remove();
-    //     //判断 有没有标签
-    //     console.log($(".has-tags span").length);
-    //     if ($(".has-tags span").length == 0) {
-    //         $(".has-tags").hide();
-    //         $(".no-tags").show();
-    //     } else {
-    //         $(".has-tags").show();
-    //         $(".no-tags").hide();
-    //     }
-    // });
+
 
     //点击颜色，颜色出现对勾
     $(".color-pick li").click(function () {
@@ -476,11 +379,6 @@ $("html").on("click",".tags-list",function () {
             '</span>';
         $('.has-tags').prepend(content);
     }
-    if ($(".has-tags .tag").length==0){
-        $(".no-tags").show()
-    } else {
-        $(".no-tags").hide()
-    }
 });
 
 // 创建 按钮 是否 能点击
@@ -493,48 +391,43 @@ $(".tag-name").keyup(function () {
 });
 
 //点击创建 按钮
-$(".tag-ok").click(function () {
-    if ($(".tag-name").val()==''){
-        return false
-    } else {
-        var content = '';
-        var vals=$(".tag-name").val();
-        var color='';
-        $(".color-pick li i").each(function () {
-            if ($(this).is(":visible")){
-                color=$(this).parent().css("background-color")
-            }
-        });
-        var url = "/tag/add";
-        var args = {"tagName":vals,"bgColor":color,"projectId":projectId}
-        $.post(url,args,function (data) {
-            if(data.result > 0){
-                $(".has-tags").show();
-                content +=
-                    '<span class="tag" value="' + data.data.tagId + '" style="background-color:' + color + '">'+
-                    '<b style="font-weight: 400">' + vals + '</b>'+
-                    '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-                    '</span>';
-                $('.no-tags').hide();
-                $(".has-tags").prepend(content);
-            } else{
-                layer.msg(data.msg);
-            }
-        },"json");
-
-    }
-});
+// $(".tag-ok").click(function () {
+//     if ($(".tag-name").val()==''){
+//         return false
+//     } else {
+//         var content = '';
+//         var vals=$(".tag-name").val();
+//         var color='';
+//         $(".color-pick li i").each(function () {
+//             if ($(this).is(":visible")){
+//                 color=$(this).parent().css("background-color")
+//             }
+//         });
+//         var url = "/tag/add";
+//         var args = {"tagName":vals,"bgColor":color,"projectId":projectId}
+//         $.post(url,args,function (data) {
+//             if(data.result > 0){
+//                 $(".has-tags").show();
+//                 content +=
+//                     '<span class="tag" value="' + data.data.tagId + '" style="background-color:' + color + '">'+
+//                     '<b style="font-weight: 400">' + vals + '</b>'+
+//                     '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
+//                     '</span>';
+//                 $('.no-tags').hide();
+//                 $(".has-tags").prepend(content);
+//             } else{
+//                 layer.msg(data.msg);
+//             }
+//         },"json");
+//
+//     }
+// });
 /**
  * 点击 X 时 移除掉该标签
  */
-$(".tag-box").on("click", ".tag i", function () {
-    $(this).parent().remove();
-    if ($(".has-tags .tag").length==0){
-        $(".no-tags").show()
-    } else {
-        $(".no-tags").hide()
-    }
-});
+// $(".tag-box").on("click", ".tag i", function () {
+//     $(this).parent().remove();
+// });
 
 
 

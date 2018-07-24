@@ -122,7 +122,7 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void addMenu(String parentId, Relation relation) {
-
+		relation.setOrder(relationMapper.findMenuMaxOrder()+1);
 		relation.setParentId(parentId);
 		relation.setLable(1);
 		relation.setRelationDel(0);

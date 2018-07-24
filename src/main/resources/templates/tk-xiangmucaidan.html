@@ -13,20 +13,20 @@
     <div class="menu-title">项目菜单<span class="close-menu">关闭</span></div>
     <div class="menu-list menu-set">
         <img src="../static/image/setting.png" th:src="@{/image/setting.png}" />
-        <span>项目设置</span>
+        <a th:href="@{/project/projectSetting(projectId=${projectId})}">项目设置</a>
     </div>
     <div class="menu-list menu-tag">
         <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
         <span>标签</span>
     </div>
-    <div class="menu-list menu-cj">
-        <img src="../static/image/chajian.png" th:src="@{/image/chajian.png}" />
-        <span>应用与插件</span>
-    </div>
-    <div class="menu-list menu-more">
-        <img src="../static/image/gengduo.png" th:src="@{/image/gengduo.png}" />
-        <span>查看更多</span>
-    </div>
+    <!--<div class="menu-list menu-cj">-->
+        <!--<img src="../static/image/chajian.png" th:src="@{/image/chajian.png}" />-->
+        <!--<span>应用与插件</span>-->
+    <!--</div>-->
+    <!--<div class="menu-list menu-more">-->
+        <!--<img src="../static/image/gengduo.png" th:src="@{/image/gengduo.png}" />-->
+        <!--<span>查看更多</span>-->
+    <!--</div>-->
     <div class="heng-line"></div>
     <div class="menu-list menu-evolve" style="margin-top: 24px">
         <img src="../static/image/jinzhan.png" th:src="@{/image/jinzhan.png}" />

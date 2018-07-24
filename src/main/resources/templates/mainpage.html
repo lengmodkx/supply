@@ -7,11 +7,8 @@
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/share.css}" href="../static/css/share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/group.css}" href="../static/css/group.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/addtask.css}" href="../static/css/addtask.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/search-people.css}" href="../static/css/search-people.css">
@@ -30,12 +27,12 @@
                <ul class="board-scrum-stages boxsizing sortable">
                    <!--待处理-->
                    <li class="model tile boxsizing" th:each="taskMenu:${taskMenus}" th:id="${taskMenu.relationId}">
-                       <div class="model-title boxsizing">
+                       <header class="model-title boxsizing">
                            <span th:text="${taskMenu.relationName}" th:class="relationName">待处理</span>
                            <i class="layui-icon layui-icon-down add-new-model xjt" style="font-size: 15px; color: #B5B5B5;" title="添加或编辑任务列表"
                               th:id="${taskMenu.relationId}" th:data="${taskMenu.relationName}"></i>
                            <!--点击下箭头出现的内容-->
-                       </div>
+                       </header>
                        <!--任务列表-->
                        <div class="ul-wrap layui-form">
                            <ul th:id="${taskMenu.relationId}" class="taskList" th:classappend="taskList+${taskMenu.relationId}">
@@ -67,14 +64,10 @@
                                           </section>
                                       </div>
                                   </div>
-
-
                                </li>
                            </ul>
                            <!--添加任务框-->
-                           <div class="add-task-box boxsizing" style="display: none" th:data="${taskMenu.relationId}">
-
-                           </div>
+                           <div class="add-task-box boxsizing" style="display: none" th:data="${taskMenu.relationId}"></div>
                        </div>
 
                        <!--添加任务按钮-->
@@ -196,7 +189,6 @@
     });
 
 
-
     $("html").on("click",".people-box .people-state",function () {
         var id = $(this).attr('data');
         console.log($(this).attr('data'));
@@ -230,8 +222,9 @@
 </script>
 <script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
-<script th:src="@{/js/file.js}" src="../static/js/file.js"></script>
 <script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
+<script th:src="@{/js/add_task.js}" src="../static/js/add_task.js"></script>
+
 </body>
 
 </html>

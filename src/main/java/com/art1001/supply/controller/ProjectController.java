@@ -12,6 +12,7 @@ import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -412,7 +413,7 @@ public class ProjectController {
         return jsonObject;
     }
 
-
+    //项目设置
     @GetMapping("/projectSetting")
     public String projectSetting(@RequestParam String projectId, Model model){
         String userId = ShiroAuthenticationManager.getUserId();
@@ -430,7 +431,7 @@ public class ProjectController {
         return "objsetting";
     }
 
-
+    //上传项目图片
     @PostMapping("/upload")
     @ResponseBody
     public JSONObject uploadCover(@RequestParam String projectId,
@@ -459,6 +460,7 @@ public class ProjectController {
         return jsonObject;
     }
 
+    //项目功能菜单更新
     @PostMapping("/updateFunc")
     @ResponseBody
     public JSONObject updateFunc(@RequestParam Integer[] funcIds){
@@ -480,10 +482,7 @@ public class ProjectController {
     }
 
 
-
-
-
-
+    //任务界面初始化
     @GetMapping("/task.html")
     public String mainpage(@RequestParam String projectId,Model model){
         try {
@@ -536,6 +535,17 @@ public class ProjectController {
         return "addtask";
     }
 
+    @GetMapping("/projectMenu.html")
+    public String projectMenu(@RequestParam(required = false) String projectId, Model model){
+        try {
+            model.addAttribute("projectId",projectId);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
+        return "tk-xiangmucaidan";
+    }
+
     @GetMapping("/removePeople.html")
     public String removePeople(@RequestParam String nodeName,Model model){
         try {
@@ -553,6 +563,8 @@ public class ProjectController {
     public String menuList(@RequestParam String menuId,@RequestParam String menuName,Model model){
         model.addAttribute("menuId",menuId);
         model.addAttribute("menuName",menuName);
+        List<Task> taskList = taskService.taskMenu(menuId);
+        model.addAttribute("taskList",taskList);
         return "tk-caidanliebiao";
     }
 

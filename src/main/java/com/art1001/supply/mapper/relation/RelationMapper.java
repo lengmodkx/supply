@@ -133,4 +133,6 @@ public interface RelationMapper {
 	 * @return
 	 */
 	Relation getRelationAndAllTaskInfo(String relationId);
+
+	int findMenuMaxOrder();
 }

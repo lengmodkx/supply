@@ -22,7 +22,7 @@ public class StatisticsController {
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
-        return "share";
+        return "statistics";
     }
 
 }

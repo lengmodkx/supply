@@ -281,6 +281,9 @@
 		select IFNULL(max(`order`),0) from prm_task where prm_task.task_menu_id = #{taskMenuId}
 	</select>
 
+	<select id="findMenuMaxOrder" resultType="java.lang.Integer">
+		select IFNULL(max(`order`),0) from prm_relation where parent_id != 0
+	</select>
 	<!-- 查询出某个项目下的某个分组信息 -->
 	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
 		select

@@ -98,14 +98,31 @@ $(function () {
                         var file = data.data;
                         var liVal = '<li class="boxsizing one-file-wrap">\n' +
                             '    <div class="one-file boxsizing fileList">\n' +
-                            '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">\n' +
-                            '        <img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >\n' +
-                            '        <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
+                            '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">';
+                            if(file.ext==='.jpg'||file.ext==='.png'||file.ext==='.jpeg'||file.ext==='.bmp'||file.ext==='.svg'){
+                                liVal+='<img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >';
+                            }else if(file.ext==='.doc'||file.ext==='.docx'){
+                                liVal+='<img class="textFile" src="/image/word_1.png" >';
+                            }else if(file.ext==='.xls'||file.ext==='.xlsx'){
+                                liVal+='<img class="textFile" src="/image/excel.png" >';
+                            }else if(file.ext==='.ppt'||file.ext==='.pptx'){
+                                liVal+='<img class="textFile" src="/image/ppt.png" >';
+                            }else if(file.ext==='.pdf'){
+                                liVal+='<img class="textFile" src="/image/pdf_1.png" >';
+                            }else if(file.ext==='.zip'){
+                                liVal+='<img class="textFile" src="/image/zip.png" >';
+                            }else if(file.ext==='.rar'){
+                                liVal+='<img class="textFile" src="/image/rar.png" >';
+                            }else if(file.ext==='.txt'){
+                                liVal+='<img class="textFile" src="/image/txt.png" >';
+                            }
+
+                            liVal+='<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
                             '        <div class="img-show-operate">\n' +
                             '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +
                             '        </div>\n' +
                             '    </div>\n' +
-                            '    <div class="one-file-name" data="' + file.fileId + '">' + file.fileName + '</div>\n' +
+                            '    <div class="one-file-name" data="' + file.fileId + '">' + file.fileName.length>15?file.fileName.substring(0,10)+file.ext:file.fileName + '</div>\n' +
                             '</li>';
                         $("#fileListUl").append(liVal);
                         form.render("checkbox");

@@ -71,6 +71,7 @@ $(function () {
     $('.sortable').sortable({
         cursor:"move",
         items:'.tile',
+        handle:'.model-title',
         axis: 'x',
         tolerance: 'pointer',
         placeholder: 'model',
@@ -78,7 +79,7 @@ $(function () {
             console.log(ui);
             var ids = $('.sortable').sortable('toArray');
             $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
-
+                console.log(data);
             });
         }
     });
@@ -93,7 +94,6 @@ $(function () {
             forcePlaceholderSize: true,
             connectWith:'.taskList',
             receive: function(event, ui) {
-              console.log(ui);
               var item = ui.item;
               var menuId = ui.item.parent().attr('id');
               var taskIds = sortable.sortable('toArray').toString();
@@ -103,14 +103,22 @@ $(function () {
               $.post(url,params,function (data) {
                   console.log(data);
               });
+            },
+            stop:function (event,ui) {
+                var taskIds = sortable.sortable('toArray').toString();
+                var url = "/task/taskOrder";
+                var params = {"taskId":"","menuId":"","taskIds":taskIds};
+                $.post(url,params,function (data) {
+                    console.log(data);
+                });
             }
         });
     });
 
+
     firefox();
 
 
-    var ulIdNum=3;   //ul列表的id 用于各列间相互拖拽
     //点击 新建任务列表
     $(".noclick-creat-model").click(function () {
         $(this).hide();
@@ -127,13 +135,14 @@ $(function () {
             $(".creat-model-input").focus();
             return false
         } else {
-            $(".click-creat-model").hide();
-            $(".noclick-creat-model").show();
             var modelTitle=$(".creat-model-input").val();
             var url = "/relation/addMenu";
-            var args = {"parentId":groupId,"relationName":modelTitle};
+            var args = {"projectId":projectId,"parentId":groupId,"relationName":modelTitle};
             $.post(url,args,function (data) {
-                console.log(data);
+                if(data.result===1){
+                    $(".click-creat-model").hide();
+                    $(".noclick-creat-model").show();
+                }
             },"json");
             // 新 的 任务列表
             firefox();
@@ -152,12 +161,20 @@ $(".close-tk").click(function () {
 });
 
 //点击 任务列表顶部 下箭头，弹出框
+var menuflag = true;
 $("html").on("click",".add-new-model",function(){
-    var top=$(this).offset().top +20 +'px';
-    var left=$(this).offset().left -125 +'px';
-    var menuId = $(this).attr('id');
-    var menuName = $(this).siblings('.relationName').text();
-    lbmenu(top,left,menuId,menuName);
+    if(menuflag){
+        var top=$(this).offset().top +20 +'px';
+        var left=$(this).offset().left -125 +'px';
+        var menuId = $(this).attr('id');
+        var menuName = $(this).siblings('.relationName').text();
+        lbmenu(top,left,menuId,menuName);
+        menuflag = false;
+    }else{
+        menuflag =true;
+        layer.closeAll();
+    }
+
 });
 function lbmenu(top,left,menuId,menuName) {
     layui.use('layer', function(){
@@ -170,7 +187,7 @@ function lbmenu(top,left,menuId,menuName) {
             fixed: true,
             shadeClose: true,
             closeBtn: 0,
-            shade: 0,
+            shade: ['0.1','#fff'],
             anim: 1,  //动画 0-6
             content: ['menuList.html?menuId='+menuId+"&menuName="+menuName,'no']
         });
@@ -356,325 +373,7 @@ function yaoqing() {
         });
     });
 }
-//添加任务
 
-//点击添加任务按钮
-$("html").on("click",".add-assignment",function(e){
-    e.stopPropagation();
-    liId=$(this).siblings(".ul-wrap").children(".taskList").children(":first").attr("id");
-    var addBox = $(this).siblings(".ul-wrap").find(".add-task-box");
-    addRenwu(addBox,addBox.attr('data'));
-    $(".add-task-box").hide();
-    $(".add-assignment").show();
-    $(this).siblings(".ul-wrap").find(".add-task-box").slideDown();
-    $(this).hide();
-    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+394);
-});
-
-
-
-function addRenwu(addBox,taskMenuId) {
-    var taskItem = ' <div class="new-assignment boxsizing layui-form">\n' +
-        '                                    <textarea placeholder="任务内容" class="layui-textarea rw-content boxsizing" id="taskName"></textarea>\n' +
-        '                                   <div class="who-and-time">\n' +
-        '                                       <input type="hidden" id="have-executor" value="'+member.id+'">\n' +
-        '                                       <div class="who-wrap">\n' +
-        '                                           <input name="" value="" type="hidden"/>\n' +
-        '                                           <img id="executorImg" src="'+IMAGE_SERVER+member.userInfo.image+'"/>\n' +
-        '                                           <input type="hidden" id="executorId" value="'+member.id+'"/>\n' +
-        '                                           <input type="hidden" id="executorName" value="'+member.userName+'"/>\n' +
-        '                                           <span id = "showExecutor">'+member.userName+'</span>\n' +
-        '                                           <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
-        '                                       </div>\n' +
-        '                                       <div class="no-renling" style="display: none">\n' +
-        '                                           <i class="layui-icon layui-icon-username no-people-img" style="font-size: 20px; color: #A6A6A6;"></i>\n' +
-        '                                           <span>待认领</span>\n' +
-        '                                       </div>\n' +
-        '                                   </div>\n' +
-        '                                   <div class="show-develop">\n' +
-        '                                       <i class="layui-icon layui-icon-more" style="font-size: 20px; color: #a6a6a6;"></i>\n' +
-        '                                       <span>更多</span>\n' +
-        '                                   </div>\n' +
-        '                                   <div class="develop" style="display: none">\n' +
-        '                                       <div class="begin-time abox">\n' +
-        '                                           <img src="/image/begintime.png"/>\n' +
-        '                                           <input type="text" class="layui-input" id="beginTime" name="startTime"  placeholder="开始时间">\n' +
-        '                                       </div>\n' +
-        '                                       <div class="over-time abox">\n' +
-        '                                           <img src="/image/begintime.png"/>\n' +
-        '                                           <input type="text" class="layui-input" id="overTime" name="endTime" placeholder="截止时间">\n' +
-        '                                       </div>\n' +
-        '                                       <div class="norepeat abox">\n' +
-        '                                           <img src="/image/norepeat.png">\n' +
-        '                                           <select name="repeat" lay-verify="" id = "repeat">\n' +
-        '                                               <option value="不重复">不重复</option>\n' +
-        '                                               <option value="每天重复">每天重复</option>\n' +
-        '                                               <option value="每周重复">每周重复</option>\n' +
-        '                                               <option value="每月重复">每月重复</option>\n' +
-        '                                               <option value="每年重复">每年重复</option>\n' +
-        '                                               <option value="工作日重复">工作日重复</option>\n' +
-        '                                           </select>\n' +
-        '                                       </div>\n' +
-        '                                       <div class="noremand abox">\n' +
-        '                                           <img src="/image/noremand.png">\n' +
-        '                                           <select name="remand" lay-verify="" id = "remand">\n' +
-        '                                               <option value="不提醒">不提醒</option>\n' +
-        '                                               <option value="任务开始时提醒">任务开始时提醒</option>\n' +
-        '                                               <option value="任务截止时提醒">任务截止时提醒</option>\n' +
-        '                                           </select>\n' +
-        '                                       </div>\n' +
-        '                                       <div class="pri layui-form">\n' +
-        '                                           <div class="layui-input-block">\n' +
-        '                                               <input type="radio" name="state" value="普通" title="普通" checked = "checked">\n' +
-        '                                               <input type="radio" name="state" value="紧急" title="紧急">\n' +
-        '                                               <input type="radio" name="state" value="非常紧急" title="非常紧急">\n' +
-        '                                           </div>\n' +
-        '                                       </div>\n' +
-        '                                   </div>\n' +
-        '                                   <div class="add-tag tag-box clearfix">\n' +
-        '                                           <img src="/image/biaoqian.png" />\n' +
-        '                                           <span>标签</span>\n' +
-        '                                           <span class="no-tags">添加标签</span>\n' +
-        '                                           <div class="has-tags"></div>\n' +
-        '                                   </div><div class="tags-search-build" style="display: none">\n' +
-        '            <!--搜索标签-->\n' +
-        '            <div class="tag-search" >\n' +
-        '                <div class="tag-search-title boxsizing">\n' +
-        '                    <input class="tag-search-input" type="text" placeholder="搜索标签">\n' +
-        '                    <img src="/image/adds.png" />\n' +
-        '                </div>\n' +
-        '                <ul class="tags-ul boxsizing" id = "tags">\n' +
-        '                </ul>\n' +
-        '            </div>\n' +
-        '            <!--新建标签-->\n' +
-        '            <div class="build-tags" style="display: none">\n' +
-        '                <div class="build-tags-title boxsizing">\n' +
-        '                    <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>\n' +
-        '                    新建标签\n' +
-        '                    <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>\n' +
-        '                </div>\n' +
-        '                <div class="build-tags-con boxsizing">\n' +
-        '                    <input class="tag-name boxsizing" type="text" placeholder="标签名称">\n' +
-        '                    <ul class="color-pick">\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>\n' +
-        '                        </li>\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
-        '                        </li>\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
-        '                        </li>\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
-        '                        </li>\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
-        '                        </li>\n' +
-        '                        <li>\n' +
-        '                            <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>\n' +
-        '                        </li>\n' +
-        '                    </ul>\n' +
-        '                    <div class="tag-ok" disabled>创建</div>\n' +
-        '                </div>\n' +
-        '            </div>\n' +
-        '        </div>\n'+
-        '                                   <div class="heng-line"></div>\n' +
-        '                                   <p class="cyz">参与者</p>\n' +
-        '                                   <div class="work-people boxsizing clearfix">\n' +
-        '                                       <div class="one-work-people" value="'+member.id+'">\n' +
-        '                                           <img src="'+IMAGE_SERVER+member.userInfo.image+'">\n' +
-        '                                           <input type="hidden" value="'+member.id+'" />\n' +
-        '                                           <i class="layui-icon layui-icon-close-fill remove-work-people "\n' +
-        '                                              style="font-size: 15px; color: #3da8f5;"></i>\n' +
-        '                                       </div>\n' +
-        '                                       <div class="add-work-people ">\n' +
-        '                                           <img src="/image/adds.png">\n' +
-        '                                       </div>\n' +
-        '                                   </div>\n'+
-        '        <div>\n' +
-        '        <input type="hidden" id = "memberId" />\n' +
-        '        <div class="people boxsizing" style="display: none" >\n' +
-        '            <input type="text" name="" placeholder="搜索" class="layui-input">\n' +
-        '            <div class="peoples">\n' +
-        '                <p id = "identity">参与者</p>\n' +
-        '                <div id = "members" >\n' +
-        '                </div>\n' +
-        '                <p>推荐</p>\n' +
-        '                <div id = "executor">\n' +
-        '                    <!--项目成员列表-->\n' +
-        '                </div>\n' +
-        '            </div>\n' +
-        '            <div id="people-ok" class="people-ok">确定</div>\n' +
-        '        </div>\n' +
-        '    </div>\n'+
-        '                                   <div class="heng-line"></div>\n' +
-        '                                   <div class="secret abox layui-form">\n' +
-        '                                       <img src="/image/suo.png">\n' +
-        '                                       <span>隐私模式</span>\n' +
-        '                                       <div class="who-can-see">所有成员可见</div>\n' +
-        '                                       <div class="layui-btn layui-btn-normal new-assignment-ok" data="'+taskMenuId+'">创建</div>\n' +
-        '                                   </div>\n' +
-        '                               </div>\n' +
-        '<div class="tk-people" style="display: none">\n'+
-        '<div class="people boxsizing" >\n' +
-        '    <input type="text" name="" placeholder="搜索" class="layui-input">\n' +
-        '    <div class="peoples">\n' +
-        '        <div>\n' +
-        '            <p>参与者</p>\n' +
-        '            <div class="invisit-people">\n' +
-        '            </div>\n' +
-        '        </div>\n' +
-        '        <p>推荐</p>\n' +
-        '        <div class = "noExecutor">\n' +
-        '\n' +
-        '        </div>\n' +
-        '    </div>\n' +
-        '    <div class="people-ok">确定</div>\n' +
-        '</div>\n'+
-        '</div>';
-
-        addBox.html(taskItem);
-        layui.form.render();
-};
-
-//标签 框
-$('.ul-wrap').on('click','.no-tags',function () {
-    var top=$(this).offset().top-250;
-    var left=$(this).offset().left;
-    layer.open({
-        type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-        title: false, //标题
-        offset: [top,left],
-        area:['230px','250px'],
-        fixed: false,
-        shadeClose: true, //点击遮罩关闭
-        shade:[0.1,'#fff'],
-        closeBtn: 0,
-        anim: 1,  //动画 0-6
-        content: $('.tags-search-build').html(),
-        success: function(layero, index){
-            $('.tags-ul').html('');
-            $.post('/tag/findByProjectId',{"projectId":projectId},function (data) {
-                if(data.result===1&&data.data!=null){
-                    for(var i=0;i<data.data.length;i++){
-                        var li = '<li class="tags-list">\n' +
-                            '        <span class="dot"></span>\n' +
-                            '        <span class="tag-font">'+data.data[i]+'</span>\n' +
-                            '     </li>';
-                        $('.tags-ul').append(li);
-                    }
-                }
-            });
-        }
-    });
-});
-
-
-$('.model').on('click','.add-work-people ',function () {
-    var top=$(this).offset().top-360;
-    var left=$(this).offset().left;
-    people(top,left)
-});
-// 人员 框
-function people(top,left){
-    layer.open({
-        type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-        title: false, //标题
-        offset: [top,left],
-        area:['252px','360px'],
-        fixed: false,
-        shadeClose: true, //点击遮罩关闭
-        shade:[0.1,'#fff'],
-        closeBtn: 0,
-        anim: 1,  //动画 0-6
-        content: $('.tk-people').html(),
-        success:function (layero, index) {
-            $(".invisit-people").html('');
-            $(".noExecutor").html('');
-            $.post('/project/findProjectMember',{"projectId":projectId},function (data) {
-                if(data.result===1){
-                    var div = '<img src="'+IMAGE_SERVER+data.user.userInfo.image+'"/>' +
-                        '<span>'+data.user.userName+'</span>' +
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>';
-                    $(".invisit-people").append(div);
-
-                    for(var i=0;i<data.members.length;i++){
-                        var div_people = '<div class="one-people"><img src="'+IMAGE_SERVER+data.members[i].memberImg+'"/>' +
-                            '<span>'+data.members[i].memberName+'</span>' +
-                            '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
-                        $(".noExecutor").append(div_people);
-                    }
-                }
-            });
-        }
-    });
-}
-
-$('.model').on('click','.new-assignment-ok',function () {
-
-    var taskName = $("#taskName").val();
-    if(taskName===null||taskName===''||taskName===undefined){
-        layer.msg("请输入任务名称",{icon:5});
-        return false;
-    }
-    addTask($(this).attr('data'));
-});
-function addTask(taskMenuId) {
-    //获取选中的参与者信息
-    var members = [];
-    $('.work-people .one-work-people').each(function () {
-        members.push($(this).attr('value'));
-    });
-
-    //获取标签信息
-    var tags = [];
-    $('.tag').each(function () {
-        tags.push($(this).attr('value'));
-    });
-    //设置任务的执行者
-    var executor = $('#executorId').val();
-    //设置任务开始时间
-    var beginTime = $('#beginTime').val();
-    if(beginTime != null && beginTime != ''){
-        var startTime = new Date(beginTime.toString()).getTime();
-    } else {
-        startTime = null;
-    }
-    //设置任务结束时间
-    var overTime = $('#overTime').val();
-    if(overTime != null && overTime != ''){
-        var endTime = new Date(overTime.toString()).getTime();
-    } else{
-        endTime = null;
-    }
-    //设置任务的内容
-    var taskName = $("#taskName").val();
-    //设置重复模式
-    var repeat = $('#repeat').val();
-    //设置任务提醒
-    var remind = $('#remand').val();
-    //设置任务优先级
-    var priority = $('input[name="state"]:checked').val();
-    //设置隐私模式
-    var privacyPattern = "";
-    if($('#privacyPattern').prop('checked')) {
-        privacyPattern = "1";
-    } else{
-        privacyPattern = "0";
-    }
-
-    var url = "/task/saveTask";
-    var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"taskUIds":members.toString(),"executor":executor,"tagId":tags.toString()};
-    $.post(url,args,function(data){
-        if(data.result === 1){
-            layer.msg("任务创建成功!",{icon:1});
-            $("#taskName").val('');
-        } else{
-            layer.msg("任务创建失败!",{icon:5});
-        }
-    },"json");
-}
 
 //修改任务 弹框界面
 function changeRenwu(taskId,projectId) {
@@ -698,7 +397,7 @@ $(".menu").click(function () {
     var top=$(this).offset().top +40 +'px';
     var right=$(window).width()-$(this).offset().left;
     var left=$(this).offset().left -380 +right+'px';
-    projectMenu(top,left)
+    projectMenu(top,left);
 });
 function projectMenu(top,left) {
     layui.use('layer', function(){
@@ -713,7 +412,7 @@ function projectMenu(top,left) {
             closeBtn: 0,
             shade: 0,
             anim: 1,  //动画 0-6
-            content: ['tk-xiangmucaidan.html','no']
+            content: ['projectMenu.html?projectId='+projectId,'no']
         });
     });
 };
