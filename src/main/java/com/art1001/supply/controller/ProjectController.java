@@ -30,6 +30,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.omg.CORBA.OBJ_ADAPTER;
@@ -42,9 +43,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static jodd.core.JoddCore.encoding;
 
 /**
  * 项目控制器
@@ -84,7 +89,7 @@ public class ProjectController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
     @RequestMapping("/project.html")
-    public String home(Model model){
+    public String home(Model model, HttpServletResponse response){
 
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -102,6 +107,9 @@ public class ProjectController {
             model.addAttribute("delProjects",delProjects);
 
             model.addAttribute("user",userEntity);
+            response.setHeader("Cache-Control","no-store");
+            response.setDateHeader("Expires", 0);
+            response.setHeader("Pragma","no-cache");
             return "project";
         }catch (Exception e){
             throw  new SystemException(e);
@@ -246,6 +254,129 @@ public class ProjectController {
 
         return jsonObject;
     }
+
+
+    /**
+     * 模板创建
+     */
+    @PostMapping("/projectTemplate")
+    @ResponseBody
+    public JSONObject projectTemplate(@RequestParam String projectName,@RequestParam(required = false)String templateFlag){
+        JSONObject jsonObject = new JSONObject();
+        if(StringUtils.isEmpty(projectName)){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","项目名称不能为空");
+            return jsonObject;
+        }
+        try {
+            //项目基本信息
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            Project project = new Project();
+            project.setProjectName(projectName);
+            project.setProjectDes("");
+            project.setProjectCover("upload/project/bj.png");
+            project.setProjectDel(0);
+            project.setCreateTime(System.currentTimeMillis());
+            project.setIsPublic(0);
+            project.setProjectRemind(0);
+            project.setMemberId(userEntity.getId());
+            project.setProjectStatus(0);
+            projectService.saveProject(project);
+            //初始化项目功能菜单
+            String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
+            for (int i=0;i<funcs.length;i++) {
+                ProjectFunc projectFunc = new ProjectFunc();
+                projectFunc.setFuncName(funcs[i]);
+                projectFunc.setIsOpen(1);
+                projectFunc.setFuncOrder(i);
+                projectFunc.setProjectId(project.getProjectId());
+                funcService.saveProjectFunc(projectFunc);
+            }
+
+            //初始化分组
+            Relation relation = new Relation();
+            relation.setRelationName("任务");
+            relation.setProjectId(project.getProjectId());
+            relation.setLable(0);
+            relation.setRelationDel(0);
+            relation.setCreateTime(System.currentTimeMillis());
+            relation.setUpdateTime(System.currentTimeMillis());
+            relationService.saveRelation(relation);
+
+            InputStream stream = getClass().getClassLoader().getResourceAsStream("ff.json");
+            java.io.File targetFile = new java.io.File("ff.json");
+            FileUtils.copyInputStreamToFile(stream, targetFile);
+            StringBuilder localStrBulider = new StringBuilder();
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(targetFile), "utf-8");
+            BufferedReader bufferReader = new BufferedReader(inputStreamReader);
+            String lineStr;
+            while((lineStr = bufferReader.readLine()) != null) {
+                localStrBulider.append(lineStr);
+            }
+            bufferReader.close();
+            inputStreamReader.close();
+
+            JSONArray jsonArray =JSON.parseArray(localStrBulider.toString());
+
+            for (int i=0;i<jsonArray.size();i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                Relation relation1 = new Relation();
+                relation1.setProjectId(project.getProjectId());
+                relation1.setRelationName(object.getString("menuName"));
+                relation1.setParentId(relation.getRelationId());
+                relation1.setLable(1);
+                relation1.setRelationDel(0);
+                relation1.setOrder(i);
+                relation1.setCreateTime(System.currentTimeMillis());
+                relation1.setUpdateTime(System.currentTimeMillis());
+                relationService.saveRelation(relation1);
+
+                for(int j=0;j<object.getJSONArray("taskList").size();j++){
+                    JSONObject object1 = object.getJSONArray("taskList").getJSONObject(i);
+                    Task task = new Task();
+                    task.setTaskMenuId(relation1.getRelationId());
+                    task.setTaskName(object1.getString("taskName"));
+                    task.setRemarks(object1.getString("remarks"));
+                    task.setProjectId(project.getProjectId());
+                    taskService.saveTask(task);
+                }
+            }
+
+            //往项目用户关联表插入数据
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setProjectId(project.getProjectId());
+            projectMember.setMemberId(userEntity.getId());
+            projectMember.setMemberName(userEntity.getUserName());
+            projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+            projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+            projectMember.setMemberImg(userEntity.getUserInfo().getImage());
+            projectMember.setCreateTime(System.currentTimeMillis());
+            projectMember.setUpdateTime(System.currentTimeMillis());
+            projectMember.setMemberLable(1);
+            projectMemberService.saveProjectMember(projectMember);
+            //初始化项目文件夹
+            fileService.initProjectFolder(project);
+            //写资源表
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目创建成功");
+            jsonObject.put("projectId",project.getProjectId());
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSON.toJSON(project).toString()));
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
+
+
+
+
+
+
+
 
     @RequestMapping("/updateMenusOrder")
     @ResponseBody

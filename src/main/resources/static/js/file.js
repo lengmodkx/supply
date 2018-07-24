@@ -84,6 +84,7 @@ $(function () {
         /**
          * 文件上传
          */
+        var liVal="";
         upload.render({
             elem: '#uploadFile' //绑定元素
             , url: '/file/uploadFile' //上传接口
@@ -96,34 +97,38 @@ $(function () {
                     layer.msg(data.msg, {icon: 1, time: 1000}, function () {
                         layer.closeAll('loading');
                         var file = data.data;
-                        var liVal = '<li class="boxsizing one-file-wrap">\n' +
+                        liVal += '<li class="boxsizing one-file-wrap">\n' +
                             '    <div class="one-file boxsizing fileList">\n' +
-                            '        <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks">';
+                            '    <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks"/>';
+
                             if(file.ext==='.jpg'||file.ext==='.png'||file.ext==='.jpeg'||file.ext==='.bmp'||file.ext==='.svg'){
                                 liVal+='<img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >';
                             }else if(file.ext==='.doc'||file.ext==='.docx'){
-                                liVal+='<img class="textFile" src="/image/word_1.png" >';
+                                liVal+='<img class="textFile" src="/image/word_1.png"/>';
                             }else if(file.ext==='.xls'||file.ext==='.xlsx'){
-                                liVal+='<img class="textFile" src="/image/excel.png" >';
+                                liVal+='<img class="textFile" src="/image/excel.png"/>';
                             }else if(file.ext==='.ppt'||file.ext==='.pptx'){
-                                liVal+='<img class="textFile" src="/image/ppt.png" >';
+                                liVal+='<img class="textFile" src="/image/ppt.png"/>';
                             }else if(file.ext==='.pdf'){
-                                liVal+='<img class="textFile" src="/image/pdf_1.png" >';
+                                liVal+='<img class="textFile" src="/image/pdf_1.png"/>';
                             }else if(file.ext==='.zip'){
-                                liVal+='<img class="textFile" src="/image/zip.png" >';
+                                liVal+='<img class="textFile" src="/image/zip.png"/>';
                             }else if(file.ext==='.rar'){
-                                liVal+='<img class="textFile" src="/image/rar.png" >';
+                                liVal+='<img class="textFile" src="/image/rar.png"/>';
                             }else if(file.ext==='.txt'){
-                                liVal+='<img class="textFile" src="/image/txt.png" >';
+                                liVal+='<img class="textFile" src="/image/txt.png"/>';
                             }
 
-                            liVal+='<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>\n' +
-                            '        <div class="img-show-operate">\n' +
-                            '            <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>\n' +
-                            '        </div>\n' +
-                            '    </div>\n' +
-                            '    <div class="one-file-name" data="' + file.fileId + '">' + file.fileName.length>15?file.fileName.substring(0,10)+file.ext:file.fileName + '</div>\n' +
-                            '</li>';
+                            liVal+='<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>';
+                            liVal+='<div class="img-show-operate"><i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i></div>';
+                            liVal+='</div>';
+                            liVal+='<div class="one-file-name" data="' + file.fileId + '">';
+                            if(file.fileName.length>15){
+                                var fileName = file.fileName.substring(0,10)+file.ext;
+                                liVal+=fileName+'</div></li>';
+                            }else{
+                                liVal+=file.fileName+'</div></li>';
+                            }
                         $("#fileListUl").append(liVal);
                         form.render("checkbox");
                         fileDetail()
@@ -158,9 +163,9 @@ $(function () {
             fileIds = fileIds.substring(0, fileIds.length - 1);
             $.post("/file/recoveryFile", {fileIds: fileIds}, function (data) {
                 if (data.result === 1) {
-                    obj.remove();
+                    layer.msg('移除成功', {icon: 1});
                 } else {
-                    layer.msg(data.msg, {icon: 2})
+                    layer.msg(data.msg, {icon: 2});
                 }
             });
         });

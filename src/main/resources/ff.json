@@ -1,0 +1,142 @@
+[{
+  "menuName": "项目信息",
+  "taskList": [{
+    "taskName": "立项",
+    "remarks": ""
+  },
+    {
+      "taskName": "签订合同",
+      "remarks": "协助商务主管签订设计合同，提交给商务主管项目建筑面积、设计计划表等相关资料。"
+    },
+    {
+      "taskName": "客户背景资料整理",
+      "remarks": ""
+    },
+    {
+      "taskName": "现场勘测",
+      "remarks": "搜集整理项目相关信息（拍照、测量）"
+    },
+    {
+      "taskName": "价格规划",
+      "remarks": "项目对接人向委托方提交设计服务书（报价、服务流程、服务内容"
+    }
+  ]
+},
+  {
+    "menuName": "线长",
+    "taskList": [{
+      "taskName": "组建项目团队",
+      "remarks": "项目负责人介绍项目情况，组建项目团队（如：项目负责人、主案设计师、副案设计师、施工图设计师、效果图设计师、软装设计师）。"
+    },
+      {
+        "taskName": "制定项目计划表",
+        "remarks": "项目负责人制订项目时间计划表，为下一步合同签订提供依据。"
+      },
+      {
+        "taskName": "硬装设计要求",
+        "remarks": ""
+      },
+      {
+        "taskName": "软装设计要求",
+        "remarks": ""
+      },
+      {
+        "taskName": "MEP设计要求",
+        "remarks": ""
+      },
+      {
+        "taskName": "主要材料初选",
+        "remarks": "方案设计师主材初选，制作材料表，搜集物料样板。初步的材质搭配、推敲。"
+      },
+      {
+        "taskName": "交付",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "menuName": "硬装设计师",
+    "taskList": [{
+      "taskName": "墙体门窗制作及铺装层设定",
+      "remarks": ""
+    },
+      {
+        "taskName": "顶面制作及卫生间布置",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "menuName": "软装设计师",
+    "taskList": [{
+      "taskName": "软装组合摆放",
+      "remarks": ""
+    }]
+  },
+  {
+    "menuName": "施工图深化师",
+    "taskList": [{
+      "taskName": "导出施工图",
+      "remarks": ""
+    },
+      {
+        "taskName": "平面",
+        "remarks": ""
+      },
+      {
+        "taskName": "立面",
+        "remarks": ""
+      },
+      {
+        "taskName": "剖面",
+        "remarks": ""
+      },
+      {
+        "taskName": "电气",
+        "remarks": ""
+      },
+      {
+        "taskName": "主材表核定",
+        "remarks": "材料组设计师与方案设计师配合完成。搜集材料样板、壁纸选样、油漆色板、陶瓷、洁具五金的选择。"
+      },
+      {
+        "taskName": "组织施工图会审",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "menuName": "全屋定制制作",
+    "taskList": [{
+      "taskName": "橱柜衣柜制作",
+      "remarks": ""
+    }]
+  }, {
+  "menuName": "MEP（水电）",
+  "taskList": [{
+    "taskName": "水电布置",
+    "remarks": ""
+  }]
+}, {
+  "menuName": "预算",
+  "taskList": [{
+    "taskName": "预算审核",
+    "remarks": ""
+  }]
+}, {
+  "menuName": "渲染师",
+  "taskList": [{
+    "taskName": "效果图渲染",
+    "remarks": ""
+  }, {
+    "taskName": "VR文件渲染",
+    "remarks": ""
+  }]
+}, {
+  "menuName": "后期编辑",
+  "taskList": [{
+    "taskName": "方案成果汇报",
+    "remarks": "项目负责人预约设计委托方负责人，将汇报时间通知设计师，进行设计方案的汇报。设计方案成果报与委托方审核，委托方在签收单签字确认"
+  }]
+}
+]
