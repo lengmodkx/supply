@@ -171,27 +171,28 @@
             </div>
         </div>
 
-        <!--添加子任务-->
-        <div class="add-child-task combox" th:if="${task.parentId == '0'}">
-            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-            <span>添加子任务</span>
-        </div>
-        <div class="click-add-child-task common-add-style" style="display: none">
-            <input type="text" name="title"  placeholder="子任务名称..." autocomplete="off" class="layui-input creat-model-input">
-            <div class="clearfix">
-                <div class="child-task-ok layui-btn layui-btn-normal common-ok-style">保存</div>
-                <div class="child-task-no common-no-style">取消</div>
+        <div id = "addSubTask" th:style="'display:' + @{(${task.taskStatus != '完成'} ? 'block':'none')}">
+            <!--添加子任务-->
+            <div class="add-child-task combox" th:if="${task.parentId == '0'}">
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                <span>添加子任务</span>
+            </div>
+            <div class="click-add-child-task common-add-style" style="display: none">
+                <input type="text" name="title"  placeholder="子任务名称..." autocomplete="off" class="layui-input creat-model-input">
+                <div class="clearfix">
+                    <div class="child-task-ok layui-btn layui-btn-normal common-ok-style">保存</div>
+                    <div class="child-task-no common-no-style">取消</div>
+                </div>
             </div>
         </div>
-        <div class="guanlian combox">
-            <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
-            <span>关联内容</span>
-        </div>
-        <div class="add-guanlian combox">
-            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-            <span>添加关联</span>
-        </div>
-
+            <div class="guanlian combox">
+                <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
+                <span>关联内容</span>
+            </div>
+            <div class="add-guanlian combox">
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                <span>添加关联</span>
+            </div>
 
         <div id = "bind">
             <!--关联 部分-->
@@ -200,7 +201,7 @@
                  <ul class="related-rw">
                     <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
                         <div class="check-box" th:value="${task.taskName}">
-                            <input type="checkbox" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
+                            <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
                         </div>
                         <div class="related-rw-info">
                             <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
@@ -483,12 +484,12 @@
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script>
-    if(taskStatus == '完成'){
-        $('.add-child-task').css('display','none');
-    } else if(taskStatus == '未完成'){
-        $('.add-child-task').css('display','block');
-    }
-    
+    // if(taskStatus == '完成'){
+    //     $('.add-child-task').css('display','none');
+    // } else if(taskStatus == '未完成'){
+    //     $('.add-child-task').css('display','block');
+    // }
+
     $("body").on("click",".show-cancel-related",function () {
         $(this).parents("li").find(".related-menu").slideToggle();
     });

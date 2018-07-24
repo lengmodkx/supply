@@ -237,6 +237,7 @@ $('.one-level-nav>li').click(function(){
  * 点击一个项目的时候 加载这个项目下的所有分组
  */
 $("html").on("click",".style-ul li",function (){
+   var it=$(this);
     $('.a-task-box').html('');
     var projectId = $(this).attr('data-id');
     var url = '';
@@ -258,14 +259,19 @@ $("html").on("click",".style-ul li",function (){
     $.post(url,args,function (data) {
         var item = data.data;
         if(type == '任务'){
-            var list = $('#groups>div')
-            list.html(addGroups(item,type));
+            var list = $('#groups>div');
+          if (it.hasClass("groupId")) {
+             return false
+          }else {
+              list.html(addGroups(item,type))
+          }
+
         }
         if(type == '文件'){
             if(item != ''){
                 addGroups(item,type);
             } else{
-                return false;
+
             }
         }
         if(type == "日程"){
@@ -281,6 +287,7 @@ $("html").on("click",".style-ul li",function (){
  * 点击分组的时候,查询该分组下的所有任务
  */
 $("html").on("click","#groups .groupId",function () {
+
     var id = $(this).attr("data-id");
     if(id == undefined){
         id = null;

@@ -529,10 +529,10 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO addAndRemoveTaskMember(Task task, String addUserEntity, String removeUserEntity) {
+    public TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
         StringBuilder content = new StringBuilder("");
-        List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
-        UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
+        //List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
+       // ./UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
         //向任务成员表中添加数据
 //        if(addUserEntity != null){
 //            taskMemberService.addManyMemberInfo(addUser,task);

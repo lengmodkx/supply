@@ -25,10 +25,39 @@ function useLayerForm(){
                 $(".who-can-see").text("所有成员可见")
             }
         });
+        /**
+         * 监听任务是否完成的复选框
+         */
+        form.on('checkbox(finish_task)', function(data){
+            var url = "/task/resetAndCompleteTask";
+            var args = {"taskId" : data.value};
+            var taskId = data.value;
+            $.post(url,args,function(data){
+                if(data.result == 0){
+                    layer.msg(data.msg);
+                    $('.task-check-box input[type = "checkbox"]').each(function (){
+                       if($(this).attr('value') == taskId){
+                           $(this).prop("checked",false);
+                           form.render();
+                       }
+                    });
+                }
+            },"json");
+            console.log(data.elem); //得到checkbox原始DOM对象
+            console.log(data.elem.checked); //是否被选中，true或者false
+            console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+            console.log(data.othis); //得到美化后的DOM对象
+        });
+
+
     });
 };
 
 $(function () {
+
+
+
+
     $(".ul-wrap").css("max-height",parseInt($(".view").css("height"))-100+'px');
     $(".content-wrap-wrap").click(function(event){
         var _con = $('.add-task-box');  // 设置目标区域

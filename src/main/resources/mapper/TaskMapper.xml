@@ -31,7 +31,7 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
-		<result column="task_uids" property="memberId" jdbcType="CLOB" />
+		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 		<!--查询创建者-->
 		<association property="creatorInfo" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 			select="com.art1001.supply.mapper.user.UserMapper.findById"/>
@@ -42,7 +42,7 @@
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<!--查询参与者-->
-		<collection property="joinInfo" column="task_uids" javaType="java.util.ArrayList"
+		<collection property="joinInfo" column="{memberIds=task_uids}" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 		<!--查询子任务-->
 		<collection property="taskList" column="task_id" javaType="java.util.ArrayList"
@@ -115,7 +115,8 @@
 				prm_task.privacy_pattern,
 				prm_task.other,
 				prm_task.order,
-				prm_task.task_calendar
+				prm_task.task_calendar,
+				prm_task.task_uids
 	</sql>
 	<sql id="Base_Column_List2">
 						task_id,
