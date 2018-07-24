@@ -176,6 +176,19 @@ html,body{
     text-align: center;
     line-height: 40px;
     font-size: 16px;
+    position: relative;
+}
+.newobj-title .return-select-tpl{
+    position: absolute;
+    left: 5px;
+    cursor: pointer;
+}
+.newobj-title i:hover{
+    color: #3da8f5 !important;
+}
+.newobj-title .close-tk{
+    position: absolute;
+    right: 5px;
 }
 .newobj-title img{
     width: 20px;
