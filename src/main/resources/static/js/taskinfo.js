@@ -114,9 +114,9 @@ layui.use('form', function() {
             var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
             $.post(url,args,function (data) {
                 if(taskStatus == '完成'){
-                    $('.add-child-task').show();
+                    $('#addSubTask').show();
                 } else{
-                    $('.add-child-task').hide();
+                    $('#addSubTask').hide();
                 }
                 if(data.result == 0){
                     layer.msg(data.msg);
@@ -1045,11 +1045,7 @@ function addBindingStr(binding,type,bindId){
         for(var i = 0;i < binding.length;i++){
             content += '<li class="boxsizing" data-id="' + binding[i].taskId + '">'+
                 '<div class="check-box" value="' + binding[i].taskName + '">';
-                if(binding[i].taskStatus == '完成'){
-                    content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" checked = "checked">';
-                } else{
-                    content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary">';
-                }
+                content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" disabled="disabled">';
                 content += '</div>'+
                 '<div class="related-rw-info">';
                 if(binding[i].executor == ''){

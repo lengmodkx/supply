@@ -369,7 +369,7 @@
 			tb_user u,tb_user_info i
 		WHERE
 			u.u_id = i.u_id and u.u_id in (
-				<if test="memberIds！=null and memberIds!=''">
+				<if test="memberIds != null and memberIds != ''">
 					<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
 						#{id}
 					</foreach>

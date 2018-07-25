@@ -172,7 +172,7 @@ public class TaskController {
      */
     @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addAndRemoveTaskMember(Task task,String addUserEntity,String removeUserEntity){
+    public JSONObject addAndRemoveTaskMember(Task task,String addUserEntity[],String removeUserEntity[]){
         JSONObject jsonObject = new JSONObject();
         try {
             TaskLogVO taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
@@ -948,7 +948,6 @@ public class TaskController {
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
             model.addAttribute("bindingVo",bindingVo);
 
-
             if(taskById.getParentId() == null){
                 //查询出该任务所在的位置信息
                 Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
@@ -957,6 +956,7 @@ public class TaskController {
                 model.addAttribute("menuRelation",menuRelation);
                 model.addAttribute("taskMenuVo",taskMenuVO);
             }
+
             //查询出该任务的日志信息
             List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
             Collections.reverse(logList);
