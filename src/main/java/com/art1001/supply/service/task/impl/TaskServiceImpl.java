@@ -27,6 +27,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -530,50 +531,53 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 添加项目成员
-     * @param task 任务实体信息
-     * @param addUserEntity 要添加的参与者的信息
-     * @param removeUserEntity 要移除的参与者的信息
      * @return
      */
     @Override
-    public Log addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
-        StringBuilder content = new StringBuilder("");
-        //List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
-       // ./UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
-        //向任务成员表中添加数据
-//        if(addUserEntity != null){
-//            taskMemberService.addManyMemberInfo(addUser,task);
-//            //循环用来拼接log日志字符串
-//            content.append(TaskLogFunction.C.getName()).append(" ");
-//            for (int i = 0; i < addUserEntity.length; i++) {
-//                if(i == addUserEntity.length - 1){
-//                    content.append(addUser[i].getUserName());
-//                } else{
-//                    content.append(addUser[i].getUserName()).append(",");
-//                }
-//            }
-//        }
-//        if(removeUserEntity != null && removeUserEntity.length > 0) {
-//            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
-//            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
-//            if (removeUserEntity != null) {
-//                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
-//                if (!StringUtils.isEmpty(content.toString())) {
-//                    content.append(",");
-//                }
-//                content.append(TaskLogFunction.B.getName()).append(" ");
-//                for (int i = 0; i < removeUserEntity.length; i++) {
-//                    if (i == removeUserEntity.length - 1) {
-//                        content.append(removeUser[i].getUserName());
-//                    } else {
-//                        content.append(removeUser[i].getUserName()).append(",");
-//                    }
-//                }
-//            }
-//        }
-//        TaskLogVO taskLogVO = new TaskLogVO();
-        return null;
+    public Log addAndRemoveTaskMember(String taskId,String memberIds) {
+        StringBuilder content = new StringBuilder();
+        Task task = taskMapper.findTaskByTaskId(taskId);
+
+        List<String> list1 = Arrays.asList(task.getTaskUIds().split(","));
+        List<String> list2 = Arrays.asList(memberIds.split(","));
+
+        List subtract1 = ListUtils.subtract(list1, list2);
+        if(subtract1 != null&& subtract1.size() > 0){
+            content.append(TaskLogFunction.B.getName());
+            for (Object aSubtract1 : subtract1) {
+                UserEntity user = userMapper.findUserById(aSubtract1.toString());
+                content.append(user.getUserName()).append(",");
+            }
+        }
+
+
+        List subtract2 = ListUtils.subtract(list2, list1);
+        if(subtract2 != null && subtract2.size() > 0){
+            content.append(TaskLogFunction.C.getName());
+            for (Object aSubtract2 : subtract2) {
+                UserEntity user = userMapper.findUserById(aSubtract2.toString());
+                content.append(user.getUserName()).append(",");
+            }
+        }
+
+        Log log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
+        return log;
     }
+
+
+    public static void main(String[] args){
+        String s1 = "1,2,3,5";
+        String s2 = "1,2,3,4";
+        List<String> list1 = Arrays.asList(s1.split(","));
+        List<String> list2 = Arrays.asList(s2.split(","));
+        List intersection = ListUtils.subtract(list2, list1);
+        System.out.println(intersection);
+
+    }
+
+
+
+
 
     /**
      * 移除任务-成员关系

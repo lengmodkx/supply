@@ -171,21 +171,18 @@ public class TaskController {
 
     /**
      * 添加任务成员
-     * @param task
-     * @param addUserEntity 要添加项目成员
-     * @param removeUserEntity 要移除的项目成员
      */
     @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addAndRemoveTaskMember(Task task,String addUserEntity[],String removeUserEntity[]){
+    public JSONObject addAndRemoveTaskMember(String taskId,String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
+            Log log = taskService.addAndRemoveTaskMember(taskId,memberIds);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
-            jsonObject.put("taskLog",taskLogVO);
+            jsonObject.put("taskLog",log);
         } catch (Exception e){
-            log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",taskId,e);
             throw new AjaxException(e);
         }
         return jsonObject;
