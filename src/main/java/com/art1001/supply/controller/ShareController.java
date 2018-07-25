@@ -66,8 +66,10 @@ public class ShareController {
                 }
             }
         });
+
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
+
         model.addAttribute("tagList",tagList);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
@@ -75,7 +77,10 @@ public class ShareController {
     }
 
     @RequestMapping("/toAddShare.html")
-    public String toAddShare(@RequestParam String projectId, Model model) {
+    public String toAddShare(@RequestParam String projectId,
+                             @RequestParam(required = false) String shareId,
+                             Model model) {
+
         model.addAttribute("projectId", projectId);
         return "share_edit";
     }

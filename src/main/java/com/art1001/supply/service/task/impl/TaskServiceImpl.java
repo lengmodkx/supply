@@ -523,48 +523,24 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 添加项目成员
-     * @param task 任务实体信息
-     * @param addUserEntity 要添加的参与者的信息
-     * @param removeUserEntity 要移除的参与者的信息
      * @return
      */
     @Override
-    public TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
-        StringBuilder content = new StringBuilder("");
-        //List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
-       // ./UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
-        //向任务成员表中添加数据
-//        if(addUserEntity != null){
-//            taskMemberService.addManyMemberInfo(addUser,task);
-//            //循环用来拼接log日志字符串
-//            content.append(TaskLogFunction.C.getName()).append(" ");
-//            for (int i = 0; i < addUserEntity.length; i++) {
-//                if(i == addUserEntity.length - 1){
-//                    content.append(addUser[i].getUserName());
-//                } else{
-//                    content.append(addUser[i].getUserName()).append(",");
-//                }
-//            }
-//        }
-//        if(removeUserEntity != null && removeUserEntity.length > 0) {
-//            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
-//            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
-//            if (removeUserEntity != null) {
-//                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
-//                if (!StringUtils.isEmpty(content.toString())) {
-//                    content.append(",");
-//                }
-//                content.append(TaskLogFunction.B.getName()).append(" ");
-//                for (int i = 0; i < removeUserEntity.length; i++) {
-//                    if (i == removeUserEntity.length - 1) {
-//                        content.append(removeUser[i].getUserName());
-//                    } else {
-//                        content.append(removeUser[i].getUserName()).append(",");
-//                    }
-//                }
-//            }
-//        }
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
+    public TaskLogVO addAndRemoveTaskMember(String taskId,String memberIds) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(userEntity.getUserName()).append(TaskLogFunction.C.getName());
+        Task task = taskMapper.findTaskByTaskId(taskId);
+
+
+
+
+
+
+
+
+
+        TaskLogVO taskLogVO = saveTaskLog(task, "");
         return taskLogVO;
     }
 

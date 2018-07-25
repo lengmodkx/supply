@@ -120,6 +120,7 @@ body{
     max-height: 390px;
     overflow-y: scroll;
     margin-bottom: 10px;
+    overflow-x: hidden;
 }
 
 .model .ul-wrap>ul{

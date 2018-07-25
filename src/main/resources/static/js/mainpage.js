@@ -224,8 +224,9 @@ function lbmenu(top,left,menuId,menuName) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
-
-function updateTask(taskId,projectId){
+$('.ul-wrap').on('click','.task-content-set',function () {
+    var taskId = $(this).attr('data');
+    var projectId = $(this).attr('data-value');
     changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {
         $(".fujian-box").slideDown()
@@ -233,6 +234,12 @@ function updateTask(taskId,projectId){
     $(".close-fujian").click(function () {
         $(".fujian-box").slideUp()
     });
+});
+
+
+
+function updateTask(taskId,projectId){
+
 }
 
 // 点击头像 ，弹出框

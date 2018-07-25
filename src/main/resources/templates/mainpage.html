@@ -47,7 +47,7 @@
                                       <div class="task-check-box">
                                           <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
-                                      <div class="task-content-set" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
+                                      <div class="task-content-set" th:data="${task.taskId}" th:data-value="${task.projectId}" >
                                           <header class="assignment-top-box boxsizing clearfix">
                                               <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                               <img class="assignment-tx" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
@@ -55,7 +55,7 @@
                                           <section class="assignment-bottom-box clearfix">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
                                                   <img  th:if="${task.remind!='不提醒'}" th:src="@{/image/zhong.png}"/>
-                                                  <img  th:if="${task.remarks!=null}" src="../static/image/file.png" th:src="@{/image/file.png}">
+                                                  <img  th:if="${task.remarks!=null and task.remarks!=''}" src="../static/image/file.png" th:src="@{/image/file.png}">
                                                   <!--<span class="span-img">-->
                                                     <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
                                                       <!--<span class="over-hidden">0/2</span>-->

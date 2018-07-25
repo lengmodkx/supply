@@ -10,7 +10,7 @@ $("html").on("click",".add-assignment",function(e){
     $(".add-assignment").show();
     $(this).siblings(".ul-wrap").find(".add-task-box").slideDown();
     $(this).hide();
-    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+394);
+    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+394+'px');
 });
 
 /*添加任务*/
@@ -449,7 +449,7 @@ function addTask(taskMenuId) {
     //获取选中的参与者信息
     var members = [];
     $('.work-people .one-work-people').each(function () {
-        members.push($(this).attr('value'));
+        members.push($(this).find('input').val());
     });
 
     //获取标签信息

@@ -262,7 +262,6 @@
                 $(this).text("隐藏")
             }
         })
-
     });
 
     //点击创建新项目的弹出框
@@ -270,55 +269,15 @@
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
-                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                title: false, //标题
-                area:['400px','420px'],
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: ["标准模板","text-align:center"], //标题
+                area:['800px','450px'],
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: mydiv
+                content: ['/project/projectTemplate.html','no']
             });
         });
     }
-    //点击完成创建按钮
-    $(function () {
-
-        layui.use('form', function(){
-            var form = layui.form;
-            //监听提交
-            form.on('submit(Project)', function(){
-                var params = $("#projectForm").serialize();
-                var index = layer.load(1, {shade: [0.1,'#fff']});
-                $.post("/project/addProject",params,function (data) {
-                    layer.close(index);
-                    if(data.result===1){
-                        //创建项目成功之后进入任务主界面
-                        window.location.href = "/project/task.html?projectId="+data.projectId;
-                    }else{
-                        layer.msg(data.msg,{icon:5});
-                    }
-                });
-
-                return false;
-            });
-        });
-    });
-
-
-
-
-    var mydiv='<div class="newobj boxsizing">\n' +
-        '    <div class="newobj-title">\n' +
-        '        创建项目\n' +
-        '    </div>\n' +
-        '    <img class="bigimg" src="/image/creatobj.png" >\n' +
-        '    <p class="p">为不同的事业创建项目吧</p>\n' +
-        '    <form class="obj-form layui-form" action="" id="projectForm">\n' +
-        '        <input class="layui-input" name="projectName" required lay-verify="required" type="text" placeholder="项目名称">\n' +
-        '        <input class="layui-input" name="projectDes" required lay-verify="required" type="text" placeholder="项目简介">\n' +
-        '        <button id="project" lay-submit class="layui-btn layui-btn-fluid" lay-filter="Project" style="background-color: #017ECA">完成创建</button>\n' +
-        '    </form>\n' +
-        '</div>'
 </script>
-
 </body>
 </html>

@@ -347,10 +347,10 @@
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <div class="one-work-people" th:if="${task.executor != ''}">
-                <img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
-                <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
-            </div>
+            <!--<div class="one-work-people" th:if="${task.executor != ''}">-->
+                <!--<img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />-->
+                <!--<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>-->
+            <!--</div>-->
             <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:id="${joininfo.id}">
                 <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>

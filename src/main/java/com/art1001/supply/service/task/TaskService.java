@@ -169,12 +169,9 @@ public interface TaskService {
 
 	/**
 	 * 添加参与者
-	 * @param task 任务实体信息
-	 * @param addUserEntity 要添加的参与者信息
-	 * @param removeUserEntity 要移除的参与者信息
 	 * @return
 	 */
-	TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity);
+	TaskLogVO addAndRemoveTaskMember(String taskId,String memberIds);
 
 	/**
 	 * 移除任务参与者

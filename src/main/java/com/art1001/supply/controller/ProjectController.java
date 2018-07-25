@@ -117,6 +117,22 @@ public class ProjectController {
     }
 
 
+    @GetMapping("/projectTemplate.html")
+    public String projectTemplate(){
+        return "tk-select-tpl";
+    }
+
+    @GetMapping("/createProject.html")
+    public String createProject(){
+        return "tk-create-newobj";
+    }
+
+    @GetMapping("/template.html")
+    public String template(){
+        return "tk-obj-info";
+    }
+
+
     @RequestMapping("/projectList")
     @ResponseBody
     public JSONObject projectList(@RequestParam Integer label){
@@ -330,14 +346,17 @@ public class ProjectController {
                 relation1.setCreateTime(System.currentTimeMillis());
                 relation1.setUpdateTime(System.currentTimeMillis());
                 relationService.saveRelation(relation1);
-
-                for(int j=0;j<object.getJSONArray("taskList").size();j++){
-                    JSONObject object1 = object.getJSONArray("taskList").getJSONObject(i);
+               JSONArray taskList = object.getJSONArray("taskList");
+                for(int j=0;j<taskList.size();j++){
+                    JSONObject object1 = taskList.getJSONObject(j);
                     Task task = new Task();
                     task.setTaskMenuId(relation1.getRelationId());
                     task.setTaskName(object1.getString("taskName"));
                     task.setRemarks(object1.getString("remarks"));
                     task.setProjectId(project.getProjectId());
+                    task.setRepeat("不重复");
+                    task.setRemind("不提醒");
+                    task.setPriority("普通");
                     taskService.saveTask(task);
                 }
             }
@@ -369,15 +388,11 @@ public class ProjectController {
     }
 
 
-
-
-
-
-
-
-
-
-
+    /**
+     * 更新菜单序
+     * @param ids
+     * @return
+     */
     @RequestMapping("/updateMenusOrder")
     @ResponseBody
     public JSONObject updateMenusOrder(String[] ids){

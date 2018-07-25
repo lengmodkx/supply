@@ -146,7 +146,8 @@
 				privacy_pattern,
 				other,
 				`order`,
-				task_calendar
+				task_calendar,
+				task_uids
 	</sql>
 
 	<sql id="whereStatement">
@@ -284,7 +285,10 @@
 				`order`,
 			</if>
 			<if test="taskCalendar != null">
-				`task_calendar`,
+				task_calendar,
+			</if>
+			<if test="taskUIds != null and taskUIds!=''">
+				task_uids,
 			</if>
 
 		</trim>
@@ -375,6 +379,9 @@
 			<if test="taskCalendar != null">
 				#{taskCalendar},
 			</if>
+			<if test="taskUIds != null and taskUIds!=''">
+				#{taskUIds},
+			</if>
 		</trim>
 
 	</insert>
@@ -463,6 +470,9 @@
 			</if>
 			<if test="taskCalendar != null">
 				task_calendar = #{taskCalendar},
+			</if>
+			<if test="taskUIds != null and taskUIds != null">
+				task_uids = #{taskUIds},
 			</if>
 		</set>
 		WHERE task_id = #{taskId}
