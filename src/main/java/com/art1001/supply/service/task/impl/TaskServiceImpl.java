@@ -566,20 +566,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    public static void main(String[] args){
-        String s1 = "1,2,3,5";
-        String s2 = "1,2,3,4";
-        List<String> list1 = Arrays.asList(s1.split(","));
-        List<String> list2 = Arrays.asList(s2.split(","));
-        List intersection = ListUtils.subtract(list2, list1);
-        System.out.println(intersection);
-
-    }
-
-
-
-
-
     /**
      * 移除任务-成员关系
      * @param task 当前项目实体信息
