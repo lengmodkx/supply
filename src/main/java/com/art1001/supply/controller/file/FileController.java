@@ -2,6 +2,7 @@ package com.art1001.supply.controller.file;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
@@ -10,6 +11,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.project.ProjectService;
@@ -57,6 +59,9 @@ public class FileController {
     @Resource
     private FileVersionService fileVersionService;
 
+    @Resource
+    private BindingService bindingService;
+
     /**
      * 文件列表
      *
@@ -89,6 +94,9 @@ public class FileController {
                 List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
                 List<Tag> tags = tagService.findByProjectId(projectId);
 
+                //查询出任务的关联信息
+                BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
+                model.addAttribute("bindingVo",bindingVo);
                 model.addAttribute("file", fileById);
                 model.addAttribute("projectId", projectId);
                 // 文件的tag
@@ -156,7 +164,6 @@ public class FileController {
         }
 
         List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
-
         model.addAttribute("file", file);
         model.addAttribute("projectId", projectId);
         model.addAttribute("tagList", tagList);
@@ -990,6 +997,26 @@ public class FileController {
         } catch (Exception e){
             jsonObject.put("result",0);
             log.error("系统异常,文件拉取失败,{}",e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 任务的评论
+     * @param fileId 文件的id
+     * @param content 文件的 评论 内容
+     * @return
+     */
+    @PostMapping("chat")
+    @ResponseBody
+    public JSONObject chat(String fileId,String content){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = fileService.chat(fileId,content);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,发送失败,{}",e);
         }
         return jsonObject;
     }

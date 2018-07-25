@@ -340,4 +340,15 @@ public class FileServiceImpl implements FileService {
     public List<File> findFileByProjectId(String projectId) {
         return fileMapper.findFileByProjectId(projectId);
     }
+
+    /**
+     * 插入文件的评论
+     * @param fileId 文件的id
+     * @param content 文件的评论内容
+     * @return 插入的结果
+     */
+    @Override
+    public int chat(String fileId, String content) {
+        return fileMapper.chat(fileId,content);
+    }
 }

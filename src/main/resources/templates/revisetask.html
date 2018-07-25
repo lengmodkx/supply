@@ -364,7 +364,7 @@
         <div class="state">
             <ul id = "log">
                 <li class="combox" th:each="tasklog:${taskLog}">
-                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.memberImg}" />
+                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
                     <span th:text="${tasklog.content}"></span>
                     <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                 </li>
@@ -533,7 +533,7 @@
     //发送消息
     $('.publish-btn').click(function (e) {
         var chat = $('#chat').val();
-        var args = {"taskId":taskId,"content":chat}
+        var args = {"publicId":taskId,"content":chat}
         $.post("/task/chat",args,function (data) {
         },"json");
         var messageJson = JSON.stringify({ "name": chat });

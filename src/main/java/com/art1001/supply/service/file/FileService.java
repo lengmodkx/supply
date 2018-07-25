@@ -142,4 +142,12 @@ import java.util.List;
 	 * @return 文件信息集合
 	 */
 	List<File> findFileByProjectId(String projectId);
+
+	/**
+	 * 文件评论数据插入
+	 * @param fileId 文件的id
+	 * @param content 文件的评论内容
+	 * @return 插入的结果
+	 */
+    int chat(String fileId, String content);
 }

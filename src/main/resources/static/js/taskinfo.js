@@ -828,7 +828,7 @@ $('.people-ok').click(function () {
 
         var log = $('#log').html();
         log += '<li class="combox">'+
-            '<img src="' + IMAGE_SERVER+taskLogVO.memberImg + '" />'+
+            '<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" />'+
             '<span>'+ taskLogVO.content +'</span>'+
             '<div class="in-what-time"  >' + date + '</div>'+
             '</li>';

@@ -352,7 +352,19 @@ $('.ok-btn').click(function () {
         layer.msg("必须选择关联内容!");
         return false;
     }
-    var args = {"publicId":taskId,"bindId":bindId.toString(),"publicType":publicType};
+    var args = {};
+    if(fileId != null){
+        args = {"publicId":fileId,"bindId":bindId.toString(),"publicType":publicType};
+    }
+    if(taskId != null){
+        args = {"publicId":taskId,"bindId":bindId.toString(),"publicType":publicType};
+    }
+    if(id != null){
+        args = {"publicId":id,"bindId":bindId.toString(),"publicType":publicType};
+    }
+    if(scheduleId != null){
+        args = {"publicId":scheduleId,"bindId":bindId.toString(),"publicType":publicType};
+    }
     var url = "/binding/saveBinding";
     $.post(url,args,function (data) {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引

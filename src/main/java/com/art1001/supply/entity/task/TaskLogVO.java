@@ -3,6 +3,7 @@ package com.art1001.supply.entity.task;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
 /**
@@ -63,5 +64,10 @@ public class TaskLogVO {
      * 用户头像
      */
     private String memberImg;
+
+    /**
+     * 哪个用户操作的日志
+     */
+    private UserEntity userEntity;
 }
 

@@ -156,8 +156,6 @@ public class BindingController {
 
 
     /**
-     *
-     * @param id 绑定id
      * @param bId 绑定目标id
      * @return
      */
@@ -180,11 +178,12 @@ public class BindingController {
 
     /**
      * @param model
-     * @param taskId 当前哪个任务需要关联的任务id
+     * @param taskId 当前哪个任务需要关联的 任务id
+     * @param fileId 当前哪个文件需要关联的 文件id
      * @return
      */
     @RequestMapping("/relevance.html")
-    public String bindpage(Model model,String taskId){
+    public String bindpage(Model model,String taskId,String fileId){
         //获取当前用户的id
         String uId = ShiroAuthenticationManager.getUserId();
         //获取当前用户参与的所有项目
@@ -195,6 +194,7 @@ public class BindingController {
         }
         model.addAttribute("projectList",projectList);
         model.addAttribute("taskId",taskId);
+        model.addAttribute("fileId",fileId);
         return "tk-relevance";
     }
 

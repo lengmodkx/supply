@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.art1001.supply.mapper.task.TaskLogMapper">
+<mapper namespace="com.art1001.supply.mapper.log.LogMapper">
 	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskLog">
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.log.Log">
 		<result column="id" property="id" jdbcType="VARCHAR" />
-		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
+		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="log_flag" property="logFlag" jdbcType="INTEGER" />
 		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id" select="com.art1001.supply.mapper.user.UserMapper.findById"></association>
 	</resultMap>
     
 	<sql id="Base_Column_List">
-				id,
-				task_id,
+						id,
+				public_id,
 				member_id,
-				member_name,
-				member_img,
 				content,
 				log_type,
 				create_time,
@@ -34,7 +31,7 @@
 		</where>
 	</sql>
 	
-	<select id="findTaskLogPagerList" resultMap="BaseResultMap"
+	<select id="findLogPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
 		select * from prm_log
@@ -49,8 +46,8 @@
 		
 	</select>
 	
-	<select id="findTaskLogAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.task.TaskLog">
+	<select id="findLogAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.log.Log">
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_log
@@ -62,7 +59,7 @@
 		</if>
 	</select>
 	
-	<select id="findTaskLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
+	<select id="findLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
 		<include refid="Base_Column_List" />
@@ -70,12 +67,12 @@
 
 	</select>
 	
-	<delete id="deleteTaskLogById" parameterType="java.lang.String">
+	<delete id="deleteLogById" parameterType="java.lang.String">
 		delete from
 		prm_log where id = #{id}
 	</delete>
 	
-	<insert id="saveTaskLog" parameterType="com.art1001.supply.entity.task.TaskLog">
+	<insert id="saveLog" parameterType="com.art1001.supply.entity.log.Log">
 
 		insert into prm_log
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -83,29 +80,23 @@
 			<if test="id != null and id != ''">
 			id,
 			</if>
-			<if test="taskId != null and taskId != ''">
-			task_id,
+			<if test="publicId != null and publicId != ''">
+			public_id,
 			</if>
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="memberName != null and memberName != ''">
-			member_name,
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-			member_img,
-			</if>
 			<if test="content != null and content != ''">
 			content,
 			</if>
-			<if test="logType != null">
+			<if test="logType != null ">
 			log_type,
 			</if>
 			<if test="createTime != null ">
 			create_time,
 			</if>
 			<if test="logFlag != null ">
-				log_flag,
+			log_flag,
 			</if>
 		</trim>
 
@@ -114,17 +105,11 @@
 			<if test="id != null and id != ''">
 				#{id},
 			</if>
-			<if test="taskId != null and taskId != ''">
-				#{taskId},
+			<if test="publicId != null and publicId != ''">
+				#{publicId},
 			</if>
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				#{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				#{memberImg},
 			</if>
 			<if test="content != null and content != ''">
 				#{content},
@@ -142,32 +127,26 @@
 
 	</insert>
 	
-	<update id="updateTaskLog" parameterType="com.art1001.supply.entity.task.TaskLog">
+	<update id="updateLog" parameterType="com.art1001.supply.entity.log.Log">
 
 		update prm_log
 		<set>
-			<if test="taskId != null and taskId != ''">
-				task_id = #{taskId},
+			<if test="publicId != null and publicId != ''">
+				public_id = #{publicId},
 			</if>
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
 			</if>
-			<if test="memberName != null and memberName != ''">
-				member_name = #{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				member_img = #{memberImg},
-			</if>
 			<if test="content != null and content != ''">
 				content = #{content},
+			</if>
+			<if test="logType != null ">
+				log_type = #{logType},
 			</if>
 			<if test="createTime != null ">
 				create_time = #{createTime},
 			</if>
-			<if test="logType != null">
-				log_type = #{logType},
-			</if>
-			<if test="logFlag != null">
+			<if test="logFlag != null ">
 				log_flag = #{logFlag},
 			</if>
 		</set>
@@ -175,18 +154,11 @@
 		WHERE id = #{id}
 
 	</update>
-	<!-- 查询该日志的content -->
-	<select id="findTaskLogContentById" resultType="com.art1001.supply.entity.task.TaskLogVO" parameterType="java.lang.String">
 
-		select content,create_time createTime,member_img memberImg from prm_log where id = #{id}
-
-	</select>
-
-	<!-- 初始化5条 任务的操作日志 -->
-	<select id="initTaskLog" resultMap="BaseResultMap">
+	<!-- 查询出最近的五条日志记录 -->
+	<select id="initTaskLog" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_log where task_id = #{taskId} order by create_time desc limit 0,5
+		from prm_log where public_id = #{publicId} order by create_time desc limit 0,5
 	</select>
-	
 </mapper>

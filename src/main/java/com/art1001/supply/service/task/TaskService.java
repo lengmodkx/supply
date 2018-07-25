@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
@@ -19,7 +20,7 @@ public interface TaskService {
 
 	/**
 	 * 查询分页task数据
-	 * 
+	 *
 	 * @param pager 分页对象
 	 * @return
 	 */
@@ -27,7 +28,7 @@ public interface TaskService {
 
 	/**
 	 * 通过taskId获取单条task数据
-	 * 
+	 *
 	 * @param taskId
 	 * @return
 	 */
@@ -45,17 +46,17 @@ public interface TaskService {
 	 *
 	 * @param task
 	 */
-	public TaskLogVO updateTask(Task task);
+	public Log updateTask(Task task);
 
 	/**
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public TaskLogVO saveTask(Task task);
+	public Log saveTask(Task task);
 
 	/**
 	 * 获取所有task数据
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Task> findTaskAllList();
@@ -65,21 +66,21 @@ public interface TaskService {
 	 * @param taskId 当前任务id
 	 * @return
 	 */
-	TaskLogVO moveToRecycleBin(String taskId);
+	Log moveToRecycleBin(String taskId);
 
 	/**
 	 * 修改当前任务状态（完成/重做）
 	 * @param task 任务id
 	 * @return
 	 */
-	TaskLogVO resetAndCompleteTask(Task task);
+	Log resetAndCompleteTask(Task task);
 
 	/**
 	 * 设定任务的时间(开始 / 结束)
 	 * @param task 任务的时间信息
 	 * @return
 	 */
-	TaskLogVO updateTaskStartAndEndTime(Task task);
+	Log updateTaskStartAndEndTime(Task task);
 
 	/**
 	 * 根据菜单id 查询该菜单下有没有任务
@@ -94,15 +95,15 @@ public interface TaskService {
 	 * @param taskMenuVO 当前任务所在的 菜单,分组,项目 的信息
 	 * @return
 	 */
-	TaskLogVO mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
+	Log mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
 
-	/**
-	 * 保存任务操作日志
-	 * @param task 任务实体信息
-	 * @param content 日志内容
-	 * @return
-	 */
-	TaskLogVO saveTaskLog(Task task,String content);
+//	/**
+//	 * 保存任务操作日志
+//	 * @param task 任务实体信息
+//	 * @param content 日志内容
+//	 * @return
+//	 */
+//	Log saveTaskLog(Task task,String content);
 
 	/**
 	 * 根据任务id数组,查找出多个任务
@@ -116,7 +117,7 @@ public interface TaskService {
 	 * @param task 包含任务的id,名称
 	 * @return
 	 */
-	TaskLogVO turnToFatherLevel(Task task);
+	Log turnToFatherLevel(Task task);
 
 	/**
 	 * 给任务添加标签
@@ -125,7 +126,7 @@ public interface TaskService {
 	 * @param countByTagName 判断要绑定到任务上的标签是不是已经存在
 	 * @return
 	 */
-	TaskLogVO addTaskTags(Tag tag,String taskId,int countByTagName);
+	Log addTaskTags(Tag tag,String taskId,int countByTagName);
 
 	/**
 	 * 移除该任务上的标签
@@ -143,7 +144,7 @@ public interface TaskService {
 	 * @param object 时间重复周期的具体信息 (未设定)
 	 * @return
 	 */
-	TaskLogVO updateTaskRepeat(Task task, Object object);
+	Log updateTaskRepeat(Task task, Object object);
 
 	/**
 	 * 更新任务提醒时间 和 指定提醒某个成员
@@ -151,27 +152,30 @@ public interface TaskService {
 	 * @param userEntity 用户实体信息
 	 * @return
 	 */
-	TaskLogVO updateTaskRemindTime(Task task, UserEntity userEntity);
+	Log updateTaskRemindTime(Task task, UserEntity userEntity);
 
 	/**
 	 * 清除任务的开始时间和结束时间
 	 * @param task 任务的实体信息
 	 * @return
 	 */
-	TaskLogVO removeTaskStartTime(Task task);
+	Log removeTaskStartTime(Task task);
 
 	/**
 	 * 清除任务的开始时间和结束时间
 	 * @param task 任务的实体信息
 	 * @return
 	 */
-	TaskLogVO removeTaskEndTime(Task task);
+	Log removeTaskEndTime(Task task);
 
 	/**
 	 * 添加参与者
+	 * @param task 任务实体信息
+	 * @param addUserEntity 要添加的参与者信息
+	 * @param removeUserEntity 要移除的参与者信息
 	 * @return
 	 */
-	TaskLogVO addAndRemoveTaskMember(String taskId,String memberIds);
+	Log addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity);
 
 	/**
 	 * 移除任务参与者
@@ -179,7 +183,7 @@ public interface TaskService {
 	 * @param userEntity 被移除的用户的信息
 	 * @return
 	 */
-	TaskLogVO removeTaskMember(Task task, UserEntity userEntity);
+	Log removeTaskMember(Task task, UserEntity userEntity);
 
 	/**
 	 * 给当前任务点赞
@@ -208,14 +212,14 @@ public interface TaskService {
 	 * @param subLevel 子级任务信息
 	 * @return
 	 */
-	TaskLogVO addSubLevelTasks(String parentTaskId, Task subLevel);
+	Log addSubLevelTasks(String parentTaskId, Task subLevel);
 
 	/**
 	 * 完成子任务 和 重做子任务
 	 * @param task 当前任务信息
 	 * @return
 	 */
-	TaskLogVO resetAndCompleteSubLevelTask(Task task);
+	Log resetAndCompleteSubLevelTask(Task task);
 
 	/**
 	 * 复制任务
@@ -224,7 +228,7 @@ public interface TaskService {
 	 * @param projectId 当前任务所在的项目id
 	 * @param newTaskMenuVO 复制到的位置的信息
 	 */
-	TaskLogVO copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO);
+	Log copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO);
 
 	/**
 	 * 收藏任务
@@ -301,7 +305,7 @@ public interface TaskService {
 	 * 移除该任务的执行者 改为待认领状态
 	 * @param taskId 任务的id
 	 */
-	TaskLogVO removeExecutor(String taskId);
+	Log removeExecutor(String taskId);
 
 	/**
 	 * 更新任务执行者
@@ -310,7 +314,7 @@ public interface TaskService {
 	 * @param userInfoEntity 新的执行者的信息
 	 * @return
 	 */
-	TaskLogVO updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
+	Log updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
 
 	/**
 	 * 查询该项目下的所有任务
