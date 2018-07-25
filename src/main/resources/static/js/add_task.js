@@ -8,9 +8,12 @@ $("html").on("click",".add-assignment",function(e){
     addRenwu(addBox,addBox.attr('data'));
     $(".add-task-box").hide();
     $(".add-assignment").show();
-    $(this).siblings(".ul-wrap").find(".add-task-box").slideDown();
+    var it=$(this);
+    var linum=$(this).siblings(".ul-wrap").children(".taskList").children("li").length;
+    $(this).siblings(".ul-wrap").find(".add-task-box").slideDown(200,function () {
+       it.siblings(".ul-wrap").scrollTop(70*linum);
+    });
     $(this).hide();
-    $(this).siblings(".ul-wrap").scrollTop($(this).siblings(".ul-wrap").find(".add-task-box").position().top+394+'px');
 });
 
 /*添加任务*/
@@ -449,7 +452,7 @@ function addTask(taskMenuId) {
     //获取选中的参与者信息
     var members = [];
     $('.work-people .one-work-people').each(function () {
-        members.push($(this).find('input').val());
+        members.push($(this).attr('value'));
     });
 
     //获取标签信息
