@@ -559,7 +559,8 @@ public class TaskServiceImpl implements TaskService {
                 content.append(user.getUserName()).append(",");
             }
         }
-
+        task.setTaskUIds(memberIds);
+        taskMapper.updateTask(task);
         Log log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
         return log;
     }
