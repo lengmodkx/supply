@@ -937,6 +937,7 @@ public class TaskController {
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
             model.addAttribute("task",taskById);
+            model.addAttribute("taskId",task.getTaskId());
             //当前项目信息
             model.addAttribute("projectId",taskById.getProjectId());
             //判断当前用户有没有对该任务点赞
@@ -960,7 +961,7 @@ public class TaskController {
             }
 
             //查询出该任务的日志信息
-            List<Log> logList = logService.initTaskLog(task.getTaskId());
+            List<Log> logList = logService.initLog(task.getTaskId());
             Collections.reverse(logList);
             if(!logList.isEmpty()){
                 model.addAttribute("taskLog",logList);
@@ -1258,13 +1259,19 @@ public class TaskController {
     public JSONObject chat(Log taskLog){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskLog.setId(IdGen.uuid());
-            taskLog.setCreateTime(System.currentTimeMillis());
-            Log log = logService.saveLog(taskLog.getPublicId(), taskLog.getContent(), 1);
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ taskLog.getContent());
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(taskLog.getPublicId());
+            log.setLogFlag(2);
+            log.setCreateTime(System.currentTimeMillis());
+            Log log1 = logService.saveLog(log);
             jsonObject.put("result",1);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
             Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskLog",log);
+            map.put("taskLog",log1);
             taskPushType.setObject(map);
             messagingTemplate.convertAndSend("/topic/"+taskLog.getPublicId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){

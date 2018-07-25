@@ -86,10 +86,6 @@
 		from prm_binding c where public_id = #{publicId}
 
 	</select>
-	<delete id="deleteBindingById" parameterType="java.lang.String">
-		delete from
-		prm_binding where id = #{id}
-	</delete>
 	
 	<insert id="saveBinding" parameterType="com.art1001.supply.entity.binding.Binding">
 

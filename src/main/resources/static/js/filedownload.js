@@ -1,4 +1,22 @@
-
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    }
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
+}
 /**
  * 追加关联字符串
  */
@@ -6,7 +24,7 @@ function addBindingStr(binding,type,bindId) {
     var content = "";
     if (type == '任务') {
         for (var i = 0; i < binding.length; i++) {
-            content += '<li class="boxsizing" data-id="' + binding[i].taskId + '">' +
+            content += '<li class="boxsizing data-info" data-id="' + binding[i].taskId + '">' +
                 '<div class="check-box" value="' + binding[i].taskName + '">';
             content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" disabled="disabled">';
             content += '</div>' +
@@ -28,7 +46,7 @@ function addBindingStr(binding,type,bindId) {
                 // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                 // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">' +
+                '<li class="boxsizing cancle"  data-id="' + fileId + '"  data-binding-id ="' + binding[i].taskId + '">' +
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>' +
                 '<span>取消关联</span>' +
                 '</li>' +
@@ -44,7 +62,7 @@ function addBindingStr(binding,type,bindId) {
     if (type == '文件') {
         for (var i = 0; i < binding.length; i++) {
             content = '';
-            content += '<li class="boxsizing" data-id = "' + binding[i].fileId + '">' +
+            content += '<li class="boxsizing data-info" data-id = "' + binding[i].fileId + '">' +
                 '<div class="related-wj-info">';
             if (binding[i].catalog == 1) {
                 content += '<img class="folderFile" src="/image/nofile.png">';
@@ -90,7 +108,7 @@ function addBindingStr(binding,type,bindId) {
                 // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                 // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">' +
+                '<li class="boxsizing cancle" data-id="' + fileId + '" data-binding-id="' + binding[i].fileId + '">' +
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>' +
                 '<span>取消关联</span>' +
                 '</li>' +
@@ -106,7 +124,7 @@ function addBindingStr(binding,type,bindId) {
     if (type == '日程') {
         for (var i = 0; i < binding.length; i++) {
             content = '';
-            content += '<li class="boxsizing">' +
+            content += '<li class="boxsizing data-info" data-id = '+ binding[i].scheduleId +'>' +
                 '<div class="related-rc-top">' +
                 '<div class="related-rc-info">' +
                 '<i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>' +
@@ -124,7 +142,7 @@ function addBindingStr(binding,type,bindId) {
                 '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>' +
                 '<div class="related-menu-title">关联菜单</div>' +
                 '<ul>' +
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">' +
+                '<li class="boxsizing cancle" data-id="' + fileId + '" data-binding-id="' + binding[i].scheduleId + '">' +
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>' +
                 '<span>取消关联</span>' +
                 '</li>' +
@@ -140,7 +158,7 @@ function addBindingStr(binding,type,bindId) {
     if (type == '分享') {
         for (var i = 0; i < binding.length; i++) {
             content = '';
-            content += '<li class="boxsizing">' +
+            content += '<li class="boxsizing data-info" data-id = '+ binding[i].id +'>' +
                 '<div class="related-rc-top">' +
                 '<div class="related-rc-info">' +
                 '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>' +
@@ -154,7 +172,7 @@ function addBindingStr(binding,type,bindId) {
                 '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>' +
                 '<div class="related-menu-title">关联菜单</div>' +
                 '<ul>' +
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">' +
+                '<li class="boxsizing cancle" data-id="' + fileId + '" data-binding-id="' + binding[i].id + '">' +
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>' +
                 '<span>取消关联</span>' +
                 '</li>' +
@@ -172,6 +190,34 @@ function addBindingStr(binding,type,bindId) {
             form.render();
         }
     }
+}
+
+/**
+ * 追加文件操作日志的方法
+ * @param taskLogVO 任务日志对象
+ */
+function getLog(taskLogVO){
+    var datey = new Date().getFullYear();
+    var datem=new Date().getMonth()+1;
+    if (datem <10){
+        datem='0'+datem
+    }
+    var dated=new Date().getDay();
+    if (dated <10){
+        dated='0'+dated
+    }
+    var dateh=new Date().getHours();
+    var datemin=new Date().getMinutes();
+    var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
+    var log = '';
+    log += '<li class="combox">'+
+        '<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" />'+
+        '<span>'+ taskLogVO.content +'</span>'+
+        '<div class="in-what-time"  >' + date + '</div>'+
+        '</li>';
+    $('#log').append(log);
+    var scrollHeight = $('#log li:nth-last-child(1)').position().top;
+    $(".scroll-box").animate({scrollTop:scrollHeight}, 400);
 }
 
 $(function () {
@@ -235,3 +281,52 @@ $(function () {
         $(".fujian-box").slideToggle();
     });
 });
+
+/**
+ * 取消关联 的单击事件
+ */
+$("html").on("click",".cancle",function (e) {
+    var id = $(this).attr("data-id");
+    var bindId = $(this).attr("data-binding-id");
+    var url = "/binding/deleteBinding";
+    var args = {"publicId":id,"bindingId":bindId};
+    $.post(url,args,function (data) {
+        if(data.result == 0){
+            layer.msg(data.msg);
+        }
+    },"json");
+    e.stopPropagation()
+});
+
+/**
+ * 点击关联的任务
+ */
+$("html").on("click",'.related-rw .related-rw-info',function () {
+    changeRenwu($(this).parent() .attr("data-id"),projectId);
+});
+
+/**
+ * 点击关联的文件
+ */
+$("html").on("click",'.related-wj li',function () {
+    location.href = "/file/list.html?fileId="+$(this).attr('data-id');
+});
+
+
+//修改任务 弹框界面
+function changeRenwu(taskId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
+        });
+    });
+}

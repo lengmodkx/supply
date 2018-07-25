@@ -63,7 +63,7 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_log c where id = #{id}
+		from prm_log where id = #{id}
 
 	</select>
 	

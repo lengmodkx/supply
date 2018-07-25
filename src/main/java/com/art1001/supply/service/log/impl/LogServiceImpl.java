@@ -91,6 +91,18 @@ public class LogServiceImpl implements LogService {
 		Log returnLog = logMapper.findLogById(log.getId());
 		return returnLog;
 	}
+
+	/**
+	 * 保存log日志 和 聊天
+	 * @param log 实体信息
+	 * @return
+	 */
+	@Override
+	public Log saveLog(Log log) {
+		logMapper.saveLog(log);
+		return logMapper.findLogById(log.getId());
+	}
+
 	/**
 	 * 获取所有数据
 	 * 
@@ -107,7 +119,7 @@ public class LogServiceImpl implements LogService {
 	 * @return 日志集合
 	 */
 	@Override
-	public List<Log> initTaskLog(String publicId) {
+	public List<Log> initLog(String publicId) {
 		return logMapper.initTaskLog(publicId);
 	}
 }
