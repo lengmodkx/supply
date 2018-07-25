@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
@@ -30,7 +31,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequestMapping("/share")
-public class ShareController {
+public class ShareController extends BaseController {
     @Resource
     private ProjectService projectService;
 

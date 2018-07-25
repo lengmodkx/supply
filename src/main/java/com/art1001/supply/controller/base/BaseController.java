@@ -1,7 +1,27 @@
 package com.art1001.supply.controller.base;
 
+import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -12,5 +32,146 @@ import org.springframework.stereotype.Controller;
  */
 @Slf4j
 public abstract class BaseController {
-	
+    @Resource
+    private ProjectMemberService projectMemberService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
+    private UserService userService;
+    //查询全部项目成员
+    @PostMapping("/findAllProjectMember")
+    @ResponseBody
+    public JSONObject findAllProjectMember(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    @GetMapping("/removePeople.html")
+    public String removePeople(@RequestParam String nodeName,Model model){
+        try {
+            model.addAttribute("nodeName",nodeName);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
+        return "tk-group-remove";
+    }
+
+    /**
+     * 查找用户
+     * @param keyword
+     * @return
+     */
+    @PostMapping("/searchMember")
+    @ResponseBody
+    public JSONObject searchMember(@RequestParam String keyword){
+        JSONObject jsonObject = new JSONObject();
+        String userId = ShiroAuthenticationManager.getUserId();
+        try{
+            List<UserEntity> userEntity = userService.findByKey(keyword);
+            userEntity = userEntity.stream().filter(userEntity1 -> !userEntity1.getId().equals(userId)).collect(Collectors.toList());
+            jsonObject.put("data",userEntity);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 给项目添加成员
+     * @param projectId
+     * @param memberIds
+     * @return
+     */
+    @PostMapping("/addProjectMember")
+    @ResponseBody
+    public JSONObject addProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
+        JSONObject jsonObject = new JSONObject();
+        try{
+
+            if(StringUtils.isEmpty(memberIds)){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","请选择成员");
+            }else{
+                String[] memberId = memberIds.split(",");
+                for (int i=0;i<memberId.length;i++){
+                    UserEntity userEntity = userService.findById(memberId[i]);
+                    ProjectMember projectMember = new ProjectMember();
+                    projectMember.setProjectId(projectId);
+                    projectMember.setMemberId(memberId[i]);
+                    projectMember.setMemberName(userEntity.getUserName());
+                    projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+                    projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+                    projectMember.setMemberImg(userEntity.getUserInfo().getImage());
+                    projectMember.setCreateTime(System.currentTimeMillis());
+                    projectMember.setUpdateTime(System.currentTimeMillis());
+                    projectMember.setMemberLable(0);
+                    projectMemberService.saveProjectMember(projectMember);
+                }
+
+                jsonObject.put("result",1);
+                jsonObject.put("msg","添加成功");
+                jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+            }
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+
+        return jsonObject;
+    }
+
+    //项目设置
+    @GetMapping("/projectSetting")
+    public String projectSetting(@RequestParam String projectId, Model model){
+        String userId = ShiroAuthenticationManager.getUserId();
+        Project project = projectService.findProjectByProjectId(projectId);
+        //获取项目拥有着信息
+        UserEntity userEntity = userService.findById(project.getMemberId());
+
+        model.addAttribute("project",project);
+        model.addAttribute("user",userEntity);
+        if(userId.equals(project.getMemberId())){
+            model.addAttribute("hasPermission",1);
+        }else{
+            model.addAttribute("hasPermission",0);
+        }
+        return "objsetting";
+    }
+
+
+    /**
+     * 移除项目成员 支持单独删除和批量删除
+     */
+    @PostMapping("/delProjectMember")
+    @ResponseBody
+    public JSONObject delProjectMember(@RequestParam String id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(StringUtils.isEmpty(id)){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","请选择组员");
+            }else{
+                String[] ids = id.split(",");
+                for (int i=0;i<ids.length;i++){
+                    projectMemberService.deleteProjectMemberById(ids[i]);
+                }
+                jsonObject.put("result",1);
+                jsonObject.put("msg","删除成功");
+            }
+        }catch (Exception e){
+            throw  new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

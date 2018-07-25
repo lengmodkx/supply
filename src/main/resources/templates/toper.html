@@ -33,10 +33,36 @@
         </div>
         <div class="toper-right">
             <i class="layui-icon layui-icon-user" style="font-size: 16px; color: #017ECA;"></i>
-            <span class="team">成员</span>
+            <span class="team" th:id="${projectId}">成员</span>
             <i class="layui-icon layui-icon-app" style="font-size: 16px; color: #017ECA;"></i>
-            <span class="menu">菜单</span>
+            <span class="menu" th:id="${projectId}">菜单</span>
         </div>
     </div>
+    <!--点击群组 出现的弹框-->
+    <div class="group-box">
+        <div class="group-title boxsizing">
+            <h3>项目成员</h3>
+            <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+        </div>
+        <!--<div class="search-box">-->
+        <!--<input class="boxsizing" type="text" placeholder="搜索成员，或输入邮箱直接邀请">-->
+        <!--</div>-->
+        <div class="add-new-member boxsizing" style="margin-top: 15px">
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}">
+            <span>邀请新成员</span>
+        </div>
+        <ul class="group-people">
+
+        </ul>
+    </div>
+    <!--邀请新成员-->
+    <div class="search_prople fuzhi-lianjie boxsizing" style="display: none">
+        <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword" style="float: left;width: 78%">
+        <div class="layui-btn user_search" style="background-color: #017ECA;float: left">搜索</div>
+        <div class="people-box" style="margin-top: 40px">
+            <ul class="invitation"></ul>
+        </div>
+    </div>
+
 </div>
 </html>

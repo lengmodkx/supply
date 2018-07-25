@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
@@ -57,7 +58,7 @@ import static jodd.core.JoddCore.encoding;
 @Controller
 @Slf4j
 @RequestMapping("/project")
-public class ProjectController {
+public class ProjectController extends BaseController {
 
     @Resource
     private ProjectService projectService;
@@ -70,9 +71,6 @@ public class ProjectController {
 
     @Resource
     private RelationService relationService;
-
-    @Resource
-    private UserService userService;
 
     @Resource
     private TaskService taskService;
@@ -457,48 +455,7 @@ public class ProjectController {
         return jsonObject;
     }
 
-    /**
-     * 给项目添加成员
-     * @param projectId
-     * @param memberIds
-     * @return
-     */
-    @PostMapping("/addProjectMember")
-    @ResponseBody
-    public JSONObject addProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
-        JSONObject jsonObject = new JSONObject();
-        try{
 
-            if(StringUtils.isEmpty(memberIds)){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","请选择成员");
-            }else{
-                String[] memberId = memberIds.split(",");
-                for (int i=0;i<memberId.length;i++){
-                    UserEntity userEntity = userService.findById(memberId[i]);
-                    ProjectMember projectMember = new ProjectMember();
-                    projectMember.setProjectId(projectId);
-                    projectMember.setMemberId(memberId[i]);
-                    projectMember.setMemberName(userEntity.getAccountName());
-                    projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
-                    projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
-                    projectMember.setMemberImg(userEntity.getUserInfo().getImage());
-                    projectMember.setCreateTime(System.currentTimeMillis());
-                    projectMember.setUpdateTime(System.currentTimeMillis());
-                    projectMember.setMemberLable(0);
-                    projectMemberService.saveProjectMember(projectMember);
-                }
-
-                jsonObject.put("result",1);
-                jsonObject.put("msg","添加成功");
-                jsonObject.put("data",projectMemberService.findByProjectId(projectId));
-            }
-        }catch (Exception e){
-            throw new AjaxException(e);
-        }
-
-        return jsonObject;
-    }
 
 
     /**
@@ -534,48 +491,8 @@ public class ProjectController {
         return jsonObject;
     }
 
-    /**
-     * 移除项目成员 支持单独删除和批量删除
-     */
-    @PostMapping("/delProjectMember")
-    @ResponseBody
-    public JSONObject delProjectMember(@RequestParam String id){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if(StringUtils.isEmpty(id)){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","请选择组员");
-            }else{
-                String[] ids = id.split(",");
-                for (int i=0;i<ids.length;i++){
-                    projectMemberService.deleteProjectMemberById(ids[i]);
-                }
-                jsonObject.put("result",0);
-                jsonObject.put("msg","删除成功");
-            }
-        }catch (Exception e){
-            throw  new AjaxException(e);
-        }
-        return jsonObject;
-    }
 
-    //项目设置
-    @GetMapping("/projectSetting")
-    public String projectSetting(@RequestParam String projectId, Model model){
-        String userId = ShiroAuthenticationManager.getUserId();
-        Project project = projectService.findProjectByProjectId(projectId);
-        //获取项目拥有着信息
-        UserEntity userEntity = userService.findById(project.getMemberId());
 
-        model.addAttribute("project",project);
-        model.addAttribute("user",userEntity);
-        if(userId.equals(project.getMemberId())){
-            model.addAttribute("hasPermission",1);
-        }else{
-            model.addAttribute("hasPermission",0);
-        }
-        return "objsetting";
-    }
 
     //上传项目图片
     @PostMapping("/upload")
@@ -650,13 +567,11 @@ public class ProjectController {
             }
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(projectId);
-            List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
             Project project = projectService.findProjectByProjectId(projectId);
             List<File> fileList = fileService.findChildFile(projectId, "0", 0);
             model.addAttribute("fileList", fileList);
             model.addAttribute("project",project);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
-            model.addAttribute("projectMembers",memberAllList);
         }catch (Exception e){
             throw new SystemException(e);
         }
@@ -692,18 +607,6 @@ public class ProjectController {
         return "tk-xiangmucaidan";
     }
 
-    @GetMapping("/removePeople.html")
-    public String removePeople(@RequestParam String nodeName,Model model){
-        try {
-            model.addAttribute("nodeName",nodeName);
-        }catch (Exception e){
-            throw new SystemException(e);
-        }
-
-        return "tk-group-remove";
-    }
-
-
 
     @GetMapping("/menuList.html")
     public String menuList(@RequestParam String menuId,@RequestParam String menuName,Model model){
@@ -736,28 +639,6 @@ public class ProjectController {
         return jsonObject;
     }
 
-
-
-
-    /**
-     * 查找用户
-     * @param keyword
-     * @return
-     */
-    @PostMapping("/searchMember")
-    @ResponseBody
-    public JSONObject searchMember(@RequestParam String keyword){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            List<UserEntity> userEntity = userService.findByKey(keyword);
-            jsonObject.put("data",userEntity);
-            jsonObject.put("result",1);
-            jsonObject.put("msg","获取成功");
-        }catch (Exception e){
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
 
     @PostMapping("findProjectFile")
     @ResponseBody

@@ -36,14 +36,15 @@
     });
 
     $('.remove-he').click(function (e) {
-        $.post('/project/delProjectMember',{"id":nodeName},function (data) {
-            parent.layer.close(parent.layer.getFrameIndex(window.name));
+        $.post('/delProjectMember',{"id":nodeName},function (data) {
             if(data.result===1){
+                console.log( parent.$('#'+nodeName).parent());
                 parent.$('#'+nodeName).parent().remove();
                 parent.layer.msg(data.msg,{icon:1});
             }else{
                 parent.layer.msg(data.msg,{icon:5});
             }
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
         });
     });
 
