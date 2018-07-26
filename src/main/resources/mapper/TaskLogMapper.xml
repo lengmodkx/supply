@@ -11,6 +11,7 @@
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id" select="com.art1001.supply.mapper.user.UserMapper.findById"></association>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -21,7 +22,8 @@
 				member_img,
 				content,
 				log_type,
-				create_time
+				create_time,
+				log_flag
 	</sql>
 
 	<sql id="whereStatement">
@@ -35,7 +37,7 @@
 	<select id="findTaskLogPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
-		select * from prm_task_log
+		select * from prm_log
 		<include refid="whereStatement" />
 		
 		<if test="orderBy == 0">
@@ -51,7 +53,7 @@
 		parameterType="com.art1001.supply.entity.task.TaskLog">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_task_log
+		from prm_log
 		<if test="orderBy == 0">
 			order by id desc
 		</if>
@@ -64,18 +66,18 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_task_log c where id = #{id}
+		from prm_log c where id = #{id}
 
 	</select>
 	
 	<delete id="deleteTaskLogById" parameterType="java.lang.String">
 		delete from
-		prm_task_log where id = #{id}
+		prm_log where id = #{id}
 	</delete>
 	
 	<insert id="saveTaskLog" parameterType="com.art1001.supply.entity.task.TaskLog">
 
-		insert into prm_task_log
+		insert into prm_log
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
 			<if test="id != null and id != ''">
@@ -101,6 +103,9 @@
 			</if>
 			<if test="createTime != null ">
 			create_time,
+			</if>
+			<if test="logFlag != null ">
+				log_flag,
 			</if>
 		</trim>
 
@@ -130,13 +135,16 @@
 			<if test="createTime != null ">
 				#{createTime},
 			</if>
+			<if test="logFlag != null ">
+				#{logFlag},
+			</if>
 		</trim>
 
 	</insert>
 	
 	<update id="updateTaskLog" parameterType="com.art1001.supply.entity.task.TaskLog">
 
-		update prm_task_log
+		update prm_log
 		<set>
 			<if test="taskId != null and taskId != ''">
 				task_id = #{taskId},
@@ -157,7 +165,10 @@
 				create_time = #{createTime},
 			</if>
 			<if test="logType != null">
-				logType = #{logType},
+				log_type = #{logType},
+			</if>
+			<if test="logFlag != null">
+				log_flag = #{logFlag},
 			</if>
 		</set>
 
@@ -167,7 +178,7 @@
 	<!-- 查询该日志的content -->
 	<select id="findTaskLogContentById" resultType="com.art1001.supply.entity.task.TaskLogVO" parameterType="java.lang.String">
 
-		select content,create_time createTime,member_img memberImg from prm_task_log where id = #{id}
+		select content,create_time createTime,member_img memberImg from prm_log where id = #{id}
 
 	</select>
 
@@ -175,7 +186,7 @@
 	<select id="initTaskLog" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
-		from prm_task_log where task_id = #{taskId} order by create_time desc limit 0,5
+		from prm_log where task_id = #{taskId} order by create_time desc limit 0,5
 	</select>
 	
 </mapper>

@@ -47,7 +47,7 @@
                                       <div class="task-check-box">
                                           <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
-                                      <div class="task-content-set" th:onclick="'javascript:updateTask(\''+ ${task.taskId} +'\',\''+ ${task.projectId} +'\')'">
+                                      <div class="task-content-set" th:data="${task.taskId}" th:data-value="${task.projectId}" >
                                           <header class="assignment-top-box boxsizing clearfix">
                                               <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                               <img class="assignment-tx" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
@@ -55,7 +55,7 @@
                                           <section class="assignment-bottom-box clearfix">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
                                                   <img  th:if="${task.remind!='不提醒'}" th:src="@{/image/zhong.png}"/>
-                                                  <img  th:if="${task.remarks!=null}" src="../static/image/file.png" th:src="@{/image/file.png}">
+                                                  <img  th:if="${task.remarks!=null and task.remarks!=''}" src="../static/image/file.png" th:src="@{/image/file.png}">
                                                   <!--<span class="span-img">-->
                                                     <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
                                                       <!--<span class="over-hidden">0/2</span>-->
@@ -96,37 +96,7 @@
           </div>
    </div>
  </div>
-<!--点击群组 出现的弹框-->
-<div class="group-box">
-    <div class="group-title boxsizing">
-        <h3>项目成员</h3>
-        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
-    </div>
-    <!--<div class="search-box">-->
-    <!--<input class="boxsizing" type="text" placeholder="搜索成员，或输入邮箱直接邀请">-->
-    <!--</div>-->
-    <div class="add-new-member boxsizing" style="margin-top: 15px">
-        <img src="../static/image/adds.png" th:src="@{/image/adds.png}">
-        <span>邀请新成员</span>
-    </div>
-    <ul class="group-people">
-        <li class="boxsizing" th:each="projectMember:${projectMembers}">
-            <img th:src="#{IMAGE_SERVER}+${projectMember.memberImg}">
-            <div class="group-people-info">
-                <p class="people-info-name" th:text="${projectMember.memberName}">名字</p>
-                <p class="people-info-email"></p>
-            </div>
-            <i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" th:if="${projectMember.memberLable==0}" th:id="${projectMember.id}"></i>
-        </li>
-    </ul>
-</div>
-<!--邀请新成员-->
-<div class="search_prople fuzhi-lianjie boxsizing" style="display: none">
-    <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword">
-    <div class="people-box">
-        <ul class="invitation"></ul>
-    </div>
-</div>
+
 <script th:inline="javascript">
     var member = [[${user}]]
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
@@ -136,7 +106,6 @@
     layui.use(['element','form'], function(){
         var element = layui.element;
         var form = layui.form;
-
     });
 
     $("#fileButton").click(function () {
@@ -162,59 +131,6 @@
         var div = $('#'+taskId + ' div').first();
         $(div).children('img:eq(0)').attr('src','/image/add.png');
     }
-
-
-    $('.keyword').keyup(function (e) {
-        $('.invitation').html('');
-        var index = layer.load(1, {shade: [0.1,'#fff']});
-        $.post('/project/searchMember',{"keyword":$('.keyword').val()},function (data) {
-            parent.layer.close(index);
-            if(data.result===1){
-                for(var i=0;i<data.data.length;i++){
-                    var user = data.data[i];
-                    var li = '<li>\n' +
-                        '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
-                        '            <span class="people-name">'+user.userName+'</span>\n' +
-                        '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
-                        '        </li>';
-                    $('.invitation').append(li);
-                }
-            }else{
-
-            }
-        });
-    });
-
-
-    $("html").on("click",".people-box .people-state",function () {
-        var id = $(this).attr('data');
-        console.log($(this).attr('data'));
-        console.log($(this).siblings('img').attr('src'));
-        console.log($(this).siblings('span').text());
-
-        $.post('/project/addProjectMember',{"projectId":projectId,"memberIds":id},function (data) {
-            if(data.result===1){
-                $('.group-people').html('');
-                for(var i=0;i<data.data.length;i++) {
-                    var projectMember = data.data[i];
-                    var li = '<li class="boxsizing">\n' +
-                        '            <img src="'+IMAGE_SERVER + projectMember.memberImg+'">\n' +
-                        '            <div class="group-people-info">\n' +
-                        '                <p class="people-info-name">'+projectMember.memberName+'</p>\n' +
-                        '                <p class="people-info-email"></p></div>';
-                    if(projectMember.memberLable===0){
-                        li += '<i class="layui-icon layui-icon-down" style="font-size: 20px; color: #a6a6a6;" id="'+projectMember.id+'"></i></li>';
-                    }else{
-                        li += '</li>';
-                    }
-
-                    $('.group-people').append(li);
-                }
-            }
-            $(this).removeClass("no-join")
-        });
-    });
-
 
 </script>
 <script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>

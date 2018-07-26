@@ -55,7 +55,7 @@ stompClient.connect({},
             '                                      <div class="task-check-box">\n' +
             '                                          <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" />\n' +
             '                                      </div>\n' +
-            '                                      <div class="task-content-set" onclick="javascript:updateTask('+task.taskId+','+task.projectId+')">\n' +
+            '                                      <div class="task-content-set" data="'+task.taskId+'" data-value="'+task.projectId+'">\n' +
             '                                          <header class="assignment-top-box boxsizing clearfix">\n' +
             '                                              <span class="assignment-title">'+task.taskName+'</span>';
         if(task.executorInfo != null) {

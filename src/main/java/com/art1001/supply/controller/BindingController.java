@@ -12,6 +12,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
@@ -101,7 +102,6 @@ public class BindingController {
             TaskPushType taskPushType = new TaskPushType("关联");
             Map<String,Object> map = new HashMap<String,Object>();
             List bInfo = new ArrayList();
-            List<String> bId = new ArrayList<String>();
             for (int i = 0;i < bindList.size();i++){
                 if(bindList.get(i) != null){
                     Binding binding = new Binding();
@@ -114,7 +114,6 @@ public class BindingController {
                     //设置绑定的类型
                     binding.setPublicType(publicType);
                     bindingService.saveBinding(binding);
-                    bId.add(binding.getId());
                     jsonObject.put("result",1);
                     jsonObject.put("msg","保存成功");
 
@@ -141,7 +140,6 @@ public class BindingController {
 
                     map.put("bindingInfo",bInfo);
                     map.put("publicType",publicType);
-                    map.put("bId",bId);
                     taskPushType.setObject(map);
                 }
             }
@@ -156,19 +154,23 @@ public class BindingController {
 
 
     /**
-     *
-     * @param id 绑定id
-     * @param bId 绑定目标id
+     * @param publicId 当前绑定信息的 id
+     * @param bindingId 被绑定的信息id
      * @return
      */
     @RequestMapping("/deleteBinding")
     @ResponseBody
-    public JSONObject deleteBinding(String bId){
+    public JSONObject deleteBinding(String publicId,String bindingId){
         JSONObject jsonObject = new JSONObject();
         try {
-            bindingService.deleteBindingById(bId);
+            bindingService.deleteBindingById(publicId,bindingId);
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A17.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("bId",bindingId);
+            taskPushType.setObject(map);
+            messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){
             jsonObject.put("result",0);
             jsonObject.put("msg","系统异常,关联删除失败,请重试.");
@@ -180,11 +182,12 @@ public class BindingController {
 
     /**
      * @param model
-     * @param taskId 当前哪个任务需要关联的任务id
+     * @param taskId 当前哪个任务需要关联的 任务id
+     * @param fileId 当前哪个文件需要关联的 文件id
      * @return
      */
     @RequestMapping("/relevance.html")
-    public String bindpage(Model model,String taskId){
+    public String bindpage(Model model,String taskId,String fileId){
         //获取当前用户的id
         String uId = ShiroAuthenticationManager.getUserId();
         //获取当前用户参与的所有项目
@@ -195,6 +198,7 @@ public class BindingController {
         }
         model.addAttribute("projectList",projectList);
         model.addAttribute("taskId",taskId);
+        model.addAttribute("fileId",fileId);
         return "tk-relevance";
     }
 

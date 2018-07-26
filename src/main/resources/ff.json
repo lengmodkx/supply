@@ -1,9 +1,10 @@
 [{
   "menuName": "项目信息",
-  "taskList": [{
+  "taskList": [
+    {
     "taskName": "立项",
     "remarks": ""
-  },
+    },
     {
       "taskName": "签订合同",
       "remarks": "协助商务主管签订设计合同，提交给商务主管项目建筑面积、设计计划表等相关资料。"

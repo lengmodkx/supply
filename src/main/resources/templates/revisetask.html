@@ -199,7 +199,7 @@
             <div class="related-box">
                     <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
                  <ul class="related-rw">
-                    <li class="boxsizing"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
+                    <li class="boxsizing data-info"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
                         <div class="check-box" th:value="${task.taskName}">
                             <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
                         </div>
@@ -219,7 +219,7 @@
                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                 <!--<span>复制链接</span>-->
                                 <!--</li>-->
-                                <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${task.taskId}">
                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                     <span>取消关联</span>
                                 </li>
@@ -231,7 +231,7 @@
                 <div class="related-wj-wrap" th:style="'display:' + @{(${bindingVo.fileList != null} ? 'block':'none')}">
                     <div class="flex-box">文件 <span></span></div>
                     <ul class="related-wj">
-                        <li class="boxsizing" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
+                        <li class="boxsizing data-info" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
                             <div class="related-wj-info">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
                                 <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
@@ -258,7 +258,7 @@
                                     <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                     <!--<span>复制链接</span>-->
                                     <!--</li>-->
-                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                    <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${file.fileId}">
                                         <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                         <span>取消关联</span>
                                     </li>
@@ -272,7 +272,7 @@
                 <div class="related-rc-wrap" th:style="'display:' + @{(${bindingVo.scheduleList != null} ? 'block':'none')}">
                     <div class="flex-box">日程 <span></span></div>
                     <ul class="related-rc">
-                        <li class="boxsizing"  th:each="schedule:${bindingVo.scheduleList}" >
+                        <li class="boxsizing data-info" th:data-id = "${schedule.scheduleId}"  th:each="schedule:${bindingVo.scheduleList}" >
                             <div class="related-rc-top">
                                 <div class="related-rc-info">
                                     <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
@@ -294,7 +294,7 @@
                                     <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                     <!--<span>复制链接</span>-->
                                     <!--</li>-->
-                                    <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                    <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${schedule.scheduleId}">
                                         <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                         <span>取消关联</span>
                                     </li>
@@ -307,8 +307,8 @@
                 <!--分享-->
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
-                    <ul class="related-fw">
-                    <li class="boxsizing"  th:each="share:${bindingVo.shareList}">
+                    <ul class="related-fx">
+                    <li class="boxsizing data-info"  th:each="share:${bindingVo.shareList}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
                                 <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
@@ -331,7 +331,7 @@
                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                 <!--<span>复制链接</span>-->
                                 <!--</li>-->
-                                <li class="boxsizing cancle" th:data-id="${bindingVo.id}">
+                                <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${share.id}">
                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                     <span>取消关联</span>
                                 </li>
@@ -347,10 +347,10 @@
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <div class="one-work-people" th:if="${task.executor != ''}">
-                <img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
-                <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
-            </div>
+            <!--<div class="one-work-people" th:if="${task.executor != ''}">-->
+                <!--<img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />-->
+                <!--<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>-->
+            <!--</div>-->
             <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:id="${joininfo.id}">
                 <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
                 <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
@@ -364,7 +364,7 @@
         <div class="state">
             <ul id = "log">
                 <li class="combox" th:each="tasklog:${taskLog}">
-                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.memberImg}" />
+                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
                     <span th:text="${tasklog.content}"></span>
                     <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                 </li>
@@ -490,8 +490,10 @@
     //     $('.add-child-task').css('display','block');
     // }
 
-    $("body").on("click",".show-cancel-related",function () {
+    $("body").on("click",".show-cancel-related",function (e) {
         $(this).parents("li").find(".related-menu").slideToggle();
+
+        e.stopPropagation();
     });
     $("body").on("click",".close-related-menu",function () {
         $(this).parents(".related-menu").slideUp();
@@ -533,7 +535,7 @@
     //发送消息
     $('.publish-btn').click(function (e) {
         var chat = $('#chat').val();
-        var args = {"taskId":taskId,"content":chat}
+        var args = {"publicId":taskId,"content":chat}
         $.post("/task/chat",args,function (data) {
         },"json");
         var messageJson = JSON.stringify({ "name": chat });
@@ -569,6 +571,25 @@
             if(taskLog.type == '更新任务名称为'){
                 $('.task_name').val(taskLog.object.taskName);
                 getLog(taskLog.object.taskLog);
+            }
+            if(taskLog.type == '取消了关联'){
+                $('#bind li.data-info ').each(function(){
+                    if($(this).attr('data-id') == taskLog.object.bId){
+                        $(this).remove();
+                        if($('.related-rw li.data-info').length == 0){
+                            $('.related-rw-wrap').hide();
+                        }
+                        if($('.related-rc li.data-info').length == 0){
+                            $('.related-rc-wrap').hide();
+                        }
+                        if($('.related-wj li.data-info').length == 0){
+                            $('.related-wj-wrap').hide();
+                        }
+                        if($('.related-fx li.data-info').length == 0){
+                            $('.related-fx-wrap').hide();
+                        }
+                    }
+                });
             }
             // if(taskLog.type == '取消了关联'){
             //     getLog(taskLog.object.taskLog);

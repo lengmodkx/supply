@@ -69,47 +69,6 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		return taskMemberMapper.findTaskMemberById(id);
 	}
 
-	/**
-	 * 通过id删除taskMember数据
-	 * 
-	 * @param taskMemberId 关联id
-	 * @param task 任务实体信息
-	 * @param file 文件实体信息
-	 * @param share 分享实体信息
-	 * @param schedule 日程实体信息
-	 * @param taskId 当前被操作的任务的id
-	 */
-	@Override
-	public TaskLogVO deleteTaskMemberById(Task task,File file,Share share,Schedule schedule,String taskId,String taskMemberId){
-		TaskLogVO taskLogVO = new TaskLogVO();
-		int result = taskMemberMapper.deleteTaskMemberById(taskMemberId);
-		Task currentTask = new Task();
-		currentTask.setTaskId(taskId);
-		StringBuilder content = new StringBuilder("");
-		//判断关联的是不是任务
-		if(task != null ){
-			content.append(TaskLogFunction.A7.getName()).append(" ");
-			taskLogVO.setTask(task);
-		}
-		//判断关联的是不是文件
-		if(file != null ){
-			content.append(TaskLogFunction.A6.getName()).append(" ");
-			taskLogVO.setFile(file);
-		}
-		//判断关联的是不是日程
-		if(schedule != null ){
-			content.append(TaskLogFunction.A5.getName()).append(" ");
-			taskLogVO.setSchedule(schedule);
-		}
-		//判断关联的是不是分享
-		if(share != null ){
-			content.append(TaskLogFunction.A1.getName()).append(" ");
-			taskLogVO.setShare(share);
-		}
-		taskService.saveTaskLog(currentTask,content.toString());
-		taskLogVO.setResult(result);
-		return taskLogVO;
-	}
 
 	/**
 	 * 修改taskMember数据
@@ -121,54 +80,7 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		taskMemberMapper.updateTaskMember(taskMember);
 	}
 
-	/**
-	 * 保存taskMember数据
-	 * 
-	 * @param
-	 */
-//	@Override
-	public TaskLogVO saveTaskMember(Task task, File file, Share share, Schedule schedule,TaskMember taskMember,String taskId) {
-		StringBuilder content = new StringBuilder("");
-		//判断关联的是不是任务
-		if(task != null ){
-			content.append(TaskLogFunction.N.getName()).append(" ").append(task.getTaskName());
-			taskMember.setPublicId(task.getTaskId());
-			taskMember.setPublicType("1");
-		}
-		//判断关联的是不是文件
-		if(file != null ){
-		    taskMember.setPublicId(file.getFileId());
-            content.append(TaskLogFunction.A3.getName()).append(" ").append(file.getFileName());
-			taskMember.setPublicType("4");
-		}
-		//判断关联的是不是日程
-		if(schedule != null ){
-            taskMember.setPublicId(schedule.getScheduleId());
-            content.append(TaskLogFunction.A2.getName()).append(" ").append(schedule.getScheduleName());
-			taskMember.setPublicType("3");
-		}
-		//判断关联的是不是分享
-		if(share != null ){
-            taskMember.setPublicId(share.getId());
-            content.append(TaskLogFunction.A1.getName()).append(" ").append(share.getTitle());
-			taskMember.setPublicType("2");
-		}
-		//设置id
-        taskMember.setId(IdGen.uuid());
-		//设置这条关联信息的创建时间
-		taskMember.setCreateTime(System.currentTimeMillis());
-		//设置这条关联信息的更新时间
-		taskMember.setUpdateTime(System.currentTimeMillis());
-		//将关联信息保存至数据库
-		int result = taskMemberMapper.saveTaskMember(taskMember);
-		//给这条关联关系设置被操作的任务的id
-		taskMember.setCurrentTaskId(taskId);
-		//创建一个任务对象 用来封装当前被操作任务的信息
-		Task currentTask = new Task();
-		currentTask.setTaskId(taskId);
-		//返回日志和结果
-        return taskService.saveTaskLog(currentTask, content.toString());
-	}
+
 	/**
 	 * 获取所有taskMember数据
 	 * 
@@ -297,7 +209,17 @@ public class TaskMemberServiceImpl implements TaskMemberService {
 		return result;
 	}
 
-    /**
+	@Override
+	public TaskLogVO deleteTaskMemberById(Task task, File file, Share share, Schedule schedule, String taskId, String id) {
+		return null;
+	}
+
+	@Override
+	public TaskLogVO saveTaskMember(Task task, File file, Share share, Schedule schedule, TaskMember taskMember, String taskId) {
+		return null;
+	}
+
+	/**
      * 通过任务id 成员id 删除 任务成员关系表的数据
      * @param task 任务实体信息
      * @param userEntity 多个成员信息

@@ -828,7 +828,7 @@ $('.people-ok').click(function () {
 
         var log = $('#log').html();
         log += '<li class="combox">'+
-            '<img src="' + IMAGE_SERVER+taskLogVO.memberImg + '" />'+
+            '<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" />'+
             '<span>'+ taskLogVO.content +'</span>'+
             '<div class="in-what-time"  >' + date + '</div>'+
             '</li>';
@@ -941,18 +941,17 @@ $('.zan img').click(function (e) {
 /**
  * 取消关联 的单击事件
  */
-$("html").on("click",".cancle",function (e) {
+$("body").on("click",".cancle",function (e) {
     var id = $(this).attr("data-id");
+    var bindId = $(this).attr("data-binding-id");
     var url = "/binding/deleteBinding";
-    var args = {"bId":id};
+    var args = {"publicId":id,"bindingId":bindId};
     $.post(url,args,function (data) {
-        if(data.result == 1){
-            location.reload();
-        } else{
+        if(data.result == 0){
             layer.msg(data.msg);
         }
     },"json");
-    e.stopPropagation()
+    e.stopPropagation();
 });
 
 /**
@@ -1043,7 +1042,7 @@ function addBindingStr(binding,type,bindId){
     var content = "";
     if(type == '任务'){
         for(var i = 0;i < binding.length;i++){
-            content += '<li class="boxsizing" data-id="' + binding[i].taskId + '">'+
+            content += '<li class="boxsizing data-info" data-id="' + binding[i].taskId + '">'+
                 '<div class="check-box" value="' + binding[i].taskName + '">';
                 content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" disabled="disabled">';
                 content += '</div>'+
@@ -1065,7 +1064,7 @@ function addBindingStr(binding,type,bindId){
                 // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                 // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].taskId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
@@ -1081,7 +1080,7 @@ function addBindingStr(binding,type,bindId){
     if(type == '文件'){
         for(var i = 0;i < binding.length;i++){
             content = '';
-            content += '<li class="boxsizing" data-id = "' + binding[i].fileId + '">'+
+            content += '<li class="boxsizing data-info" data-id = "' + binding[i].fileId + '">'+
                 '<div class="related-wj-info">';
             if(binding[i].catalog == 1){
                 content += '<img class="folderFile" src="/image/nofile.png">';
@@ -1126,8 +1125,9 @@ function addBindingStr(binding,type,bindId){
                 // '<!--<li class="boxsizing">-->'
                 // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                 // <!--<span>复制链接</span>-->
+                // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].fileId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
@@ -1143,7 +1143,7 @@ function addBindingStr(binding,type,bindId){
     if(type == '日程'){
         for(var i = 0;i < binding.length;i++){
             content = '';
-            content += '<li class="boxsizing">'+
+            content += '<li class="boxsizing data-info" data-id="' + binding[i].scheduleId + '">'+
             '<div class="related-rc-top">'+
             '<div class="related-rc-info">'+
             '<i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+
@@ -1161,7 +1161,7 @@ function addBindingStr(binding,type,bindId){
                 '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
                 '<div class="related-menu-title">关联菜单</div>'+
                 '<ul>'+
-                '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].scheduleId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
@@ -1177,7 +1177,7 @@ function addBindingStr(binding,type,bindId){
     if(type == '分享'){
         for(var i = 0;i < binding.length;i++){
             content = '';
-            content += '<li class="boxsizing">'+
+            content += '<li class="boxsizing data-info" data-id="'+ binding[i].id +'">'+
                     '<div class="related-rc-top">'+
                     '<div class="related-rc-info">'+
                     '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+
@@ -1191,7 +1191,7 @@ function addBindingStr(binding,type,bindId){
                         '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
                         '<div class="related-menu-title">关联菜单</div>'+
                         '<ul>'+
-                        '<li class="boxsizing cancle" data-id="' + bindId[i] + '">'+
+                        '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].id + '">'+
                         '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                         '<span>取消关联</span>'+
                         '</li>'+
@@ -1204,7 +1204,7 @@ function addBindingStr(binding,type,bindId){
                 // <!--</div>-->
                     '</li>';
             $('.related-fx-wrap').show();
-            $('.related-fw').prepend(content);
+            $('.related-fx').prepend(content);
             var form = layui.form;
             form.render();
         }

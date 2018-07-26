@@ -1,5 +1,6 @@
 package com.art1001.supply.controller;
 
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import javax.annotation.Resource;
 @Controller
 @Slf4j
 @RequestMapping("/chat")
-public class GroupChatController {
+public class GroupChatController extends BaseController {
     @Resource
     private ProjectService projectService;
 

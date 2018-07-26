@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/common_header :: common_header(~{::title},~{::link})">
     <meta charset="UTF-8">
-    <title></title>
+    <title>分享</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
@@ -65,11 +65,11 @@
                 <div class="white-box boxsizing">
                     <div class="share-right-title boxsizing clearfix">
                         <h3 th:text="${share.title}"></h3>
-                        <i class="layui-icon layui-icon-down show-share-menu" style="font-size: 20px; color: #a6a6a6;"></i>
-                        <div class="zan">
-                            <img src="../static/image/zan.png" th:src="@{/image/zan.png}" />
-                            <span>+12</span>
-                        </div>
+                        <i class="layui-icon layui-icon-down show-share-menu" style="font-size: 20px; color: #a6a6a6;" th:data="${share.id}"></i>
+                        <!--<div class="zan">-->
+                            <!--<img src="../static/image/zan.png" th:src="@{/image/zan.png}" />-->
+                            <!--<span>+12</span>-->
+                        <!--</div>-->
                     </div>
                     <div class="describtion" th:utext="${share.content}"></div>
                     <div class="heng-line"></div>
@@ -218,27 +218,25 @@
         <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
     </div>
     <div class="menu-box edit-rc">
-        <img src="../static/image/fzrc.png" >
-        <span>复制分享</span>
+        <img th:src="@{/image/fzrc.png}" >
+        <span>编辑分享</span>
     </div>
     <div class="menu-box edit-rc">
-        <img src="../static/image/fzrclj.png" >
+        <img th:src="@{/image/fzrclj.png}" >
         <span>复制分享链接</span>
     </div>
     <div class="menu-box edit-rc">
-        <img src="../static/image/gxrc.png" >
+        <img th:src="@{/image/gxrc.png}" >
         <span>共享分享</span>
     </div>
     <div class="menu-box edit-rc">
-        <img src="../static/image/scrc.png" >
+        <img th:src="@{/image/scrc.png}" >
         <span>收藏分享</span>
     </div>
 </div>
 
 </body>
-<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
-<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script>
+<script th:inline="javascript">
     layui.use('element', function(){
         var element = layui.element;
     });
@@ -259,8 +257,7 @@
         });
 
         layui.use(['form', 'layer'], function() {
-            var form = layui.form
-                , layer = layui.layer;
+            var form = layui.form;
 
             // 移除标签
             $(".deleteTag").each(function () {
@@ -369,7 +366,8 @@
         $("html").on("click",".show-share-menu",function () {
             var top=$(this).offset().top+25;
             var left=$(this).offset().left-120;
-            shareMenu(top,left)
+            var id = $(this).attr('data');
+            shareMenu(top,left,id);
         });
         //添加 人员 弹框
         $("html").on("click",".add-work-people img",function () {
@@ -476,7 +474,7 @@
         layer.closeAll('page');
     });
     //分享菜单 弹框
-    function shareMenu(top,left) {
+    function shareMenu(top,left,id) {
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({

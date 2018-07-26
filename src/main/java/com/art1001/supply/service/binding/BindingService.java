@@ -28,10 +28,11 @@ public interface BindingService {
 
 	/**
 	 * 通过id删除binding数据
-	 * 
-	 * @param id
+	 *
+	 * @param id 当前绑定信息的id
+	 * @param bindingId 被绑定信息的id
 	 */
-	public void deleteBindingById(String id);
+	public void deleteBindingById(String id, String bindingId);
 
 	/**
 	 * 修改binding数据

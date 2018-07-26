@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
@@ -30,7 +31,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequestMapping("/share")
-public class ShareController {
+public class ShareController extends BaseController {
     @Resource
     private ProjectService projectService;
 
@@ -66,8 +67,10 @@ public class ShareController {
                 }
             }
         });
+
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
+
         model.addAttribute("tagList",tagList);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
@@ -75,7 +78,10 @@ public class ShareController {
     }
 
     @RequestMapping("/toAddShare.html")
-    public String toAddShare(@RequestParam String projectId, Model model) {
+    public String toAddShare(@RequestParam String projectId,
+                             @RequestParam(required = false) String shareId,
+                             Model model) {
+
         model.addAttribute("projectId", projectId);
         return "share_edit";
     }

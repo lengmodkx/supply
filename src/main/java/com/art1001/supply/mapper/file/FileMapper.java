@@ -139,4 +139,6 @@ public interface FileMapper {
 	 * @return 项目的所有文件信息
 	 */
     List<File> findFileByProjectId(String projectId);
+
+    int chat(String fileId, String content);
 }

@@ -111,7 +111,7 @@
 		from
 			prm_project_member
 		where
-			project_id = #{projectId}
+			project_id = #{projectId} order by member_lable desc
 	</select>
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">

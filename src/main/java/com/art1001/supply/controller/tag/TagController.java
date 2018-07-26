@@ -2,6 +2,7 @@ package com.art1001.supply.controller.tag;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.service.tag.TagService;
 import jdk.jfr.events.ExceptionThrownEvent;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/tag")
 @Slf4j
-public class TagController {
+public class TagController extends BaseController {
 
     @Resource
     private TagService tagService;

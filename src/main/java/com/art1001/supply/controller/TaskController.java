@@ -6,6 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -19,6 +20,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
@@ -83,6 +85,9 @@ public class TaskController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    /** 日志逻辑层接口 */
+    @Resource
+    private LogService logService;
 
     /**
      * 在日历上创建任务
@@ -166,21 +171,18 @@ public class TaskController {
 
     /**
      * 添加任务成员
-     * @param task
-     * @param addUserEntity 要添加项目成员
-     * @param removeUserEntity 要移除的项目成员
      */
     @PostMapping("addAndRemoveTaskMember")
     @ResponseBody
-    public JSONObject addAndRemoveTaskMember(Task task,String addUserEntity[],String removeUserEntity[]){
+    public JSONObject addAndRemoveTaskMember(String taskId,String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.addAndRemoveTaskMember(task,addUserEntity,removeUserEntity);
+            Log log = taskService.addAndRemoveTaskMember(taskId,memberIds);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
-            jsonObject.put("taskLog",taskLogVO);
+            jsonObject.put("taskLog",log);
         } catch (Exception e){
-            log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",task.getTaskId(),e);
+            log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",taskId,e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -198,7 +200,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = userService.findUserById(uId);
-            TaskLogVO taskLogVO = taskService.removeTaskMember(task,userEntity);
+            Log taskLogVO = taskService.removeTaskMember(task,userEntity);
             jsonObject.put("msg","任务参与者移除成功!");
             jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
@@ -221,7 +223,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
-            TaskLogVO taskLogVO = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
+            Log taskLogVO = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("result", 1);
                 jsonObject.put("msg","任务移动成功！");
@@ -250,7 +252,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //将任务移入回收站
-            TaskLogVO taskLogVO = taskService.moveToRecycleBin(taskId);
+            Log taskLogVO = taskService.moveToRecycleBin(taskId);
             if (taskLogVO.getResult() > 0) {
                 jsonObject.put("msg", "操作成功！");
                 jsonObject.put("result","1");
@@ -299,7 +301,7 @@ public class TaskController {
     public JSONObject upateTaskContent(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTask(task);
+            Log taskLogVO = taskService.updateTask(task);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
@@ -322,7 +324,7 @@ public class TaskController {
     public JSONObject upateTaskRemarks(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTask(task);
+            Log taskLogVO = taskService.updateTask(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","更新成功!");
                 jsonObject.put("result","1");
@@ -348,7 +350,7 @@ public class TaskController {
     public JSONObject updateTaskPriority(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTask(task);
+            Log taskLogVO = taskService.updateTask(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","设置成功!");
                 jsonObject.put("result",1);
@@ -402,7 +404,7 @@ public class TaskController {
             //根据任务id 查询出该任务的实体信息
             Task taskInfo = taskService.findTaskByTaskId(task.getTaskId());
             //改变任务状态
-            TaskLogVO taskLogVO = taskService.resetAndCompleteTask(taskInfo);
+            Log taskLogVO = taskService.resetAndCompleteTask(taskInfo);
             jsonObject.put("msg","修改成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
@@ -433,7 +435,7 @@ public class TaskController {
     public JSONObject updateTaskRepeat(Task task,Object object){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTaskRepeat(task,object);
+            Log taskLogVO = taskService.updateTaskRepeat(task,object);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","重复规则设置成功");
                 jsonObject.put("result",1);
@@ -459,7 +461,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
-            TaskLogVO taskLogVO = taskService.updateTaskStartAndEndTime(task);
+            Log taskLogVO = taskService.updateTaskStartAndEndTime(task);
             if(taskLogVO.getResult() > 0){
                 if(task.getStartTime() != null){
                     jsonObject.put("msg","开始时间更新成功!");
@@ -489,7 +491,7 @@ public class TaskController {
     public JSONObject removeTaskStartTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.removeTaskStartTime(task);
+            Log taskLogVO = taskService.removeTaskStartTime(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","清空成功!");
                 jsonObject.put("result","1");
@@ -515,7 +517,7 @@ public class TaskController {
     public JSONObject removeTaskEndTime(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.removeTaskEndTime(task);
+            Log taskLogVO = taskService.removeTaskEndTime(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","清空成功!");
                 jsonObject.put("result","1");
@@ -542,7 +544,7 @@ public class TaskController {
     public JSONObject updateTaskRemindTime(Task task,UserEntity userEntity){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTaskRemindTime(task,userEntity);
+            Log taskLogVO = taskService.updateTaskRemindTime(task,userEntity);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","设置成功！");
                 jsonObject.put("result",1);
@@ -604,7 +606,7 @@ public class TaskController {
                 return jsonObject;
             }
             //更新当前任务的标签信息
-            TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
+            Log taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("result",taskLogVO.getResult());
                 jsonObject.put("msg","标签添加成功!");
@@ -635,7 +637,7 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //更新当前任务的标签信息
-            TaskLogVO taskLogVO = taskService.addTaskTags(tag, taskId,1);
+            Log taskLogVO = taskService.addTaskTags(tag, taskId,1);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("result",taskLogVO.getResult());
                 jsonObject.put("msg","标签添加成功!");
@@ -712,7 +714,7 @@ public class TaskController {
     public JSONObject turnToFatherLevel(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.turnToFatherLevel(task);
+            Log taskLogVO = taskService.turnToFatherLevel(task);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","转换成功");
                 jsonObject.put("result","1");
@@ -793,7 +795,7 @@ public class TaskController {
             //保存子任务信息至数据库
             subLevel.setTaskId(IdGen.uuid());
             subLevel.setProjectId(projectId);
-            TaskLogVO taskLogVO = taskService.addSubLevelTasks(parentTaskId,subLevel);
+            Log taskLogVO = taskService.addSubLevelTasks(parentTaskId,subLevel);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("msg","添加成功!");
                 jsonObject.put("result",1);
@@ -819,7 +821,7 @@ public class TaskController {
     public JSONObject resetAndCompleteSubLevelTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.resetAndCompleteSubLevelTask(task);
+            Log taskLogVO = taskService.resetAndCompleteSubLevelTask(task);
             jsonObject.put("msg","状态更新成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
@@ -843,7 +845,7 @@ public class TaskController {
     public JSONObject copyTask(@RequestParam Task task,@RequestParam String projectId,@RequestParam TaskMenuVO newTaskMenuVO){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.copyTask(task,projectId,newTaskMenuVO);
+            Log taskLogVO = taskService.copyTask(task,projectId,newTaskMenuVO);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
@@ -935,6 +937,7 @@ public class TaskController {
             //查询出此条任务的具体信息
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
             model.addAttribute("task",taskById);
+            model.addAttribute("taskId",task.getTaskId());
             //当前项目信息
             model.addAttribute("projectId",taskById.getProjectId());
             //判断当前用户有没有对该任务点赞
@@ -958,7 +961,7 @@ public class TaskController {
             }
 
             //查询出该任务的日志信息
-            List<TaskLog> logList = taskLogService.initTaskLog(task.getTaskId());
+            List<Log> logList = logService.initLog(task.getTaskId());
             Collections.reverse(logList);
             if(!logList.isEmpty()){
                 model.addAttribute("taskLog",logList);
@@ -1011,7 +1014,7 @@ public class TaskController {
     public JSONObject updateOther(@RequestParam Task task){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTask(task);
+            Log taskLogVO = taskService.updateTask(task);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
@@ -1148,7 +1151,7 @@ public class TaskController {
     public JSONObject removeExecutor(String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.removeExecutor(taskId);
+            Log taskLogVO = taskService.removeExecutor(taskId);
             jsonObject.put("taskLog",taskLogVO);
             jsonObject.put("msg","移除成功!");
             jsonObject.put("result",1);
@@ -1170,7 +1173,7 @@ public class TaskController {
     public JSONObject updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity,String uName){
         JSONObject jsonObject = new JSONObject();
         try {
-            TaskLogVO taskLogVO = taskService.updateTaskExecutor(taskId, userInfoEntity, uName);
+            Log taskLogVO = taskService.updateTaskExecutor(taskId, userInfoEntity, uName);
             jsonObject.put("msg","修改成功");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
@@ -1253,20 +1256,24 @@ public class TaskController {
      */
     @PostMapping("chat")
     @ResponseBody
-    public JSONObject chat(TaskLog taskLog){
+    public JSONObject chat(Log taskLog){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskLog.setId(IdGen.uuid());
-            taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
-            taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
-            taskLog.setCreateTime(System.currentTimeMillis());
-            taskLogService.saveTaskLog(taskLog);
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ taskLog.getContent());
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(taskLog.getPublicId());
+            log.setLogFlag(2);
+            log.setCreateTime(System.currentTimeMillis());
+            Log log1 = logService.saveLog(log);
             jsonObject.put("result",1);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
             Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskLog",taskLog);
+            map.put("taskLog",log1);
             taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+taskLog.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskLog.getPublicId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("操作失败,{}",e);
             throw new AjaxException(e);
@@ -1312,7 +1319,7 @@ public class TaskController {
             task.setTaskName(taskName);
             task.setUpdateTime(System.currentTimeMillis());
             //更新任务
-            TaskLogVO taskLogVO = taskService.updateTask(task);
+            Log taskLogVO = taskService.updateTask(task);
             //推送数据
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A18.getName());
             Map<String,Object> map = new HashMap<String,Object>();

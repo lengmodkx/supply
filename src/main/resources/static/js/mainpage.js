@@ -180,14 +180,7 @@ $(function () {
 
 });
 
-//群组 部分 的js
-//点击 关闭按钮  关闭弹出层
-$(".close-people").click(function () {
-    layer.close(layer.index)
-});
-$(".close-tk").click(function () {
-    layer.closeAll('page');
-});
+
 
 //点击 任务列表顶部 下箭头，弹出框
 var menuflag = true;
@@ -224,8 +217,9 @@ function lbmenu(top,left,menuId,menuName) {
 };
 
 //点击 具体 任务 出现修改任务 弹窗
-
-function updateTask(taskId,projectId){
+$('.ul-wrap').on('click','.task-content-set',function () {
+    var taskId = $(this).attr('data');
+    var projectId = $(this).attr('data-value');
     changeRenwu(taskId,projectId);
     $(".publish-bottom img:nth-of-type(1)").click(function () {
         $(".fujian-box").slideDown()
@@ -233,7 +227,8 @@ function updateTask(taskId,projectId){
     $(".close-fujian").click(function () {
         $(".fujian-box").slideUp()
     });
-}
+});
+
 
 // 点击头像 ，弹出框
 $(".head-photo").click(function () {
@@ -300,108 +295,9 @@ function calendar() {
         });
     });
 }
-// 群组 弹框
-$(".team").click(function () {
-    var left=$(window).width()-350;
-    var top=$(window).height()-100;
-    groups(top,left)
-    // $(".group-box").css("height",$(window).height()-100+'px');
-    // $(".group-box").addClass("now");
-    // $("html,body").css("overflow","hidden")
 
-});
-// $(".group-title .close-tk").click(function () {
-//     $(".group-box").removeClass("now");
-//     $("html,body").css("overflow","auto")
-// })
-function groups(top,left) {
-    layui.use('layer', function(){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
-            offset: ['100px',left],
-            area:['350px',top+'px'],
-            fixed: true,
-            shadeClose: true,
-            closeBtn: 0,
-            shade: 0,
-            anim: 0,  //动画 0-6
-            content: $(".group-box")
-        });
-    });
-}
-// 群组 弹框 里面的 人员信息 弹框
-// $("html").on("click",".group-people",function () {
-//     var top=$(this).offset().top-100;
-//     var left=$(this).offset().left-320;
-//     groupPeople(top,left)
-// });
-// function groupPeople(top,left) {
-//     layui.use('layer', function(){
-//         var layer = layui.layer;
-//         layer.open({
-//             type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-//             title: false, //标题
-//             offset: [top,left],
-//             area:['320px','250px'],
-//             fixed: true,
-//             shadeClose: true,
-//             closeBtn: 0,
-//             shade: 0,
-//             anim: 1,  //动画 0-6
-//             content: $(".people-info")
-//         });
-//     });
-// }
-//群组 人员  下箭头 弹框
-$("body").on("click",".group-people>li>i",function (e) {
-    e.stopPropagation();
-    var top=$(this).offset().top-110;
-    var left=$(this).offset().left-280;
-    var temp = $(this).attr('id');
-    console.log(temp);
-    groupPeopleRemove(top,left,temp);
 
-});
-function groupPeopleRemove(top,left,nodeName) {
-    layui.use('layer', function(){
-        var layer = layui.layer;
-        layer.open({
-            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
-            offset: [top,left],
-            area:['280px','185px'],
-            fixed: true,
-            shadeClose: true,
-            closeBtn: 0,
-            shade: 0,
-            anim: 1,  //动画 0-6
-            content: '/project/removePeople.html?nodeName='+nodeName
-        });
-    });
-}
-//群组 邀请成员 弹框
-//点击邀请新成员
-$(".add-new-member").click(function (e) {
-    $('.invitation').html('');
-    yaoqing();
-    e.stopPropagation()
-});
-function yaoqing() {
-    layui.use('layer', function(){
-        var layer = layui.layer;
-        layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: "邀请新成员", //标题
-            offset: '150px',
-            fixed: false,
-            shadeClose: true, //点击遮罩关闭
-            anim: 1,  //动画 0-6
-            content: $(".search_prople")
-        });
-    });
-}
+
 
 
 //修改任务 弹框界面
@@ -421,30 +317,7 @@ function changeRenwu(taskId,projectId) {
         });
     });
 }
-//点击菜单，打开项目菜单区域
-$(".menu").click(function () {
-    var top=$(this).offset().top +40 +'px';
-    var right=$(window).width()-$(this).offset().left;
-    var left=$(this).offset().left -380 +right+'px';
-    projectMenu(top,left);
-});
-function projectMenu(top,left) {
-    layui.use('layer', function(){
-        var layer = layui.layer;
-        layer.open({
-            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            title: false, //标题
-            offset: [top,left],
-            area:['380px','500px'],
-            fixed: true,
-            shadeClose: true,
-            closeBtn: 0,
-            shade: 0,
-            anim: 1,  //动画 0-6
-            content: ['projectMenu.html?projectId='+projectId,'no']
-        });
-    });
-};
+
 
 // 点击 帮助 弹出 帮助弹框
 $("#help").click(function () {

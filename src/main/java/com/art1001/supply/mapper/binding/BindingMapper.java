@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.binding;
 import java.util.List;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.base.Pager;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,7 +34,8 @@ public interface BindingMapper {
 	 * 
 	 * @param id
 	 */
-	void deleteBindingById(String id);
+	@Delete("delete from prm_binding where public_id = #{id} and bind_id = #{bindingId}")
+	void deleteBindingById(@Param("id") String id,@Param("bindingId") String bindingId);
 
 	/**
 	 * 修改binding数据

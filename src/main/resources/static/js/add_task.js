@@ -15,6 +15,7 @@ $("html").on("click",".add-assignment",function(e){
     });
     $(this).hide();
 });
+
 /*添加任务*/
 function addRenwu(addBox,taskMenuId) {
     var taskItem = '<div class="new-assignment boxsizing layui-form">\n' +

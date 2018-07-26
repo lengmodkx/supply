@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
@@ -17,6 +18,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
@@ -25,6 +27,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -37,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-	/** taskMapper接口*/
+    /** taskMapper接口*/
 	@Resource
 	private TaskMapper taskMapper;
 
@@ -73,6 +76,10 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private TagService tagService;
 
+    /** 日志逻辑层接口 */
+    @Resource
+    private LogService logService;
+
 	/**
 	 * 重写方法
 	 * 查询分页task数据
@@ -90,12 +97,12 @@ public class TaskServiceImpl implements TaskService {
 	 * @param taskId
 	 * @return
 	 */
-	@Override 
+	@Override
 	public Task findTaskByTaskId(String taskId){
 		return taskMapper.findTaskByTaskId(taskId);
 	}
 
-	/**
+    /**
 	 * 重写方法
 	 * 删除任务
 	 * 通过taskId删除task数据
@@ -115,34 +122,34 @@ public class TaskServiceImpl implements TaskService {
 	 * @param task 任务信息
 	 */
 	@Override
-	public TaskLogVO updateTask(Task task){
+	public Log updateTask(Task task){
 	    String content = "";
-	    TaskLogVO taskLogVO = new TaskLogVO();
+	    Log log = new Log();
 	    //任务更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //更新任务优先级
         if(task.getPriority() != null && task.getPriority() != ""){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.F.getName() + " " + task.getPriority());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.F.getName() + " " + task.getPriority(),1);
         }
         //更新任务备注
         if(task.getRemarks() != null && task.getRemarks() != null){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.E.getName());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName() + " " + task.getPriority(),1);
         }
         //更新任务执行者
         if(task.getExecutor() != null && task.getExecutor() != ""){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.U.getName());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.U.getName() + " " + task.getPriority(),1);
         }
         //更新任务其他
         if(task.getOther() != null && task.getOther() != ""){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.G.getName());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.G.getName() + " " + task.getPriority(),1);
         }
         //更新任务的名称
         if(!StringUtils.isEmpty(task.getTaskName())){
-            taskLogVO = saveTaskLog(task,TaskLogFunction.A18.getName()+ task.getTaskName());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.A18.getName() + " " + task.getPriority(),1);
         }
         int result = taskMapper.updateTask(task);
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        log.setResult(result);
+        return log;
 	}
 
 	/**
@@ -151,7 +158,7 @@ public class TaskServiceImpl implements TaskService {
      * @param task task信息
      */
 	@Override
-	public TaskLogVO saveTask(Task task) {
+	public Log saveTask(Task task) {
         task.setTaskId(IdGen.uuid());
 	    //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
@@ -176,7 +183,7 @@ public class TaskServiceImpl implements TaskService {
         //保存任务信息
         taskMapper.saveTask(task);
         //拿到TaskLog对象并且保存
-        return saveTaskLog(task, TaskLogFunction.R.getName() + task.getTaskName());
+        return logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
     }
 
 	/**
@@ -196,16 +203,16 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO moveToRecycleBin(String taskId) {
+    public Log moveToRecycleBin(String taskId) {
         //把该任务放到回收站
         int result = taskMapper.moveToRecycleBin(taskId,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
         TaskLogVO taskLogVO = new TaskLogVO();
         //任务状态为0 日志打印内容为 xxx把任务移入了回收站
-        taskLogVO = saveTaskLog(task,TaskLogFunction.P.getName());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(),TaskLogFunction.P.getName(),1);
+        log.setResult(result);
+        return log;
     }
 
 	/**
@@ -215,7 +222,7 @@ public class TaskServiceImpl implements TaskService {
 	 * @return
 	 */
 	@Override
-	public TaskLogVO resetAndCompleteTask(Task task) {
+	public Log resetAndCompleteTask(Task task) {
 	    StringBuilder content = new StringBuilder("");
         //如果当前状态为未完成  则 日志记录为 完成任务 否则为 重做任务
         if(task.getTaskStatus().equals("完成")){
@@ -246,9 +253,9 @@ public class TaskServiceImpl implements TaskService {
         }
 	    //修改任务状态
 	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -258,7 +265,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO updateTaskStartAndEndTime(Task task) {
+    public Log updateTaskStartAndEndTime(Task task) {
         String content = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         if(task.getStartTime() != null){
@@ -270,9 +277,9 @@ public class TaskServiceImpl implements TaskService {
             content = TaskLogFunction.L.getName() + " " + format.format(date);
         }
         int result =  taskMapper.updateTask(task);
-        TaskLogVO taskLogVO = saveTaskLog(task, content);
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content,1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -293,7 +300,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
+    public Log mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
         //如果是跨项目移动 则清空任务成员关系 及 执行者
         if(!newTaskMenuVO.getProjectId().equals(oldTaskMenuVO.getProjectId())){
             task.setExecutor("");
@@ -312,18 +319,18 @@ public class TaskServiceImpl implements TaskService {
             //拼接任务操作日志内容的字符串
             content = TaskLogFunction.V.getName() + " " + oldTaskMenuVO.getTaskGroupName() + "/" + oldTaskMenuVO.getTaskMenuName() +" "+  TaskLogFunction.W.getName() + " " + newTaskMenuVO.getTaskGroupName() + "/" + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
-            TaskLogVO taskLogVO = saveTaskLog(task, content);
-            taskLogVO.setResult(result);
-            return taskLogVO;
+            Log log = logService.saveLog(task.getTaskId(), content,1);
+            log.setResult(result);
+            return log;
         }
         //如果任务的菜单信息不为空 说明该任务要移至其他的任务菜单
         if(newTaskMenuVO.getTaskMenuId() != null && newTaskMenuVO.getTaskMenuId() != ""){
             //拼接任务操作日志内容的字符串
             content = TaskLogFunction.X.getName() + " " + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
-            TaskLogVO taskLogVO = saveTaskLog(task, content);
-            taskLogVO.setResult(result);
-            return taskLogVO;
+            Log log = logService.saveLog(task.getTaskId(), content,1);
+            log.setResult(result);
+            return log;
         }
             return null;
     }
@@ -344,7 +351,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO turnToFatherLevel(Task task) {
+    public Log turnToFatherLevel(Task task) {
         Task fatherLevelTask = taskMapper.findFatherLevelProjectId(task.getParentId());
         //将任务的父级任务设置为0 (没有父级任务)
         task.setParentId("0");
@@ -358,9 +365,9 @@ public class TaskServiceImpl implements TaskService {
         //拼接日志内容
         content.append(TaskLogFunction.A8.getName()).append(" ").append(task.getTaskName()).append(" ").append(TaskLogFunction.A9.getName());
         //保存日志
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -371,7 +378,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO addTaskTags(Tag tag,String taskId,int countByTagName) {
+    public Log addTaskTags(Tag tag,String taskId,int countByTagName) {
         //先查询出当前任务原有的标签id信息
         String taskTag = taskMapper.findTaskTagByTaskId(taskId);
         if(taskTag == null){
@@ -387,16 +394,17 @@ public class TaskServiceImpl implements TaskService {
         task.setTagId(newTaskTag.toString());
         //更新到数据库
         int result = taskMapper.updateTask(task);
-        TaskLogVO taskLogVO = new TaskLogVO();
+        Log log = new Log();
         //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
         if(countByTagName == 0){
             //拼接任务操作日志内容
             StringBuilder content = new StringBuilder("");
             content.append(TaskLogFunction.A10.getName()).append(" ").append(tag.getTagName());
-            taskLogVO = saveTaskLog(task, content.toString());
-            taskLogVO.setResult(result);
+            log = logService.saveLog(task.getTaskId(), content.toString(),1);
+            log.setResult(result);
+            return log;
         }
-        return taskLogVO;
+        return log;
     }
 
     /**
@@ -442,7 +450,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO updateTaskRepeat(Task task, Object object) {
+    public Log updateTaskRepeat(Task task, Object object) {
         //判断是不是自定义重复
         if(!task.getRepeat().equals("自定义重复")){
             //如果不是自定义重复删除该任务的自定义重复时间
@@ -450,9 +458,9 @@ public class TaskServiceImpl implements TaskService {
         task.setUpdateTime(System.currentTimeMillis());
         int result = taskMapper.updateTask(task);
         String content = TaskLogFunction.D.getName();
-        TaskLogVO taskLogVO = saveTaskLog(task, content);
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content,1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -462,7 +470,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO updateTaskRemindTime(Task task, UserEntity userEntity) {
+    public Log updateTaskRemindTime(Task task, UserEntity userEntity) {
         StringBuilder content = new StringBuilder("");
         //判断是开始时提醒还是结束时提醒
         if(task.getRemind().equals("任务截止时提醒")){
@@ -477,9 +485,9 @@ public class TaskServiceImpl implements TaskService {
         task.setUpdateTime(System.currentTimeMillis());
         content.append(TaskLogFunction.A13.getName()).append(" ").append(task.getRemind());
         int result = taskMapper.updateTask(task);
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
         //UserEntity是要被提醒的成员信息(暂时先不用)
     }
 
@@ -489,7 +497,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO removeTaskStartTime(Task task) {
+    public Log removeTaskStartTime(Task task) {
         StringBuilder content = new StringBuilder("");
         int result = 0;
         //设置最后更新时间
@@ -497,9 +505,9 @@ public class TaskServiceImpl implements TaskService {
         result = taskMapper.removeTaskStartTime(task);
         content.append(TaskLogFunction.J.getName());
         //保存操作日志
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -508,7 +516,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO removeTaskEndTime(Task task) {
+    public Log removeTaskEndTime(Task task) {
         StringBuilder content = new StringBuilder("");
         int result = 0;
         //设置最后更新时间
@@ -516,57 +524,47 @@ public class TaskServiceImpl implements TaskService {
         result = taskMapper.removeTaskEndTime(task);
         content.append(TaskLogFunction.K.getName());
         //保存操作日志
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
      * 添加项目成员
-     * @param task 任务实体信息
-     * @param addUserEntity 要添加的参与者的信息
-     * @param removeUserEntity 要移除的参与者的信息
      * @return
      */
     @Override
-    public TaskLogVO addAndRemoveTaskMember(Task task, String[] addUserEntity, String[] removeUserEntity) {
-        StringBuilder content = new StringBuilder("");
-        //List<UserEntity> add = userMapper.findManyUserById(addUserEntity);
-       // ./UserEntity[] addUser = (UserEntity[])add.toArray(new UserEntity[0]);
-        //向任务成员表中添加数据
-//        if(addUserEntity != null){
-//            taskMemberService.addManyMemberInfo(addUser,task);
-//            //循环用来拼接log日志字符串
-//            content.append(TaskLogFunction.C.getName()).append(" ");
-//            for (int i = 0; i < addUserEntity.length; i++) {
-//                if(i == addUserEntity.length - 1){
-//                    content.append(addUser[i].getUserName());
-//                } else{
-//                    content.append(addUser[i].getUserName()).append(",");
-//                }
-//            }
-//        }
-//        if(removeUserEntity != null && removeUserEntity.length > 0) {
-//            List<UserEntity> remove = userMapper.findManyUserById(removeUserEntity);
-//            UserEntity[] removeUser = (UserEntity[]) remove.toArray(new UserEntity[0]);
-//            if (removeUserEntity != null) {
-//                taskMemberService.delTaskMemberByTaskIdAndMemberId(task, removeUser);
-//                if (!StringUtils.isEmpty(content.toString())) {
-//                    content.append(",");
-//                }
-//                content.append(TaskLogFunction.B.getName()).append(" ");
-//                for (int i = 0; i < removeUserEntity.length; i++) {
-//                    if (i == removeUserEntity.length - 1) {
-//                        content.append(removeUser[i].getUserName());
-//                    } else {
-//                        content.append(removeUser[i].getUserName()).append(",");
-//                    }
-//                }
-//            }
-//        }
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        return taskLogVO;
+    public Log addAndRemoveTaskMember(String taskId,String memberIds) {
+        StringBuilder content = new StringBuilder();
+        Task task = taskMapper.findTaskByTaskId(taskId);
+
+        List<String> list1 = Arrays.asList(task.getTaskUIds().split(","));
+        List<String> list2 = Arrays.asList(memberIds.split(","));
+
+        List subtract1 = ListUtils.subtract(list1, list2);
+        if(subtract1 != null&& subtract1.size() > 0){
+            content.append(TaskLogFunction.B.getName());
+            for (Object aSubtract1 : subtract1) {
+                UserEntity user = userMapper.findUserById(aSubtract1.toString());
+                content.append(user.getUserName()).append(",");
+            }
+        }
+
+
+        List subtract2 = ListUtils.subtract(list2, list1);
+        if(subtract2 != null && subtract2.size() > 0){
+            content.append(TaskLogFunction.C.getName());
+            for (Object aSubtract2 : subtract2) {
+                UserEntity user = userMapper.findUserById(aSubtract2.toString());
+                content.append(user.getUserName()).append(",");
+            }
+        }
+        task.setTaskUIds(memberIds);
+        taskMapper.updateTask(task);
+        Log log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
+        return log;
     }
+
 
     /**
      * 移除任务-成员关系
@@ -575,11 +573,11 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO removeTaskMember(Task task, UserEntity userEntity) {
+    public Log removeTaskMember(Task task, UserEntity userEntity) {
         taskMemberService.removeTaskMember(task,userEntity);
         StringBuilder builder = new StringBuilder("");
         builder.append(TaskLogFunction.B.getName()).append(" ").append(userEntity.getUserName());
-        return saveTaskLog(task,builder.toString());
+        return logService.saveLog(task.getTaskId(),builder.toString(),1);
     }
 
     /**
@@ -641,7 +639,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO addSubLevelTasks(String parentTaskId, Task subLevel) {
+    public Log addSubLevelTasks(String parentTaskId, Task subLevel) {
         //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置任务的层级
@@ -664,14 +662,14 @@ public class TaskServiceImpl implements TaskService {
         //保存日志信息至数据库
         Task task = new Task();
         task.setTaskId(parentTaskId);
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
         //查询父任务的任务名称
         String parentTask = taskMapper.findTaskNameById(parentTaskId);
         content = new StringBuilder("");
         content.append(TaskLogFunction.A15.getName()).append(" ").append(parentTask).append(TaskLogFunction.A16.getName()).append(" ").append(subLevel.getTaskName());
-        saveTaskLog(subLevel,content.toString());
-        return taskLogVO;
+        logService.saveLog(task.getTaskId(), content.toString(),1);
+        return log;
     }
 
     /**
@@ -680,7 +678,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO resetAndCompleteSubLevelTask(Task task) {
+    public Log resetAndCompleteSubLevelTask(Task task) {
         Task taskByTaskId = taskMapper.findTaskBySubTaskId(task.getTaskId());
         if(taskByTaskId.getTaskStatus().equals("完成")){
             throw new ServiceException();
@@ -695,9 +693,9 @@ public class TaskServiceImpl implements TaskService {
         }
         //更新任务信息
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(),content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -708,7 +706,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO) {
+    public Log copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO) {
         String oldTaskId = task.getTaskId();
         //把被复制的任务的id更改成新生成的任务的id
         task.setTaskId(IdGen.uuid());
@@ -756,9 +754,9 @@ public class TaskServiceImpl implements TaskService {
         }
         //追加日志字符串
         content.append(TaskLogFunction.R.getName()).append(" ").append(task.getTaskName());
-        TaskLogVO taskLogVO = saveTaskLog(task, content.toString());
-        taskLogVO.setResult(result);
-        return taskLogVO;
+        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        log.setResult(result);
+        return log;
     }
 
     /**
@@ -908,7 +906,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO removeExecutor(String taskId) {
+    public Log removeExecutor(String taskId) {
         //先将任务成员关系表的执行者清掉
         taskMapper.clearExecutor(taskId);
         Task task = new Task();
@@ -916,7 +914,7 @@ public class TaskServiceImpl implements TaskService {
         taskMapper.removeExecutor(taskId);
         //拼接日志
         String content = TaskLogFunction.A.getName();
-        return saveTaskLog(task,content);
+        return logService.saveLog(task.getTaskId(),content,1);
     }
 
     /**
@@ -948,7 +946,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public TaskLogVO updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
+    public Log updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
         Task task = new Task();
         task.setTaskId(taskId);
         task.setExecutor(userInfoEntity.getId());
@@ -977,7 +975,7 @@ public class TaskServiceImpl implements TaskService {
         }
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
-        return saveTaskLog(task,content.toString());
+        return logService.saveLog(task.getTaskId(),content.toString(),1);
     }
 
     /**
@@ -1003,29 +1001,28 @@ public class TaskServiceImpl implements TaskService {
         TaskLogVO taskLogVO = new TaskLogVO();
         Task task = new Task();
         task.setTaskId(taskId);
-        saveTaskLog(task,TaskLogFunction.P.getName());
+        logService.saveLog(task.getTaskId(),TaskLogFunction.P.getName(),1);
     }
 
 
-    /**
-     * 返回日志实体对象
-     */
-    @Override
-    public TaskLogVO saveTaskLog(Task task,String content){
-        TaskLog taskLog = new TaskLog();
-        taskLog.setId(IdGen.uuid());
-        taskLog.setMemberName(ShiroAuthenticationManager.getUserEntity().getUserName());
-        taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
-        taskLog.setMemberImg(ShiroAuthenticationManager.getUserEntity().getUserInfo().getImage());
-        taskLog.setTaskId(task.getTaskId());
-        taskLog.setContent(taskLog.getMemberName() + "  " + content);
-        taskLog.setCreateTime(System.currentTimeMillis());
-        taskLog.setLogType(0);
-        taskLogService.saveTaskLog(taskLog);
-        TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
-        taskLogVO.setTask(task);
-        return taskLogVO;
-    }
+//    /**
+//     * 返回任务日志实体对象
+//     */
+//    @Override
+//    public TaskLogVO saveTaskLog(Task task,String content){
+//        TaskLog taskLog = new TaskLog();
+//        taskLog.setId(IdGen.uuid());
+//        taskLog.setLogType(0);
+//        taskLog.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+//        taskLog.setTaskId(task.getTaskId());
+//        taskLog.setContent(taskLog.getMemberName() + "  " + content);
+//        taskLog.setCreateTime(System.currentTimeMillis());
+//        taskLog.setLogFlag(1);
+//        taskLogService.saveTaskLog(taskLog);
+//        TaskLogVO taskLogVO = taskLogService.findTaskLogContentById(taskLog.getId());
+//        taskLogVO.setTask(task);
+//        return taskLogVO;
+//    }
 
     /**
      * 查询此任务的关联

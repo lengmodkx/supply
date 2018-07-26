@@ -63,6 +63,11 @@
     height: 60px;
     position: relative;
     border-top: 1px solid #EBEBEB;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }
 .create-success{
     width: 150px;
