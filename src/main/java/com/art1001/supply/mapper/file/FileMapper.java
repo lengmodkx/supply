@@ -7,6 +7,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * filemapper接口
@@ -141,4 +142,12 @@ public interface FileMapper {
     List<File> findFileByProjectId(String projectId);
 
     int chat(String fileId, String content);
+
+	/**
+	 * 返回该文件的所有参与者id
+	 * @param fileId 文件id
+	 * @return 参与者id
+	 */
+	@Select("select file_uids from prm_file where file_id = #{fileId}")
+	String findJoinId(String fileId);
 }

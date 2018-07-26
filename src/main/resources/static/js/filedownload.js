@@ -312,6 +312,129 @@ $("html").on("click",'.related-wj li',function () {
     location.href = "/file/list.html?fileId="+$(this).attr('data-id');
 });
 
+/**
+ * 任务详情的时候显示的人员信息
+ */
+$(".add-work-people img").click(function (e) {
+    var content = '';
+    var members = '';
+    var url = "/file/findProjectMember";
+    var args = {"fileId":fileId,"projectId":projectId};
+    $.post(url,args,function (data) {
+        var joinInfo = data.joinInfo;
+        var projectMember = data.projectMember;
+
+        //这里是循环参与者
+        for (var i = 0;i < joinInfo.length;i++) {
+            content +=
+                '<div class="one-people">' +
+                '<img src="' + IMAGE_SERVER + joinInfo[i].userInfo.image + '"/>' +
+                '<span value = "' + joinInfo[i].id + '">' + joinInfo[i].userName + '</span>' +
+                '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: rgb(209, 209, 209); display: inline;"></i>' +
+                '</div>';
+        }
+
+        //这里是循环项目的推荐人员
+        if(projectMember == ''){
+            members += "<div class=\'one-people\'>"+
+                "<img src = '/image/add.png'>"+
+                "<span value = ''>" + '该项目没有成员了' + "</span>"+
+                "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
+                "</div>";
+        } else{
+            for (var i = 0;i < projectMember.length;i++){
+                members += "<div class=\'one-people\'>"+
+                    "<img src = '" + IMAGE_SERVER+projectMember[i].userInfo.image +"'>"+
+                    "<span value = '"+ projectMember[i].id +"'>" + projectMember[i].userName + "</span>"+
+                    "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
+                    "</div>";
+            }
+
+        }
+        $('#joinInfo').html(content);
+        $('#Recommend').html(members);
+        $(".people").show(500);
+    },"json");
+    e.stopPropagation();
+});
+
+
+/**
+ * 点击人员 弹框 确定 按钮
+ */
+$('.people-ok').click(function () {
+    var addUserEntity=[];
+    var removeUserEntity=[];
+    for (var i=0;i<$("#joinInfo .one-people").length;i++){
+        if ($("#joinInfo .one-people").eq(i).find("i").is(":visible")) {
+            var value =$("#joinInfo .one-people").eq(i).find("span").attr("value");
+            addUserEntity.push(value);
+        }
+    }
+    for (var i=0;i<$("#Recommend .one-people").length;i++){
+        if ($("#Recommend .one-people").eq(i).find("i").is(":visible")) {
+            var value =$("#Recommend .one-people").eq(i).find("span").attr("value");
+            var image =$("#Recommend .one-people").eq(i).find("img").attr("src");
+            addUserEntity.push(value);
+        }
+    }
+    if(addUserEntity == '' && removeUserEntity == ''){
+        $(".people").hide(500);
+        return false;
+    }
+
+    var url = "/file/addAndRemoveFileJoin";
+    var args = {"newJoin":addUserEntity.toString(),"fileId":fileId};
+    $.post(url,args,function (data) {
+        $(".people").hide(500);
+        if(data.result == 0){
+            layer.msg("系统异常,操作失败!");
+        }
+    },"json");
+});
+
+/**
+ * 移除参与者
+ */
+$('html').on('click','.remove-work-people',function () {
+    var id = $(this).parent().attr('data-id');
+    var ids = [];
+    $('.one-work-people').each(function () {
+        ids.push($(this).attr('data-id'));
+    });
+    for(var i = 0;i < ids.length;i++){
+        if(ids[i] == id){
+            ids.splice(i,1);
+        }
+    }
+
+    var url = "/file/addAndRemoveFileJoin";
+    var args = {"newJoin":ids.toString(),"fileId":fileId};
+    $.post(url,args,function (data) {
+        if(data.result == 0){
+            layer.msg("系统异常,操作失败!");
+        }
+    },"json");
+});
+
+
+var zxz=false;
+//点击人员 出现对勾
+$("html").on("click",".one-people",function () {
+    if (zxz){
+        $(this).siblings().find("i").hide();
+        $(this).find("i").toggle();
+    } else {
+        $(this).find("i").toggle();
+    }
+
+    var arr=[]
+    for (var i=0;i<$(".one-people").length;i++){
+        if ($(this).find(i).is(":visible")) {
+            var value=$(this).find("span").attr("value");
+        }
+    }
+});
 
 //修改任务 弹框界面
 function changeRenwu(taskId,projectId) {

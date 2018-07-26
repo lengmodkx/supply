@@ -7,7 +7,9 @@ import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,7 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 	 * @param memberIds 逗号隔开的用户id
 	 * @return
 	 */
-    List<UserEntity> findManyUserById(String memberIds);
+    List<UserEntity> findManyUserById(@Param("memberIds") String memberIds);
 
 	/**
 	 * 根据项目id 查询该项目下所有的用户信息
@@ -139,4 +141,12 @@ public interface UserMapper extends BaseMapper<UserEntity, String> {
 
 	//根据关键字模糊查询用户
 	List<UserEntity> findByKey(String keyword);
+
+	/**
+	 * 根据用户id 查询出当前用户的名称
+	 * @param uId 用户id
+	 * @return 用户名称
+	 */
+	@Select("select u_name from tb_user where u_id = #{uId}")
+    String findUserNameById(String uId);
 }

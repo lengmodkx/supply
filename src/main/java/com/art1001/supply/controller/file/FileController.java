@@ -10,6 +10,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.TaskPushType;
@@ -17,18 +18,22 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -47,6 +52,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 文件相关controller
@@ -76,6 +82,9 @@ public class FileController extends BaseController {
 
     @Resource
     private SimpMessagingTemplate messagingTemplate;
+
+    @Resource
+    private UserService userService;
 
 
     /**
@@ -110,7 +119,10 @@ public class FileController extends BaseController {
                 List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
                 List<Tag> tags = tagService.findByProjectId(projectId);
 
-                //查询出任务的关联信息
+                //查询出该文件的所有参与者信息
+                List<UserEntity> joinInfo = userService.findManyUserById(fileService.findJoinId(file.getFileId()));
+                model.addAttribute("joinInfos",joinInfo);
+                //查询出文件的关联信息
                 BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
                 model.addAttribute("bindingVo",bindingVo);
                 model.addAttribute("file", fileById);
@@ -1050,7 +1062,7 @@ public class FileController extends BaseController {
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("fileLog",log1);
             taskPushType.setObject(map);
-            //推送至任务的详情界面
+            //推送至文件的详情界面
             messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             jsonObject.put("result",0);
@@ -1058,4 +1070,55 @@ public class FileController extends BaseController {
         }
         return jsonObject;
     }
+
+    /**
+     * 查询出该文件的参与者 和 项目成员
+     * @param fileId 文件id
+     * @param  projectId 该项目的id
+     * @return
+     */
+    @PostMapping("findProjectMember")
+    @ResponseBody
+    public JSONObject findProjectMember(String fileId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //查询出该文件的所有参与者id
+            String uids = fileService.findJoinId(fileId);
+            List<UserEntity> joinInfo = userService.findManyUserById(uids);
+            List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
+            //比较项目全部成员集合 和 文件参与者集合的差集
+            List<UserEntity> reduce1 = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());
+            jsonObject.put("joinInfo",joinInfo);
+            jsonObject.put("projectMember",reduce1);
+        } catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("result",0);
+            jsonObject.put("msg","数据拉取失败!");
+            log.error("系统异常,数据拉取失败!");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 添加或者移除文件的参与者
+     * @param fileId 文件id
+     * @param newJoin 新的参与者id 数组
+     * @return
+     */
+    @PostMapping("addAndRemoveFileJoin")
+    @ResponseBody
+    public JSONObject addAndRemoveFileJoin(String fileId, String newJoin){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.addAndRemoveFileJoin(fileId, newJoin);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+
 }

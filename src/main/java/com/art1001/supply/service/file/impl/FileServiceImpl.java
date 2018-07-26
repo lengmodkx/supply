@@ -1,20 +1,31 @@
 package com.art1001.supply.service.file.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
+import org.apache.catalina.User;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +34,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * fileServiceImpl
@@ -41,6 +53,15 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private FileVersionService fileVersionService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private LogService logService;
+
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
 
     /**
      * 查询分页file数据
@@ -339,5 +360,82 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> findFileByProjectId(String projectId) {
         return fileMapper.findFileByProjectId(projectId);
+    }
+
+    /**
+     * 查询出该文件的所有参与者id
+     * @param fileId 文件id
+     * @return 参与者id
+     */
+    @Override
+    public String findJoinId(String fileId) {
+        return fileMapper.findJoinId(fileId);
+    }
+
+    /**
+     * 添加或者移除文件的参与者
+     * @param fileId 当前参与者id
+     * @param newJoinId 新的参与者id
+     * @return 影响行数
+     */
+    @Override
+    public void addAndRemoveFileJoin(String fileId, String newJoinId) {
+        //查询出当前文件中的 参与者id
+        String joinId = fileService.findJoinId(fileId);
+
+        //log日志
+        Log log = new Log();
+        StringBuilder logContent = new StringBuilder();
+
+        //将数组转换成集合
+        List<String> oldJoin = Arrays.asList(joinId.split(","));
+        List<String> newJoin = Arrays.asList(newJoinId.split(","));
+
+        //比较 oldJoin 和 newJoin 两个集合的差集  (移除)
+        List<String> reduce1 = oldJoin.stream().filter(item -> !newJoin.contains(item)).collect(Collectors.toList());
+        if(reduce1 != null && reduce1.size() > 0){
+            logContent.append(TaskLogFunction.B.getName()).append(" ");
+            for (String uId : reduce1) {
+                String userName = userService.findUserNameById(uId);
+                logContent.append(userName).append(" ");
+            }
+        }
+
+        //比较 newJoin  和 oldJoin 两个集合的差集  (添加)
+        List<String> reduce2 = newJoin.stream().filter(item -> !oldJoin.contains(item)).collect(Collectors.toList());
+        if(reduce2 != null && reduce2.size() > 0){
+            logContent.append(TaskLogFunction.C.getName()).append(" ");
+            for (String uId : reduce2) {
+                String userName = userService.findUserNameById(uId);
+                logContent.append(userName).append(" ");
+            }
+        }
+
+        //如果没有参与者变动直接返回
+        if((reduce1 == null && reduce1.size() == 0) && (reduce2 == null && reduce2.size() == 0)){
+            return;
+        } else{
+            File file = new File();
+            file.setFileId(fileId);
+            file.setFileUids(newJoinId);
+            file.setUpdateTime(System.currentTimeMillis());
+            fileService.updateFile(file);
+            log = logService.saveLog(fileId,logContent.toString(),2);
+
+            //推送信息
+            FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            List<UserEntity> adduser = new ArrayList<UserEntity>();
+            map.put("log",log);
+            for (String id : reduce2) {
+                adduser.add(userService.findById(id));
+            }
+            map.put("reduce2",reduce2);
+            map.put("reduce1",reduce1);
+            map.put("adduser",adduser);
+            filePushType.setObject(map);
+            //推送至文件的详情界面
+            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(filePushType)));
+        }
     }
 }

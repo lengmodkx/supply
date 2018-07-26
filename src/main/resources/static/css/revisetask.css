@@ -236,6 +236,11 @@
 .combox span{
     float: left;
     margin-right: 15px;
+    max-width: 380px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
 }
 .tag-box{
     width: 100%;
@@ -872,6 +877,7 @@
     height: 40px;
     padding: 8px 4px;
     position: relative;
+    display: flex;
 }
 .check-box{
     float: left;

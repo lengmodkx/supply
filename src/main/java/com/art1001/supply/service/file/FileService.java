@@ -2,6 +2,7 @@ package com.art1001.supply.service.file;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -142,4 +143,19 @@ import java.util.List;
 	 * @return 文件信息集合
 	 */
 	List<File> findFileByProjectId(String projectId);
+
+	/**
+	 * 查询出该文件的所有参与者id
+	 * @param fileId 文件id
+	 * @return 参与者id
+	 */
+    String findJoinId(String fileId);
+
+	/**
+	 * 添加或者移除文件的参与者
+	 * @param fileId 文件id
+	 * @param newJoin 新的参与者id
+	 * @return 影响行数
+	 */
+	void addAndRemoveFileJoin(String fileId, String newJoin);
 }

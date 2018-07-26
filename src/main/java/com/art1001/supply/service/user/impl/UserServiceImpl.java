@@ -273,4 +273,14 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     public List<UserEntity> findByKey(String keyword) {
         return userMapper.findByKey(keyword);
     }
+
+    /**
+     * 根据用户id 查询出当前用户的名称
+     * @param uId 用户id
+     * @return 用户名称
+     */
+    @Override
+    public String findUserNameById(String uId) {
+        return userMapper.findUserNameById(uId);
+    }
 }

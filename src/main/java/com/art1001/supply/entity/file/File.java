@@ -104,6 +104,15 @@ public class File extends BaseEntity implements Serializable {
      */
     private UserEntity userEntity;
 
+    /**
+     * 文件参与者信息
+     */
+    private List<UserEntity> joinInfo;
+
+    /**
+     * 所有文件参与者的Id
+     */
+    private String fileUids;
 
     private String fileUrlTemp;
 
