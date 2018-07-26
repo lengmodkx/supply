@@ -307,7 +307,7 @@
                 <!--分享-->
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
-                    <ul class="related-fw">
+                    <ul class="related-fx">
                     <li class="boxsizing data-info"  th:each="share:${bindingVo.shareList}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
@@ -492,6 +492,7 @@
 
     $("body").on("click",".show-cancel-related",function (e) {
         $(this).parents("li").find(".related-menu").slideToggle();
+
         e.stopPropagation();
     });
     $("body").on("click",".close-related-menu",function () {
@@ -575,17 +576,17 @@
                 $('#bind li.data-info ').each(function(){
                     if($(this).attr('data-id') == taskLog.object.bId){
                         $(this).remove();
-                        if($('.related-rw li').length == 0){
+                        if($('.related-rw li.data-info').length == 0){
                             $('.related-rw-wrap').hide();
                         }
-                        if($('.related-rc li').length == 0){
+                        if($('.related-rc li.data-info').length == 0){
                             $('.related-rc-wrap').hide();
                         }
-                        if($('.related-wj li').length == 0){
+                        if($('.related-wj li.data-info').length == 0){
                             $('.related-wj-wrap').hide();
                         }
-                        if($('.related-fw li').length == 0){
-                            $('.related-fw-wrap').hide();
+                        if($('.related-fx li.data-info').length == 0){
+                            $('.related-fx-wrap').hide();
                         }
                     }
                 });

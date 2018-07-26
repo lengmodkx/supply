@@ -185,7 +185,7 @@ function addBindingStr(binding,type,bindId) {
                 // <!--</div>-->
                 '</li>';
             $('.related-fx-wrap').show();
-            $('.related-fw').prepend(content);
+            $('.related-fx').prepend(content);
             var form = layui.form;
             form.render();
         }
@@ -285,7 +285,7 @@ $(function () {
 /**
  * 取消关联 的单击事件
  */
-$("html").on("click",".cancle",function (e) {
+$("body").on("click",".cancle",function (e) {
     var id = $(this).attr("data-id");
     var bindId = $(this).attr("data-binding-id");
     var url = "/binding/deleteBinding";
