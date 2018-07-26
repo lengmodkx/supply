@@ -3,6 +3,7 @@ package com.art1001.supply.controller.file;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
@@ -53,7 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Controller
 @RequestMapping("file")
 @Slf4j
-public class FileController {
+public class FileController extends BaseController {
 
     @Resource
     private FileService fileService;

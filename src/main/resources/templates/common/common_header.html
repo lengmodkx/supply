@@ -17,13 +17,6 @@
     <script th:src="@{/js/jquery-ui.min.js}"></script>
     <script th:inline="javascript">
         var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-        function getRootPath(){
-            var curPageUrl = window.document.location.href;
-            var rootPath = curPageUrl.split("//")[0] + curPageUrl.split("//")[1].split("/")[0]
-                + curPageUrl.split("//")[1].split("/")[1];
-            return rootPath;
-        }
-
         $(function () {
             // 群组 弹框
             $(".team").click(function () {

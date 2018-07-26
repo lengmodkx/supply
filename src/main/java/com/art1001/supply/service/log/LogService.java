@@ -60,7 +60,7 @@ public interface LogService {
 	 * 
 	 * @return
 	 */
-	public List<Log> findLogAllList();
+	public List<Log> findLogAllList(Log log);
 
 	/**
 	 * 查询出五条最近的记录

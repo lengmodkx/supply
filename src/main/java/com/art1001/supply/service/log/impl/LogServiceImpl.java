@@ -109,8 +109,8 @@ public class LogServiceImpl implements LogService {
 	 * @return
 	 */
 	@Override
-	public List<Log> findLogAllList(){
-		return logMapper.findLogAllList();
+	public List<Log> findLogAllList(Log log){
+		return logMapper.findLogAllList(log);
 	}
 
 	/**

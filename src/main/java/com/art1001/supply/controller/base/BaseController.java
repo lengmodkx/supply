@@ -1,11 +1,13 @@
 package com.art1001.supply.controller.base;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
@@ -40,6 +42,11 @@ public abstract class BaseController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    LogService logService;
+
+
     //查询全部项目成员
     @PostMapping("/findAllProjectMember")
     @ResponseBody
@@ -173,5 +180,20 @@ public abstract class BaseController {
             throw  new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    @GetMapping("/projectMenu.html")
+    public String projectMenu(@RequestParam(required = false) String projectId, Model model){
+        try {
+            Log log = new Log();
+            log.setLogType(0);
+            List<Log> logList = logService.findLogAllList(log);
+            model.addAttribute("projectId",projectId);
+            model.addAttribute("logList",logList);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+
+        return "tk-project-menu";
     }
 }

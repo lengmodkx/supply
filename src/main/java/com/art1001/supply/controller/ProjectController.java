@@ -596,16 +596,7 @@ public class ProjectController extends BaseController {
         return "addtask";
     }
 
-    @GetMapping("/projectMenu.html")
-    public String projectMenu(@RequestParam(required = false) String projectId, Model model){
-        try {
-            model.addAttribute("projectId",projectId);
-        }catch (Exception e){
-            throw new SystemException(e);
-        }
 
-        return "tk-xiangmucaidan";
-    }
 
 
     @GetMapping("/menuList.html")

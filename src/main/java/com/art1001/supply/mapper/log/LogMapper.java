@@ -53,7 +53,7 @@ public interface LogMapper {
 	 * 
 	 * @return
 	 */
-	List<Log> findLogAllList();
+	List<Log> findLogAllList(Log log);
 
 	/**
 	 * 查询出5条最近的日志记录

@@ -10,7 +10,8 @@
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="log_flag" property="logFlag" jdbcType="INTEGER" />
-		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id" select="com.art1001.supply.mapper.user.UserMapper.findById"></association>
+		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id"
+					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -50,12 +51,12 @@
 		parameterType="com.art1001.supply.entity.log.Log">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_log
-		<if test="orderBy == 0">
-			order by id desc
+		from prm_log where 1=1
+		<if test="logFlag != null ">
+			and log_flag = #{logFlag}
 		</if>
-		<if test="orderBy == 1">
-			order by id asc
+		<if test="logType != null ">
+			and log_type = #{logType}
 		</if>
 	</select>
 	
