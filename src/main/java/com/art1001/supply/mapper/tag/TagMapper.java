@@ -79,5 +79,5 @@ public interface TagMapper {
 	List<Tag> searchTag(String tagName);
 
 
-	List<Tag> findTagByTagIds(String tagIds);
+	List<Tag> findTagByTagIds(@Param("tagIds") String tagIds);
 }

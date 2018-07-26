@@ -78,16 +78,17 @@
 
     </select>
 
+
     <select id="findTagByTagIds" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from prm_tag where tag_id in(
+        from prm_tag where 1=1
         <if test="tagIds != null and tagIds != ''">
+            and tag_id in(
             <foreach collection="tagIds.split(',')" item="tagId" index="index" separator=",">
                 #{tagId}
-            </foreach>
+            </foreach>)
         </if>
-        )
     </select>
 
     <select id="findCountByTagName" parameterType="java.lang.String" resultType="java.lang.Integer">

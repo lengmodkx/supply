@@ -91,4 +91,5 @@ public interface PublicCollectService {
 	 * @return 收藏实体信息的集合
 	 */
 	List<PublicCollectVO> listMyCollect(String memberId, String type);
+
 }

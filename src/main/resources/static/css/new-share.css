@@ -303,10 +303,6 @@ body,html{
 .tags:hover>span{
     color: #3da8f5;
 }
-.has-tags{
-    display: none;
-
-}
 .has-tags>span{
     margin-bottom: 10px;
 }

@@ -1,21 +1,20 @@
 package com.art1001.supply.controller;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
-import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -45,28 +44,13 @@ public class ShareController extends BaseController {
     private ProjectMemberService projectMemberService;
 
     @Resource
-    private TaskMemberService taskMemberService;
+    private PublicCollectService publicCollectService;
 
     //导航到分享界面
     @RequestMapping("/share.html")
     public String share(@RequestParam String projectId, Model model){
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
-        shareList.forEach(share -> {
-            String tagIdsStr = share.getTagIds();
-            if (StringUtils.isNotEmpty(tagIdsStr)) {
-                String[] tagIdArrStr = tagIdsStr.split(",");
-
-                if (tagIdArrStr.length > 0) {
-                    Integer[] tagIdArr = new Integer[tagIdArrStr.length];
-                    for (int i = 0; i < tagIdArrStr.length; i++) {
-                        tagIdArr[i] = Integer.valueOf(tagIdArrStr[i]);
-                    }
-                    List<Tag> tagList = tagService.findByIds(tagIdArr);
-                    share.setTagList(tagList);
-                }
-            }
-        });
 
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
@@ -83,6 +67,8 @@ public class ShareController extends BaseController {
                              Model model) {
 
         model.addAttribute("projectId", projectId);
+        model.addAttribute("share",shareService.findById(shareId));
+
         return "share_edit";
     }
 
@@ -271,4 +257,71 @@ public class ShareController extends BaseController {
         return jsonObject;
     }
 
+
+    //收藏分享
+    @PostMapping("shareCollect")
+    @ResponseBody
+    public JSONObject shareCollect(String shareId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        try{
+
+            int judge = publicCollectService.judgeCollectPublic(userEntity.getId(), shareId, "分享");
+            if(judge==1){
+                jsonObject.put("result",1);
+                jsonObject.put("msg","已经收藏");
+            }else{
+                PublicCollect publicCollect = new PublicCollect();
+                publicCollect.setId(IdGen.uuid());
+                publicCollect.setPublicId(shareId);
+                publicCollect.setProjectId(projectId);
+                publicCollect.setMemberId(userEntity.getId());
+                publicCollect.setCollectType("分享");
+                publicCollectService.savePublicCollect(publicCollect);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","收藏成功");
+            }
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    //删除分享
+    @PostMapping("shareDelete")
+    @ResponseBody
+    public JSONObject shareDelate(String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            shareService.deleteById(shareId);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","移除成功");
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取项目下的所有标签
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("findAllTags")
+    @ResponseBody
+    public JSONObject findAllTags(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Tag> tagList = tagService.findByProjectId(projectId);
+            jsonObject.put("data",tagList);
+            jsonObject.put("result",1);
+
+        } catch (Exception e){
+            log.error("系统异常,标签获取失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

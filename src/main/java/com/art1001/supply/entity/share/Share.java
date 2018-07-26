@@ -9,11 +9,13 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * shareEntity
  */
 @Data
+@ToString
 public class Share extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
