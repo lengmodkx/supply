@@ -383,8 +383,6 @@
         var args = {"fileId":fileId,"content":chat}
         $.post("/file/chat",args,function (data) {
         },"json");
-        var messageJson = JSON.stringify({ "name": chat });
-        stompClient.send("/app/sendTest",{"fileId":fileId}, messageJson);
         $('#chat').val('');
         $('#chat').focus();
 
