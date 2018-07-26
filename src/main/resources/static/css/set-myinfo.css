@@ -1,0 +1,382 @@
+html,body{
+    background-color: #EDEDED;
+}
+
+header{
+    width: 100%;
+    height: 48px;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,.05);
+    background-color: white;
+    line-height: 48px;
+}
+.head-left{
+    float: left;
+}
+.head-left a{
+    float: left;
+
+}
+.head-left a img{
+    width: 200px;
+    transform: translateY(-5px);
+}
+.head-left span{
+    float: left;
+    margin-left: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #383838;
+}
+.header-right{
+    width: 105px;
+    height: 48px;
+    float: right;
+    border-left: 1px solid rgba(0,0,0,.07);
+}
+.header-right a{
+    display: flex;
+    padding: 0 16px;
+    color: #383838;
+    font-size: 16px;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-right a img{
+    width: 24px;
+    height: 24px;
+}
+
+.container{
+    width: 980px;
+    margin: 20px auto;
+}
+.container-left{
+    width: 300px;
+    padding: 0 10px;
+    float: left;
+}
+.sidebar-user{
+    width: 100%;
+    background: #FFF;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+.sidebar-user img{
+    width: 60px;
+    height: 60px;
+    float: left;
+    margin-right: 15px;
+}
+.sidebar-user-con{
+    width: 185px;
+    height: 60px;
+    float: left;
+    line-height: 20px;
+}
+.sidebar-user-con h3{
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+.sidebar-user-con p{
+    font-size: 14px;
+    color: gray;
+    margin-top: 6px;
+}
+
+.container-left nav{
+    width: 100%;
+    background-color: white;
+}
+.container-left nav li{
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid #F2F2F2;
+    padding: 15px 20px;
+    font-size: 18px;
+    color: gray;
+    line-height: 20px;
+    cursor: pointer;
+}
+.container-left nav .now{
+    font-weight: 600;
+    color: #383838;
+}
+.container-left nav li:hover{
+    background-color: #FCFCFC;
+}
+
+.container-right{
+    width: 640px;
+    padding: 0 10px;
+    float: left;
+    position: relative;
+}
+.container-right>div{
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 100%;
+}
+.login-account,.login-pwd{
+    background-color: white;
+}
+.user-info-box{
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+}
+.title{
+    font-weight: 600;
+    font-size: 18px;
+}
+.information{
+    width: 100%;
+    padding: 20px 0;
+}
+.style-box{
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+}
+.style-box-left{
+    width: 120px;
+    font-size: 14px;
+    font-weight: 700;
+    color: gray;
+    line-height: 40px;
+}
+.style-box-right{
+    width: 500px;
+}
+.style-box-right>input{
+    width: 300px;
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    padding: 8px 12px;
+}
+.head-img{
+    line-height: 100px;
+}
+.head-img img{
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: 20px;
+}
+.change-img-btn{
+    width: 88px;
+    height: 30px;
+    float: left;
+    border: 1px solid #3DA8F5;
+    background-color: white;
+    cursor: pointer;
+    line-height: 30px;
+    color: #3DA8F5;
+    border-radius: 3px;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: 30px;
+}
+.change-img-btn:hover{
+    background-color:  #3DA8F5;
+    color: white;
+}
+.select-box{
+    width: 90px;
+    height: 40px;
+    float: left;
+    margin-right: 15px;
+}
+.save-btn{
+    width: 300px;
+    height: 40px;
+    background-color: #3DA8F5;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.save-btn:hover{
+    opacity: 0.8;
+}
+/*账号密码 部分*/
+.tips{
+    font-size: 14px;
+    color: gray;
+    margin-top: 10px;
+}
+.account-pwd-header{
+    padding: 20px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.email-box,.phone-box{
+    padding: 20px;
+    border-bottom: 1px solid #E5E5E5;
+}
+.left-span{
+    width: 120px;
+    float: left;
+    color: grey;
+    font-weight: 600;
+    font-size: 14px;
+}
+.right-div{
+    width: 500px;
+    float: left;
+}
+.zhu-email{
+    width: 100%;
+    height: 24px;
+    line-height: 24px;
+    margin-bottom: 20px;
+}
+.zhu-email span:nth-of-type(2){
+    display: inline-block;
+    width: 60px;
+    height: 24px;
+    margin-left: 10px;
+    color: white;
+    text-align: center;
+    background: grey;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 3px;
+}
+.bd-email{
+    width: 100%;
+    height: 40px;
+}
+.bd-email input{
+    width: 300px;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    float: left;
+}
+.sure-to-binding{
+    float: left;
+    margin-left: 10px;
+    width: 120px;
+    height: 40px;
+    background-color: #3DA8F5;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.sure-to-binding:hover{
+    opacity: 0.8;
+}
+.phone-num{
+    font-size: 14px;
+    line-height: 20px;
+}
+.remove-bind-phone{
+    margin-top: 15px;
+    width: 120px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid #FF4F3E;
+    color: #FF4F3E;
+    border-radius: 3px;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.remove-bind-phone:hover{
+    background-color: #FF4F3E;
+    color: white;
+}
+.proving-box input{
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    padding: 8px 12px;
+    width: 300px;
+    height: 40px;
+    margin-top: 15px;
+}
+.proving-box input::placeholder{
+    color: #d9d9d9;
+}
+.sure-remove-bind-phone{
+    margin-top: 15px;
+    width: 120px;
+    height: 40px;
+    background-color: #FF4F3E;
+    color: white;
+    border-radius: 3px;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+}
+.sure-remove-bind-phone:hover{
+    opacity: 0.8;
+}
+.login-pwd{
+    padding: 20px;
+    background-color: white;
+    margin-top: 15px;
+}
+.pwd-save-btn{
+    width: 120px;
+    height: 40px;
+    background-color: #3DA8F5;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.pwd-save-btn:hover{
+    opacity: 0.8;
+}
+/*更换 头像 弹框*/
+.change-head-img{
+    width: 300px;
+    height: 140px;
+    background-color: white;
+}
+.change-head-img-title{
+    width: 100%;
+    height: 47px;
+    line-height: 47px;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+    position: relative;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.change-head-img-title span{
+    font-size: 15px;
+    font-weight: 700;
+}
+.change-head-img-title i{
+    color: #A6A6A6;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    cursor: pointer;
+}
+.change-head-img-title i:hover{
+    color: #3da8f5;
+}
+.change-head-img li{
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    cursor: pointer;
+    text-indent: 2em;
+    color: gray;
+    font-size: 15px;
+}
+.change-head-img li:hover{
+    background-color: #f7f7f7;
+}
