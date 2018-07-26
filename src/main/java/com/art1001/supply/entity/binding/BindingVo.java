@@ -16,7 +16,6 @@ import java.util.List;
  **/
 @Data
 public class BindingVo {
-    private String id;
     private List<Task> taskList;
     private List<Share> shareList;
     private List<File> fileList;

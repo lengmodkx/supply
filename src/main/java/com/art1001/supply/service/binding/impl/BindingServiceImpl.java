@@ -65,28 +65,11 @@ public class BindingServiceImpl implements BindingService {
 	/**
 	 * 通过id删除binding数据
 	 * @param id
+	 * @param bindingId
 	 */
 	@Override
-	public void deleteBindingById(String id){
-//		//根据关联数据id  查出该条数据
-//        Binding bindingById = bindingMapper.findBindingById(id);
-        //删除关联记录
-        //根据查出的bindingById 取出被关联的信息id  然后根据id  查询出实体信息
-        //Task taskByTaskId = taskService.findTaskByTaskId(bindingById.getBindId());
-        bindingMapper.deleteBindingById(id);
-        //保存操作日志
-//        if(BindingConstants.BINDING_TASK_NAME.equals(bindingById.getPublicType())){
-//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A7.getName()+" "+ taskByTaskId.getTaskName());
-//        }
-//        if(BindingConstants.BINDING_FILE_NAME.equals(bindingById.getPublicType())){
-//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A6.getName()+" "+ taskByTaskId.getTaskName());
-//        }
-//        if(BindingConstants.BINDING_SCHEDULE_NAME.equals(bindingById.getPublicType())){
-//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A5.getName()+" "+ taskByTaskId.getTaskName());
-//        }
-//        if(BindingConstants.BINDING_SHARE_NAME.equals(bindingById.getPublicType())){
-//            return taskService.saveTaskLog(taskByTaskId,TaskLogFunction.A4.getName()+" "+ taskByTaskId.getTaskName());
-//        }
+	public void deleteBindingById(String id, String bindingId){
+		bindingMapper.deleteBindingById(id,bindingId);
 	}
 
 	/**
@@ -131,9 +114,7 @@ public class BindingServiceImpl implements BindingService {
 		List<Share> shareList = new ArrayList<>();
 		List<File> fileList = new ArrayList<>();
 		List<Schedule> scheduleList = new ArrayList<>();
-
 		for (Binding b : list) {
-			binding.setId(b.getId());
 			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_TASK_NAME)){
 				taskList.add(taskService.findTaskByTaskId(b.getBindId()));
 				binding.setTaskList(taskList);

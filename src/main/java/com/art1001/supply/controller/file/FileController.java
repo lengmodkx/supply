@@ -1,28 +1,35 @@
 package com.art1001.supply.controller.file;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileUtils;
+import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Controller
 @RequestMapping("file")
 @Slf4j
-public class FileController extends BaseController {
+public class FileController {
 
     @Resource
     private FileService fileService;
@@ -62,6 +69,13 @@ public class FileController extends BaseController {
 
     @Resource
     private BindingService bindingService;
+
+    @Resource
+    private LogService logService;
+
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+
 
     /**
      * 文件列表
@@ -99,7 +113,11 @@ public class FileController extends BaseController {
                 BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
                 model.addAttribute("bindingVo",bindingVo);
                 model.addAttribute("file", fileById);
+                model.addAttribute("fileId", fileById.getFileId());
                 model.addAttribute("projectId", projectId);
+                List<Log> logs = logService.initLog(file.getFileId());
+                Collections.reverse(logs);
+                model.addAttribute("logs",logs);
                 // 文件的tag
                 model.addAttribute("tagList", tagList);
                 // 项目的tag
@@ -165,6 +183,9 @@ public class FileController extends BaseController {
         }
 
         List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
+        //查询出任务的关联信息
+        BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
+        model.addAttribute("bindingVo",bindingVo);
         model.addAttribute("file", file);
         model.addAttribute("projectId", projectId);
         model.addAttribute("tagList", tagList);
@@ -1013,8 +1034,23 @@ public class FileController extends BaseController {
     public JSONObject chat(String fileId,String content){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = fileService.chat(fileId,content);
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ content);
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(fileId);
+            log.setLogFlag(2);
+            log.setCreateTime(System.currentTimeMillis());
+            Log log1 = logService.saveLog(log);
             jsonObject.put("result",1);
+            //推送数据
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("fileLog",log1);
+            taskPushType.setObject(map);
+            //推送至任务的详情界面
+            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             jsonObject.put("result",0);
             log.error("系统异常,发送失败,{}",e);
