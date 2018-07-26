@@ -1177,7 +1177,7 @@ function addBindingStr(binding,type,bindId){
     if(type == '分享'){
         for(var i = 0;i < binding.length;i++){
             content = '';
-            content += '<li class="boxsizing data-info" data-id="'+ binding[i].id +'">'+
+            content += '<li class="boxsizing data-info" data-id="'+ bindId[i].id +'">'+
                     '<div class="related-rc-top">'+
                     '<div class="related-rc-info">'+
                     '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+

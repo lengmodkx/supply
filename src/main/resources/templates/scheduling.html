@@ -30,7 +30,7 @@
             <!--//每一个折叠区域-->
             <div class="my-scheduling-box boxsizing layui-form">
                 <div class="layui-tab layui-tab-brief" lay-filter="schedule">
-                    <p class="layui-this">日程</p>
+                    <p style="padding-left: 10px;padding-top: 10px">日程</p>
                     <div class="layui-tab-content">
                         <div class="layui-tab-item layui-show">
                             <div class="layui-collapse">
@@ -38,7 +38,7 @@
                                     <h2 class="layui-colla-title" th:text="${schedulevo.date}">杜甫</h2>
                                     <div class="layui-colla-content">
                                         <ul>
-                                            <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px">
+                                            <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px" class="schedule" th:id="${schedule.id}">
                                                 <div class="scheduling-time">
                                                     <span th:text="${#calendars.format(schedule.startTime,'MM-dd HH:mm')}">8:15</span>
                                                     <span>——</span>
@@ -93,5 +93,19 @@
     layui.use('element', function(){
         var element = layui.element;
     });
+
+
+
+
+    $('html').on('click','.schedule',function () {
+        var id = $(this).attr('id');
+
+
+
+
+    });
+
+
+
 </script>
 </html>

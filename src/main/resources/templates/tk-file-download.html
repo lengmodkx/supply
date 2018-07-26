@@ -273,8 +273,8 @@
 
             <p class="cyz">参与者</p>
             <div class="work-people boxsizing clearfix">
-                <div class="one-work-people">
-                    <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${file.memberImg}" th:id="${file.fileId}" th:data="${file.memberName}"/>
+                <div class="one-work-people" th:each="joinInfo:${joinInfos}" th:data-id="${joinInfo.id}">
+                    <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${joinInfo.userInfo.image}" th:data="${joinInfo.userName}"/>
                     <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
                 </div>
                 <div class="add-work-people">
@@ -291,6 +291,31 @@
                     </li>
                 </ul>
             </div>
+
+            <!--人员 参与者 弹框-->
+            <div class="people boxsizing" style="display: none;top: 20px;left: 10px">
+                <input type="text" name="" placeholder="搜索" class="layui-input">
+                <div class="peoples">
+                    <p>参与者</p>
+                    <div id = "joinInfo">
+
+                    </div>
+                    <p>推荐</p>
+                    <div id = "Recommend">
+
+                    </div>
+                    <div class="add-new-people">
+                        <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
+                        <span>邀请新成员</span>
+                    </div>
+                </div>
+                <div class="people-ok">确定</div>
+
+
+            </div>
+
+
+
         </div>
         <div style="background-color: #E5E5E5" class="publish boxsizing">
             <textarea id = "chat" style="background-color: #E5E5E5" name="" placeholder="@快速提及他人，enter快速发布"
@@ -326,31 +351,7 @@
     </div>
 
 
-    <!--人员 参与者 弹框-->
-    <div class="people boxsizing" style="display: none">
-        <input type="text" name="" placeholder="搜索" class="layui-input">
-        <div class="peoples">
-            <p>参与者</p>
-            <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${file.fileUrl}"/>
-                <span th:text="${file.fileName}">李健</span>
-                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
-            </div>
-            <p>推荐</p>
-            <div class="one-people">
-                <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}"/>
-                <span>李健</span>
-                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
-            </div>
-            <div class="add-new-people">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                <span>邀请新成员</span>
-            </div>
-        </div>
-        <div class="people-ok">确定</div>
 
-
-    </div>
 </div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -361,6 +362,9 @@
 
 <script th:inline="javascript">
     var fileId = [[${fileId}]];
+    var fileUids = [[${file.fileUids}]];
+    var projectId = [[${projectId}]]
+
     // 建立连接对象（还未发起连接）
     var socket = new SockJS('http://localhost:8080/webSocketServer');
     // 获取 STOMP 子协议的客户端对象
@@ -404,6 +408,30 @@
                 var scrollHeight = $('.revise-task').prop("scrollHeight");
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
+            if(file.type == '更新了参与者'){
+                getLog(file.object.log);
+                if(file.object.reduce1 != ''){
+                    for(var i = 0;i < file.object.reduce1.length;i++){
+                        $('.one-work-people').each(function () {
+                           if($(this).attr('data-id') == file.object.reduce1[i]){
+                               $(this).remove();
+                           }
+                        });
+                    }
+                }
+                if(file.object.adduser != ''){
+                    var content = '';
+                    for(var i = 0;i < file.object.adduser.length;i++){
+                        content +=
+                            '<div class="one-work-people" data-id = '+ file.object.adduser[i].id +'>'+
+                                '<img src="'+IMAGE_SERVER + file.object.adduser[i].userInfo.image + '" data = ' + file.object.adduser[i].userName +'>'+
+                                '<i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>'+
+                            '</div>';
+                    }
+                    $('.add-work-people').before(content);
+                }
+            }
+
             if(file.type == "取消了关联"){
                 $('#bind li.data-info').each(function(){
                     if($(this).attr('data-id') == file.object.bId){

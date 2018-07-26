@@ -542,7 +542,7 @@ public class TaskServiceImpl implements TaskService {
         List<String> list2 = Arrays.asList(memberIds.split(","));
 
         List subtract1 = ListUtils.subtract(list1, list2);
-        if(subtract1 != null&& subtract1.size() > 0){
+        if(subtract1 != null && subtract1.size() > 0){
             content.append(TaskLogFunction.B.getName());
             for (Object aSubtract1 : subtract1) {
                 UserEntity user = userMapper.findUserById(aSubtract1.toString());

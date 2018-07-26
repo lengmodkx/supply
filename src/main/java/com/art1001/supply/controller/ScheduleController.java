@@ -71,6 +71,22 @@ public class ScheduleController extends BaseController {
         return "tk-add-calendar";
     }
 
+
+    @RequestMapping("/editSchedule.html")
+    public String editSchedule(@RequestParam String projectId, @RequestParam String id,Model model){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
+        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+        model.addAttribute("startTime",format.format(System.currentTimeMillis()));
+        model.addAttribute("startTimeTemp",System.currentTimeMillis());
+        model.addAttribute("endTime",format.format(System.currentTimeMillis()+60*60*1000));
+        model.addAttribute("endTimeTemp",System.currentTimeMillis()+60*60*1000);
+        model.addAttribute("schedule",scheduleService.findScheduleById(id));
+        return "tk-bianjiricheng";
+    }
+
+
+
     @RequestMapping("/searchPeople.html")
     public String searchPeople(@RequestParam String projectId, Model model){
 
@@ -134,6 +150,11 @@ public class ScheduleController extends BaseController {
         }
         return jsonObject;
     }
+
+
+
+
+
 
 
 
