@@ -221,7 +221,7 @@ layui.use('form', function() {
     form.on('radio(priority)', function(priorityData){
         var taskId = $('#taskId').val();
         var oldPriorty = $('#oldPriority').val();
-        if(oldPriorty == priorityData.value){
+        if(oldPriorty === priorityData.value){
             return false;
         }
         //console.log(data.elem); //得到radio原始DOM对象
