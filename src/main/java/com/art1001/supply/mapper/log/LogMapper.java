@@ -60,5 +60,5 @@ public interface LogMapper {
 	 * @param publicId
 	 * @return 日志集合
 	 */
-    List<Log> initTaskLog(String publicId);
+    List<Log> initLog(String publicId);
 }

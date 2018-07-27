@@ -221,7 +221,7 @@ layui.use('form', function() {
     form.on('radio(priority)', function(priorityData){
         var taskId = $('#taskId').val();
         var oldPriorty = $('#oldPriority').val();
-        if(oldPriorty == priorityData.value){
+        if(oldPriorty === priorityData.value){
             return false;
         }
         //console.log(data.elem); //得到radio原始DOM对象
@@ -976,19 +976,20 @@ $("html").on("click",'.related-wj li',function () {
     location.href = "/file/fileDetail.html?fileId="+$(this).attr('data-id');
 });
 
-// /**
-//  * 点击关联的日程
-//  */
-// $("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
-//     changeRenwu($(this).parent() .attr("data-id"),projectId);
-// });
-//
-// /**
-//  * 点击关联的分享
-//  */
-// $("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
-//     changeRenwu($(this).parent() .attr("data-id"),projectId);
-// });
+/**
+ * 点击关联的日程
+ */
+$("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
+    changeRenwu($(this).parent() .attr("data-id"),projectId);
+});
+
+/**
+ * 点击关联的分享
+ */
+$("html").on("click",'.related-fx li',function () {
+    layer.closeAll();
+    parent.location.href = "/share/share.html?shareId="+ $(this).attr('data-id') + "&projectId=" + projectId;
+});
 
 
 //修改任务 弹框界面
@@ -1177,7 +1178,7 @@ function addBindingStr(binding,type,bindId){
     if(type == '分享'){
         for(var i = 0;i < binding.length;i++){
             content = '';
-            content += '<li class="boxsizing data-info" data-id="'+ bindId[i].id +'">'+
+            content += '<li class="boxsizing data-info" data-id="'+ binding[i].id +'">'+
                     '<div class="related-rc-top">'+
                     '<div class="related-rc-info">'+
                     '<i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>'+

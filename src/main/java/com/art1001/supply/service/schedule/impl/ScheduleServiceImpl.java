@@ -88,7 +88,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 
 	@Override
-	public List<Schedule> findScheduleGroupByCreateTime(Long currTime,String projectId) {
+	public List<ScheduleVo> findScheduleGroupByCreateTime(Long currTime,String projectId) {
 		return scheduleMapper.findScheduleGroupByCreateTime(currTime,projectId);
 	}
 
@@ -120,7 +120,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public List<Schedule> findBeforeSchedule(long currTime,String projectId,int identification) {
-		System.out.println(identification);
 		return scheduleMapper.findBeforeSchedule(currTime,projectId,identification);
 	}
 }

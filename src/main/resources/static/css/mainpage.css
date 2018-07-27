@@ -342,7 +342,7 @@ body{
 .task-card-mode:hover .bg-priority-2{
     width: 8px;
 }
-.task-priority-2{
+.bg-priority-2{
     background-color: #ff4f3e;
 }
 

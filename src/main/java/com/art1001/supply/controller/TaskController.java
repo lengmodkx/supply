@@ -305,8 +305,10 @@ public class TaskController {
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
-            jsonObject.put("type","更新任务");
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(jsonObject.toString()));
+            jsonObject.put("taskName",task.getTaskName());
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A18.getName());
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(taskPushType.toString()));
         } catch (Exception e){
             log.error("系统异常,更新任务内容失败! 当前任务: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -325,14 +327,10 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             Log taskLogVO = taskService.updateTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","更新成功!");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","更新失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","更新成功!");
+            jsonObject.put("result","1");
+            jsonObject.put("taskLog",taskLogVO);
+            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(jsonObject.toString()));
         } catch (Exception e){
             log.error("系统异常,更新任务备注失败! 当前任务:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -351,14 +349,14 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             Log taskLogVO = taskService.updateTask(task);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("msg","设置成功!");
-                jsonObject.put("result",1);
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("msg","更新失败!");
-                jsonObject.put("result","0");
-            }
+            jsonObject.put("msg","设置成功!");
+            jsonObject.put("result",1);
+            jsonObject.put("taskLog",taskLogVO);
+            jsonObject.put("priority",task.getPriority());
+            //推送至主页面
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.F.getName());
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,更新任务优先级失败! 当前任务,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
@@ -88,7 +90,17 @@ public class Share extends BaseEntity implements Serializable {
 	 */
 	private Integer isPrivacy;
 
+	/**
+	 * 该分享的关联内容
+	 */
+	private BindingVo bindingVo;
+
 	private List<Tag> tagList = new ArrayList<>();
+
+	/**
+	 * 该任务的 聊天记录 和  log 日志
+	 */
+	private List<Log> logs = new ArrayList<Log>();
 
 	private Project project;
 }

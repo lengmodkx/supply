@@ -63,7 +63,7 @@ public interface ScheduleMapper {
 	 * 根据时间分组查询日程
 	 * @return
 	 */
-	List<Schedule> findScheduleGroupByCreateTime(@Param("currTime") Long currTime,@Param("projectId") String projectId);
+	List<ScheduleVo> findScheduleGroupByCreateTime(@Param("currTime") Long currTime,@Param("projectId") String projectId);
 
 	/**
 	 * 根据月份查询日程列表

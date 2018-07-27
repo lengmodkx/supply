@@ -359,8 +359,8 @@ $('.ok-btn').click(function () {
     if(taskId != null){
         args = {"publicId":taskId,"bindId":bindId.toString(),"publicType":publicType};
     }
-    if(id != null){
-        args = {"publicId":id,"bindId":bindId.toString(),"publicType":publicType};
+    if(shareId != null){
+        args = {"publicId":shareId,"bindId":bindId.toString(),"projectId":projectId,"publicType":publicType,"bindType":"分享"};
     }
     if(scheduleId != null){
         args = {"publicId":scheduleId,"bindId":bindId.toString(),"publicType":publicType};

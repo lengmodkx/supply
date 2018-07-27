@@ -308,7 +308,7 @@
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
                     <ul class="related-fx">
-                    <li class="boxsizing data-info"  th:each="share:${bindingVo.shareList}">
+                    <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
                                 <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
@@ -516,7 +516,7 @@
 </script>
 <script th:inline="javascript">
     // 建立连接对象（还未发起连接）
-    var socket = new SockJS('http://localhost:8080/webSocketServer');
+    var socket = new SockJS('/webSocketServer');
     // 获取 STOMP 子协议的客户端对象
     var stompClient = Stomp.over(socket);
 
@@ -553,25 +553,30 @@
         stompClient.subscribe('/topic/'+taskId, function (response) {
             var returnData = JSON.parse(response.body);
             var taskLog = JSON.parse(returnData.responseMessage);
-            if(taskLog.type == '把任务执行者指派给了'){
+            if(taskLog.type === '把任务执行者指派给了'){
                 parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
                 $('#executorId').val(taskLog.userInfo.id);
                 $('#executorName').html(taskLog.uName);
                 $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
                 getLog(taskLog.taskLog);
             }
-            if(taskLog.type == '发送消息'){
+            if(taskLog.type === '发送消息'){
                 getLog(taskLog.object.taskLog);
                 var scrollHeight = $('.revise-task').prop("scrollHeight");
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
-            if(taskLog.type == '关联'){
+            if(taskLog.type === '关联'){
                 addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bId);
             }
-            if(taskLog.type == '更新任务名称为'){
+            if(taskLog.type === '更新任务名称为'){
                 $('.task_name').val(taskLog.object.taskName);
                 getLog(taskLog.object.taskLog);
             }
+
+            if(taskLog.type === '更新任务优先级为'){
+                getLog(taskLog.object.taskLog);
+            }
+
             if(taskLog.type == '取消了关联'){
                 $('#bind li.data-info ').each(function(){
                     if($(this).attr('data-id') == taskLog.object.bId){

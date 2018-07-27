@@ -1,13 +1,21 @@
 package com.art1001.supply.controller;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
@@ -17,6 +25,7 @@ import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -46,14 +58,35 @@ public class ShareController extends BaseController {
     @Resource
     private PublicCollectService publicCollectService;
 
+    @Resource
+    private BindingService bindingService;
+
+    @Resource
+    private LogService logService;
+
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+
     //导航到分享界面
     @RequestMapping("/share.html")
-    public String share(@RequestParam String projectId, Model model){
+    public String share(@RequestParam String projectId,String shareId, Model model){
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
-
+        for (Share s : shareList) {
+            Collections.reverse(s.getLogs());
+        }
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
+
+        //查询出分享的关联信息
+        for (Share s : shareList) {
+            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
+            s.setBindingVo(bindingVo);
+        }
+
+        if(!StringUtils.isEmpty(shareId)){
+            model.addAttribute("shareId",shareId);
+        }
 
         model.addAttribute("tagList",tagList);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
@@ -321,6 +354,40 @@ public class ShareController extends BaseController {
         } catch (Exception e){
             log.error("系统异常,标签获取失败!");
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 分享的聊天室
+     * @return
+     */
+    @PostMapping("chat")
+    @ResponseBody
+    public JSONObject chat(String projectId,String shareId,String content){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ content);
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(shareId);
+            log.setLogFlag(2);
+            log.setCreateTime(System.currentTimeMillis());
+            Log log1 = logService.saveLog(log);
+            jsonObject.put("result",1);
+            //推送数据
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("shareLog",log1);
+            map.put("shareId",shareId);
+            taskPushType.setObject(map);
+            //推送至文件的详情界面
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,发送失败,{}",e);
         }
         return jsonObject;
     }

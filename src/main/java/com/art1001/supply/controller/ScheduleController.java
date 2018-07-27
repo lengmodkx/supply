@@ -37,11 +37,11 @@ public class ScheduleController extends BaseController {
 
 
     @RequestMapping("/schedule.html")
-    public String share(@RequestParam String projectId, Model model){
+    public String schedule(@RequestParam String projectId, Model model){
 
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
-        model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,null));
+        model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,projectId));
         return "scheduling";
     }
 
@@ -100,7 +100,8 @@ public class ScheduleController extends BaseController {
     }
 
     @PostMapping("/addschedule")
-    public JSONObject addschedule(@RequestParam String scheduleName,
+    public JSONObject addschedule(@RequestParam String projectId,
+                                  @RequestParam String scheduleName,
                                   @RequestParam String repeat,
                                   @RequestParam String remand,
                                   @RequestParam(required = false) String allDay,
@@ -111,6 +112,7 @@ public class ScheduleController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             Schedule schedule = new Schedule();
+            schedule.setProjectId(projectId);
             schedule.setScheduleName(scheduleName);
             schedule.setRepeat(repeat);
             schedule.setRemind(remand);

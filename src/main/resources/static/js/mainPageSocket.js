@@ -1,5 +1,5 @@
 // 建立连接对象（还未发起连接）
-var socket = new SockJS("http://localhost:8080/webSocketServer");
+var socket = new SockJS("/webSocketServer");
 // 获取 STOMP 子协议的客户端对象
 var stompClient = Stomp.over(socket);
 
@@ -39,12 +39,30 @@ stompClient.connect({},
         if(task.type ==='添加菜单'){
             showMenu(task.object.menu);
         }
-        if(task.type == '更新菜单名称'){
+        if(task.type === '更新菜单名称'){
             $('#'+task.menuId+' .relationName').html(task.menuName);
         }
-        if(task.type == '更新任务名称为'){
+        if(task.type === '更新任务名称为'){
             $('#'+task.object.taskId+' .assignment-title').html(task.object.taskName);
         }
+
+        if(task.object.priority==='普通'){
+            $('.task-priority').removeClass('bg-priority-0');
+            $('.task-priority').removeClass("bg-priority-1");
+            $('.task-priority').removeClass("bg-priority-2");
+            $('.task-priority').addClass('bg-priority-0');
+        }else if(task.object.priority==='紧急'){
+            $('.task-priority').removeClass('bg-priority-0');
+            $('.task-priority').removeClass("bg-priority-1");
+            $('.task-priority').removeClass("bg-priority-2");
+            $('.task-priority').addClass('bg-priority-1');
+        }else{
+            $('.task-priority').removeClass('bg-priority-0');
+            $('.task-priority').removeClass("bg-priority-1");
+            $('.task-priority').removeClass("bg-priority-2");
+            $('.task-priority').addClass('bg-priority-2');
+        }
+
     });
 
     function taskShow(task) {

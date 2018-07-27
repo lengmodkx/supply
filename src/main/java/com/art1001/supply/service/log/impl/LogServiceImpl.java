@@ -120,6 +120,6 @@ public class LogServiceImpl implements LogService {
 	 */
 	@Override
 	public List<Log> initLog(String publicId) {
-		return logMapper.initTaskLog(publicId);
+		return logMapper.initLog(publicId);
 	}
 }
