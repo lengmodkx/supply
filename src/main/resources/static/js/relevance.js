@@ -360,7 +360,7 @@ $('.ok-btn').click(function () {
         args = {"publicId":taskId,"bindId":bindId.toString(),"publicType":publicType};
     }
     if(shareId != null){
-        args = {"publicId":shareId,"bindId":bindId.toString(),"projectId":projectId,"publicType":publicType};
+        args = {"publicId":shareId,"bindId":bindId.toString(),"projectId":projectId,"publicType":publicType,"bindType":"分享"};
     }
     if(scheduleId != null){
         args = {"publicId":scheduleId,"bindId":bindId.toString(),"publicType":publicType};

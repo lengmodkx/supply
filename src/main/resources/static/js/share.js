@@ -27,15 +27,27 @@ function addBindingStr(binding,type,bindId){
                 // <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                 // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].taskId + '">'+
+                '<li class="boxsizing cancle" data-id="' + shareId + '" data-binding-id="' + binding[i].taskId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
                 '</ul>'+
                 '</div>'+
                 '</li>';
-            $('.related-rw-wrap').show();
-            $('.related-rw').prepend(content);
+            $('.related-rw-wrap').each(function () {
+                var that = $(this);
+                if(that.attr('data-id') == $('.share-list.selected').attr('data')){
+                    $(that).show();
+                }
+                // $('.related-fx').prepend(content);
+            })
+            $('.related-rw').each(function () {
+                if($(this).attr('data-id') == $('.share-list.selected').attr('data')){
+                    $(this).prepend(content);
+                }
+            })
+            // $('.related-rw-wrap').show();
+            // $('.related-rw').prepend(content);
             var form = layui.form;
             form.render();
         }
@@ -90,15 +102,27 @@ function addBindingStr(binding,type,bindId){
                 // <!--<span>复制链接</span>-->
                 // <!--<span>复制链接</span>-->
                 // <!--</li>-->
-                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].fileId + '">'+
+                '<li class="boxsizing cancle" data-id="' + shareId + '" data-binding-id="' + binding[i].fileId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
                 '</ul>'+
                 '</div>'+
                 '</li>';
-            $('.related-wj-wrap').show();
-            $('.related-wj').prepend(content);
+            $('.related-wj-wrap').each(function () {
+                var that = $(this);
+                if(that.attr('data-id') == $('.share-list.selected').attr('data')){
+                    $(that).show();
+                }
+                // $('.related-fx').prepend(content);
+            })
+            $('.related-wj').each(function () {
+                if($(this).attr('data-id') == $('.share-list.selected').attr('data')){
+                    $(this).prepend(content);
+                }
+            })
+            // $('.related-wj-wrap').show();
+            // $('.related-wj').prepend(content);
             var form = layui.form;
             form.render();
         }
@@ -124,7 +148,7 @@ function addBindingStr(binding,type,bindId){
                 '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
                 '<div class="related-menu-title">关联菜单</div>'+
                 '<ul>'+
-                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].scheduleId + '">'+
+                '<li class="boxsizing cancle" data-id="' + shareId + '" data-binding-id="' + binding[i].scheduleId + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
@@ -132,10 +156,22 @@ function addBindingStr(binding,type,bindId){
                 '</div>'+
                 '</li>';
         }
-        $('.related-rc-wrap').show();
-        $('.related-rc').prepend(content);
-        var form = layui.form;
-        form.render();
+        $('.related-rc-wrap').each(function () {
+            var that = $(this);
+            if(that.attr('data-id') == $('.share-list.selected').attr('data')){
+                $(that).show();
+            }
+            // $('.related-fx').prepend(content);
+        })
+        $('.related-rc').each(function () {
+            if($(this).attr('data-schedule-id') == $('.share-list.selected').attr('data')){
+                $(this).prepend(content);
+            }
+        })
+        // $('.related-rc-wrap').show();
+        // $('.related-rc').prepend(content);
+        // var form = layui.form;
+        // form.render();
     }
     if(type == '分享'){
         for(var i = 0;i < binding.length;i++){
@@ -154,7 +190,7 @@ function addBindingStr(binding,type,bindId){
                 '<i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>'+
                 '<div class="related-menu-title">关联菜单</div>'+
                 '<ul>'+
-                '<li class="boxsizing cancle" data-id="' + taskId + '" data-binding-id="' + binding[i].id + '">'+
+                '<li class="boxsizing cancle" data-id="' + shareId + '" data-binding-id="' + binding[i].id + '">'+
                 '<i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>'+
                 '<span>取消关联</span>'+
                 '</li>'+
@@ -166,11 +202,50 @@ function addBindingStr(binding,type,bindId){
                 // <!--<span>2018-12-25 12:00</span>-->
                 // <!--</div>-->
                 '</li>';
-            $('.related-fx-wrap').show();
-            $('.related-fx').prepend(content);
+            $('.related-fx-wrap').each(function () {
+                var that = $(this);
+                if(that.attr('data-id') == $('.share-list.selected').attr('data')){
+                    $(that).show();
+                }
+                    // $('.related-fx').prepend(content);
+            })
+            $('.related-fx').each(function () {
+                if($('.related-fx').attr('data-share-id') == $('.share-list.selected').attr('data')){
+                    $(this).prepend(content);
+                }
+            })
             var form = layui.form;
-            form.render();
         }
+            form.render();
     }
 
+}
+/**
+ * 添加任务操作日志的方法
+ * @param taskLogVO 任务日志对象
+ */
+function getLog(shareLog,shareId){
+    var datey = new Date().getFullYear();
+    var datem=new Date().getMonth()+1;
+    if (datem <10){
+        datem='0'+datem
+    }
+    var dated=new Date().getDay();
+    if (dated <10){
+        dated='0'+dated
+    }
+    var dateh=new Date().getHours();
+    var datemin=new Date().getMinutes();
+    var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
+
+    var log = '<li class="combox">'+
+        '<img src="' + IMAGE_SERVER+shareLog.userEntity.userInfo.image+ '" />'+
+        '<span>'+ shareLog.content +'</span>'+
+        '<div class="in-what-time"  >' + date + '</div>'+
+        '</li>';
+    $('.log').each(function () {
+        if($(this).attr('data-id') == shareId){
+            $(this).append(log);
+        }
+    })
 }

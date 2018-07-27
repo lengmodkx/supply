@@ -157,7 +157,7 @@
 	</update>
 
 	<!-- 查询出最近的五条日志记录 -->
-	<select id="initTaskLog" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="initLog" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
 		from prm_log where public_id = #{publicId} order by create_time desc limit 0,5

@@ -73,11 +73,12 @@ public class BindingController {
      * @param publicId 任务,日程，文件，分享的id
      * @param bindId 被绑定的任务,日程，文件，分享的id
      * @param publicType 绑定类型 任务,日程，文件，分享 枚举类型
+     * @param bindType 绑定的类型
      * @return
      */
     @RequestMapping("/saveBinding")
     @ResponseBody
-    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId[],@RequestParam String publicType,String projectId){
+    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId[],@RequestParam String publicType,String projectId,String bindType){
         JSONObject jsonObject = new JSONObject();
         List<String> bindList1 = Arrays.asList(bindId);
         List<String> bindList = new ArrayList<String>(bindList1);
@@ -144,7 +145,7 @@ public class BindingController {
                 }
             }
             if(map.size() > 0){
-                if(publicType.equals(BindingConstants.BINDING_SHARE_NAME)){
+                if(bindType.equals(BindingConstants.BINDING_SHARE_NAME)){
                     messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 } else{
                     messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));

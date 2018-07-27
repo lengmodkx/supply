@@ -120,7 +120,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public List<Schedule> findBeforeSchedule(long currTime,String projectId,int identification) {
-		System.out.println(identification);
 		return scheduleMapper.findBeforeSchedule(currTime,projectId,identification);
 	}
 }
