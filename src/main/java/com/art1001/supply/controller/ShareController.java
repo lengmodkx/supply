@@ -1,12 +1,14 @@
 package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -46,14 +48,28 @@ public class ShareController extends BaseController {
     @Resource
     private PublicCollectService publicCollectService;
 
+    @Resource
+    private BindingService bindingService;
+
     //导航到分享界面
     @RequestMapping("/share.html")
-    public String share(@RequestParam String projectId, Model model){
+    public String share(@RequestParam String projectId,String shareId, Model model){
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
 
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
+
+        String sId = "";
+        if(!StringUtils.isEmpty(shareId)){
+            sId = shareId;
+            model.addAttribute("shareId",shareId);
+        } else if(tagList != null && tagList.size() > 0){
+            sId = shareList.get(0).getId();
+        }
+        //查询出任务的关联信息
+        BindingVo bindingVo = bindingService.listBindingInfoByPublicId(sId);
+        model.addAttribute("bindingVo",bindingVo);
 
         model.addAttribute("tagList",tagList);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
