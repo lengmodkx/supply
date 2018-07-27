@@ -561,28 +561,31 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    background-color: #EEEEEE;
+    background-color: #eee;
     padding: 10px 15px;
 }
 .publish-input{
     padding: 10px;
     width: 100%;
     height: 60px;
-    background-color: #EEEEEE;
+    background-color: #fff !important;
     min-height: 60px;
     resize: none;
     border: 0 none;
-
+}
+.publish-input::placeholder{
+    color: #D2D2D2;
 }
 .fenge-line{
     width: 100%;
-    height: 2px;
+    height: 1px;
     background-color: #E2E2E2;
 }
 .publish-bottom{
     width: 100%;
     height: 40px;
     position: relative;
+    background-color: #fff ;
 }
 .publish-bottom>img{
     float: left;
@@ -594,12 +597,13 @@
     width: 60px;
     height: 30px;
     float: right;
-    margin-top: 10px;
+    margin-top: 5px;
     text-align: center;
     line-height: 30px;
     background-color: #1E9FFF;
     color: white;
     cursor: pointer;
+    margin-right: 5px;
 }
 .publish-btn:hover{
     opacity: 0.8;

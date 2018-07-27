@@ -21,7 +21,8 @@
             <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
             <!--<li>更多</li>-->
         </ul>
-        <img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">
+        <!--<img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">-->
+        <i class="layui-icon layui-icon-close" style="font-size: 20px;"></i>
     </div>
     <!--左侧-->
     <div class="download-left boxsizing">
@@ -321,7 +322,7 @@
                       class="layui-textarea publish-input"></textarea>
             <div class="fenge-line"></div>
             <div class="publish-bottom">
-                <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}"/>
+                <!--<img src="../static/image/fujian.png" th:src="@{/image/fujian.png}"/>-->
                 <div class="publish-btn ">发布</div>
             </div>
             <!--上传文件框-->

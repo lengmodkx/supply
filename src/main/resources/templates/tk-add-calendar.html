@@ -11,8 +11,8 @@
 <!-- 日历页面 创建 日程-->
 <form class="create-rc boxsizing layui-form" id="schedule-from">
     <div class="create-rc-title ">
-       <span> 添加日程到</span>
-        <span class="project-names" th:value="${project.projectName}">bim5d 过程管理平台</span>
+       <span>添加日程到</span>
+        <span class="project-names" th:text="${project.projectName}">bim5d 过程管理平台</span>
         <i class="layui-icon layui-icon-close" style="font-size: 16px; color: #a6a6a6;"></i>
     </div>
     <input type="hidden" th:value="${project.projectId}" th:name="projectId"/>
@@ -207,17 +207,7 @@
     //移除任务的参与者
     $("html").on("click",".remove-work-people",function () {
         $(this).parent().remove();
-
-        // var id = $(this).prev().attr("value");
-        // var args = {"taskId":taskId,"uId":id};
-        // var url = "/task/removeTaskMember";
-        // $.post(url,args,function (data) {
-        //     //移除完成
-        //
-        // },"json");
     });
-
-
 
 
     //添加人员 弹框
