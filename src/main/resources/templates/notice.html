@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/notice.css}" href="../static/css/notice.css">
+</head>
+<body>
+
+<div class="head">
+    <div class="head-con">
+        <div class="head-left">
+            <i class="iconfont icon-nitification"></i>
+            <span>通知 <i class="layui-icon layui-icon-down" style="font-size: 14px; color: gray;"></i> </span>
+            <i class="layui-icon layui-icon-more more" style="font-size: 20px;"></i>
+
+            <!--通知 下拉 盒子-->
+            <ul class="style-box" style="display: none">
+                <li class="boxsizing now">
+                    <i class="iconfont icon-nitification"></i>
+                    <span>通知</span>
+                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-nitification"></i>
+                    <span>未读消息</span>
+                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-nitification"></i>
+                    <span>@我的通知</span>
+                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-nitification"></i>
+                    <span>稍后处理</span>
+                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                </li>
+            </ul>
+            <!--更多 下拉 盒子-->
+            <ul class="style-box-tz"  style="display: none">
+                <li class="boxsizing">
+                    <i class="layui-icon layui-icon-ok" style="font-size: 20px;"></i>
+                    <span>标记全部已读</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="layui-icon layui-icon-delete" style="font-size: 20px;"></i>
+                    <span>清空已读消息</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="layui-icon layui-icon-set-sm" style="font-size: 20px;"></i>
+                    <span>通知设置</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="head-right boxsizing">
+            <a href="#">前往项目：啥啥啥</a>
+            <a href="#">前往任务模板</a>
+        </div>
+    </div>
+
+</div>
+<div class="content">
+    <div class="content-left boxsizing">
+        <ul class="notice-ul">
+            <li class="boxsizing clearfix">
+                <div class="li-title">
+                    <i class="iconfont icon-renwuyiwancheng"></i>
+                    <span>任务名称</span>
+                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                </div>
+                <div class="li-con clearfix">
+                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                    <div class="thing">
+                        谁谁干了什么
+                    </div>
+                    <div class="what-time">7月12日10:00</div>
+                </div>
+            </li>
+            <li class="boxsizing clearfix">
+                <div class="li-title">
+                    <i class="iconfont icon-wenjian"></i>
+                    <span>abc.jpg</span>
+                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                </div>
+                <div class="li-con clearfix">
+                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                    <div class="thing">
+                        谁谁干了什么
+                    </div>
+                    <div class="what-time">7月12日10:00</div>
+                </div>
+            </li>
+            <li class="boxsizing clearfix">
+                <div class="li-title">
+                    <i class="iconfont icon-weibiaoti-"></i>
+                    <span>系统消息</span>
+                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                </div>
+                <div class="li-con clearfix">
+                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                    <div class="thing">
+                        谁谁干了什么
+                    </div>
+                    <div class="what-time">7月12日10:00</div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+    <!--右侧 盒子-->
+    <div class="content-right boxsizing">
+        <div class="scroll-box"></div>
+    </div>
+
+</div>
+
+</body>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+
+    });
+    $(".head-left span").click(function (e) {
+        $(".style-box").show();
+        e.stopPropagation()
+    });
+    $(".more").click(function (e) {
+        $(".style-box-tz").show()
+        e.stopPropagation()
+    });
+    $(document).click(function(event){
+        var _con = $('.style-box');   // 设置目标区域
+        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+            $('.style-box').hide(300);          //淡出消失
+        }
+    });
+    $(document).click(function(event){
+        var _con = $('.style-box-tz');   // 设置目标区域
+        if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
+            $('.style-box-tz').hide(300);          //淡出消失
+        }
+    });
+
+</script>
+</html>
