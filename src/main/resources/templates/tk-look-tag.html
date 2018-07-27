@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/look-tag.css}" href="../static/css/look-tag.css">
+</head>
+<body>
+<div class="look-tag-wrap">
+    <div class="look-tag-title">
+        <span>标签</span>
+        <i class="layui-icon layui-icon-close" style="font-size: 20px;"></i>
+    </div>
+    <div class="content">
+        <!--左侧 标签-->
+        <div class="look-tag-left">
+            <div class="left-head boxsizing">
+                <div class="add-new-tag">
+                    <i class="layui-icon layui-icon-add-circle" style="font-size: 16px;"></i>
+                    <span>新标签</span>
+                </div>
+
+            </div>
+            <ul class="all-tags">
+                <li class="boxsizing">
+                    <span class="dot"></span>
+                    <p class="tag-name over-hidden">标签名称</p>
+                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;"></i>
+                </li>
+                <li class="boxsizing">
+                    <span class="dot"></span>
+                    <p class="tag-name over-hidden">标签名称</p>
+                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;"></i>
+                </li>
+
+            </ul>
+        </div>
+        <!--右侧内容-->
+        <div class="look-tag-right boxsizing">
+            <div class="right-head boxsizing">
+                <p>
+                    <span class="tag">
+                        <span class="dot"></span>
+                        <span class="tag-name over-hidden">标签名称</span>
+                    </span>
+                    <span> <span>20</span> 项任务，</span>
+                    <span> <span>2</span> 个日程，</span>
+                    <span> <span>2</span> 篇分享，</span>
+                    <span> <span>2</span> 个文件，</span>
+                </p>
+            </div>
+            <div class="scroll-box">
+                <h3 class="style-num">任务 ・ <span>20</span></h3>
+                <ul class="task-ul layui-form">
+                    <li class="boxsizing clearfix">
+                        <div class="check-box"><input type="checkbox" name=""  lay-skin="primary"> </div>
+                        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
+                        <div class="style-box">
+                            <span class="task-name">所属任务名称</span>
+                            <span class="task-group">所属任务分组</span>
+                            <span class="a-tag">2132</span>
+                        </div>
+                        <div class="timer">
+                            <i class="layui-icon layui-icon-log" style="font-size: 14px;"></i>
+                            <span>7月15日</span>开始
+                        </div>
+
+                    </li>
+                </ul>
+                <h3 class="style-num">日程 ・ <span>20</span></h3>
+                <ul class="rc-ul">
+                    <li class="boxsizing">
+                        <span class="rc-time"><span>6月25日10:00</span><span>—</span><span>6月25日10:00</span></span>
+                        <span>日程名称</span>
+                    </li>
+                </ul>
+                <h3 class="style-num">分享 ・ <span>20</span></h3>
+                <ul class="fx-ul">
+                    <li class="boxsizing clearfix">
+                        <p class="over-hidden">分享名称</p>
+                        <span class="fx-time">
+                            <span>谁谁</span> 发布于
+                            <span>6月12日10:00</span>
+                        </span>
+                    </li>
+                </ul>
+                <h3 class="style-num">文件 ・ <span>20</span></h3>
+                <ul class="wj-ul">
+                    <li class="boxsizing clearfix">
+                        <img src="../static/image/defaultFile.png" th:src="@{/image/defaultFile.png}">
+                        <span class="wj-name over-hidden">文件名称</span>
+                        <span class="wj-time">
+                            <span>谁谁</span>上传于
+                            <span>6月12日10:00</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!--菜单标签 框-->
+<div class="tag-menu" style="display: none">
+    <div class="tag-menu-title">
+        标签菜单
+        <i class="layui-icon layui-icon-close close-tag-menu" style="font-size: 16px;"></i>
+    </div>
+    <ul>
+        <li class="boxsizing">
+            <i class="layui-icon layui-icon-edit" style="font-size: 16px;"></i>
+            <span>编辑标签</span>
+        </li>
+        <li class="boxsizing">
+            <i class="layui-icon layui-icon-delete" style="font-size: 16px;"></i>
+            <span>移动到回收站</span>
+        </li>
+    </ul>
+</div>
+</body>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+
+
+    });
+    $(".close-tag-menu").click(function () {
+        layer.closeAll('page');
+    });
+
+    $(".close-tk").click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    });
+    $("html").on("click",".down-jiantou",function () {
+        var top=$(this).offset().top+20+'px';
+        var left=$(this).offset().left-120+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area:['250px','140px'],
+                fixed: false,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: 0,
+                anim: 1,  //动画 0-6
+                content: $(".tag-menu")
+            });
+        });
+    })
+</script>
+</html>
