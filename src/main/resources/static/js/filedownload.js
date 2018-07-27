@@ -393,6 +393,18 @@ $('.people-ok').click(function () {
     },"json");
 });
 
+// /**
+//  * 点击移除标签
+//  */
+// $('html').on('click','.deleteTag',function(){
+//    $(this).remove();
+//    var ids = [];
+//    $('.has-tags').children('span').each(function(){
+//       ids.push($(this).children('i').attr('id'));
+//    });
+//    alert(ids);
+// });
+
 /**
  * 移除参与者
  */

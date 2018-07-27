@@ -77,7 +77,7 @@ public class BindingController {
      */
     @RequestMapping("/saveBinding")
     @ResponseBody
-    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId[],@RequestParam String publicType){
+    public JSONObject saveBinding(@RequestParam String publicId,@RequestParam String bindId[],@RequestParam String publicType,String projectId){
         JSONObject jsonObject = new JSONObject();
         List<String> bindList1 = Arrays.asList(bindId);
         List<String> bindList = new ArrayList<String>(bindList1);
@@ -144,7 +144,11 @@ public class BindingController {
                 }
             }
             if(map.size() > 0){
-                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                if(publicType.equals(BindingConstants.BINDING_SHARE_NAME)){
+                    messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                } else{
+                    messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                }
             }
         }catch (Exception e){
             throw new AjaxException(e);
@@ -184,10 +188,12 @@ public class BindingController {
      * @param model
      * @param taskId 当前哪个任务需要关联的 任务id
      * @param fileId 当前哪个文件需要关联的 文件id
+     * @param shareId 当前哪个文件需要关联的 分享id
+     * @param projectId 当前项目id
      * @return
      */
     @RequestMapping("/relevance.html")
-    public String bindpage(Model model,String taskId,String fileId){
+    public String bindpage(Model model,String taskId,String fileId,String shareId,String projectId){
         //获取当前用户的id
         String uId = ShiroAuthenticationManager.getUserId();
         //获取当前用户参与的所有项目
@@ -198,7 +204,9 @@ public class BindingController {
         }
         model.addAttribute("projectList",projectList);
         model.addAttribute("taskId",taskId);
+        model.addAttribute("shareId",shareId);
         model.addAttribute("fileId",fileId);
+        model.addAttribute("projectId",projectId);
         return "tk-relevance";
     }
 

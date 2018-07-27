@@ -60,7 +60,7 @@
     </div>
     <!--右侧内容-->
     <div class="share-right-wrap">
-        <div class="share-right" th:each="share: ${shareList}">
+        <div class="share-right" th:each="share: ${shareList}" th:data = "${share.id}">
             <div class="share-right-scroll">
                 <div class="white-box boxsizing">
                     <div class="share-right-title boxsizing clearfix">
@@ -144,6 +144,156 @@
                         <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                         <span>添加关联</span>
                     </div>
+
+                    <div id = "bind">
+                        <!--关联 部分-->
+                        <div class="related-box">
+                            <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList != null} ? 'block':'none')}">任务 <span></span></div>
+                            <ul class="related-rw">
+                                <li class="boxsizing data-info"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
+                                    <div class="check-box" th:value="${task.taskName}">
+                                        <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
+                                    </div>
+                                    <div class="related-rw-info">
+                                        <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
+                                        <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
+                                        <span th:text="${task.taskName}"></span>
+                                    </div>
+                                    <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
+                                    <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                    <!--取消关联框-->
+                                    <div class="related-menu" style="display: none">
+                                        <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                        <div class="related-menu-title">关联菜单</div>
+                                        <ul>
+                                            <!--<li class="boxsizing">-->
+                                            <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                            <!--<span>复制链接</span>-->
+                                            <!--</li>-->
+                                            <li class="boxsizing cancle" th:data-id="${fileId}" th:data-binding-id="${task.taskId}">
+                                                <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                                <span>取消关联</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!--文件-->
+                            <div class="related-wj-wrap" th:style="'display:' + @{(${bindingVo.fileList != null} ? 'block':'none')}">
+                                <div class="flex-box">文件 <span></span></div>
+                                <ul class="related-wj">
+                                    <li class="boxsizing data-info" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
+                                        <div class="related-wj-info">
+                                            <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                                            <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
+                                            <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '..doc'}"/>
+                                            <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.docx'}"/>
+                                            <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xls'}"/>
+                                            <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xlsx'}"/>
+                                            <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pptx'}"/>
+                                            <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.ppt'}"/>
+                                            <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
+                                            <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
+                                            <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
+                                            <img class="folderFile" th:src="@{/image/defaultFile.png}" th:th:unless="${file.ext eq '.rar'} or ${file.ext eq '.png'} or ${file.ext eq '.jpg'} or ${file.ext eq '.jpeg'} or ${file.ext eq '..doc'} or ${file.ext eq '.docx'} or ${file.ext eq '.xls'} or ${file.ext eq '.xlsx'} or ${file.ext eq '.pptx'} or ${file.ext eq '.ppt'} or ${file.ext eq '.zip'} or ${file.ext eq '.rar'} or ${file.ext eq '.pdf'}"/>
+                                            <span th:text = "${file.fileName}"></span>
+                                        </div>
+                                        <div class="related-rw-describe over-hidden" th:text="${file.project.projectName}"></div>
+                                        <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                        <!--取消关联框-->
+                                        <div class="related-menu" style="display: none">
+                                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                            <div class="related-menu-title">关联菜单</div>
+                                            <ul>
+                                                <!--<li class="boxsizing">-->
+                                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                                <!--<span>复制链接</span>-->
+                                                <!--</li>-->
+                                                <li class="boxsizing cancle" th:data-id="${fileId}" th:data-binding-id="${file.fileId}">
+                                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                                    <span>取消关联</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!--日程-->
+                            <div class="related-rc-wrap" th:style="'display:' + @{(${bindingVo.scheduleList != null} ? 'block':'none')}">
+                                <div class="flex-box">日程 <span></span></div>
+                                <ul class="related-rc">
+                                    <li class="boxsizing data-info"  th:each="schedule:${bindingVo.scheduleList}" th:data-id = "${schedule.scheduleId}">
+                                        <div class="related-rc-top">
+                                            <div class="related-rc-info">
+                                                <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                                <span th:text="${schedule.scheduleName}"></span>
+                                            </div>
+                                            <div class="related-rw-describe over-hidden" th:text="${schedule.project.projectName}"></div>
+                                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                        </div>
+                                        <div class="related-rc-down">
+                                            <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
+                                            <span>—</span>
+                                            <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
+                                        </div>
+                                        <div class="related-menu" style="display: none">
+                                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                            <div class="related-menu-title">关联菜单</div>
+                                            <ul>
+                                                <!--<li class="boxsizing">-->
+                                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                                <!--<span>复制链接</span>-->
+                                                <!--</li>-->
+                                                <li class="boxsizing cancle" th:data-id="${fileId}" th:data-binding-id="${schedule.scheduleId}">
+                                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                                    <span>取消关联</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!--分享-->
+                            <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
+                                <div class="flex-box" >分享 <span></span></div>
+                                <ul class="related-fx">
+                                    <li class="boxsizing data-info"  th:each="share:${bindingVo.shareList}" th:data-id="${share.id}">
+                                        <div class="related-rc-top">
+                                            <div class="related-rc-info">
+                                                <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
+                                                <span th:text="${share.title}"></span>
+                                            </div>
+                                            <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
+                                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                        </div>
+                                        <!--<div class="related-rc-down">-->
+                                        <!--<span>2018-12-25 12:00</span>-->
+                                        <!--<span>—</span>-->
+                                        <!--<span>2018-12-25 12:00</span>-->
+                                        <!--</div>-->
+                                        <div class="related-menu" style="display: none">
+                                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                            <div class="related-menu-title">关联菜单</div>
+                                            <ul>
+                                                <!--<li class="boxsizing">-->
+                                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                                <!--<span>复制链接</span>-->
+                                                <!--</li>-->
+                                                <li class="boxsizing cancle"  th:data-id="${fileId}" th:data-binding-id="${share.id}">
+                                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                                    <span>取消关联</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="gray-box">
                     <div class="boxsizing">
@@ -235,6 +385,7 @@
 </div>
 
 </body>
+<script th:src="@{/js/share.js}" src="../static/js/share.js"></script>
 <script th:inline="javascript">
 
     layui.use('element', function(){
@@ -329,7 +480,16 @@
         if (url.indexOf("share") > 0) {
             $(".toper-nav ul li:nth-of-type(2)").addClass("now").siblings().removeClass("now");
         }
-        $(".share-list:nth-of-type(1)").addClass("selected");
+        var noclass;
+        if ($(".share-list").hasClass("selected")){
+            return false
+        } else {
+            noclass=true;
+        }
+        if (noclass){
+            $(".share-list:nth-of-type(1)").addClass("selected");
+        }
+
 
         function updateShareId() {
             $(".share-list").each(function () {
@@ -580,5 +740,44 @@
             console.log(e);
         });
     });
+    var shareId = [[${shareId}]];
+    if(shareId != '' && shareId != null){
+        $('.share-list').removeClass('selected');
+        $('.share-list').each(function (i,n) {
+            if($(n).attr('data') == shareId){
+
+                $(n).addClass('selected');
+                $(".share-right").hide();
+                $(".share-right").eq(i).show()
+                return false;
+            }
+        });
+    }
+
+    $('.add-guanlian').click(function (e) {
+        var shareId = $(this).parents('.share-right').attr('data');
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area:['800px','540px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade:  [0.1, 'black'],
+            anim: 1,  //动画 0-6
+            content: ['/binding/relevance.html?shareId=' + shareId+'&projectId='+projectId,'no']
+        });
+    });
+
+    //订阅消息
+    function subscribe() {
+        stompClient.subscribe('/topic/'+projectId, function (response) {
+            var returnData = JSON.parse(response.body);
+            var share = JSON.parse(returnData.responseMessage);
+            if(share.type == '关联'){
+                addBindingStr(share.object.bindingInfo,share.object.publicType,share.object.bId);
+            }
+        })
+    };
 </script>
 </html>

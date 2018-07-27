@@ -21,7 +21,8 @@
             <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
             <!--<li>更多</li>-->
         </ul>
-        <img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">
+        <!--<img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">-->
+        <i class="layui-icon layui-icon-close" style="font-size: 20px;"></i>
     </div>
     <!--左侧-->
     <div class="download-left boxsizing">
@@ -54,7 +55,7 @@
                 <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
                 <span>标签</span>
                 <div class="has-tags">
-                    <span class="tag" th:each="tag : ${tagList}">
+                    <span class="tag" th:each="tag : ${tagList}" th:style="'background-color:'+${tag.bgColor}+''">
                         <b style="font-weight: 400" th:text="${tag.tagName}"></b>
                         <i class="layui-icon layui-icon-close-fill deleteTag" style="font-size: 14px; color: #1E9FFF;" th:id="${tag.tagId}"></i>
                     </span>
@@ -70,8 +71,8 @@
                         </div>
                         <ul class="tags-ul boxsizing" id = "tags">
                             <!--这里是标签-->
-                            <li class="tags-list" th:each="tag:${tags}">
-                                <i class="dot"></i>
+                            <li class="tags-list" th:each="tag:${tags}" >
+                                <i class="dot" th:style="'background-color:'+${tag.bgColor}+''"></i>
                                 <span class="tag-font" th:text="${tag.tagName}" th:data="${tag.tagId}"></span>
                             </li>
                         </ul>
@@ -321,7 +322,7 @@
                       class="layui-textarea publish-input"></textarea>
             <div class="fenge-line"></div>
             <div class="publish-bottom">
-                <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}"/>
+                <!--<img src="../static/image/fujian.png" th:src="@{/image/fujian.png}"/>-->
                 <div class="publish-btn ">发布</div>
             </div>
             <!--上传文件框-->
@@ -581,9 +582,9 @@
                         if (data.result === 1) {
                             var tag = data.data;
                             $(".has-tags").append(
-                                '<span class="tag">\n' +
+                                '<span class="tag" style="background-color: ' + tag.bgColor + '">\n' +
                                 '    <b style="font-weight: 400">'+ tag.tagName +'</b>\n' +
-                                '    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;" id="'+ tag.tagId +'"></i>\n' +
+                                '    <i class="layui-icon layui-icon-close-fill deleteTag" style="font-size: 14px; color: #1E9FFF;" id="'+ tag.tagId +'"></i>\n' +
                                 '</span>'
                             );
                         } else if (data.result === 2) {
@@ -595,20 +596,31 @@
                 })
             });
 
-            // 移除标签
-            $(".deleteTag").each(function () {
-                $(this).click(function () {
-                    var tagId = $(this).attr("id");
-                    console.log(tagId);
-                    $.post("/file/deleteTag", {fileId: fileId, tagId: tagId}, function (data) {
-                        if (data.result === 1) {
-                            $("#" + tagId).parent("span").remove();
-                        } else {
-                            layer.msg(data.msg, {icon: 2, time: 700});
-                        }
-                    })
+            $('html').on('click','.deleteTag',function(){
+                var tagId = $(this).attr("id");
+                console.log(tagId);
+                $.post("/file/deleteTag", {fileId: fileId, tagId: tagId}, function (data) {
+                    if (data.result === 1) {
+                        $("#" + tagId).parent("span").remove();
+                    } else {
+                        layer.msg(data.msg, {icon: 2, time: 700});
+                    }
                 })
             });
+            // // 移除标签
+            // $(".deleteTag").each(function () {
+            //     $(this).click(function () {
+            //         var tagId = $(this).attr("id");
+            //         console.log(tagId);
+            //         $.post("/file/deleteTag", {fileId: fileId, tagId: tagId}, function (data) {
+            //             if (data.result === 1) {
+            //                 $("#" + tagId).parent("span").remove();
+            //             } else {
+            //                 layer.msg(data.msg, {icon: 2, time: 700});
+            //             }
+            //         })
+            //     })
+            // });
 
         });
     });

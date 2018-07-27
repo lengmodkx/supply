@@ -308,7 +308,7 @@
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
                     <ul class="related-fx">
-                    <li class="boxsizing data-info"  th:each="share:${bindingVo.shareList}">
+                    <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
                         <div class="related-rc-top">
                             <div class="related-rc-info">
                                 <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
