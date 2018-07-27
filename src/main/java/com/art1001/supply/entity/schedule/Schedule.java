@@ -2,6 +2,7 @@ package com.art1001.supply.entity.schedule;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.List;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
@@ -77,4 +78,10 @@ public class Schedule extends BaseEntity implements Serializable {
 	 * 所在的项目信息
 	 */
 	private Project project;
+
+	/**
+	 * 参与者
+	 */
+	private List<UserEntity> joinInfo;
+
 }

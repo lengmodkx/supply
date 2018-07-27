@@ -45,8 +45,8 @@
     <div class="heng-line"></div>
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
-        <div class="one-work-people">
-            <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+        <div class="one-work-people" th:each="user:${schedule.joinInfo}">
+            <img src="../static/image/add.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
             <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">

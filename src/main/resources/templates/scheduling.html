@@ -29,7 +29,7 @@
             </div>
             <!--//每一个折叠区域-->
             <div class="my-scheduling-box boxsizing layui-form">
-                <div class="layui-tab layui-tab-brief" lay-filter="schedule">
+                <div class="layui-tab layui-tab-brief">
                     <p style="padding-left: 10px;padding-top: 10px">日程</p>
                     <div class="layui-tab-content">
                         <div class="layui-tab-item layui-show">
@@ -38,7 +38,7 @@
                                     <h2 class="layui-colla-title" th:text="${schedulevo.date}">杜甫</h2>
                                     <div class="layui-colla-content">
                                         <ul>
-                                            <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px" class="schedule" th:id="${schedule.id}">
+                                            <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px" class="schedule" th:id="${schedule.scheduleId}">
                                                 <div class="scheduling-time">
                                                     <span th:text="${#calendars.format(schedule.startTime,'MM-dd HH:mm')}">8:15</span>
                                                     <span>——</span>
@@ -100,8 +100,20 @@
     $('html').on('click','.schedule',function () {
         var id = $(this).attr('id');
 
-
-
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area: ['600px', '400px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: "/schedule/editSchedule.html?projectId=" + projectId+"&id="+id
+            });
+        });
 
     });
 

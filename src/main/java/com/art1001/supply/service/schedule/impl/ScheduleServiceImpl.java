@@ -88,7 +88,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 
 	@Override
-	public List<Schedule> findScheduleGroupByCreateTime(Long currTime,String projectId) {
+	public List<ScheduleVo> findScheduleGroupByCreateTime(Long currTime,String projectId) {
 		return scheduleMapper.findScheduleGroupByCreateTime(currTime,projectId);
 	}
 
