@@ -12,17 +12,22 @@
     <input type="text" name="" placeholder="搜索" class="layui-input">
     <div class="peoples">
         <div>
-            <p>项目成员</p>
-            <div class="one-people" th:each="member:${data}" th:id="${member.id}">
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.userInfo.image}" />
-                <span th:text="${member.userName}"></span>
+            <p>参与者</p>
+            <div class="invisit-people" th:id="${user.id}">
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
+                <span th:text="${user.userName}"></span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
         </div>
-        <!--<p>推荐</p>-->
-        <!--<div id = "noExecutor">-->
+        <p>推荐</p>
+        <div class="one-people" th:if="${#lists.isEmpty(members)}" th:text="暂无成员推荐">
 
-        <!--</div>-->
+        </div>
+        <div class="one-people" th:each="member:${members}" th:id="${member.id}">
+            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.memberImg}" />
+            <span th:text="${member.memberName}"></span>
+            <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
+        </div>
         <!--<div class="add-new-people">-->
             <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
             <!--<span>邀请新成员</span>-->
@@ -34,7 +39,6 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
-    var members = [[${members}]];
     $(".people-ok").click(function (e) {
         var id = [];
         var names = [];

@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.project;
 
 import com.art1001.supply.entity.base.BaseEntity;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.task.Task;
 import lombok.Data;
 import lombok.ToString;
@@ -81,4 +82,8 @@ public class Project extends BaseEntity implements Serializable {
      * 是否收藏，0不是，1是
      */
     private Integer isCollect;
+
+    private List<ProjectMember> projectMemberList;
+
+    private List<Log> logList;
 }

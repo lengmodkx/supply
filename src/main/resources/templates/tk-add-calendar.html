@@ -229,14 +229,24 @@
         });
     }
 
-    function bind(member) {
-        var div = '<div class="one-work-people">\n' +
-            '            <input type="hidden" id="memberId" value="'+member.memberId+'" name="memberId"/>\n' +
-            '            <img src="'+IMAGE_SERVER + member.memberImg+'" />\n' +
-            '            <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>\n' +
-            '        </div>';
-
-        $('.add-work-people').before(div);
+    /**
+     * 添加添加选择完成后的参与者小头像
+     * @param id 参与者id
+     * @param name 参与者名称
+     * @param img 参与者头像
+     */
+    function addMember(id,name,img){
+        var content = '';
+        if(id !== ''){
+            for(var i = 0;i < id.length;i++){
+                content += '<div  class="one-work-people">'+
+                    '<input type="hidden" value = "' + id[i] + '" name="memberId"/>'+
+                    '<img src="'+ img[i] +'">'+
+                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                    '</div>';
+            }
+        }
+        $(".add-work-people").before(content);
     }
 </script>
 </html>

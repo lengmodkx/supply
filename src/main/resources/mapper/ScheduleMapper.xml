@@ -17,12 +17,14 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
+		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+		<!--创建者-->
 		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<!--查询参与者-->
-		<collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
+		<collection property="joinInfo" column="{member_ids=member_ids}" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 	</resultMap>
 
@@ -31,7 +33,6 @@
 		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
 		select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
 	</resultMap>
-
 
 	<sql id="Base_Column_List">
 				schedule_id,
@@ -46,7 +47,8 @@
 				tag_id,
 				create_time,
 				update_time,
-				member_id
+				member_id,
+				member_ids
 	</sql>
 
 	<sql id="whereStatement">
@@ -152,6 +154,9 @@
 			<if test="memberId != null ">
 				member_id,
 			</if>
+			<if test="memberIds != null and memberIds != ''">
+				member_ids,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -194,6 +199,9 @@
 			</if>
 			<if test="memberId != null ">
 				#{memberId},
+			</if>
+			<if test="memberIds != null and memberIds != ''">
+				#{memberIds},
 			</if>
 		</trim>
 
@@ -241,6 +249,9 @@
 			</if>
 			<if test="memberId != null ">
 				member_id = #{memberId},
+			</if>
+			<if test="memberIds != null and memberIds != ''">
+				member_ids = #{memberIds},
 			</if>
 		</set>
 

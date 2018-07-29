@@ -61,4 +61,6 @@ public interface LogMapper {
 	 * @return 日志集合
 	 */
     List<Log> initLog(String publicId);
+
+    List<Log> findLogByProjectId(String projectId);
 }

@@ -33,7 +33,6 @@
     padding: 6px 0;
     font-size: 14px;
     line-height: 32px;
-    cursor: pointer;
 }
 .one-people:hover{
     background-color: #f5f5f5;
@@ -52,7 +51,6 @@
 .one-people i{
     float: right;
     margin-right: 5px;
-    display: none;
 }
 .add-new-people{
     width: 100%;

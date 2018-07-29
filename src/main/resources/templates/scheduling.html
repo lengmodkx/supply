@@ -16,7 +16,7 @@
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
-<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
+<div th:include="toper::toper (${project})"></div>
 
 <div class="content-wrap-wrap boxsizing">
     <div class="content boxsizing">
@@ -105,7 +105,7 @@
             layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
-                area: ['600px', '400px'],
+                area: ['480px', '455px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,

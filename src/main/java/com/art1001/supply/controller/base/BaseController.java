@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +46,10 @@ public abstract class BaseController {
     private UserService userService;
 
     @Resource
-    LogService logService;
+    private LogService logService;
 
+    @Resource
+    private TagService tagService;
 
     //查询全部项目成员
     @PostMapping("/findAllProjectMember")
@@ -195,5 +199,12 @@ public abstract class BaseController {
         }
 
         return "tk-project-menu";
+    }
+
+    @GetMapping("/projectTag.html")
+    public String  projectTag(String projectId,Model model){
+        List<Tag> tagList = tagService.findByProjectId(projectId);
+        model.addAttribute("tagList",tagList);
+        return "tk-look-tag";
     }
 }

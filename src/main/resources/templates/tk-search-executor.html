@@ -12,17 +12,19 @@
     <input type="text" name="" placeholder="搜索" class="layui-input">
     <div class="peoples">
         <div>
-            <p>项目成员</p>
-            <div class="one-people" th:id="${executor.id}" th:each="executor:${data}">
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${executor.userInfo.image}" />
-                <span th:text="${executor.userName}"></span>
+            <p>执行者</p>
+            <div class="one-people" th:id="${user.id}" >
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
+                <span th:text="${user.userName}"></span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
         </div>
-        <!--<p>推荐</p>-->
-        <!--<div id = "noExecutor">-->
-
-        <!--</div>-->
+        <p>推荐</p>
+        <div id = "noExecutor" class="invisit-people" th:each="member:${members}">
+            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.memberImg}" />
+            <span th:text="${member.memberName}"></span>
+            <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
+        </div>
         <!--<div class="add-new-people">-->
             <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
             <!--<span>邀请新成员</span>-->

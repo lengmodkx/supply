@@ -16,21 +16,33 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
-		<association property="funcList" column="project_id" javaType="ArrayList"
+		<collection property="funcList" column="project_id" javaType="ArrayList"
 					 select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>
+
+		<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"
+					 select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>
+
+		<collection property="logList" column="project_id" javaType="java.util.ArrayList"
+					 select="com.art1001.supply.mapper.log.LogMapper.findLogByProjectId"/>
 	</resultMap>
 
 	<resultMap id="ProjectAndTaskByExecutor" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"/>
 	</resultMap>
 	<resultMap id="ProjectAndTaskByUser" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"/>
 	</resultMap>
 	<resultMap id="ProjectAndTaskByCreateMember" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"></collection>
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">

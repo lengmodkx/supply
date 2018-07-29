@@ -8,6 +8,7 @@ import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
@@ -21,6 +22,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 任务控制器，关于任务的操作
@@ -89,6 +92,8 @@ public class TaskController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private ProjectMemberService projectMemberService;
     /**
      * 在日历上创建任务
      * @param model
@@ -117,18 +122,27 @@ public class TaskController {
     @GetMapping("addPeople.html")
     public String addPeople(String projectId,String executorId,String type,Model model){
         try {
-            List<UserEntity> userList = userService.findProjectAllMember(projectId);
-            for (int i = 0;i < userList.size();i++){
-                //如果没有执行者跳出循环
-                if(StringUtils.isEmpty(executorId)){
-                    break;
-                }
-                //查询完所有的成员信息后 过滤掉当前的执行者信息
-                if(userList.get(i).getId().equals(executorId)){
-                    userList.remove(i);
-                }
-            }
-            model.addAttribute("data",userList);
+//            List<UserEntity> userList = userService.findProjectAllMember(projectId);
+//            for (int i = 0;i < userList.size();i++){
+//                //如果没有执行者跳出循环
+//                if(StringUtils.isEmpty(executorId)){
+//                    break;
+//                }
+//                //查询完所有的成员信息后 过滤掉当前的执行者信息
+//                if(userList.get(i).getId().equals(executorId)){
+//                    userList.remove(i);
+//                }
+//            }
+//            model.addAttribute("data",userList);
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            model.addAttribute("user",userEntity);
+            model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setProjectId(projectId);
+            List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
+           // memberAllList = memberAllList.stream().filter(projectMember1->!userEntity.getId().equals(projectMember1.getMemberId())).collect(Collectors.toList());
+            model.addAttribute("members",memberAllList);
+
         } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
             throw new SystemException(e);

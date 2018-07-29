@@ -1,0 +1,114 @@
+.modal-detail{
+    height: 536px;
+    width: 600px;
+}
+
+.detail-header{
+    position: relative;
+    padding: 16px 16px 0 16px;
+    color: #fff;
+    background-color: #3da8f5;
+    height: 155px;
+}
+
+.detail-coo{
+    float: right;
+}
+
+.detail-coo>i:hover{
+    color: #ffffff;
+    cursor: pointer;
+}
+.project_name{
+    padding: 4px 8px;
+    background-color: #3696dc;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.detail-title-wrap{
+    margin: 16px 0 0;
+    font-size: 16px;
+    word-break: break-word;
+}
+
+.detail-title-input{
+    padding: 4px;
+    border-radius: 4px;
+}
+.detail-title-input:focus{
+    background-color: rgba(0,0,0,.1);
+}
+.contenteditable{
+    outline: 0;
+    cursor: text;
+}
+
+.detail-handler-set{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 28px 72px 20px 0;
+}
+
+.detail-handler-set>div:nth-child(-n+3):first-child {
+    padding-left: 0;
+    border-left: 0 none;
+}
+
+.detail-handler-set>div:nth-child(-n+3) {
+    -webkit-flex: 1 0 0;
+    -ms-flex: 1 0 0px;
+    flex: 1 0 0;
+    padding-left: 20px;
+    border-left: 1px solid hsla(0,0%,100%,.15);
+}
+
+.detail-handler-set>div:nth-child(-n+3) .detail-handler-tips {
+    margin: 0 0 12px;
+    line-height: 14px;
+    color: hsla(0,0%,100%,.5);
+}
+
+.detail-handler-set>div:nth-child(-n+3) .detail-handler-content {
+    cursor: pointer;
+    line-height: 16px;
+    margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

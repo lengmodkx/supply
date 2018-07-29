@@ -10,7 +10,7 @@
 <div class="look-tag-wrap">
     <div class="look-tag-title">
         <span>标签</span>
-        <i class="layui-icon layui-icon-close" style="font-size: 20px;"></i>
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px;"></i>
     </div>
     <div class="content">
         <!--左侧 标签-->
@@ -23,17 +23,11 @@
 
             </div>
             <ul class="all-tags">
-                <li class="boxsizing">
+                <li class="boxsizing" th:each="tag:${tagList}">
                     <span class="dot"></span>
-                    <p class="tag-name over-hidden">标签名称</p>
-                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;"></i>
+                    <p class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</p>
+                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:id="${tag.tagId}"></i>
                 </li>
-                <li class="boxsizing">
-                    <span class="dot"></span>
-                    <p class="tag-name over-hidden">标签名称</p>
-                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;"></i>
-                </li>
-
             </ul>
         </div>
         <!--右侧内容-->
@@ -152,7 +146,13 @@
                 closeBtn: 0,
                 shade: 0,
                 anim: 1,  //动画 0-6
-                content: $(".tag-menu")
+                content: $(".tag-menu"),
+                success:function () {
+                    var id = $('.down-jiantou').attr('id');
+                    $('.tag-menu ul li').each(function (data,item) {
+                        $(item).attr('id',id);
+                    });
+                }
             });
         });
     })

@@ -565,11 +565,8 @@ public class ProjectController extends BaseController {
                 model.addAttribute("taskGroups",taskGroups);
                 model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             }
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setProjectId(projectId);
+
             Project project = projectService.findProjectByProjectId(projectId);
-            List<File> fileList = fileService.findChildFile(projectId, "0", 0);
-            model.addAttribute("fileList", fileList);
             model.addAttribute("project",project);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         }catch (Exception e){

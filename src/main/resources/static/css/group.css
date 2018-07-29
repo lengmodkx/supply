@@ -1,13 +1,7 @@
 
 .group-box{
-    width: 350px;
-    height: 100%;
     background-color: #F7F7F7;
-    box-shadow: -3px 0 3px rgba(0,0,0,.1);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    z-index: 200;
-    display: none;
+    margin-top: 100px;
 }
 /*.group-box.now{*/
     /*transition: all 0.8s;*/

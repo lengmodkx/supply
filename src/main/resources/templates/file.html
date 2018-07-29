@@ -16,7 +16,7 @@
 <body>
 <header th:include="common/header::frag (${user.userInfo.image}, ${user.id})"></header>
 
-<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
+<div th:include="toper::toper (${project})"></div>
 
 <div class="content-wrap-wrap boxsizing">
     <input type="hidden" th:value="${projectId}" id="projectId">

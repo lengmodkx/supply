@@ -29,7 +29,10 @@ public class Log extends BaseEntity implements Serializable {
 	 */
 	private String publicId;
 
-
+	/**
+	 * 下面id
+	 */
+	private String projectId;
 	/**
 	 * 用户id
 	 */
