@@ -107,11 +107,11 @@
 
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT p.id,p.project_id,p.member_id,p.member_lable u.u_name as member_name,i.u_image as member_img FROM prm_project_member p
+		SELECT p.id,p.project_id,p.member_id,p.member_lable, u.u_name as member_name,i.u_image as member_img FROM prm_project_member p
 		LEFT JOIN tb_user u on p.member_id = u.u_id
 		LEFT JOIN tb_user_info i on u.u_id = i.u_id
 		where
-			project_id = #{projectId} order by member_lable desc
+			project_id = #{projectId} order by p.member_lable desc
 	</select>
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
