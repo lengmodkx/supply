@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -114,7 +115,8 @@ public class ShareController extends BaseController {
             @RequestParam String shareId,
             Model model
     ) {
-        List<ProjectMember> projectMemberList = projectMemberService.findByProjectId(projectId);
+        List<ProjectMember> projectMemberList = shareService.findProjectMemberNotShareJoin(projectId,shareId);
+        Share share = shareService.findById(shareId);
         model.addAttribute("projectMemberList", projectMemberList);
         model.addAttribute("shareId", shareId);
         return "tk-share-people";

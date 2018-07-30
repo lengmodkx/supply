@@ -145,7 +145,7 @@ public class BindingController {
                 }
             }
             if(map.size() > 0){
-                if(bindType.equals(BindingConstants.BINDING_SHARE_NAME)){
+                if(BindingConstants.BINDING_SHARE_NAME.equals(bindType)){
                     messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 } else{
                     messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));

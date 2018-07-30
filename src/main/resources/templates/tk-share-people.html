@@ -8,6 +8,27 @@
 </head>
 <body>
 <!--人员 参与者 弹框-->
+<div class="people boxsizing" style="display: none;top: 20px;left: 10px">
+    <input type="text" name="" placeholder="搜索" class="layui-input">
+    <div class="peoples">
+        <p>参与者</p>
+        <div id = "joinInfo">
+
+        </div>
+        <p>推荐</p>
+        <div id = "Recommend">
+
+        </div>
+        <div class="add-new-people">
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
+            <span>邀请新成员</span>
+        </div>
+    </div>
+    <div class="people-ok">确定</div>
+
+
+</div>
+<!--人员 参与者 弹框-->
 <div class="people boxsizing">
     <input type="text" name="" placeholder="搜索" class="layui-input">
     <input type="hidden" th:value="${shareId}" id="shareId">

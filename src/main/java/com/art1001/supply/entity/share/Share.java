@@ -103,4 +103,11 @@ public class Share extends BaseEntity implements Serializable {
 	private List<Log> logs = new ArrayList<Log>();
 
 	private Project project;
+
+	/**
+	 * 分享的参与者信息
+	 */
+	private String uids;
+
+	List<UserEntity> joinInfo;
 }
