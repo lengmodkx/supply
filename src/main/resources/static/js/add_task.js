@@ -452,7 +452,7 @@ function addTask(taskMenuId) {
     //获取选中的参与者信息
     var members = [];
     $('.work-people .one-work-people').each(function () {
-        members.push($(this).attr('value'));
+        members.push($(this).find('input').attr('value'));
     });
 
     //获取标签信息

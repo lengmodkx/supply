@@ -380,8 +380,24 @@
 	<!-- 查询指定项目下所有的成员信息 -->
 	<select id="findProjectAllMember" resultMap="userMap">
 		select
-		<include refid="userAttributes" ></include>
-		from tb_user where u_id in (select member_id from prm_project_member where project_id = #{projectId})
+			u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			i.u_sex,
+			i.u_birthday,
+			i.u_telephone,
+			i.u_email,
+			i.u_image,
+			i.u_address
+		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId})
 	</select>
 
 	<!-- 根据用户id查用户信息 -->
