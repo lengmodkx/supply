@@ -51,6 +51,7 @@
 .one-people i{
     float: right;
     margin-right: 5px;
+    display: none;
 }
 .add-new-people{
     width: 100%;

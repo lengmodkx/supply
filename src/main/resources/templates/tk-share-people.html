@@ -8,47 +8,28 @@
 </head>
 <body>
 <!--人员 参与者 弹框-->
-<div class="people boxsizing" style="display: none;top: 20px;left: 10px">
+<div class="people boxsizing">
     <input type="text" name="" placeholder="搜索" class="layui-input">
     <div class="peoples">
         <p>参与者</p>
-        <div id = "joinInfo">
-
+        <div id = "executor" class="special-executor">
+            <div class="one-people" th:each="shareJoin:${shareJoins}" th:id="${shareJoin.id}">
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${shareJoin.userInfo.image}" />
+                <span th:text="${shareJoin.userName}"  th:value="${shareJoin.id}"></span>
+                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display:block"></i>
+            </div>
         </div>
         <p>推荐</p>
-        <div id = "Recommend">
+        <div id = "noExecutor">
+            <div class="one-people" th:if="${#lists.isEmpty(projectMemberList)}" th:text="暂无成员推荐">
 
-        </div>
-        <div class="add-new-people">
-            <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-            <span>邀请新成员</span>
-        </div>
-    </div>
-    <div class="people-ok">确定</div>
-
-
-</div>
-<!--人员 参与者 弹框-->
-<div class="people boxsizing">
-    <input type="text" name="" placeholder="搜索" class="layui-input">
-    <input type="hidden" th:value="${shareId}" id="shareId">
-    <div class="peoples">
-        <div>
-            <p>项目成员</p>
-            <div class="one-people" th:each="member:${projectMemberList}" th:data="${member.memberId}">
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.memberImg}"/>
-                <span th:text="${member.memberName}"></span>
+            </div>
+            <div class="one-people" th:each="member:${projectMemberList}" th:id="${member.id}">
+                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.userInfo.image}" />
+                <span th:text="${member.userName}" th:value="${member.id}"></span>
                 <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
             </div>
         </div>
-        <!--<p>推荐</p>-->
-        <!--<div id = "noExecutor">-->
-
-        <!--</div>-->
-        <!--<div class="add-new-people">-->
-        <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
-        <!--<span>邀请新成员</span>-->
-        <!--</div>-->
     </div>
     <div class="people-ok">确定</div>
 </div>
@@ -56,36 +37,53 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
-    var shareId = $("#shareId").val();
-    var members = [[${members}]];
-    $(".people-ok").click(function (e) {
-        var id = [];
-        var names = [];
-        var img = [];
-        for (var i = 0; i < $(".one-people").length; i++) {
-            if ($(".one-people").eq(i).find("i").is(":visible")) {
-                var value = $(".one-people").eq(i).attr("id");
-                var image = $(".one-people").eq(i).find("img").attr("src");
-                var name = $(".one-people").eq(i).find("span").html();
-                id.push(value);
-                img.push(image);
-                names.push(name);
+    //点击人员 出现对勾
+    $("html").on("click",".one-people",function () {
+
+        var arr=[]
+        for (var i=0;i<$(".one-people").length;i++){
+            if ($(this).find(i).is(":visible")) {
+                var value=$(this).find("span").attr("value");
             }
         }
-        //跟新参与者的头像
-        parent.addMember(id, names, img);
-        parent.layer.closeAll();
+    });
+
+    var shareId = [[${shareId}]]
+    var members = [[${members}]];
+    var layer = layui.layer;
+
+    $(".people-ok").click(function (e) {
+        var addUserEntity=[];
+        var removeUserEntity=[];
+        for (var i=0;i<$("#executor .one-people").length;i++){
+            if ($("#executor .one-people").eq(i).find("i").is(":visible")) {
+                var value =$("#executor .one-people").eq(i).find("span").attr("value");
+                addUserEntity.push(value);
+            }
+        }
+        for (var i=0;i<$("#noExecutor .one-people").length;i++){
+            if ($("#noExecutor .one-people").eq(i).find("i").is(":visible")) {
+                var value =$("#noExecutor .one-people").eq(i).find("span").attr("value");
+                addUserEntity.push(value);
+            }
+        }
+        if(addUserEntity == '' && removeUserEntity == ''){
+            $(".people").hide(500);
+            return false;
+        }
+        var url = "/share/addAndRemoveShareMember";
+        var args = {"shareId":shareId,"addUserEntity":addUserEntity.toString(),"removeUserEntity":removeUserEntity.toString()};
+        var content = '';
+        $.post(url,args,function (data) {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        },"json");
     });
 
     $(".one-people").each(function () {
         $(this).click(function () {
             $(this).find('i').toggle();
             var memberId = $(this).attr("data");
-            $.post("", {shareId: shareId, memberId: memberId}, function (data) {
-                if (data.result === 1) {
-
-                }
-            });
         });
     });
 

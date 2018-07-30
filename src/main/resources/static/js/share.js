@@ -249,3 +249,34 @@ function getLog(shareLog,shareId){
         }
     })
 }
+
+/**
+ * 更新参与者的头像
+ */
+function updatePeopel(share){
+    $('.share-right').each(function () {
+        if($(this).attr('data') == share.object.shareId){
+            if(share.object.reduce1 != ''){
+                for(var i = 0;i < share.object.reduce1.length;i++){
+                    $(this).find(".one-work-people").each(function () {
+                        if($(this).attr('data-id') == share.object.reduce1[i]){
+                            $(this).remove();
+                        }
+                    });
+                }
+            }
+            if(share.object.adduser != ''){
+                var content = '';
+                for(var i = 0;i < share.object.adduser.length;i++){
+                    content +=
+                        '<div class="one-work-people" data-id = '+ share.object.adduser[i].id +'>'+
+                        '<img src="'+IMAGE_SERVER + share.object.adduser[i].userInfo.image + '" data = ' + share.object.adduser[i].userName +'>'+
+                        '<i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>'+
+                        '</div>';
+                }
+                $(this).find(".add-work-people").before(content);
+            }
+        }
+    });
+    $(".people").hide(500);
+}

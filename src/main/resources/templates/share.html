@@ -300,14 +300,19 @@
                     <div class="boxsizing">
                         <p class="cyz">参与者</p>
                         <div class="work-people boxsizing clearfix">
-                            <div class="one-work-people">
-                                <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}" />
+                            <div class="one-work-people" th:data-id = "${share.userEntity.id}">
+                                <img src="../static/image/add.png" th:src="#{IMAGE_SERVER} + ${share.userEntity.userInfo.image}" />
+                                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
+                            </div>
+                            <div class="one-work-people" th:each="join:${share.joinInfo}" th:data-id = "${join.id}">
+                                <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER} + ${join.userInfo.image}" th:data= "${join.userName}"/>
                                 <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
                             </div>
                             <div class="add-work-people">
                                 <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                             </div>
                         </div>
+
                         <div class="heng-line"></div>
                         <!--谁谁 干了 什么-->
                         <div class="state">
@@ -434,6 +439,12 @@
             if(share.type == "发送消息"){
                 getLog(share.object.shareLog,share.object.shareId);
             }
+            if(share.type == '更新了参与者'){
+                getLog(share.object.log,share.object.shareId);
+                updatePeopel(share);
+
+            }
+
         })
     };
 
@@ -802,6 +813,23 @@
             }
         });
     }
+
+    /**
+     * 移除参与者
+     */
+    $('html').on('click','.remove-work-people',function () {
+        var ids = [];
+        $(this).parent().siblings('.one-work-people').each(function () {
+            ids.push($(this).attr('data-id'));
+        });
+        var url = "/share/addAndRemoveShareMember";
+        var args = {"addUserEntity":ids.toString(),"shareId":shareId};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg("系统异常,操作失败!");
+            }
+        },"json");
+    });
 
     $('.add-guanlian').click(function (e) {
         var shareId = $(this).parents('.share-right').attr('data');

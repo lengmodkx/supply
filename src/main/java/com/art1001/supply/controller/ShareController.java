@@ -20,10 +20,12 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -66,6 +68,9 @@ public class ShareController extends BaseController {
     private LogService logService;
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private SimpMessagingTemplate messagingTemplate;
 
     //导航到分享界面
@@ -74,10 +79,16 @@ public class ShareController extends BaseController {
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
         for (Share s : shareList) {
+           for (int i = 0;i < s.getJoinInfo().size();i++){
+               if(s.getMemberId().equals(s.getJoinInfo().get(i).getId())){
+                   s.getJoinInfo().remove(s.getJoinInfo().get(i));
+               }
+           }
             Collections.reverse(s.getLogs());
         }
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
+
 
         //查询出分享的关联信息
         for (Share s : shareList) {
@@ -115,9 +126,12 @@ public class ShareController extends BaseController {
             @RequestParam String shareId,
             Model model
     ) {
-        List<ProjectMember> projectMemberList = shareService.findProjectMemberNotShareJoin(projectId,shareId);
-        Share share = shareService.findById(shareId);
-        model.addAttribute("projectMemberList", projectMemberList);
+        Share byId = shareService.findById(shareId);
+        List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
+        List<UserEntity> manyUserById = userService.findManyUserById(byId.getUids());
+        List<UserEntity> reduce1 = projectAllMember.stream().filter(item -> !manyUserById.contains(item)).collect(Collectors.toList());
+        model.addAttribute("projectMemberList", reduce1);
+        model.addAttribute("shareJoins",manyUserById);
         model.addAttribute("shareId", shareId);
         return "tk-share-people";
     }
@@ -390,6 +404,21 @@ public class ShareController extends BaseController {
         } catch (Exception e){
             jsonObject.put("result",0);
             log.error("系统异常,发送失败,{}",e);
+        }
+        return jsonObject;
+    }
+
+    @PostMapping("addAndRemoveShareMember")
+    @ResponseBody
+    public JSONObject addAndRemoveShareMember(String shareId,String addUserEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            shareService.addAndRemoveShareMember(shareId,addUserEntity);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,操作失败!");
+            jsonObject.put("msg","系统异常,操作失败!");
+            jsonObject.put("result",0);
         }
         return jsonObject;
     }

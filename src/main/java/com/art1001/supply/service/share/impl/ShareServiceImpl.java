@@ -1,16 +1,26 @@
 package com.art1001.supply.service.share.impl;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FilePushType;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.share.Share;
 
@@ -23,6 +33,15 @@ public class ShareServiceImpl implements ShareService {
 	/** shareMapper接口*/
 	@Resource
 	private ShareMapper shareMapper;
+
+	@Resource
+    private UserService userService;
+
+	@Resource
+    private LogService logService;
+
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
 	
 	/**
 	 * 查询分页share数据
@@ -126,5 +145,72 @@ public class ShareServiceImpl implements ShareService {
 	@Override
 	public List<ProjectMember> findProjectMemberNotShareJoin(String projectId, String shareId) {
 		return shareMapper.findProjectMemberShareJoin(projectId,shareId);
+	}
+
+	/**
+	 * 添加或者移除掉 分享的参与者 然后将结果推送
+	 * @param shareId 分享的id
+	 * @param addUserEntity 要添加的成员id
+	 */
+	@Override
+	public void addAndRemoveShareMember(String shareId, String addUserEntity) {
+		//查询出当前文件中的 参与者id
+        Share byId = shareMapper.findById(shareId);
+
+        //log日志
+		Log log = new Log();
+		StringBuilder logContent = new StringBuilder();
+
+		//将数组转换成集合
+		List<String> oldJoin = Arrays.asList(byId.getUids().split(","));
+		List<String> newJoin = Arrays.asList(addUserEntity.split(","));
+
+		//比较 oldJoin 和 newJoin 两个集合的差集  (移除)
+		List<String> reduce1 = oldJoin.stream().filter(item -> !newJoin.contains(item)).collect(Collectors.toList());
+		if(reduce1 != null && reduce1.size() > 0){
+			logContent.append(TaskLogFunction.B.getName()).append(" ");
+			for (String uId : reduce1) {
+				String userName = userService.findUserNameById(uId);
+				logContent.append(userName).append(" ");
+			}
+		}
+
+		//比较 newJoin  和 oldJoin 两个集合的差集  (添加)
+		List<String> reduce2 = newJoin.stream().filter(item -> !oldJoin.contains(item)).collect(Collectors.toList());
+		if(reduce2 != null && reduce2.size() > 0){
+			logContent.append(TaskLogFunction.C.getName()).append(" ");
+			for (String uId : reduce2) {
+				String userName = userService.findUserNameById(uId);
+				logContent.append(userName).append(" ");
+			}
+		}
+
+		//如果没有参与者变动直接返回
+		if((reduce1 == null && reduce1.size() == 0) && (reduce2 == null && reduce2.size() == 0)){
+			return;
+		} else{
+		    Share share = new Share();
+		    share.setId(shareId);
+		    share.setUids(addUserEntity);
+		    share.setUpdateTime(System.currentTimeMillis());
+		    shareMapper.updateShare(share);
+			log = logService.saveLog(shareId,logContent.toString(),2);
+
+			//推送信息
+			FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());
+			Map<String,Object> map = new HashMap<String,Object>();
+			List<UserEntity> adduser = new ArrayList<UserEntity>();
+			map.put("log",log);
+			for (String id : reduce2) {
+				adduser.add(userService.findById(id));
+			}
+			map.put("reduce2",reduce2);
+            map.put("reduce1",reduce1);
+			map.put("adduser",adduser);
+			map.put("shareId",shareId);
+			filePushType.setObject(map);
+			//推送至文件的详情界面
+			messagingTemplate.convertAndSend("/topic/"+byId.getProjectId(),new ServerMessage(JSON.toJSONString(filePushType)));
+		}
 	}
 }
