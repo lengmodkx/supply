@@ -976,9 +976,7 @@ public class TaskController {
             List<Log> logList = logService.initLog(task.getTaskId());
             Collections.reverse(logList);
             if(!logList.isEmpty()){
-                model.addAttribute("taskLog",logList);
-            } else{
-                model.addAttribute("taskLog","没有操作日志记录!");
+                model.addAttribute("taskLogs",logList);
             }
             //返回数据
             model.addAttribute("data",taskById);

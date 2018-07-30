@@ -15,6 +15,7 @@
 		<result column="is_del" property="isDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+        <result column="uids" property="uids" jdbcType="CLOB" />
         <association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
                      select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
         <association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -24,6 +25,9 @@
         <!--查询标签-->
         <collection property="tagList" column="{tagIds=tag_ids}" javaType="java.util.ArrayList"
                     select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
+        <!--查询参与者-->
+        <collection property="joinInfo" column="{memberIds=uids}" javaType="java.util.ArrayList"
+                    select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -38,7 +42,8 @@
 		is_privacy,
 		is_del,
 		create_time,
-		update_time
+		update_time,
+		uids
 	</sql>
 
     <!-- 根据id查询 -->
@@ -102,6 +107,9 @@
             <if test="updateTime != null ">
                 update_time,
             </if>
+            <if test="uids != null ">
+                uids,
+            </if>
         </trim>
 
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -142,6 +150,9 @@
             <if test="updateTime != null ">
                 #{updateTime},
             </if>
+            <if test="uids != null ">
+                #{uids},
+            </if>
         </trim>
     </insert>
 
@@ -180,6 +191,9 @@
             </if>
             <if test="updateTime != null ">
                 update_time = #{updateTime},
+            </if>
+            <if test="uids != null ">
+                uids = #{uids},
             </if>
         </set>
 

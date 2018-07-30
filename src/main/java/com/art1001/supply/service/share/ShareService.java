@@ -2,6 +2,7 @@ package com.art1001.supply.service.share;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 
 /**
@@ -48,4 +49,19 @@ public interface ShareService {
 	 * @return 分享的实体集合
 	 */
 	List<Share> shareByProjectId(String projectId);
+
+	/**
+	 * 查询出分享的参与人员
+	 * @param shareId 分享的id
+	 * @return 参与者的信息
+	 */
+    List<ProjectMember> shareJoinInfo(String shareId);
+
+	/**
+	 * 查询出项目的成员信息 排除 分享的参与者
+	 * @param projectId 项目id
+	 * @param shareId 分享id
+	 * @return
+	 */
+	List<ProjectMember> findProjectMemberNotShareJoin(String projectId, String shareId);
 }

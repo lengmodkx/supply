@@ -1,6 +1,8 @@
 package com.art1001.supply.mapper.share;
 
 import java.util.List;
+
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
@@ -51,4 +53,19 @@ public interface ShareMapper {
      * @return 分享信息集合
      */
     List<Share> shareByProjectId(String projectId);
+
+    /**
+     * 查询出分享的参与人员
+     * @param shareId 分享的id
+     * @return 参与者的信息
+     */
+    List<ProjectMember> shareJoinInfo(String shareId);
+
+    /**
+     * 查询出项目的成员信息 排除 分享的参与者
+     * @param projectId 项目id
+     * @param shareId 分享id
+     * @return
+     */
+    List<ProjectMember> findProjectMemberShareJoin(String projectId, String shareId);
 }

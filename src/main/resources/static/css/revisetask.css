@@ -911,11 +911,13 @@
     color: #a6a6a6;
     font-size: 12px;
     text-align: right;
-    float: left;
     cursor: pointer;
+    position: absolute;
+    right: 30px;
 }
 .show-cancel-related{
-    float: right;
+    position: absolute;
+    right: 5px;
     line-height: 24px;
     cursor: pointer;
 }

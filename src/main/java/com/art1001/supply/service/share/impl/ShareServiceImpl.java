@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.share.ShareMapper;
@@ -104,5 +105,26 @@ public class ShareServiceImpl implements ShareService {
 	@Override
 	public List<Share> shareByProjectId(String projectId) {
 		return shareMapper.shareByProjectId(projectId);
+	}
+
+	/**
+	 * 查询出分享的参与人员
+	 * @param shareId 分享的id
+	 * @return 参与者的信息
+	 */
+	@Override
+	public List<ProjectMember> shareJoinInfo(String shareId) {
+		return shareMapper.shareJoinInfo(shareId);
+	}
+
+	/**
+	 * 查询出项目的成员信息 排除 分享的参与者
+	 * @param projectId 项目id
+	 * @param shareId 分享id
+	 * @return
+	 */
+	@Override
+	public List<ProjectMember> findProjectMemberNotShareJoin(String projectId, String shareId) {
+		return shareMapper.findProjectMemberShareJoin(projectId,shareId);
 	}
 }
