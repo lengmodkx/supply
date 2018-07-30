@@ -29,13 +29,19 @@ stompClient.connect({},
     stompClient.subscribe('/topic/subscribe', function (response) {
         var returnData = JSON.parse(response.body);
         var task = JSON.parse(returnData.responseMessage);
-        console.log(task);
         if(task.type === '创建了任务'){
             taskShow(task.task);
         }
+
         if(task.type === '把任务执行者指派给了'){
-            changeExecutor(task.taskId,IMAGE_SERVER+task.userInfo.image);
+            $('.'+task.object.taskId).attr('src',IMAGE_SERVER+task.object.executorInfo.userInfo.image);
+            $('.'+task.object.taskId).css('opacity',"1");
         }
+
+        if(task.type === '移除了执行者'){
+            $('.'+task.object.taskId).css('opacity',"0");
+        }
+
         if(task.type ==='添加菜单'){
             showMenu(task.object.menu);
         }
@@ -51,12 +57,15 @@ stompClient.connect({},
             $('.task-priority').removeClass("bg-priority-1");
             $('.task-priority').removeClass("bg-priority-2");
             $('.task-priority').addClass('bg-priority-0');
-        }else if(task.object.priority==='紧急'){
+        }
+
+        if(task.object.priority==='紧急'){
             $('.task-priority').removeClass('bg-priority-0');
             $('.task-priority').removeClass("bg-priority-1");
             $('.task-priority').removeClass("bg-priority-2");
             $('.task-priority').addClass('bg-priority-1');
-        }else{
+        }
+        if(task.object.priority==='非常紧急'){
             $('.task-priority').removeClass('bg-priority-0');
             $('.task-priority').removeClass("bg-priority-1");
             $('.task-priority').removeClass("bg-priority-2");

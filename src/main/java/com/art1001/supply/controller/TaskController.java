@@ -192,9 +192,16 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             Log log = taskService.addAndRemoveTaskMember(taskId,memberIds);
+            Task task = taskService.findTaskByTaskId(taskId);
+            jsonObject.put("members",userService.findManyUserById(task.getTaskUIds()));
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
-            jsonObject.put("taskLog",log);
+            if(log!=null){
+                jsonObject.put("taskLog",log);
+                TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
+                taskPushType.setObject(jsonObject);
+                messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
         } catch (Exception e){
             log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",taskId,e);
             throw new AjaxException(e);
@@ -217,6 +224,8 @@ public class TaskController {
             Log taskLogVO = taskService.removeTaskMember(task,userEntity);
             jsonObject.put("msg","任务参与者移除成功!");
             jsonObject.put("taskLog",taskLogVO);
+
+
         } catch (Exception e){
             log.error("移除任务成员失败! 当前任务id: ,{},{}",task.getTaskId(),e);
             throw new AjaxException(e);
@@ -909,26 +918,22 @@ public class TaskController {
 
     /**
      * 查询出已经是该任务的参与者的信息和非参与者的信息
-     * @param task
      * @return
      */
     @PostMapping("findTaskMemberInfo")
     @ResponseBody
-    public JSONObject findTaskMemberInfo(Task task){
+    public JSONObject findTaskMemberInfo(String taskId,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            //查询出项目下不存在与该任务中的成员信息
-            Map<String, List<UserEntity>> userByIsExistTask = userService.findUserByIsExistTask(task);
-            if(userByIsExistTask.get("existList") != null && userByIsExistTask.get("existList").size() > 0){
-                jsonObject.put("userExistTask",userByIsExistTask.get("existList"));
-            } else{
+            Task task = taskService.findTaskByTaskId(taskId);
+            List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
 
-            }
-            if(userByIsExistTask.get("notExistList") != null && userByIsExistTask.get("notExistList").size() > 0){
-                jsonObject.put("userNotExistTask",userByIsExistTask.get("notExistList"));
-            } else{
+            projectMembers = projectMembers.stream().filter(item -> !task.getJoinInfo().contains(item)).collect(Collectors.toList());
 
-            }
+            jsonObject.put("projectMembers",projectMembers);
+            jsonObject.put("joinInfo",task.getJoinInfo());
+            jsonObject.put("result",1);
+
         } catch (Exception e){
             throw new AjaxException(e);
         }
@@ -975,9 +980,7 @@ public class TaskController {
             //查询出该任务的日志信息
             List<Log> logList = logService.initLog(task.getTaskId());
             Collections.reverse(logList);
-            if(!logList.isEmpty()){
-                model.addAttribute("taskLogs",logList);
-            }
+            model.addAttribute("taskLogs",logList);
             //返回数据
             model.addAttribute("data",taskById);
             model.addAttribute("isFabulous",isFabulous);
@@ -992,21 +995,25 @@ public class TaskController {
     /**
      * 根据项目id 查询该项目下( 当前任务的执行者除外 )的其他所有成员信息
      * @param projectId 项目id
-     * @param executor 任务的执行者信息
      * @return
      */
     @PostMapping("findProjectAllMember")
     @ResponseBody
-    public JSONObject findProjectAllMember(String executor,@RequestParam String projectId){
+    public JSONObject findProjectAllMember(@RequestParam String projectId,@RequestParam(required = false) String executorId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<UserEntity> list = taskService.findProjectAllMember(projectId,executor);
-            if(list != null && list.size() > 0){
+            List<UserEntity> list = userService.findProjectAllMember(projectId);
+
+            if(StringUtils.isEmpty(executorId)){
                 jsonObject.put("data",list);
-            } else{
-                jsonObject.put("data",null);
-                jsonObject.put("msg","无数据");
+
+            }else{
+                UserEntity userEntity = userService.findById(executorId);
+                list = list.stream().filter(user->!user.getId().equals(userEntity.getId())).collect(Collectors.toList());
+                jsonObject.put("user",userEntity);
+                jsonObject.put("data",list);
             }
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,数据获取失败! 当前项目id: ,{},{}",projectId,e);
             throw new AjaxException(e);
@@ -1161,10 +1168,15 @@ public class TaskController {
     public JSONObject removeExecutor(String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.removeExecutor(taskId);
-            jsonObject.put("taskLog",taskLogVO);
+            Log log = taskService.removeExecutor(taskId);
+            jsonObject.put("taskLog",log);
+            jsonObject.put("taskId",taskId);
             jsonObject.put("msg","移除成功!");
             jsonObject.put("result",1);
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A.getName());
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,操作失败,{}",e);
         }
@@ -1175,23 +1187,24 @@ public class TaskController {
      * 更新任务的执行者
      * @param taskId 任务id
      * @param uName 新的执行者的名字
-     * @param userInfoEntity 新的执行者的信息
+     * @param executor 新的执行者的id
      * @return0
      */
     @PostMapping("updateTaskExecutor")
     @ResponseBody
-    public JSONObject updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity,String uName){
+    public JSONObject updateTaskExecutor(String taskId,String executor,String uName){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.updateTaskExecutor(taskId, userInfoEntity, uName);
+            Log log = taskService.updateTaskExecutor(taskId, executor, uName);
             jsonObject.put("msg","修改成功");
             jsonObject.put("result",1);
-            jsonObject.put("taskLog",taskLogVO);
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskLog",taskLogVO);
+            jsonObject.put("taskLog",log);
+            jsonObject.put("executorInfo",userService.findById(executor));
+            jsonObject.put("taskId",taskId);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.U.getName());
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName) +"}"));
-            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType).substring(0,JSON.toJSONString(taskPushType).length()-1)+",\"taskId\":"+JSON.toJSONString(taskId)+",\"userInfo\":"+JSON.toJSONString(userInfoEntity)+",\"uName\":"+JSON.toJSONString(uName)+",\"taskLog\":"+JSON.toJSONString(taskLogVO) +"}"));
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
             throw new AjaxException(e);

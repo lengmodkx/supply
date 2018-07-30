@@ -50,7 +50,7 @@
                                       <div class="task-content-set" th:data="${task.taskId}" th:data-value="${task.projectId}" >
                                           <header class="assignment-top-box boxsizing clearfix">
                                               <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                              <img class="assignment-tx" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
+                                              <img class="assignment-tx" th:classappend="${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
                                           </header>
                                           <section class="assignment-bottom-box clearfix">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
@@ -108,28 +108,12 @@
         var form = layui.form;
     });
 
-    $("#fileButton").click(function () {
-        var projectId = getQueryString("projectId");
-        $("#file").load("/file/list.html?projectId=" + projectId);
-    });
-
-
     function getQueryString(name)
     {
         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
         if(r!=null)return  unescape(r[2]);
         return null;
-    }
-
-    function changeExecutor(taskId,image){
-        var div = $('#'+taskId + ' div').first();
-        $(div).children('img:eq(0)').attr('src',image);
-    }
-
-    function clearExecutor(taskId){
-        var div = $('#'+taskId + ' div').first();
-        $(div).children('img:eq(0)').attr('src','/image/add.png');
     }
 
 </script>

@@ -333,80 +333,81 @@ layui.use('form', function() {
 
 
     });
-    if ($("#have-executor").val()){
-        $(".who-wrap").show();
-        $(".no-renling").hide()
-    } else {
-        $(".who-wrap").hide();
-        $(".no-renling").show()
-    }
+
     //点击 认领人 的x 号， 移出认领人 ，待认领出现
-    $(".remove-who-wrap").click(function () {
-        if($("#executorId").val() == null || $("#executorId").val() == ''){
-            $(this).parent().hide();
-            $(".no-renling").show();
-            return false;
-        }
+    $('body').on('click','.remove-who-wrap',function (e) {
         var url = "/task/removeExecutor";
         var args = {"taskId":taskId};
         $.post(url,args,function (data) {
-            if(data.result == 1){
-                getLog(data.taskLog);
-                $('#executorId').val('');
-                $('#executorName').html('');
-                parent.clearExecutor(taskId);
+            if(data.result === 1){
             }
-        },"json");
-        $(this).parent().hide();
-        if ($(".who-and-time").find(".who-wrap").css("display") == "none") {
-            $(".no-renling").show();
-        } else {
-            $(".no-renling").hide();
-        }
+        });
+        e.stopPropagation();
     });
 
     //点击 待认领 出现 人员名单
-    $(".no-renling").click(function (e) {
-        $('#titles').html('执行者');
-        $('#executor').html(
-            "<div class='one-people'>"+
-            "<img value = '' src=''>"+
-            "<span value = ''>" + '待认领' + "</span>"+
-            "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>"+
-            "</div>"
-        );
-        $('#noExecutor').html('');
-        zxz=true;
+    $('html').on('click','.no-renling',function (e) {
         var url = "/task/findProjectAllMember";
-        var args = {"executor": executorId, "projectId": projectId};
+        var args = {"projectId": projectId,"executorId":""};
         //异步请求项目人员名单
         $.post(url,args,function(data){
-            var content = "";
-            var member = data.data;
-            if(member == null){
-                content += "<div class='one-people'>";
-                content += "<img value = '' src='/static/image/add.png'>";
-                content += "<span value = ''>" + 没有成员了 + "</span>";
-                content += "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>";
-                content += "</div>";
-                $('#noExecutor').html(content);
-                $(".people").show(500);
-                $("#executor").removeClass("special-executor");
-                return false;
+            if(data.result===1){
+                $('.zx_p').html('');
+                $('.tj_p').html('');
+                var member = data.data;
+                var div = '<div class="one-people"><img src="/image/person.png"><span>待认领</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i></div>';
+                $('.zx_p').append(div);
+
+                for(var i = 0;i < member.length;i++){
+                    var content = '<div class="one-people" id="'+member[i].id+'"><img src="'+IMAGE_SERVER+ member[i].userInfo.image +'"><span >' + member[i].userName + '</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
+                    $('.tj_p').append(content);
+                }
             }
-            for(var i = 0;i < member.length;i++){
-                content += "<div class='one-people'>";
-                content += "<img value = '"+ member[i].userInfo.image +"' src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
-                content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
-                content += "<i class=\"layui-icon layui-icon-ok\" style=\"font-size: 16px; color: #D1D1D1;\"></i>";
-                content += "</div>";
-            }
-            $('#noExecutor').html(content);
         });
-        $(".people").show(500);
-        $("#executor").removeClass("special-executor");
+        $(".zx_people").show(500);
         e.stopPropagation()
     });
+
+
+    $('html').on('click','.who-wrap',function (e) {
+
+        var url = "/task/findProjectAllMember";
+        var args = {"projectId": projectId,"executorId":$('#executorId').val()};
+        //异步请求项目人员名单
+        $.post(url,args,function(data){
+            if(data.result===1){
+                $('.zx_p').html('');
+                $('.tj_p').html('');
+                var member = data.data;
+                var user  = data.user;
+                var div = '<div class="one-people" id="'+user.id+'"><img src="'+IMAGE_SERVER+user.userInfo.image+'"><span>'+user.userName+'</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i></div>';
+                $('.zx_p').append(div);
+
+                for(var i = 0;i < member.length;i++){
+                    var content = '<div class="one-people" id="'+member[i].id+'"><img src="'+IMAGE_SERVER+ member[i].userInfo.image +'"><span >' + member[i].userName + '</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
+                    $('.tj_p').append(content);
+                }
+            }
+        });
+        $(".zx_people").show(500);
+        e.stopPropagation()
+    });
+
+
+   $('html').on('click','.zx_people .one-people',function () {
+       var executor=$(this).attr('id');
+       var uName=$(this).find('span').text();
+
+       if(executor===null||executor===undefined){
+           $(".zx_people").hide(500);
+       }else{
+           $.post('/task/updateTaskExecutor',{"taskId":taskId,"executor":executor,"uName":uName},function (data) {
+               $(".zx_people").hide(500);
+           });
+       }
+   });
+
+
 
     // 点击  任务菜单出现隐藏
     $(".assignment-menu-show").click(function () {
@@ -639,78 +640,29 @@ $(".add-fuhao").click(function () {
  * 点击人员 弹框 确定 按钮
  */
 $('.people-ok').click(function () {
-    // 执行者 确定
-    if (zxz){
-        var id = "";
-        var name = "";
-        var img = "";
-        for (var i=0;i<$(".one-people").length;i++){
-            if ($(".one-people").eq(i).find("i").is(":visible")) {
-                id = $(".one-people").eq(i).find("span").attr("value");
-                name = $(".one-people").eq(i).find("span").html();
-                img = $(".one-people").eq(i).find("img").attr("value");
+      //参与者 确定
+        var memberIds=[];
+        $('#executor .one-people').each(function (index,item) {
+            if($(item).find('i').is(":visible")) {
+                memberIds.push($(item).attr('id'));
             }
-        }
-        if(id == ''){
-            $(".people").hide(500);
-            return false;
-        }
-        var url = "/task/updateTaskExecutor";
-        var args = {"taskId":taskId,"id":id,"image":img,"uName":name};
-        $.post(url,args,function(data){
-            if(data.result == 1){
-                parent.changeExecutor(taskId,IMAGE_SERVER+img);
-                getLog(data.taskLog);
-                $('#executorId').val(id);
-                $('#executorName').html(name);
-                $('#executorImg').attr("src",IMAGE_SERVER+img);
-                $(".no-renling").hide();
-                $(".people").hide(500);
-                $(".who-wrap").show();
+        });
+
+        $('#noExecutor .one-people').each(function (index,item) {
+            if($(item).find('i').is(":visible")){
+                memberIds.push($(item).attr('id'));
             }
-        },"json");
-    }else {  //参与者 确定
-        var addUserEntity=[];
-        var addUserImage = [];
-        var removeUserEntity=[];
-        for (var i=0;i<$("#executor .one-people").length;i++){
-            if ($("#executor .one-people").eq(i).find("i").is(":hidden")) {
-                var value =$("#executor .one-people").eq(i).find("span").attr("value");
-                removeUserEntity.push(value);
-            }
-        }
-        for (var i=0;i<$("#noExecutor .one-people").length;i++){
-            if ($("#noExecutor .one-people").eq(i).find("i").is(":visible")) {
-                var value =$("#noExecutor .one-people").eq(i).find("span").attr("value");
-                var image =$("#noExecutor .one-people").eq(i).find("img").attr("src");
-                addUserImage.push(image);
-                addUserEntity.push(value);
-            }
-        }
-        if(addUserEntity == '' && removeUserEntity == ''){
-            $(".people").hide(500);
-            return false;
-        }
+        });
+
+
         var url = "/task/addAndRemoveTaskMember";
-        var args = {"taskId":taskId,"addUserEntity":addUserEntity.toString(),"removeUserEntity":removeUserEntity.toString()};
-        var content = '';
+        var args = {"taskId":taskId,"memberIds":memberIds.toString()};
         $.post(url,args,function (data) {
-            if(data.result > 0){
-                getLog(data.taskLog);
-                for(var i = 0;i < addUserEntity.length;i++){
-                    content += '<div class="one-work-people">'+
-                            '<img src="'+ addUserImage[i] +'" value="' + addUserEntity[i] + '">'+
-                            '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
-                        '</div>';
-                }
-                for (var i = 0;i<removeUserEntity.length;i++){
-                    $('#'+removeUserEntity[i]).remove();
-                }
-                $(".add-work-people").before(content);
+            if(data.result === 1){
                 $(".people").hide(500);
             }
         },"json");
-    }
+
 });
     //点击空白区域 添加人员消失
     $(document).click(function (event) {
@@ -730,52 +682,36 @@ $('.people-ok').click(function () {
      * 任务详情的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
-        zxz=false;
         $("#executor").addClass("special-executor");
         var url = '/task/findTaskMemberInfo';
         var args = {"projectId":projectId, "taskId": taskId};
-        var executor = "";
-        var noExecutor = "";
+
         $.post(url, args, function (data) {
-            var content = "";
-            var userExistTask = data.userExistTask;
-            var userNotExistTask = data.userNotExistTask;
-            if(userExistTask != null){
-                for (var i = 0;i < data.userExistTask.length;i++){
-                    executor+=
-                        '<div class="one-people">'+
-                        '<img src="'+ IMAGE_SERVER+userExistTask[i].userInfo.image +'"/>'+
-                        '<span value = "'+ userExistTask[i].id +'">'+ userExistTask[i].userName +'</span>'+
-                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                        '</div>';
-                }
-            } else{
-                executor+=
-                    '<div class="one-people">'+
-                    '<img src="/image/begintime.png" th:src="@{null}" />'+
-                    '<span value = "">没有参与者</span>'+
-                    '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                    '</div>';
-            }
-            if(userNotExistTask != null){
-                for (var i = 0;i < data.userNotExistTask.length;i++){
-                    noExecutor += "<div class=\'one-people\'>"+
-                    "<img src = '" + IMAGE_SERVER+userNotExistTask[i].userInfo.image +"'>"+
-                    "<span value = '"+ userNotExistTask[i].id +"'>" + userNotExistTask[i].userName + "</span>"+
-                    "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
-                    "</div>";
-                }
-            } else{
-                noExecutor += "<div class=\'one-people\'>"+
-                    "<img th:src='\@{}\'>"+
-                    "<span value = ''>没有成员可邀请</span>"+
-                    "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
-                    "</div>";
-            }
-            $('#executor').html(executor);
-            $('#noExecutor').html(noExecutor);
-            $(".people").show(500);
-        }, "json");
+           if(data.result===1){
+               $('#executor').html('');
+               $('#noExecutor').html('');
+               for(var i=0;i<data.joinInfo.length;i++){
+                   var div = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
+                       '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
+                       '<span>'+ data.joinInfo[i].userName +'</span>'+
+                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                       '</div>';
+                    $('#executor').append(div);
+               }
+
+
+               for(var j=0;j<data.projectMembers.length;j++){
+                   var div = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
+                       '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
+                       '<span>'+ data.projectMembers[j].userName +'</span>'+
+                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                       '</div>';
+                   $('#noExecutor').append(div);
+               }
+           }
+
+           $(".people").show(500);
+        });
         e.stopPropagation();
 });
     //监听任务内容的光标离开事件

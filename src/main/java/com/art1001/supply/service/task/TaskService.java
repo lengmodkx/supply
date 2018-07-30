@@ -308,10 +308,10 @@ public interface TaskService {
 	 * 更新任务执行者
 	 * @param taskId 该任务的id
 	 * @param uName 新的任务执行者的名字
-	 * @param userInfoEntity 新的执行者的信息
+	 * @param executor 新的执行者的id
 	 * @return
 	 */
-	Log updateTaskExecutor(String taskId,UserInfoEntity userInfoEntity, String uName);
+	Log updateTaskExecutor(String taskId,String executor, String uName);
 
 	/**
 	 * 查询该项目下的所有任务

@@ -3,6 +3,7 @@ package com.art1001.supply.entity.log;
 import com.art1001.supply.entity.base.BaseEntity;
 import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @date 2018/7/25 12:00
  **/
 @Data
+@ToString
 public class Log extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

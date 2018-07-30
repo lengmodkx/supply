@@ -28,7 +28,7 @@
             <input type="text" th:value="${task.taskName}" class="task_name boxsizing layui-input"/>
         </div>
         <div class="who-and-time">
-            <input type="hidden" id="have-executor" th:value="${task.executor}">
+
             <div class="who-wrap" th:if="${task.executorInfo != null}">
                 <input type="hidden" th:value="${task.executor}" id = "executorId"/>
                 <img th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" id = "executorImg" />
@@ -347,13 +347,9 @@
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <!--<div class="one-work-people" th:if="${task.executor != ''}">-->
-                <!--<img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />-->
-                <!--<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>-->
-            <!--</div>-->
             <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:id="${joininfo.id}">
                 <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
-                <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
             </div>
 
             <div class="add-work-people">
@@ -454,13 +450,33 @@
             <div id = "noExecutor">
 
             </div>
-            <div class="add-new-people">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-                <span>邀请新成员</span>
-            </div>
+            <!--<div class="add-new-people">-->
+                <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
+                <!--<span>邀请新成员</span>-->
+            <!--</div>-->
         </div>
         <div class="people-ok">确定</div>
     </div>
+
+    <div class="zx_people people boxsizing" style="display: none">
+        <input type="text" name="" placeholder="搜索" class="layui-input">
+        <div class="peoples">
+            <p>执行者</p>
+            <div class="zx_p">
+
+            </div>
+            <p>推荐</p>
+            <div class="tj_p">
+
+            </div>
+            <!--<div class="add-new-people">-->
+            <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
+            <!--<span>邀请新成员</span>-->
+            <!--</div>-->
+        </div>
+    </div>
+
+
 
 </div>
 </body>
@@ -554,11 +570,17 @@
             var returnData = JSON.parse(response.body);
             var taskLog = JSON.parse(returnData.responseMessage);
             if(taskLog.type === '把任务执行者指派给了'){
-                parent.changeExecutor(taskId,IMAGE_SERVER+taskLog.userInfo.image);
-                $('#executorId').val(taskLog.userInfo.id);
-                $('#executorName').html(taskLog.uName);
-                $('#executorImg').attr("src",IMAGE_SERVER+taskLog.userInfo.image);
-                getLog(taskLog.taskLog);
+                getLog(taskLog.object.taskLog);
+                var executorInfo = taskLog.object.executorInfo;
+                $('.who-wrap').remove();
+                $('.no-renling').remove();
+                $('.who-and-time').prepend('<div class="who-wrap">\n' +
+                    '                <input type="hidden" value="'+executorInfo.id+'" id = "executorId"/>\n' +
+                    '                <img src="'+IMAGE_SERVER+executorInfo.userInfo.image+'" id = "executorImg" />\n' +
+                    '                <span id = "executorName">'+executorInfo.userName+'</span>\n' +
+                    '                <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>\n' +
+                    '            </div>');
+
             }
             if(taskLog.type === '发送消息'){
                 getLog(taskLog.object.taskLog);
@@ -576,6 +598,31 @@
             if(taskLog.type === '更新任务优先级为'){
                 getLog(taskLog.object.taskLog);
             }
+
+            if(taskLog.type==='更新了参与者'){
+                getLog(taskLog.object.taskLog);
+                var members = taskLog.object.members;
+                $('.work-people .add-work-people').siblings().remove();
+                for(var i=0;i<members.length;i++){
+                    var div = '<div class="one-work-people" id="'+members[i].id+'">\n' +
+                        '           <img src="'+IMAGE_SERVER+members[i].userInfo.image+'" />\n' +
+                        '           <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>\n' +
+                        '      </div>';
+
+                    $('.work-people .add-work-people').before(div);
+                }
+            }
+
+            if(taskLog.type==='移除了执行者'){
+                getLog(taskLog.object.taskLog);
+
+                $('.who-wrap').after('<div class="no-renling">\n' +
+                    '                <i class="layui-icon layui-icon-username no-people-img" style="font-size: 20px; color: #A6A6A6;"></i>\n' +
+                    '                <span>待认领</span>\n' +
+                    '            </div>');
+                $('.who-wrap').remove();
+            }
+
 
             if(taskLog.type == '取消了关联'){
                 $('#bind li.data-info ').each(function(){

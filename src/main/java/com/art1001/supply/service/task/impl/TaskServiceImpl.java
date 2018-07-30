@@ -535,6 +535,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Log addAndRemoveTaskMember(String taskId,String memberIds) {
+        Log log = null;
         StringBuilder content = new StringBuilder();
         Task task = taskMapper.findTaskByTaskId(taskId);
 
@@ -560,8 +561,11 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         task.setTaskUIds(memberIds);
-        taskMapper.updateTask(task);
-        Log log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
+        if(subtract1!=null||subtract2!=null){
+            taskMapper.updateTask(task);
+            log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
+        }
+        
         return log;
     }
 
@@ -909,12 +913,9 @@ public class TaskServiceImpl implements TaskService {
     public Log removeExecutor(String taskId) {
         //先将任务成员关系表的执行者清掉
         taskMapper.clearExecutor(taskId);
-        Task task = new Task();
-        task.setTaskId(taskId);
-        taskMapper.removeExecutor(taskId);
         //拼接日志
         String content = TaskLogFunction.A.getName();
-        return logService.saveLog(task.getTaskId(),content,1);
+        return logService.saveLog(taskId,content,1);
     }
 
     /**
@@ -941,38 +942,16 @@ public class TaskServiceImpl implements TaskService {
     /**
      * 更新任务的执行者
      * @param taskId 该任务的id
-     * @param userInfoEntity 用户信息
+     * @param execcutor 执行者id
      * @param uName 用户名
      * @return
      */
     @Override
-    public Log updateTaskExecutor(String taskId, UserInfoEntity userInfoEntity,String uName) {
+    public Log updateTaskExecutor(String taskId, String execcutor,String uName) {
         Task task = new Task();
         task.setTaskId(taskId);
-        task.setExecutor(userInfoEntity.getId());
+        task.setExecutor(execcutor);
         taskMapper.updateTask(task);
-        taskMemberService.delTaskMemberExecutor(taskId);
-        //初始化一个任务成员关系实体
-        TaskMember taskMember = new TaskMember();
-        taskMember.setId(IdGen.uuid());
-        taskMember.setMemberId(userInfoEntity.getId());
-        taskMember.setPublicId(task.getTaskId());
-        taskMember.setMemberName(uName);
-        taskMember.setMemberImg(userInfoEntity.getImage());
-        //设置任务的关联类型
-        taskMember.setPublicType("任务");
-        taskMember.setType("执行者");
-        taskMember.setCreateTime(System.currentTimeMillis());
-        taskMember.setUpdateTime(System.currentTimeMillis());
-        taskMemberService.saveTaskMember(taskMember);
-        //查询新的任务执行者之前是不是此任务的参与者
-        int isTaskMember = taskMemberService.findTaskMemberExecutorIsMember(userInfoEntity.getId(), task.getTaskId());
-        //如果新的任务执行者以前已经是该任务的参与者  就不在添加该执行者的参与者信息
-        if(isTaskMember == 0){
-            taskMember.setId(IdGen.uuid());
-            taskMember.setType("参与者");
-            taskMemberService.saveTaskMember(taskMember);
-        }
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
         return logService.saveLog(task.getTaskId(),content.toString(),1);

@@ -397,7 +397,7 @@
 			i.u_email,
 			i.u_image,
 			i.u_address
-		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId})
+		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_lable desc)
 	</select>
 
 	<!-- 根据用户id查用户信息 -->

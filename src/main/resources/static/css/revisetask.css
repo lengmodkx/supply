@@ -155,9 +155,7 @@
     float: left;
     margin-right: 5px;
 }
-.no-renling{
-    display: none;
-}
+
 .no-renling:hover span{
     color: #3da8f5;
 }
