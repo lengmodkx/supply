@@ -1175,7 +1175,7 @@ public class TaskController {
             jsonObject.put("result",1);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A.getName());
             taskPushType.setObject(jsonObject);
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskService.findTaskByTaskId(taskId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
             messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,操作失败,{}",e);
@@ -1203,7 +1203,7 @@ public class TaskController {
             jsonObject.put("taskId",taskId);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.U.getName());
             taskPushType.setObject(jsonObject);
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskService.findTaskByTaskId(taskId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
             messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,修改失败,{}",e);
@@ -1354,7 +1354,7 @@ public class TaskController {
             map.put("taskId",taskId);
             map.remove("taskLog");
             //推送至主页面
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             jsonObject.put("result",1);
         } catch (Exception e){
             jsonObject.put("result",0);

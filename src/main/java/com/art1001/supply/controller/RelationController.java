@@ -175,7 +175,7 @@ public class RelationController {
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("menu",relation);
             taskPushType.setObject(map);
-            simpMessagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(JSON.toJSONString(taskPushType)));
+            simpMessagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             jsonObject.put("msg","添加成功!");
             jsonObject.put("result","1");
         } catch (Exception e){

@@ -26,7 +26,7 @@ stompClient.connect({},
 
     //订阅消息
     function subscribe1() {
-    stompClient.subscribe('/topic/subscribe', function (response) {
+    stompClient.subscribe('/topic/'+projectId, function (response) {
         var returnData = JSON.parse(response.body);
         var task = JSON.parse(returnData.responseMessage);
         if(task.type === '创建了任务'){
