@@ -87,4 +87,5 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private List<UserEntity> joinInfo;
 
+
 }

@@ -24,8 +24,8 @@
 		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<!--查询参与者-->
-		<collection property="joinInfo" column="{member_ids=member_ids}" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+		<collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
+					 select = "com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
@@ -255,7 +255,7 @@
 			</if>
 		</set>
 
-		WHERE schedule_id = #{id}
+		WHERE schedule_id = #{scheduleId}
 
 	</update>
 

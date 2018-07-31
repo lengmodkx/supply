@@ -3,185 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/schedule_temp.css}" href="../static/css/schedule_temp.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_2w226gygtpg.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
 </head>
 <body>
-<!--编辑日程 弹框-->
-<form class="edit-scheduling boxsizing layui-form">
-    <div class="edit-scheduling-title">编辑日程
-        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
-    </div>
-    <input type="hidden" th:value="${schedule.scheduleId}" class="scheduleId"/>
-    <textarea th:name="scheduleName" th:text="${schedule.scheduleName}" placeholder="设计修改任务界面" class="layui-textarea"></textarea>
-    <div class="begin-time abox">
-        <input type="hidden" th:name="startTimeTemp" id="startTimeTemp" th:value="${startTimeTemp}"/>
-        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
-        <input type="text" class="layui-input" id="beginTimes" placeholder="设置开始时间">
-    </div>
-    <div class="over-time abox">
-        <input type="hidden" th:name="endTimeTemp" id="endTimeTemp" th:value="${endTimeTemp}"/>
-        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}" />
-        <input type="text" class="layui-input" id="overTimes" placeholder="设置截止时间">
-    </div>
-    <div class="no-repeat abox">
-        <img src="../static/image/norepeat.png" th:src="@{/image/norepeat.png}" />
-        <select name="repeat" lay-verify="">
-            <option value="repeat-no" th:checked="${schedule.repeat=='不重复'}">不重复</option>
-            <option value="repeat-day" th:checked="${schedule.repeat=='每天重复'}">每天重复</option>
-            <option value="repeat-week" th:checked="${schedule.repeat=='每周重复'}">每周重复</option>
-            <option value="repeat-mouth" th:checked="${schedule.repeat=='每月重复'}">每月重复</option>
-            <option value="repeat-year" th:checked="${schedule.repeat=='每年重复'}">每年重复</option>
-            <option value="repeat-workday" th:checked="${schedule.repeat=='工作日重复'}">工作日重复</option>
-        </select>
-    </div>
-    <div class="no-remand abox">
-        <img src="../static/image/noremand.png" th:src="@{/image/noremand.png}" />
-        <select name="remind" lay-verify="">
-            <option value="remand-no" th:checked="${schedule.remind=='不提醒'}">不提醒</option>
-            <option value="remand-over" th:checked="${schedule.remind=='任务截止时提醒'}">任务截止时提醒</option>
-            <option value="remand-begin" th:checked="${schedule.remind=='任务开始时提醒'}">任务开始时提醒</option>
-        </select>
-    </div>
-    <div class="heng-line"></div>
-    <p class="cyz">参与者</p>
-    <div class="work-people boxsizing clearfix">
-        <div class="one-work-people" th:each="user:${schedule.joinInfo}" th:value="${user.id}">
-            <input type="hidden" id="memberId" th:value="${user.id}" th:name="memberId"/>
-            <img src="../static/image/add.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
-            <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+    <div class="modal-detail layui-form">
+    <section class="detail-content">
+        <div class="detail-header">
+            <span class="project_name">管控平台xxxxxx</span>
+            <div class="detail-coo">
+                <i class="layui-icon layui-icon-down" style="color: #e5e5e5;"></i>
+                <i class="layui-icon layui-icon-close" style="color: #e5e5e5;margin-left: 15px;"></i>
+            </div>
+            <div class="detail-title-wrap">
+                <div class="detail-title-input attr-input" data-attr="title" placeholder="日程标题" contenteditable="">sssss</div>
+            </div>
+            <div class="detail-handler-set">
+                <div class="starttime">
+                    <h6 class="detail-handler-tips">开始时间</h6>
+                    <p class="detail-handler-content">12月13号 8:10</p>
+                </div>
+                <div class="endtime">
+                    <h6 class="detail-handler-tips">结束时间</h6>
+                    <p class="detail-handler-content">12月13号 8:10</p>
+                </div>
+                <div class="isallday layui-form">
+                    <h6 class="detail-handler-tips">全天</h6>
+                    <input type="checkbox" name="" lay-skin="primary" class="detail-handler-content">
+                </div>
+                <div class="remind_repeat">
+                    <div class="no-repeat">
+                        <i class="iconfont icon-zhongfubofang"></i>
+                        <select name="repeat" lay-verify="" lay-filter = "repeat">
+                            <option value="不重复" th:selected="${schedule.repeat == '不重复'}" th:text="${schedule.repeat}">不重复</option>
+                            <option value="每天重复" th:selected ="${schedule.repeat == '每天重复'}">每天重复</option>
+                            <option value="每周重复" th:selected ="${schedule.repeat == '每周重复'}" >每周重复</option>
+                            <option value="每月重复" th:selected="${schedule.repeat == '每月重复'}">每月重复</option>
+                            <option value="每年重复" th:selected="${schedule.repeat == '每年重复'}" >每年重复</option>
+                            <option value="工作日重复" th:selected="${schedule.repeat == '工作日重复'}" >工作日重复</option>
+                        </select>
+                    </div>
+                    <div class="no-remand ">
+                        <i class="iconfont icon-tixing"></i>
+                        <select name="remand" lay-verify="" lay-filter = "remind">
+                            <option value="不提醒" th:selected="${schedule.remind == '不提醒'}" >不提醒</option>
+                            <option value="任务开始时提醒" th:selected="${schedule.remind == '任务开始时提醒'}">任务开始时提醒</option>
+                            <option value="任务截止时提醒" th:selected="${schedule.remind == '任务截止时提醒'}" >任务截止时提醒</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="add-work-people" th:onclick="'javascript:addPeople(\''+${project.projectId}+'\')'">
-            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+
+        <div class="detail-middle boxsizing">
+            <div class="style-boxs boxsizing">
+                <div class="left-boxs">
+                    <i class="iconfont icon-didian"></i>
+                    <span>地点</span>
+                </div>
+                <div class="right-boxs">
+                    <div class="will-add boxsizing dd-will-add">待添加</div>
+                    <div class="add-input-box" style="display: none">
+                        <input class="boxsizing" type="text" placeholder="待添加">
+                        <div class="sure-btn">确定</div>
+                        <div class="cancel-btn">取消</div>
+                    </div>
+                </div>
+            </div>
+            <div class="style-boxs boxsizing">
+                <div class="left-boxs">
+                    <i class="iconfont icon-beizhu" style="font-size: 14px"></i>
+                    <span>备注</span>
+                </div>
+                <div class="right-boxs">
+                    <div class="will-add boxsizing">待添加</div>
+                </div>
+            </div>
+            <div class="style-boxs boxsizing">
+                <div class="left-boxs">
+                    <i class="iconfont icon-biaoqian1" ></i>
+                    <span>标签</span>
+                </div>
+                <div class="right-boxs">
+                    <div class="will-add boxsizing">待添加</div>
+                </div>
+            </div>
+
+            <div class="a-line"></div>
+            <div class="guanlian combox">
+                <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
+                <span>关联内容</span>
+            </div>
+            <div class="add-guanlian combox">
+                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                <span>添加关联</span>
+            </div>
+
+            <div id = "bind">
+                <!--关联 部分-->
+                <div class="related-box">
+                    <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
+                    <ul class="related-rw">
+                        <li class="boxsizing data-info"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
+                            <div class="check-box" th:value="${task.taskName}">
+                                <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
+                            </div>
+                            <div class="related-rw-info">
+                                <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
+                                <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
+                                <span th:text="${task.taskName}"></span>
+                            </div>
+                            <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
+                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                            <!--取消关联框-->
+                            <div class="related-menu" style="display: none">
+                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                <div class="related-menu-title">关联菜单</div>
+                                <ul>
+                                    <!--<li class="boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                    <!--<span>复制链接</span>-->
+                                    <!--</li>-->
+                                    <li class="boxsizing cancle" th:data-id="${schedule.scheduleId}" th:data-binding-id="${task.taskId}">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                        <span>取消关联</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <!--文件-->
+                    <div class="related-wj-wrap" th:style="'display:' + @{(${bindingVo.fileList != null} ? 'block':'none')}">
+                        <div class="flex-box">文件 <span></span></div>
+                        <ul class="related-wj">
+                            <li class="boxsizing data-info" th:each="file:${bindingVo.fileList}" th:data-id = "${file.fileId}">
+                                <div class="related-wj-info over-hidden">
+                                    <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
+                                    <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'})"/>
+                                    <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '..doc'}"/>
+                                    <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.docx'}"/>
+                                    <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xls'}"/>
+                                    <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.xlsx'}"/>
+                                    <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pptx'}"/>
+                                    <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.ppt'}"/>
+                                    <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
+                                    <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
+                                    <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
+                                    <img class="folderFile" th:src="@{/image/defaultFile.png}" th:th:unless="${file.ext eq '.rar'} or ${file.ext eq '.png'} or ${file.ext eq '.jpg'} or ${file.ext eq '.jpeg'} or ${file.ext eq '..doc'} or ${file.ext eq '.docx'} or ${file.ext eq '.xls'} or ${file.ext eq '.xlsx'} or ${file.ext eq '.pptx'} or ${file.ext eq '.ppt'} or ${file.ext eq '.zip'} or ${file.ext eq '.rar'} or ${file.ext eq '.pdf'}"/>
+                                    <span th:text = "${file.fileName}" ></span>
+                                </div>
+                                <div class="related-rw-describe over-hidden" th:text="${file.project.projectName}"></div>
+                                <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                <!--取消关联框-->
+                                <div class="related-menu" style="display: none">
+                                    <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                    <div class="related-menu-title">关联菜单</div>
+                                    <ul>
+                                        <!--<li class="boxsizing">-->
+                                        <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                        <!--<span>复制链接</span>-->
+                                        <!--</li>-->
+                                        <li class="boxsizing cancle" th:data-id="${schedule.scheduleId}" th:data-binding-id="${file.fileId}">
+                                            <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                            <span>取消关联</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!--日程-->
+                    <div class="related-rc-wrap" th:style="'display:' + @{(${bindingVo.scheduleList != null} ? 'block':'none')}">
+                        <div class="flex-box">日程 <span></span></div>
+                        <ul class="related-rc">
+                            <li class="boxsizing data-info" th:data-id = "${schedule.scheduleId}"  th:each="schedule:${bindingVo.scheduleList}" >
+                                <div class="related-rc-top">
+                                    <div class="related-rc-info">
+                                        <i class="layui-icon layui-icon-date img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                        <span th:text="${schedule.scheduleName}"></span>
+                                    </div>
+                                    <div class="related-rw-describe over-hidden" th:text="${schedule.project.projectName}"></div>
+                                    <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                </div>
+                                <div class="related-rc-down">
+                                    <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
+                                    <span>—</span>
+                                    <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
+                                </div>
+                                <div class="related-menu" style="display: none">
+                                    <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                    <div class="related-menu-title">关联菜单</div>
+                                    <ul>
+                                        <!--<li class="boxsizing">-->
+                                        <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                        <!--<span>复制链接</span>-->
+                                        <!--</li>-->
+                                        <li class="boxsizing cancle" th:data-id="${schedule.scheduleId}" th:data-binding-id="${schedule.scheduleId}">
+                                            <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                            <span>取消关联</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!--分享-->
+                    <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
+                        <div class="flex-box" >分享 <span></span></div>
+                        <ul class="related-fx">
+                            <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
+                                <div class="related-rc-top">
+                                    <div class="related-rc-info">
+                                        <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                        <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
+                                        <span th:text="${share.title}"></span>
+                                    </div>
+                                    <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
+                                    <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
+                                </div>
+                                <!--<div class="related-rc-down">-->
+                                <!--<span>2018-12-25 12:00</span>-->
+                                <!--<span>—</span>-->
+                                <!--<span>2018-12-25 12:00</span>-->
+                                <!--</div>-->
+                                <div class="related-menu" style="display: none">
+                                    <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                    <div class="related-menu-title">关联菜单</div>
+                                    <ul>
+                                        <!--<li class="boxsizing">-->
+                                        <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                        <!--<span>复制链接</span>-->
+                                        <!--</li>-->
+                                        <li class="boxsizing cancle" th:data-id="${schedule.scheduleId}" th:data-binding-id="${share.id}">
+                                            <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                            <span>取消关联</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="float: right">
-            <a href="https://zoom.us/start/videomeeting" target="_blank">video</a>
+
+        <div class="bj-box boxsizing">
+            <p class="cyz">参与者</p>
+            <div class="work-people boxsizing clearfix" id = "participate" >
+                <!--<div class="one-work-people" th:if="${task.executor != ''}">-->
+                <!--<img src="../static/image/add.png" th:value="${task.executor}"  th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />-->
+                <!--<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>-->
+                <!--</div>-->
+                <div class="one-work-people" th:each="joininfo:${schedule.joinInfo}" th:id="${joininfo.id}">
+                    <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
+                    <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
+                </div>
+                <div class="add-work-people">
+                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+                </div>
+            </div>
+            <div class="a-line"></div>
+            <div class="state">
+                <ul id = "log">
+                    <!--<li class="combox" th:each="tasklog:${taskLog}">-->
+                        <!--<img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />-->
+                        <!--<span th:text="${tasklog.content}">11</span>-->
+                        <!--<div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}">22</div>-->
+                    <!--</li>-->
+                </ul>
+            </div>
+        </div>
+    </section>
+        <div class="publish boxsizing">
+            <textarea id="chat" name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
+            <div class="fenge-line"></div>
+            <div class="publish-bottom">
+
+                <div class="publish-btn">发布</div>
+            </div>
+            <!--上传文件框-->
+            <div class="fujian-box boxsizing" style="display: none">
+                <div class="fujian-box-title boxsizing">
+                    添加附件
+                    <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+                </div>
+                <div class="zj-up">
+                    <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>直接上传</span>
+                </div>
+                <div class="xian"></div>
+                <div class="select-up">
+                    <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>从文件库选择</span>
+                </div>
+                <div class="xian"></div>
+                <div class="fujian-box-bottom boxsizing">
+                    <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
+                    <div class="add-fujian">添加</div>
+                </div>
+            </div>
+
         </div>
     </div>
-    <div class="heng-line"></div>
-    <div class="edit-scheduling-ok">保存</div>
-</form>
+
+    <!--人员 参与者 弹框-->
+    <div class="people boxsizing" style="display: none">
+        <input type="text" name="" placeholder="搜索" class="layui-input">
+        <div class="peoples">
+            <p id = "titles">参与者</p>
+            <div id = "executor" class="special-executor">
+
+            </div>
+            <p>推荐</p>
+            <div id = "noExecutor">
+
+            </div>
+            <!--<div class="add-new-people">-->
+            <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
+            <!--<span>邀请新成员</span>-->
+            <!--</div>-->
+        </div>
+        <div class="people-ok">确定</div>
+    </div>
+
+
+
+
+
+
+
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script th:inline="javascript">
-    var startTime = [[${startTime}]];
-    var endTime = [[${endTime}]];
-    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-    var scheduleId = $('scheduleId').val();
-
+<script th:src="@{/js/sockjs.js}"></script>
+<script th:src="@{/js/stomp.js}"></script>
+<script th:src="@{/js/schedule.js}" src="../static/js/schedule.js"></script>
+<script>
     layui.use('form', function(){
         var form = layui.form;
-        form.on('switch(switch-filter)', function(data){
-            console.log(data.elem.checked); //开关是否开启，true或者false
-            if (data.elem.checked) {
-                $(".who-can-see").text("仅自己可见")
-            }else {
-                $(".who-can-see").text("所有成员可见")
-            }
-        });
-    });
-    layui.use('element', function(){
-        var element = layui.element;
 
     });
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#beginTimes', //指定元素
-            type:'datetime',
-            format:'yyyy-MM-dd HH:mm',
-            value: startTime,
-            isInitValue: true,
-            done: function(value, date, endDate){
-                $("#startTimeTemp").val(new Date(value).getTime());
-            }
-        });
-        laydate.render({
-            elem: '#overTimes', //指定元素
-            type:'datetime',
-            format:'yyyy-MM-dd HH:mm',
-            value:endTime,
-            isInitValue: true,
-            done: function(value, date, endDate){
-                $("#endTimeTemp").val(new Date(value).getTime());
-            }
-        });
+    $(".dd-will-add").click(function () {
+        $(".add-input-box").slideDown();
+        $(this).hide();
     });
-    
-    $(".close-tk").click(function () {
-        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        parent.layer.close(index); //再执行关闭
-    })
-
-
-    //添加人员 弹框
-    function addPeople(projectId) {
-        console.log("xxxxxxxxxx")
-        layui.use('layer', function(){
-            var layer = layui.layer;
-            layer.open({
-                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                title: false, //标题
-                area:['252px','360px'],
-                fixed: true,
-                shadeClose: true,
-                closeBtn: 0,
-                shade: [0.1, '#fff'],
-                anim: 1,  //动画 0-6
-                content: "/schedule/searchPeople.html?projectId="+projectId
-            });
+    $(".cancel-btn").click(function () {
+        $(".add-input-box").slideUp(200,function () {
+            $(".will-add").show()
         });
-    }
 
+    });
+</script>
+
+<script th:inline="javascript">
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    var scheduleId = [[${schedule.scheduleId}]];
+    var projectId = [[${schedule.projectId}]];
     /**
-     * 添加添加选择完成后的参与者小头像
-     * @param id 参与者id
-     * @param name 参与者名称
-     * @param img 参与者头像
+     * 关联信息弹框
      */
-    function addMember(id,name,img){
-        var content = '';
-        if(id !== ''){
-            for(var i = 0;i < id.length;i++){
-                content += '<div  class="one-work-people">'+
-                    '<input type="hidden" value = "' + id[i] + '" name="memberId"/>'+
-                    '<img src="'+ img[i] +'">'+
-                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
-                    '</div>';
-            }
-        }
-        $(".add-work-people").before(content);
-    }
-
-    //移除任务的参与者
-    $("html").on("click",".remove-work-people",function () {
-        var id = $(this).parent().attr("value");
-        var args = {"scheduleId":scheduleId,"uId":id};
-        var url = "/schedule/removeScheduleMember";
-        $(this).parent().remove();
-        $.post(url,args,function (data) {
-            //getLog(data.taskLog);
-            //移除完成
-        },"json");
+    $('.add-guanlian').click(function (e) {
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area:['800px','540px'],
+            fixed: true,
+            shadeClose: true,
+            closeBtn: 0,
+            shade:  [0.1, 'black'],
+            anim: 1,  //动画 0-6
+            content: ['/binding/relevance.html?scheduleId='+scheduleId,'no']
+        });
     });
 
-    $('edit-scheduling-ok').click(function () {
-        var params = $('.edit-scheduling').serialize();
-        $.post("/schedule/addschedule",params,function (data) {
-            if(data.result===1){
-                parent.layer.msg(data.msg,{icon:1});
-            }else{
-                parent.layer.msg("更新失败",{icon:5});
+    // 建立连接对象（还未发起连接）
+    var socket = new SockJS('/webSocketServer');
+    // 获取 STOMP 子协议的客户端对象
+    var stompClient = Stomp.over(socket);
+
+    // 向服务器发起websocket连接并发送CONNECT帧
+    stompClient.connect({},
+        function connectCallback(frame) {
+            // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
+            console.log("连接成功");
+            subscribe();
+        },
+        function errorCallBack(error) {
+            // 连接失败时（服务器响应 ERROR 帧）的回调方法
+            console.log("连接失败");
+        }
+    );
+    //发送消息
+    $('.publish-btn').click(function (e) {
+        var chat = $('#chat').val();
+        var args = {"publicId":taskId,"content":chat}
+        $.post("/task/chat",args,function (data) {
+        },"json");
+        var messageJson = JSON.stringify({ "name": chat });
+        stompClient.send("/app/sendTest",{"taskId":taskId}, messageJson);
+        $('#chat').val('');
+        $('#chat').focus();
+        var scrollHeight = $('.revise-task').prop("scrollHeight");
+        $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+    });
+
+
+
+    //订阅消息
+    function subscribe() {
+        stompClient.subscribe('/topic/'+scheduleId, function (response) {
+            var returnData = JSON.parse(response.body);
+            var schedule = JSON.parse(returnData.responseMessage);
+            if(schedule.type === '发送消息'){
+                getLog(taskLog.object.taskLog);
+                var scrollHeight = $('.revise-task').prop("scrollHeight");
+                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+            }
+            if(schedule.type === '关联'){
+                addBindingStr(schedule.object.bindingInfo,schedule.object.publicType,schedule.object.bId);
+            }
+            if(schedule.type == '更新了参与者'){
+                getLog(schedule.object.log);
+                if(schedule.object.reduce1 != ''){
+                    for(var i = 0;i < schedule.object.reduce1.length;i++){
+                        $('.one-work-people').each(function () {
+                            if($(this).attr('data-id') == schedule.object.reduce1[i]){
+                                $(this).remove();
+                            }
+                        });
+                    }
+                }
+                if(schedule.object.adduser != ''){
+                    var content = '';
+                    for(var i = 0;i < schedule.object.adduser.length;i++){
+                        content +=
+                            '<div class="one-work-people" data-id = '+ schedule.object.adduser[i].id +'>'+
+                            '<img src="'+IMAGE_SERVER + schedule.object.adduser[i].userInfo.image + '" data = ' + schedule.object.adduser[i].userName +'>'+
+                            '<i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>'+
+                            '</div>';
+                    }
+                    $('.add-work-people').before(content);
+                }
+            }
+
+            if(schedule.type == '取消了关联'){
+                $('#bind li.data-info ').each(function(){
+                    if($(this).attr('data-id') == schedule.object.bId){
+                        $(this).remove();
+                        if($('.related-rw li.data-info').length == 0){
+                            $('.related-rw-wrap').hide();
+                        }
+                        if($('.related-rc li.data-info').length == 0){
+                            $('.related-rc-wrap').hide();
+                        }
+                        if($('.related-wj li.data-info').length == 0){
+                            $('.related-wj-wrap').hide();
+                        }
+                        if($('.related-fx li.data-info').length == 0){
+                            $('.related-fx-wrap').hide();
+                        }
+                    }
+                });
             }
         });
-        layer.closeAll();
-        return false;
-    });
+    }
 
+    $("body").on("click",".show-cancel-related",function (e) {
+        $(this).parents("li").find(".related-menu").slideToggle();
+
+        e.stopPropagation();
+    });
+    $("body").on("click",".close-related-menu",function () {
+        $(this).parents(".related-menu").slideUp();
+    });
 
 </script>
 </html>

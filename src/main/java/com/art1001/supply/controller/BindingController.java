@@ -25,6 +25,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -160,12 +161,13 @@ public class BindingController {
 
     /**
      * @param publicId 当前绑定信息的 id
-     * @param bindingId 被绑定的信息id
+     * @param bindingId
+     * @param projectId 项目id (取消分享的关联才会用到)
      * @return
      */
     @RequestMapping("/deleteBinding")
     @ResponseBody
-    public JSONObject deleteBinding(String publicId,String bindingId){
+    public JSONObject deleteBinding(String publicId,String bindingId,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             bindingService.deleteBindingById(publicId,bindingId);
@@ -175,7 +177,12 @@ public class BindingController {
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("bId",bindingId);
             taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            //如果项目id 不为空 则是分享页面的取消关联   所以要推送至 项目的频道
+            if(!StringUtils.isEmpty(projectId)){
+                messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else{
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
         }catch (Exception e){
             jsonObject.put("result",0);
             jsonObject.put("msg","系统异常,关联删除失败,请重试.");
@@ -194,7 +201,7 @@ public class BindingController {
      * @return
      */
     @RequestMapping("/relevance.html")
-    public String bindpage(Model model,String taskId,String fileId,String shareId,String projectId){
+    public String bindpage(Model model,String taskId,String fileId,String shareId,String projectId,String scheduleId){
         //获取当前用户的id
         String uId = ShiroAuthenticationManager.getUserId();
         //获取当前用户参与的所有项目
@@ -205,6 +212,7 @@ public class BindingController {
         }
         model.addAttribute("projectList",projectList);
         model.addAttribute("taskId",taskId);
+        model.addAttribute("scheduleId",scheduleId);
         model.addAttribute("shareId",shareId);
         model.addAttribute("fileId",fileId);
         model.addAttribute("projectId",projectId);

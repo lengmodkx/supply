@@ -85,4 +85,11 @@ public interface ScheduleService {
 	 * @return
 	 */
 	List<Schedule> findBeforeSchedule(long currTime,String projectId,int identification);
+
+	/**
+	 * 添加或者移除参与者
+	 * @param scheduleId 日程的id
+	 * @param newJoin 新的参与者信息
+	 */
+    void addAndRemoveScheduleMember(String scheduleId, String newJoin);
 }

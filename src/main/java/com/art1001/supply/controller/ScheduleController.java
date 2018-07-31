@@ -3,16 +3,20 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +42,12 @@ public class ScheduleController extends BaseController {
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private BindingService bindingService;
+
+    @Resource
+    private UserService userService;
 
 
     @RequestMapping("/schedule.html")
@@ -75,7 +85,6 @@ public class ScheduleController extends BaseController {
         return "tk-add-calendar";
     }
 
-
     @RequestMapping("/editSchedule.html")
     public String editSchedule(@RequestParam String projectId, @RequestParam String id,Model model){
         Schedule schedule = scheduleService.findScheduleById(id);
@@ -87,6 +96,9 @@ public class ScheduleController extends BaseController {
         model.addAttribute("endTime",format.format(schedule.getEndTime()));
         model.addAttribute("endTimeTemp",format.format(schedule.getEndTime()));
         model.addAttribute("schedule",schedule);
+        //查询出日程的关联信息
+        BindingVo bindingVo = bindingService.listBindingInfoByPublicId(id);
+        model.addAttribute("bindingVo",bindingVo);
         return "tk-edit-schedule";
     }
 
@@ -197,11 +209,46 @@ public class ScheduleController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 查询出日程的全部成员信息
+     * @param scheduleId 日程id
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("findScheduleMemberInfo")
+    @ResponseBody
+    public JSONObject findScheduleMemberInfo(String scheduleId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Schedule scheduleById = scheduleService.findScheduleById(scheduleId);
+            List<UserEntity> joinInfo = userService.findManyUserById(scheduleById.getMemberIds());
+            List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
+            projectMembers = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());
+            jsonObject.put("joinInfo",joinInfo);
+            jsonObject.put("projectMembers",projectMembers);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            log.error("系统异常,数据拉取失败!");
+        }
+        return jsonObject;
+    }
 
-
-
-
-
+    @PostMapping("addAndRemoveScheduleMember")
+    @ResponseBody
+    public JSONObject addAndRemoveScheduleMember(String scheduleId, String addUserEntity){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            scheduleService.addAndRemoveScheduleMember(scheduleId, addUserEntity);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,{}",e);
+            jsonObject.put("msg","系统异常!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
 
 
 }
