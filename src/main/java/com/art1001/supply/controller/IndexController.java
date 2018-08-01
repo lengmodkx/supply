@@ -50,6 +50,12 @@ public class IndexController extends BaseController {
         return "login";
     }
 
+
+    @GetMapping("/login.html")
+    public String loginHtml() {
+        return "login";
+    }
+
     /**
      * 跳转到注册
      */

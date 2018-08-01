@@ -26,7 +26,7 @@ public class ShiroUtils {
 	/*
 	 * 登录地址：这里使用空的登录地址，是为了让程序根据contextPath自动跳转
 	 */
-	public static final String LOGIN_URL = "";
+	public static final String LOGIN_URL = "/";
 	/*
 	 * 登录地址：这里使用空的登录地址，是为了让程序根据contextPath自动跳转
 	 */
