@@ -170,7 +170,7 @@ public class TaskServiceImpl implements TaskService {
         task.setParentId("0");
         //设置任务的创建者
         task.setMemberId(id);
-
+        task.setTaskUIds(id);
         //设置该任务的初始状态
         task.setTaskStatus("未完成");
         //设置该任务是否删除 0 未删除 1 已删除

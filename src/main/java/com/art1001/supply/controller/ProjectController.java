@@ -295,7 +295,7 @@ public class ProjectController extends BaseController {
                 relation1.setCreateTime(System.currentTimeMillis());
                 relation1.setUpdateTime(System.currentTimeMillis());
                 relationService.saveRelation(relation1);
-               JSONArray taskList = object.getJSONArray("taskList");
+                JSONArray taskList = object.getJSONArray("taskList");
                 for(int j=0;j<taskList.size();j++){
                     JSONObject object1 = taskList.getJSONObject(j);
                     Task task = new Task();

@@ -149,7 +149,7 @@ public class IndexController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         // 得到是哪个页面跳转的登陆
         String refer = request.getHeader("REFERER");
-        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        String kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
         if(StringUtils.isEmpty(captcha)){
             jsonObject.put("result",0);
             jsonObject.put("msg","请输入验证码");
@@ -165,7 +165,6 @@ public class IndexController extends BaseController {
         //设置创建者姓名
         userEntity.setCreatorName(userEntity.getAccountName());
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
-        userEntity.setAccountName(userEntity.getAccountName());
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
         UserEntity user = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
         //设置添加用户的密码和加密盐
@@ -221,7 +220,7 @@ public class IndexController extends BaseController {
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
-            ShiroAuthenticationManager.setSessionAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
+            ShiroAuthenticationManager.setSessionAttribute(request.getSession().getId(), capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
@@ -244,7 +243,7 @@ public class IndexController extends BaseController {
     @PostMapping("/code")
     @ResponseBody
     public JSONObject code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
-        String kaptcha = ShiroAuthenticationManager.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        String kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(accountName)){
             jsonObject.put("result",0);

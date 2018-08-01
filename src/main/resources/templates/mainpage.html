@@ -41,18 +41,18 @@
                                    th:id="${task.taskId}">
                                   <div class="task-card">
                                       <!--//左边框线-->
-                                      <div class="task-priority bg-priority-0" th:if="${task.priority=='普通'}" th:classappend="${task.taskId}"></div>
-                                      <div class="task-priority bg-priority-1" th:if="${task.priority=='紧急'}" th:classappend="${task.taskId}"></div>
-                                      <div class="task-priority bg-priority-2" th:if="${task.priority=='非常紧急'}" th:classappend="${task.taskId}"></div>
+                                      <div class="task-priority bg-priority-0" th:if="${task.priority=='普通'}" th:classappend="priority+${task.taskId}"></div>
+                                      <div class="task-priority bg-priority-1" th:if="${task.priority=='紧急'}" th:classappend="priority+${task.taskId}"></div>
+                                      <div class="task-priority bg-priority-2" th:if="${task.priority=='非常紧急'}" th:classappend="priority+${task.taskId}"></div>
                                       <div class="task-check-box">
                                           <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
                                       <div class="task-content-set" th:data="${task.taskId}" th:data-value="${task.projectId}" >
                                           <header class="assignment-top-box boxsizing clearfix">
-                                              <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
-                                              <img class="assignment-tx" th:classappend="${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
+                                              <span class="assignment-title" th:text="${task.taskName}" th:classappend="title+${task.taskId}">设计修改任务界面</span>
+                                              <img class="assignment-tx" th:classappend="tx+${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
                                           </header>
-                                          <section class="assignment-bottom-box clearfix" th:classappend="${task.taskId}">
+                                          <section class="assignment-bottom-box clearfix" th:classappend="box+${task.taskId}">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
                                                   <img  class="remind" th:src="@{/image/zhong.png}" th:style="'opacity:' + @{(${task.remind=='不提醒'} ? '0':'1')}"/>
                                                   <img  th:style="'opacity:' + @{(${task.remarks!=null and task.remarks!=''} ? '1':'0')}" th:src="@{/image/file.png}"/>

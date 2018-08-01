@@ -34,12 +34,12 @@ stompClient.connect({},
         }
 
         if(task.type === '把任务执行者指派给了'){
-            $('.'+task.object.taskId).attr('src',IMAGE_SERVER+task.object.executorInfo.userInfo.image);
-            $('.'+task.object.taskId).css('opacity',"1");
+            $('.tx'+task.object.taskId).attr('src',IMAGE_SERVER+task.object.executorInfo.userInfo.image);
+            $('.tx'+task.object.taskId).css('opacity',"1");
         }
 
         if(task.type === '移除了执行者'){
-            $('.'+task.object.taskId).css('opacity',"0");
+            $('.tx'+task.object.taskId).css('opacity',"0");
         }
 
         if(task.type ==='添加菜单'){
@@ -49,31 +49,31 @@ stompClient.connect({},
             $('#'+task.menuId+' .relationName').html(task.menuName);
         }
         if(task.type === '更新任务名称为'){
-            $('#'+task.object.taskId+' .assignment-title').html(task.object.taskName);
+            $('.title'+task.object.taskId).html(task.object.taskName);
         }
 
         if(task.type === '更新提醒模式为'){
-            $('.'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png");
+            $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png");
         }
 
 
         if(task.type==='更新任务的重复') {
-            $('.'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
+            $('.box'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
 
 
         if(task.type==='更新任务优先级为'){
-            $('.'+task.object.taskId).removeClass('bg-priority-0');
-            $('.'+task.object.taskId).removeClass("bg-priority-1");
-            $('.'+task.object.taskId).removeClass("bg-priority-2");
+            $('.priority'+task.object.taskId).removeClass('bg-priority-0');
+            $('.priority'+task.object.taskId).removeClass("bg-priority-1");
+            $('.priority'+task.object.taskId).removeClass("bg-priority-2");
             if(task.object.priority==='普通'){
-                $('.'+task.object.taskId).addClass('bg-priority-0');
+                $('.priority'+task.object.taskId).addClass('bg-priority-0');
             }
             if(task.object.priority==='紧急'){
-                $('.'+task.object.taskId).addClass('bg-priority-1');
+                $('.priority'+task.object.taskId).addClass('bg-priority-1');
             }
             if(task.object.priority==='非常紧急'){
-                $('.'+task.object.taskId).addClass('bg-priority-2');
+                $('.priority'+task.object.taskId).addClass('bg-priority-2');
             }
         }
     });

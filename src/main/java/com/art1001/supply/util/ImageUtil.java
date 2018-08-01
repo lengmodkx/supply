@@ -16,14 +16,14 @@ public class ImageUtil {
      **/
     public static void main(String[] args) throws IOException {
         // 用户名
-        String[] names = {"q", "w", "m", "x"};
+        String[] names = {"wangyafeng", "汪亚峰", "张苗"};
         for (String name : names) {
             // 图片byte数组
             byte[] bytes = generateImg(name);
 
             // oss上传
             String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-            AliyunOss.uploadByte("upload/" + fileName, bytes);
+            AliyunOss.uploadByte("test/" + fileName, bytes);
         }
     }
 
@@ -107,6 +107,7 @@ public class ImageUtil {
                 g2.drawString(nameWritten.toUpperCase(), xAxis, 70);
             }
         }
+
         BufferedImage rounded = makeRoundedCorner(bi);
         return imageToBytes(rounded);
     }
@@ -189,4 +190,5 @@ public class ImageUtil {
         }
         return out.toByteArray();
     }
+
 }
