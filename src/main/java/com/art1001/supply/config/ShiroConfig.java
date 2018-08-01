@@ -139,9 +139,9 @@ public class ShiroConfig {
         securityManager.setCacheManager(cacheManager());
 
         CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
-        SimpleCookie simpleCookie = new SimpleCookie("SUPPLY-SID");
-        simpleCookie.setMaxAge(604800);
+        SimpleCookie simpleCookie = new SimpleCookie("rememberme");
         simpleCookie.setHttpOnly(true);
+        simpleCookie.setMaxAge(604800);
         rememberMeManager.setCipherKey(Base64.decode("ZDJGdVozbGhabVZ1Wnc9PQ=="));
         rememberMeManager.setCookie(simpleCookie);
         securityManager.setRememberMeManager(rememberMeManager);
@@ -154,12 +154,9 @@ public class ShiroConfig {
         ShiroFilterFactoryBean filter = new ShiroFilterFactoryBean();
         //shiro的核心安全接口
         filter.setSecurityManager(securityManager());
-        filter.setLoginUrl("/login.html");
+        filter.setLoginUrl("/");
         filter.setSuccessUrl("/project/project.html");
         filter.setUnauthorizedUrl("/denied.html");
-        ChainDefinitionService chainDefinitionService = new ChainDefinitionServiceImpl();
-        filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());
-
         Map<String,Filter> filtersMap = new HashMap<>();
         KickoutSessionFilter kickoutSessionFilter = new KickoutSessionFilter();
         filtersMap.put("kickout",kickoutSessionFilter);
@@ -173,6 +170,8 @@ public class ShiroConfig {
 //        sslFilter.setPort(8443);
 //        filtersMap.put("ssl",sslFilter);
         filter.setFilters(filtersMap);
+        ChainDefinitionService chainDefinitionService = new ChainDefinitionServiceImpl();
+        filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());
         return filter;
     }
 
