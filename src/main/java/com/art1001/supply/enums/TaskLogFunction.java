@@ -60,7 +60,7 @@ public enum TaskLogFunction {
         this.id = id;
     }
     private int id;
-    public int id(){
+    public int getId(){
         return this.id;
     }
 

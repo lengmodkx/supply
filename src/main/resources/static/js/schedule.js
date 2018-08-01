@@ -18,6 +18,48 @@ Date.prototype.format = function(format)
     return format;
 }
 
+
+layui.use('form', function(){
+    var form = layui.form;
+
+});
+layui.use('laydate', function(){
+    var laydate = layui.laydate;
+    laydate.render({
+        elem: '#test1',
+        type:'datetime',
+        format: 'yyyy-MM-dd HH:00:00', //可任意组合
+        done: function(value, date, endDate){
+            console.log(value); //得到日期生成的值，如：2017-08-18
+            // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+            // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            var url = "/schedule/updateScheduleStartAndEndTime";
+            var args = {"scheduleId":scheduleId,"startTime":value};
+            $.post(url,args,function(data){
+
+            });
+        }
+    });
+    laydate.render({
+        elem: '#test2',
+        type:'datetime',
+        format: 'yyyy-MM-dd HH:00:00', //可任意组合
+        done: function(value, date, endDate){
+            // console.log(value); //得到日期生成的值，如：2017-08-18
+            // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+            // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            var startTime = value;
+            var url = "/schedule/updateScheduleStartAndEndTime";
+            var args = {"scheduleId":scheduleId,"endTime":value};
+            $.post(url,args,function(data){
+
+            });
+        }
+    });
+
+});
+
+
 /**
  * 追加关联字符串
  */
@@ -316,3 +358,156 @@ function getLog(taskLogVO){
     var scrollHeight = $('#log li:nth-last-child(1)').position().top;
     $(".scroll-box").animate({scrollTop:scrollHeight}, 400);
 }
+
+/**
+ * 移除参与者
+ */
+$('html').on('click','.remove-work-people',function () {
+    var ids = [];
+    $(this).parent().siblings('.one-work-people').each(function () {
+        ids.push($(this).attr('id'));
+    });
+    var url = "/schedule/addAndRemoveScheduleMember";
+    var args = {"addUserEntity":ids.toString(),"scheduleId":scheduleId};
+    $.post(url,args,function (data) {
+        if(data.result == 0){
+            layer.msg("系统异常,操作失败!");
+        }
+    },"json");
+});
+
+
+/**
+ * 点击关联的文件
+ */
+$("html").on("click",'.related-wj li',function () {
+    location.href = "/file/fileDetail.html?fileId="+$(this).attr('data-id');
+});
+
+/**
+ * 点击关联的任务
+ */
+$("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
+    changeRenwu($(this).parent() .attr("data-id"),projectId);
+});
+
+/**
+ * 点击关联的分享
+ */
+$("html").on("click",'.related-fx li',function () {
+    layer.closeAll();
+    parent.location.href = "/share/share.html?shareId="+ $(this).attr('data-id') + "&projectId=" + projectId;
+});
+
+//修改任务 弹框界面
+function changeRenwu(taskId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
+        });
+    });
+}
+
+/**
+ * 更新任务的名称
+ */
+$('.scheduleName').blur(function () {
+    var scheduleName = $('.scheduleName').val();
+    var args = {"scheduleName":scheduleName,"scheduleId":scheduleId};
+    var url = "/schedule/updateScheduleName";
+    $.post(url,args,function (data) {
+        if(data.result == 0){
+            layer.msg(data.msg);
+        }
+    })
+});
+
+//开始时间的回调
+layui.use('laydate', function(){
+    var laydate = layui.laydate;
+
+});
+
+/**
+ * 监听重复规则的选择
+ */
+layui.use('form', function(){
+    var form = layui.form;
+    form.on('select(repeat)', function(data){
+        var url = "/schedule/updateScheduleRepeat";
+        var args = {"scheduleId":scheduleId,"repeat":data.value};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+            }
+        });
+        // console.log(data.elem); //得到select原始DOM对象
+        // console.log(data.value); //得到被选中的值
+        // console.log(data.othis); //得到美化后的DOM对象
+    });
+});
+
+/**
+ * 监听提醒模式的选择
+ */
+layui.use('form', function(){
+    var form = layui.form;
+    form.on('select(remind)', function(data){
+        var url = "/schedule/updateScheduleRemind";
+        var args = {"scheduleId":scheduleId,"remind":data.value};
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+            }
+        });
+        // console.log(data.elem); //得到select原始DOM对象
+        // console.log(data.value); //得到被选中的值
+        // console.log(data.othis); //得到美化后的DOM对象
+    });
+
+    /**
+     * 标记为全天 或者取消全天
+     */
+    form.on('checkbox(isAllday)', function(data){
+        var url = "/schedule/isAllday";
+        var args = {"scheduleId":scheduleId,"isAllday":data.elem.checked};
+        $.post(url,args,function(data){
+            if(data.result == 0){
+                layer.msg(data.msg);
+            }
+        });
+        // console.log(data.elem); //得到checkbox原始DOM对象
+        // console.log(data.elem.checked); //是否被选中，true或者false
+        // console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+        // console.log(data.othis); //得到美化后的DOM对象
+    });
+});
+
+/**
+ * 更新日程的地点
+ */
+$('.sure-btn').click(function () {
+    var url = "/schedule/updateScheduleAddress";
+    var args = {"scheduleId":scheduleId,"address":$('.address').val()};
+    $.post(url,args,function(data){
+        $(".add-input-box").slideUp(200,function () {
+            $(".will-add").show()
+        });
+        if(data.result == 0){
+            layer.msg(data.msg);
+        }
+
+    });
+});
+
+
+

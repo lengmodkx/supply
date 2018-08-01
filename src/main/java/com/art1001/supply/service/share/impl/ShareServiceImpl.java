@@ -194,7 +194,7 @@ public class ShareServiceImpl implements ShareService {
 		    share.setUids(addUserEntity);
 		    share.setUpdateTime(System.currentTimeMillis());
 		    shareMapper.updateShare(share);
-			log = logService.saveLog(shareId,logContent.toString(),2);
+			log = logService.saveLog(shareId,logContent.toString(),4);
 
 			//推送信息
 			FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());

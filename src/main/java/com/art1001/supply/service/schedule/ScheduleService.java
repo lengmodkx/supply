@@ -2,6 +2,7 @@ package com.art1001.supply.service.schedule;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 
@@ -39,7 +40,7 @@ public interface ScheduleService {
 	 * 
 	 * @param schedule
 	 */
-	public void updateSchedule(Schedule schedule);
+	public Log updateSchedule(Schedule schedule);
 
 	/**
 	 * 保存schedule数据
@@ -92,4 +93,13 @@ public interface ScheduleService {
 	 * @param newJoin 新的参与者信息
 	 */
     void addAndRemoveScheduleMember(String scheduleId, String newJoin);
+
+	/**
+	 * 更新日程的开始时间或者结束时间
+	 * @param scheduleId  日程id
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @return
+	 */
+    Log updateScheduleStartAndEndTime(String scheduleId, String startTime, String endTime);
 }

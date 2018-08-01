@@ -1037,7 +1037,7 @@ public class FileController extends BaseController {
     }
 
     /**
-     * 任务的评论
+     * 文件的评论
      * @param fileId 文件的id
      * @param content 文件的 评论 内容
      * @return

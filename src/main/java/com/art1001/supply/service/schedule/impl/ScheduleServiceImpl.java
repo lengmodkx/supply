@@ -9,6 +9,7 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
@@ -17,7 +18,9 @@ import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -79,8 +82,42 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 * @param schedule
 	 */
 	@Override
-	public void updateSchedule(Schedule schedule){
+	public Log updateSchedule(Schedule schedule){
+		StringBuilder content = new StringBuilder();
+		//更新开始时间  结束时间
+		if(!StringUtils.isEmpty(schedule.getScheduleName())){
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.D.getName());
+		}
+
+		//更新重复规则
+		if(!StringUtils.isEmpty(schedule.getRepeat())){
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.E.getName());
+		}
+
+		//更新提醒模式
+		if(!StringUtils.isEmpty(schedule.getRemind())){
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.F.getName());
+		}
+
+		//更新日程地址
+		if(!StringUtils.isEmpty(schedule.getAddress())){
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.G.getName());
+		}
+		//更新日程全天模式
+		if(schedule.getIsAllday() != null) {
+			if (schedule.getIsAllday() == 0) {
+				content.append(ScheduleLogFunction.J.getName()).append(" ").append(ScheduleLogFunction.I.getName());
+			} else {
+				content.append(ScheduleLogFunction.J.getName()).append(" ").append(ScheduleLogFunction.H.getName());
+			}
+		}
+		schedule.setUpdateTime(System.currentTimeMillis());
+		Log log = new Log();
+		if(!StringUtils.isEmpty(content.toString())){
+			log = logService.saveLog(schedule.getScheduleId(),content.toString(),3);
+		}
 		scheduleMapper.updateSchedule(schedule);
+		return log;
 	}
 	/**
 	 * 保存schedule数据
@@ -208,5 +245,32 @@ public class ScheduleServiceImpl implements ScheduleService {
 			//推送至文件的详情界面
 			messagingTemplate.convertAndSend("/topic/"+scheduleId,new ServerMessage(JSON.toJSONString(filePushType)));
 		}
+	}
+
+	/**
+	 * 更新日程的开始时间或者结束时间
+	 * @param scheduleId  日程id
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @return 操作的日志信息
+	 */
+	@Override
+	public Log updateScheduleStartAndEndTime(String scheduleId, String startTime, String endTime) {
+		Schedule schedule = new Schedule();
+		schedule.setScheduleId(scheduleId);
+		StringBuilder content = new StringBuilder();
+		//日期字符串转为毫秒数
+		if(!StringUtils.isEmpty(startTime)){
+			schedule.setStartTime(DateUtils.strToLong(startTime));
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.B.getName());
+		}
+		if(!StringUtils.isEmpty(endTime)){
+			schedule.setEndTime(DateUtils.strToLong(endTime));
+			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.C.getName());
+		}
+		schedule.setUpdateTime(System.currentTimeMillis());
+		scheduleMapper.updateSchedule(schedule);
+		Log log = logService.saveLog(scheduleId, content.toString(), 3);
+		return log;
 	}
 }

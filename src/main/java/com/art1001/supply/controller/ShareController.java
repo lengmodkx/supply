@@ -178,11 +178,11 @@ public class ShareController extends BaseController {
             share.setMemberId(userEntity.getId());
             share.setMemberImg(userEntity.getUserInfo().getImage());
             share.setMemberName(userEntity.getUserName());
+            share.setUids(userEntity.getId());
             shareService.saveShare(share);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "保存成功");
-
-        }catch (Exception e){
+        } catch (Exception e){
             log.error("保存分享异常, {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "保存失败");
@@ -389,7 +389,7 @@ public class ShareController extends BaseController {
             log.setLogType(1);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             log.setPublicId(shareId);
-            log.setLogFlag(2);
+            log.setLogFlag(4);
             log.setCreateTime(System.currentTimeMillis());
             Log log1 = logService.saveLog(log);
             jsonObject.put("result",1);

@@ -15,8 +15,13 @@ public class TaskPushType {
 
     private String type;
     private Map<String,Object> object;
+
     public TaskPushType(String type){
         this.type = type;
+    }
+
+    public TaskPushType(){
+
     }
 }
 

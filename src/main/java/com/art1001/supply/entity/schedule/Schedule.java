@@ -87,5 +87,10 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private List<UserEntity> joinInfo;
 
+	/**
+	 * 是否是全天
+	 */
+	private Integer isAllday;
+
 
 }

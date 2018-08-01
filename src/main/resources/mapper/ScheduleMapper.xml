@@ -17,6 +17,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
+		<result column="is_allday" property="isAllday" jdbcType="INTEGER" />
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -48,7 +49,8 @@
 				create_time,
 				update_time,
 				member_id,
-				member_ids
+				member_ids,
+				is_allday
 	</sql>
 
 	<sql id="whereStatement">
@@ -157,6 +159,9 @@
 			<if test="memberIds != null and memberIds != ''">
 				member_ids,
 			</if>
+			<if test="isAllday != null and isAllday != ''">
+				is_allday,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -202,6 +207,9 @@
 			</if>
 			<if test="memberIds != null and memberIds != ''">
 				#{memberIds},
+			</if>
+			<if test="isAllday != null and isAllday != ''">
+				#{isAllday},
 			</if>
 		</trim>
 
@@ -252,6 +260,9 @@
 			</if>
 			<if test="memberIds != null and memberIds != ''">
 				member_ids = #{memberIds},
+			</if>
+			<if test="isAllday != null">
+				is_allday = #{isAllday},
 			</if>
 		</set>
 

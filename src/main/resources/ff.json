@@ -139,5 +139,62 @@
     "taskName": "方案成果汇报",
     "remarks": "项目负责人预约设计委托方负责人，将汇报时间通知设计师，进行设计方案的汇报。设计方案成果报与委托方审核，委托方在签收单签字确认"
   }]
-}
+},
+  {
+    "menuName": "竣工验收",
+    "taskList": [{
+      "taskName": "项目拍照及归档",
+      "remarks": ""
+    },{
+      "taskName": "向委托方提供项目结算文件，申请结算",
+      "remarks": ""
+    },{
+      "taskName": "项目款项结清确认",
+      "remarks": ""
+    },{
+      "taskName": "发票开具",
+      "remarks": ""
+    }
+    ]
+  },
+  {
+    "menuName": "施工方",
+    "taskList": [{
+      "taskName": "拆改工程",
+      "remarks": ""
+    },
+      {
+        "taskName": "水电工程",
+        "remarks": ""
+      },{
+        "taskName": "拆改工程",
+        "remarks": ""
+      }
+    ,{
+        "taskName": "铺装工程",
+        "remarks": ""
+      }
+    ,{
+        "taskName": "定制工程",
+        "remarks": ""
+      }
+    ,{
+        "taskName": "安装工程",
+        "remarks": ""
+      }
+    ,{
+        "taskName": "收尾工程",
+        "remarks": ""
+      }]
+  },
+  {
+    "menuName": "业主",
+    "taskList": [{
+    }]
+  },
+  {
+    "menuName": "监理方",
+    "taskList": [{
+    }]
+  }
 ]
