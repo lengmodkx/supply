@@ -57,7 +57,7 @@ stompClient.connect({},
         }
 
 
-        if(taskLog.type==='更新任务的重复') {
+        if(task.type==='更新任务的重复') {
             $('.'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
 

@@ -347,8 +347,40 @@ public class FileUtils {
         dir.delete();// 删除目录本身
     }
 
+    public static String readFileContent(InputStream stream) throws Exception{
+        BufferedReader bufferReader = null;
+        InputStreamReader inputStreamReader = null;
+        try {
+            java.io.File targetFile = new java.io.File("ff.json");
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, targetFile);
+            StringBuilder localStrBulider = new StringBuilder();
+            inputStreamReader = new InputStreamReader(new FileInputStream(targetFile), "utf-8");
+            bufferReader = new BufferedReader(inputStreamReader);
+            String lineStr;
+            while((lineStr = bufferReader.readLine()) != null) {
+                localStrBulider.append(lineStr);
+            }
+            return localStrBulider.toString();
+
+        }finally {
+            if(bufferReader!=null){
+                bufferReader.close();
+            }
+            if(inputStreamReader!=null){
+                inputStreamReader.close();
+            }
+        }
+    }
+
+
+
+
+
+
     public static void main(String[] args) {
         // 删除文件夹
         FileUtils.delFolder("D:\\project\\supply\\temp\\1530522000382");
     }
+
+
 }

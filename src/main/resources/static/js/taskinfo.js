@@ -18,7 +18,28 @@ Date.prototype.format = function(format)
     return format;
 }
 var zxz=false;
+$("body").on("click",".show-cancel-related",function (e) {
+    $(this).parents("li").find(".related-menu").slideToggle();
 
+    e.stopPropagation();
+});
+$("body").on("click",".close-related-menu",function () {
+    $(this).parents(".related-menu").slideUp();
+});
+
+$('.add-guanlian').click(function (e) {
+    parent.layer.open({
+        type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        title: false, //标题
+        area:['800px','540px'],
+        fixed: true,
+        shadeClose: true,
+        closeBtn: 0,
+        shade:  [0.1, 'black'],
+        anim: 1,  //动画 0-6
+        content: ['/binding/relevance.html?taskId='+taskId,'no']
+    });
+});
 layui.use('form', function() {
     var form = layui.form;
     // //监听提交

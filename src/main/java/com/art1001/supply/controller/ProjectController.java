@@ -15,10 +15,8 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectFuncService;
@@ -27,30 +25,22 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.omg.CORBA.OBJ_ADAPTER;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static jodd.core.JoddCore.encoding;
 
 /**
  * 项目控制器
@@ -289,19 +279,9 @@ public class ProjectController extends BaseController {
             relationService.saveRelation(relation);
 
             InputStream stream = getClass().getClassLoader().getResourceAsStream("ff.json");
-            java.io.File targetFile = new java.io.File("ff.json");
-            FileUtils.copyInputStreamToFile(stream, targetFile);
-            StringBuilder localStrBulider = new StringBuilder();
-            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(targetFile), "utf-8");
-            BufferedReader bufferReader = new BufferedReader(inputStreamReader);
-            String lineStr;
-            while((lineStr = bufferReader.readLine()) != null) {
-                localStrBulider.append(lineStr);
-            }
-            bufferReader.close();
-            inputStreamReader.close();
+            String content = FileUtils.readFileContent(stream);
 
-            JSONArray jsonArray = JSON.parseArray(localStrBulider.toString());
+            JSONArray jsonArray = JSON.parseArray(content);
 
             for (int i=0;i<jsonArray.size();i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
