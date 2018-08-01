@@ -56,4 +56,6 @@ public class UserInfoEntity implements Serializable {
 	 */
 	private Date createTime;
 
+	private String job;
+
 }

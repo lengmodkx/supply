@@ -153,7 +153,20 @@ $(function () {
     });
 
 
-
-
-
+    $('.head-right .avatar').click(function () {
+        var id = $(this).attr('data');
+        layui.use(['layer'],function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area:['230px','200px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: ['my.html?userId='+id,'no']
+            });
+        });
+    });
 });

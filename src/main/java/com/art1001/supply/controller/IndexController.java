@@ -202,7 +202,7 @@ public class IndexController extends BaseController {
      * 用户退出
      * @return	视图信息
      */
-    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout.html", method = RequestMethod.GET)
     public String logout() {
         //这里执行退出系统之前需要清理数据的操作
 
@@ -210,6 +210,8 @@ public class IndexController extends BaseController {
         ShiroAuthenticationManager.logout();
         return "redirect:/login.html";
     }
+
+
 
 
     /**

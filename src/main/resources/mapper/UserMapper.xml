@@ -32,6 +32,7 @@
 		u_image,
 		u_address,
 		u_create_time
+		u_job
 	</sql>
 
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
@@ -58,7 +59,15 @@
 			<result property="createTime" column="r_create_time"/>
 			<result property="updateTime" column="r_update_time"/>
 		</association>
-		<association property="userInfo" column="{uId=u_id}" javaType="com.art1001.supply.entity.user.UserInfoEntity" select="com.art1001.supply.mapper.user.UserMapper.findUserInfoByUserId">
+		<association property="userInfo" column="id" javaType="com.art1001.supply.entity.user.UserInfoEntity">
+			<id property="id" column="u_id"/>
+			<result property="sex" column="u_sex"/>
+			<result property="birthday" column="u_birthday"/>
+			<result property="telephone" column="u_telephone"/>
+			<result property="email" column="u_email"/>
+			<result property="address" column="u_address"/>
+			<result property="createTime" column="u_create_time"/>
+			<result property="job" column="u_job"/>
 		</association>
 	</resultMap>
 
@@ -71,6 +80,7 @@
 		<result property="image" column="u_image"/>
 		<result property="address" column="u_address"/>
 		<result property="createTime" column="u_create_time"/>
+		<result property="job" column="u_job"/>
 	</resultMap>
 
 	<select id="findCount" resultType="java.lang.Integer">
@@ -152,7 +162,8 @@
 		i.u_telephone,
 		i.u_email,
 		i.u_address,
-		i.u_create_time
+		i.u_create_time,
+		i.u_job
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name = #{name}
 	</select>
@@ -186,7 +197,8 @@
 		i.u_email,
 		i.u_image,
 		i.u_address,
-		i.u_create_time
+		i.u_create_time,
+		i.u_job
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
 		where u.u_id = #{id}
 		
@@ -329,8 +341,9 @@
 			#{userInfo.email},
 			#{userInfo.image},
 			#{userInfo.address},
-			#{userInfo.createTime}
-			)  
+			#{userInfo.createTime},
+			#{userInfo.job},
+			)
 	</insert>
 	
 	
@@ -341,7 +354,8 @@
 		u_telephone = #{userInfo.telephone},
 		u_email = #{userInfo.email},
 		u_image = #{userInfo.image},
-		u_address = #{userInfo.address}
+		u_address = #{userInfo.address},
+		u_job = #{userInfo.job}
 		where u_id = ${userInfo.id}
 	</update>
 
@@ -364,7 +378,8 @@
 			i.u_telephone,
 			i.u_email,
 			i.u_image,
-			i.u_address
+			i.u_address,
+			i.u_job
 		FROM
 			tb_user u,tb_user_info i
 		WHERE
@@ -396,45 +411,47 @@
 			i.u_telephone,
 			i.u_email,
 			i.u_image,
-			i.u_address
+			i.u_address,
+			i.u_job
 		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_lable desc)
 	</select>
 
 	<!-- 根据用户id查用户信息 -->
 	<select id="findUserInfoById" resultMap="userMap">
 		SELECT
-	tb_user.u_id,
-	u_name,
-	u_account_name,
-	u_password,
-	u_delete_status,
-	u_locked,
-	u_description,
-	u_credentials_salt,
-	u_creator_name,
-	tb_user.u_create_time,
-	u_update_time,
-	u_organization_id,
-	u_partment_id,
-	u_organization_lable,
-	tb_user_info.u_id u_id1,
-	u_sex,
-	u_birthday,
-	u_telephone,
-	u_email,
-	u_image,
-	u_address,
-	tb_user_info.u_create_time u_create_time1
-	FROM
-		tb_user,
-		tb_user_info
-	WHERE
-		tb_user.u_id = tb_user_info.u_id and tb_user.u_id = #{id}
+		tb_user.u_id,
+		u_name,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		tb_user.u_create_time,
+		u_update_time,
+		u_organization_id,
+		u_partment_id,
+		u_organization_lable,
+		tb_user_info.u_id u_id1,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		tb_user_info.u_create_time u_create_time1,
+		u_job
+		FROM
+			tb_user,
+			tb_user_info
+		WHERE
+			tb_user.u_id = tb_user_info.u_id and tb_user.u_id = #{id}
 	</select>
 
 	<!-- 查询存在该任务中的成员信息 -->
 	<select id="findUserByExistTask" resultMap="userMap">
-		select <include refid="userAttributes" ></include>
+		select <include refid="userAttributes" />
 		from tb_user where u_id in
 		(select member_id from prm_task_member where public_id = #{taskId} and `type` != '创建者' and member_id in
 		 (select member_id from prm_project_member where project_id =  #{projectId}))
@@ -442,7 +459,7 @@
 
 	<!-- 查询不存在该任务中的成员信息 -->
 	<select id="findUserByNotExistTask" resultMap="userMap">
-		select <include refid="userAttributes" ></include>
+		select <include refid="userAttributes" />
 		from tb_user where u_id in
 		(select member_id from prm_project_member where prm_project_member.project_id =  #{projectId} and member_id not in (
 			select member_id from prm_task_member where prm_task_member.public_id = #{taskId}
@@ -453,14 +470,14 @@
 	<!-- 查询任务下的所有参与者的基本信息  不保括执行者 -->
 	<select id="findTaskMemberInfo" resultMap="userMap">
 		select
-		<include refid="userAttributes"></include>
+		<include refid="userAttributes"/>
 		from tb_user where u_id in (select member_id from prm_task_member where public_id = #{taskId}  and type = #{status})
 	</select>
 
 	<!-- 根据任务id 查询 执行者信息 -->
 	<select id="findExecutorByTask" resultMap="userMap">
 		select
-		<include refid="userAttributes"></include>
+		<include refid="userAttributes"/>
 		from
 		tb_user where tb_user.u_id = (select member_id from prm_task_member where public_id = #{taskId} and type = '执行者')
 	</select>
@@ -491,7 +508,7 @@
 	<!-- 根据用户的id反向选择用户 -->
 	<select id="reverseFindUser" resultMap="userMap">
 		select
-		<include refid="userAttributes"></include>
+		<include refid="userAttributes"/>
 		from tb_user where u_id in (
 		select member_id from prm_project_member where project_id = #{projectId} and member_id not in
 		<foreach collection="uId" separator="," open="(" close=")" item="mId">
@@ -529,7 +546,8 @@
 			i.u_telephone,
 			i.u_email,
 			i.u_address,
-			i.u_create_time
+			i.u_create_time,
+			i.u_job
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name like CONCAT('%',#{keyword},'%')
 	</select>

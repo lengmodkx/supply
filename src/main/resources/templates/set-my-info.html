@@ -15,8 +15,8 @@
     </div>
     <div class="header-right">
         <a href="#" class="boxsizing">
-            <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-            <span>名字</span>
+            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}">
+            <span th:text="${user.userName}">名字</span>
         </a>
     </div>
 
@@ -27,8 +27,8 @@
         <div class="sidebar-user boxsizing clearfix">
             <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
             <div class="sidebar-user-con">
-                <h3>名字</h3>
-                <p class="over-hidden">2439676969@qq.com</p>
+                <h3 th:text="${user.userName}">名字</h3>
+                <p class="over-hidden" th:text="${user.userInfo.email}">2439676969@qq.com</p>
             </div>
         </div>
 
@@ -48,34 +48,36 @@
             <div class="information">
                 <form action="" class="layui-form">
                     <div class="style-box head-img">
-                        <div class="style-box-left">头像</div>
+                        <div class="style-box-left" >头像</div>
                         <div class="style-box-right">
-                            <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-                            <div class="change-img-btn">更换头像</div>
+                            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}">
+                            <button type="button" class="layui-btn" id="upload" style="position: absolute;left: 270px;background-color: #1E9FFF">
+                                <i class="layui-icon">&#xe67c;</i>更换头像
+                            </button>
                         </div>
                     </div>
                     <div class="style-box">
-                        <div class="style-box-left">姓名</div>
+                        <div class="style-box-left" >姓名</div>
                         <div class="style-box-right">
-                            <input class="boxsizing" type="text">
+                            <input class="boxsizing" type="text" th:value="${user.userName}">
                         </div>
                     </div>
                     <div class="style-box">
                         <div class="style-box-left">邮箱</div>
                         <div class="style-box-right">
-                            <input class="boxsizing" type="text">
+                            <input class="boxsizing" type="text" th:value="${user.userInfo.email}">
                         </div>
                     </div>
                     <div class="style-box">
-                        <div class="style-box-left">职位</div>
+                        <div class="style-box-left" th:value="${user.userInfo.job}">职位</div>
                         <div class="style-box-right">
                             <input class="boxsizing" type="text">
                         </div>
                     </div>
                     <div class="style-box">
-                        <div class="style-box-left">联系电话</div>
+                        <div class="style-box-left" >联系电话</div>
                         <div class="style-box-right">
-                            <input class="boxsizing" type="text">
+                            <input class="boxsizing" type="text" th:value="${user.userInfo.telephone}">
                         </div>
                     </div>
                     <div class="style-box">
@@ -108,15 +110,10 @@
                     <div class="style-box">
                         <div class="style-box-left">所在地</div>
                         <div class="style-box-right">
-                            <input class="boxsizing" type="text">
+                            <input class="boxsizing" type="text" th:text="${user.userInfo.telephone}">
                         </div>
                     </div>
-                    <div class="style-box">
-                        <div class="style-box-left">网址</div>
-                        <div class="style-box-right">
-                            <input class="boxsizing" type="text">
-                        </div>
-                    </div>
+
                     <div class="style-box">
                         <div class="style-box-left"></div>
                         <div class="style-box-right">

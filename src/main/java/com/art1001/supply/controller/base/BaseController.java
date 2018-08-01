@@ -18,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -206,5 +203,15 @@ public abstract class BaseController {
         List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("tagList",tagList);
         return "tk-look-tag";
+    }
+
+    /**
+     * 我的头像
+     * @return	视图信息
+     */
+    @RequestMapping(value = "/my.html", method = RequestMethod.GET)
+    public String my(String userId,Model model) {
+        model.addAttribute("userId",userId);
+        return "tk-click-touxiang";
     }
 }

@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.project.Project;
@@ -10,21 +11,23 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskCollectService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -54,6 +57,8 @@ public class PublicController {
     @Resource
     private PublicCollectService publicCollectService;
 
+    @Resource
+    private UserService userService;
     /**
      * 所有收藏的常量
      */
@@ -318,5 +323,45 @@ public class PublicController {
                 }
             }
         }
+    }
+
+
+    /**
+     * 账号设置
+     * @return	视图信息
+     */
+    @RequestMapping(value = "/accountInfo.html", method = RequestMethod.GET)
+    public String accountSetting(String userId,Model model) {
+        UserEntity userEntity = userService.findById(userId);
+        model.addAttribute("user",userEntity);
+        return "set-my-info";
+    }
+
+
+
+    //上传头像图片
+    @PostMapping("/upload")
+    @ResponseBody
+    public JSONObject uploadImage(@RequestParam String userId,
+                                  MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //先删除阿里云上项目的图片然后再上传
+            UserEntity userEntity = userService.findById(userId);
+            AliyunOss.deleteFile(userEntity.getUserInfo().getImage());
+            String filename = System.currentTimeMillis()+".jpg";
+            AliyunOss.uploadInputStream(Constants.MEMBER_IMAGE_URL + filename,file.getInputStream());
+            UserInfoEntity userInfoEntity = new UserInfoEntity();
+            userInfoEntity.setImage(Constants.MEMBER_IMAGE_URL + filename);
+            userInfoEntity.setId(userEntity.getId());
+            userEntity.setUserInfo(userInfoEntity);
+            userService.update(userEntity);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "上传成功");
+            jsonObject.put("data",Constants.MEMBER_IMAGE_URL + filename);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+        return jsonObject;
     }
 }

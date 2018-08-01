@@ -98,10 +98,8 @@ a:hover {
 /*}*/
 .vertical-nav {
   width: 230px;
-  height: 345px;
   background-color: white;
-  z-index: 100;
-  position: relative;
+  margin-top: 50px;
 }
 
 .close-vertical-nav {

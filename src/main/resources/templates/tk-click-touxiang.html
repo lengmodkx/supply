@@ -11,31 +11,15 @@
 
 
     <div class="vertical-nav" style="display: block">
-        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;z-index: 200"></i>
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;float: right;margin-right: 5px"></i>
         <ul>
             <li class="boxsizing">
                 <span></span>
-                <a href="">创建企业</a>
+                <a th:href="@{/public/accountInfo.html(userId=${userId})}" target="_blank">账号设置</a>
             </li>
             <li class="boxsizing">
                 <span></span>
-                <a href="">个人项目</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">账号设置</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">偏好设置</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">切换至国际服务器</a>
-            </li>
-            <li class="boxsizing">
-                <span></span>
-                <a href="">退出登录</a>
+                <a href=/logout.html>退出登录</a>
             </li>
         </ul>
     </div>
@@ -61,29 +45,11 @@
                 $(".who-can-see").text("所有成员可见")
             }
         });
-
-
-
     });
     layui.use('element', function(){
         var element = layui.element;
-
     });
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
 
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#beginTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-        laydate.render({
-            elem: '#overTime', //指定元素
-            type:'datetime',
-            format:'yyyy年MM月dd日 HH时mm分ss秒'
-        });
-    });
     $(".close-tk").click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭

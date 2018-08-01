@@ -2,40 +2,6 @@ html,body{
     background-color: #FEFCFC;
 }
 
-.vertical-nav{
-    width: 230px;
-    height: 345px;
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: white;
-    display: none;
-    z-index: 60;
-}
-.vertical-nav li{
-    width: 100%;
-    height: 30px;
-    margin-top: 25px;
-    padding-left: 60px;
-    position: relative;
-    line-height: 30px;
-    font-size: 12px;
-}
-.vertical-nav li:hover span{
-    display: block;
-}
-.vertical-nav li span{
-    width:0px;
-    height:0px;
-    border-bottom: 11px solid #4A90E2;
-    border-right:6px solid transparent;
-    border-top:5px solid transparent;
-    border-left:6px solid transparent;
-    position: absolute;
-    top: 5px;
-    left: 26px;
-    display: none;
-}
 .content{
     width: 80%;
     margin: 0 auto;
