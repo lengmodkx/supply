@@ -109,6 +109,9 @@
     font-size: 14px;
     float: left;
 }
+.choose-ok{
+    float: right;
+}
 .one-tag{
     position: relative;
     float: left;
@@ -209,11 +212,11 @@
     text-align: center;
     line-height: 40px;
     border-radius: 5px;
-    background-color: #ccc;
+    background-color: #1E9FFF;
     border: 0 none;
     outline-style: none;
     color: white;
-    cursor: not-allowed;
+    cursor: pointer;
 }
 .add-tag .label{
     width: 300px;

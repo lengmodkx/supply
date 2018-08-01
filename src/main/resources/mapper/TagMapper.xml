@@ -84,10 +84,13 @@
         <include refid="Base_Column_List"/>
         from prm_tag where 1=1
         <if test="tagIds != null and tagIds != ''">
-            and tag_id in(
-            <foreach collection="tagIds.split(',')" item="tagId" index="index" separator=",">
+            and tag_id in
+            <foreach collection="tagIds.split(',')" item="tagId" index="index" open="(" separator="," close=")">
                 #{tagId}
-            </foreach>)
+            </foreach>
+        </if>
+        <if test="tagIds == null or tagIds == ''">
+            and tag_id in('')
         </if>
     </select>
 

@@ -184,10 +184,9 @@ layui.use('form', function() {
             return false;
         }
         var url = "/task/updateTaskRepeat";
-        $.post(url,{"taskId":taskId,"repeat": repeat},function (data) {
+        $.post(url,{"taskId":taskId,"repeat": repeat,"projectId":projectId},function (data) {
            if(data.result == 1){
                $('#oldRepeat').val(repeat);
-               getLog(data.taskLog);
            }
         },"json");
 
@@ -197,9 +196,6 @@ layui.use('form', function() {
      * 提醒模式下拉框监听
      */
     form.on('select(remind)', function(formData){
-        // console.log(data.elem); //得到select原始DOM对象
-        // console.log(data.value); //得到被选中的值
-        // console.log(data.othis); //得到美化后的DOM对象
         var taskId = $('#taskId').val();
         var remind = formData.value;
         var oldremind = $('#oldRemind').val();
@@ -207,10 +203,9 @@ layui.use('form', function() {
             return false;
         }
         var url = "/task/updateTaskRemindTime";
-        $.post(url,{"taskId":taskId,"remind": remind},function (data) {
-            if(data.result == 1) {
+        $.post(url,{"taskId":taskId,"remind": remind,"projectId":projectId},function (data) {
+            if(data.result === 1) {
                 $('#oldRemind').val(remind);
-                getLog(data.taskLog);
             }
         },"json");
     });
@@ -227,10 +222,9 @@ layui.use('form', function() {
         //console.log(data.elem); //得到radio原始DOM对象
         //console.log(data.value); //被点击的radio的value值
         var url = '/task/updateTaskPriority';
-        var args = {"taskId":taskId,"priority":priorityData.value};
+        var args = {"taskId":taskId,"priority":priorityData.value,"projectId":projectId};
         $.post(url,args,function (data) {
-           if(data.result == 1){
-               getLog(data.taskLog);
+           if(data.result === 1){
                $('#oldPriority').val(priorityData.value);
            }
         },"json");
@@ -417,157 +411,40 @@ layui.use('form', function() {
         $(".renwu-menu").slideUp();
     });
 
-    // 点击添加标签
-if ($(".has-tags .tag").length==0){
-    $(".no-tags").show();
-    $(".has-tags").hide();
-} else {
-    $(".no-tags").hide();
-    $(".has-tags").show();
-}
+
     $(".no-tags").click(function (e) {
-        var url = "/task/findAllTags";
-        var args = {"projectId":projectId};
-        //异步请求获取项目下的所有标签
-        $.post(url,args,function(data){
-            var tags = data.data;
-            var content = "";
-            for(var i = 0;i < tags.length; i++){
-                content += "<li class='tags-list'>" +
-                                "<span class='dot' style='background-color: " + tags[i].bgColor + "'></span>" +
-                                "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
-                            "</li>";
-            }
-            $('#tags').html(content);
-            $(".tags-search-build").show();
-            $(".tag-search").show();
-            $(".no-tags").hide();
-        },"json");
-        e.stopPropagation();
-    });
-    $(".tag-search-title img").click(function () {
-        $(".tag-search").hide();
-        $(".build-tags").show();
-    });
-    $(".go-return").click(function () {
-        $(".tag-search").show();
-        $(".build-tags").hide();
-    });
-    $(".close-tag").click(function () {
-        $(".tags-search-build").slideUp();
-        if ($(".has-tags .tag").length==0){
-            $(".no-tags").show();
-            $(".has-tags").hide();
-        } else {
-            $(".no-tags").hide();
-            $(".has-tags").show();
-        }
-
-    });
-    $(".has-tags>i").click(function (e) {
-        $(".tags-search-build").show();
-        $(".tag-search").show();
-
-        e.stopPropagation();
-    });
-
-    // 点击某个具体标签
-$("html").on("click",".tags-list",function () {
-    $(".has-tags").show();
-    var tagId = $(this).find(".tag-font").attr("value");
-    var tags = [];
-    $('.tag').each(function () {
-        tags.push($(this).attr('value'));
-    });
-    var index = 0;
-    $('.tag').each(function () {
-        if(tagId == $(this).attr('value')){
-            var that=$(this);
-            var url = "/task/removeTaskTag";
-            var args = {"tags":tags.toString(),"tagId":tagId,"taskId":taskId};
-            $.post(url,args,function (data) {
-                that.remove();
-            },"json");
-            index = 1;
-        }
-    });
-    if(index == 1){
-        return false;
-    }
-    var tagName = $(this).find(".tag-font").text();
-    var bgColor = $(this).find(".dot").css("background-color");
-    var url = "/task/addTaskTag";
-    var args = {"tagId":tagId,"tagName":tagName,"taskId":taskId,"projectId":projectId};
-    var content = '';
-    $.post(url,args,function (data) {
-        $(".no-tags").hide();
-        content += '<span class="tag" value="' + tagId + '" style="background-color:' + bgColor + '">'+
-            '<b style="font-weight: 400">' + tagName + '</b>'+
-            '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-            '</span>';
-        $(".has-tags").prepend(content);
-    },"json");
-
-});
-
-// 创建 按钮 是否 能点击
-$(".tag-name").keyup(function () {
-    if ($(this).val()==''){
-        $(".tag-ok").css({"background-color":"#ccc","cursor":"not-allowed"})
-    } else {
-        $(".tag-ok").css({"background-color":"#1E9FFF","cursor":"pointer"})
-    }
-});
-
-//点击创建 按钮
-$(".tag-ok").click(function () {
-    if ($(".tag-name").val()==''){
-        return false
-    } else {
-        var content = '';
-        var vals=$(".tag-name").val();
-        var color='';
-        $(".color-pick li i").each(function () {
-            if ($(this).is(":visible")){
-                color=$(this).parent().css("background-color")
-            }
+        console.log(parent.window.innerHeight)
+        var width=(parent.window.innerWidth-600)/2+20;
+        var height=(parent.window.innerHeight-600)/2+20;
+        var top = $(this).offset().top+height+"px";
+        var left = $(this).offset().left+width+"px";
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top, left],
+            area: ['250px', '250px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/tag/tag.html?projectId='+projectId+"&taskId="+taskId,'no']
         });
-        var url = "/task/addTagsToTask";
-        var args = {"tagName":vals,"bgColor":color,"taskId":taskId,"projectId":projectId}
+        e.stopPropagation();
+    });
+
+    $('html').on('click','.remove-tag',function (e) {
+        var tagId = $(this).parent().attr('id');
+        var url = "/task/removeTaskTag";
+        var args = {"tagId":tagId,"taskId":taskId};
         $.post(url,args,function (data) {
-            if(data.result > 0){
-                $(".has-tags").show();
-                content +=
-                            '<span class="tag" value="' + data.data + '" style="background-color:' + color + '">'+
-                            '<b style="font-weight: 400">' + vals + '</b>'+
-                            '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-                            '</span>';
-                $('.no-tags').hide();
-                $(".has-tags").prepend(content);
-            } else{
-                layer.msg(data.msg);
-            }
+            console.log(data);
         },"json");
 
-    }
-});
-$(".add-fuhao").click(function () {
-    $('.no-tags').trigger("click");
-});
+        e.stopPropagation();
+    });
 
-    //点击颜色，颜色出现对勾
-    $(".color-pick li").click(function () {
-        $(this).find("i").show();
-        $(this).siblings().find("i").hide()
-    });
-    //点击空白区域 添加标签消失
-    $(document).click(function (event) {
-        var _con = $('.tags-search-build');   // 设置目标区域
-        if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
-            //$('#divTop').slideUp('slow');   //滑动消失
-            $('.tags-search-build').hide(500);          //淡出消失
-        }
-    });
+
 
     //点击添加子任务
     $(".add-child-task span").click(function () {
@@ -723,7 +600,7 @@ $('.people-ok').click(function () {
             return false;
         }
         var url = "/task/upateTaskRemarks";
-        var args = {"taskId":taskId,"remarks":remarks};
+        var args = {"taskId":taskId,"remarks":remarks,"projectId":projectId};
         $.post(url,args,function(data){
            if(data.result == 1) {
                $('#oldRemarks').val(remarks);
@@ -731,12 +608,12 @@ $('.people-ok').click(function () {
         },"json");
      });
 
-//监听任务内容的光标离开事件
+     //监听任务内容的光标离开事件
     $('.task_name').blur(function(){
         var taskId = $('#taskId').val();
         var taskName = $('#task_name').val();
-        var url = "/task/upateTaskContent";
-        var args = {"taskId":taskId,"taskName":taskName};
+        var url = "/task/updateTaskName";
+        var args = {"taskId":taskId,"projectId":projectId,"taskName":taskName};
         $.post(url,args,function(data){
             console.log(data);
         },"json");
@@ -760,7 +637,7 @@ $('.people-ok').click(function () {
         }
         var dateh=new Date().getHours();
         var datemin=new Date().getMinutes();
-        var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
+        var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin;
 
         var log = $('#log').html();
         log += '<li class="combox">'+
@@ -778,55 +655,6 @@ $('.people-ok').click(function () {
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     });
-
-$(".tag-search-title img").click(function () {
-    $(".build-tags").show();
-    $(".tag-search").hide()
-});
-$(".go-return").click(function () {
-    $(".build-tags").hide();
-    $(".tag-search").show()
-});
-$(".close-tag").click(function () {
-    $(".tags-search-build").hide()
-});
-
-/**
- * 点击 x 从任务上移除该标签
- */
-$(".revise-task").on("click", ".tag i", function () {
-    var tagId = $(this).parent().attr("value");
-    var tags = [];
-    $('.tag').each(function () {
-        tags.push($(this).attr("value"));
-    });
-    var url = "/task/removeTaskTag";
-    var args = {"tags":tags.toString(),"tagId":tagId,"taskId":taskId};
-    $.post(url,args,function (data) {
-        //完成
-    $(this).parent().remove();
-    });
-    $(this).parent().remove();
-    //判断 有没有标签
-    if ($(".has-tags span").length == 0) {
-        $(".has-tags").hide();
-        $(".no-tags").show();
-    } else {
-        $(".has-tags").show();
-        $(".no-tags").hide();
-    }
-});
-
-//点击空白区域 选择标签 框 消失
-$(document).click(function(event){
-    var _con = $('.tags-search-build');  // 设置目标区域
-    if(!_con.is(event.target) && _con.has(event.target).length === 0){ // Mark 1
-        $('.tags-search-build').hide(100);     //淡出消失
-    }
-    if ($(".has-tags .tag").length==0){
-        $(".no-tags").show()
-    }
-});
 
 //点击 选择  颜色
 $("html").on("click",".color-pick li",function () {

@@ -63,11 +63,11 @@ public class ProjectFuncServiceImpl implements ProjectFuncService {
 	/**
 	 * 保存project数据
 	 * 
-	 * @param projectFunc
+	 * @param appName
 	 */
 	@Override
-	public void saveProjectFunc(ProjectFunc projectFunc){
-		projectFuncMapper.saveProjectFunc(projectFunc);
+	public void saveProjectFunc(List<String> appName,String projectId){
+		projectFuncMapper.saveProjectFunc(appName,projectId);
 	}
 	/**
 	 * 获取所有project数据

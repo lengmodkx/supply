@@ -130,12 +130,10 @@ public interface TaskService {
 
 	/**
 	 * 移除该任务上的标签
-	 * @param tags 当前任务上绑定的所有标签对象数组
-	 * @param tag 当前要被的标签对象
 	 * @param taskId 当前任务uid
 	 * @return
 	 */
-	int removeTaskTag(String[] tags, Tag tag, String taskId);
+	void removeTaskTag(String tagId, String taskId);
 
 
 	/**

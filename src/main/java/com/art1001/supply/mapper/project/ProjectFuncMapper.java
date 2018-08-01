@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.ProjectFunc;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * projectmapper接口
@@ -44,9 +45,9 @@ public interface ProjectFuncMapper {
 	/**
 	 * 保存project数据
 	 * 
-	 * @param projectFunc
+	 * @param appName
 	 */
-	void saveProjectFunc(ProjectFunc projectFunc);
+	void saveProjectFunc(@Param("appName") List<String> appName, @Param("projectId") String projectId);
 
 	/**
 	 * 获取所有project数据

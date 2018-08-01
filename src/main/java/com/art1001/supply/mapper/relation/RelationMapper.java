@@ -52,6 +52,8 @@ public interface RelationMapper {
 	 */
 	void saveRelation(Relation relation);
 
+	void saveRelationBatch(@Param("relationList") List<String> relationList,@Param("projectId") String projectId,@Param("parentId") String parentId);
+
 	/**
 	 * 获取所有relation数据
 	 * 

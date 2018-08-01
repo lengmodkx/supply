@@ -389,8 +389,8 @@ body{
     margin-top: 3px;
 }
 .is-sure{
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     border: 1px solid #D3D3D3;
     border-radius: 50%;
     display: inline-block;
@@ -606,10 +606,18 @@ body{
     height: 18px;
     width: 200px;
 }
+.no-repeat>i,.no-remand>i{
+    position: absolute;
+    left: 0;
+}
+.layui-form-select dl{
+    top: 28px;
+    left: -22px;
+}
 .no-repeat .layui-unselect,.layui-form-select{
     float: left;
     height: 18px;
-    width: 200px;
+    width: 100%;
 }
 .no-repeat .layui-unselect,.layui-form-select input{
     padding-left: 0;
@@ -649,6 +657,8 @@ body{
 .no-remand .layui-form-select dl{
     top: 30px;
 }
+
+
 .pri{
     margin-top: 15px;
     height: 36px;

@@ -41,9 +41,9 @@
                                    th:id="${task.taskId}">
                                   <div class="task-card">
                                       <!--//左边框线-->
-                                      <div class="task-priority" th:if="${task.priority=='普通'}" th:classappend="bg-priority-0"></div>
-                                      <div class="task-priority" th:if="${task.priority=='紧急'}" th:classappend="bg-priority-1"></div>
-                                      <div class="task-priority" th:if="${task.priority=='非常紧急'}" th:classappend="bg-priority-2"></div>
+                                      <div class="task-priority bg-priority-0" th:if="${task.priority=='普通'}" th:classappend="${task.taskId}"></div>
+                                      <div class="task-priority bg-priority-1" th:if="${task.priority=='紧急'}" th:classappend="${task.taskId}"></div>
+                                      <div class="task-priority bg-priority-2" th:if="${task.priority=='非常紧急'}" th:classappend="${task.taskId}"></div>
                                       <div class="task-check-box">
                                           <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
@@ -52,10 +52,10 @@
                                               <span class="assignment-title" th:text="${task.taskName}">设计修改任务界面</span>
                                               <img class="assignment-tx" th:classappend="${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
                                           </header>
-                                          <section class="assignment-bottom-box clearfix">
+                                          <section class="assignment-bottom-box clearfix" th:classappend="${task.taskId}">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
-                                                  <img  th:if="${task.remind!='不提醒'}" th:src="@{/image/zhong.png}"/>
-                                                  <img  th:if="${task.remarks!=null and task.remarks!=''}" src="../static/image/file.png" th:src="@{/image/file.png}">
+                                                  <img  class="remind" th:src="@{/image/zhong.png}" th:style="'opacity:' + @{(${task.remind=='不提醒'} ? '0':'1')}"/>
+                                                  <img  th:style="'opacity:' + @{(${task.remarks!=null and task.remarks!=''} ? '1':'0')}" th:src="@{/image/file.png}"/>
                                                   <!--<span class="span-img">-->
                                                     <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
                                                       <!--<span class="over-hidden">0/2</span>-->

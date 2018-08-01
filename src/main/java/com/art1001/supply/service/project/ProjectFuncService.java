@@ -41,11 +41,11 @@ public interface ProjectFuncService {
 	public void updateProjectFunc(ProjectFunc projectFunc);
 
 	/**
-	 * 保存project数据
+	 * 批量保存项目应用插件
 	 * 
-	 * @param projectFunc
+	 * @param appName
 	 */
-	public void saveProjectFunc(ProjectFunc projectFunc);
+	public void saveProjectFunc(List<String> appName,String projectId);
 
 	/**
 	 * 获取所有project数据

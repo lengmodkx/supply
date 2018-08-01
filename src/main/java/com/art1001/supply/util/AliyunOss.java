@@ -77,7 +77,7 @@ public class AliyunOss {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
             // 创建Bucket
-            ensureBucket(ossClient, bucketName);
+            //ensureBucket(ossClient, bucketName);
             // 上传文件流
             ossClient.putObject(bucketName, key, inputStream);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class AliyunOss {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
             // 创建Bucket
-            ensureBucket(ossClient, bucketName);
+            //ensureBucket(ossClient, bucketName);
             // 上传文件流
             ossClient.putObject(bucketName, key, new ByteArrayInputStream(content.getBytes()));
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class AliyunOss {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
             // 创建Bucket
-            ensureBucket(ossClient, bucketName);
+            //ensureBucket(ossClient, bucketName);
             // 上传文件流
             ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class AliyunOss {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {
             // 创建Bucket
-            ensureBucket(ossClient, bucketName);
+            //ensureBucket(ossClient, bucketName);
             ossClient.putObject(bucketName, folderName, new ByteArrayInputStream(new byte[0]));
         } catch (Exception e) {
             e.printStackTrace();

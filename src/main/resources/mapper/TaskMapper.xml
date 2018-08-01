@@ -48,7 +48,7 @@
 		<collection property="taskList" column="task_id" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.task.TaskMapper.findSubLevelTask"/>
 		<!--查询标签-->
-		<collection property="tagList" column="tag_id" javaType="java.util.ArrayList"
+		<collection property="tagList" column="{tagIds=tag_id}" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
 	</resultMap>
 

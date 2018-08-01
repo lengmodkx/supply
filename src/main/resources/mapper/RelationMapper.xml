@@ -159,6 +159,17 @@
 		</trim>
 
 	</insert>
+
+
+	<insert id="saveRelationBatch">
+		  insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable, relation_del, `order`) VALUES
+
+		   <foreach collection="relationList" item="relation" index="index" separator=",">
+			   ( REPLACE(UUID(), '-', '') ,#{relation},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
+		   </foreach>
+
+	</insert>
+
 	
 	<update id="updateRelation" parameterType="com.art1001.supply.entity.relation.Relation">
 

@@ -208,11 +208,7 @@ public class FileServiceImpl implements FileService {
         String[] childFolderNameArr = {"图片", "文档", "视频", "音频"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
-            // 在OSS上创建目录
-            // String childFolder = folderName + System.currentTimeMillis() + "/";
-            // AliyunOss.createFolder(childFolder);
             // 写库
-            // 拿到项目的名字作为初始化的文件名
             file.setFileName(childFolderName);
             // 项目id
             file.setProjectId(project.getProjectId());

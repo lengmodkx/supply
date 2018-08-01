@@ -50,6 +50,8 @@ public interface RelationService {
 	 */
 	public void saveRelation(Relation relation);
 
+	public void saveRelationBatch(List<String> relationList,String projectId,String parentId);
+
 	/**
 	 * 获取所有relation数据
 	 * 

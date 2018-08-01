@@ -96,6 +96,12 @@ public class RelationServiceImpl implements RelationService {
 		relation.setRelationId(IdGen.uuid());
 		relationMapper.saveRelation(relation);
 	}
+
+	@Override
+	public void saveRelationBatch(List<String> relationList, String projectId, String parentId) {
+			relationMapper.saveRelationBatch(relationList,projectId,parentId);
+	}
+
 	/**
 	 * 获取所有relation数据
 	 * 

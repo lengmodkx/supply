@@ -122,12 +122,12 @@ public class ProjectController extends BaseController {
 
     @GetMapping("/createProject.html")
     public String createProject(){
-        return "tk-create-newobj";
+        return "tk-proejct-create";
     }
 
     @GetMapping("/template.html")
     public String template(){
-        return "tk-obj-info";
+        return "tk-project-tempelate-create";
     }
 
 
@@ -204,14 +204,7 @@ public class ProjectController extends BaseController {
 
             //初始化项目功能菜单
             String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
-            for (int i=0;i<funcs.length;i++) {
-                ProjectFunc projectFunc = new ProjectFunc();
-                projectFunc.setFuncName(funcs[i]);
-                projectFunc.setIsOpen(1);
-                projectFunc.setFuncOrder(i);
-                projectFunc.setProjectId(project.getProjectId());
-                funcService.saveProjectFunc(projectFunc);
-            }
+            funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
             Relation relation = new Relation();
@@ -225,19 +218,7 @@ public class ProjectController extends BaseController {
 
             //初始化菜单
             String[] menus  = new String[]{"待处理","进行中","已完成"};
-            for (int i=0;i<menus.length;i++) {
-                Relation relation1 = new Relation();
-                relation1.setProjectId(project.getProjectId());
-                relation1.setRelationName(menus[i]);
-                relation1.setParentId(relation.getRelationId());
-                relation1.setLable(1);
-                relation1.setRelationDel(0);
-                relation1.setOrder(i);
-                relation1.setCreateTime(System.currentTimeMillis());
-                relation1.setUpdateTime(System.currentTimeMillis());
-                relationService.saveRelation(relation1);
-            }
-
+            relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
             //往项目用户关联表插入数据
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
@@ -254,14 +235,11 @@ public class ProjectController extends BaseController {
             //初始化项目文件夹
             fileService.initProjectFolder(project);
 
-
             //写资源表
-
 
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
             jsonObject.put("projectId",project.getProjectId());
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSON.toJSON(project).toString()));
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -298,14 +276,7 @@ public class ProjectController extends BaseController {
             projectService.saveProject(project);
             //初始化项目功能菜单
             String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
-            for (int i=0;i<funcs.length;i++) {
-                ProjectFunc projectFunc = new ProjectFunc();
-                projectFunc.setFuncName(funcs[i]);
-                projectFunc.setIsOpen(1);
-                projectFunc.setFuncOrder(i);
-                projectFunc.setProjectId(project.getProjectId());
-                funcService.saveProjectFunc(projectFunc);
-            }
+            funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
             Relation relation = new Relation();
@@ -330,7 +301,7 @@ public class ProjectController extends BaseController {
             bufferReader.close();
             inputStreamReader.close();
 
-            JSONArray jsonArray =JSON.parseArray(localStrBulider.toString());
+            JSONArray jsonArray = JSON.parseArray(localStrBulider.toString());
 
             for (int i=0;i<jsonArray.size();i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
@@ -377,7 +348,6 @@ public class ProjectController extends BaseController {
             jsonObject.put("result",1);
             jsonObject.put("msg","项目创建成功");
             jsonObject.put("projectId",project.getProjectId());
-            messagingTemplate.convertAndSend("/topic/subscribe", new ServerMessage(JSON.toJSON(project).toString()));
 
         }catch (Exception e){
             throw new AjaxException(e);

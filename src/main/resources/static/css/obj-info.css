@@ -56,7 +56,10 @@
     margin: 10px auto;
 }
 
-
+.layui-btn-fluid {
+    width: 330px!important;
+    margin-top: 20px;
+}
 
 .obj-info-bottom{
     width: 100%;

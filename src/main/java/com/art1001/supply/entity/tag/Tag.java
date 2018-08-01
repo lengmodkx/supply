@@ -53,4 +53,5 @@ public class Tag extends BaseEntity implements Serializable {
 	private String shareId;
 
 
+	private boolean flag;
 }

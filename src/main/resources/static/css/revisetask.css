@@ -1,11 +1,12 @@
 /*修改任务*/
-.revise-task-wrap{
+.revise-task-wrap {
     width: 600px;
     height: 600px;
     position: relative;
     margin: 0 auto;
 }
-.revise-task{
+
+.revise-task {
     width: 600px;
     padding: 16px;
     background-color: white;
@@ -14,98 +15,112 @@
     position: relative;
     overflow-x: hidden;
 }
-.revise-task::-webkit-scrollbar{
+
+.revise-task::-webkit-scrollbar {
     width: 1px;
     height: 10px;
-    background-color: 	#F8F8FF;
+    background-color: #F8F8FF;
 }
-.close-revise-task{
+
+.close-revise-task {
     position: absolute;
     right: 10px;
     top: 18px;
     z-index: 5;
     cursor: pointer;
 }
-.close-revise-task:hover{
+
+.close-revise-task:hover {
     color: #3da8f5 !important;
 }
-.assignment-menu-show{
+
+.assignment-menu-show {
     position: absolute;
     right: 42px;
     top: 18px;
     z-index: 5;
     cursor: pointer;
 }
-.assignment-menu-show:hover{
+
+.assignment-menu-show:hover {
     color: #3da8f5 !important;
 }
-.zan{
+
+.zan {
     position: absolute;
     right: 75px;
     top: 18px;
     z-index: 5;
     cursor: pointer;
 }
-.zan>img{
+
+.zan > img {
     width: 15px;
     height: 15px;
     vertical-align: middle;
     transition: all 0.2s;
     float: left;
 }
-.zan span{
+
+.zan span {
     font-size: 14px;
     color: #B7ACA6;
     line-height: 18px;
     float: left;
     margin-left: 3px;
 }
-.zan :hover{
+
+.zan :hover {
     width: 17px;
     height: 17px;
     top: 16px;
     right: 63px;
 }
-.revise-task-title{
+
+.revise-task-title {
     width: 100%;
     height: 38px;
     font-size: 16px;
     font-weight: bold;
 }
-.task-name{
+
+.task-name {
     width: 100%;
     height: 20px;
     line-height: 20px;
     margin-bottom: 15px;
 }
-.task-name .layui-form-checked[lay-skin=primary] i{
+
+.task-name .layui-form-checked[lay-skin=primary] i {
     border-color: #2B93D2;
     background-color: #2B93D2;
 }
-.task-name .layui-form-checkbox[lay-skin=primary]{
+
+.task-name .layui-form-checkbox[lay-skin=primary] {
     float: left;
-}
-.task-name .layui-form-checkbox[lay-skin=primary] i{
-    width: 14px;
-    height: 14px;
-    margin-top: 2px;
-}
-.task_name{
-    float: left;
-    margin-left: 15px;
-    border: 0 none;
-    outline-style: none;
-    width: 300px;
-    height: 20px;
-    padding-left: 10px;
 }
 
-.task_name:focus{
+.task-name .layui-form-checkbox[lay-skin=primary] i {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+}
+
+.task_name {
+    float: left;
+    margin-left: 10px;
+    border: 0 none;
+    outline-style: none;
+    width: 400px;
+    height: 25px;
+    padding-left: 5px;
+}
+
+.task_name:focus {
     background-color: #e5e5e5;
 }
 
-
-.is-sure{
+.is-sure {
     width: 14px;
     height: 14px;
     border: 1px solid #D3D3D3;
@@ -114,18 +129,21 @@
     cursor: pointer;
     float: left;
 }
-.task-name span{
+
+.task-name span {
     float: left;
     font-size: 14px;
     margin-left: 15px;
 }
-.who-and-time{
+
+.who-and-time {
     width: 100%;
     height: 25px;
     margin-top: 25px;
     position: relative;
 }
-.who-wrap,.no-renling{
+
+.who-wrap, .no-renling {
     float: left;
     padding: 5px 10px;
     height: 25px;
@@ -136,66 +154,78 @@
     margin-left: -10px;
     margin-right: 15px;
 }
-.no-renling span{
+
+.no-renling span {
     float: left;
 }
-.who-wrap:hover{
+
+.who-wrap:hover {
     background-color: #f5f5f5;
 }
-.who-wrap:hover .remove-who-wrap{
+
+.who-wrap:hover .remove-who-wrap {
     display: block;
 }
- .remove-who-wrap{
+
+.remove-who-wrap {
     position: absolute;
     top: -7px;
     right: -3px;
     display: none;
 }
- .no-people-img{
+
+.no-people-img {
     float: left;
     margin-right: 5px;
 }
 
-.no-renling:hover span{
+.no-renling:hover span {
     color: #3da8f5;
 }
-.who-and-time img{
+
+.who-and-time img {
     width: 25px;
     height: 25px;
     border-radius: 50%;
     margin-right: 15px;
     float: left;
 }
-.who-and-time span{
+
+.who-and-time span {
     line-height: 25px;
     font-size: 14px;
     float: left;
 }
-.time-wrap{
-    width: 130px;
+
+.time-wrap {
+    width: 170px;
     height: 25px;
     float: left;
 }
-.time-wrap input{
+
+.time-wrap input {
     height: 25px;
     border: 0 none;
     padding-left: 0;
     cursor: pointer;
     line-height: 25px;
     float: left;
-    width: 105px;
+    width: 130px;
 }
-.time-wrap input::placeholder{
+
+.time-wrap input::placeholder {
     color: black;
 }
-.time-wrap>img{
+
+.time-wrap > img {
     width: 18px;
     height: 18px;
     float: left;
     margin-right: 5px;
     margin-top: 3px;
 }
-.no-repeat>img,.no-remand>img{
+
+.no-repeat > img, .no-remand > img {
     width: 18px;
     height: 18px;
     float: left;
@@ -205,25 +235,30 @@
     top: 0px;
     left: 0;
 }
-.no-repeat,.no-remand{
+
+.no-repeat, .no-remand {
     float: left;
     width: 30px;
     position: relative;
 }
-.no-repeat .layui-select-title{
+
+.no-repeat .layui-select-title {
     opacity: 0;
 }
-.no-remand .layui-select-title{
+
+.no-remand .layui-select-title {
     opacity: 0;
 }
-.combox{
-     width: 100%;
-     height: 30px;
-     margin-top: 20px;
-     line-height: 30px;
-     font-size: 14px;
- }
-.combox img{
+
+.combox {
+    width: 100%;
+    height: 30px;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 14px;
+}
+
+.combox img {
     width: 18px;
     height: 18px;
     vertical-align: middle;
@@ -231,7 +266,8 @@
     margin-right: 20px;
     margin-top: 6px;
 }
-.combox span{
+
+.combox span {
     float: left;
     margin-right: 15px;
     max-width: 380px;
@@ -240,13 +276,15 @@
     white-space: nowrap;
 
 }
-.tag-box{
+
+.tag-box {
     width: 100%;
     margin-top: 20px;
     line-height: 30px;
     font-size: 14px;
 }
-.tag-box img{
+
+.tag-box img {
     width: 18px;
     height: 18px;
     vertical-align: middle;
@@ -254,47 +292,50 @@
     margin-right: 20px;
     margin-top: 6px;
 }
-.tag-box span{
+
+.tag-box span {
     float: left;
     margin-right: 15px;
 }
-.tag{
+
+.tag {
     margin-top: 3px;
 }
-.add-bz .label{
+
+.add-bz .label {
     width: 300px;
 }
-.yxj.combox{
+
+.yxj.combox {
     height: 36px;
 }
-.yxj.combox span{
+
+.yxj.combox span {
     line-height: 40px;
 }
-.yxj.combox img{
+
+.yxj.combox img {
     margin-top: 10px;
 }
+
 /*标签 搜索框   新建标签*/
-.tags-search-build{
+.tags-search-build {
     width: 230px;
     height: 250px;
     background-color: white;
-    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, .1);
     z-index: 100;
 }
-.add-tag{
+
+.add-tag {
     position: relative;
 }
-.no-tags{
+
+.no-tags {
     cursor: pointer;
 }
-.no-tags:hover{
-    color: #2B93D2;
-}
-.has-tags{
 
-}
-
-.tag{
+.tag {
     padding: 0 8px;
     height: 24px;
     line-height: 24px;
@@ -304,21 +345,25 @@
     cursor: pointer;
     background-color: #A1D5FA;
 }
-.tag:hover i{
+
+.tag:hover i {
     display: block;
 }
-.tag i{
+
+.tag i {
     position: absolute;
     top: -6px;
     right: -6px;
     display: none;
 }
-.tag-search{
+
+.tag-search {
     width: 100%;
     height: 100%;
     position: relative;
 }
-.tag-search-title{
+
+.tag-search-title {
     position: absolute;
     top: 0;
     left: 0;
@@ -327,13 +372,15 @@
     border-bottom: 1px solid #e5e5e5;
     padding: 0 15px;
 }
-.tag-search-input{
+
+.tag-search-input {
     width: 80%;
     height: 100%;
     border: 0 none;
     float: left;
 }
-.tag-search-title img{
+
+.tag-search-title img {
     width: 18px;
     height: 18px;
     float: right;
@@ -341,28 +388,33 @@
     margin-top: 10px;
     cursor: pointer;
 }
-.tags-ul{
+
+.tags-ul {
     width: 100%;
     height: 200px;
     padding-top: 50px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
-.tags-list{
+
+.tags-list {
     width: 230px;
     padding: 0 15px;
     height: 40px;
     line-height: 40px;
     cursor: pointer;
 }
-.tags-ul::-webkit-scrollbar{
+
+.tags-ul::-webkit-scrollbar {
     width: 1px;
     height: 1px;
 }
-.tags-list:hover{
+
+.tags-list:hover {
     background-color: #f5f5f5;
 }
-.dot{
+
+.dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -371,16 +423,19 @@
     margin-right: 10px;
     margin-top: 15px;
 }
-.tag-font{
+
+.tag-font {
     font-size: 14px;
     float: left;
 }
+
 /*新建标签*/
-.build-tags{
+.build-tags {
     width: 100%;
     height: 100%;
 }
-.build-tags-title{
+
+.build-tags-title {
     width: 100%;
     height: 40px;
     line-height: 40px;
@@ -388,26 +443,31 @@
     padding: 0 15px;
     text-align: center;
 }
-.go-return{
+
+.go-return {
     float: left;
     cursor: pointer;
 }
-.close-tag{
+
+.close-tag {
     float: right;
     cursor: pointer;
 }
-.build-tags-con{
+
+.build-tags-con {
     width: 100%;
     padding: 20px 15px;
 }
-.tag-name{
+
+.tag-name {
     width: 100%;
     height: 40px;
     padding: 8px 12px;
     border: 1px solid #e5e5e5;
     outline-style: none;
 }
-.color-pick{
+
+.color-pick {
     width: 100%;
     height: 24px;
     margin-top: 25px;
@@ -415,7 +475,8 @@
     display: flex;
     justify-content: space-between;
 }
-.color-pick li{
+
+.color-pick li {
     width: 24px;
     height: 24px;
     float: left;
@@ -424,28 +485,36 @@
     line-height: 24px;
     cursor: pointer;
 }
-.color-pick li i{
+
+.color-pick li i {
     display: none;
 }
-.color-pick li:nth-of-type(1){
+
+.color-pick li:nth-of-type(1) {
     background-color: #3DA8F5;
 }
-.color-pick li:nth-of-type(2){
+
+.color-pick li:nth-of-type(2) {
     background-color: #75C940;
 }
-.color-pick li:nth-of-type(3){
+
+.color-pick li:nth-of-type(3) {
     background-color: #2FBDB3;
 }
-.color-pick li:nth-of-type(4){
+
+.color-pick li:nth-of-type(4) {
     background-color: #797EC9;
 }
-.color-pick li:nth-of-type(5){
+
+.color-pick li:nth-of-type(5) {
     background-color: #FFAF38;
 }
-.color-pick li:nth-of-type(6){
+
+.color-pick li:nth-of-type(6) {
     background-color: #FF4F3E;
 }
-.tag-ok{
+
+.tag-ok {
     width: 100%;
     height: 40px;
     text-align: center;
@@ -457,40 +526,49 @@
     color: white;
     cursor: not-allowed;
 }
-.add-tag .label{
+
+.add-tag .label {
     width: 300px;
 }
-.add-child-task span{
+
+.add-child-task span {
     color: #2B93D2;
     cursor: pointer;
 }
-.add-guanlian span{
+
+.add-guanlian span {
     color: #2B93D2;
     cursor: pointer;
 }
+
 /*具体子任务*/
-.child-task-list{
+.child-task-list {
     width: 100%;
     height: 32px;
     line-height: 32px;
 }
-.child-task-list .layui-form-checkbox[lay-skin=primary]{
+
+.child-task-list .layui-form-checkbox[lay-skin=primary] {
     float: left;
     margin-top: 7px;
 }
-.child-task-con{
+
+.child-task-con {
     float: left;
     margin-left: 10px;
     width: 80%;
 }
-.child-task-con:hover{
+
+.child-task-con:hover {
     background-color: #f7f7f7;
 }
-.child-task-con>span{
+
+.child-task-con > span {
     float: left;
     font-size: 12px;
 }
-.child-task-con .dt{
+
+.child-task-con .dt {
     float: left;
     width: 40px;
     height: 20px;
@@ -500,15 +578,18 @@
     margin-top: 7px;
     margin-left: 15px;
 }
-.go-detail{
+
+.go-detail {
     float: right;
     line-height: 32px;
     cursor: pointer;
 }
-.go-detail:hover{
+
+.go-detail:hover {
     color: #3da8f5 !important;
 }
-.child-task-who{
+
+.child-task-who {
     width: 24px;
     height: 24px;
     float: right;
@@ -516,14 +597,17 @@
     border-radius: 50%;
     margin-top: 4px;
 }
-.common-add-style{
+
+.common-add-style {
     width: 90%;
 }
-.common-ok-style{
+
+.common-ok-style {
     float: right;
     margin-top: 15px;
 }
-.common-no-style{
+
+.common-no-style {
     float: right;
     margin-right: 10px;
     width: 64px;
@@ -534,26 +618,32 @@
     cursor: pointer;
     color: #383838;
 }
-.common-no-style:hover{
+
+.common-no-style:hover {
     color: #0b84da;
 }
-.state{
+
+.state {
     width: 100%;
     color: #A5A5A5;
 }
-.state .combox{
+
+.state .combox {
     margin-top: 10px;
     height: 20px;
     line-height: 20px;
 }
-.state .combox img{
+
+.state .combox img {
     margin-top: 1px;
 }
-.combox .in-what-time{
+
+.combox .in-what-time {
     float: right;
 }
+
 /*底部发布*/
-.publish{
+.publish {
     width: 100%;
     height: 120px;
     position: absolute;
@@ -562,7 +652,8 @@
     background-color: #eee;
     padding: 10px 15px;
 }
-.publish-input{
+
+.publish-input {
     padding: 10px;
     width: 100%;
     height: 60px;
@@ -571,27 +662,32 @@
     resize: none;
     border: 0 none;
 }
-.publish-input::placeholder{
+
+.publish-input::placeholder {
     color: #D2D2D2;
 }
-.fenge-line{
+
+.fenge-line {
     width: 100%;
     height: 1px;
     background-color: #E2E2E2;
 }
-.publish-bottom{
+
+.publish-bottom {
     width: 100%;
     height: 40px;
     position: relative;
-    background-color: #fff ;
+    background-color: #fff;
 }
-.publish-bottom>img{
+
+.publish-bottom > img {
     float: left;
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
-.publish-btn{
+
+.publish-btn {
     width: 60px;
     height: 30px;
     float: right;
@@ -603,11 +699,13 @@
     cursor: pointer;
     margin-right: 5px;
 }
-.publish-btn:hover{
+
+.publish-btn:hover {
     opacity: 0.8;
 }
+
 /*上传附件框*/
-.fujian-box{
+.fujian-box {
     width: 250px;
     height: 210px;
     position: absolute;
@@ -615,10 +713,11 @@
     top: -140px;
     left: -100px;
     padding: 5px;
-    box-shadow: 0 7px 21px rgba(0,0,0,.1);
+    box-shadow: 0 7px 21px rgba(0, 0, 0, .1);
     border-radius: 3px;
 }
-.fujian-box-title{
+
+.fujian-box-title {
     width: 100%;
     height: 50px;
     padding: 10px 15px;
@@ -627,18 +726,21 @@
     font-weight: bold;
     font-size: 16px;
     position: relative;
-    border-bottom: 1px solid rgba(0,0,0,.07);
+    border-bottom: 1px solid rgba(0, 0, 0, .07);
 }
-.close-fujian{
+
+.close-fujian {
     position: absolute;
     right: 5px;
     top: 8px;
     cursor: pointer;
 }
-.close-fujian:hover{
+
+.close-fujian:hover {
     color: #3da8f5 !important;
 }
-.zj-up,.select-up{
+
+.zj-up, .select-up {
     width: 100%;
     height: 34px;
     margin-top: 7px;
@@ -647,35 +749,43 @@
     line-height: 34px;
     font-size: 14px;
 }
-.zj-up:hover{
+
+.zj-up:hover {
     background-color: #f7f7f7;
 }
-.select-up:hover{
+
+.select-up:hover {
     background-color: #f7f7f7;
 }
-.zj-up i,.select-up i{
+
+.zj-up i, .select-up i {
     float: left;
     margin-right: 15px;
     margin-left: 10px;
 }
-.zj-up span,.select-up span{
+
+.zj-up span, .select-up span {
     float: left;
 }
-.xian{
+
+.xian {
     width: 100%;
-    border-bottom: 1px solid rgba(0,0,0,.07);
+    border-bottom: 1px solid rgba(0, 0, 0, .07);
 }
-.fujian-box-bottom{
+
+.fujian-box-bottom {
     width: 100%;
     height: 50px;
     padding: 10px 5px;
 }
-.lianjie{
+
+.lianjie {
     width: 150px;
     height: 28px;
     float: left;
 }
-.add-fujian{
+
+.add-fujian {
     width: 54px;
     height: 28px;
     float: right;
@@ -686,22 +796,25 @@
     cursor: pointer;
     border-radius: 3px;
 }
-.add-fujian:hover{
+
+.add-fujian:hover {
     opacity: 0.8;
 }
+
 /*任务菜单框*/
 
-.renwu-menu{
+.renwu-menu {
     width: 200px;
     padding: 0 20px 1px 20px;
     background-color: white;
     position: absolute;
     top: 35px;
     right: 0px;
-    box-shadow: 0 7px 21px rgba(0,0,0,.1);
+    box-shadow: 0 7px 21px rgba(0, 0, 0, .1);
     color: #9F9F9F;
 }
-.scheduling-menu-title{
+
+.scheduling-menu-title {
     width: 100%;
     height: 54px;
     line-height: 54px;
@@ -710,7 +823,8 @@
     border-bottom: 1px solid #D5D5D5;
     margin-bottom: 22px;
 }
-.scheduling-menu-title img{
+
+.scheduling-menu-title img {
     width: 16px;
     height: 16px;
     float: right;
@@ -718,59 +832,68 @@
     cursor: pointer;
 
 }
-.menu-box{
+
+.menu-box {
     width: 100%;
     height: 22px;
     margin-bottom: 22px;
     line-height: 22px;
     cursor: pointer;
 }
-.menu-box img{
+
+.menu-box img {
     width: 18px;
     height: 18px;
     float: left;
     margin-right: 20px;
 }
-.menu-box span{
+
+.menu-box span {
     float: left;
     font-size: 14px;
 }
-.secret.menu-box{
+
+.secret.menu-box {
     height: 45px;
     position: relative;
     color: #9F9F9F;
     margin-top: 10px;
 }
-.layui-form-switch{
+
+.layui-form-switch {
     margin-top: 0;
 }
-.switch{
+
+.switch {
     float: right;
 }
-.who-can-see{
+
+.who-can-see {
     position: absolute;
     bottom: 0;
     left: 38px;
 }
-.layui-form-onswitch{
+
+.layui-form-onswitch {
     background-color: #017ECA;
     border-color: #017ECA;
 }
 
 /*参与者  人员 弹框*/
-.people{
+.people {
     width: 252px;
     height: 360px;
     border-radius: 4px;
-    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, .1);
     position: absolute;
     top: 70px;
     left: 95px;
     background-color: white;
-    padding: 15px ;
+    padding: 15px;
     z-index: 100;
 }
-.peoples{
+
+.peoples {
     width: 100%;
     height: 210px;
     padding-top: 20px;
@@ -778,15 +901,18 @@
     overflow-y: scroll;
     border-bottom: 1px solid #E5E5E5;
 }
-.peoples::-webkit-scrollbar{
+
+.peoples::-webkit-scrollbar {
     width: 1px;
     height: 1px;
 }
-.peoples>p{
+
+.peoples > p {
     font-size: 12px;
     color: #a6a6a6;
 }
-.one-people{
+
+.one-people {
     width: 100%;
     height: 32px;
     padding: 6px 0;
@@ -794,29 +920,34 @@
     line-height: 32px;
     cursor: pointer;
 }
-.one-people:hover{
+
+.one-people:hover {
     background-color: #f5f5f5;
 }
-.one-people img{
+
+.one-people img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     float: left;
 }
-.one-people span{
+
+.one-people span {
     float: left;
     margin-left: 15px;
 }
 
-#executor.special-executor i{
+#executor.special-executor i {
     display: block;
 }
-.one-people i{
+
+.one-people i {
     float: right;
     margin-right: 5px;
     display: none;
 }
-.add-new-people{
+
+.add-new-people {
     width: 100%;
     height: 32px;
     padding: 6px 0;
@@ -824,23 +955,25 @@
     line-height: 32px;
     cursor: pointer;
 }
-#members.yougou i{
+
+#members.yougou i {
     display: block;
 }
-.add-new-people img{
+
+.add-new-people img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     float: left;
 }
-.add-new-people span{
+
+.add-new-people span {
     float: left;
     margin-left: 15px;
     color: #3da8f5;
 }
 
-
-.people-ok{
+.people-ok {
     width: 220px;
     height: 40px;
     margin: 15px auto;
@@ -850,44 +983,50 @@
     background-color: #3696DC;
     cursor: pointer;
 }
-.people-ok:hover{
+
+.people-ok:hover {
     opacity: 0.8;
 }
 
-
 /*关联 部分*/
-.related-box{
+.related-box {
     width: 100%;
 }
-.related-box li:hover{
+
+.related-box li:hover {
     background-color: #F5F5F5;
 }
-.flex-box{
+
+.flex-box {
     display: flex;
     align-items: center;
     color: #a6a6a6;
     font-size: 12px;
     padding: 16px 4px 12px;
 }
-.flex-box span{
+
+.flex-box span {
     flex: 1;
-    border-top: 1px solid rgba(0,0,0,.1);
+    border-top: 1px solid rgba(0, 0, 0, .1);
     margin-left: 12px;
 }
-.related-rw li,.related-fx li,.related-rc li,.related-wj li{
+
+.related-rw li, .related-fx li, .related-rc li, .related-wj li {
     width: 100%;
     height: 40px;
     padding: 8px 4px;
     position: relative;
     display: flex;
 }
-.check-box{
+
+.check-box {
     float: left;
     width: 18px;
     height: 18px;
     margin-top: 3px;
 }
-.related-rw-info{
+
+.related-rw-info {
     float: left;
     width: 320px;
     height: 24px;
@@ -895,15 +1034,18 @@
     margin-left: 15px;
     cursor: pointer;
 }
-.related-rw-info img{
+
+.related-rw-info img {
     width: 24px;
     height: 24px;
 }
-.related-rw-info span{
+
+.related-rw-info span {
     font-size: 14px;
     margin-left: 5px;
 }
-.related-rw-describe{
+
+.related-rw-describe {
     width: 170px;
     line-height: 24px;
     color: #a6a6a6;
@@ -913,42 +1055,49 @@
     position: absolute;
     right: 30px;
 }
-.show-cancel-related{
+
+.show-cancel-related {
     position: absolute;
     right: 5px;
     line-height: 24px;
     cursor: pointer;
 }
-.show-cancel-related:hover{
+
+.show-cancel-related:hover {
     color: #3da8f5 !important;
 }
-.related-menu{
+
+.related-menu {
     position: absolute;
     right: -15px;
     top: 30px;
     width: 250px;
     background-color: white;
     z-index: 200;
-    box-shadow: 0 7px 21px rgba(0,0,0,.1);
+    box-shadow: 0 7px 21px rgba(0, 0, 0, .1);
     border-radius: 3px;
     padding-bottom: 10px;
 }
-.related-menu-title{
+
+.related-menu-title {
     width: 220px;
     line-height: 50px;
     text-align: center;
     font-size: 16px;
 }
-.close-related-menu{
+
+.close-related-menu {
     position: absolute;
     right: 10px;
     top: 14px;
     cursor: pointer;
 }
-.close-related-menu:hover{
+
+.close-related-menu:hover {
     color: #3da8f5 !important;
 }
-.related-menu li{
+
+.related-menu li {
     width: 100%;
     height: 40px !important;
     cursor: pointer;
@@ -956,14 +1105,16 @@
     line-height: 30px;
     color: gray;
 }
-.related-menu li:hover{
+
+.related-menu li:hover {
     background-color: #f7f7f7;
 }
-.related-menu li i{
+
+.related-menu li i {
     margin-right: 15px;
 }
 
-.related-wj li{
+.related-wj li {
     width: 100%;
     height: 48px;
     padding: 4px;
@@ -971,59 +1122,71 @@
     line-height: 40px;
     margin-bottom: 5px;
 }
-.related-wj-info{
+
+.related-wj-info {
     width: 353px;
     float: left;
     cursor: pointer;
 }
-.related-wj-info img{
+
+.related-wj-info img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 15px;
 }
-.related-wj-info span{
+
+.related-wj-info span {
     font-size: 14px;
 }
-.related-wj .related-rw-describe{
+
+.related-wj .related-rw-describe {
     line-height: 40px;
 }
-.related-wj .show-cancel-related{
+
+.related-wj .show-cancel-related {
     line-height: 40px;
 }
-.related-rc li{
+
+.related-rc li {
     width: 100%;
     height: 70px;
     padding: 8px 4px;
     position: relative;
 }
-.related-rc-top{
+
+.related-rc-top {
     width: 100%;
     height: 24px;
     line-height: 24px;
 
 }
-.related-rc-info{
+
+.related-rc-info {
     width: 353px;
     float: left;
     cursor: pointer;
 }
-.img-i{
+
+.img-i {
     float: left;
     margin-right: 15px;
 }
-.related-rc-info img{
+
+.related-rc-info img {
     float: left;
     width: 24px;
     height: 24px;
     border-radius: 50%;
     margin-right: 15px;
 }
-.related-rc-info span{
-   font-size: 14px;
+
+.related-rc-info span {
+    font-size: 14px;
     float: left;
 }
-.related-rc-down{
+
+.related-rc-down {
     line-height: 20px;
     margin-top: 5px;
     font-size: 12px;

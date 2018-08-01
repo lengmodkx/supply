@@ -4,16 +4,22 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskService;
 import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tag")
@@ -23,12 +29,32 @@ public class TagController extends BaseController {
     @Resource
     private TagService tagService;
 
+    @Resource
+    private TaskService taskService;
+
+
     @RequestMapping("/tag.html")
-    public String tagPage(@RequestParam String projectId, Model model) {
+    public String tagPage(@RequestParam String projectId,
+                          @RequestParam(required = false) String taskId, Model model) {
         List<Tag> tagList = tagService.findByProjectId(projectId);
+        Task task = taskService.findTaskByTaskId(taskId);
+        if(StringUtils.isNotEmpty(task.getTagId())){
+            List<String> tagIds = Arrays.asList(task.getTagId().split(","));
+            for(int i=0;i<tagList.size();i++) {
+                for (int j=0;j<tagIds.size();j++) {
+                    if(tagList.get(i).getTagId().equals(Long.valueOf(tagIds.get(j)))){
+                        tagList.get(i).setFlag(true);
+                    }
+                }
+            }
+        }
+
         model.addAttribute("tagList", tagList);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("taskId", taskId);
         return "tk-add-tag";
     }
+
 
     /**
      * 查询标签列表，根据项目

@@ -52,26 +52,30 @@ stompClient.connect({},
             $('#'+task.object.taskId+' .assignment-title').html(task.object.taskName);
         }
 
-        if(task.object.priority==='普通'){
-            $('.task-priority').removeClass('bg-priority-0');
-            $('.task-priority').removeClass("bg-priority-1");
-            $('.task-priority').removeClass("bg-priority-2");
-            $('.task-priority').addClass('bg-priority-0');
+        if(task.type === '更新提醒模式为'){
+            $('.'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png");
         }
 
-        if(task.object.priority==='紧急'){
-            $('.task-priority').removeClass('bg-priority-0');
-            $('.task-priority').removeClass("bg-priority-1");
-            $('.task-priority').removeClass("bg-priority-2");
-            $('.task-priority').addClass('bg-priority-1');
-        }
-        if(task.object.priority==='非常紧急'){
-            $('.task-priority').removeClass('bg-priority-0');
-            $('.task-priority').removeClass("bg-priority-1");
-            $('.task-priority').removeClass("bg-priority-2");
-            $('.task-priority').addClass('bg-priority-2');
+
+        if(taskLog.type==='更新任务的重复') {
+            $('.'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
 
+
+        if(task.type==='更新任务优先级为'){
+            $('.'+task.object.taskId).removeClass('bg-priority-0');
+            $('.'+task.object.taskId).removeClass("bg-priority-1");
+            $('.'+task.object.taskId).removeClass("bg-priority-2");
+            if(task.object.priority==='普通'){
+                $('.'+task.object.taskId).addClass('bg-priority-0');
+            }
+            if(task.object.priority==='紧急'){
+                $('.'+task.object.taskId).addClass('bg-priority-1');
+            }
+            if(task.object.priority==='非常紧急'){
+                $('.'+task.object.taskId).addClass('bg-priority-2');
+            }
+        }
     });
 
     function taskShow(task) {

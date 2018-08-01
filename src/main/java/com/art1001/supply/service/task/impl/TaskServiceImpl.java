@@ -2,8 +2,10 @@ package com.art1001.supply.service.task.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
@@ -27,6 +29,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -128,24 +131,25 @@ public class TaskServiceImpl implements TaskService {
 	    //任务更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //更新任务优先级
-        if(task.getPriority() != null && task.getPriority() != ""){
+        if(StringUtils.isNotEmpty(task.getPriority())){
             log = logService.saveLog(task.getTaskId(),TaskLogFunction.F.getName() + " " + task.getPriority(),1);
         }
         //更新任务备注
-        if(task.getRemarks() != null && task.getRemarks() != null){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName() + " " + task.getPriority(),1);
+        if(StringUtils.isNotEmpty(task.getRemarks())){
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName() + " " + task.getRemarks(),1);
         }
         //更新任务执行者
-        if(task.getExecutor() != null && task.getExecutor() != ""){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.U.getName() + " " + task.getPriority(),1);
+        if(StringUtils.isNotEmpty(task.getExecutor())){
+            UserEntity user = userMapper.findUserById(task.getExecutor());
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.U.getName() + " " + user.getUserName(),1);
         }
         //更新任务其他
-        if(task.getOther() != null && task.getOther() != ""){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.G.getName() + " " + task.getPriority(),1);
+        if(StringUtils.isNotEmpty(task.getOther())){
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.G.getName() + " " + task.getOther(),1);
         }
         //更新任务的名称
-        if(!StringUtils.isEmpty(task.getTaskName())){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.A18.getName() + " " + task.getPriority(),1);
+        if(StringUtils.isNotEmpty(task.getTaskName())){
+            log = logService.saveLog(task.getTaskId(),TaskLogFunction.A18.getName() + " " + task.getTaskName(),1);
         }
         int result = taskMapper.updateTask(task);
         log.setResult(result);
@@ -409,38 +413,21 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 移除该任务上的标签
-     * @param tags 当前任务上绑定的所有标签对象数组
-     * @param tag 当前要被的标签对象
      * @param taskId 当前任务uid
      * @return
      */
     @Override
-    public int removeTaskTag(String[] tags, Tag tag, String taskId) {
-        if(tags.length == 1){
-            int result = taskMapper.clearTaskTag(taskId);
-            return result;
+    public void removeTaskTag(String tagId, String taskId) {
+        Task task = taskMapper.findTaskByTaskId(taskId);
+        String tagIds = task.getTagId();
+        List<String> tagIdTemp = Arrays.stream(tagIds.split(",")).filter(tagId1->!tagId1.equals(tagId)).collect(Collectors.toList());
+        if(tagIdTemp.size()==0){
+            taskMapper.clearTaskTag(taskId);
+        }else{
+            task.setTagId(StringUtils.join(tagIdTemp,",")+",");
+            task.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateTask(task);
         }
-        StringBuilder taskTagsId = new StringBuilder();
-        //循环标签数组
-        for (int i = 0; i < tags.length ; i++) {
-            //如果循环到的标签和要被删除的标签的信息一致时 清空该对象
-            if(tags[i].equals(String.valueOf(tag.getTagId()))){
-                tags[i] = null;
-                continue;
-            }
-            //累加标签的id
-            taskTagsId.append(tags[i]).append(",");
-        }
-        Task task = new Task();
-        //设置删除后的标签id
-        task.setTagId(taskTagsId.toString());
-        //设置任务id
-        task.setTaskId(taskId);
-        //设置更新时间
-        task.setUpdateTime(System.currentTimeMillis());
-        //保存至数据库
-        int result = taskMapper.updateTask(task);
-        return result;
     }
 
     /**
