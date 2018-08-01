@@ -83,28 +83,7 @@
                     <div class="style-box">
                         <div class="style-box-left">生日</div>
                         <div class="style-box-right">
-                            <div class="select-box">
-                                <select name="year" lay-verify="">
-                                    <option value="1">2018</option>
-                                    <option value="2">2017</option>
-                                    <option value="3">2016</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select name="mouth" lay-verify="">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select name="date" lay-verify="">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
-                            </div>
-
+                            <input type="text" class="layui-input" id="birthday">
                         </div>
                     </div>
                     <div class="style-box">
@@ -207,7 +186,19 @@
     layui.use('form', function(){
         var form = layui.form;
     });
-
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#birthday'
+            ,type: 'date', //默认，可不填
+            format: 'yyyy年MM月dd日', //可任意组合
+            done: function(value, date, endDate){
+                console.log(value); //得到日期生成的值，如：2017-08-18
+                console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+    });
 
 
     //点击 个人信息 账号密码 切换 页面
