@@ -28,8 +28,9 @@
 		u_email,
 		u_image,
 		u_address,
-		u_create_time
-		u_job
+		u_create_time,
+		u_job,
+		u_default_img
 	</sql>
 
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
@@ -63,6 +64,7 @@
 			<result property="address" column="u_address"/>
 			<result property="createTime" column="u_create_time"/>
 			<result property="job" column="u_job"/>
+			<result property="defaultImg" column="u_default_img"/>
 		</association>
 	</resultMap>
 
@@ -76,6 +78,7 @@
 		<result property="address" column="u_address"/>
 		<result property="createTime" column="u_create_time"/>
 		<result property="job" column="u_job"/>
+		<result property="defaultImg" column="u_default_img"/>
 	</resultMap>
 
 	<select id="findCount" resultType="java.lang.Integer">
@@ -152,7 +155,8 @@
 		i.u_email,
 		i.u_address,
 		i.u_create_time,
-		i.u_job
+		i.u_job,
+		i.u_default_img
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name = #{name}
 	</select>
@@ -184,7 +188,8 @@
 		i.u_image,
 		i.u_address,
 		i.u_create_time,
-		i.u_job
+		i.u_job,
+		i.u_default_img
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
 		where u.u_id = #{id}
 		
@@ -322,6 +327,7 @@
 			#{userInfo.address},
 			#{userInfo.createTime},
 			#{userInfo.job},
+			#{userInfo.defaultImg},
 			)
 	</insert>
 	
@@ -351,6 +357,9 @@
 			<if test="userInfo.job != null and userInfo.job != ''">
 				u_job = #{userInfo.job}
 			</if>
+			<if test="userInfo.defaultImg != null and userInfo.defaultImg != ''">
+				u_default_img = #{userInfo.defaultImg}
+			</if>
 		</set>
 		where u_id = #{userInfo.id}
 	</update>
@@ -375,7 +384,8 @@
 			i.u_email,
 			i.u_image,
 			i.u_address,
-			i.u_job
+			i.u_job,
+		    i.u_default_img
 		FROM
 			tb_user u,tb_user_info i
 		WHERE
@@ -408,7 +418,8 @@
 			i.u_email,
 			i.u_image,
 			i.u_address,
-			i.u_job
+			i.u_job,
+			i.u_default_img
 		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_lable desc)
 	</select>
 
@@ -434,7 +445,8 @@
 		u_image,
 		u_address,
 		tb_user_info.u_create_time u_create_time1,
-		u_job
+		u_job,
+		u_default_img
 		FROM
 			tb_user,
 			tb_user_info
@@ -537,7 +549,8 @@
 			i.u_email,
 			i.u_address,
 			i.u_create_time,
-			i.u_job
+			i.u_job,
+			i.u_default_img
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name like CONCAT('%',#{keyword},'%')
 	</select>

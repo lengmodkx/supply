@@ -58,4 +58,6 @@ public class UserInfoEntity implements Serializable {
 
 	private String job;
 
+	private String defaultImg;
+
 }

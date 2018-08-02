@@ -411,4 +411,17 @@ public class PublicController {
     }
 
 
+
+    @PostMapping("/setDefaultImg")
+    @ResponseBody
+    public JSONObject setDefaultImg(@RequestParam String userId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            UserEntity userEntity = userService.findById(userId);
+
+        }catch (Exception e){
+            throw  new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }
