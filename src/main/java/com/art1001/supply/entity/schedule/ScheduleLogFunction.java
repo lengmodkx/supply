@@ -19,7 +19,9 @@ public enum ScheduleLogFunction {
     H(8,"全天日程"),
     I(9,"非全天日程"),
     J(10,"设置日程为"),
-    K(11,"全天模式");
+    K(11,"全天模式"),
+    L(12,"添加标签"),
+    M(13,"移除标签");
 
     private ScheduleLogFunction(int id, String name){
         this.id = id;

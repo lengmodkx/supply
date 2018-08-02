@@ -60,6 +60,7 @@ $(function () {
         }
 
     });
+
     //点击显示 隐藏 过去 日程
     $("html").on("click",".is-show",function () {
         if ($(this).parent().siblings(".old-rc").is(":visible")){
@@ -70,6 +71,7 @@ $(function () {
             $(this).text("隐藏")
         }
     });
+
     //点击新建文件夹
     $("html").on("click",".up-add>i:nth-of-type(2)",function () {
         $(this).parent().siblings(".wjj-wrap").find("input").show();

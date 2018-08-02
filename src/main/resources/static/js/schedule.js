@@ -381,7 +381,7 @@ $('html').on('click','.remove-work-people',function () {
  * 点击关联的文件
  */
 $("html").on("click",'.related-wj li',function () {
-    location.href = "/file/fileDetail.html?fileId="+$(this).attr('data-id');
+    window.open("/file/fileDetail.html?fileId="+$(this).attr('data-id'),"在线预览文件");
 });
 
 /**
@@ -389,6 +389,13 @@ $("html").on("click",'.related-wj li',function () {
  */
 $("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
     changeRenwu($(this).parent() .attr("data-id"),projectId);
+});
+
+/**
+ * 点击关联的日程
+ */
+$("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
+    changeRicheng($(this).parent().parent().attr("data-id"),projectId);
 });
 
 /**
@@ -417,6 +424,23 @@ function changeRenwu(taskId,projectId) {
     });
 }
 
+//修改日程 弹框界面
+function changeRicheng(scheduleId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/schedule/editSchedule.html?id="+ scheduleId + "&projectId=" + projectId
+        });
+    });
+}
 /**
  * 更新任务的名称
  */
@@ -506,6 +530,56 @@ $('.sure-btn').click(function () {
             layer.msg(data.msg);
         }
 
+    });
+});
+
+/**
+ * 点击添加标签按钮弹出标签页面
+ */
+$(".no-tags").click(function (e) {
+    var width=(parent.window.innerWidth-600)/2+20;
+    var height=(parent.window.innerHeight-600)/2+20;
+    var top = $(this).offset().top+height+"px";
+    var left = $(this).offset().left+width+"px";
+    parent.layer.open({
+        type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        title: false, //标题
+        offset: [top, left],
+        area: ['250px', '250px'],
+        fixed: false,
+        shadeClose: true, //点击遮罩关闭
+        shade: [0.1, '#fff'],
+        closeBtn: 0,
+        anim: 1,  //动画 0-6
+        content: ['/tag/tag.html?projectId='+projectId+"&publicId="+scheduleId+"&publicType="+'日程','no']
+    });
+    e.stopPropagation();
+});
+
+
+/**
+ * 添加标签
+ */
+$(".tags-list").click(function () {
+    var tagId = $(this).attr('id');
+    $.post("/schedule/addTag", {"scheduleId": scheduleId,tagId: tagId}, function (data) {
+        if (data.result === 0) {
+            layer.msg(data.msg);
+        }
+    })
+});
+
+/**
+ * 点击 x 移除标签
+ */
+$('html').on('click','.remove-tag',function () {
+    var id = $(this).parent().attr('id');
+    var url = "/tag/removeTag";
+    var args = {"publicId":scheduleId,"publicType":"日程","tagId":id};
+    $.post(url,args,function (data) {
+        if(data.result  === 0){
+            layer.msg(data.msg);
+        }
     });
 });
 

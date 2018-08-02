@@ -449,7 +449,7 @@ layui.use('form', function() {
             shade: [0.1, '#fff'],
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: ['/tag/tag.html?projectId='+projectId+"&taskId="+taskId,'no']
+            content: ['/tag/tag.html?projectId='+projectId+"&publicId="+taskId+"&publicType="+'任务','no']
         });
         e.stopPropagation();
     });
@@ -742,30 +742,30 @@ $("body").on("click",".cancle",function (e) {
 /**
  * 点击子任务右边的箭头的时候跳转到 子任务详情页
  */
-$('.go-detail').click(function () {
+$('html').on("click",".go-detail",function () {
     var childTaskId = $(this).prev().prev().attr('id');
-    location.href = '/task/initTask.html?taskId='+childTaskId+'&projectId='+ projectId;
+    changeRenwu2(childTaskId,projectId);
 });
 
 /**
  * 点击关联的任务
  */
 $("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
-    changeRenwu($(this).parent() .attr("data-id"),projectId);
+    changeRenwu2($(this).parent() .attr("data-id"),projectId);
 });
 
 /**
  * 点击关联的文件
  */
 $("html").on("click",'.related-wj li',function () {
-    location.href = "/file/fileDetail.html?fileId="+$(this).attr('data-id');
+    window.open("/file/fileDetail.html?fileId="+$(this).attr('data-id'),"在线预览文件");
 });
 
 /**
  * 点击关联的日程
  */
-$("html").on("click",'.related-rw .boxsizing .related-rw-info',function () {
-    changeRenwu($(this).parent() .attr("data-id"),projectId);
+$("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
+    changeRicheng($(this).parent().parent().attr("data-id"),projectId);
 });
 
 /**
@@ -998,7 +998,41 @@ function addBindingStr(binding,type,bindId){
 
 }
 
+//修改任务 弹框界面
+function changeRenwu2(taskId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
+        });
+    });
+}
 
+//修改日程 弹框界面
+function changeRicheng(scheduleId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/schedule/editSchedule.html?id="+ scheduleId + "&projectId=" + projectId
+        });
+    });
+}
 
 
 

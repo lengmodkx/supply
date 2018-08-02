@@ -198,6 +198,9 @@ public class FileController extends BaseController {
         List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
         //查询出任务的关联信息
         BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
+        //查询出该文件的所有参与者信息
+        List<UserEntity> joinInfo = userService.findManyUserById(fileService.findJoinId(file.getFileId()));
+        model.addAttribute("joinInfos",joinInfo);
         model.addAttribute("bindingVo",bindingVo);
         model.addAttribute("file", file);
         model.addAttribute("projectId", projectId);

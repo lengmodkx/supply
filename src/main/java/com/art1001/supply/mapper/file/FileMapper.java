@@ -8,6 +8,7 @@ import com.art1001.supply.entity.file.File;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * filemapper接口
@@ -150,4 +151,11 @@ public interface FileMapper {
 	 */
 	@Select("select file_uids from prm_file where file_id = #{fileId}")
 	String findJoinId(String fileId);
+
+	/**
+	 * 清空该文件的标签
+	 * @param fileId 文件的id
+	 */
+	@Update("update set tag_id = '' where file_id = #{fileId}")
+    void fileClearTag(String fileId);
 }

@@ -127,6 +127,7 @@ public class FileServiceImpl implements FileService {
         file.setSize(FileUtils.convertFileSize(contentLength));
         file.setCatalog(0);
         file.setParentId(parentId);
+        file.setFileUids(ShiroAuthenticationManager.getUserId());
         fileService.saveFile(file);
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -433,5 +434,14 @@ public class FileServiceImpl implements FileService {
             //推送至文件的详情界面
             messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(filePushType)));
         }
+    }
+
+    /**
+     * 清空文件的标签
+     * @param fileId 文件的id
+     */
+    @Override
+    public void fileClearTag(String fileId) {
+        fileMapper.fileClearTag(fileId);
     }
 }

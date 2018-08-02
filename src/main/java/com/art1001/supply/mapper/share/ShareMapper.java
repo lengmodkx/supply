@@ -7,6 +7,7 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * sharemapper接口
@@ -68,4 +69,11 @@ public interface ShareMapper {
      * @return
      */
     List<ProjectMember> findProjectMemberShareJoin(String projectId, String shareId);
+
+    /**
+     * 清空分享的标签
+     * @param shareId 分享的id
+     */
+    @Update("udpate prm_share set tag_ids = '' where id = #{shareId}")
+    void shareClearTag(String shareId);
 }

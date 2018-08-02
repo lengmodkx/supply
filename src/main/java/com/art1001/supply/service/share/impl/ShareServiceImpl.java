@@ -213,4 +213,13 @@ public class ShareServiceImpl implements ShareService {
 			messagingTemplate.convertAndSend("/topic/"+byId.getProjectId(),new ServerMessage(JSON.toJSONString(filePushType)));
 		}
 	}
+
+	/**
+	 * 清空分享的标签
+	 * @param shareId 分享的id
+	 */
+	@Override
+	public void shareClearTag(String shareId) {
+		shareMapper.shareClearTag(shareId);
+	}
 }

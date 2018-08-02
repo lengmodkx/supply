@@ -181,6 +181,7 @@ public class TaskServiceImpl implements TaskService {
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
+        task.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
@@ -1190,5 +1191,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String getTaskNameById(String taskId) {
         return taskMapper.getTaskNameById(taskId);
+    }
+
+    /**
+     * 清空任务的标签
+     * @param publicId 任务id
+     */
+    @Override
+    public void clearTaskTag(String publicId) {
+        taskMapper.clearTaskTag(publicId);
     }
 }

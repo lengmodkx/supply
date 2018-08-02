@@ -306,6 +306,13 @@ $("html").on("click",'.related-rw .related-rw-info',function () {
 });
 
 /**
+ * 点击关联的日程
+ */
+$("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
+    changeRicheng($(this).parent().parent().attr("data-id"),projectId);
+});
+
+/**
  * 点击关联的文件
  */
 $("html").on("click",'.related-wj li',function () {
@@ -452,7 +459,7 @@ $("html").on("click",".one-people",function () {
 function changeRenwu(taskId,projectId) {
     layui.use('layer', function(){
         var layer = layui.layer;
-        layer.open({
+        parent.layer.open({
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: '20px',
@@ -462,6 +469,24 @@ function changeRenwu(taskId,projectId) {
             closeBtn: 0,
             anim: 1,  //动画 0-6
             content: "/task/initTask.html?taskId="+ taskId + "&projectId=" + projectId
+        });
+    });
+}
+
+//修改任务 弹框界面
+function changeRicheng(id,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/schedule/editSchedule.html?id="+ id + "&projectId=" + projectId
         });
     });
 }

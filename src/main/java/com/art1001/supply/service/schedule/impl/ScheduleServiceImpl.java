@@ -207,7 +207,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 				logContent.append(userName).append(" ");
 			}
 		}
-
 		//比较 newJoin  和 oldJoin 两个集合的差集  (添加)
 		List<String> reduce2 = newJoin.stream().filter(item -> !oldJoin.contains(item)).collect(Collectors.toList());
 		if(reduce2 != null && reduce2.size() > 0){
@@ -272,5 +271,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 		scheduleMapper.updateSchedule(schedule);
 		Log log = logService.saveLog(scheduleId, content.toString(), 3);
 		return log;
+	}
+
+	/**
+	 * 清空日程的id
+	 * @param scheduleId 日程的id
+	 */
+	@Override
+	public void clearScheduleTag(String scheduleId) {
+		scheduleMapper.clearScheduleTag(scheduleId);
 	}
 }

@@ -9,6 +9,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -18,12 +19,14 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import jdk.jfr.events.ExceptionThrownEvent;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +62,9 @@ public class ScheduleController extends BaseController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private TagService tagService;
 
     @Resource
     private SimpMessagingTemplate messagingTemplate;
@@ -113,6 +119,7 @@ public class ScheduleController extends BaseController {
         model.addAttribute("startTimeTemp",format.format(schedule.getEndTime()));
         model.addAttribute("endTime",format.format(schedule.getEndTime()));
         model.addAttribute("endTimeTemp",format.format(schedule.getEndTime()));
+        model.addAttribute("tags",schedule.getTags());
         model.addAttribute("schedule",schedule);
         //查询出日程的关联信息
         BindingVo bindingVo = bindingService.listBindingInfoByPublicId(id);
@@ -159,6 +166,7 @@ public class ScheduleController extends BaseController {
             schedule.setRemind(remand);
             schedule.setMemberId(userEntity.getId());
             schedule.setMemberIds(memberId);
+            schedule.setMemberIds(ShiroAuthenticationManager.getUserId());
             if("on".equals(allDay)){
                 schedule.setStartTime(System.currentTimeMillis());
                 schedule.setEndTime(DateUtils.getEndTime());
@@ -476,6 +484,12 @@ public class ScheduleController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 是否是全天
+     * @param scheduleId 日程id
+     * @param isAllday 是否是全天 (是:true 否:false)
+     * @return
+     */
     @PostMapping("isAllday")
     @ResponseBody
     public JSONObject isAllday(String scheduleId, boolean isAllday){
@@ -511,6 +525,7 @@ public class ScheduleController extends BaseController {
         }
         return jsonObject;
     }
+
 
 
 

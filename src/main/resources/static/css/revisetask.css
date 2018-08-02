@@ -1011,14 +1011,19 @@
     margin-left: 12px;
 }
 
-.related-rw li, .related-fx li, .related-rc li, .related-wj li {
+.related-rw li, .related-fx li,.related-wj li {
     width: 100%;
     height: 40px;
     padding: 8px 4px;
     position: relative;
     display: flex;
 }
-
+.related-rc li{
+    width: 100%;
+    height: 40px;
+    padding: 8px 4px;
+    position: relative;
+}
 .check-box {
     float: left;
     width: 18px;
@@ -1127,6 +1132,9 @@
     width: 353px;
     float: left;
     cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .related-wj-info img {

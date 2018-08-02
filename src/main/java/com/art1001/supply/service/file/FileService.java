@@ -158,4 +158,10 @@ import java.util.List;
 	 * @return 影响行数
 	 */
 	void addAndRemoveFileJoin(String fileId, String newJoin);
+
+	/**
+	 * 清空文件的标签
+	 * @param fileId 文件的id
+	 */
+	void fileClearTag(String fileId);
 }

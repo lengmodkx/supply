@@ -17,7 +17,12 @@
         </div>
         <ul class="tags-ul boxsizing" id = "tags">
             <!--这里是标签-->
-            <li class="tags-list" th:each="tag:${tagList}" th:id="${tag.tagId}">
+            <li class="tags-list" th:each="tag:${tagList}" th:if="${tag.flag}" th:id="${tag.tagId}">
+                <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
+                <span class="tag-font" th:text="${tag.tagName}"></span>
+                <i class="layui-icon layui-icon-ok choose-ok" style="font-size: 16px; color: #D1D1D1;" th:style="'display:' + @{(${tag.flag} ? 'block' : 'none')} + ''"></i>
+            </li>
+            <li class="tags-list" th:each="tag:${tagList}" th:if="${!tag.flag}" th:id="${tag.tagId}">
                 <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
                 <span class="tag-font" th:text="${tag.tagName}"></span>
                 <i class="layui-icon layui-icon-ok choose-ok" style="font-size: 16px; color: #D1D1D1;" th:style="'display:' + @{(${tag.flag} ? 'block' : 'none')} + ''"></i>
@@ -66,7 +71,9 @@
     //当前项目id
     var projectId = [[${projectId}]];
     //当前任务id
-    var taskId = [[${taskId}]];
+    var publicId = [[${publicId}]];
+    //得知是从哪里跳转过来的
+    var publicType = [[${publicType}]]
     layui.use('form', function(){
         var form = layui.form;
     });
@@ -95,16 +102,14 @@
     $("html").on("click",".tags-list",function () {
         var tagId = $(this).attr("id");
         if($(this).find("i").is(':visible')){
-            var url = "/task/removeTaskTag";
-            var args = {"tagId":tagId,"taskId":taskId};
+            var url = "/tag/removeTag";
+            var args = {"tagId":tagId,"publicId":publicId,"publicType":publicType};
             $.post(url,args,function (data) {
                 console.log(data);
             },"json");
-
         }else{
-
-            var url = "/task/addTaskTag";
-            var args = {"tagId":tagId,"taskId":taskId,"projectId":projectId};
+            var url = "/tag/addItemTag";
+            var args = {"tagId":tagId,"publicId":publicId,"projectId":projectId,"publicType":publicType};
             $.post(url,args,function (data) {
                 console.log(data);
             },"json");
@@ -125,15 +130,22 @@
                     color=$(this).parent().css("background-color")
                 }
             });
-            var url = "/task/addTagsToTask";
-            var args = {"tagName":vals,"bgColor":color,"taskId":taskId,"projectId":projectId};
+            var url = "/tag/addItemTag";
+            var args = {"tagName":vals,"bgColor":color,"publicId":publicId,"projectId":projectId,"publicType":publicType};
             $.post(url,args,function (data) {
-                if(data.result > 0){
-                    $(".build-tags").hide();
-                    $(".tag-search").show();
-                    window.location.reload();
-                } else{
+                if(data.result == 0){
                     layer.msg(data.msg);
+                } else{
+                    var content = '<li class="tags-list" id="' + data.tag.tagId + '">'+
+                        '<span class="dot" style="background-color:'  + data.tag.bgColor +  '"></span>'+
+                        '<span class="tag-font">' + data.tag.tagName + '</span>'+
+                        '<i class="layui-icon layui-icon-ok choose-ok" style="display:block"></i>'+
+                        '</li>';
+                    $('#tags').append(content);
+                    $(".go-return").trigger("click");
+
+
+
                 }
             },"json");
         }

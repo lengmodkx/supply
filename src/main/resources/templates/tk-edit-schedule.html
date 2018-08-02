@@ -90,6 +90,17 @@
                     <div class="will-add boxsizing">待添加</div>
                 </div>
             </div>
+            <div class="add-tag tag-box clearfix">
+                <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
+                <span>标签</span>
+                <div class="has-tags">
+                    <span class="tag" th:each="tag:${tags}" th:id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
+                        <b style="font-weight: 400" th:text="${tag.tagName}"></b>
+                        <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color: #1E9FFF;"></i>
+                    </span>
+                </div>
+                <i class="layui-icon layui-icon-add-circle no-tags" style="font-size: 20px; color: #1E9FFF;"></i>
+            </div>
 
             <div class="a-line"></div>
             <div class="guanlian combox">
@@ -477,6 +488,23 @@
                 }
             }
 
+            //添加标签
+            if(schedule.object.type === 12){
+                var content = '<span class="tag" id="' + schedule.object.tag.tagId + '" style="background-color:'+ schedule.object.tag.bgColor +'">'+
+                    '<b style="font-weight: 400">' + schedule.object.tag.tagName + '</b>'+
+                    '<i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color:#1E9FFF;"></i>'+
+                    '</span>';
+                $('.has-tags').prepend(content);
+            }
+
+            //移除标签
+            if(schedule.object.type === 13){
+                $('.has-tags span').each(function () {
+                   if($(this).attr('id') === schedule.object.tag){
+                       $(this).remove();
+                   }
+                });
+            }
 
             if(schedule.type == '更新了参与者'){
                 getLog(schedule.object.log);

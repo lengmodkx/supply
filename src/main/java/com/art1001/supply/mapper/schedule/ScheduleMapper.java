@@ -6,6 +6,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * schedulemapper接口
@@ -94,4 +95,11 @@ public interface ScheduleMapper {
 	 * @return 日程的实体信息集合
 	 */
 	List<Schedule> findBeforeSchedule(@Param("currTime") long currTime,@Param("projectId") String projectId,@Param("ident")int ident);
+
+	/**
+	 * 清空日程的标签
+	 * @param scheduleId 日程id
+	 */
+	@Update("update prm_schedule set tag_id = '' where schedule_id = #{scheduleId}")
+    void clearScheduleTag(String scheduleId);
 }

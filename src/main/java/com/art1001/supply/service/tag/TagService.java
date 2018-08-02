@@ -82,4 +82,15 @@ public interface TagService {
 	 * @return 标签实体集合
 	 */
     List<Tag> searchTag(String tagName);
+
+	void removeTag(String publicId, String publicType, String tagId);
+
+	/**
+	 * 给(任务,文件,日程,分享) 添加标签
+	 * @param tagId 标签id
+	 * @param publicId (任务 ,文件, 日程, 分享) id
+	 * @param publicType (任务,文件,日程,分享) 类型
+	 */
+	void addItemTag(String tagId, String publicId, String publicType);
+
 }

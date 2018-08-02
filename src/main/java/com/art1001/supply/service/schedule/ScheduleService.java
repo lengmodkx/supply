@@ -102,4 +102,10 @@ public interface ScheduleService {
 	 * @return
 	 */
     Log updateScheduleStartAndEndTime(String scheduleId, String startTime, String endTime);
+
+	/**
+	 * 清空某个日程的标签
+	 * @param scheduleId 日程的id
+	 */
+	void clearScheduleTag(String scheduleId);
 }

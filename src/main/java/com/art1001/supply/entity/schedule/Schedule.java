@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -91,6 +92,11 @@ public class Schedule extends BaseEntity implements Serializable {
 	 * 是否是全天
 	 */
 	private Integer isAllday;
+
+	/**
+	 * 标签集合
+	 */
+	private List<Tag> tags;
 
 
 }

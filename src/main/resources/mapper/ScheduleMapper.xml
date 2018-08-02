@@ -21,12 +21,17 @@
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<!--创建者-->
 		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<!--查询参与者-->
 		<collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+		<!--关联标签-->
+		<collection property="tags" column="{tagIds=tag_id}" javaType="java.util.ArrayList"
+					select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">

@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.tag.Tag;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * tagmapper接口
@@ -80,4 +81,5 @@ public interface TagMapper {
 
 
 	List<Tag> findTagByTagIds(@Param("tagIds") String tagIds);
+
 }

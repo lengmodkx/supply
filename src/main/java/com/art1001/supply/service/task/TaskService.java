@@ -462,4 +462,10 @@ public interface TaskService {
 	 * @return 任务名称
 	 */
 	String getTaskNameById(String taskId);
+
+	/**
+	 * 清空任务的标签
+	 * @param publicId 任务id
+	 */
+    void clearTaskTag(String publicId);
 }
