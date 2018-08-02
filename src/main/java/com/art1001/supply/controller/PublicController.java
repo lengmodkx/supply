@@ -22,8 +22,10 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.DateUtils;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -360,8 +362,53 @@ public class PublicController {
             jsonObject.put("msg", "上传成功");
             jsonObject.put("data",Constants.MEMBER_IMAGE_URL + filename);
         }catch (Exception e){
-            throw new SystemException(e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
+
+    @PostMapping("/saveMy")
+    @ResponseBody
+    public JSONObject saveMy(@RequestParam String userId,
+                             @RequestParam String userName,
+                             @RequestParam(required = false,defaultValue = "") String email,
+                             @RequestParam(required = false,defaultValue = "") String job,
+                             @RequestParam(required = false,defaultValue = "") String telephone,
+                             @RequestParam(required = false,defaultValue = "") String birthday,
+                             @RequestParam(required = false,defaultValue = "") String address){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity userEntity = userService.findById(userId);
+            userEntity.setUserName(userName);
+
+            if(StringUtils.isNotEmpty(email)){
+                userEntity.getUserInfo().setEmail(email);
+            }
+
+            if(StringUtils.isNotEmpty(job)){
+                userEntity.getUserInfo().setJob(job);
+            }
+
+            if(StringUtils.isNotEmpty(telephone)){
+                userEntity.getUserInfo().setTelephone(telephone);
+            }
+
+            if(StringUtils.isNotEmpty(birthday)){
+                userEntity.getUserInfo().setBirthday(DateUtils.toDate(birthday+" 00:00:00",""));
+            }
+            if (StringUtils.isNotEmpty(address)){
+                userEntity.getUserInfo().setAddress(address);
+            }
+
+            userService.update(userEntity);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "更新成功");
+            jsonObject.put("data",userName);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 }

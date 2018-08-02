@@ -205,13 +205,4 @@ public abstract class BaseController {
         return "tk-look-tag";
     }
 
-    /**
-     * 我的头像
-     * @return	视图信息
-     */
-    @RequestMapping(value = "/my.html", method = RequestMethod.GET)
-    public String my(String userId,Model model) {
-        model.addAttribute("userId",userId);
-        return "tk-click-touxiang";
-    }
 }

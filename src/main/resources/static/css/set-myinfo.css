@@ -28,7 +28,6 @@ header{
     color: #383838;
 }
 .header-right{
-    width: 105px;
     height: 48px;
     float: right;
     border-left: 1px solid rgba(0,0,0,.07);
@@ -44,6 +43,7 @@ header{
 .header-right a img{
     width: 24px;
     height: 24px;
+    margin-right: 5px;
 }
 
 .container{

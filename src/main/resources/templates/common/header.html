@@ -16,6 +16,16 @@
                 <!--<a href="#">消息</a>-->
             </span>
             <img th:src="#{IMAGE_SERVER}+${headerImg}" class="avatar" th:data="${userId}">
+            <div class="vertical-nav" style="display: none">
+                <ul>
+                    <li class="boxsizing">
+                        <a th:href="@{/public/accountInfo.html(userId=${userId})}" target="_blank">账号设置</a>
+                    </li>
+                    <li class="boxsizing">
+                        <a th:href="@{/logout.html}">退出登录</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

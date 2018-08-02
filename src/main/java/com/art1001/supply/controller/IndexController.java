@@ -212,8 +212,6 @@ public class IndexController extends BaseController {
     }
 
 
-
-
     /**
      * 获取图形验证码
      */
