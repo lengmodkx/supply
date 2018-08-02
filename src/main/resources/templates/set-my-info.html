@@ -177,9 +177,9 @@
     </div>
     <ul>
         <li class="up-img-wrap"><span>上传新头像</span>
-            <input  type="file" class="up-img">
+            <input  type="file" class="up-img" id="file" >
         </li>
-        <li>使用默认头像</li>
+        <li class="use-moren-img">使用默认头像</li>
     </ul>
 </div>
 <!--// 头像剪裁 盒子-->
@@ -229,7 +229,100 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/js/cropper.min.js}" src="../static/js/cropper.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    var userId = $('.userId').val();
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#birthday'
+            ,type: 'date', //默认，可不填
+            format: 'yyyy年MM月dd日', //可任意组合
+            done: function(value, date, endDate){
+                console.log(value); //得到日期生成的值，如：2017-08-18
+                console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+    });
+
+
+    //点击 个人信息 账号密码 切换 页面
+    $("nav li").click(function () {
+        var i=$(this).index();
+        $(this).addClass("now").siblings().removeClass("now");
+        $(".container-right>div").eq(i).show().siblings().hide()
+    });
+    //点击 解除绑定 手机号
+    $(".remove-bind-phone").click(function () {
+        $(".proving-box").show();
+        $(this).hide()
+    });
+    //点击 更换 头像 弹出框
+    $("#upload").click(function () {
+        var top=$(this).offset().top+40+'px';
+        var left=$(this).offset().left-100+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area: ['305px','143px'],
+                fixed: false,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: 0,
+                anim: 1,  //动画 0-6
+                content: $(".change-head-img")
+            });
+        });
+    });
+    $(".close-tk").click(function () {
+        layer.closeAll('page');
+    });
+
+    $('.save-btn').click(function () {
+        var params = $('.personal-form').serialize();
+        $.post('/public/saveMy',params,function (data) {
+            if(data.result===1){
+                $('.userName').html(data.data);
+                layer.msg("更新成功",{icon:1});
+            }else{
+                layer.msg("更新失败",{icon:2});
+            }
+        });
+    });
+
+//点击 使用 默认 头像
+    $(".use-moren-img").click(function () {
+        layer.closeAll('page');
+    })
+
+    // layui.use('upload', function(){
+    //     var upload = layui.upload;
+    //     //执行实例
+    //     upload.render({
+    //         elem: '#upload' //绑定元素
+    //         ,url: '/public/upload' //上传接口
+    //         ,data:{userId:userId},
+    //         choose: function(obj){
+    //
+    //         }
+    //         ,done: function(res){
+    //             //上传完毕回调
+    //             console.log(res);
+    //             $('.headerImg').attr("src", IMAGE_SERVER + res.data);
+    //         }
+    //         ,error: function(){
+    //             //请求异常回调
+    //         }
+    //     });
+    // });
+
+</script>
 <script>
+    var file=document.getElementById("file");
     $(".up-img").change(function(){
         var file = this.files[0];
         if (window.FileReader) {
@@ -237,10 +330,12 @@
             reader.readAsDataURL(file);
             //监听文件读取结束后事件
             reader.onloadend = function (e) {
-               $(".jc-bj-box").show();
-               $(".img-contain>img").attr("src",e.target.result)
-                   //e.target.result就是最后的路径地址
-                fn()
+                layer.closeAll('page');
+                $(".jc-bj-box").show();
+                $(".img-contain>img").attr("src",e.target.result);
+                //e.target.result就是最后的路径地址
+                fn(e.target.result);
+                file.outerHTML = file.outerHTML;
             };
         }
     });
@@ -256,19 +351,21 @@
         $(".style-box-right img").attr("src",base64url);
         $(".jc-bj-box").hide();
     });
-    function fn() {
+    function fn(url) {
         $('.img-contain>img').cropper({
             aspectRatio: 1,  //剪裁框宽高比
             viewMode:1,
             preview:".preview-picture",
-            autoCropArea:0.5,
+            autoCropArea:0.8,
             crop: function (e) {
                 console.log(e);
             }
         });
+         $('.img-contain>img').cropper('replace',url,false );
+
     }
     // 点击重新上传图片
-$(".up-img-again").change(function(){
+    $(".up-img-again").change(function(){
         var file = this.files[0];
         if (window.FileReader) {
             var reader = new FileReader();
@@ -281,102 +378,4 @@ $(".up-img-again").change(function(){
     });
 
 </script>
-<!--<script th:inline="javascript">-->
-    <!--var userId = $('.userId').val();-->
-    <!--var IMAGE_SERVER = [[#{IMAGE_SERVER}]];-->
-    <!--layui.use('laydate', function(){-->
-        <!--var laydate = layui.laydate;-->
-        <!--laydate.render({-->
-            <!--elem: '#birthday'-->
-            <!--,type: 'date', //默认，可不填-->
-            <!--format: 'yyyy年MM月dd日', //可任意组合-->
-            <!--done: function(value, date, endDate){-->
-                <!--console.log(value); //得到日期生成的值，如：2017-08-18-->
-                <!--console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}-->
-                <!--console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。-->
-            <!--}-->
-        <!--});-->
-    <!--});-->
-
-
-    <!--//点击 个人信息 账号密码 切换 页面-->
-    <!--$("nav li").click(function () {-->
-        <!--var i=$(this).index();-->
-        <!--$(this).addClass("now").siblings().removeClass("now");-->
-        <!--$(".container-right>div").eq(i).show().siblings().hide()-->
-    <!--});-->
-    <!--//点击 解除绑定 手机号-->
-    <!--$(".remove-bind-phone").click(function () {-->
-        <!--$(".proving-box").show();-->
-        <!--$(this).hide()-->
-    <!--});-->
-    <!--//点击 更换 头像 弹出框-->
-    <!--$(".change-img-btn").click(function () {-->
-        <!--var top=$(this).offset().top-30+'px';-->
-        <!--var left=$(this).offset().left-100+'px';-->
-        <!--layui.use('layer', function(){-->
-            <!--var layer = layui.layer;-->
-            <!--layer.open({-->
-                <!--type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）-->
-                <!--title: false, //标题-->
-                <!--offset:[top,left],-->
-                <!--area: ['305px','143px'],-->
-                <!--fixed: false,-->
-                <!--shadeClose: true,-->
-                <!--closeBtn: 0,-->
-                <!--shade: 0,-->
-                <!--anim: 1,  //动画 0-6-->
-                <!--content: $(".change-head-img")-->
-            <!--});-->
-        <!--});-->
-    <!--});-->
-    <!--$(".close-tk").click(function () {-->
-        <!--layer.closeAll('page');-->
-    <!--})-->
-
-    <!--$('.save-btn').click(function () {-->
-        <!--var params = $('.personal-form').serialize();-->
-        <!--$.post('/public/saveMy',params,function (data) {-->
-            <!--if(data.result===1){-->
-                <!--$('.userName').html(data.data);-->
-                <!--layer.msg("更新成功",{icon:1});-->
-            <!--}else{-->
-                <!--layer.msg("更新失败",{icon:2});-->
-            <!--}-->
-        <!--});-->
-    <!--});-->
-
-
-
-    <!--layui.use('upload', function(){-->
-        <!--var upload = layui.upload;-->
-        <!--//执行实例-->
-        <!--upload.render({-->
-            <!--elem: '#upload' //绑定元素-->
-            <!--,url: '/public/upload' //上传接口-->
-            <!--,data:{userId:userId},-->
-            <!--choose: function(obj){-->
-
-            <!--}-->
-            <!--,done: function(res){-->
-                <!--//上传完毕回调-->
-                <!--console.log(res);-->
-                <!--$('.headerImg').attr("src", IMAGE_SERVER + res.data);-->
-            <!--}-->
-            <!--,error: function(){-->
-                <!--//请求异常回调-->
-            <!--}-->
-        <!--});-->
-    <!--});-->
-
-
-
-
-
-
-
-
-
-
-<!--</script>-->
 </html>
