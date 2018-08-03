@@ -111,7 +111,7 @@ public class MyDBRealm extends AuthorizingRealm {
 					this.getName() // realm name
 			);
             //设置session属性
-            ShiroAuthenticationManager.setSessionAttribute(ShiroUtils.USERSESSION, userEntity);
+            ShiroAuthenticationManager.setSessionAttribute(userEntity.getId(), userEntity);
             return authenticationInfo;
 		} else {
 			throw new UnknownAccountException();// 没找到帐号
