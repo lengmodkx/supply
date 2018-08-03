@@ -232,10 +232,22 @@ $(function () {
     $(".close-tag").click(function () {
         $(".tags-search-build").slideUp();
     });
-    $(".add-fuhao").click(function (e) {
-        $(".tags-search-build").show();
-        $(".tag-search").show();
 
+    $(".add-fuhao").click(function (e) {
+        var top=$(this).offset().top+20+'px';
+        var left=$(this).offset().left-120+'px';
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area: ['250px', '250px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/tag/tag.html?projectId='+projectId+"&publicId="+fileId+"&publicType="+'文件','no']
+        });
         e.stopPropagation();
     });
 
@@ -400,17 +412,19 @@ $('.people-ok').click(function () {
     },"json");
 });
 
-// /**
-//  * 点击移除标签
-//  */
-// $('html').on('click','.deleteTag',function(){
-//    $(this).remove();
-//    var ids = [];
-//    $('.has-tags').children('span').each(function(){
-//       ids.push($(this).children('i').attr('id'));
-//    });
-//    alert(ids);
-// });
+
+/**
+ * 点击移除标签
+ */
+$('html').on('click','.remove-tag',function(){
+   var url = "/tag/removeTag";
+   var args = {"publicId":fileId,"publicType":"文件","tagId":$(this).parent().attr('id')};
+   $.post(url,args,function(data){
+       if(data.result > 0){
+           layer.msg(data.msg);
+       }
+   })
+});
 
 /**
  * 移除参与者

@@ -1,3 +1,26 @@
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    }
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
+}
+
+
+
+
 /**
  * 追加关联字符串
  */
@@ -163,9 +186,9 @@ function addBindingStr(binding,type,bindId){
             }
             // $('.related-fx').prepend(content);
         })
-        $('.related-rc').each(function () {
-            if($(this).attr('data-schedule-id') == $('.share-list.selected').attr('data')){
-                $(this).prepend(content);
+        $('.share-right').each(function () {
+            if($(this).attr('data') == $('.share-list.selected').attr('data')){
+                $(this).find('.related-rc').prepend(content);
             }
         })
         // $('.related-rc-wrap').show();
@@ -209,9 +232,9 @@ function addBindingStr(binding,type,bindId){
                 }
                     // $('.related-fx').prepend(content);
             })
-            $('.related-fx').each(function () {
-                if($('.related-fx').attr('data-share-id') == $('.share-list.selected').attr('data')){
-                    $(this).prepend(content);
+            $('.share-right').each(function () {
+                if($(this).attr('data') == $('.share-list.selected').attr('data')){
+                    $(this).find('.related-fx').prepend(content);
                 }
             })
             var form = layui.form;
@@ -279,4 +302,22 @@ function updatePeopel(share){
         }
     });
     $(".people").hide(500);
+}
+
+//修改日程 弹框界面
+function changeRicheng(scheduleId,projectId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','600px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/schedule/editSchedule.html?id="+ scheduleId + "&projectId=" + projectId
+        });
+    });
 }

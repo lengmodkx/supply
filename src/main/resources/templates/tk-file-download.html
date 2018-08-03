@@ -55,9 +55,9 @@
                 <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
                 <span>标签</span>
                 <div class="has-tags">
-                    <span class="tag" th:each="tag : ${tagList}" th:style="'background-color:'+${tag.bgColor}+''">
+                    <span class="tag" th:each="tag : ${tagList}" th:id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
                         <b style="font-weight: 400" th:text="${tag.tagName}"></b>
-                        <i class="layui-icon layui-icon-close-fill deleteTag" style="font-size: 14px; color: #1E9FFF;" th:id="${tag.tagId}"></i>
+                        <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color: #1E9FFF;"></i>
                     </span>
                 </div>
                 <i class="layui-icon layui-icon-add-circle add-fuhao" style="font-size: 20px; color: #1E9FFF;cursor: pointer"></i>
@@ -71,7 +71,7 @@
                         </div>
                         <ul class="tags-ul boxsizing" id = "tags">
                             <!--这里是标签-->
-                            <li class="tags-list" th:each="tag:${tags}" >
+                            <li class="tags-list" th:each="tag:${tags}">
                                 <i class="dot" th:style="'background-color:'+${tag.bgColor}+''"></i>
                                 <span class="tag-font" th:text="${tag.tagName}" th:data="${tag.tagId}"></span>
                             </li>
@@ -451,6 +451,24 @@
                     }
                 });
             }
+
+            //添加标签
+            if(file.object.type === 12){
+                var content = '<span class="tag" id="' + file.object.tag.tagId + '" style="background-color:'+ file.object.tag.bgColor +'">'+
+                    '<b style="font-weight: 400">' + file.object.tag.tagName + '</b>'+
+                    '<i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color:#1E9FFF;"></i>'+
+                    '</span>';
+                $('.has-tags').prepend(content);
+            }
+
+            //移除标签
+            if(file.object.type === 13){
+                $('.has-tags span').each(function () {
+                    if($(this).attr('id') === file.object.tag){
+                        $(this).remove();
+                    }
+                });
+            }
         });
     }
 
@@ -518,12 +536,12 @@
                 download(fileId);
             });
 
-            // 添加标签
-            $(".no-tagss").click(function () {
-                var top= $(this).offset().top+40;
-                var left=$(this).offset().left;
-                addtag(top,left)
-            });
+            // // 添加标签
+            // $(".no-tagss").click(function () {
+            //     var top= $(this).offset().top+40;
+            //     var left=$(this).offset().left;
+            //     addtag(top,left)
+            // });
             function addtag(top,left) {
                 layui.use('layer', function(){
                     var layer = layui.layer;
@@ -565,62 +583,6 @@
                     tips: [1, '#555'] //还可配置颜色
                 });
             });
-
-            $(".deleteFileTag").each(function () {
-                $(this).click(function () {
-                    var tagId = $(this).attr("data");
-                    $(this).parent("li").remove();
-                    $.post("/file/deleteFileTag", {fileId: fileId, tagId: tagId})
-                });
-            });
-
-            // 添加标签
-            $(".tags-list").each(function () {
-                $(this).click(function () {
-                    var tagId = $(this).find("span").attr("data");
-                    $.post("/file/addTag", {fileId: fileId,tagId: tagId}, function (data) {
-                        if (data.result === 1) {
-                            var tag = data.data;
-                            $(".has-tags").append(
-                                '<span class="tag" style="background-color: ' + tag.bgColor + '">\n' +
-                                '    <b style="font-weight: 400">'+ tag.tagName +'</b>\n' +
-                                '    <i class="layui-icon layui-icon-close-fill deleteTag" style="font-size: 14px; color: #1E9FFF;" id="'+ tag.tagId +'"></i>\n' +
-                                '</span>'
-                            );
-                        } else if (data.result === 2) {
-                            $("#" + tagId).parent("span").remove();
-                        } else {
-                            layer.msg(data.msg, {icon: 2, time: 700});
-                        }
-                    })
-                })
-            });
-
-            $('html').on('click','.deleteTag',function(){
-                var tagId = $(this).attr("id");
-                console.log(tagId);
-                $.post("/file/deleteTag", {fileId: fileId, tagId: tagId}, function (data) {
-                    if (data.result === 1) {
-                        $("#" + tagId).parent("span").remove();
-                    } else {
-                        layer.msg(data.msg, {icon: 2, time: 700});
-                    }
-                })
-            });
-            // // 移除标签
-            // $(".deleteTag").each(function () {
-            //     $(this).click(function () {
-            //         var tagId = $(this).attr("id");
-            //         console.log(tagId);
-            //         $.post("/file/deleteTag", {fileId: fileId, tagId: tagId}, function (data) {
-            //             if (data.result === 1) {
-            //                 $("#" + tagId).parent("span").remove();
-            //             } else {
-            //                 layer.msg(data.msg, {icon: 2, time: 700});
-            //             }
-            //         })
-            //     })
-            // });
 
         });
     });

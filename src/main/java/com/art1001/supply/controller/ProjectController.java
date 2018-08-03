@@ -299,14 +299,16 @@ public class ProjectController extends BaseController {
                 for(int j=0;j<taskList.size();j++){
                     JSONObject object1 = taskList.getJSONObject(j);
                     Task task = new Task();
-                    task.setTaskMenuId(relation1.getRelationId());
-                    task.setTaskName(object1.getString("taskName"));
-                    task.setRemarks(object1.getString("remarks"));
-                    task.setProjectId(project.getProjectId());
-                    task.setRepeat("不重复");
-                    task.setRemind("不提醒");
-                    task.setPriority("普通");
-                    taskService.saveTask(task);
+                    if(StringUtils.isNotEmpty(object1.getString("taskName"))){
+                        task.setTaskMenuId(relation1.getRelationId());
+                        task.setTaskName(object1.getString("taskName"));
+                        task.setRemarks(object1.getString("remarks"));
+                        task.setProjectId(project.getProjectId());
+                        task.setRepeat("不重复");
+                        task.setRemind("不提醒");
+                        task.setPriority("普通");
+                        taskService.saveTask(task);
+                    }
                 }
             }
 

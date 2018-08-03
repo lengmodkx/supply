@@ -421,9 +421,15 @@ function addStr(relation,id){
                 //这里开始循环任务
                 for(var j = 0;j < relation[i].taskList.length;j++){
                     content += '                                    <li class="a-task-li"  data-id = '+ relation[i].taskList[j].taskId +'>' +
-                        '                                        <span></span>' +
-                        '                                        <img src="' + IMAGE_SERVER + relation[i].taskList[j].executorInfo.userInfo.image+ '">' +
-                        '                                        <p class="over-hidden">' + relation[i].taskList[j].taskName + '</p>' +
+                        '                                        <span></span>';
+
+                    if(relation[i].taskList[j].excutorInfo != null){
+                        content += '                                        <img src="' + IMAGE_SERVER + relation[i].taskList[j].executorInfo.userInfo.image+ '">';
+
+                    } else{
+                        content += '<img src="/image/add.png">';
+                    }
+                      content +=  '                                        <p class="over-hidden">' + relation[i].taskList[j].taskName + '</p>' +
                         '                                    </li>';
                 }
                 content += '                                </ul>' +
@@ -546,6 +552,19 @@ function addGroups(item,type,that){
             '</div>'+
             '</li>';
         }
+        for(var i = 0;i < beoforeSchedule.length;i++){
+            content2 += '<li class="a-task-li" data-id = '+ beoforeSchedule[i].scheduleId +'>'+
+                '<i class="layui-icon layui-icon-date" style="font-size: 20px; color: gray;"></i>'+
+                '<p>' + beoforeSchedule[i].scheduleName + '</p>'+
+                '<div class="over-hidden rc-time">'+
+                '<span title="' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+                '<span>—</span>'+
+                '<span title="' + new Date(beoforeSchedule[i].endTime).format('yyyy-MM-dd') + '">' + new Date(beoforeSchedule[i].startTime).format('yyyy-MM-dd') + '</span>'+
+                '</div>'+
+                '</li>';
+        }
+        $('.old-rc-count').html(beoforeSchedule.length);
+        $('.old-rc').html(content2);
         $('.new-rc-count').html(schedule.length);
         $('.new-rc').html(content);
     }

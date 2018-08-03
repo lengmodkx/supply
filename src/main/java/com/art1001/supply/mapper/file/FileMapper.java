@@ -156,6 +156,6 @@ public interface FileMapper {
 	 * 清空该文件的标签
 	 * @param fileId 文件的id
 	 */
-	@Update("update set tag_id = '' where file_id = #{fileId}")
+	@Update("update prm_file set tag_id = '' where file_id = #{fileId}")
     void fileClearTag(String fileId);
 }

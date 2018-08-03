@@ -123,6 +123,7 @@
                $.post("/schedule/addschedule",params,function (data) {
                    if(data.result===1){
                        parent.layer.msg(data.msg,{icon:1});
+                       parent.location.reload();
                    }else{
                        parent.layer.msg("创建失败",{icon:5});
                    }

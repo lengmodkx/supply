@@ -60,6 +60,11 @@ stompClient.connect({},
         if(task.type==='更新任务的重复') {
             $('.box'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
+        if(task.object.status === '完成'){
+            $('#'+task.object.taskId +' .layui-form-checkbox').addClass('layui-form-checked')
+        } else{
+            $('#'+task.object.taskId +' .layui-form-checkbox').removeClass('layui-form-checked')
+        }
 
 
         if(task.type==='更新任务优先级为'){

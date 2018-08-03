@@ -266,9 +266,14 @@ public class TagController extends BaseController {
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",tagId);
             map.put("type",ScheduleLogFunction.M.getId());
+            map.put("publicId",publicId);
             taskPushType.setObject(map);
             //推送至日程的详情界面
-            messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else{
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
         } catch (Exception e){
             e.printStackTrace();
             log.error("系统异常,{}",e);
@@ -308,9 +313,14 @@ public class TagController extends BaseController {
             map.put("tag",byId);
             jsonObject.put("tag",byId);
             map.put("type",ScheduleLogFunction.L.getId());
+            map.put("publicId",publicId);
             taskPushType.setObject(map);
             //推送至日程的详情界面
-            messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else{
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
         } catch (Exception e){
             log.error("系统异常,{}",e);
             jsonObject.put("result",0);

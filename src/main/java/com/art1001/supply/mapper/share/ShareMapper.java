@@ -74,6 +74,6 @@ public interface ShareMapper {
      * 清空分享的标签
      * @param shareId 分享的id
      */
-    @Update("udpate prm_share set tag_ids = '' where id = #{shareId}")
+    @Update("update prm_share set tag_ids = '' where id = #{shareId}")
     void shareClearTag(String shareId);
 }

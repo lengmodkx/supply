@@ -358,9 +358,10 @@ public class TaskController {
             jsonObject.put("taskLog",taskLogVO);
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.S.getName());
             Map<String,Object> map = new HashMap<String,Object>();
-            map.put("Status",task.getTaskStatus());
+            map.put("taskId",task.getTaskId());
+            map.put("status",taskInfo.getTaskStatus());
             taskPushType.setObject(map);
-            //messagingTemplate.convertAndSend("/topic/"+task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+taskInfo.getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (ServiceException e){
             jsonObject.put("result",0);
             jsonObject.put("msg",e.getMessage());

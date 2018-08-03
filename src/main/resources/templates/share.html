@@ -77,29 +77,30 @@
                     <div class="add-tag tag-box clearfix">
                         <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
                         <span>标签</span>
-                        <div class="has-tags" th:id="${share.id}">
-                            <span th:each="tag:${share.tagList}" class="tag" th:id="${share.id} + '_' + ${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
-                                <b style="font-weight: 400" th:text="${tag.tagName}"></b>
-                                <i class="layui-icon layui-icon-close-fill deleteTag" th:data="${tag.tagId}" style="font-size: 14px; color: #1E9FFF;"></i>
-                            </span>
+                        <div class="has-tags">
+                    <span class="tag" th:each="tag : ${share.tagList}" th:id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
+                        <b style="font-weight: 400" th:text="${tag.tagName}"></b>
+                        <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color: #1E9FFF;"></i>
+                    </span>
                         </div>
-                        <span class="no-tags">添加标签</span>
+                        <i class="layui-icon layui-icon-add-circle add-fuhao" style="font-size: 20px; color: #1E9FFF;cursor: pointer"></i>
                         <!--新建  搜索标签框-->
-                        <div class="tags-search-build" style="display: none">
+                        <div class="tags-search-build" style="display: none;left: 0">
                             <!--搜索标签-->
                             <div class="tag-search" >
                                 <div class="tag-search-title boxsizing">
                                     <input class="tag-search-input" type="text" placeholder="搜索标签">
                                     <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
                                 </div>
-                                <ul class="tags-ul boxsizing" th:id = "'tag_' + ${share.id}">
-                                    <!--这里是标签-->
-                                    <li class="tags-list" th:each="tag:${tagList}" th:data="${tag.tagId}">
-                                        <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
-                                        <span class="tag-font" th:text="${tag.tagName}">aaa</span>
-                                    </li>
+                                <ul class="tags-ul boxsizing" id = "tags">
+                                    <!--&lt;!&ndash;这里是标签&ndash;&gt;-->
+                                    <!--<li class="tags-list" th:each="tag:${tags}">-->
+                                        <!--<i class="dot" th:style="'background-color:'+${tag.bgColor}+''"></i>-->
+                                        <!--<span class="tag-font" th:text="${tag.tagName}" th:data="${tag.tagId}"></span>-->
+                                    <!--</li>-->
                                 </ul>
                             </div>
+
                             <!--新建标签-->
                             <div class="build-tags" style="display: none">
                                 <div class="build-tags-title boxsizing">
@@ -210,7 +211,7 @@
                                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                                 <!--<span>复制链接</span>-->
                                                 <!--</li>-->
-                                                <li class="boxsizing cancle" th:data-id="${fileId}" th:data-binding-id="${file.fileId}">
+                                                <li class="boxsizing cancle" th:data-id="${share.id}" th:data-binding-id="${file.fileId}">
                                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                                     <span>取消关联</span>
                                                 </li>
@@ -246,7 +247,7 @@
                                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                                 <!--<span>复制链接</span>-->
                                                 <!--</li>-->
-                                                <li class="boxsizing cancle" th:data-id="${fileId}" th:data-binding-id="${schedule.scheduleId}">
+                                                <li class="boxsizing cancle" th:data-id="${share.id}" th:data-binding-id="${schedule.scheduleId}">
                                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                                     <span>取消关联</span>
                                                 </li>
@@ -283,7 +284,7 @@
                                                 <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
                                                 <!--<span>复制链接</span>-->
                                                 <!--</li>-->
-                                                <li class="boxsizing cancle"  th:data-id="${fileId}" th:data-binding-id="${share.id}">
+                                                <li class="boxsizing cancle"  th:data-id="${share.id}" th:data-binding-id="${share.id}">
                                                     <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
                                                     <span>取消关联</span>
                                                 </li>
@@ -444,6 +445,30 @@
                 updatePeopel(share);
 
             }
+            //添加标签
+            if(share.object.type === 12){
+                var content = '<span class="tag" id="' + share.object.tag.tagId + '" style="background-color:'+ share.object.tag.bgColor +'">'+
+                    '<b style="font-weight: 400">' + share.object.tag.tagName + '</b>'+
+                    '<i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color:#1E9FFF;"></i>'+
+                    '</span>';
+                $('.share-right').each(function () {
+                    if($(this).attr('data') === share.object.publicId){
+                        $(this).find('.has-tags').prepend(content)
+                    }
+                });
+            }
+
+            //移除标签
+            if(share.object.type === 13){
+                $('.share-right').each(function () {
+                    $('.has-tags span').each(function () {
+                        if($(this).attr('id') === share.object.tag){
+                            $(this).remove();
+                        }
+                    });
+                });
+            }
+
             if(share.type == '取消了关联'){
                 $('#bind li.data-info ').each(function(){
                     if($(this).attr('data-id') == share.object.bId){
@@ -480,71 +505,6 @@
 
     var shareId = "";
     var projectId = getQueryString("projectId");
-
-    // 移除标签
-    $('html').on('click','.deleteTag',function () {
-        var tagId = $(this).attr("data");
-        $(this).parent("span").remove();
-        $.post("/share/deleteTag", {shareId: shareId, tagId: tagId});
-    });
-
-
-
-
-
-    // 添加标签
-    $('html').on('click','.tags-list',function () {
-        var tagId = $(this).attr("data");
-        $.post("/share/addTag", {shareId: shareId, tagId: tagId}, function (data) {
-            var result = data.result;
-            if (result === 1) { // 添加
-                var tag = data.data;
-                $(".has-tags").append(
-                    '<span class="tag" id="'+ shareId + '_' + tagId +'" id="' + tagId + '" style="background-color: ' + tag.bgColor + '">\n' +
-                    '    <b style="font-weight: 400">' + tag.tagName + '</b>\n' +
-                    '    <i class="layui-icon layui-icon-close-fill deleteTag" data="' + tag.tagId + '" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
-                    '</span>'
-                );
-            } else if (result === 2) { // 移除
-                console.log(tagId);
-                $("#" + shareId + "_" + tagId).remove();
-            }
-        });
-    });
-
-
-    //点击标签创建按钮
-    $(".tag-ok").click(function () {
-        var tagName = $(".tag-name").val();
-        if ('' === tagName){
-            return false
-        } else {
-            var color='';
-            $(".color-pick li i").each(function () {
-                if ($(this).is(":visible")){
-                    color=$(this).parent().css("background-color")
-                }
-            });
-
-            $.post("/tag/add", {tagName: tagName, bgColor: color, projectId: projectId}, function (data) {
-                if (data.result === 1) {
-                    var tag = data.tag;
-                    $("#tag_" + shareId).append(
-                        '<li class="tags-list" data="' + tag.tagId + '">\n' +
-                        '<span class="dot" style="background-color:' + tag.bgColor + '"></span>\n' +
-                        '<span class="tag-font">' + tag.tagName + '</span>\n' +
-                        '</li>'
-                    );
-                    layer.msg(data.msg, {icon: 1, time: 700});
-                } else {
-                    layer.msg(data.msg, {icon: 2, time: 700});
-                }
-            });
-
-        }
-    });
-
-
 
     $(function () {
         $("html").on("click",".deleteTag",function () {
@@ -635,76 +595,6 @@
             var top=$(this).offset().top-50;
             var left=$(this).offset().left-120;
             addpeople(top,left)
-        });
-        //添加 标签 弹框
-        $("html").on("click",".tags",function () {
-            var top=$(this).offset().top+35;
-            var left=$(this).offset().left-100;
-            addtag(top,left)
-        });
-
-
-        // // 点击添加标签
-        // if ($(".has-tags .tag").length==0){
-        //     $(".no-tags").show();
-        //     $(".has-tags").hide();
-        // } else {
-        //     $(".no-tags").hide();
-        //     $(".has-tags").show();
-        // }
-        $(".no-tags").click(function (e) {
-            var url = "/share/findAllTags";
-            var args = {"projectId":projectId};
-            $.post(url,args,function(data){
-                var tags = data.data;
-                var content = "";
-                for(var i = 0;i < tags.length; i++){
-                    content += "<li class='tags-list'>" +
-                        "<span class='dot' style='background-color: " + tags[i].bgColor + "'></span>" +
-                        "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
-                        "</li>";
-                }
-                $('#tags').html(content);
-                $(".tags-search-build").show();
-                $(".tag-search").show();
-            },"json");
-            $(".tags-search-build").show()
-            e.stopPropagation();
-
-        });
-        $(".tag-search-title img").click(function () {
-            $(".tag-search").hide();
-            $(".build-tags").show();
-        });
-        $(".go-return").click(function () {
-            $(".tag-search").show();
-            $(".build-tags").hide();
-        });
-        $(".close-tag").click(function () {
-            $(".tags-search-build").slideUp();
-            if ($(".has-tags .tag").length==0){
-                $(".no-tags").show();
-                $(".has-tags").hide();
-            } else {
-                $(".no-tags").hide();
-                $(".has-tags").show();
-            }
-
-        });
-        $(".has-tags>i").click(function (e) {
-            $(".tags-search-build").show();
-            $(".tag-search").show();
-
-            e.stopPropagation();
-        });
-
-        // 创建 按钮 是否 能点击
-        $(".tag-name").keyup(function () {
-            if ($(this).val()==''){
-                $(".tag-ok").css({"background-color":"#ccc","cursor":"not-allowed"})
-            } else {
-                $(".tag-ok").css({"background-color":"#1E9FFF","cursor":"pointer"})
-            }
         });
 
         //点击颜色，颜色出现对勾
@@ -879,7 +769,7 @@
      * 点击关联的文件
      */
     $("html").on("click",'.related-wj li',function () {
-        location.href = "/file/fileDetail.html?fileId="+$(this).attr('data-id');
+        window.open("/file/fileDetail.html?fileId="+$(this).attr('data-id'),"在线预览文件");
     });
 
     /**
@@ -893,8 +783,19 @@
      * 点击关联的分享
      */
     $("html").on("click",'.related-fx li',function () {
-        layer.closeAll();
-        parent.location.href = "/share/share.html?shareId="+ $(this).attr('data-id') + "&projectId=" + projectId;
+        var shareId = $(this).attr('data-id');
+        $('.share-list').each(function () {
+           if($(this).attr('data') === shareId){
+               $(this).trigger("click");
+           }
+        });
+    });
+
+    /**
+     * 点击关联的日程
+     */
+    $("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
+        changeRicheng($(this).parent().parent().attr("data-id"),projectId);
     });
 
     //修改任务 弹框界面
@@ -928,6 +829,38 @@
             }
         },"json");
         e.stopPropagation();
+    });
+
+    $(".add-fuhao").click(function (e) {
+        var top=$(this).offset().top+20+'px';
+        var left=$(this).offset().left-120+'px';
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top,left],
+            area: ['250px', '250px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/tag/tag.html?projectId='+projectId+"&publicId="+shareId+"&publicType="+'分享','no']
+        });
+        e.stopPropagation();
+    });
+
+    /**
+     * 点击x 移除标签
+     */
+    $('html').on('click','.remove-tag',function () {
+        var shareId = $(this).parents('.share-right').attr('data');
+        var url = "/tag/removeTag";
+        var args = {"publicId":shareId,"publicType":"分享","tagId":$(this).parent().attr('id')};
+        $.post(url,args,function(data){
+            if(data.result > 0){
+                layer.msg(data.msg);
+            }
+        })
     });
 </script>
 </html>

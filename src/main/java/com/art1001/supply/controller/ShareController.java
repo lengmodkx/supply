@@ -86,7 +86,6 @@ public class ShareController extends BaseController {
            }
             Collections.reverse(s.getLogs());
         }
-        List<Tag> tagList = tagService.findByProjectId(projectId);
         model.addAttribute("shareList",shareList);
 
 
@@ -99,8 +98,6 @@ public class ShareController extends BaseController {
         if(!StringUtils.isEmpty(shareId)){
             model.addAttribute("shareId",shareId);
         }
-
-        model.addAttribute("tagList",tagList);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         return "share";
