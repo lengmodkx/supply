@@ -74,6 +74,20 @@
             </div>
             <div class="style-boxs boxsizing">
                 <div class="left-boxs">
+                    <img th:src="@{/image/huiyi.png}"></img>
+                    <a href="https://zoom.us/start/videomeeting" style="color: #1E9FFF;text-decoration:underline;" target="_blank"><span>&nbsp;&nbsp;会议</span></a>
+                </div>
+                <div class="right-boxs">
+                    <div class="will-add boxsizing dd-will-add" th:text="${schedule.address}">待添加</div>
+                    <div class="add-input-box" style="display: none">
+                        <input class="boxsizing address" type="text" placeholder="待添加">
+                        <div class="sure-btn">确定</div>
+                        <div class="cancel-btn">取消</div>
+                    </div>
+                </div>
+            </div>
+            <div class="style-boxs boxsizing">
+                <div class="left-boxs">
                     <i class="iconfont icon-beizhu" style="font-size: 14px"></i>
                     <span>备注</span>
                 </div>
@@ -101,7 +115,6 @@
                 </div>
                 <i class="layui-icon layui-icon-add-circle no-tags" style="font-size: 20px; color: #1E9FFF;"></i>
             </div>
-
             <div class="a-line"></div>
             <div class="guanlian combox">
                 <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
