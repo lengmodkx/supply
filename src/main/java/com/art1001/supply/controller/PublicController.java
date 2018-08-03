@@ -361,12 +361,11 @@ public class PublicController {
             base64url = base64url.substring(22);
             byte[] bytes = Base64.decodeBase64(base64url);
             InputStream input = new ByteArrayInputStream(bytes);
-
-
             AliyunOss.uploadInputStream(Constants.MEMBER_IMAGE_URL + filename,input);
 
             userEntity.getUserInfo().setImage(Constants.MEMBER_IMAGE_URL + filename);
             userService.update(userEntity);
+
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
             jsonObject.put("url",Constants.MEMBER_IMAGE_URL + filename);
