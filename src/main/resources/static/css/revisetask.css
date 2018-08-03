@@ -265,6 +265,7 @@
     float: left;
     margin-right: 20px;
     margin-top: 6px;
+    border-radius: 50%;
 }
 
 .combox span {
