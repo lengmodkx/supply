@@ -49,7 +49,7 @@
                     <div class="style-box head-img">
                         <div class="style-box-left" >头像</div>
                         <div class="style-box-right">
-                            <input type="hidden" th:value="${user.id}" name="userId"/>
+                            <input type="hidden" th:value="${user.id}" name="userId" class="userId"/>
                             <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" class="headerImg">
                             <button type="button" class="layui-btn" id="upload" style="background-color: #1E9FFF">
                                 <i class="layui-icon">&#xe67c;</i>更换头像
@@ -296,29 +296,17 @@
 
 //点击 使用 默认 头像
     $(".use-moren-img").click(function () {
+        $.post('/public/setDefaultImg',{"userId":userId},function (data) {
+            if(data.result===1){
+                $('.headerImg').attr("src", IMAGE_SERVER + data.url);
+                layer.msg("更新成功",{icon:1});
+            }else{
+                layer.msg("更新失败",{icon:5});
+            }
+
+        });
         layer.closeAll('page');
     })
-
-    // layui.use('upload', function(){
-    //     var upload = layui.upload;
-    //     //执行实例
-    //     upload.render({
-    //         elem: '#upload' //绑定元素
-    //         ,url: '/public/upload' //上传接口
-    //         ,data:{userId:userId},
-    //         choose: function(obj){
-    //
-    //         }
-    //         ,done: function(res){
-    //             //上传完毕回调
-    //             console.log(res);
-    //             $('.headerImg').attr("src", IMAGE_SERVER + res.data);
-    //         }
-    //         ,error: function(){
-    //             //请求异常回调
-    //         }
-    //     });
-    // });
 
 </script>
 <script>
@@ -347,9 +335,16 @@
     });
     $(".jc-ok-btn").click(function () {
         var cas=$('.img-contain>img').cropper('getCroppedCanvas');
-        var base64url=cas.toDataURL('image/jpeg');
-        $(".style-box-right img").attr("src",base64url);
+        var base64url=cas.toDataURL('image/jpg');
         $(".jc-bj-box").hide();
+        $.post('/public/upload',{"userId":userId,"base64url":base64url},function (data) {
+            if(data.result===1){
+                $('.headerImg').attr("src", IMAGE_SERVER + data.url);
+                layer.msg("更新成功",{icon:1});
+            }else{
+                layer.msg("更新失败",{icon:5});
+            }
+        });
     });
     function fn(url) {
         $('.img-contain>img').cropper({
@@ -358,7 +353,6 @@
             preview:".preview-picture",
             autoCropArea:0.8,
             crop: function (e) {
-                console.log(e);
             }
         });
          $('.img-contain>img').cropper('replace',url,false );

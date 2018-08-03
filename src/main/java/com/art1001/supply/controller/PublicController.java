@@ -25,13 +25,18 @@ import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -345,22 +350,26 @@ public class PublicController {
     @PostMapping("/upload")
     @ResponseBody
     public JSONObject uploadImage(@RequestParam String userId,
-                                  MultipartFile file){
+                                  @RequestParam String base64url){
         JSONObject jsonObject = new JSONObject();
         try {
             //先删除阿里云上项目的图片然后再上传
             UserEntity userEntity = userService.findById(userId);
             AliyunOss.deleteFile(userEntity.getUserInfo().getImage());
             String filename = System.currentTimeMillis()+".jpg";
-            AliyunOss.uploadInputStream(Constants.MEMBER_IMAGE_URL + filename,file.getInputStream());
-            UserInfoEntity userInfoEntity = new UserInfoEntity();
-            userInfoEntity.setImage(Constants.MEMBER_IMAGE_URL + filename);
-            userInfoEntity.setId(userEntity.getId());
-            userEntity.setUserInfo(userInfoEntity);
+
+            base64url = base64url.substring(22);
+            byte[] bytes = Base64.decodeBase64(base64url);
+            InputStream input = new ByteArrayInputStream(bytes);
+
+
+            AliyunOss.uploadInputStream(Constants.MEMBER_IMAGE_URL + filename,input);
+
+            userEntity.getUserInfo().setImage(Constants.MEMBER_IMAGE_URL + filename);
             userService.update(userEntity);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
-            jsonObject.put("data",Constants.MEMBER_IMAGE_URL + filename);
+            jsonObject.put("url",Constants.MEMBER_IMAGE_URL + filename);
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -418,7 +427,11 @@ public class PublicController {
         JSONObject jsonObject = new JSONObject();
         try{
             UserEntity userEntity = userService.findById(userId);
-
+            userEntity.getUserInfo().setImage(userEntity.getUserInfo().getDefaultImg());
+            userService.update(userEntity);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "更新成功");
+            jsonObject.put("url",userEntity.getUserInfo().getDefaultImg());
         }catch (Exception e){
             throw  new AjaxException(e);
         }
