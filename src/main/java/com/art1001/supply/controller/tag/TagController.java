@@ -253,11 +253,12 @@ public class TagController extends BaseController {
      * @param publicId (任务,文件,日程,分享) 的id
      * @param publicType 要从 (任务,文件,日程,分享) 哪个类型上 移除掉标签
      * @param tagId 标签id
+     * @param projectId 项目id
      * @return
      */
     @PostMapping("removeTag")
     @ResponseBody
-    public JSONObject removeTag(String publicId, String publicType, String tagId){
+    public JSONObject removeTag(String publicId, String publicType, String tagId,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             tagService.removeTag(publicId,publicType,tagId);
@@ -271,6 +272,9 @@ public class TagController extends BaseController {
             //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             } else{
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
             }
@@ -288,11 +292,12 @@ public class TagController extends BaseController {
      * @param publicId (任务,文件,日程,分享) 的id
      * @param publicType 要从 (任务,文件,日程,分享) 哪个类型上 移除掉标签
      * @param tag 标签id 标签名称 标签所属项目
+     * @param projectId 项目的id
      * @return
      */
     @PostMapping("addItemTag")
     @ResponseBody
-    public JSONObject addItemTag(Tag tag, String publicId, String publicType){
+    public JSONObject addItemTag(Tag tag, String publicId, String publicType,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(StringUtils.isNotEmpty(tag.getTagName())){
@@ -318,6 +323,9 @@ public class TagController extends BaseController {
             //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             } else{
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
             }

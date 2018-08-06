@@ -549,7 +549,7 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         task.setTaskUIds(memberIds);
-        if(subtract1!=null||subtract2!=null){
+        if(subtract1.size()>0||subtract2.size()>0){
             taskMapper.updateTask(task);
             log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
         }

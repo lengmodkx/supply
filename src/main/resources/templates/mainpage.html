@@ -54,6 +54,12 @@
                                           </header>
                                           <section class="assignment-bottom-box clearfix" th:classappend="box+${task.taskId}">
                                                   <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
+                                              <!-- 标签的点点 -->
+                                              <span class="circle-tag" th:each="tag:${task.tagList}" th:data-id = "${tag.tagId}">
+                                                  <span class="dian" th:style="'background-color:'+${tag.bgColor}+''"></span>
+                                                  <span class="tag-font" th:text="${tag.tagName}"></span>
+                                              </span>
+                                              <!--<span class="dot"  th:data-id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''" th:text="${tag.tagName}"></span>-->
                                                   <img  class="remind" th:src="@{/image/zhong.png}" th:style="'opacity:' + @{(${task.remind=='不提醒'} ? '0':'1')}"/>
                                                   <img  th:style="'opacity:' + @{(${task.remarks!=null and task.remarks!=''} ? '1':'0')}" th:src="@{/image/file.png}"/>
                                                   <!--<span class="span-img">-->
@@ -121,7 +127,6 @@
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 <script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
 <script th:src="@{/js/add_task.js}" src="../static/js/add_task.js"></script>
-
 </body>
 
 </html>

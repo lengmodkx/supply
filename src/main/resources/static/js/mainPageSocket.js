@@ -9,6 +9,7 @@ stompClient.connect({},
         // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
         console.log("连接成功");
         subscribe1();
+        subscribe2();
     },
     function errorCallBack(error) {
         // 连接失败时（服务器响应 ERROR 帧）的回调方法
@@ -23,6 +24,15 @@ stompClient.connect({},
     stompClient.send("/app/sendTest", {}, messageJson);
     setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
 }
+
+    //订阅消息
+    function subscribe2() {
+        stompClient.subscribe('/user/queue/' + 'b350bc19b07c4ae7908d9499c9875055' + '/news', function (response) {
+            var returnData = JSON.parse(response.body);
+            //var taskLog = JSON.parse(returnData.responseMessage);
+            alert(returnData);
+        });
+    }
 
     //订阅消息
     function subscribe1() {
@@ -54,6 +64,25 @@ stompClient.connect({},
 
         if(task.type === '更新提醒模式为'){
             $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png");
+        }
+
+        //移除标签的点点
+        if(task.object.type === 13){
+            $('#'+task.object.publicId + ' .circle-tag').each(function () {
+                if($(this).attr('data-id') === task.object.tag){
+                    $(this).remove();
+                }
+            });
+            return false;
+        }
+        //添加一个标签点
+        if(task.object.type === 12){
+            var content = '<span class="circle-tag" data-id="' + task.object.tag.tagId + '">'+
+                '<span class="dian" style="background-color:' + task.object.tag.bgColor + '"></span>'+
+                '<span class="tag-font">' + task.object.tag.tagName + '</span>'+
+            '</span>';
+            $('#'+task.object.publicId + ' .assignment-bottom-box').prepend(content);
+            return false;
         }
 
 
@@ -128,4 +157,6 @@ stompClient.connect({},
             '        </div>\n' +
             '    </li>');
     }
+
+
 }

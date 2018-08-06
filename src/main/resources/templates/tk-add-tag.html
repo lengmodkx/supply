@@ -103,7 +103,7 @@
         var tagId = $(this).attr("id");
         if($(this).find("i").is(':visible')){
             var url = "/tag/removeTag";
-            var args = {"tagId":tagId,"publicId":publicId,"publicType":publicType};
+            var args = {"tagId":tagId,"publicId":publicId,"publicType":publicType,"projectId":projectId};
             $.post(url,args,function (data) {
                 console.log(data);
             },"json");
@@ -143,9 +143,6 @@
                         '</li>';
                     $('#tags').append(content);
                     $(".go-return").trigger("click");
-
-
-
                 }
             },"json");
         }

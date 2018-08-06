@@ -454,10 +454,13 @@ layui.use('form', function() {
         e.stopPropagation();
     });
 
-    $('html').on('click','.remove-tag',function (e) {
+/**
+ * 点击x 移除标签
+ */
+$('html').on('click','.remove-tag',function (e) {
         var tagId = $(this).parent().attr('id');
-        var url = "/task/removeTaskTag";
-        var args = {"tagId":tagId,"taskId":taskId};
+        var url = "/tag/removeTag";
+        var args = {"tagId":tagId,"publicId":taskId,"projectId":projectId,"publicType":"任务"};
         $.post(url,args,function (data) {
             console.log(data);
         },"json");
@@ -583,7 +586,6 @@ $('.people-ok').click(function () {
         $("#executor").addClass("special-executor");
         var url = '/task/findTaskMemberInfo';
         var args = {"projectId":projectId, "taskId": taskId};
-
         $.post(url, args, function (data) {
            if(data.result===1){
                $('#executor').html('');
@@ -597,7 +599,6 @@ $('.people-ok').click(function () {
                     $('#executor').append(div);
                }
 
-
                for(var j=0;j<data.projectMembers.length;j++){
                    var div = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
                        '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
@@ -607,7 +608,6 @@ $('.people-ok').click(function () {
                    $('#noExecutor').append(div);
                }
            }
-
            $(".people").show(500);
         });
         e.stopPropagation();

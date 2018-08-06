@@ -451,16 +451,26 @@ body{
     margin-left: 10px;
     top: 10px;
 }
-.circle-tag:before{
-    content: " ";
+.dian{
     position: absolute;
-    top: 6px;
-    left: 4px;
+    top: 7px;
+    left: 5px;
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    margin-right: 3px;
     background-color: rgb(61, 168, 245);
 }
+/*.circle-tag:before{*/
+    /*content: " ";*/
+    /*position: absolute;*/
+    /*top: 6px;*/
+    /*left: 4px;*/
+    /*width: 6px;*/
+    /*height: 6px;*/
+    /*border-radius: 50%;*/
+    /*background-color: rgb(61, 168, 245);*/
+/*}*/
 .span-img{
 
 }

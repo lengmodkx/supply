@@ -19,13 +19,15 @@
     <script th:src="@{/js/pushbar.js}"></script>
     <script th:src="@{/js/clipboard.min.js}"></script>
     <script th:src="@{/js/jquery-ui.min.js}"></script>
-    <script th:inline="javascript">
-        var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-    </script>
     <script th:src="@{/js/header.js}"></script>
     <title th:replace="${title}">The awesome application</title>
     <th:block th:replace="${links}" />
 
 </head>
 
+
+
+<script th:inline="javascript">
+
+</script>
 </html>

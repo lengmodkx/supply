@@ -28,12 +28,18 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.ContextLoader;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,6 +82,9 @@ public class TaskController {
     /** 日志逻辑层接口 */
     @Resource
     private LogService logService;
+
+    @Resource
+    private ServletContext servletContext;
 
     @Resource
     private ProjectMemberService projectMemberService;
@@ -146,6 +155,8 @@ public class TaskController {
             JSONObject object = new JSONObject();
             object.put("task",taskByTaskId);
             object.put("type","创建了任务");
+            Subject subject = SecurityUtils.getSubject();
+
             messagingTemplate.convertAndSend("/topic/"+taskByTaskId.getProjectId(), new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -159,7 +170,7 @@ public class TaskController {
     /**
      * 添加/移除参与者
      */
-    @PostMapping("addAndRemoveTaskMember")
+    @PostMapping("/addAndRemoveTaskMember")
     @ResponseBody
     public JSONObject addAndRemoveTaskMember(String taskId,String memberIds){
         JSONObject jsonObject = new JSONObject();
@@ -173,6 +184,10 @@ public class TaskController {
                 jsonObject.put("taskLog",log);
                 TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
                 taskPushType.setObject(jsonObject);
+                String[] memberId = memberIds.split(",");
+                for(int i = 0;i < memberId.length;i++){
+                    messagingTemplate.convertAndSendToUser(memberId[i],"/queue/news",new ServerMessage("服务器"));
+                }
                 messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
             }
         } catch (Exception e){
@@ -608,31 +623,6 @@ public class TaskController {
 
         } catch (Exception e){
             log.error("系统异常,标签获取失败!");
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-    /**
-     * 移除该任务上的标签
-     * @param taskId 当前任务id
-     * @return
-     */
-    @PostMapping("removeTaskTag")
-    @ResponseBody
-    public JSONObject removeTaskTag(String tagId,String taskId){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            //更新该任务的标签信息
-            taskService.removeTaskTag(tagId,taskId);
-            jsonObject.put("msg","标签移除成功!");
-            jsonObject.put("result",1);
-            jsonObject.put("tagId",tagId);
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A11.getName());
-            taskPushType.setObject(jsonObject);
-            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
-        } catch (Exception e){
-            log.error("系统异常，标签移除失败！ 当前任务id： ,{},{}",taskId,e);
             throw new AjaxException(e);
         }
         return jsonObject;
