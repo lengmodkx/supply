@@ -4,6 +4,8 @@ import java.util.List;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * mapper接口
@@ -54,4 +56,36 @@ public interface UserNewsMapper {
 	 */
 	List<UserNews> findUserNewsAllList();
 
+	/**
+	 * 根据 信息id 和用户id  查询 用户有没有这消息的记录
+	 * @param publicId 信息id
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Select("select count(0) from prm_user_news where news_public_id = #{publicId} and news_to_user = #{userId}")
+    int findUserNewsByPublicId(@Param("publicId") String publicId, @Param("userId") String userId);
+
+	/**
+	 * 根据信息id 用户id 查询出 这条信息的消息数
+	 * @param publicId 信息id
+	 * @param userId 用户id
+	 * @return 消息数
+	 */
+	@Select("select news_count from prm_user_news where news_public_id = #{publicId} and news_to_user = #{userId}")
+	Integer findNewsCountByPublicId(@Param("publicId")String publicId, @Param("userId")String userId);
+
+	/**
+	 * 根据用户的id 查询出用户的未读消息条数
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Select("select IFNULL(SUM(news_count),0) from prm_user_news where news_handle = 0 and news_to_user = #{userId}")
+    int findUserNewsCount(String userId);
+
+	/**
+	 * 根据用户的id 查询出该用户的所有消息
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<UserNews> findAllUserNewsByUserId(String userId);
 }

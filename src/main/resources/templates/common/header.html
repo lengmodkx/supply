@@ -15,6 +15,12 @@
                 <a th:href="@{/public/calendar.html(id=${userId})}">日历</a>
                 <!--<a href="#">消息</a>-->
             </span>
+            <span style="margin-left: 15px;" class="notice-box">
+                <a href="/news/userNewsList.html">
+                    <i class="iconfont icon-nitification"></i>
+                    <span class="notice-num" th:if="${newsConut > 0 and newsConut != ''}" th:text="${newsCount}"></span>
+                </a>
+            </span>
             <img th:src="#{IMAGE_SERVER}+${headerImg}" class="avatar" th:data="${userId}">
             <div class="vertical-nav" style="display: none">
                 <ul>
@@ -25,6 +31,7 @@
                         <a th:href="@{/logout.html}">退出登录</a>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>

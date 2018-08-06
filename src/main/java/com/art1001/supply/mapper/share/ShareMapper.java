@@ -7,6 +7,7 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
@@ -76,4 +77,12 @@ public interface ShareMapper {
      */
     @Update("update prm_share set tag_ids = '' where id = #{shareId}")
     void shareClearTag(String shareId);
+
+    /**
+     * 根据id 查询出该分享的标题
+     * @param publicId 分享id
+     * @return
+     */
+    @Select("select title from prm_share where id = #{publicId}")
+    String findShareNameById(String publicId);
 }

@@ -4,29 +4,39 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -59,6 +69,18 @@ public class TaskController {
     @Resource
     private TagService tagService;
 
+    /** 文件逻辑层接口 */
+    @Resource
+    private FileService fileService;
+
+    /** 日程逻辑层接口 */
+    @Resource
+    private ScheduleService scheduleService;
+
+    /** 分享逻辑层接口 */
+    @Resource
+    private ShareService shareService;
+
     /** 用户逻辑层接口 */
     @Resource
     private UserService userService;
@@ -84,10 +106,12 @@ public class TaskController {
     private LogService logService;
 
     @Resource
-    private ServletContext servletContext;
-
-    @Resource
     private ProjectMemberService projectMemberService;
+
+    /** 用户消息逻辑层接口 */
+    @Resource
+    private UserNewsService userNewsService;
+
     /**
      * 在日历上创建任务
      * @param model
@@ -185,9 +209,6 @@ public class TaskController {
                 TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
                 taskPushType.setObject(jsonObject);
                 String[] memberId = memberIds.split(",");
-                for(int i = 0;i < memberId.length;i++){
-                    messagingTemplate.convertAndSendToUser(memberId[i],"/queue/news",new ServerMessage("服务器"));
-                }
                 messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
             }
         } catch (Exception e){
@@ -438,6 +459,7 @@ public class TaskController {
                 jsonObject.put("msg","时间更新失败!");
                 jsonObject.put("result",0);
             }
+            messagingTemplate.convertAndSend("");
         } catch (Exception e){
             log.error("任务时间信息更新失败,{}",e);
             throw new AjaxException(e);
@@ -1185,6 +1207,7 @@ public class TaskController {
     public JSONObject chat(Log taskLog){
         JSONObject jsonObject = new JSONObject();
         try {
+            //保存聊天信息
             Log log = new Log();
             log.setId(IdGen.uuid());
             log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ taskLog.getContent());
@@ -1200,6 +1223,11 @@ public class TaskController {
             map.put("taskLog",log1);
             taskPushType.setObject(map);
             messagingTemplate.convertAndSend("/topic/"+taskLog.getPublicId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            //查询出该任务的所有成员id
+            Task taskByTaskId = taskService.findTaskByTaskId(taskLog.getPublicId());
+            String[] users = taskByTaskId.getTaskUIds().split(",");
+            //保存消息信息
+            userNewsService.saveUserNews(users,taskLog.getPublicId(),BindingConstants.BINDING_TASK_NAME,taskLog.getContent(),1);
         } catch (Exception e){
             log.error("操作失败,{}",e);
             throw new AjaxException(e);
@@ -1264,4 +1292,5 @@ public class TaskController {
         }
         return jsonObject;
     }
+
 }

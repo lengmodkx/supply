@@ -44,15 +44,15 @@ public class UserNews extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 消息来自谁
+	 * 消息来自谁 id
 	 */
-	private String newsFromUser;
+	private String newsFromUserId;
 
 
 	/**
-	 * 消息发给谁
+	 * 消息发给谁 id
 	 */
-	private String newsToUser;
+	private String newsToUserId;
 
 
 	/**
@@ -76,11 +76,37 @@ public class UserNews extends BaseEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
-	private Long careateTiem;
+	private Long createTime;
 
 	/**
 	 * 最后更新时间
 	 */
 	private Long updateTime;
 
+	/**
+	 * 消息发给谁的实体信息
+	 */
+	private UserEntity newsToUser;
+
+	/**
+	 * 消息来自谁的实体信息
+	 */
+	private UserEntity newsFromUser;
+
+	public UserNews(String newsId, String newsName, String newsContent, String newsPublicId, Integer newsHandle, String newsFromUserId, String newsToUserId, String newsType, Integer newsCount, Long createTime, Long updateTime) {
+		this.newsId = newsId;
+		this.newsName = newsName;
+		this.newsContent = newsContent;
+		this.newsPublicId = newsPublicId;
+		this.newsHandle = newsHandle;
+		this.newsFromUserId = newsFromUserId;
+		this.newsToUserId = newsToUserId;
+		this.newsType = newsType;
+		this.newsCount = newsCount;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+	}
+
+	public UserNews() {
+	}
 }

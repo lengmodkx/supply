@@ -108,4 +108,11 @@ public interface ScheduleService {
 	 * @param scheduleId 日程的id
 	 */
 	void clearScheduleTag(String scheduleId);
+
+	/**
+	 * 根据日程id 查询出该日程的名称
+	 * @param publicId 日程id
+	 * @return 名称
+	 */
+    String findScheduleNameById(String publicId);
 }

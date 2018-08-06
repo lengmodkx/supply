@@ -444,4 +444,14 @@ public class FileServiceImpl implements FileService {
     public void fileClearTag(String fileId) {
         fileMapper.fileClearTag(fileId);
     }
+
+    /**
+     * 根据文件id 查询出文件名
+     * @param publicId 文件id
+     * @return
+     */
+    @Override
+    public String findFileNameById(String publicId) {
+        return fileMapper.findFileNameById(publicId);
+    }
 }

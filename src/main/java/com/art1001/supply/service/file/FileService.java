@@ -164,4 +164,11 @@ import java.util.List;
 	 * @param fileId 文件的id
 	 */
 	void fileClearTag(String fileId);
+
+	/**
+	 * 根据文件id 查询出文件名
+	 * @param publicId 文件id
+	 * @return 文件名
+	 */
+    String findFileNameById(String publicId);
 }

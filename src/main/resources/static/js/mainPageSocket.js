@@ -24,13 +24,11 @@ stompClient.connect({},
     stompClient.send("/app/sendTest", {}, messageJson);
     setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
 }
-
     //订阅消息
     function subscribe2() {
-        stompClient.subscribe('/user/queue/' + 'b350bc19b07c4ae7908d9499c9875055' + '/news', function (response) {
+        stompClient.subscribe('/topic/' + userId, function (response) {
             var returnData = JSON.parse(response.body);
-            //var taskLog = JSON.parse(returnData.responseMessage);
-            alert(returnData);
+            $('.notice-num').html(returnData);
         });
     }
 

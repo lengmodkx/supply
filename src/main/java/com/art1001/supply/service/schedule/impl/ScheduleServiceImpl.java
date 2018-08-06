@@ -281,4 +281,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 	public void clearScheduleTag(String scheduleId) {
 		scheduleMapper.clearScheduleTag(scheduleId);
 	}
+
+	/**
+	 * 根据日程id 查询出该日程的名称
+	 * @param publicId 日程id
+	 * @return
+	 */
+	@Override
+	public String findScheduleNameById(String publicId) {
+		return scheduleMapper.findScheduleNameById(publicId);
+	}
 }

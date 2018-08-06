@@ -26,6 +26,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
@@ -78,6 +79,10 @@ public class TaskServiceImpl implements TaskService {
     /** 标签的逻辑层接口 */
     @Resource
     private TagService tagService;
+
+    /** 用户消息的逻辑层接口 */
+    @Resource
+    private UserNewsService userNewsService;
 
     /** 日志逻辑层接口 */
     @Resource
@@ -530,15 +535,16 @@ public class TaskServiceImpl implements TaskService {
         List<String> list1 = Arrays.asList(task.getTaskUIds().split(","));
         List<String> list2 = Arrays.asList(memberIds.split(","));
 
-        List subtract1 = ListUtils.subtract(list1, list2);
+        List<String> subtract1 = ListUtils.subtract(list1, list2);
         if(subtract1 != null && subtract1.size() > 0){
             content.append(TaskLogFunction.B.getName());
             for (Object aSubtract1 : subtract1) {
                 UserEntity user = userMapper.findUserById(aSubtract1.toString());
                 content.append(user.getUserName()).append(",");
             }
+            //保存被移除的参与者的消息信息
+            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName(),0);
         }
-
 
         List subtract2 = ListUtils.subtract(list2, list1);
         if(subtract2 != null && subtract2.size() > 0){
@@ -1200,5 +1206,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void clearTaskTag(String publicId) {
         taskMapper.clearTaskTag(publicId);
+    }
+
+    /**
+     * 根据任务的id 查询出该任务的名称
+     * @param taskId 任务id
+     * @return
+     */
+    @Override
+    public String findTaskNameById(String taskId) {
+        return taskMapper.findTaskNameById(taskId);
     }
 }

@@ -65,49 +65,21 @@
 <div class="content">
     <div class="content-left boxsizing">
         <ul class="notice-ul">
-            <li class="boxsizing clearfix">
+            <li class="boxsizing clearfix" th:each="news:${newsList}" th:class="${news.newsHandle == 1}? 'isread'" th:data-public-id= "${news.newsPublicId}">
                 <div class="li-title">
                     <i class="iconfont icon-renwuyiwancheng"></i>
-                    <span>任务名称</span>
+                    <span th:text="${news.newsName}"></span>
+                    <span class="num" th:if = "${news.newsHandle == 0}" th:text = "${news.newsCount}"></span>
                     <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
                     <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
                 </div>
                 <div class="li-con clearfix">
-                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-                    <div class="thing">
-                        谁谁干了什么
+                    <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${news.newsFromUser.userInfo.image}">
+                    <div class="thing" th:text="${news.newsContent}">
+
                     </div>
-                    <div class="what-time">7月12日10:00</div>
-                </div>
-            </li>
-            <li class="boxsizing clearfix">
-                <div class="li-title">
-                    <i class="iconfont icon-wenjian"></i>
-                    <span>abc.jpg</span>
-                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                </div>
-                <div class="li-con clearfix">
-                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-                    <div class="thing">
-                        谁谁干了什么
-                    </div>
-                    <div class="what-time">7月12日10:00</div>
-                </div>
-            </li>
-            <li class="boxsizing clearfix">
-                <div class="li-title">
-                    <i class="iconfont icon-weibiaoti-"></i>
-                    <span>系统消息</span>
-                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                </div>
-                <div class="li-con clearfix">
-                    <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-                    <div class="thing">
-                        谁谁干了什么
-                    </div>
-                    <div class="what-time">7月12日10:00</div>
+
+                    <div class="what-time" th:text="${#dates.format(news.updateTime,'MM月dd日 HH:mm')}"></div>
                 </div>
             </li>
         </ul>
@@ -150,6 +122,11 @@
             $('.style-box-tz').hide(300);          //淡出消失
         }
     });
+
+    $("html").on("click",".notice-ul li",function () {
+        $(this).addClass("isread");
+        $(this).find('.num').remove();
+    })
 
 </script>
 </html>

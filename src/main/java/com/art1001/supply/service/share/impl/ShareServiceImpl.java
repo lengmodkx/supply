@@ -222,4 +222,14 @@ public class ShareServiceImpl implements ShareService {
 	public void shareClearTag(String shareId) {
 		shareMapper.shareClearTag(shareId);
 	}
+
+	/**
+	 * 根据id 查询出该分享的标题
+	 * @param publicId 分享id
+	 * @return
+	 */
+	@Override
+	public String findShareNameById(String publicId) {
+		return shareMapper.findShareNameById(publicId);
+	}
 }

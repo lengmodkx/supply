@@ -377,6 +377,7 @@ public interface TaskMapper {
 	/**
 	 * 查询任务的名称
 	 * @param taskId 任务id
+	 * @return 任务名称
 	 */
 	@Select("select task_name from prm_task where task_id = #{taskId}")
     String findTaskNameById(String taskId);

@@ -158,4 +158,12 @@ public interface FileMapper {
 	 */
 	@Update("update prm_file set tag_id = '' where file_id = #{fileId}")
     void fileClearTag(String fileId);
+
+	/**
+	 * 根据文件id 查询出文件名
+	 * @param publicId 文件id
+	 * @return
+	 */
+	@Select("select file_name from prm_file where file_id = #{publicId}")
+    String findFileNameById(String publicId);
 }

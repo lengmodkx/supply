@@ -77,4 +77,10 @@ public interface ShareService {
 	 * @param shareId 分享的id
 	 */
 	void shareClearTag(String shareId);
+
+	/**
+	 * 根据id 查询出该分享的标题
+	 * @param publicId 分享id
+	 */
+    String findShareNameById(String publicId);
 }

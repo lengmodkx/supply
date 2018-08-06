@@ -6,6 +6,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
@@ -102,4 +103,12 @@ public interface ScheduleMapper {
 	 */
 	@Update("update prm_schedule set tag_id = '' where schedule_id = #{scheduleId}")
     void clearScheduleTag(String scheduleId);
+
+	/**
+	 * 根据日程id 查询出该日程的名称
+	 * @param publicId 日程id
+	 * @return
+	 */
+	@Select("select schedule_name from prm_schedule where schedule_id = #{publicId}")
+    String findScheduleNameById(String publicId);
 }

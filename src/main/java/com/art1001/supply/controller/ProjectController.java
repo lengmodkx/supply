@@ -25,6 +25,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
@@ -75,6 +76,9 @@ public class ProjectController extends BaseController {
     private TagService tagService;
 
     @Resource
+    private UserNewsService userNewsService;
+
+    @Resource
     private SimpMessagingTemplate messagingTemplate;
     @RequestMapping("/project.html")
     public String home(Model model, HttpServletResponse response){
@@ -93,6 +97,10 @@ public class ProjectController extends BaseController {
             //项目回收站
             List<Project> delProjects = projectMemberService.findProjectByMemberId(userEntity.getId(),1);
             model.addAttribute("delProjects",delProjects);
+
+            //获取当前登录用户的消息总数
+            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
+            model.addAttribute("newsCount",userNewsCount);
 
             model.addAttribute("user",userEntity);
             response.setHeader("Cache-Control","no-store");
@@ -517,6 +525,10 @@ public class ProjectController extends BaseController {
                 model.addAttribute("taskGroups",taskGroups);
                 model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             }
+
+            //获取当前登录用户的消息总数
+            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
+            model.addAttribute("newsCount",userNewsCount);
 
             Project project = projectService.findProjectByProjectId(projectId);
             model.addAttribute("project",project);

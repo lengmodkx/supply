@@ -52,5 +52,45 @@ public interface UserNewsService {
 	 * @return
 	 */
 	public List<UserNews> findUserNewsAllList();
-	
+
+	/**
+	 * 根据 信息id 和用户id  查询 用户有没有这消息的记录
+	 * @param publicId 信息id
+	 * @param userId 用户id
+	 * @return
+	 */
+    int findUserNewsByPublicId(String publicId, String userId);
+
+	/**
+	 * 根据信息id 用户id 查询出 这条信息的消息数
+	 * @param publicId 信息id
+	 * @param userId 用户id
+	 * @return 消息数
+	 */
+	Integer findNewsCountByPublicId(String publicId, String userId);
+
+	/**
+	 * 根据用户id  查询出用户的未读消息条数
+	 * @param userId 用户id
+	 * @return
+	 */
+	int findUserNewsCount(String userId);
+
+	/**
+	 * 根据用户id 查询出该用户的 全部消息
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<UserNews> findAllUserNewsByUserId(String userId);
+
+	/**
+	 *	保存用户的消息信息
+	 * @param users 受影响的用户数组
+	 * @param publicId 哪条信息的消息
+	 * @param publicType 信息的类型(任务,文件,日程,分享)
+	 * @param content 消息内容
+	 * @param isChat 是否是聊天信息
+	 */
+	void saveUserNews(String[] users, String publicId, String publicType, String content, int isChat);
+
 }

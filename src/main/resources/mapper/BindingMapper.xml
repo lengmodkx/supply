@@ -7,32 +7,13 @@
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<result column="bind_id" property="bindId" jdbcType="VARCHAR" />
 		<result column="public_type" property="publicType" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="image" property="image" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
-		<result column="menuId" property="menu_id" jdbcType="VARCHAR" />
-		<result column="bind_name" property="bindName" jdbcType="VARCHAR" />
-		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
-		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
-		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 				id,
 				public_id,
 				bind_id,
-				bind_name,
-				public_type,
-				create_time,
-				update_time,
-				image,
-			    public_id,
-				group_id,
-				menu_id,
-				share_link
+				public_type
 	</sql>
 
 	<sql id="whereStatement">
@@ -223,7 +204,7 @@
 
 	<select id="listBindingInfoByPublicId" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"></include>
-		from prm_binding where public_id = #{publicId} order by prm_binding.create_time desc
+		from prm_binding where public_id = #{publicId}
 	</select>
 
 	<!-- 查询出此条关联在库中的记录数 -->
