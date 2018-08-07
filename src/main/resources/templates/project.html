@@ -136,6 +136,7 @@
 <script th:src="@{/js/project.js}" src="../static/js/project.js"></script>
 <script type="text/javascript" th:inline="javascript">
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    var userId = [[${user.id}]];
     layui.use('element', function(){
         var element = layui.element;
 

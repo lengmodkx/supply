@@ -19,18 +19,12 @@ stompClient.connect({},
 
     //发送消息
     function send() {
-    var message = "你好啊";
-    var messageJson = JSON.stringify({ "name": message });
-    stompClient.send("/app/sendTest", {}, messageJson);
-    setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
-}
-    //订阅消息
-    function subscribe2() {
-        stompClient.subscribe('/topic/' + userId, function (response) {
-            var returnData = JSON.parse(response.body);
-            $('.notice-num').html(returnData);
-        });
+        var message = "你好啊";
+        var messageJson = JSON.stringify({ "name": message });
+        stompClient.send("/app/sendTest", {}, messageJson);
+        setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
     }
+
 
     //订阅消息
     function subscribe1() {

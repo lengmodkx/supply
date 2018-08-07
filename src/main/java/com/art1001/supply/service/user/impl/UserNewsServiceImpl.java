@@ -199,6 +199,7 @@ public class UserNewsServiceImpl implements UserNewsService {
 				UserNews userNews = new UserNews();
 				userNews.setNewsContent(content);
 				userNews.setNewsPublicId(publicId);
+				userNews.setNewsHandle(0);
 				userNews.setNewsToUserId(users[i]);
 				userNews.setNewsCount(userNewsMapper.findNewsCountByPublicId(publicId,users[i])+1);
 				userNews.setUpdateTime(System.currentTimeMillis());

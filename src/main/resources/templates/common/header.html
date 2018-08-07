@@ -18,7 +18,7 @@
             <span style="margin-left: 15px;" class="notice-box">
                 <a href="/news/userNewsList.html">
                     <i class="iconfont icon-nitification"></i>
-                    <span class="notice-num" th:if="${newsCount > 0}" th:text="${newsCount}"></span>
+                    <span class="notice-num" th:style="'display:' + (${newsCount > 0} ? 'block' : 'none') + ''" th:text="${newsCount}"></span>
                 </a>
             </span>
             <img th:src="#{IMAGE_SERVER}+${headerImg}" class="avatar" th:data="${userId}">
@@ -37,3 +37,4 @@
     </div>
 </div>
 </html>
+
