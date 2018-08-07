@@ -583,29 +583,28 @@ $('.people-ok').click(function () {
      * 任务详情的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
-        $("#executor").addClass("special-executor");
         var url = '/task/findTaskMemberInfo';
         var args = {"projectId":projectId, "taskId": taskId};
         $.post(url, args, function (data) {
            if(data.result===1){
-               $('#executor').html('');
-               $('#noExecutor').html('');
+               $('.executor').html('');
+               $('.noExecutor').html('');
                for(var i=0;i<data.joinInfo.length;i++){
-                   var div = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
+                   var div1 = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
                        '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
                        '<span>'+ data.joinInfo[i].userName +'</span>'+
                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
                        '</div>';
-                    $('#executor').append(div);
+                    $('.executor').append(div1);
                }
 
                for(var j=0;j<data.projectMembers.length;j++){
-                   var div = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
+                   var div2 = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
                        '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
                        '<span>'+ data.projectMembers[j].userName +'</span>'+
                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
                        '</div>';
-                   $('#noExecutor').append(div);
+                   $('.noExecutor').append(div2);
                }
            }
            $(".people").show(500);

@@ -28,7 +28,7 @@
     <div class="download-left boxsizing">
         <!--<div class="download-left-box">-->
             <div class="download-left-name">
-                <img id="bannerImage" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" alt="" style="width: 100%;" th:if="${file.catalog eq 0} and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'}or ${file.ext eq '.bmp'}or ${file.ext eq '.svg'})"/>
+                <img id="bannerImage" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" alt="" style="width: 50%;" th:if="${file.catalog eq 0} and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'}or ${file.ext eq '.bmp'}or ${file.ext eq '.svg'})"/>
                 <iframe th:src="#{OFFICE}+${file.fileUrlTemp}" th:if="${file.catalog eq 0} and (${file.ext eq '.doc'} or ${file.ext eq '.docx'} or ${file.ext eq '.xls'}or ${file.ext eq '.xlsx'}or ${file.ext eq '.ppt'}or ${file.ext eq '.pptx'})"></iframe>
                 <iframe th:src="@{/file/viewer.html(fileId=${file.fileId})}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"></iframe>
                 <iframe th:src="#{IMAGE_SERVER}+${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"></iframe>

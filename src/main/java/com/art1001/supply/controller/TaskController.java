@@ -3,11 +3,13 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -33,6 +35,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -1293,4 +1297,26 @@ public class TaskController {
         return jsonObject;
     }
 
+    //上传项目图片
+    @PostMapping("/upload")
+    @ResponseBody
+    public JSONObject uploadCover(@RequestParam String projectId,
+                                  MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            String filename = System.currentTimeMillis()+".jpg";
+            AliyunOss.uploadInputStream(Constants.PROJECT_IMG + filename,file.getInputStream());
+            Project project1 = new Project();
+            project1.setProjectId(projectId);
+            project1.setProjectCover(Constants.PROJECT_IMG + filename);
+            projectService.updateProject(project1);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "上传成功");
+            jsonObject.put("data",Constants.PROJECT_IMG + filename);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+        return jsonObject;
+    }
 }

@@ -116,6 +116,8 @@ public class File extends BaseEntity implements Serializable {
 
     private String fileUrlTemp;
 
+    private int fileLabel;
+
     public String getFileUrlTemp(){
         try {
             return URLEncoder.encode("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/"+fileUrl,"utf-8");

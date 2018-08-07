@@ -323,10 +323,12 @@
     </div>
 
     <div class="publish boxsizing">
-        <textarea id="chat" name=""  placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input" ></textarea>
+        <textarea id="chat" name=""  placeholder="请输入内容，点击发布按钮" class="layui-textarea publish-input" ></textarea>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
-            <img src="../static/image/fujian.png" th:src="@{/image/fujian.png}" />
+            <button type="button" class="layui-btn" id="test1" style="background-color: #1E9FFF;float: left;width: 54px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;">
+                <i class="layui-icon">&#xe67c;</i>
+            </button>
             <div class="publish-btn">发布</div>
         </div>
         <!--上传文件框-->
@@ -393,14 +395,14 @@
     </div>
     <!--人员 参与者 弹框-->
     <div class="people boxsizing" style="display: none">
-        <input type="text" name="" placeholder="搜索" class="layui-input">
+        <!--<input type="text" name="" placeholder="搜索" class="layui-input">-->
         <div class="peoples">
-            <p id = "titles">参与者</p>
-            <div id = "executor" class="special-executor">
+            <p>参与者</p>
+            <div class = "executor">
 
             </div>
             <p>推荐</p>
-            <div id = "noExecutor">
+            <div class = "noExecutor">
 
             </div>
             <!--<div class="add-new-people">-->
@@ -411,6 +413,19 @@
         <div class="people-ok">确定</div>
     </div>
 
+    <div class="people boxsizing zx_people" style="display: none">
+        <!--<input type="text" name="" placeholder="搜索" class="layui-input">-->
+        <div class="peoples">
+            <p>参与者</p>
+            <div class = "zx_p">
+
+            </div>
+            <p>推荐</p>
+            <div class="tj_p">
+
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <script th:inline="javascript">
@@ -430,6 +445,23 @@
     var executor = [[${task.executor}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+
+
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        //执行实例
+        upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/upload/' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>

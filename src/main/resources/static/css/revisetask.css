@@ -680,11 +680,22 @@
     position: relative;
     background-color: #fff;
 }
-
+.publish-bottom input{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    opacity: 0;
+    font-size: 0;
+}
 .publish-bottom > img {
     float: left;
     width: 30px;
     height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
     cursor: pointer;
 }
 
@@ -936,10 +947,6 @@
 .one-people span {
     float: left;
     margin-left: 15px;
-}
-
-#executor.special-executor i {
-    display: block;
 }
 
 .one-people i {

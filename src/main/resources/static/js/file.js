@@ -98,42 +98,43 @@ $(function () {
                 if (data.result === 1) {
                     layer.msg(data.msg, {icon: 1, time: 1000}, function () {
                         layer.closeAll('loading');
-                        var file = data.data;
-                        liVal += '<li class="boxsizing one-file-wrap">\n' +
-                            '    <div class="one-file boxsizing fileList">\n' +
-                            '    <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks"/>';
-
-                            if(file.ext==='.jpg'||file.ext==='.png'||file.ext==='.jpeg'||file.ext==='.bmp'||file.ext==='.svg'){
-                                liVal+='<img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >';
-                            }else if(file.ext==='.doc'||file.ext==='.docx'){
-                                liVal+='<img class="textFile" src="/image/word_1.png"/>';
-                            }else if(file.ext==='.xls'||file.ext==='.xlsx'){
-                                liVal+='<img class="textFile" src="/image/excel.png"/>';
-                            }else if(file.ext==='.ppt'||file.ext==='.pptx'){
-                                liVal+='<img class="textFile" src="/image/ppt.png"/>';
-                            }else if(file.ext==='.pdf'){
-                                liVal+='<img class="textFile" src="/image/pdf_1.png"/>';
-                            }else if(file.ext==='.zip'){
-                                liVal+='<img class="textFile" src="/image/zip.png"/>';
-                            }else if(file.ext==='.rar'){
-                                liVal+='<img class="textFile" src="/image/rar.png"/>';
-                            }else if(file.ext==='.txt'){
-                                liVal+='<img class="textFile" src="/image/txt.png"/>';
-                            }
-
-                            liVal+='<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>';
-                            liVal+='<div class="img-show-operate"><i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i></div>';
-                            liVal+='</div>';
-                            liVal+='<div class="one-file-name" data="' + file.fileId + '">';
-                            if(file.fileName.length>15){
-                                var fileName = file.fileName.substring(0,10)+file.ext;
-                                liVal+=fileName+'</div></li>';
-                            }else{
-                                liVal+=file.fileName+'</div></li>';
-                            }
-                        $("#fileListUl").append(liVal);
-                        form.render("checkbox");
-                        fileDetail()
+                        // var file = data.data;
+                        // liVal += '<li class="boxsizing one-file-wrap">\n' +
+                        //     '    <div class="one-file boxsizing fileList">\n' +
+                        //     '    <input class="pick-it" type="checkbox" name="fileCheck" value="' + file.fileId + '" title="" lay-skin="primary" lay-filter="checks"/>';
+                        //
+                        //     if(file.ext==='.jpg'||file.ext==='.png'||file.ext==='.jpeg'||file.ext==='.bmp'||file.ext==='.svg'){
+                        //         liVal+='<img class="textFile" src="' + IMAGE_SERVER + file.fileUrl + '" >';
+                        //     }else if(file.ext==='.doc'||file.ext==='.docx'){
+                        //         liVal+='<img class="textFile" src="/image/word_1.png"/>';
+                        //     }else if(file.ext==='.xls'||file.ext==='.xlsx'){
+                        //         liVal+='<img class="textFile" src="/image/excel.png"/>';
+                        //     }else if(file.ext==='.ppt'||file.ext==='.pptx'){
+                        //         liVal+='<img class="textFile" src="/image/ppt.png"/>';
+                        //     }else if(file.ext==='.pdf'){
+                        //         liVal+='<img class="textFile" src="/image/pdf_1.png"/>';
+                        //     }else if(file.ext==='.zip'){
+                        //         liVal+='<img class="textFile" src="/image/zip.png"/>';
+                        //     }else if(file.ext==='.rar'){
+                        //         liVal+='<img class="textFile" src="/image/rar.png"/>';
+                        //     }else if(file.ext==='.txt'){
+                        //         liVal+='<img class="textFile" src="/image/txt.png"/>';
+                        //     }
+                        //
+                        //     liVal+='<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>';
+                        //     liVal+='<div class="img-show-operate"><i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i></div>';
+                        //     liVal+='</div>';
+                        //     liVal+='<div class="one-file-name" data="' + file.fileId + '">';
+                        //     if(file.fileName.length>15){
+                        //         var fileName = file.fileName.substring(0,10)+file.ext;
+                        //         liVal+=fileName+'</div></li>';
+                        //     }else{
+                        //         liVal+=file.fileName+'</div></li>';
+                        //     }
+                        // $("#fileListUl").append(liVal);
+                        // form.render("checkbox");
+                        // fileDetail()
+                        window.location.reload();
                     });
                 } else {
                     layer.closeAll('loading');
@@ -213,23 +214,24 @@ $(function () {
                     }, function (data) {
                         if (data.result === 1) {
                             layer.closeAll('loading');
-                            var file = data.data;
-                            $(".new-file-wrap").after(
-                                '<li class="boxsizing one-file-wrap layui-form">\n' +
-                                '    <div class="one-file boxsizing fileList">\n' +
-                                '       <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
-                                '       <img src="/image/nofile.png" class="folderFile">\n' +
-                                '       <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
-                                '       <div class="img-show-operate">' +
-                                '           <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>' +
-                                '       </div>' +
-                                '    </div>\n' +
-                                '    <div class="one-file-name" data="'+ file.fileId +'">' + folderName + '</div>\n' +
-                                '</li>');
-                            $(".new-file").hide();
-                            $(".new-file-wrap").hide();
-                            form.render("checkbox");
-                            fileDetail()
+                            // var file = data.data;
+                            // $(".new-file-wrap").after(
+                            //     '<li class="boxsizing one-file-wrap layui-form">\n' +
+                            //     '    <div class="one-file boxsizing fileList">\n' +
+                            //     '       <input class="pick-it" type="checkbox" name="" title="" lay-skin="primary" lay-filter="checks">\n' +
+                            //     '       <img src="/image/nofile.png" class="folderFile">\n' +
+                            //     '       <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>' +
+                            //     '       <div class="img-show-operate">' +
+                            //     '           <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #ADADAD;"></i>' +
+                            //     '       </div>' +
+                            //     '    </div>\n' +
+                            //     '    <div class="one-file-name" data="'+ file.fileId +'">' + folderName + '</div>\n' +
+                            //     '</li>');
+                            // $(".new-file").hide();
+                            // $(".new-file-wrap").hide();
+                            // form.render("checkbox");
+                            // fileDetail()
+                            window.location.reload();
                         } else {
                             layer.msg(data.msg, {icon: 2, time: 1000})
                         }

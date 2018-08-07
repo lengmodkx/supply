@@ -73,7 +73,7 @@
                             <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
                         </li>
                         <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
-                            <div class="one-file boxsizing fileList">
+                            <div class="one-file boxsizing fileList" th:data="${file.fileId}">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
                                 <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'}or ${file.ext eq '.bmp'}or ${file.ext eq '.svg'})"/>
