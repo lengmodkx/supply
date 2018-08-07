@@ -883,7 +883,7 @@ public class TaskController {
             //当前项目信息
             model.addAttribute("projectId",taskById.getProjectId());
             //判断当前用户有没有对该任务点赞
-            boolean isFabulous = taskService.judgeFabulous(task);
+            boolean isFabulous = taskService.judgeFabulous(task.getTaskId());
             model.addAttribute("isFabulous",isFabulous);
             //判断当前用户有没有收藏该任务
             boolean isCollect = taskService.judgeCollectTask(task);

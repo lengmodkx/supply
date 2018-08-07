@@ -92,4 +92,6 @@ public interface PublicCollectService {
 	 */
 	List<PublicCollectVO> listMyCollect(String memberId, String type);
 
+
+
 }

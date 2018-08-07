@@ -209,4 +209,13 @@ public class UserNewsServiceImpl implements UserNewsService {
 			messagingTemplate.convertAndSend("/topic/"+ users[i],newsCount);
 		}
 	}
+
+	/**
+	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0
+	 * @param id 消息id
+	 */
+	@Override
+	public void updateIsRead(String id) {
+		userNewsMapper.updateIsRead(id);
+	}
 }

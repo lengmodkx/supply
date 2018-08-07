@@ -106,7 +106,7 @@ public class ScheduleController extends BaseController {
     }
 
     @RequestMapping("/editSchedule.html")
-    public String editSchedule(@RequestParam String projectId, @RequestParam String id,Model model){
+    public String editSchedule(String projectId, @RequestParam String id,Model model){
         Schedule schedule = scheduleService.findScheduleById(id);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00");
         //查询出该日程的log信息

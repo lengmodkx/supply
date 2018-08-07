@@ -153,7 +153,7 @@ public class ProjectController extends BaseController {
 
             jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
-            jsonObject.put("data",JSON.toJSON(projects));
+            jsonObject.put("data",projects);
 
         }catch (Exception e){
             log.error("请求项目列表异常：",e);

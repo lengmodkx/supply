@@ -93,4 +93,9 @@ public interface UserNewsService {
 	 */
 	void saveUserNews(String[] users, String publicId, String publicType, String content, int isChat);
 
+	/**
+	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0
+	 * @param id 消息id
+	 */
+	void updateIsRead(String id);
 }

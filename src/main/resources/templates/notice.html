@@ -5,9 +5,13 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/notice.css}" href="../static/css/notice.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commonhead.css}" href="../static/css/commonhead.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_bevac9qvhqa.css">
 </head>
 <body>
-
+<header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 <div class="head">
     <div class="head-con">
         <div class="head-left">
@@ -55,7 +59,7 @@
             </ul>
         </div>
 
-        <div class="head-right boxsizing">
+        <div class="heads-right boxsizing">
             <a href="#">前往项目：啥啥啥</a>
             <a href="#">前往任务模板</a>
         </div>
@@ -65,7 +69,9 @@
 <div class="content">
     <div class="content-left boxsizing">
         <ul class="notice-ul">
-            <li class="boxsizing clearfix" th:each="news:${newsList}" th:class="${news.newsHandle == 1}? 'isread'" th:data-public-id= "${news.newsPublicId}">
+            <li class="boxsizing clearfix" th:each="news:${newsList}" th:class="${news.newsHandle == 1}? 'isread'" th:data-id= "${news.newsId}" th:data-public-id= "${news.newsPublicId}">
+                <input type="hidden" th:value="${news.newsType}" class = "newsType"/>
+                <input type="hidden" th:value="${news.newsHandle}" class = "read"/>
                 <div class="li-title">
                     <i class="iconfont icon-renwuyiwancheng"></i>
                     <span th:text="${news.newsName}"></span>
@@ -88,7 +94,11 @@
 
     <!--右侧 盒子-->
     <div class="content-right boxsizing">
-        <div class="scroll-box"></div>
+        <div class="scroll-box">
+            <div class = "task layui-anim layui-anim-scale">
+
+            </div>
+        </div>
     </div>
 
 </div>
@@ -96,10 +106,21 @@
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+<script th:inline="javascript">
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    var projectId = [[${projectId}]];
+</script>
+
+<script th:src="@{/js/notice.js}" src="../static/js/notice.js"></script>
 <script>
     layui.use('form', function(){
         var form = layui.form;
 
+
+    });
+    layui.use('element', function(){
+        var element = layui.element;
 
     });
     $(".head-left span").click(function (e) {
@@ -123,10 +144,12 @@
         }
     });
 
-    $("html").on("click",".notice-ul li",function () {
-        $(this).addClass("isread");
-        $(this).find('.num').remove();
-    })
+    // $(document).ready(function(e) {
+    //     var counter = 0;
+    //     if (window.history && window.history.pushState) { $(window).on('popstate', function () {
+    //         window.history.pushState('forward', null, '#');
+    //         window.history.forward(1);
+    //          location.replace(document.referrer); }); } window.history.pushState('forward', null, '#');  window.history.forward(1); });
 
 </script>
 </html>

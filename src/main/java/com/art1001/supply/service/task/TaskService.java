@@ -181,10 +181,10 @@ public interface TaskService {
 
 	/**
 	 * 判断用户有没有该任务点赞
-	 * @param task 任务的实体信息
+	 * @param taskId 任务id
 	 * @return
 	 */
-	boolean judgeFabulous(Task task);
+	boolean judgeFabulous(String taskId);
 
 	/**
 	 * 用户取消对当前任务的赞

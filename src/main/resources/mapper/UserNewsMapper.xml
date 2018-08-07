@@ -82,7 +82,7 @@
 	
 	<delete id="deleteUserNewsById" parameterType="java.lang.String">
 		delete from
-		prm_user_news where id = #{id}
+		prm_user_news where news_id = #{id}
 	</delete>
 	
 	<insert id="saveUserNews" parameterType="com.art1001.supply.entity.user.UserNews">

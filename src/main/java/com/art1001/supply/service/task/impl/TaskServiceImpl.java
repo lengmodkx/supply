@@ -546,7 +546,9 @@ public class TaskServiceImpl implements TaskService {
             userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName(),0);
         }
 
-        List subtract2 = ListUtils.subtract(list2, list1);
+        List<String> subtract2 = ListUtils.subtract(list2, list1);
+        //保存被添加进来的参与者的消息信息
+        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName(),0);
         if(subtract2 != null && subtract2.size() > 0){
             content.append(TaskLogFunction.C.getName());
             for (Object aSubtract2 : subtract2) {
@@ -599,13 +601,13 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 判断当前用户有没有给该任务点赞
-     * @param task 任务信息
+     * @param taskId 任务id信息
      * @return
      */
     @Override
-    public boolean judgeFabulous(Task task) {
+    public boolean judgeFabulous(String taskId) {
         String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        int result = fabulousMapper.judgeFabulous(task.getTaskId(),memberId);
+        int result = fabulousMapper.judgeFabulous(taskId,memberId);
         //如果已经给该任务点赞 返回 false 否则返回true
         if(result > 0){
             return false;

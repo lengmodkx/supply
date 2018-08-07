@@ -6,6 +6,7 @@ import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * mapper接口
@@ -88,4 +89,11 @@ public interface UserNewsMapper {
 	 * @return
 	 */
 	List<UserNews> findAllUserNewsByUserId(String userId);
+
+	/**
+	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0
+	 * @param id 消息id
+	 */
+	@Update("update prm_user_news set news_handle = 1,news_count = 0 where news_id = #{id}")
+    void updateIsRead(String id);
 }
