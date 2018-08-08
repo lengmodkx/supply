@@ -165,14 +165,6 @@ public interface TaskService {
 	Log addAndRemoveTaskMember(String taskId,String memberIds);
 
 	/**
-	 * 移除任务参与者
-	 * @param task 当前任务实体信息
-	 * @param userEntity 被移除的用户的信息
-	 * @return
-	 */
-	Log removeTaskMember(Task task, UserEntity userEntity);
-
-	/**
 	 * 给当前任务点赞
 	 * @param task 任务的实体信息
 	 * @return
@@ -467,4 +459,5 @@ public interface TaskService {
 	 * @return
 	 */
 	String findTaskNameById(String taskId);
+
 }

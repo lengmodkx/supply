@@ -565,21 +565,6 @@ public class TaskServiceImpl implements TaskService {
         return log;
     }
 
-
-    /**
-     * 移除任务-成员关系
-     * @param task 当前项目实体信息
-     * @param userEntity 被移除的用户的信息
-     * @return
-     */
-    @Override
-    public Log removeTaskMember(Task task, UserEntity userEntity) {
-        taskMemberService.removeTaskMember(task,userEntity);
-        StringBuilder builder = new StringBuilder("");
-        builder.append(TaskLogFunction.B.getName()).append(" ").append(userEntity.getUserName());
-        return logService.saveLog(task.getTaskId(),builder.toString(),1);
-    }
-
     /**
      * 给当前任务点赞
      * @param task 任务的实体信息
@@ -907,10 +892,13 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Log removeExecutor(String taskId) {
-        //先将任务成员关系表的执行者清掉
-        taskMapper.clearExecutor(taskId);
         //拼接日志
         String content = TaskLogFunction.A.getName();
+        //保存被移除的参与者的消息信息
+        Task task = taskMapper.findTaskByTaskId(taskId);
+        userNewsService.saveUserNews(task.getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A.getName() + " " + task.getExecutorInfo().getUserName(),0);
+        //先将任务成员关系表的执行者清掉
+        taskMapper.clearExecutor(taskId);
         return logService.saveLog(taskId,content,1);
     }
 
@@ -950,6 +938,8 @@ public class TaskServiceImpl implements TaskService {
         taskMapper.updateTask(task);
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
+        //保存被移除的参与者的消息信息
+        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName,0);
         return logService.saveLog(task.getTaskId(),content.toString(),1);
     }
 
@@ -1219,4 +1209,5 @@ public class TaskServiceImpl implements TaskService {
     public String findTaskNameById(String taskId) {
         return taskMapper.findTaskNameById(taskId);
     }
+
 }
