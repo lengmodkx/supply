@@ -18,10 +18,6 @@ stompClient.connect({},
 //发送消息
 $('.publish-btn').click(function (e) {
     var chat = $('#chat').val();
-    if(chat == null || chat == ''){
-        layer.msg("请输入内容!")
-        return false;
-    }
     var args = {"publicId":taskId,"content":chat}
     $.post("/task/chat",args,function (data) {
     },"json");

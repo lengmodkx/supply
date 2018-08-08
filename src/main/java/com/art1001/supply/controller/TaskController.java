@@ -1303,20 +1303,13 @@ public class TaskController {
     @PostMapping("/upload")
     @ResponseBody
     public JSONObject uploadCover(@RequestParam String taskId,
-                                  HttpServletRequest request){
+                                  MultipartFile file){
         JSONObject jsonObject = new JSONObject();
         try {
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-            if(fileMap.size() == 0){
-                jsonObject.put("result", 0);
-                jsonObject.put("msg", "请上传文件,注意文件的name属性为file");
-                return jsonObject;
-            }
-
 
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
+            System.out.println(file.getOriginalFilename());
         }catch (Exception e){
             throw new SystemException(e);
         }

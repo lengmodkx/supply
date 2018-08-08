@@ -462,25 +462,30 @@
             ,field:'file'
             ,bindAction: '#fileListAction'
             ,choose: function(obj) {
-                var files = this.files = obj.pushFile();
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
                 obj.preview(function(index, file, result){
                     console.log(file); //得到文件对象
                     var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
                         '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
                         '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
-                        '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+file.size+'</p>\n' +
-                        '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;" data="'+index+'"></i>\n' +
+                        '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
+                        '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+index+'"></i>\n' +
                         '            </li>';
-                    $('li').find('i').on('click', function() {
+                    $('.fileList').append(li);
+                    $('li i').on('click', function() {
+                        console.log("xxx");
                         delete files[index]; //删除对应的文件
                         $(this).parent().remove();
-                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                        //uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
                     });
-                    $('.fileList').append(li);
                 });
             }
             ,done: function(res){
                 //上传完毕回调
+            }
+            ,allDone:function (res) {
+                $('.fileList').html('');
+                uploadListIns.config.elem.next()[0].value = '';
             }
             ,error: function(){
                 //请求异常回调
