@@ -40,23 +40,18 @@ layui.use('laydate', function () {
  * 点击一条消息
  */
 $("html").on("click",".notice-ul li",function () {
-    var aid=$(this).attr("data-public-id");
+    var publicId =$(this).attr("data-public-id");
     var type = $('.newsType').val();
     $(this).addClass("isread");
     $(this).find('.num').remove();
     var url = "/news/updateIsRead";
-    var args = {"id":$(this).attr("data-id"),"publicId":$(this).attr("data-public-id"),"publicType":type,"isread":$(this).find('.read').val()};
+    var args = {"id":$(this).attr("data-id"),"publicId":publicId,"publicType":type,"isread":$(this).find('.read').val()};
     $.post(url,args,function (data) {
         if(data.result == 0){
             layer.msg(data.msg);
         } else{
-            $(".scroll-box>div").hide(10);
-            $(".scroll-box>div").eq(0).show(11);
-            // addContent(data.data,type,data.isFabulous);
-            $('.task').find('');
-            var otop=$(".scroll-box").offset().top+'px';
-            var oleft=$(".scroll-box").offset().left+'px';
-            // $('.task').html(data);
+            info(publicId,type);
+
             if(data.newsCount === 0){
                 $('.notice-num').remove();
             } else{
@@ -91,18 +86,21 @@ $('.layui-icon-close').click(function (e) {
 });
 
 function info(publicId,publicType){
+    var content = '';
     if(publicType === '任务'){
-        var content = "/task/initTask.html?taskId="+publicId;
+        content = "/task/initTask.html?taskId="+publicId;
     }
     if(publicType === '文件'){
-        var content = "/file/fileDetail.html?fileId="+publicId;
+        content = "/file/fileDetail.html?fileId="+publicId;
     }
     if(publicType === '日程'){
-        var content = "/schedule/editSchedule.html?id="+publicId;
+        content = "/schedule/editSchedule.html?id="+publicId;
     }
-    if(publicType === '任务'){
-        var content = "/task/initTask.html?taskId="+publicId;
-    }
+    $(".scroll-box>div").hide(10);
+    $(".scroll-box>div").eq(0).show(11);
+
+    var otop=$(".scroll-box").offset().top+'px';
+    var oleft=$(".scroll-box").offset().left+'px';
     layui.use('layer',function (top,left) {
         var layer=layui.layer;
         layer.closeAll('iframe');
@@ -114,7 +112,11 @@ function info(publicId,publicType){
             shade: 0,
             anim: 5,
             closeBtn: 0,
-            content:'/task/initTask.html?taskId='+aid
+            content:content,
+            success: function(layero, index){
+             var f='#'+layero.find('iframe')[0].id;
+             $(f).contents().find('.close-revise-task').hide()
+            }
         })
     });
 }

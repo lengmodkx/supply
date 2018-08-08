@@ -205,6 +205,10 @@ html,body{
     float: right;
     display: none;
 }
+
+#revise-task{
+    width: 700px;
+}
 @media screen and (max-width: 1366px){
     .content{
         height: 610px;
