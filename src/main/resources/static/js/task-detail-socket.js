@@ -109,7 +109,7 @@ function subscribe() {
             var members = taskLog.object.members;
             $('.work-people .add-work-people').siblings().remove();
             for(var i=0;i<members.length;i++){
-                var div = '<div class="one-work-people" id="'+members[i].id+'">\n' +
+                var div = '<div class="one-work-people" data-id="'+members[i].id+'">\n' +
                     '           <img src="'+IMAGE_SERVER+members[i].userInfo.image+'" />\n' +
                     '           <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>\n' +
                     '      </div>';

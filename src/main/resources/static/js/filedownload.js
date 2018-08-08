@@ -440,6 +440,7 @@ $('html').on('click','.remove-work-people',function () {
             ids.splice(i,1);
         }
     }
+    alert(ids);
 
     var url = "/file/addAndRemoveFileJoin";
     var args = {"newJoin":ids.toString(),"fileId":fileId};

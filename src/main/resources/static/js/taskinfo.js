@@ -1,3 +1,5 @@
+var danxuan=false;
+
 Date.prototype.format = function(format)
 {
     var o = {
@@ -362,24 +364,34 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $('html').on('click','.no-renling',function (e) {
+        danxuan=true;
+        $('.tk_name').html("执行者");
+        $('.joinInfo').html('');
+        $('.Recommend').html('');
         var url = "/task/findProjectAllMember";
         var args = {"projectId": projectId,"executorId":""};
         //异步请求项目人员名单
         $.post(url,args,function(data){
             if(data.result===1){
-                $('.zx_p').html('');
-                $('.tj_p').html('');
                 var member = data.data;
-                var div = '<div class="one-people"><img src="/image/person.png"><span>待认领</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i></div>';
-                $('.zx_p').append(div);
+                var div = '<div class="one-people">' +
+                    '           <img src="/image/person.png">' +
+                    '           <span>待认领</span>' +
+                    '           <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>' +
+                    '       </div>';
+                $('.joinInfo').append(div);
 
                 for(var i = 0;i < member.length;i++){
-                    var content = '<div class="one-people" id="'+member[i].id+'"><img src="'+IMAGE_SERVER+ member[i].userInfo.image +'"><span >' + member[i].userName + '</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
-                    $('.tj_p').append(content);
+                    var content = '<div class="one-people" id="'+member[i].id+'">' +
+                                        '<img src="'+IMAGE_SERVER+ member[i].userInfo.image +'">' +
+                                        '<span value = "' + member[i].id + '">' + member[i].userName + '</span>' +
+                                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>' +
+                                    '</div>';
+                    $('.Recommend').append(content);
                 }
             }
         });
-        $(".zx_people").show(500);
+        $(".people").show(500);
         e.stopPropagation()
     });
 
@@ -509,13 +521,23 @@ $('html').on('click','.remove-tag',function (e) {
 
     //移除任务的参与者
    $("html").on("click",".remove-work-people",function () {
-       var id = $(this).prev().attr("value");
-       var args = {"taskId":taskId,"uId":id};
-       var url = "/task/removeTaskMember";
+
+       var id = $(this).parent().attr('data-id');
+       var ids = [];
+       $('.one-work-people').each(function () {
+           ids.push($(this).attr('data-id'));
+       });
+       for(var i = 0;i < ids.length;i++){
+           if(ids[i] == id){
+               ids.splice(i,1);
+           }
+       }
+
+       var args = {"taskId":taskId,"memberIds":ids.toString()};
+       var url = "/task/addAndRemoveTaskMember";
        $(this).parent().remove();
        $.post(url,args,function (data) {
-           getLog(data.taskLog);
-           //移除完成
+
        },"json");
    });
 
@@ -523,7 +545,7 @@ $('html').on('click','.remove-tag',function (e) {
 
     //点击人员 出现对勾
     $("html").on("click",".one-people",function () {
-        if (zxz){
+        if (danxuan){
             $(this).siblings().find("i").hide();
             $(this).find("i").toggle();
         } else {
@@ -541,28 +563,50 @@ $('html').on('click','.remove-tag',function (e) {
  * 点击人员 弹框 确定 按钮
  */
 $('.people-ok').click(function () {
-      //参与者 确定
-        var memberIds=[];
-        $('#executor .one-people').each(function (index,item) {
-            if($(item).find('i').is(":visible")) {
-                memberIds.push($(item).attr('id'));
+    if(!danxuan){
+        //参与者 确定
+        var addUserEntity=[];
+        var removeUserEntity=[];
+        for (var i=0;i<$(".joinInfo .one-people").length;i++){
+            if ($(".joinInfo .one-people").eq(i).find("i").is(":visible")) {
+                var value =$(".joinInfo .one-people").eq(i).find("span").attr("value");
+                addUserEntity.push(value);
             }
-        });
-
-        $('#noExecutor .one-people').each(function (index,item) {
-            if($(item).find('i').is(":visible")){
-                memberIds.push($(item).attr('id'));
+        }
+        for (var i=0;i<$(".Recommend .one-people").length;i++){
+            if ($(".Recommend .one-people").eq(i).find("i").is(":visible")) {
+                var value =$(".Recommend .one-people").eq(i).find("span").attr("value");
+                addUserEntity.push(value);
             }
-        });
-
+        }
+        if(addUserEntity == '' && removeUserEntity == ''){
+            $(".people").hide(500);
+            return false;
+        }
 
         var url = "/task/addAndRemoveTaskMember";
-        var args = {"taskId":taskId,"memberIds":memberIds.toString()};
+        var args = {"taskId":taskId,"memberIds":addUserEntity.toString()};
         $.post(url,args,function (data) {
             if(data.result === 1){
                 $(".people").hide(500);
             }
         },"json");
+    } else {
+        var uid = '';
+        var name = '';
+        for (var i=0;i<$(".Recommend .one-people").length;i++){
+            if ($(".Recommend .one-people").eq(i).find("i").is(":visible")) {
+                uid = $(".Recommend .one-people").eq(i).find("span").attr("value");
+                name = $(".Recommend .one-people").eq(i).find("span").html();
+            }
+        }
+        var url = "/task/updateTaskExecutor";
+        var args = {"taskId":taskId,"executor":uid,"uName":name};
+        $.post(url,args,function (data) {
+            $(".people").hide(500);
+        });
+
+    }
 
 });
     //点击空白区域 添加人员消失
@@ -583,28 +627,30 @@ $('.people-ok').click(function () {
      * 任务详情的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
+        danxuan=false;
+        $('.tk_name').html("参与者");
+       $('.joinInfo').html('');
+       $('.Recommend').html('');
         var url = '/task/findTaskMemberInfo';
         var args = {"projectId":projectId, "taskId": taskId};
         $.post(url, args, function (data) {
            if(data.result===1){
-               $('.executor').html('');
-               $('.noExecutor').html('');
                for(var i=0;i<data.joinInfo.length;i++){
                    var div1 = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
                        '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
-                       '<span>'+ data.joinInfo[i].userName +'</span>'+
-                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                       '<span value = "' + data.joinInfo[i].id + '">'+ data.joinInfo[i].userName +'</span>'+
+                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: rgb(209, 209, 209); display: inline;"></i>' +
                        '</div>';
-                    $('.executor').append(div1);
+                    $('.joinInfo').append(div1);
                }
 
                for(var j=0;j<data.projectMembers.length;j++){
                    var div2 = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
                        '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
-                       '<span>'+ data.projectMembers[j].userName +'</span>'+
+                       '<span value = "' + data.projectMembers[j].id + '">'+ data.projectMembers[j].userName +'</span>'+
                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
                        '</div>';
-                   $('.noExecutor').append(div2);
+                   $('.Recommend').append(div2);
                }
            }
            $(".people").show(500);
