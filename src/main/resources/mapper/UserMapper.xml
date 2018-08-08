@@ -327,7 +327,7 @@
 			#{userInfo.address},
 			#{userInfo.createTime},
 			#{userInfo.job},
-			#{userInfo.defaultImg},
+			#{userInfo.defaultImg}
 			)
 	</insert>
 	

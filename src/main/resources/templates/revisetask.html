@@ -324,12 +324,14 @@
 
     <div class="publish boxsizing">
         <textarea id="chat" name=""  placeholder="请输入内容，点击发布按钮" class="layui-textarea publish-input" ></textarea>
+        <ul class="fileList" style="background-color: #fff;padding-bottom: 5px">
+        </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
             <button type="button" class="layui-btn" id="test1" style="background-color: #1E9FFF;float: left;width: 54px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;">
                 <i class="layui-icon">&#xe67c;</i>
             </button>
-            <div class="publish-btn">发布</div>
+            <div class="publish-btn" id="fileListAction">发布</div>
         </div>
         <!--上传文件框-->
         <div class="fujian-box boxsizing" style="display: none">
@@ -445,15 +447,38 @@
     var executor = [[${task.executor}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-
-
     layui.use('upload', function(){
         var upload = layui.upload;
-
         //执行实例
-        upload.render({
+        var uploadListIns = upload.render({
             elem: '#test1' //绑定元素
-            ,url: '/upload/' //上传接口
+            ,url: '/task/upload/' //上传接口
+            ,data:{"taskId":taskId}
+            ,auto: false
+            ,multiple: true
+            ,accept: 'file'
+            ,size:50000
+            ,number:5
+            ,field:'file'
+            ,bindAction: '#fileListAction'
+            ,choose: function(obj) {
+                var files = this.files = obj.pushFile();
+                obj.preview(function(index, file, result){
+                    console.log(file); //得到文件对象
+                    var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
+                        '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
+                        '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
+                        '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+file.size+'</p>\n' +
+                        '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;" data="'+index+'"></i>\n' +
+                        '            </li>';
+                    $('li').find('i').on('click', function() {
+                        delete files[index]; //删除对应的文件
+                        $(this).parent().remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+                    $('.fileList').append(li);
+                });
+            }
             ,done: function(res){
                 //上传完毕回调
             }
@@ -462,6 +487,7 @@
             }
         });
     });
+
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>

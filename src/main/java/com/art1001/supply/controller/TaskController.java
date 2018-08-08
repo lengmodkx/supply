@@ -50,9 +50,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1300,20 +1302,21 @@ public class TaskController {
     //上传项目图片
     @PostMapping("/upload")
     @ResponseBody
-    public JSONObject uploadCover(@RequestParam String projectId,
-                                  MultipartFile file){
+    public JSONObject uploadCover(@RequestParam String taskId,
+                                  HttpServletRequest request){
         JSONObject jsonObject = new JSONObject();
         try {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+            if(fileMap.size() == 0){
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "请上传文件,注意文件的name属性为file");
+                return jsonObject;
+            }
 
-            String filename = System.currentTimeMillis()+".jpg";
-            AliyunOss.uploadInputStream(Constants.PROJECT_IMG + filename,file.getInputStream());
-            Project project1 = new Project();
-            project1.setProjectId(projectId);
-            project1.setProjectCover(Constants.PROJECT_IMG + filename);
-            projectService.updateProject(project1);
+
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
-            jsonObject.put("data",Constants.PROJECT_IMG + filename);
         }catch (Exception e){
             throw new SystemException(e);
         }
