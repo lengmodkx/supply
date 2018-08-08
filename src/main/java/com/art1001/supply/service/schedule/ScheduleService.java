@@ -115,4 +115,10 @@ public interface ScheduleService {
 	 * @return 名称
 	 */
     String findScheduleNameById(String publicId);
+
+	/**
+	 * 查询出未来的日程
+	 * @return
+	 */
+	List<ScheduleVo> afterSchedule();
 }

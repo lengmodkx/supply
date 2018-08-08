@@ -363,32 +363,33 @@
 
             </div>
 
+            <!--分享菜单 弹框-->
+            <div class="share-menu boxsizing layui-form" th:datas-id = "${share.id}" style="position: relative;top: 0;left: 0;display: none">
+                <div class="scheduling-menu-title">分享菜单
+                    <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
+                </div>
+                <div class="menu-box edit-rc edit_share">
+                    <img th:src="@{/image/fzrc.png}" >
+                    <span>编辑分享</span>
+                </div>
+                <!--<div class="menu-box edit-rc share_copy">-->
+                <!--<img th:src="@{/image/fzrclj.png}" >-->
+                <!--<span>复制分享链接</span>-->
+                <!--</div>-->
+                <div class="menu-box edit-rc share_collect">
+                    <img th:src="@{/image/scrc.png}" >
+                    <span th:if="${share.isCollect}">收藏分享</span>
+                    <span th:if="${!share.isCollect}">取消收藏</span>
+                </div>
+                <div class="menu-box edit-rc delete_share">
+                    <img th:src="@{/image/gxrc.png}" >
+                    <span>移到回收站</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
-</div>
-
-<!--分享菜单 弹框-->
-<div class="scheduling-menu boxsizing layui-form" style="position: relative;top: 0;left: 0;display: none">
-    <div class="scheduling-menu-title">分享菜单
-        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
-    </div>
-    <div class="menu-box edit-rc edit_share">
-        <img th:src="@{/image/fzrc.png}" >
-        <span>编辑分享</span>
-    </div>
-    <!--<div class="menu-box edit-rc share_copy">-->
-        <!--<img th:src="@{/image/fzrclj.png}" >-->
-        <!--<span>复制分享链接</span>-->
-    <!--</div>-->
-    <div class="menu-box edit-rc share_collect">
-        <img th:src="@{/image/scrc.png}" >
-        <span>收藏分享</span>
-    </div>
-    <div class="menu-box edit-rc delete_share">
-        <img th:src="@{/image/gxrc.png}" >
-        <span>移到回收站</span>
-    </div>
 </div>
 
 </body>
@@ -583,6 +584,7 @@
             $(".share-right").eq(i).show()
             updateShareId();
         });
+
         // 点击下箭头 ，出现 分享 菜单 弹框
         $("html").on("click",".show-share-menu",function () {
             var top=$(this).offset().top+25;
@@ -630,7 +632,7 @@
                 closeBtn: 0,
                 shade: [0.1, '#fff'],
                 anim: 1,  //动画 0-6
-                content: $(".scheduling-menu"),
+                content: $('div[datas-id="'+id+'"]'),
                 success:function () {
                     $('.menu-box').each(function (data,item) {
                         $(item).attr('id',id);
@@ -678,16 +680,6 @@
     $('.edit_share').click(function () {
 
         parent.window.location.href = 'toAddShare.html?projectId='+projectId+"&shareId="+$('.edit_share').attr('id');
-    });
-
-    $('.share_collect').click(function () {
-          $.post('/share/shareCollect',{"shareId":$('.share_collect').attr('id'),"project":projectId},function (data) {
-              if(data.result===1){
-                  layer.msg(data.msg,{icon:1});
-              }else{
-                  layer.msg("收藏失败",{icon:5});
-              }
-          });  
     });
 
     $('.delete_share').click(function () {

@@ -14,6 +14,8 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -131,16 +133,16 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 	}
 
 	/**
-	 * 重写接口 取消收藏任务的方法
+	 * 重写接口 取消收藏的方法
 	 * 数据: 根据收藏记录的id 删除一条收藏记录
-	 * 功能: 取消任务收藏
+	 * 功能: 取消收藏
 	 * 数据处理:
 	 * @param publicCollectId 该条收藏记录id
 	 * @return
 	 */
 	@Override
-	public int cancelCollectTask(String publicCollectId) {
-		return publicCollectMapper.cancelCollectTask(publicCollectId);
+	public int cancelCollect(String publicCollectId) {
+		return publicCollectMapper.cancelCollect(publicCollectId);
 	}
 
 	/**
@@ -178,5 +180,48 @@ public class PublicCollectServiceImpl implements PublicCollectService {
             publicCollectVOs.add(publicCollectVO);
         }
         return publicCollectVOs;
+	}
+
+	/**
+	 * 收藏项 (文件,日程,分享)
+	 * @param publicId 项id
+	 * @param publicType 项的类型 (文件,日程,分享)
+	 * @return
+	 */
+	@Override
+	public void collectItem(String publicId, String publicType) {
+		PublicCollect publicCollect = new PublicCollect();
+		//设置收藏的id
+		publicCollect.setId(IdGen.uuid());
+		publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+		//设置收藏的任务id
+		publicCollect.setPublicId(publicId);
+		//设置收藏的类型
+		publicCollect.setCollectType(publicType);
+		//设置这条收藏的创建时间
+		publicCollect.setCreateTime(System.currentTimeMillis());
+		//设置这条收藏的更新时间
+		publicCollect.setUpdateTime(System.currentTimeMillis());
+		publicCollectMapper.savePublicCollect(publicCollect);
+	}
+
+	/**
+	 * 判断一下该用户是否收藏 当前信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+	@Override
+	public boolean isCollItem(String publicId) {
+		return publicCollectMapper.isCollItem(publicId,ShiroAuthenticationManager.getUserId()) > 0 ? false : true;
+	}
+
+	/**
+	 * 根据用户取消收藏信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+	@Override
+	public int cancelCollectByUser(String publicId) {
+		return publicCollectMapper.cancelCollectByUser(publicId, ShiroAuthenticationManager.getUserId());
 	}
 }

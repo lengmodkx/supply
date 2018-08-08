@@ -440,8 +440,6 @@ $('html').on('click','.remove-work-people',function () {
             ids.splice(i,1);
         }
     }
-    alert(ids);
-
     var url = "/file/addAndRemoveFileJoin";
     var args = {"newJoin":ids.toString(),"fileId":fileId};
     $.post(url,args,function (data) {
@@ -469,6 +467,18 @@ $("html").on("click",".one-people",function () {
         }
     }
 });
+
+// 点击  任务菜单出现隐藏
+
+$(".more").click(function () {
+    if ( $(".file-menu").is(":visible")){
+        $(this).children('img').attr('src','/image/more.png');
+    } else {
+        $(this).children('img').attr('src','/image/more-blue.png');
+    }
+    $(".file-menu").slideToggle();
+});
+
 
 //修改任务 弹框界面
 function changeRenwu(taskId,projectId) {
@@ -505,3 +515,21 @@ function changeRicheng(id,projectId) {
         });
     });
 }
+
+$('.sc').click(function () {
+    if($(this).children('span').html() === '收藏文件'){
+        var that = $(this);
+        var url = "/public/collectItem";
+        var args = {"publicId":fileId,"publicType":"文件"};
+        $.post(url,args,function () {
+            that.children('span').html('取消收藏');
+        });
+    } else{
+        var that = $(this);
+        var url = "/public/cancelCollectByUser";
+        var args = {"publicId":fileId};
+        $.post(url,args,function () {
+            that.children('span').html('收藏文件');
+        });
+    }
+});

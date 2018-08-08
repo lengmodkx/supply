@@ -9,12 +9,14 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
+import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -69,6 +71,9 @@ public class ScheduleController extends BaseController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    @Resource
+    private PublicCollectService publicCollectService;
+
 
     @RequestMapping("/schedule.html")
     public String schedule(@RequestParam String projectId, Model model){
@@ -112,6 +117,10 @@ public class ScheduleController extends BaseController {
         //查询出该日程的log信息
         List<Log> logs = logService.initLog(id);
         Collections.reverse(logs);
+
+        //查询该文件有没有被当前用户收藏
+        model.addAttribute("isCollect",publicCollectService.isCollItem(id));
+
         model.addAttribute("logs",logs);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
@@ -526,6 +535,24 @@ public class ScheduleController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 查询出未来的日程
+     * @return
+     */
+    @PostMapping("afterSchedule")
+    @ResponseBody
+    public  JSONObject  afterSchedule(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<ScheduleVo> scheduleList = scheduleService.afterSchedule();
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常,请重试!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+        }
+        return jsonObject;
+    }
 
 
 

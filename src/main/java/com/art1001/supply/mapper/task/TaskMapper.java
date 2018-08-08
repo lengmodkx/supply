@@ -5,10 +5,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -412,4 +409,13 @@ public interface TaskMapper {
 	 * @return
 	 */
 	int findSubTaskCount(@Param("taskId")String taskId,@Param("taskStatus")String taskStatus);
+
+	/**
+	 * 取消收藏任务
+	 * @param taskId 任务id
+	 * @param uId 用户id
+	 *
+	 */
+	@Delete("delete from prm_public_collect where public_id = #{taskId} and member_id = #{uId}")
+    void cancleCollectTask(@Param("taskId") String taskId, @Param("uId") String uId);
 }

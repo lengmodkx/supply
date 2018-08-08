@@ -19,6 +19,9 @@
             <!--<li>详情</li>-->
             <li id="uploadFile">版本更新</li>
             <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
+            <li class="more">
+                <img src="../static/image/more.png" th:src="@{/image/more.png}">&nbsp;更多
+            </li>
             <!--<li>更多</li>-->
         </ul>
         <!--<img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">-->
@@ -292,6 +295,8 @@
                 </ul>
             </div>
 
+
+
             <!--人员 参与者 弹框-->
             <div class="people boxsizing" style="display: none;top: 20px;left: 10px">
                 <input type="text" name="" placeholder="搜索" class="layui-input">
@@ -353,11 +358,52 @@
 
 
 </div>
+<!--文件菜单 框-->
+<div style="position: absolute;right: 70px;top: 50px;z-index: 200;width: 220px;background-color: white;padding: 0 15px;display: none" class="file-menu boxsizing layui-form" >
+    <div class="scheduling-menu-title">文件菜单
+        <img src="../static/image/close.png" th:src="@{/image/close.png}" />
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
+        <span>复制文件</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
+        <span>复制文件链接</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
+        <span>移动文件</span>
+    </div>
+    <div class="menu-box edit-rc sc">
+        <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
+        <span th:if="${isCollect}">收藏文件</span>
+        <span th:if="${!isCollect}">取消收藏</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
+        <span>共享文件</span>
+    </div>
+    <div class="menu-box edit-rc">
+        <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
+        <span>移到回收站</span>
+    </div>
+    <div class="heng-line"></div>
+    <div class="secret menu-box layui-form">
+        <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
+        <span>隐私模式</span>
+        <div class="switch">
+            <!--<input type="checkbox" name="" th:checked="${task.privacyPattern == '0'}" lay-skin="switch" lay-filter="switch-filter" />-->
+        </div>
+        <div class="who-can-see">所有成员可见</div>
+    </div>
+</div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/sockjs.js}" src="../static/js/sockjs.js"></script>
 <script th:src="@{/js/stomp.js}" src="../static/js/stomp.js"></script>
+
 <script th:src="@{/js/filedownload.js}" src="../static/js/filedownload.js"></script>
 
 <script th:inline="javascript">

@@ -268,7 +268,7 @@ $(".add-work-people img").click(function (e) {
                 var div = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
                     '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
                     '<span value = "' + data.joinInfo[i].id + '">'+ data.joinInfo[i].userName +'</span>'+
-                    '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
+                    '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: rgb(209, 209, 209); display: inline;"></i>' +
                     '</div>';
                 $('#executor').append(div);
             }
@@ -581,6 +581,30 @@ $('html').on('click','.remove-tag',function () {
             layer.msg(data.msg);
         }
     });
+});
+
+
+// 点击  任务菜单出现隐藏
+$(".layui-icon-down").click(function () {
+    $(".schedule-menu").slideToggle();
+});
+
+$('.sc').click(function () {
+    if($(this).children('span').html() === '收藏日程'){
+        var that = $(this);
+        var url = "/public/collectItem";
+        var args = {"publicId":scheduleId,"publicType":"日程"};
+        $.post(url,args,function () {
+            that.children('span').html('取消收藏');
+        });
+    } else{
+        var that = $(this);
+        var url = "/public/cancelCollectByUser";
+        var args = {"publicId":scheduleId};
+        $.post(url,args,function () {
+            that.children('span').html('收藏日程');
+        });
+    }
 });
 
 

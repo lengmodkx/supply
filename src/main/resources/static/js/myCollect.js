@@ -23,13 +23,13 @@ $("#click-my-collect").click(function () {
 });
 
 /**
- * 取消收藏任务
+ * 取消收藏
  */
 $("body").on("click",".collect-item-top-remove",function (e) {
     var that = $(this).parent().parent();
     var id = $(this).parent().parent().attr("data-id");
     $('.collect-head').children('span').each(function () {
-        var url = '/public/cancelCollectTask';
+        var url = '/public/cancelCollect';
         var args = {"publicCollectId":id};
         $.post(url,args,function (data) {
             if(data.result > 0){
@@ -118,8 +118,8 @@ function appendStr(list) {
                 '<div class="collect-item-middle-img">' +
                 '<img src="/image/rw-white.png">' +
                 '</div>' +
-                '<img class="collect-item-touxiang" src="' + IMAGE_SERVER + list[i].task.taskMember.memberImg+ '">' +
-                '<p class="collect-item-name">' + list[i].task.taskExecutorInfo.userName + '</p>' +
+                '<img class="collect-item-touxiang" src="' + IMAGE_SERVER + list[i].task.creatorInfo.userInfo.image+ '">' +
+                '<p class="collect-item-name">' + list[i].task.creatorInfo.userName + '</p>' +
                 '</div>' +
                 '</li>';
         }

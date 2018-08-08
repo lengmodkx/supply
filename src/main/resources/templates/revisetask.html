@@ -375,7 +375,8 @@
         </div>
         <div class="menu-box edit-rc sc">
             <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
-            <span>收藏任务</span>
+            <span th:if="${isCollect}">收藏任务</span>
+            <span th:if="${!isCollect}">取消收藏</span>
         </div>
         <div class="menu-box edit-rc">
             <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />

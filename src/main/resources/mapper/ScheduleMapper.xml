@@ -39,6 +39,11 @@
 		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
 		select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
 	</resultMap>
+	<resultMap id="resultMap1" type="com.art1001.supply.entity.schedule.ScheduleVo">
+		<id property="date" column="date" />
+		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
+					select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleListByDay"/>
+	</resultMap>
 
 	<sql id="Base_Column_List">
 				schedule_id,
@@ -293,6 +298,10 @@
 
 	</select>
 
+	<select id="findScheduleListByDay" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d') = #{date}
+	</select>
+
 	<!-- 查询出当前用户参与的近三天的日程 -->
 	<select id="findScheduleByUserIdAndByTreeDay" resultMap="resultMap">
 		SELECT
@@ -347,6 +356,13 @@
 				and start_time <![CDATA[<]]> #{currTime}
 			</if>
 		</if>
+	</select>
+
+	<!-- 查询出未来的日程 (根据 日 存放) -->
+	<select id="afterSchedule" resultMap="resultMap1">
+		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d') as date from prm_schedule where
+				start_time > #{currdate}
+		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d');
 	</select>
 
 </mapper>

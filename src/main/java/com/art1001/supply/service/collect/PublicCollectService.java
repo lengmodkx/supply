@@ -82,7 +82,7 @@ public interface PublicCollectService {
 	 * @param publicCollectId 该条收藏记录id
 	 * @return 返回影响行数
 	 */
-	int cancelCollectTask(String publicCollectId);
+	int cancelCollect(String publicCollectId);
 
 	/**
 	 * 根据类型查询出收藏的数据
@@ -92,6 +92,25 @@ public interface PublicCollectService {
 	 */
 	List<PublicCollectVO> listMyCollect(String memberId, String type);
 
+	/**
+	 * 收藏项 (文件,日程,分享)
+	 * @param publicId 项id
+	 * @param publicType 项的类型 (文件,日程,分享)
+	 * @return
+	 */
+	void collectItem(String publicId, String publicType);
 
+	/**
+	 * 判断一下该用户是否收藏 当前信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+	boolean isCollItem(String publicId);
 
+	/**
+	 * 根据用户取消收藏信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+	int cancelCollectByUser(String publicId);
 }

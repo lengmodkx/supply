@@ -151,7 +151,15 @@ console.log(inputs)
         },"json");
         $("#my-task").show().siblings().hide()
     });
+
+    /**
+     * 点击日程 触发事件
+     */
     $("#click-my-scheduling").click(function () {
+        var url = '/schedule/afterSchedule';
+        $.post(url,function (data) {
+
+        });
         $("#my-scheduling").show().siblings().hide()
     });
     $("#click-my-file").click(function () {

@@ -73,6 +73,7 @@ public class ShareController extends BaseController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+
     //导航到分享界面
     @RequestMapping("/share.html")
     public String share(@RequestParam String projectId,String shareId, Model model){
@@ -86,8 +87,11 @@ public class ShareController extends BaseController {
            }
             Collections.reverse(s.getLogs());
         }
+        //判断当前用户有没有收藏该任务
+        for (Share share : shareList) {
+            share.setIsCollect(publicCollectService.isCollItem(share.getId()));
+        }
         model.addAttribute("shareList",shareList);
-
 
         //查询出分享的关联信息
         for (Share s : shareList) {

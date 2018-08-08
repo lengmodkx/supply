@@ -776,11 +776,8 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public boolean judgeCollectTask(Task task) {
-        String memberId = "admin";
-        //暂时不用
-        //String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        //如果收藏了任务返回false 负责返回true
-        int result = publicCollectService.judgeCollectPublic(memberId,task.getTaskId(),"任务");
+        //如果收藏了任务返回false 否则返回true
+        int result = publicCollectService.judgeCollectPublic(ShiroAuthenticationManager.getUserId(),task.getTaskId(),BindingConstants.BINDING_TASK_NAME);
         if(result > 0){
             return false;
         } else{
@@ -1210,4 +1207,12 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.findTaskNameById(taskId);
     }
 
+    /**
+     * 取消收藏任务
+     * @param taskId 任务id
+     */
+    @Override
+    public void cancleCollectTask(String taskId) {
+        taskMapper.cancleCollectTask(taskId,ShiroAuthenticationManager.getUserId());
+    }
 }

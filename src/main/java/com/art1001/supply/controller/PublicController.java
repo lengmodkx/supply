@@ -294,16 +294,55 @@ public class PublicController {
      * @param publicCollectId 收藏id
      * @return
      */
-    @PostMapping("cancelCollectTask")
+    @PostMapping("cancelCollect")
     @ResponseBody
-    public JSONObject cancelCollectTask(String publicCollectId){
+    public JSONObject cancelCollect(String publicCollectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            int result = publicCollectService.cancelCollectTask(publicCollectId);
+            int result = publicCollectService.cancelCollect(publicCollectId);
             jsonObject.put("result",result);
         } catch (Exception e){
             log.error("系统异常,取消失败,{}",e);
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 取消收藏
+     * @param publicId 收藏id
+     * @return
+     */
+    @PostMapping("cancelCollectByUser")
+    @ResponseBody
+    public JSONObject cancelCollectByUser(String publicId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int result = publicCollectService.cancelCollectByUser(publicId);
+            jsonObject.put("result",result);
+        } catch (Exception e){
+            log.error("系统异常,取消失败,{}",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 收藏项 (文件,日程,分享)
+     * @param publicId 项id
+     * @param publicType 项的类型 (文件,日程,分享)
+     * @return
+     */
+    @PostMapping("collectItem")
+    @ResponseBody
+    public JSONObject collectItem(String publicId, String publicType){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            publicCollectService.collectItem(publicId, publicType);
+        } catch (Exception e){
+            log.error("系统异常,收藏失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,收藏失败!");
         }
         return jsonObject;
     }
@@ -436,7 +475,6 @@ public class PublicController {
         }
         return jsonObject;
     }
-
 
 
 

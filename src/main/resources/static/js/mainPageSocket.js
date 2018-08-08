@@ -9,7 +9,6 @@ stompClient.connect({},
         // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
         console.log("连接成功");
         subscribe1();
-        subscribe2();
     },
     function errorCallBack(error) {
         // 连接失败时（服务器响应 ERROR 帧）的回调方法

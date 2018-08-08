@@ -834,13 +834,23 @@ function changeRenwu(taskId,projectId) {
  * 单击收藏任务的事件
  */
 $('.renwu-menu .sc').click(function () {
-    var url = "/task/collectTask";
-    var args = {"taskId":taskId};
-    $.post(url,args,function(data){
-        if(data.result > 0){
-            $(this).children('span').html("取消收藏");
-        }
-    },"json");
+    if($(this).find('span').html() === '收藏任务'){
+        var url = "/task/collectTask";
+        var args = {"taskId":taskId};
+        var that = $(this);
+        $.post(url,args,function(data){
+            if(data.result > 0){
+                that.find('span').html("取消收藏");
+            }
+        },"json");
+    } else{
+        var url = "/public/cancelCollectTask";
+        var args = {"taskId":taskId};
+        var that = $(this);
+        $.post(url,args,function(data){
+            that.find('span').html("收藏任务");
+        },"json");
+    }
 });
 
 /**

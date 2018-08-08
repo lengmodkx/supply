@@ -321,3 +321,23 @@ function changeRicheng(scheduleId,projectId) {
         });
     });
 }
+
+
+
+$('.share_collect').click(function () {
+    if($(this).children('span').html() === '收藏分享'){
+        var that = $(this);
+        var url = "/public/collectItem";
+        var args = {"publicId":shareId,"publicType":"分享"};
+        $.post(url,args,function () {
+            that.children('span').html('取消收藏');
+        });
+    } else{
+        var that = $(this);
+        var url = "/public/cancelCollectByUser";
+        var args = {"publicId":shareId};
+        $.post(url,args,function () {
+            that.children('span').html('收藏分享');
+        });
+    }
+});

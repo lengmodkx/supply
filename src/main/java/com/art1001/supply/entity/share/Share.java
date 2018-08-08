@@ -110,4 +110,9 @@ public class Share extends BaseEntity implements Serializable {
 	private String uids;
 
 	List<UserEntity> joinInfo;
+
+	/**
+	 * 是否被登录用户收藏
+	 */
+	private Boolean isCollect;
 }

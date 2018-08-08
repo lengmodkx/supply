@@ -111,4 +111,11 @@ public interface ScheduleMapper {
 	 */
 	@Select("select schedule_name from prm_schedule where schedule_id = #{publicId}")
     String findScheduleNameById(String publicId);
+
+	/**
+	 * 查询出未来的日程
+	 * @param currdate 当前时间
+	 * @return
+	 */
+    List<ScheduleVo> afterSchedule(long currdate);
 }

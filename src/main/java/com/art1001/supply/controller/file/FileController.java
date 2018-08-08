@@ -6,6 +6,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
@@ -20,6 +21,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
@@ -84,6 +86,9 @@ public class FileController extends BaseController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Resource
+    private PublicCollectService publicCollectService;
+
+    @Resource
     private UserService userService;
 
 
@@ -131,6 +136,9 @@ public class FileController extends BaseController {
                 List<Log> logs = logService.initLog(file.getFileId());
                 Collections.reverse(logs);
                 model.addAttribute("logs",logs);
+
+                //查询该文件有没有被当前用户收藏
+                model.addAttribute("isCollect",publicCollectService.isCollItem(file.getFileId()));
                 // 文件的tag
                 model.addAttribute("tagList", tagList);
                 // 项目的tag
@@ -198,6 +206,10 @@ public class FileController extends BaseController {
         List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
         //查询出任务的关联信息
         BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
+
+        //查询该文件有没有被当前用户收藏
+        model.addAttribute("isCollect",publicCollectService.isCollItem(file.getFileId()));
+
         //查询出该文件的所有参与者信息
         List<UserEntity> joinInfo = userService.findManyUserById(fileService.findJoinId(file.getFileId()));
         model.addAttribute("joinInfos",joinInfo);

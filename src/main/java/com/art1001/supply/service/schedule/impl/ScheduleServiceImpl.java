@@ -291,4 +291,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 	public String findScheduleNameById(String publicId) {
 		return scheduleMapper.findScheduleNameById(publicId);
 	}
+
+	/**
+	 * 查询出未来的日程
+	 * @return
+	 */
+	@Override
+	public List<ScheduleVo> afterSchedule() {
+		return scheduleMapper.afterSchedule(System.currentTimeMillis());
+	}
 }

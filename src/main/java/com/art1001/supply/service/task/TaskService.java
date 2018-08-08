@@ -460,4 +460,9 @@ public interface TaskService {
 	 */
 	String findTaskNameById(String taskId);
 
+	/**
+	 * 取消收藏任务
+	 * @param taskId 任务id
+	 */
+	void cancleCollectTask(String taskId);
 }

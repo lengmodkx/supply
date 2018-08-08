@@ -6,6 +6,7 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * collectmapper接口
@@ -70,7 +71,7 @@ public interface PublicCollectMapper {
 	 * @return 返回受影响行数
 	 */
 	@Delete("delete from prm_public_collect where id = #{publicCollectId}")
-    int cancelCollectTask(String publicCollectId);
+    int cancelCollect(String publicCollectId);
 
 	/**
 	 * 收藏mapper层
@@ -89,4 +90,23 @@ public interface PublicCollectMapper {
 	 * @return 收藏实体信息的集合
 	 */
 	List<PublicCollect> listMyCollect(@Param("memberId") String memberId, @Param("type") String type);
+
+	/**
+	 * 判断一下该用户是否收藏 当前信息
+	 *
+	 * @param uId 当前登录用户id
+	 * @param publicId 信息id
+	 * @return
+	 */
+	@Select("select count(0) from prm_public_collect where public_id = #{publicId} and member_id = #{uId}")
+    int isCollItem(@Param("publicId") String publicId, @Param("uId") String uId);
+
+	/**
+	 * 根据用户删除信息
+	 * @param publicId 信息id
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Delete("delete from prm_public_collect where member_id = #{userId} and public_id = #{publicId}")
+	int cancelCollectByUser(@Param("publicId") String publicId, @Param("userId") String userId);
 }
