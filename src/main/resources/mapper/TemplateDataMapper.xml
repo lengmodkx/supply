@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.template.TemplateDataMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.template.TemplateData">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="template_id" property="templateId" jdbcType="VARCHAR" />
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+						id,
+				template_id,
+				menu_name,
+				task_name,
+				remarks,
+				parent_id
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findTemplateDataPagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from template_data
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+		
+	</select>
+	
+	<select id="findTemplateDataAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.TemplateData">
+		SELECT
+		<include refid="Base_Column_List" />
+		from template_data
+		<if test="orderBy == 0">
+			order by id desc
+		</if>
+		<if test="orderBy == 1">
+			order by id asc
+		</if>
+	</select>
+	
+	<select id="findTemplateDataById" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from template_data c where id = #{id}
+
+	</select>
+	
+	<delete id="deleteTemplateDataById" parameterType="java.lang.String">
+		delete from
+		template_data where id = #{id}
+	</delete>
+	
+	<insert id="saveTemplateData" parameterType="com.art1001.supply.entity.template.TemplateData">
+
+		insert into template_data
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+			id,
+			</if>
+			<if test="templateId != null and templateId != ''">
+			template_id,
+			</if>
+			<if test="menuName != null and menuName != ''">
+			menu_name,
+			</if>
+			<if test="taskName != null and taskName != ''">
+			task_name,
+			</if>
+			<if test="remarks != null and remarks != ''">
+			remarks,
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+			parent_id,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="templateId != null and templateId != ''">
+				#{templateId},
+			</if>
+			<if test="menuName != null and menuName != ''">
+				#{menuName},
+			</if>
+			<if test="taskName != null and taskName != ''">
+				#{taskName},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				#{remarks},
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+				#{parent.id},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateTemplateData" parameterType="com.art1001.supply.entity.template.TemplateData">
+
+		update template_data
+		<set>
+			<if test="templateId != null and templateId != ''">
+				template_id = #{templateId},
+			</if>
+			<if test="menuName != null and menuName != ''">
+				menu_name = #{menuName},
+			</if>
+			<if test="taskName != null and taskName != ''">
+				task_name = #{taskName},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
+			</if>
+			<if test="parent.id != null and parent.id != ''">
+				parent_id = #{parent.id},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>
