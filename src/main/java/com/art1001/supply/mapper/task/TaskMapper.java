@@ -59,7 +59,7 @@ public interface TaskMapper {
 	 */
 	int saveTask(Task task);
 
-	void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList);
+	void saveTaskBatch(@Param("projectId") String projectId, @Param("menuId") String menuId, @Param("templateDataList") List<TemplateData> templateDataList,@Param("memberId")String memberId);
 	/**
 	 * 获取所有task数据
 	 * 

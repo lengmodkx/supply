@@ -396,6 +396,9 @@
 					#{id}
 				</foreach>)
 			</if>
+		<if test="memberIds == null and memberIds == ''">
+			and u.u_id in ('')
+		</if>
 	</select>
 
 	<!-- 查询指定项目下所有的成员信息 -->

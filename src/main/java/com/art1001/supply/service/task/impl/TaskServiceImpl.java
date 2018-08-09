@@ -199,7 +199,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList) {
-        taskMapper.saveTaskBatch(projectId,menuId,templateDataList);
+        String id = ShiroAuthenticationManager.getUserEntity().getId();
+        taskMapper.saveTaskBatch(projectId,menuId,templateDataList,id);
     }
 
     /**

@@ -297,11 +297,9 @@ public class ProjectController extends BaseController {
             relationService.saveRelationBatch2(menus,project.getProjectId(),relation.getRelationId());
 
             for(int i=0;i<menus.size();i++){
-
-
-
-
-
+                String menuId = menus.get(i).getId();
+                List<TemplateData> templateDataList = templateDataService.findByParentId(menuId);
+                taskService.saveTaskBatch(project.getProjectId(),menuId,templateDataList);
             }
 
 

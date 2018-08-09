@@ -200,7 +200,15 @@
 		delete from
 		prm_task where task_id = #{taskId}
 	</delete>
-	
+
+	<insert id="saveTaskBatch">
+		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, tag_id, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
+		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
+		 (#{templateData.id} ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
+		</foreach>
+	</insert>
+
+
 	<insert id="saveTask" parameterType="com.art1001.supply.entity.task.Task">
 
 		insert into prm_task
