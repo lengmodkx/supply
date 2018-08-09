@@ -115,7 +115,9 @@ public interface ScheduleMapper {
 	/**
 	 * 查询出未来的日程
 	 * @param currdate 当前时间
+	 * @param lable (0:过去 1: 未来)
+	 * @param userId 当前用户id
 	 * @return
 	 */
-    List<ScheduleVo> afterSchedule(long currdate);
+    List<ScheduleVo> afterSchedule(@Param("currdate") long currdate, @Param("lable") int lable,@Param("userId")String userId);
 }

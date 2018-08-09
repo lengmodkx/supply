@@ -454,4 +454,13 @@ public class FileServiceImpl implements FileService {
     public String findFileNameById(String publicId) {
         return fileMapper.findFileNameById(publicId);
     }
+
+    /**
+     * 查询出我参与的所有文件
+     * @return
+     */
+    @Override
+    public List<File> findJoinFile() {
+        return fileMapper.findJoinFile(ShiroAuthenticationManager.getUserId());
+    }
 }

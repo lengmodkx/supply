@@ -419,6 +419,11 @@
 		from prm_file where project_id = #{projectId}
 	</select>
 
+    <!-- 查询我参与的所有文件 -->
+	<select id="findJoinFile" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_file where find_in_set(#{uId}, file_uIds);
+	</select>
 
 	
 </mapper>

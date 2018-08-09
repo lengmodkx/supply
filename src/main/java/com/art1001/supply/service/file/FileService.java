@@ -171,4 +171,10 @@ import java.util.List;
 	 * @return 文件名
 	 */
     String findFileNameById(String publicId);
+
+	/**
+	 * 查询出我参与的所有文件
+	 * @return
+	 */
+	List<File> findJoinFile();
 }

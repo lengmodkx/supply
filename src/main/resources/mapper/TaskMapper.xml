@@ -676,7 +676,7 @@
 	<select id="findTaskByProjectAndStatusAndUser" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"/>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and task_id in(select public_id from prm_task_member where member_id = #{memberId} and `type` = '参与者' and public_type = '任务')  and task_status = '未完成'
+		from prm_task where find_in_set(#{memberId}, task_uids) and project_id = #{projectId} and task_status = '未完成'
 	</select>
 
 	<!-- 查询出项目下的指定创建者 并且是未完成的任务 -->
@@ -744,9 +744,9 @@
 	<!-- 查询出我参与的所有任务 -->
 	<select id="findTaskByUserId" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and member_id = #{id}) and task_status = '未完成'
+		<include refid="Base_Column_List"/>
+	  	from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
+
 		<if test="orderType != null and orderType != ''">
 			<if test="orderType == '2'.toString()">
 				order by end_time
@@ -790,8 +790,7 @@
 	<select id="findTaskByUserIdByStatus" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where task_id in (select public_id from prm_task_member where public_type = '任务' and `type` = '参与者' and prm_task.member_id = #{uId})
+		from prm_task where find_in_set(#{uId}, task_uids)
 		<if test="status != null and status != ''">
 			and task_status = #{status}
 		</if>
@@ -800,9 +799,7 @@
 	<!-- 查询某个用户的参与的所有任务 并且排序 -->
 	<select id="findTaskByUserAndTime">
 		select <include refid="Base_Column_List"/>
-		from prm_task where task_id in (
-		select task_id from prm_task_member where member_id = #{id}
-		)
+		from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
 		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">
 			order by end_time
 		</if>

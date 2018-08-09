@@ -18,6 +18,7 @@ import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
@@ -294,10 +295,23 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	/**
 	 * 查询出未来的日程
+	 * lable(1:未来 0:过去)
 	 * @return
 	 */
 	@Override
-	public List<ScheduleVo> afterSchedule() {
-		return scheduleMapper.afterSchedule(System.currentTimeMillis());
+	public List<ScheduleVo> afterSchedule(int lable) {
+		List<ScheduleVo> scheduleVos = scheduleMapper.afterSchedule(System.currentTimeMillis(),lable,ShiroAuthenticationManager.getUserId());
+		for (ScheduleVo s : scheduleVos) {
+			if(DateUtils.getDateStr().equals(s.getDate())) {
+				s.setDate("今天");
+				continue;
+			}
+			if(lable == 1){
+				if(DateUtils.getAfterDay(DateUtils.getDateStr(),1,"yyyy-MM-dd","yyyy-MM-dd").equals(s.getDate())){
+					s.setDate("明天");
+				}
+			}
+		}
+		return scheduleVos;
 	}
 }

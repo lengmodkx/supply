@@ -32,12 +32,14 @@
 					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"/>
 	</resultMap>
+
 	<resultMap id="ProjectAndTaskByUser" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
 					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"/>
 	</resultMap>
+
 	<resultMap id="ProjectAndTaskByCreateMember" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 

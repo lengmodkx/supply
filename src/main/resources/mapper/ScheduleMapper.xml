@@ -39,9 +39,11 @@
 		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
 		select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
 	</resultMap>
+
 	<resultMap id="resultMap1" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id property="date" column="date" />
-		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
+		<id property="userId" column="member_id" />
+		<collection property="scheduleList" column="{date=date,userId=member_id}" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
 					select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleListByDay"/>
 	</resultMap>
 
@@ -298,8 +300,8 @@
 
 	</select>
 
-	<select id="findScheduleListByDay" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d') = #{date}
+	<select id="findScheduleListByDay" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT * from prm_schedule where FROM_UNIXTIME(start_time / 1000,'%Y-%m-%d') = #{date} and member_id = #{userId}
 	</select>
 
 	<!-- 查询出当前用户参与的近三天的日程 -->
@@ -360,9 +362,33 @@
 
 	<!-- 查询出未来的日程 (根据 日 存放) -->
 	<select id="afterSchedule" resultMap="resultMap1">
-		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d') as date from prm_schedule where
-				start_time > #{currdate}
-		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m-%d');
+		SELECT
+			FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d') AS date,member_id
+		FROM
+			prm_schedule
+		WHERE
+		(
+			FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d')
+		)
+		 <if test="lable == 1">
+			 &gt;= (
+				FROM_UNIXTIME(
+			 #{currdate} / 1000,
+					'%Y-%m-%d'
+				)
+			)
+		 </if>
+		<if test="lable == 0">
+			&lt;(
+			FROM_UNIXTIME(
+			#{currdate} / 1000,
+			'%Y-%m-%d'
+			)
+			)
+		</if>
+	and member_id = #{userId}
+	GROUP BY
+		FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d');
 	</select>
 
 </mapper>

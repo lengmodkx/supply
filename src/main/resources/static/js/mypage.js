@@ -157,14 +157,69 @@ console.log(inputs)
      */
     $("#click-my-scheduling").click(function () {
         var url = '/schedule/afterSchedule';
-        $.post(url,function (data) {
-
+        var args = {"lable":1};
+        $.post(url,args,function (data) {
+            addSchedule(data.scheduleList)
         });
         $("#my-scheduling").show().siblings().hide()
     });
+
+    /**
+     * 点击文件触发事件
+     */
     $("#click-my-file").click(function () {
-        $("#my-file").show().siblings().hide()
+        $("#my-file").show().siblings().hide();
+        var url = "/file/findByMember";
+        $.post(url,function (data) {
+            addFileStr(data.fileList);
+        });
     });
+
+    /**
+     * 点击我参与的文件
+     */
+    $('.join-file').click(function () {
+        var url = "/file/findJoinFile";
+        $.post(url,function (data) {
+            addFileStr(data.data);
+        });
+    });
+
+    /**
+     * 点击我创建的文件
+     */
+    $('.create-file').click(function () {
+        var url = "/file/findByMember";
+        $.post(url,function (data) {
+            addFileStr(data.fileList);
+        });
+    });
+
+
+    /**
+     * 点击未来的日程
+     */
+    $('.after').click(function () {
+        var url = '/schedule/afterSchedule';
+        var args = {"lable":1};
+        $.post(url,args,function (data) {
+            addSchedule(data.scheduleList)
+        });
+    });
+
+    /**
+     * 点击过去的日程
+     */
+    $('.before').click(function () {
+
+        var url = '/schedule/afterSchedule';
+        var args = {"lable":0};
+        $.post(url,args,function (data) {
+            addSchedule(data.scheduleList)
+        });
+    });
+
+
 
     //点击近期的事 页面  中的 紧急选择条
     $("html").on("click",".urgent-state",function () {
@@ -273,24 +328,34 @@ console.log(inputs)
     });
 // 日程页面 ，编辑日程 弹框
     $(".add-scheduling .middle-box").click(function () {
-        bianjiricheng()
+
     });
-    function bianjiricheng() {
+
+    $('html').on("click",".rc-list li",function () {
+        bianjiricheng($(this).attr('data-id'),$(this).attr('data-projectId'));
+    });
+
+
+    /**
+     * 日程详情页面弹框
+     */
+    function bianjiricheng(scheduleId,projectId) {
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
                 offset: '20px',
-                area:['480px','455px'],
+                area:['600px','600px'],
                 fixed: false,
                 shadeClose: true, //点击遮罩关闭
                 closeBtn: 0,
                 anim: 1,  //动画 0-6
-                content: "tk-bianjiricheng.html"
+                content: "/schedule/editSchedule.html?projectId="+projectId+"&id="+scheduleId
             });
         });
     }
+
 
     /**
      * 点击  我执行的, 我参与的,我创建的 事件
@@ -442,6 +507,113 @@ console.log(inputs)
                 '</li>';
             $('#executorTask').html(content);
         }
+    }
+
+
+    function addSchedule(scheduleList){
+        $('.afterScheduleList').html('');
+        var content = '';
+        for(var i = 0;i < scheduleList.length;i++){
+            content += '<div class="my-scheduling-wrap">'+
+                '<div class="layui-collapse my-scheduling">'+
+            '<div class="layui-colla-item">'+
+            '<div class="layui-colla-title">';
+            content += '<span class="scheduling-date">'+ scheduleList[i].date +'</span><span class="scheduling-num">&emsp;' + scheduleList[i].scheduleList.length + '</span>';
+            content += '</div>'+
+                '<div class="layui-colla-content scheduling-list">'+
+                '<ul class="rc-list">';
+                for(var j = 0;j < scheduleList[i].scheduleList.length;j++){
+                    content += '<li data-id = "' + scheduleList[i].scheduleList[j].scheduleId + '" data-projectId = "' + scheduleList[i].scheduleList[j].project.projectId + '">'+
+                            '<div class="scheduling-time">'+
+                            '<span>'+ new Date(scheduleList[i].scheduleList[j].startTime).format('yyyy-MM-dd') + '</span><span>——</span><span>'+ new Date(scheduleList[i].scheduleList[j].endTime).format('yyyy-MM-dd') +'</span>'+
+                            '</div>'+
+                            '<div class="scheduling-name">'+
+                            '<span>' + scheduleList[i].scheduleList[j].scheduleName + '</span><span>——</span><span>' + scheduleList[i].scheduleList[j].project.projectName + '</span>'+
+                            '</div>'+
+                            '<div class="scheduling-dt">dt-12</div>'+
+                            '</li>';
+                }
+                content += '</ul>'+
+                '</div>'+
+            '</div>'+
+            '</div>';
+        }
+        $(".layui-colla-content").hide();
+        $('.afterScheduleList').append(content);
+
+
+
+    }
+
+    $("html").on("click",".layui-colla-title",function () {
+        $(this).siblings(".layui-colla-content").slideToggle();
+    });
+
+
+    /**
+     * 下载文件
+     */
+    $('html').on('click','.img-show-download',function (e) {
+        var fileId = $(this).parent().parent().attr('data-id');
+        location.href = "/file/downloadFile?fileId=" + fileId;
+        e.stopPropagation();
+    })
+
+    /**
+     * 在线预览文件
+     */
+    $("html").on("click",".one-file-wrap",function () {
+        window.open("/file/fileDetail.html?fileId="+$(this).attr("data-id"),"在线预览文件");
+    });
+
+    function addFileStr(fileList){
+        $('#fileListUl').html('');
+        var content = '';
+        for (var i = 0;i < fileList.length;i++){
+            if(fileList[i].catalog == 1){
+                continue;
+            }
+            <!--缩略图模式-->
+            content +=
+                '<li class="boxsizing one-file-wrap" data-id = "' + fileList[i].fileId + '">'+
+                    '<div class="one-file boxsizing fileList">'+
+                    '<input class="pick-it" type="checkbox" name="fileCheck" title="" lay-skin="primary" lay-filter="checks">';
+                        if(fileList[i].catalog == 0 && (fileList[i].ext == '.jpg' || fileList[i].ext == '.png' || fileList[i].ext == '.jpeg')){
+                            content += '<img class="folderFile collect-item-touxiang" src="' + IMAGE_SERVER + fileList[i].fileUrl + '"/>';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '..doc'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/word_1.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.xls'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                        } else if (fileList[i].catalog == 0 && fileList[i].ext == '.xlsx'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/excel.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.pptx'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.ppt'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/ppt.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.pdf'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/pdf_1.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.zip'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/zip.png" />';
+                        } else if(fileList[i].catalog == 0 && fileList[i].ext == '.rar'){
+
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+                        } else {
+                            content += '<img class="folderFile collect-item-touxiang" src="/image/defaultFile.png" />';
+                        }
+                    content += '<i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>'+
+                                '<i class="layui-icon layui-icon-about img-show-more" style="font-size: 20px; color: #ADADAD;"></i>'+
+                                '</div>'+
+                                '<div class="one-file-name" th:text="123" >' + fileList[i].fileName + '</div>'+
+                            '</li>';
+        }
+        $('#fileListUl').append(content);
     }
 
 });

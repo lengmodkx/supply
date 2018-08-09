@@ -537,14 +537,16 @@ public class ScheduleController extends BaseController {
 
     /**
      * 查询出未来的日程
+     * @param lable 标识是查询为来的日程还是 过去的日程 (1:未来 0:过去)
      * @return
      */
     @PostMapping("afterSchedule")
     @ResponseBody
-    public  JSONObject  afterSchedule(){
+    public  JSONObject  afterSchedule(int lable){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ScheduleVo> scheduleList = scheduleService.afterSchedule();
+            List<ScheduleVo> scheduleList = scheduleService.afterSchedule(lable);
+            jsonObject.put("scheduleList",scheduleList);
         } catch (Exception e){
             e.printStackTrace();
             log.error("系统异常,请重试!");

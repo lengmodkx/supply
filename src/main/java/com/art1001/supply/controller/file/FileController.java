@@ -1135,5 +1135,25 @@ public class FileController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 查询我参与的文件
+     * @return
+     */
+    @PostMapping("findJoinFile")
+    @ResponseBody
+    public JSONObject findJoinFile(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<File> listFile = fileService.findJoinFile();
+            jsonObject.put("data",listFile);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+
 
 }

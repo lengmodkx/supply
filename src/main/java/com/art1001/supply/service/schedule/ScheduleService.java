@@ -118,7 +118,8 @@ public interface ScheduleService {
 
 	/**
 	 * 查询出未来的日程
+     * @param lable (1:未来 0:过去)
 	 * @return
 	 */
-	List<ScheduleVo> afterSchedule();
+	List<ScheduleVo> afterSchedule(int lable);
 }

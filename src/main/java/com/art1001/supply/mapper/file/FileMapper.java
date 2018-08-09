@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import javax.annotation.security.PermitAll;
-
 /**
  * filemapper接口
  */
@@ -169,5 +167,10 @@ public interface FileMapper {
 	@Select("select file_name from prm_file where file_id = #{publicId}")
     String findFileNameById(String publicId);
 
-	List<File> findByFileIds(@Param("fileIds") String fileIds);
+	/**
+	 * 查询我参与的所有文件
+	 * @param userId 用户id
+	 * @return
+	 */
+    List<File> findJoinFile(String userId);
 }
