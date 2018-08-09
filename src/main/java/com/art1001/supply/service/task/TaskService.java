@@ -9,6 +9,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 
@@ -53,6 +54,8 @@ public interface TaskService {
 	 * @param task 其他信息
 	 */
 	public Log saveTask(Task task);
+
+	void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList);
 
 	/**
 	 * 获取所有task数据

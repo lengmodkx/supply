@@ -9,6 +9,7 @@
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="menu_order" property="menuOrder" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -17,7 +18,8 @@
 				menu_name,
 				task_name,
 				remarks,
-				parent_id
+				parent_id,
+				menu_order
 	</sql>
 
 	<sql id="whereStatement">
@@ -63,6 +65,17 @@
 		from template_data c where id = #{id}
 
 	</select>
+
+	<select id="findByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select <include refid="Base_Column_List" />
+		from template_data c where template_id = #{templateId}
+		ORDER BY menu_order ASC
+	</select>
+
+	<select id="findByParentId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select <include refid="Base_Column_List" />
+		from template_data where parent_id = #{id}
+	</select>
 	
 	<delete id="deleteTemplateDataById" parameterType="java.lang.String">
 		delete from
@@ -92,6 +105,9 @@
 			<if test="parentId != null and parentId != ''">
 			parent_id,
 			</if>
+			<if test="menuOrder != null">
+				menu_order,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -112,7 +128,10 @@
 				#{remarks},
 			</if>
 			<if test="parentId != null and parentId != ''">
-				#{parent.id},
+				#{parentId},
+			</if>
+			<if test="menuOrder != null">
+				#{menuOrder},
 			</if>
 		</trim>
 
@@ -137,10 +156,17 @@
 			<if test="parentId != null and parentId != ''">
 				parent_id = #{parentId},
 			</if>
+			<if test="menuOrder != null">
+				menu_order = #{menuOrder},
+			</if>
 		</set>
 
 		WHERE id = #{id}
 
 	</update>
-	
+
+
+
+
+
 </mapper>

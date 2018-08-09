@@ -13,6 +13,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -196,7 +197,12 @@ public class TaskServiceImpl implements TaskService {
         return logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
     }
 
-	/**
+    @Override
+    public void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList) {
+        taskMapper.saveTaskBatch(projectId,menuId,templateDataList);
+    }
+
+    /**
 	 * 重写方法
 	 * 获取所有task数据
 	 * @return

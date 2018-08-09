@@ -55,4 +55,9 @@ public interface TemplateDataMapper {
 	 */
 	List<TemplateData> findTemplateDataAllList();
 
+
+	List<TemplateData> findByTemplateId(String templateId);
+
+	List<TemplateData> findByParentId(String id);
+
 }

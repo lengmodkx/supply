@@ -7,6 +7,7 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
@@ -100,6 +101,11 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void saveRelationBatch(List<String> relationList, String projectId, String parentId) {
 			relationMapper.saveRelationBatch(relationList,projectId,parentId);
+	}
+
+	@Override
+	public void saveRelationBatch2(List<TemplateData> templateDataList, String projectId, String parentId) {
+		relationMapper.saveRelationBatch2(templateDataList,projectId,parentId);
 	}
 
 	/**

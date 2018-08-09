@@ -14,6 +14,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
@@ -25,6 +26,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.template.TemplateDataService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
@@ -77,6 +79,10 @@ public class ProjectController extends BaseController {
 
     @Resource
     private UserNewsService userNewsService;
+
+    @Resource
+    private TemplateDataService templateDataService;
+
 
     @Resource
     private SimpMessagingTemplate messagingTemplate;
@@ -286,39 +292,50 @@ public class ProjectController extends BaseController {
             relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
 
-            InputStream stream = getClass().getClassLoader().getResourceAsStream("ff.json");
-            String content = FileUtils.readFileContent(stream);
 
-            JSONArray jsonArray = JSON.parseArray(content);
+            List<TemplateData> menus = templateDataService.findByTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
+            relationService.saveRelationBatch2(menus,project.getProjectId(),relation.getRelationId());
 
-            for (int i=0;i<jsonArray.size();i++) {
-                JSONObject object = jsonArray.getJSONObject(i);
-                Relation relation1 = new Relation();
-                relation1.setProjectId(project.getProjectId());
-                relation1.setRelationName(object.getString("menuName"));
-                relation1.setParentId(relation.getRelationId());
-                relation1.setLable(1);
-                relation1.setRelationDel(0);
-                relation1.setOrder(i);
-                relation1.setCreateTime(System.currentTimeMillis());
-                relation1.setUpdateTime(System.currentTimeMillis());
-                relationService.saveRelation(relation1);
-                JSONArray taskList = object.getJSONArray("taskList");
-                for(int j=0;j<taskList.size();j++){
-                    JSONObject object1 = taskList.getJSONObject(j);
-                    Task task = new Task();
-                    if(StringUtils.isNotEmpty(object1.getString("taskName"))){
-                        task.setTaskMenuId(relation1.getRelationId());
-                        task.setTaskName(object1.getString("taskName"));
-                        task.setRemarks(object1.getString("remarks"));
-                        task.setProjectId(project.getProjectId());
-                        task.setRepeat("不重复");
-                        task.setRemind("不提醒");
-                        task.setPriority("普通");
-                        taskService.saveTask(task);
-                    }
-                }
+            for(int i=0;i<menus.size();i++){
+
+
+
+
+
             }
+
+
+
+
+
+//            for (int i=0;i<jsonArray.size();i++) {
+//                JSONObject object = jsonArray.getJSONObject(i);
+//                Relation relation1 = new Relation();
+//                relation1.setProjectId(project.getProjectId());
+//                relation1.setRelationName(object.getString("menuName"));
+//                relation1.setParentId(relation.getRelationId());
+//                relation1.setLable(1);
+//                relation1.setRelationDel(0);
+//                relation1.setOrder(i);
+//                relation1.setCreateTime(System.currentTimeMillis());
+//                relation1.setUpdateTime(System.currentTimeMillis());
+//                relationService.saveRelation(relation1);
+//                JSONArray taskList = object.getJSONArray("taskList");
+//                for(int j=0;j<taskList.size();j++){
+//                    JSONObject object1 = taskList.getJSONObject(j);
+//                    Task task = new Task();
+//                    if(StringUtils.isNotEmpty(object1.getString("taskName"))){
+//                        task.setTaskMenuId(relation1.getRelationId());
+//                        task.setTaskName(object1.getString("taskName"));
+//                        task.setRemarks(object1.getString("remarks"));
+//                        task.setProjectId(project.getProjectId());
+//                        task.setRepeat("不重复");
+//                        task.setRemind("不提醒");
+//                        task.setPriority("普通");
+       //               taskService.saveTask(task);
+//                    }
+//                }
+//            }
 
             //往项目用户关联表插入数据
             ProjectMember projectMember = new ProjectMember();

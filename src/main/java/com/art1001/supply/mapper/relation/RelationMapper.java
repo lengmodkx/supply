@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -53,6 +54,8 @@ public interface RelationMapper {
 	void saveRelation(Relation relation);
 
 	void saveRelationBatch(@Param("relationList") List<String> relationList,@Param("projectId") String projectId,@Param("parentId") String parentId);
+
+	void saveRelationBatch2(@Param("templateDataList") List<TemplateData> templateDataList, @Param("projectId") String projectId, @Param("parentId") String parentId);
 
 	/**
 	 * 获取所有relation数据

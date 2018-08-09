@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserInfoEntity;
 
 
@@ -50,8 +51,10 @@ public interface RelationService {
 	 */
 	public void saveRelation(Relation relation);
 
-	public void saveRelationBatch(List<String> relationList,String projectId,String parentId);
+	void saveRelationBatch(List<String> relationList,String projectId,String parentId);
 
+
+	void saveRelationBatch2(List<TemplateData> templateDataList, String projectId, String parentId);
 	/**
 	 * 获取所有relation数据
 	 * 

@@ -1,18 +1,25 @@
 package com.art1001.supply.test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.dtgrid.util.ExportUtils;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.template.TemplateDataService;
+import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +36,10 @@ public class TestRelationController extends TestBase {
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private TemplateDataService templateDataService;
+
 
     @Test
     public void addRelation(){
@@ -158,15 +169,39 @@ public class TestRelationController extends TestBase {
     }
 
     @Test
-    public void a(){
-        Relation menuInfoByTaskId = relationService.findMenuInfoByTaskId("13af45c74f41410da431fdf46c8a7aa0");
-        System.out.println(menuInfoByTaskId.getRelationName()+"\t"+ menuInfoByTaskId.getRelationId());
-        TaskMenuVO projectAndGroupInfoByMenuId = relationService.findProjectAndGroupInfoByMenuId(menuInfoByTaskId.getRelationId());
-        System.out.println(projectAndGroupInfoByMenuId.getProjectId()+"\t"+ projectAndGroupInfoByMenuId.getProjectName());
-        System.out.println(projectAndGroupInfoByMenuId.getTaskGroupId()+"\t"+projectAndGroupInfoByMenuId.getTaskGroupName());
+    public void a() throws Exception{
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("ff.json");
+        String content = FileUtils.readFileContent(stream);
+        JSONArray jsonArray = JSON.parseArray(content);
+
+
+        for (int i=0;i<jsonArray.size();i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            TemplateData templateData = new TemplateData();
+            templateData.setId(IdGen.uuid());
+            templateData.setMenuName(object.getString("menuName"));
+            templateData.setTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
+            templateData.setMenuOrder(i);
+            templateDataService.saveTemplateData(templateData);
+
+            JSONArray taskList = object.getJSONArray("taskList");
+            for(int j=0;j<taskList.size();j++){
+                JSONObject object1 = taskList.getJSONObject(j);
+                TemplateData templateData1 = new TemplateData();
+                templateData1.setId(IdGen.uuid());
+                templateData1.setTaskName(object1.getString("taskName"));
+                templateData1.setRemarks(object1.getString("remarks"));
+                templateData1.setParentId(templateData.getId());
+
+                templateDataService.saveTemplateData(templateData1);
+            }
+        }
 
 
     }
+
+
+
 
 
 

@@ -78,5 +78,15 @@ public class TemplateDataServiceImpl implements TemplateDataService {
 	public List<TemplateData> findTemplateDataAllList(){
 		return templateDataMapper.findTemplateDataAllList();
 	}
-	
+
+	@Override
+	public List<TemplateData> findByTemplateId(String templateId) {
+		return templateDataMapper.findByTemplateId(templateId);
+	}
+
+	@Override
+	public List<TemplateData> findByParentId(String id) {
+		return templateDataMapper.findByParentId(id);
+	}
+
 }

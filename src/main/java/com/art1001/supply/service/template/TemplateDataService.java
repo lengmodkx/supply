@@ -52,5 +52,9 @@ public interface TemplateDataService {
 	 * @return
 	 */
 	public List<TemplateData> findTemplateDataAllList();
+
+	List<TemplateData> findByTemplateId(String templateId);
+
+	List<TemplateData> findByParentId(String id);
 	
 }

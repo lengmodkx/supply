@@ -47,4 +47,6 @@ public class TemplateData implements Serializable {
 	 */
 	private String parentId;
 
+	private int menuOrder;
+
 }

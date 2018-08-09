@@ -5,6 +5,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
+import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,7 @@ public interface TaskMapper {
 	 */
 	int saveTask(Task task);
 
+	void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList);
 	/**
 	 * 获取所有task数据
 	 * 
