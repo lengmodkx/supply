@@ -139,20 +139,20 @@
                 </div>
             </div>
         </div>
-            <div class="guanlian combox">
-                <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
-                <span>关联内容</span>
-            </div>
-            <div class="add-guanlian combox">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-                <span>添加关联</span>
-            </div>
+        <div class="guanlian combox">
+            <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
+            <span>关联内容</span>
+        </div>
+        <div class="add-guanlian combox">
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+            <span>添加关联</span>
+        </div>
 
         <div id = "bind">
             <!--关联 部分-->
             <div class="related-box">
-                    <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
-                 <ul class="related-rw">
+                <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
+                <ul class="related-rw">
                     <li class="boxsizing data-info"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
                         <div class="check-box" th:value="${task.taskName}">
                             <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
@@ -236,9 +236,9 @@
                                 <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
                             <div class="related-rc-down">
-                            <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
-                            <span>—</span>
-                            <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
+                                <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
+                                <span>—</span>
+                                <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
                             </div>
                             <div class="related-menu" style="display: none">
                                 <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
@@ -262,37 +262,37 @@
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
                     <ul class="related-fx">
-                    <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
-                        <div class="related-rc-top">
-                            <div class="related-rc-info">
-                                <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
-                                <span th:text="${share.title}"></span>
+                        <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
+                            <div class="related-rc-top">
+                                <div class="related-rc-info">
+                                    <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                    <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
+                                    <span th:text="${share.title}"></span>
+                                </div>
+                                <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
+                                <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
-                            <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
-                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                        </div>
-                        <!--<div class="related-rc-down">-->
+                            <!--<div class="related-rc-down">-->
                             <!--<span>2018-12-25 12:00</span>-->
                             <!--<span>—</span>-->
                             <!--<span>2018-12-25 12:00</span>-->
-                        <!--</div>-->
-                        <div class="related-menu" style="display: none">
-                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
-                            <div class="related-menu-title">关联菜单</div>
-                            <ul>
-                                <!--<li class="boxsizing">-->
-                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-                                <!--<span>复制链接</span>-->
-                                <!--</li>-->
-                                <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${share.id}">
-                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
-                                    <span>取消关联</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
+                            <!--</div>-->
+                            <div class="related-menu" style="display: none">
+                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                <div class="related-menu-title">关联菜单</div>
+                                <ul>
+                                    <!--<li class="boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                    <!--<span>复制链接</span>-->
+                                    <!--</li>-->
+                                    <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${share.id}">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                        <span>取消关联</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -313,10 +313,32 @@
         <div class="heng-line"></div>
         <div class="state">
             <ul id = "log">
-                <li class="combox" th:each="tasklog:${taskLogs}">
-                    <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
-                    <span th:text="${tasklog.content}"></span>
-                    <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
+                <li class="combox clearfix" th:each="tasklog:${taskLogs}">
+                    <div th:if="${#lists.isEmpty(tasklog.fileList)}">
+                        <img th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
+                        <span th:text="${tasklog.content}"></span>
+                        <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                    <div th:if="${!#lists.isEmpty(tasklog.fileList)}">
+                        <div class="touxiang-img">
+                            <img th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}">
+                        </div>
+                        <div class="file-con-box">
+                            <div class="file-con-box-header boxsizing">
+                                <span class="file-con-box-name" th:text="${tasklog.userEntity.userName}">谁谁谁</span>
+                                <span class="file-con-box-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}">3月24日12:00</span>
+                                <span class="hide-box download" th:id="${tasklog.id}">下载附件</span>
+                            </div>
+                            <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p >
+                            <ul class="up-file-ul clearfix">
+                                <li class="boxsizing" th:each="file:${tasklog.fileList}">
+                                    <img th:src="@{/image/defaultFile.png}" >
+                                    <p class=" up-file-ul-name" th:text="${#strings.length(file.fileName) gt 11 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}">啥啥啥文件</p >
+                                    <p class="up-file-ul-size" th:text="${file.size}">13.2kb</p >
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -328,9 +350,11 @@
         </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
-            <button type="button" class="layui-btn" id="test1" style="background-color: #1E9FFF;float: left;width: 54px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;">
-                <i class="layui-icon">&#xe67c;</i>
-            </button>
+
+            <div style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
+                <i class="layui-icon" style="color: #ffffff">&#xe67c;</i>
+                <input type="file" multiple name="file" class="files" style="position: absolute;font-size: 0px;cursor: pointer;width: 100%;height: 100%"/>
+            </div>
             <div class="publish-btn" id="fileListAction">发布</div>
         </div>
         <!--上传文件框-->
@@ -423,63 +447,88 @@
     //当前项目id
     var projectId = [[${projectId}]];
     //当前任务的父级id
-    var parentId = [[${task.parentId}]]
+    var parentId = [[${task.parentId}]];
     //当前任务id
     var taskId = [[${task.taskId}]];
     //当前任务所在菜单id
     var taskMenuId = [[${task.taskMenuId}]];
     //当前任务的状态
-    var taskStatus = [[${task.taskStatus}]]
+    var taskStatus = [[${task.taskStatus}]];
     //当前任务的名称
-    var taskName = [[${task.taskName}]]
+    var taskName = [[${task.taskName}]];
     //当前任务执行者id
     var executor = [[${task.executor}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-    layui.use('upload', function(){
-        var upload = layui.upload;
-        //执行实例
-        var uploadListIns = upload.render({
-            elem: '#test1' //绑定元素
-            ,url: '/task/upload/' //上传接口
-            ,data:{"taskId":taskId}
-            ,auto: false
-            ,multiple: true
-            ,accept: 'file'
-            ,size:50000
-            ,number:5
-            ,field:'file'
-            ,bindAction: '#fileListAction'
-            ,choose: function(obj) {
-                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
-                obj.preview(function(index, file, result){
-                    console.log(file); //得到文件对象
-                    var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
-                        '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
-                        '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
-                        '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
-                        '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+index+'"></i>\n' +
-                        '            </li>';
-                    $('.fileList').append(li);
-                    $('li i').on('click', function() {
-                        console.log("xxx");
-                        delete files[index]; //删除对应的文件
-                        $(this).parent().remove();
-                        //uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
-                    });
-                });
+    var curFiles = [];
+    $('.files').on('change',function (e) {
+        console.log(e.currentTarget.files);
+        Array.prototype.push.apply(curFiles, e.currentTarget.files);
+        console.log(curFiles);
+        $('.fileList').html("");
+        for(var i=0;i<curFiles.length;i++){
+            var file = curFiles[i];
+            var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
+                '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
+                '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
+                '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
+                '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
+                '            </li>';
+            $('.fileList').append(li);
+        }
+        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
+    });
+
+
+    $('html').on('click', '.fileList li i',function() {
+        curFiles.splice($(this).attr('data'), 1);
+        $(this).parent().remove();
+        $('.files').val('');
+        $('.fileList').html("");
+        for(var i=0;i<curFiles.length;i++){
+            var file = curFiles[i];
+            var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
+                '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
+                '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
+                '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
+                '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
+                '            </li>';
+            $('.fileList').append(li);
+        }
+        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
+    });
+
+    $('#fileListAction').click(function (e) {
+        if(curFiles.length>0){
+            var oMyForm = new FormData();
+            oMyForm.append("taskId",taskId);
+            oMyForm.append("projectId",projectId);
+            oMyForm.append("content",$('#chat').val());
+            for (var i=0;i<curFiles.length;i++){
+                oMyForm.append("file",curFiles[i]);
             }
-            ,done: function(res){
-                //上传完毕回调
-            }
-            ,allDone:function (res) {
-                $('.fileList').html('');
-                uploadListIns.config.elem.next()[0].value = '';
-            }
-            ,error: function(){
-                //请求异常回调
-            }
-        });
+
+            $.ajax({
+                url:"/task/upload",
+                type:"POST",
+                data:oMyForm,
+                async:false,
+                cache:false,
+                contentType:false,
+                processData:false,
+                success:function(returndata){
+                    $('.fileList').html('');
+                },
+                error:function(returndata){
+                    alert("error:"+returndata);
+                }
+            });
+        }
+    });
+
+
+    $('html').on('click','.download',function () {
+        location.href = "/task/download?logId=" + $(this).attr('id')+"&taskId="+taskId;
     });
 
 </script>

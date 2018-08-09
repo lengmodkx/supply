@@ -19,8 +19,9 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="file_uids" property="fileUids" jdbcType="CLOB" />
+		<result column="file_label" property="fileLabel" jdbcType="INTEGER" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-		select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById">
@@ -43,7 +44,8 @@
 				tag_id,
 				create_time,
 				update_time,
-				file_uids
+				file_uids,
+				file_label
 	</sql>
 
 	<sql id="whereStatement">
@@ -85,8 +87,8 @@
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
-		from prm_file where
-		file_id = #{fileId}
+		from prm_file where file_label=0
+		and file_id = #{fileId}
 	</select>
 
 	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -97,8 +99,8 @@
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
-		where
-		project_id = #{projectId}
+		where file_label=0
+		and project_id = #{projectId}
 		and parent_id = #{parentId}
 		and file_del = #{isDel}
 	</select>
@@ -129,8 +131,9 @@
 		FROM
 			prm_file
 		WHERE
-			project_id = #{projectId}
-		AND parent_id = '0'
+			file_label = 0
+		and	project_id = #{projectId}
+		and parent_id = '0'
 		LIMIT 0, 1
 	</select>
 
@@ -139,9 +142,9 @@
 		<include refid="Base_Column_List" />
 		FROM
 		prm_file
-		<where>
+            where file_label = 0
 			<if test="fileId != null and fileId != ''">
-				file_id = #{fileId}
+				and file_id = #{fileId}
 			</if>
 			<if test="fileName != null and fileName != ''">
 				and file_name = #{fileName}
@@ -176,7 +179,6 @@
 			<if test="fileUids != null">
 				and file_uids = #{fileUids}
 			</if>
-		</where>
 	</select>
 
 	<select id="findByIds" resultMap="BaseResultMap">
@@ -189,8 +191,23 @@
 		</foreach>
 	</select>
 
+	<select id="findByFileIds" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from prm_file
+		where file_label=1
+		<if test="fileIds!=null and fileIds!=''">
+			and file_id in <foreach collection="fileIds.split(',')" open="(" separator="," close=")" item="id">
+			#{id}
+		</foreach>
+		</if>
+		<if test="fileIds==null and fileIds==''">
+			and file_id in('')
+		</if>
+	</select>
+
 	<select id="findProjectUrl" parameterType="java.lang.String" resultType="java.lang.String">
-		select file_url from prm_file where parent_id = '1' and project_id = #{projectId}
+		select file_url from prm_file where parent_id = '1' and file_label=0 and project_id = #{projectId}
 	</select>
 
 	<select id="findChildFolder" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -275,6 +292,9 @@
 			<if test="fileUids != null ">
 				file_uids,
 			</if>
+			<if test="fileLabel != null ">
+				file_label,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -326,6 +346,9 @@
 			</if>
 			<if test="fileUids != null ">
 				#{fileUids},
+			</if>
+			<if test="fileLabel != null ">
+				#{fileLabel},
 			</if>
 		</trim>
 

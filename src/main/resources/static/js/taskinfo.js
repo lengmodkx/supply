@@ -706,11 +706,19 @@ $('.people-ok').click(function () {
         var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin;
 
         var log = $('#log').html();
-        log += '<li class="combox">'+
-            '<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" />'+
-            '<span>'+ taskLogVO.content +'</span>'+
-            '<div class="in-what-time"  >' + date + '</div>'+
-            '</li>';
+        log += '<li class="combox clearfix">';
+        if(taskLogVO.fileIds===null||taskLogVO.fileIds===''){
+            log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
+        }else{
+            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span><span class="hide-box download">下载附件</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p ><ul class="up-file-ul clearfix">';
+            for(var i=0;i<taskLogVO.fileList.length;i++){
+                var file = taskLogVO.fileList[i];
+                log+='<li class="boxsizing"><img src="/image/defaultFile.png"/><p class=" up-file-ul-name">'+file.fileName.length>10?file.fileName.substring(0,10)+file.ext:file.fileName+'</p><p class="up-file-ul-size">'+file.size+'</p></li>';
+            }
+
+            log+='</ul></div></div></li>';
+        }
+
         $('#log').html(log);
     }
 

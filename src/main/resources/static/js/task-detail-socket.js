@@ -17,16 +17,19 @@ stompClient.connect({},
 );
 //发送消息
 $('.publish-btn').click(function (e) {
-    var chat = $('#chat').val();
-    var args = {"publicId":taskId,"content":chat}
-    $.post("/task/chat",args,function (data) {
-    },"json");
-    var messageJson = JSON.stringify({ "name": chat });
-    stompClient.send("/app/sendTest",{"taskId":taskId}, messageJson);
-    $('#chat').val('');
-    $('#chat').focus();
-    var scrollHeight = $('.revise-task').prop("scrollHeight");
-    $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+    if( $('.fileList li').length===0){
+        var chat = $('#chat').val();
+        var args = {"publicId":taskId,"content":chat};
+        $.post("/task/chat",args,function (data) {
+            if(data.result===1){
+                $('#chat').val('');
+                $('#chat').focus();
+                var scrollHeight = $('.revise-task').prop("scrollHeight");
+                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
+            }
+        },"json");
+    }
+
 });
 
 
@@ -51,9 +54,12 @@ function subscribe() {
         }
         if(taskLog.type === '发送消息'){
             getLog(taskLog.object.taskLog);
-            var scrollHeight = $('.revise-task').prop("scrollHeight");
-            $('.revise-task').animate({scrollTop:scrollHeight}, 400);
         }
+
+        if(taskLog.type==='任务发送文件'){
+            getLog(taskLog.object.taskLog);
+        }
+
         if(taskLog.type === '关联'){
             addBindingStr(taskLog.object.bindingInfo,taskLog.object.publicType,taskLog.object.bId);
         }

@@ -11,8 +11,10 @@
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="log_flag" property="logFlag" jdbcType="INTEGER" />
+		<result column="file_ids" property="fileIds" jdbcType="CLOB" />
 		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
+		<collection property="fileList" javaType="java.util.ArrayList" column="{fileIds=file_ids}" select="com.art1001.supply.mapper.file.FileMapper.findByFileIds"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -23,7 +25,8 @@
 				content,
 				log_type,
 				create_time,
-				log_flag
+				log_flag,
+				file_ids
 	</sql>
 
 	<sql id="whereStatement">
@@ -95,7 +98,7 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="content != null and content != ''">
+			<if test="content != null">
 			content,
 			</if>
 			<if test="logType != null ">
@@ -106,6 +109,9 @@
 			</if>
 			<if test="logFlag != null ">
 			log_flag,
+			</if>
+			<if test="fileIds != null and fileIds != ''">
+				file_ids,
 			</if>
 		</trim>
 
@@ -123,7 +129,7 @@
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
 			</if>
-			<if test="content != null and content != ''">
+			<if test="content != null">
 				#{content},
 			</if>
 			<if test="logType != null ">
@@ -134,6 +140,9 @@
 			</if>
 			<if test="logFlag != null ">
 				#{logFlag},
+			</if>
+			<if test="fileIds != null and fileIds != ''">
+				#{fileIds},
 			</if>
 		</trim>
 
@@ -163,6 +172,9 @@
 			</if>
 			<if test="logFlag != null ">
 				log_flag = #{logFlag},
+			</if>
+			<if test="fileIds != null and fileIds != ''">
+				file_ids = #{fileIds},
 			</if>
 		</set>
 

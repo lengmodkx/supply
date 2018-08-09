@@ -102,11 +102,10 @@ public class FileServiceImpl implements FileService {
     public File uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
         // 得到文件名
         String originalFilename = multipartFile.getOriginalFilename();
-
         // 获取要创建文件的上级目录实体
         String parentUrl = fileService.findProjectUrl(projectId);
         // 重置文件名
-        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
         // 设置文件url
         String fileUrl = parentUrl + fileName;
         // 上传oss
@@ -128,6 +127,7 @@ public class FileServiceImpl implements FileService {
         file.setCatalog(0);
         file.setParentId(parentId);
         file.setFileUids(ShiroAuthenticationManager.getUserId());
+        file.setFileLabel(0);
         fileService.saveFile(file);
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
