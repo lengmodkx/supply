@@ -120,4 +120,11 @@ public interface ScheduleMapper {
 	 * @return
 	 */
     List<ScheduleVo> afterSchedule(@Param("currdate") long currdate, @Param("lable") int lable,@Param("userId")String userId);
+
+	/**
+	 * 查询出近三天的日程
+	 * @param uId  当前用户id
+	 * @return
+	 */
+	List<Schedule> findScheduleByUserIdAndThreeDay(String uId);
 }

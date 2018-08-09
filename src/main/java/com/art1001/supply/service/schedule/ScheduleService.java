@@ -122,4 +122,11 @@ public interface ScheduleService {
 	 * @return
 	 */
 	List<ScheduleVo> afterSchedule(int lable);
+
+	/**
+	 * 查询出近三天的日程
+	 * @param uId  当前用户id
+	 * @return
+	 */
+	List<Schedule> findScheduleByUserIdAndThreeDay(String uId);
 }

@@ -245,10 +245,6 @@ console.log(inputs)
             });
         });
     }
-    //点击 任务 li 出现 修改任务 弹框
-    $("html").on("click",".rw-span-wrap",function () {
-        changerw($(this).attr("value"))
-    });
     function changerw(taskId) {
         layui.use('layer', function(){
             var layer = layui.layer;
@@ -264,10 +260,6 @@ console.log(inputs)
             });
         });
     }
-    //点击 日程 li 出现 修改日程 弹框
-    $("html").on("click",".rc-span-wrap",function () {
-        changerc()
-    });
     function changerc() {
         layui.use('layer', function(){
             var layer = layui.layer;
@@ -335,6 +327,19 @@ console.log(inputs)
         bianjiricheng($(this).attr('data-id'),$(this).attr('data-projectId'));
     });
 
+    /**
+     * 点击近期的事儿 任务
+     */
+    $('.rw li').click(function () {
+        changerw($(this).attr('data-id'));
+    });
+
+    /**
+     * 点击近期的事儿 日程
+     */
+    $('.rc li').click(function () {
+        bianjiricheng($(this).attr('data-id'),$(this).attr('data-projectId'));
+    });
 
     /**
      * 日程详情页面弹框

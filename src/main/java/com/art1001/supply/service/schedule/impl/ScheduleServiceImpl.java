@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.PublicVO;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -313,5 +314,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 			}
 		}
 		return scheduleVos;
+	}
+
+	/**
+	 * 查询出近三天的日程
+	 * @param uId  当前用户id
+	 * @return
+	 */
+	@Override
+	public List<Schedule> findScheduleByUserIdAndThreeDay(String uId) {
+        return scheduleMapper.findScheduleByUserIdAndThreeDay(uId);
 	}
 }
