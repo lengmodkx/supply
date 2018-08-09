@@ -37,8 +37,8 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
-import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,10 +55,16 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 任务控制器，关于任务的操作
@@ -1235,7 +1241,11 @@ public class TaskController {
             //保存聊天信息
             Log log = new Log();
             log.setId(IdGen.uuid());
-            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName()+" 说: "+ taskLog.getContent());
+            if(StringUtils.isEmpty(taskLog.getContent())){
+                jsonObject.put("result",1);
+                return jsonObject;
+            }
+            log.setContent(taskLog.getContent());
             log.setLogType(1);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             log.setPublicId(taskLog.getPublicId());
@@ -1318,20 +1328,122 @@ public class TaskController {
         return jsonObject;
     }
 
-    //上传项目图片
+    //上传文件
     @PostMapping("/upload")
     @ResponseBody
-    public JSONObject uploadCover(@RequestParam String taskId,
-                                  MultipartFile file){
+    public JSONObject uploadFile(
+            @RequestParam String taskId,@RequestParam String projectId,@RequestParam String content,
+            @RequestParam(value = "file") MultipartFile[] fileArray){
         JSONObject jsonObject = new JSONObject();
         try {
 
+            List<String> fileIds = new ArrayList<>();
+
+            for (MultipartFile file : fileArray) {
+                // 得到文件名
+                String originalFilename = file.getOriginalFilename();
+                // 重置文件名
+                String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+                // 设置文件url
+                String fileUrl = "upload/"+ taskId + "/" + fileName;
+                // 上传oss
+                AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+                // 获取后缀名
+                String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+                // 写库
+                File myFile = new File();
+                // 用原本的文件名
+                myFile.setFileName(originalFilename);
+                myFile.setExt(ext);
+                myFile.setProjectId(projectId);
+                myFile.setFileUrl(fileUrl);
+
+                // 得到上传文件的大小
+                long contentLength = file.getSize();
+                myFile.setSize(FileUtils.convertFileSize(contentLength));
+                myFile.setCatalog(0);
+                myFile.setParentId("0");
+                myFile.setFileLabel(1);
+                myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                fileService.saveFile(myFile);
+                fileIds.add(myFile.getFileId());
+            }
+
+            //保存聊天信息
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            if(StringUtils.isEmpty(content)){
+                log.setContent("");
+            }else{
+                log.setContent(content);
+            }
+
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(taskId);
+            log.setLogFlag(2);
+            log.setCreateTime(System.currentTimeMillis());
+            log.setFileIds(StringUtils.join(fileIds,","));
+            Log log1 = logService.saveLog(log);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
-            System.out.println(file.getOriginalFilename());
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A23.getName());
+            Map<String,Object> map = new HashMap<>();
+            map.put("taskLog",log1);
+            taskPushType.setObject(map);
+            messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         }catch (Exception e){
             throw new SystemException(e);
         }
         return jsonObject;
+    }
+
+
+
+
+    /**
+     * 下载
+     *
+     * @param logId
+     */
+    @RequestMapping(value = "/download",method = RequestMethod.GET)
+    @ResponseBody
+    public void downloadFile(@RequestParam String logId, @RequestParam String taskId, HttpServletResponse response) throws IOException{
+        Log log = logService.findLogById(logId);
+        Task task = taskService.findTaskByTaskId(taskId);
+        // 通过response对象获取OutputStream流
+        OutputStream os = response.getOutputStream();
+        //获取zip的输出流
+        ZipOutputStream zos = new ZipOutputStream(os);
+        //定义输入流
+        BufferedInputStream bis = null;
+        try {
+            for (int i=0;i<log.getFileList().size();i++){
+                File file = log.getFileList().get(i);
+                InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl());
+                //设置压缩后的zip文件名
+                String sourceFilePath = task.getTaskName()+".zip";
+                //设置content-disposition响应头控制浏览器弹出保存框，若没有此句则浏览器会直接打开并显示文件。
+                //中文名要经过URLEncoder.encode编码，否则虽然客户端能下载但显示的名字是乱码
+                // 设置响应类型
+                response.setContentType("application/x-msdownload");
+                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(sourceFilePath, "UTF-8"));
+                byte[] buf = new byte[8192];
+                int len = 0;
+                //创建ZIP实体，并添加进压缩包
+                ZipEntry zipEntry = new ZipEntry(file.getFileName());
+                zos.putNextEntry(zipEntry);
+                bis = new BufferedInputStream(inputStream, 1024*10);
+                while ((len = bis.read(buf)) > 0) {
+                    //使用OutputStream将缓冲区的数据输出到客户端浏览器
+                    zos.write(buf, 0, len);
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(null != zos) zos.close();
+            if(null != bis) bis.close();
+        }
     }
 }

@@ -1,11 +1,13 @@
 package com.art1001.supply.entity.log;
 
 import com.art1001.supply.entity.base.BaseEntity;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author heshaohua
@@ -65,8 +67,11 @@ public class Log extends BaseEntity implements Serializable {
 	 */
 	private int result;
 
+	private String fileIds;
 	/**
 	 * 用户实体信息
 	 */
 	private UserEntity userEntity;
+
+	private List<File> fileList;
 }
