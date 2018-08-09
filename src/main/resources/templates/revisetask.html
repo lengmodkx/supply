@@ -139,20 +139,20 @@
                 </div>
             </div>
         </div>
-            <div class="guanlian combox">
-                <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
-                <span>关联内容</span>
-            </div>
-            <div class="add-guanlian combox">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
-                <span>添加关联</span>
-            </div>
+        <div class="guanlian combox">
+            <img src="../static/image/guanlian.png" th:src="@{/image/guanlian.png}" />
+            <span>关联内容</span>
+        </div>
+        <div class="add-guanlian combox">
+            <img src="../static/image/adds.png" th:src="@{/image/adds.png}" />
+            <span>添加关联</span>
+        </div>
 
         <div id = "bind">
             <!--关联 部分-->
             <div class="related-box">
-                    <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
-                 <ul class="related-rw">
+                <div class="flex-box related-rw-wrap" th:style="'display:' + @{(${bindingVo.taskList!=null} ? 'block':'none')}">任务 <span></span></div>
+                <ul class="related-rw">
                     <li class="boxsizing data-info"  th:each="task:${bindingVo.taskList}"  th:data-id="${task.taskId}">
                         <div class="check-box" th:value="${task.taskName}">
                             <input type="checkbox" disabled="disabled" th:value = "${task.taskId}" lay-filter="bindTask" name="" th:checked="${task.taskStatus == '完成'}" lay-skin="primary">
@@ -236,9 +236,9 @@
                                 <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
                             <div class="related-rc-down">
-                            <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
-                            <span>—</span>
-                            <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
+                                <span th:text="${#dates.format(schedule.startTime,'yyyy-MM-dd')}"></span>
+                                <span>—</span>
+                                <span th:text="${#dates.format(schedule.endTime,'yyyy-MM-dd')}"></span>
                             </div>
                             <div class="related-menu" style="display: none">
                                 <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
@@ -262,37 +262,37 @@
                 <div class="related-fx-wrap" th:style="'display:' + @{(${bindingVo.shareList != null} ? 'block':'none')}">
                     <div class="flex-box" >分享 <span></span></div>
                     <ul class="related-fx">
-                    <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
-                        <div class="related-rc-top">
-                            <div class="related-rc-info">
-                                <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
-                                <span th:text="${share.title}"></span>
+                        <li class="boxsizing data-info" th:each="share:${bindingVo.shareList}" th:data-id = "${share.id}">
+                            <div class="related-rc-top">
+                                <div class="related-rc-info">
+                                    <i class="layui-icon layui-icon-list img-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                                    <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${share.memberImg}">
+                                    <span th:text="${share.title}"></span>
+                                </div>
+                                <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
+                                <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
-                            <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
-                            <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
-                        </div>
-                        <!--<div class="related-rc-down">-->
+                            <!--<div class="related-rc-down">-->
                             <!--<span>2018-12-25 12:00</span>-->
                             <!--<span>—</span>-->
                             <!--<span>2018-12-25 12:00</span>-->
-                        <!--</div>-->
-                        <div class="related-menu" style="display: none">
-                            <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
-                            <div class="related-menu-title">关联菜单</div>
-                            <ul>
-                                <!--<li class="boxsizing">-->
-                                <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
-                                <!--<span>复制链接</span>-->
-                                <!--</li>-->
-                                <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${share.id}">
-                                    <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
-                                    <span>取消关联</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
+                            <!--</div>-->
+                            <div class="related-menu" style="display: none">
+                                <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
+                                <div class="related-menu-title">关联菜单</div>
+                                <ul>
+                                    <!--<li class="boxsizing">-->
+                                    <!--<i class="layui-icon layui-icon-link" style="font-size: 16px; color: gray;"></i>-->
+                                    <!--<span>复制链接</span>-->
+                                    <!--</li>-->
+                                    <li class="boxsizing cancle" th:data-id="${taskId}" th:data-binding-id="${share.id}">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 16px; color: gray;"></i>
+                                        <span>取消关联</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -476,6 +476,7 @@
                 '            </li>';
             $('.fileList').append(li);
         }
+        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
     });
 
 
@@ -494,6 +495,7 @@
                 '            </li>';
             $('.fileList').append(li);
         }
+        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
     });
 
     $('#fileListAction').click(function (e) {
