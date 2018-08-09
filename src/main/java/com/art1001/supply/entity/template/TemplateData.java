@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.template;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -8,7 +7,7 @@ import lombok.Data;
  * 模板Entity
  */
 @Data
-public class TemplateData extends BaseEntity implements Serializable {
+public class TemplateData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -46,6 +45,6 @@ public class TemplateData extends BaseEntity implements Serializable {
 	/**
 	 * parent_id
 	 */
-	private String parent;
+	private String parentId;
 
 }

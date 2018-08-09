@@ -8,7 +8,7 @@
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parent.id" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -44,7 +44,7 @@
 	</select>
 	
 	<select id="findTemplateDataAllList" resultMap="BaseResultMap"
-		parameterType="com.leimingtech.core.entity.base.TemplateData">
+		parameterType="com.art1001.supply.entity.template.TemplateData">
 		SELECT
 		<include refid="Base_Column_List" />
 		from template_data
@@ -89,7 +89,7 @@
 			<if test="remarks != null and remarks != ''">
 			remarks,
 			</if>
-			<if test="parent.id != null and parent.id != ''">
+			<if test="parentId != null and parentId != ''">
 			parent_id,
 			</if>
 		</trim>
@@ -111,7 +111,7 @@
 			<if test="remarks != null and remarks != ''">
 				#{remarks},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
+			<if test="parentId != null and parentId != ''">
 				#{parent.id},
 			</if>
 		</trim>
@@ -134,8 +134,8 @@
 			<if test="remarks != null and remarks != ''">
 				remarks = #{remarks},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				parent_id = #{parent.id},
+			<if test="parentId != null and parentId != ''">
+				parent_id = #{parentId},
 			</if>
 		</set>
 
