@@ -3,6 +3,7 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.base.PublicVO;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.project.Project;
@@ -37,10 +38,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Controller
@@ -71,7 +69,7 @@ public class PublicController {
      */
     static final String allCollect = "所有收藏";
 
-    @GetMapping("mypage.html")
+
     public String my(Model model){
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         List<Task> taskList = taskService.findTaskByUserIdAndByTreeDay(userEntity.getId());
@@ -474,6 +472,58 @@ public class PublicController {
             throw  new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    @GetMapping("mypage.html")
+    public String findThreeDay(Model model){
+        try {
+            //近三天的 日程
+            List<Schedule> scheduleByUserIdAndByTreeDay = scheduleService.findScheduleByUserIdAndByTreeDay(ShiroAuthenticationManager.getUserId());
+            //近三天的 任务
+            List<Task> taskByUserIdAndByTreeDay = taskService.findTaskByUserIdAndByTreeDay(ShiroAuthenticationManager.getUserId());
+
+            List<PublicVO> publicVOs = new ArrayList<PublicVO>(3);
+            String[] days = {"今天","明天","后天"};
+            for (String day : days) {
+                PublicVO publicVO = new PublicVO();
+                publicVO.setName(day);
+
+                for (Schedule s : scheduleByUserIdAndByTreeDay) {
+                    if(day.equals(days[0]) && DateUtils.getDateStr().equals(DateUtils.getDateStr(new Date(s.getStartTime()),"yyyy-MM-dd"))) {
+                        publicVO.getScheduleList().add(s);
+                        continue;
+                    }
+                    if(day.equals(days[1]) && DateUtils.getAfterDay(DateUtils.getDateStr(),1,"yyyy-MM-dd","yyyy-MM-dd").equals(DateUtils.getDateStr(new Date(s.getStartTime()),"yyyy-MM-dd"))){
+                        publicVO.getScheduleList().add(s);
+                        continue;
+                    }
+                    if(day.equals(days[2]) && DateUtils.getAfterDay(DateUtils.getDateStr(),2,"yyyy-MM-dd","yyyy-MM-dd").equals(DateUtils.getDateStr(new Date(s.getStartTime()),"yyyy-MM-dd"))){
+                        publicVO.getScheduleList().add(s);
+                        continue;
+                    }
+                }
+
+                for (Task t : taskByUserIdAndByTreeDay) {
+                    if(day.equals(days[0]) && DateUtils.getDateStr().equals(DateUtils.getDateStr(new Date(t.getStartTime()),"yyyy-MM-dd"))) {
+                        publicVO.getTaskList().add(t);
+                        continue;
+                    }
+                    if(day.equals(days[1]) && DateUtils.getAfterDay(DateUtils.getDateStr(),1,"yyyy-MM-dd","yyyy-MM-dd").equals(DateUtils.getDateStr(new Date(t.getStartTime()),"yyyy-MM-dd"))){
+                        publicVO.getTaskList().add(t);
+                        continue;
+                    }
+                    if(day.equals(days[2]) && DateUtils.getAfterDay(DateUtils.getDateStr(),2,"yyyy-MM-dd","yyyy-MM-dd").equals(DateUtils.getDateStr(new Date(t.getStartTime()),"yyyy-MM-dd"))){
+                        publicVO.getTaskList().add(t);
+                        continue;
+                    }
+                }
+                publicVOs.add(publicVO);
+            }
+            model.addAttribute("datas",publicVOs);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+        }
+        return "mypage";
     }
 
 

@@ -30,14 +30,14 @@
 <div class="mypage-content" style="margin-top: 50px">
   <!--近期的事-->
     <div id="near-thing" style="display: block" >
-        <div class="near-thing-box boxsizing">
+        <div class="near-thing-box boxsizing" th:each="data:${datas}">
             <div class="thing-title boxsizing">
-               <div> <span>近期的事  + </span><span th:text="${#lists.size(taskList)}">1</span></div>
+               <div> <span th:text="${data.name}">&emsp;</span><span th:text="${data.taskList.size() + data.scheduleList.size()}"></span></div>
             </div>
             <div class="things layui-form">
                 <!--任务-->
                 <ul class="rw">
-                    <li class="thing-list" th:each="task : ${taskList}">
+                    <li class="thing-list" th:data-id = "${task.taskId}" th:each="task : ${data.taskList}">
                        <div class="urgent-state"></div>
                         <div class="things-info boxsizing">
                             <input type="checkbox" name="" title="" lay-skin="primary" class="is-sure" >
@@ -54,16 +54,16 @@
                 </ul>
                 <!--日程-->
                 <ul class="rc">
-                    <li class="thing-list" th:each="task : ${taskList}">
+                    <li class="thing-list" th:data-id = "${schedule.scheduleId}" th:data-projectId = "${schedule.project.projectId}" th:each="schedule : ${data.scheduleList}">
                         <div class="things-info boxsizing">
                             <img src="../static/image/rc.png" th:src="@{/image/rc.png}">
                             <div class="rc-span-wrap">
-                                <span class="what-thing" th:text="${task.taskName}">项目名称</span>
+                                <span class="what-thing" th:text="${schedule.project.projectName}">项目名称</span>
                                 <span class="what-thing" >属于5d管理系统</span>
                             </div>
-                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            <span class="thing-what-date" th:text="${#calendars.format(schedule.startTime,'M月d日 HH:ss')}">6月10日 14:14</span>
                             <span class="thing-what-date">—</span>
-                            <span class="thing-what-date" th:text="${#calendars.format(task.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
+                            <span class="thing-what-date" th:text="${#calendars.format(schedule.endTime,'M月d日 HH:ss')}">6月10日 14:14</span>
                         </div>
 
                     </li>
@@ -357,7 +357,7 @@
     <div id="my-file"  style="display: none" >
         <div class="file-box boxsizing layui-form">
             <div class="file-toper">
-                <span class="now icreated create-file">我创建的</span><span class="ipartin join-file">我参与的</span>
+                <span class="now icreated create-file">我创建的</span><span class="ipartin thing-title boxsizing">我参与的</span>
             </div>
             <!--没有文件-->
             <div class="no-file" style="display: none">
