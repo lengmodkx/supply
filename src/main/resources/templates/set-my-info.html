@@ -34,7 +34,7 @@
         <nav>
             <ul>
                 <li class="boxsizing now">个人信息</li>
-                <li class="boxsizing">账号密码</li>
+                <li class="boxsizing">修改密码</li>
             </ul>
 
         </nav>
@@ -105,55 +105,55 @@
 
         <!--账号密码 部分-->
         <div class="account-pwd-box boxsizing" style="display: none">
-            <div class="login-account">
-                <div class="account-pwd-header boxsizing">
-                    <h3 class="title">登录账号</h3>
-                    <p class="tips">所有登录帐号都可用于登录，主邮箱帐号可收取通知。</p>
-                </div>
-                <div class="email-box boxsizing clearfix">
-                    <span class="left-span">邮箱账号</span>
-                    <div class="right-div">
-                        <div class="zhu-email">
-                            <span>2439676969@qq.com</span>
-                            <span>主邮箱</span>
-                        </div>
-                        <div class="bd-email">
-                            <input type="text" class="boxsizing">
-                            <div class="sure-to-binding">确认绑定</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="phone-box boxsizing clearfix">
-                    <span class="left-span">手机账号</span>
-                    <div class="right-div">
-                        <p class="phone-num">13256456123</p>
-                        <div class="remove-bind-phone boxsizing">解除绑定</div>
-                        <div class="proving-box" style="display: none">
-                            <input type="text" class="boxsizing" placeholder="输入短信验证码">
-                            <div class="sure-remove-bind-phone">确认解绑</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="login-account">-->
+                <!--<div class="account-pwd-header boxsizing">-->
+                    <!--<h3 class="title">登录账号</h3>-->
+                    <!--<p class="tips">所有登录帐号都可用于登录，主邮箱帐号可收取通知。</p>-->
+                <!--</div>-->
+                <!--<div class="email-box boxsizing clearfix">-->
+                    <!--<span class="left-span">邮箱账号</span>-->
+                    <!--<div class="right-div">-->
+                        <!--<div class="zhu-email">-->
+                            <!--<span>2439676969@qq.com</span>-->
+                            <!--<span>主邮箱</span>-->
+                        <!--</div>-->
+                        <!--<div class="bd-email">-->
+                            <!--<input type="text" class="boxsizing">-->
+                            <!--<div class="sure-to-binding">确认绑定</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="phone-box boxsizing clearfix">-->
+                    <!--<span class="left-span">手机账号</span>-->
+                    <!--<div class="right-div">-->
+                        <!--<p class="phone-num">13256456123</p>-->
+                        <!--<div class="remove-bind-phone boxsizing">解除绑定</div>-->
+                        <!--<div class="proving-box" style="display: none">-->
+                            <!--<input type="text" class="boxsizing" placeholder="输入短信验证码">-->
+                            <!--<div class="sure-remove-bind-phone">确认解绑</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
 
             <div class="login-pwd boxsizing">
                 <h3 class="title" style="margin-bottom: 15px">登录密码</h3>
                 <div class="style-box">
                     <div class="style-box-left">旧密码</div>
                     <div class="style-box-right">
-                        <input class="boxsizing" type="text">
+                        <input class="old_password boxsizing" type="text"/>
                     </div>
                 </div>
                 <div class="style-box">
                     <div class="style-box-left">新密码</div>
                     <div class="style-box-right">
-                        <input class="boxsizing" type="text">
+                        <input class="new_password boxsizing" type="text"/>
                     </div>
                 </div>
                 <div class="style-box">
                     <div class="style-box-left">确认新密码</div>
                     <div class="style-box-right">
-                        <input class="boxsizing" type="text">
+                        <input class="sure_password boxsizing" type="text" />
                     </div>
                 </div>
                 <div class="style-box">
@@ -369,6 +369,41 @@
                 $('.img-contain>img').cropper('replace',e.target.result,false );
             };
         }
+    });
+
+    $('.pwd-save-btn').click(function () {
+
+        var oldPwd = $('.old_password').val();
+        var newPwd = $('.new_password').val();
+        var surePwd = $('.sure_password').val();
+        if(oldPwd==null||oldPwd===''){
+            layer.msg("请输入原密码",{icon:5});
+        }
+
+        if(newPwd==null||newPwd===''){
+            layer.msg("请输入新密码",{icon:5});
+        }
+
+        if(surePwd==null||surePwd===''){
+            layer.msg("请输入确认密码",{icon:5});
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     });
 
 </script>

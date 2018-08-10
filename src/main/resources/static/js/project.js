@@ -1,52 +1,142 @@
-// 建立连接对象（还未发起连接）
-var socket = new SockJS("/webSocketServer");
-// 获取 STOMP 子协议的客户端对象
-var stompClient = Stomp.over(socket);
+layui.use('element', function(){
+    var element = layui.element;
 
-// 向服务器发起websocket连接并发送CONNECT帧
-stompClient.connect({},
-    function connectCallback(frame) {
-        // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
-        console.log("连接成功");
-        subscribe1();
-    },
-    function errorCallBack(error) {
-        // 连接失败时（服务器响应 ERROR 帧）的回调方法
-        console.log("连接失败");
+    //一些事件监听
+    element.on('tab(demo)', function(data){
+        console.log(data);
+    });
+});
+
+function stopBubbling(e) {
+    e = window.event || e;
+    if (e.stopPropagation) {
+        e.stopPropagation();      //阻止事件 冒泡传播
+    } else {
+        e.cancelBubble = true;   //ie兼容
     }
-);
+}
+//点击项目设置的弹出框
+function setting(projectId,e){
+    stopBubbling(e);
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area:['800px','600px'],
+            shadeClose: true, //点击遮罩关闭
+            anim: 1,  //动画 0-6
+            content: '/project/projectSetting?projectId='+projectId
+        });
+    });
+}
+
+function cancleCollect(projectId,e){
+    stopBubbling(e);
+    $.post("/project/collectProject",{"projectId":projectId},function (data) {
+        if(data.result===1){
+            layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            window.location.href = "/project/project.html";
+        }else{
+            layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+        }
+    });
+}
 
 
-//订阅消息
-function subscribe1() {
-    stompClient.subscribe('/topic/subscribe', function (response) {
-        var returnData = JSON.parse(response.body);
-        dealMessage(JSON.parse(returnData.responseMessage));
+//点击项目进入任务界面
+function projectClick(projectId,e){
+    stopBubbling(e);
+    window.location.href = "/project/task.html?projectId="+projectId;
+    return false;
+}
+
+//点击收藏项目
+function projectCollect(projectId,e){
+    stopBubbling(e);
+    console.log(projectId);
+    $.post("/project/collectProject",{"projectId":projectId},function (data) {
+        if(data.result===1){
+            layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            $(".complete-wrap").show();
+            window.location.href = "/project/project.html";
+        }else{
+            layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+        }
+    });
+}
+
+function resetProject(projectId){
+    $.post("/project/updateProject",{"projectId":projectId,"projectIdDel":0},function (data) {
+        if(data.result===1){
+            layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            window.location.href = "/project/project.html";
+        }else{
+            layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+        }
+    });
+}
+
+function delProject(projectId){
+    $.post("/project/delProject",{"projectId":projectId},function (data) {
+        if(data.result===1){
+            layer.msg(data.msg,{icon:1,offset:'lb',anim:2});
+            window.location.href = "/project/project.html";
+        }else{
+            layer.msg(data.msg,{icon:5,offset:'lb',anim:2});
+        }
     });
 }
 
 
 
-//将消息显示在网页上
-function dealMessage(project) {
+$(function () {
 
-    var li = '<li class="layui-col-md3 layui-anim layui-anim-scaleSpring"\n' +
-        '                    style="background-image:url('+IMAGE_SERVER + project.projectCover+');"\n' +
-        '                    onclick="javascript:projectClick(\''+project.projectId+'\')"\n' +
-        '                    id="'+project.projectId+'">\n' +
-        '                    <div class="describe boxsizing">\n' +
-        '                        <div>\n' +
-        '                            <div class="describe-title">'+project.projectName+'</div>\n' +
-        '                            <span class="tools">\n' +
-        '                                <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"\n' +
-        '                                   onclick="javascript:setting(\''+project.projectId+'\')"></i>\n' +
-        '                                <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"\n' +
-        '                                   onclick="javascript:projectCollect(\''+project.projectId+'\')"></i>\n' +
-        '                            </span>\n' +
-        '                        </div>\n' +
-        '                        <p>'+project.projectDes+'</p>\n' +
-        '                    </div>\n' +
-        '                </li>';
+    // console.log($(".content-list li").css("width"));
+    // // 高度随屏幕大小变化
+    // $(".content-list li").css("height",parseInt($(".content-list li").css("width"))*0.68 +'px' );
+    //点击导航条显示对应内容
+    $(".content-nav li").click(function () {
+        var i=$(this).index();
+        $(".content-nav li a").removeClass("selected");
+        $(".content-nav li a").eq(i).addClass("selected");
+        $(".content-list").hide();
+        $(".content-list").eq(i).show()
+    });
+    //点击创建新项目
+    $(".special-li").click(function () {
+        newWork();
+    });
 
-    $(".partake ul").append(li);
+    // 我收藏的项目  点击添加
+    if ($(".complete-wrap li").length==0){
+        $(".complete-wrap").hide()
+    } else {
+        $(".complete-wrap").show()
+    }
+    //项目回收站 显示隐藏
+    $(".show-recycle-bin").click(function () {
+        if ($(".recycle-bin").is(':visible')) {
+            $(".recycle-bin").hide();
+            $(this).text("显示")
+        }else {
+            $(".recycle-bin").show();
+            $(this).text("隐藏")
+        }
+    })
+});
+
+//点击创建新项目的弹出框
+function newWork(){
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: ["标准模板","text-align:center"], //标题
+            area:['800px','450px'],
+            shadeClose: true, //点击遮罩关闭
+            anim: 1,  //动画 0-6
+            content: ['/project/projectTemplate.html','no']
+        });
+    });
 }

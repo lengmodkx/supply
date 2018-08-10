@@ -78,10 +78,6 @@ public class Project extends BaseEntity implements Serializable {
      * 项目下的所有任务
      */
     private List<Task> taskList;
-    /**
-     * 是否收藏，0不是，1是
-     */
-    private Integer isCollect;
 
     private List<ProjectMember> projectMemberList;
 

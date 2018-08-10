@@ -137,29 +137,24 @@ public class ProjectController extends BaseController {
 
     @RequestMapping("/projectList")
     @ResponseBody
-    public JSONObject projectList(@RequestParam Integer label){
+    public JSONObject projectList(){
         JSONObject jsonObject = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-
-            List<Project> projects;
-            if(label==1){
-                //获取我拥有的项目
-                projects = projectService.findProjectByMemberId(userId);
-            }else if (label==2){
-                //我参与的项目
-               projects = projectMemberService.findProjectByMemberId(userId,0);
-            }else if (label==3) {
-                //我收藏的项目
-                projects = projectCollectService.findProjectByMemberId(userId);
-            } else{
-                //项目回收站
-                projects = projectMemberService.findProjectByMemberId(userId,1);
-            }
-
+            //我创建的任务
+            List<Project> createProjects = projectService.findProjectByMemberId(userId);
+            //我参与的任务
+            List<Project> joinInProject = projectMemberService.findProjectByMemberId(userId, 0);
+            //我收藏的项目
+            List<Project> collectProjects = projectCollectService.findProjectByMemberId(userId);
+            //项目回收站
+            List<Project> delProjects = projectMemberService.findProjectByMemberId(userId,1);
             jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
-            jsonObject.put("data",projects);
+            jsonObject.put("createProjects",createProjects);
+            jsonObject.put("joinInProject",joinInProject);
+            jsonObject.put("collectProjects",collectProjects);
+            jsonObject.put("delProjects",delProjects);
 
         }catch (Exception e){
             log.error("请求项目列表异常：",e);
@@ -458,6 +453,9 @@ public class ProjectController extends BaseController {
                 jsonObject.put("result",1);
                 jsonObject.put("msg","取消收藏成功");
             }
+            //我收藏的项目
+            List<Project> collectProjects = projectCollectService.findProjectByMemberId(userEntity.getId());
+            jsonObject.put("collectProjects",collectProjects);
         }catch (Exception e){
             throw new AjaxException(e);
         }

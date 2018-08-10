@@ -46,7 +46,23 @@
 					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"/>
 	</resultMap>
-    
+
+    <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="start_time" property="startTime" jdbcType="BIGINT" />
+		<result column="end_time" property="endTime" jdbcType="BIGINT" />
+		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
+		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
+		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
+		<result column="project_status" property="projectStatus" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		project_id,
 		project_name,
@@ -256,12 +272,12 @@
 	</update>
 
 
-	<!-- 查询我参与的所有项目 -->
-	<select id="findProjectByMemberId" resultMap="BaseResultMap"
+	<!-- 查询我创建的所有项目 -->
+	<select id="findProjectByMemberId" resultMap="BaseResultMap1"
 			parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_project where project_del = 0 and project_id in (select project_id from prm_project_member where prm_project.member_id = #{memberId})
+		from prm_project where project_del = 0 and member_id = #{memberId}
 		order by create_time asc
 	</select>
 
