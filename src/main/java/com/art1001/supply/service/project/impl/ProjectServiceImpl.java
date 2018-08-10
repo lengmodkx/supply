@@ -141,4 +141,14 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<Project> listProjectByUserCollect(String uId) {
 		return projectMapper.listProjectByUserCollect(uId);
 	}
+
+	/**
+	 *  根据用户id查询所有项目，包含我创建的，我参与的，星标项目，回收站的项目
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Override
+	public List<Project> findProjectByUserId(String userId) {
+		return projectMapper.findProjectByUserId(userId);
+	}
 }

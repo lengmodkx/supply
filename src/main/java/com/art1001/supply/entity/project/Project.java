@@ -82,4 +82,11 @@ public class Project extends BaseEntity implements Serializable {
     private List<ProjectMember> projectMemberList;
 
     private List<Log> logList;
+
+    private int collect;
+
+    private int memberber_label;
+
+    private int label=0;
+
 }

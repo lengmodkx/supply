@@ -51,16 +51,11 @@
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="start_time" property="startTime" jdbcType="BIGINT" />
-		<result column="end_time" property="endTime" jdbcType="BIGINT" />
 		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
 		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
 		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
-		<result column="project_status" property="projectStatus" jdbcType="INTEGER" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
-		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
+		<result column="collect" property="collect" jdbcType="INTEGER" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -279,6 +274,21 @@
 		<include refid="Base_Column_List" />
 		from prm_project where project_del = 0 and member_id = #{memberId}
 		order by create_time asc
+	</select>
+
+
+	<!---->
+	<select id="findProjectByUserId" resultMap="BaseResultMap1" parameterType="java.lang.String">
+		  select p.project_id,
+			  p.project_name,
+			  p.member_id,
+			  p.project_cover,
+			  p.project_des,
+			  p.project_del,
+			  pm.member_label,
+			  pm.collect
+		  from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
+		  where pm.member_id = #{userId}
 	</select>
 
 	<!-- 查询出该用户执行的任务信息和所在项目信息 -->

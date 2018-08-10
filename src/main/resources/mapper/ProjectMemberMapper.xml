@@ -16,7 +16,8 @@
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
-        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
         <result column="project_name" property="projectName" jdbcType="VARCHAR" />
         <result column="member_id" property="memberId" jdbcType="VARCHAR" />
         <result column="start_time" property="startTime" jdbcType="BIGINT" />

@@ -41,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -137,24 +138,33 @@ public class ProjectController extends BaseController {
 
     @RequestMapping("/projectList")
     @ResponseBody
-    public JSONObject projectList(){
+    public JSONObject projectList(@RequestParam Integer label){
         JSONObject jsonObject = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-            //我创建的任务
-            List<Project> createProjects = projectService.findProjectByMemberId(userId);
-            //我参与的任务
-            List<Project> joinInProject = projectMemberService.findProjectByMemberId(userId, 0);
+            List<Project> projects = new ArrayList<>();
+            //我创建的项目
+            if(label==1){
+                projects = projectService.findProjectByMemberId(userId);
+            }
+
+            //我参与的项目
+            if(label==2){
+                projects = projectMemberService.findProjectByMemberId(userId, 0);
+            }
+
             //我收藏的项目
-            List<Project> collectProjects = projectCollectService.findProjectByMemberId(userId);
+            if(label==3){
+                projects = projectCollectService.findProjectByMemberId(userId);
+            }
+
             //项目回收站
-            List<Project> delProjects = projectMemberService.findProjectByMemberId(userId,1);
+            if(label==4){
+                projects = projectMemberService.findProjectByMemberId(userId,1);
+            }
             jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
-            jsonObject.put("createProjects",createProjects);
-            jsonObject.put("joinInProject",joinInProject);
-            jsonObject.put("collectProjects",collectProjects);
-            jsonObject.put("delProjects",delProjects);
+            jsonObject.put("data",projects);
 
         }catch (Exception e){
             log.error("请求项目列表异常：",e);
@@ -453,9 +463,6 @@ public class ProjectController extends BaseController {
                 jsonObject.put("result",1);
                 jsonObject.put("msg","取消收藏成功");
             }
-            //我收藏的项目
-            List<Project> collectProjects = projectCollectService.findProjectByMemberId(userEntity.getId());
-            jsonObject.put("collectProjects",collectProjects);
         }catch (Exception e){
             throw new AjaxException(e);
         }

@@ -97,4 +97,11 @@ public interface ProjectMapper {
 	 * @return 用户收藏的所有项目信息
 	 */
 	List<Project> listProjectByUserCollect(String uId);
+
+	/**
+	 *  根据用户id查询所有项目，包含我创建的，我参与的，星标项目，回收站的项目
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<Project> findProjectByUserId(String userId);
 }
