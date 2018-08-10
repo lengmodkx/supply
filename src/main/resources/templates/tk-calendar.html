@@ -135,7 +135,12 @@
                 // console.log('eventClick中选中Event的end属性值为：', event.end==null?'无':event.end.format('YYYY-MM-DD HH:mm'));
                 // console.log('eventClick中选中Event的color属性值为：', event.color);
                 // console.log('eventClick中选中Event的className属性值为：', event.className);
-                changeRenwu(event.id);
+                if(event.ClassName === 'task'){
+                    changeRenwu(event.id);
+                } else{
+                    reviseSchedule(event.id);
+                }
+
                 //reviseSchedule()
             },
             eventMouseover : function( event ) {
@@ -316,13 +321,13 @@
             layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
-                area:['600px','400px'],
+                area:['622px','400px'],
                 fixed: false,
                 closeBtn: 0,
                 // shade: 0,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: '/schedule/calendarCreateSchedule.html',
+                content: '/schedule/calendarCreateSchedule.html?rq='+rq,
                 zIndex: layer.zIndex, //重点1
                 success: function(layero){
                     layer.setTop(layero); //重点2
@@ -331,7 +336,7 @@
         });
     }
     //修改日程 弹框
-    function reviseSchedule() {
+    function reviseSchedule(id) {
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
@@ -342,7 +347,7 @@
                 closeBtn: 0,
                 shadeClose: true, //点击遮罩关闭
                 anim: 1,  //动画 0-6
-                content: 'tk-calendar-change-content.html',
+                content: '/schedule/editSchedule.html?id='+id,
                 zIndex: layer.zIndex, //重点1
                 success: function(layero){
                     layer.setTop(layero); //重点2
@@ -355,13 +360,34 @@
        var url = "/public/taskCalendar";
        var arr = [];
        $.post(url,function (data) {
-           var task = data.data;
-           for(var i = 0;i < task.length;i++){
-               arr.push({id:task[i].taskId,title:task[i].taskName,start:new Date(task[i].taskCalendar),backgroundColor: '#33FFFF',
-                   borderColor: '#00CCFF'});
-           }
-           $('#calendar').fullCalendar('addEventSource',arr);
-       },"json");
+            var task = data.data;
+            for(var i = 0;i < task.length;i++) {
+                arr.push({
+                    id: task[i].taskId,
+                    title: task[i].taskName,
+                    start: new Date(task[i].taskCalendar),
+                    backgroundColor: '#33FFFF',
+                    ClassName: 'task',
+                    borderColor: '#00CCFF'
+                });
+            }
+           var url1= "/public/scheduleCalendar";
+           $.post(url1,function (data) {
+               var schedule = data.data;
+               for(var i = 0;i < schedule.length;i++) {
+                   arr.push({
+                       id: schedule[i].scheduleId,
+                       title: schedule[i].scheduleName,
+                       start: new Date(schedule[i].scheduleCalendar),
+                       backgroundColor: '#99FFCC',
+                       ClassName: 'schedule',
+                       borderColor: '#99FF99',
+                   });
+               }
+               $('#calendar').fullCalendar('addEventSource', arr);
+           },"json");
+        },"json");
+
     });
 
     /**
@@ -375,8 +401,32 @@
                title: task.taskName,
                allDay: true,
                backgroundColor: '#33FFFF',
+               url:'/task/initTask.html',
+               borderColor: '#99FFCC',
+               ClassName: 'task',
                start: new Date(task.taskCalendar),
            },]);
+        location.reload(false);
+    }
+
+    /**
+     * 添加日程完成后在日历显示日程信息
+     */
+    function showSchedule(schedule){
+        var arr=[];
+        $('#calendar').fullCalendar('addEventSource', [
+            {
+                id: schedule.scheduleId,
+                title: schedule.scheduleName,
+                allDay: true,
+                backgroundColor: '#99FFCC',
+                url:'/schedule/editSchedule.html',
+                ClassName: 'schedule',
+                borderColor: '#99FF99',
+                start: new Date(schedule.scheduleCalendar),
+            },]);
+      location.reload(false);
+
     }
 
 

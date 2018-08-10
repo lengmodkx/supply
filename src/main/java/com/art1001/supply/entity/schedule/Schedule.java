@@ -98,5 +98,10 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private List<Tag> tags;
 
+	/**
+	 * 在日历上创建日程的日期
+	 */
+	private Long scheduleCalendar;
+
 
 }

@@ -526,6 +526,25 @@ public class PublicController {
         return "mypage";
     }
 
+    /**
+     * 查询出日历上的所有任务
+     * @return
+     */
+    @PostMapping("/scheduleCalendar")
+    @ResponseBody
+    public JSONObject scheduleCalendar(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            List<Schedule> list = scheduleService.findCalendarSchedule();
+            jsonObject.put("data",list);
+        }catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
 
 
 }

@@ -127,4 +127,11 @@ public interface ScheduleMapper {
 	 * @return
 	 */
 	List<Schedule> findScheduleByUserIdAndThreeDay(String uId);
+
+	/**
+	 * 查询出日历上的所有日程
+	 * @param uId 当前登录用户的id
+	 * @return
+	 */
+    List<Schedule> findCalendarSchedule(String uId);
 }

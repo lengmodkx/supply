@@ -189,6 +189,7 @@ public class TaskController {
             jsonObject.put("msg","添加任务成功!");
             jsonObject.put("result",1);
             Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
+            jsonObject.put("task",taskByTaskId);
             JSONObject object = new JSONObject();
             object.put("task",taskByTaskId);
             object.put("type","创建了任务");

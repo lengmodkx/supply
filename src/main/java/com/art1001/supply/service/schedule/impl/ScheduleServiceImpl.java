@@ -128,7 +128,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public void saveSchedule(Schedule schedule){
-		schedule.setScheduleId(IdGen.uuid());
 		scheduleMapper.saveSchedule(schedule);
 	}
 	/**
@@ -324,5 +323,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public List<Schedule> findScheduleByUserIdAndThreeDay(String uId) {
         return scheduleMapper.findScheduleByUserIdAndThreeDay(uId);
+	}
+
+	/**
+	 * 查询出日历上的所有日程
+	 * @return
+	 */
+	@Override
+	public List<Schedule> findCalendarSchedule() {
+		return scheduleMapper.findCalendarSchedule(ShiroAuthenticationManager.getUserId());
 	}
 }

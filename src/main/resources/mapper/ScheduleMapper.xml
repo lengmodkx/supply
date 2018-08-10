@@ -18,6 +18,7 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
 		<result column="is_allday" property="isAllday" jdbcType="INTEGER" />
+		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -62,7 +63,8 @@
 				update_time,
 				member_id,
 				member_ids,
-				is_allday
+				is_allday,
+				schedule_calendar
 	</sql>
 
 	<sql id="whereStatement">
@@ -174,6 +176,9 @@
 			<if test="isAllday != null and isAllday != ''">
 				is_allday,
 			</if>
+			<if test="scheduleCalendar != null and scheduleCalendar != ''">
+				schedule_calendar,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -222,6 +227,9 @@
 			</if>
 			<if test="isAllday != null and isAllday != ''">
 				#{isAllday},
+			</if>
+			<if test="scheduleCalendar != null and scheduleCalendar != ''">
+				#{scheduleCalendar},
 			</if>
 		</trim>
 
@@ -275,6 +283,9 @@
 			</if>
 			<if test="isAllday != null">
 				is_allday = #{isAllday},
+			</if>
+			<if test="scheduleCalendar != null">
+				schedule_calendar = #{scheduleCalendar},
 			</if>
 		</set>
 
@@ -376,6 +387,12 @@
 		'%Y-%m-%d'
 		)
 		) &gt;= (SELECT curdate())
+	</select>
+
+	<!-- 查询该用户在日历上创建的所有日程 -->
+	<select id="findCalendarSchedule" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_schedule where schedule_calendar is not null  and member_id = #{uId}
 	</select>
 
 </mapper>

@@ -90,8 +90,10 @@ public class ScheduleController extends BaseController {
      * @return
      */
     @GetMapping("calendarCreateSchedule.html")
-    public String calendarCreateSchedule(Model model){
+    public String calendarCreateSchedule(Model model,String rq){
+        model.addAttribute("projecs",projectService.listProjectByUid(ShiroAuthenticationManager.getUserId()));
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        model.addAttribute("rq",rq);
         return "tk-calendar-create-rc";
     }
 
@@ -164,6 +166,7 @@ public class ScheduleController extends BaseController {
                                   @RequestParam(required = false) String allPeopleDay,
                                   @RequestParam String startTimeTemp,
                                   @RequestParam String endTimeTemp,
+                                  Long scheduleCalendar,
                                   @RequestParam(required = false) String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -173,9 +176,9 @@ public class ScheduleController extends BaseController {
             schedule.setScheduleName(scheduleName);
             schedule.setRepeat(repeat);
             schedule.setRemind(remand);
+            schedule.setScheduleCalendar(scheduleCalendar);
             schedule.setMemberId(userEntity.getId());
             schedule.setMemberIds(memberId);
-            schedule.setMemberIds(ShiroAuthenticationManager.getUserId());
             if("on".equals(allDay)){
                 schedule.setStartTime(System.currentTimeMillis());
                 schedule.setEndTime(DateUtils.getEndTime());
@@ -192,9 +195,11 @@ public class ScheduleController extends BaseController {
                 jsonObject.put("result",1);
                 jsonObject.put("msg","更新成功");
             }else{
+                schedule.setScheduleId(IdGen.uuid());
                 scheduleService.saveSchedule(schedule);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","创建成功");
+                jsonObject.put("schedule",scheduleService.findScheduleById(schedule.getScheduleId()));
             }
 
         }catch (Exception e){

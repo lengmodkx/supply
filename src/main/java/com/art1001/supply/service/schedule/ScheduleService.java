@@ -129,4 +129,10 @@ public interface ScheduleService {
 	 * @return
 	 */
 	List<Schedule> findScheduleByUserIdAndThreeDay(String uId);
+
+	/**
+	 * 查询出日历上的所有日程
+	 * @return
+	 */
+    List<Schedule> findCalendarSchedule();
 }

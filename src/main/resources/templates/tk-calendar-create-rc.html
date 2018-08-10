@@ -9,18 +9,15 @@
 </head>
 <body>
 <!-- 日历页面 创建 日程-->
+<input th:if="${rq != null}" type="hidden" th:value="${rq}" id="rq"/>
+<form class="create-rc boxsizing layui-form" id="schedule-from">
 <div class="create-rc boxsizing layui-form">
     <div class="create-rc-title  ">
        <span> 添加日程到</span>
-        <select name=""  lay-filter="project">
-            <optgroup label="星标项目">
-                <option value="bim新手指导？">bim新手指导？</option>
-            </optgroup>
-            <optgroup label="非星标项目">
-                <option value="你的任务">你的任务</option>
-                <option value="你的任务">你的任务？</option>
-            </optgroup>
-        </select>
+            <select id="projectId"  lay-filter="project">
+                    <option th:if="${index.first}" th:each="project,index:${projecs}" th:value="${project.projectId}" th:text="${project.projectName}" selected="selected"></option>
+                    <option th:if="${!index.first}" th:each="project,index:${projecs}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
+            </select>
         <i class="layui-icon layui-icon-close" style="font-size: 16px; color: #a6a6a6;"></i>
     </div>
     <textarea class="rc-title boxsizing" placeholder="日程标题"></textarea>
@@ -54,8 +51,8 @@
             <input type="hidden"  id = "oldRemind"/>
             <select name="remand" lay-verify="" lay-filter = "remind">
                 <option value="不提醒" >不提醒</option>
-                <option value="任务开始时提醒" >任务开始时提醒</option>
-                <option value="任务截止时提醒" >任务截止时提醒</option>
+                <option value="日程开始时提醒" >日程开始时提醒</option>
+                <option value="日程截止时提醒" >日程截止时提醒</option>
             </select>
         </div>
     </div>
@@ -66,8 +63,8 @@
     <div class="line"></div>
     <p class="cyz">参与者</p>
     <div class="work-people boxsizing clearfix">
-        <div class="one-work-people">
-            <img src="../static/image/add.png" th:src="@{/image/add.png}" />
+        <div class="one-work-people" th:value="${user.id}">
+            <img src="../static/image/add.png" th:src="#{IMAGE_SERVER}+ ${user.userInfo.image}" />
             <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>
         </div>
         <div class="add-work-people">
@@ -83,19 +80,22 @@
             <span class="set-see all-can-see">所有成员可见</span>
             <span class="set-see cyz-can-see" style="display: none">仅参与者可见</span>
         </div>
-        <div class="create-ok">创建</div>
+        <button id="schedule_create" lay-submit class="layui-btn" lay-filter="scheduleCreate" style="background-color: #017ECA;float: right;margin-right: 10px">创建</button>
 
     </div>
 </div>
 
 
-
+</form>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 
 <script>
-    var project,groups,list;
+    var startTime;
+    var endTime;
+
+    var project,groups,list,repeat,remind;
     layui.use('form', function(){
         var form = layui.form;
 
@@ -133,7 +133,61 @@
             }
 
         });
+
+        //监听提交
+        form.on('submit(scheduleCreate)', function(data){
+            var beginTime = $('#beginTimes').val();
+            if(beginTime != null && beginTime != ''){
+                var startTime = new Date(beginTime.toString()).getTime();
+            } else {
+                layer.msg("需要设置时间");
+                return false;
+            }
+
+            var overTime = $('#overTimes').val();
+            if(overTime != null && overTime != ''){
+                var endTime = new Date(overTime.toString()).getTime();
+            } else{
+                layer.msg("需要设置时间");
+                return false;
+            }
+
+            //设置重复模式
+            var repeat = $('[name = "repeat"]').val();
+            //设置任务提醒
+            var remind = $('[name="remand"]').val();
+            var projectId = $('#projectId').val();
+            var scheduleName = $('.rc-title').val();
+            //获取选中的参与者信息
+            var members = [];
+            $('.work-people .one-work-people').each(function () {
+                members.push($(this).attr('value'));
+            });
+
+
+            var scheduleCalendar;
+            if($('#rq').val() != null && $('#rq').val() != undefined){
+                scheduleCalendar = $('#rq').val();
+                var scheduleCalendar = new Date(scheduleCalendar.toString()).getTime();
+            }
+
+            var args = {"projectId":projectId,"scheduleName":scheduleName,"memberId":members.toString(),"startTimeTemp":startTime,"endTimeTemp":endTime,"repeat":repeat,"remand":remind,"scheduleCalendar":scheduleCalendar}
+
+            $.post("/schedule/addschedule",args,function (data) {
+                if(data.result===1){
+                    parent.showSchedule(data.schedule);
+                    parent.layer.msg(data.msg,{icon:1});
+                }else{
+                    parent.layer.msg("创建失败",{icon:5});
+                }
+            });
+            parent.layer.closeAll();
+            return false;
+        });
     });
+
+
+
     layui.use('laydate', function(){
         var laydate = layui.laydate;
 
@@ -141,12 +195,12 @@
         laydate.render({
             elem: '#beginTimes', //指定元素
             type:'datetime',
-            format:'M月d日 H:00'
+            format:'yyyy-MM-dd H:00'
         });
         laydate.render({
             elem: '#overTimes', //指定元素
             type:'datetime',
-            format:'M月d日 H:00'
+            format:'yyyy-MM-dd H:00'
         });
     });
     $(function () {
@@ -174,6 +228,7 @@
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             parent.layer.close(index); //再执行关闭
         });
+
         //所有成员可见  参与者可见
         $(".click-see").click(function () {
             if ($(".all-can-see").is(":visible")) {
@@ -200,32 +255,57 @@
             $(".who-wrap").hide();
             $(".no-renling").show()
         });
+
         //点击添加人员 出现 弹框
         $(".add-work-people img").click(function () {
-            addpeople()
-        })
+            if(project == undefined){
+                layer.msg("必须选择一个项目!");
+                return false;
+            }
+            addPeople(project);
+        });
 
 
     });
-//添加人员 弹框
-    function addpeople() {
+    //添加人员 弹框
+    function addPeople(projectId) {
+        console.log("xxxxxxxxxx")
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
-                offset:[0,0],
                 area:['252px','360px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,
                 shade: [0.1, '#fff'],
                 anim: 1,  //动画 0-6
-                content: "tk-search-people.html"
+                content: "/schedule/searchPeople.html?projectId="+projectId
             });
         });
     }
 
+    function addMember(id,name,img){
+        var content = '';
+        if(id !== ''){
+            for(var i = 0;i < id.length;i++){
+                content += '<div  class="one-work-people" value = "' + id[i] + '">'+
+                    '<input type="hidden" value = "' + id[i] + '" name="memberId"/>'+
+                    '<img src="'+ img[i] +'">'+
+                    '<i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>'+
+                    '</div>';
+            }
+        }
+        $(".add-work-people").before(content);
+    }
+
+    /**
+     * 点击参与者右上角的 X 的时候 移除该参与者
+     */
+    $("html").on("click",".remove-work-people",function () {
+        $(this).parent().remove();
+    });
 
 
 </script>
