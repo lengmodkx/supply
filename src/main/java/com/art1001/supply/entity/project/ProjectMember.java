@@ -61,7 +61,7 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	/**
 	 * 是否是项目成员，0是，1是拥有者
 	 */
-	private int memberLable;
+	private int memberLabel;
 
 	private int lable;
 }

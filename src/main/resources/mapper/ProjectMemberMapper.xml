@@ -12,7 +12,7 @@
 		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="member_lable" property="memberLable" jdbcType="INTEGER" />
+		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
@@ -58,7 +58,7 @@
 				member_email,
 				create_time,
 				update_time,
-		        member_lable
+				member_label
 	</sql>
 
 	<sql id="whereStatement">
@@ -93,7 +93,7 @@
 		<if test="projectId != null and projectId != ''">
 			and project_id = #{projectId}
 		</if>
-		order by member_lable desc
+		order by member_label desc
 	</select>
 	
 	<select id="findProjectMemberById" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -106,11 +106,11 @@
 
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT p.id,p.project_id,p.member_id,p.member_lable, u.u_name as member_name,i.u_image as member_img FROM prm_project_member p
+		SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,i.u_image as member_img FROM prm_project_member p
 		LEFT JOIN tb_user u on p.member_id = u.u_id
 		LEFT JOIN tb_user_info i on u.u_id = i.u_id
 		where
-			project_id = #{projectId} order by p.member_lable desc
+			project_id = #{projectId} order by p.member_label desc
 	</select>
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
@@ -150,8 +150,8 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
-			<if test="memberLable != null ">
-			member_lable,
+			<if test="memberLabel != null ">
+				member_label,
 			</if>
 		</trim>
 
@@ -184,8 +184,8 @@
 			<if test="updateTime != null ">
 				#{updateTime},
 			</if>
-			<if test="memberLable != null ">
-				#{memberLable},
+			<if test="memberLabel != null ">
+				#{memberLabel},
 			</if>
 		</trim>
 
@@ -219,8 +219,8 @@
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
-			<if test="memberLable != null ">
-				member_lable = #{memberLable},
+			<if test="memberLabel != null ">
+				member_label = #{memberLabel},
 			</if>
 		</set>
 
