@@ -238,7 +238,7 @@ public class ProjectController extends BaseController {
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());
             projectMember.setCreateTime(System.currentTimeMillis());
             projectMember.setUpdateTime(System.currentTimeMillis());
-            projectMember.setMemberLable(1);
+            projectMember.setMemberLabel(1);
             projectMemberService.saveProjectMember(projectMember);
 
             //初始化项目文件夹
@@ -348,7 +348,7 @@ public class ProjectController extends BaseController {
             projectMember.setMemberImg(userEntity.getUserInfo().getImage());
             projectMember.setCreateTime(System.currentTimeMillis());
             projectMember.setUpdateTime(System.currentTimeMillis());
-            projectMember.setMemberLable(1);
+            projectMember.setMemberLabel(1);
             projectMemberService.saveProjectMember(projectMember);
             //初始化项目文件夹
             fileService.initProjectFolder(project);

@@ -124,7 +124,7 @@ public abstract class BaseController {
                     projectMember.setMemberImg(userEntity.getUserInfo().getImage());
                     projectMember.setCreateTime(System.currentTimeMillis());
                     projectMember.setUpdateTime(System.currentTimeMillis());
-                    projectMember.setMemberLable(0);
+                    projectMember.setMemberLabel(0);
                     projectMemberService.saveProjectMember(projectMember);
                 }
 
