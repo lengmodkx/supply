@@ -202,8 +202,8 @@ $('.one-level-nav>li').click(function(){
             var content = '';
             content += '<li class="group-name"><p>' + '个人项目' + '</p></li>';
             for(var i = 0;i < project.length;i++){
-                if(i == 0){
-                    content += '<li class="style-li p style-li selected" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
+                    if(i == 0){
+                        content += '<li class="style-li p style-li selected" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
                 } else{
                     content += '<li class="style-li p" data-id = "' + project[i].projectId + '"><span>' + project[i].projectName + '</span></li>';
                 }

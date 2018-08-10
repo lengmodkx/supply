@@ -395,7 +395,8 @@
 </body>
 <script th:src="@{/js/share.js}" src="../static/js/share.js"></script>
 <script th:inline="javascript">
-
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     // 建立连接对象（还未发起连接）
     var socket = new SockJS('/webSocketServer');
     // 获取 STOMP 子协议的客户端对象
@@ -522,7 +523,7 @@
         }
         var noclass;
         if ($(".share-list").hasClass("selected")){
-            return false
+            // return false
         } else {
             noclass=true;
         }

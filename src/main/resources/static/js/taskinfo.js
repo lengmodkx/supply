@@ -707,7 +707,7 @@ $('.people-ok').click(function () {
 
         var log = $('#log').html();
         log += '<li class="combox clearfix">';
-        if(taskLogVO.fileIds===null||taskLogVO.fileIds===''){
+        if(taskLogVO.fileIds == undefined || taskLogVO.fileIds === null||taskLogVO.fileIds===''){
             log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
         }else{
             log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span><span class="hide-box download">下载附件</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p ><ul class="up-file-ul clearfix">';
