@@ -102,7 +102,9 @@ public class ShareController extends BaseController {
         if(!StringUtils.isEmpty(shareId)){
             model.addAttribute("shareId",shareId);
         }
-        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        String userId = ShiroAuthenticationManager.getUserId();
+        UserEntity userEntity = userService.findById(userId);
+        model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         return "share";
     }

@@ -77,8 +77,9 @@ public class ScheduleController extends BaseController {
 
     @RequestMapping("/schedule.html")
     public String schedule(@RequestParam String projectId, Model model){
-
-        model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        String userId = ShiroAuthenticationManager.getUserId();
+        UserEntity userEntity = userService.findById(userId);
+        model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,projectId));
         return "scheduling";

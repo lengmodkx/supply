@@ -101,6 +101,8 @@ public class FileController extends BaseController {
      */
     @GetMapping("/list.html")
     public String list(File file, Model model) {
+        String userId = ShiroAuthenticationManager.getUserId();
+        UserEntity userEntity = userService.findById(userId);
         // 项目id
         String projectId = file.getProjectId();
         // 上级id
@@ -156,7 +158,8 @@ public class FileController extends BaseController {
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
-        model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
+
+        model.addAttribute("user",userEntity);
         return "file";
     }
 

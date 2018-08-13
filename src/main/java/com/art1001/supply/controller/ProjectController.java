@@ -28,6 +28,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.template.TemplateDataService;
 import com.art1001.supply.service.user.UserNewsService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
@@ -84,14 +85,18 @@ public class ProjectController extends BaseController {
     @Resource
     private TemplateDataService templateDataService;
 
-
     @Resource
     private SimpMessagingTemplate messagingTemplate;
+
+    @Resource
+    private UserService userService;
+
     @RequestMapping("/project.html")
     public String home(Model model, HttpServletResponse response){
 
         try {
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            String userId = ShiroAuthenticationManager.getUserId();
+            UserEntity userEntity = userService.findById(userId);
             //我创建的任务
             List<Project> projects = projectService.findProjectByMemberId(userEntity.getId());
             model.addAttribute("projects",projects);
