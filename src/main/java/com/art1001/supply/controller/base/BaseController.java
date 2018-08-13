@@ -81,14 +81,23 @@ public abstract class BaseController {
      */
     @PostMapping("/searchMember")
     @ResponseBody
-    public JSONObject searchMember(@RequestParam String keyword){
+    public JSONObject searchMember(@RequestParam String keyword,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         String userId = ShiroAuthenticationManager.getUserId();
         try{
-            List<UserEntity> userEntity = userService.findByKey(keyword);
-            userEntity = userEntity.stream().filter(userEntity1 -> !userEntity1.getId().equals(userId)).collect(Collectors.toList());
+            UserEntity userEntity = userService.findByKey(keyword);
+            //判断 查找到的用户在当前项目中是不是已经存在
+            if(userEntity != null){
+                jsonObject.put("result",1);
+                int result = projectMemberService.findMemberIsExist(projectId,userEntity.getId());
+                if(result > 0){
+                    jsonObject.put("exist",false);
+                } else{
+                    jsonObject.put("exist",true);
+                }
+            }
+            //userEntity = userEntity.stream().filter(userEntity1 -> !userEntity1.getId().equals(userId)).collect(Collectors.toList());
             jsonObject.put("data",userEntity);
-            jsonObject.put("result",1);
             jsonObject.put("msg","获取成功");
         }catch (Exception e){
             throw new AjaxException(e);

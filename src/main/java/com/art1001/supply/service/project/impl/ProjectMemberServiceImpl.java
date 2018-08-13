@@ -92,4 +92,14 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		return projectMemberMapper.findByProjectId(projectId);
 	}
 
+	/**
+	 * 查询成员是否存在于项目中
+	 * @param projectId 项目id
+	 * @param id 用户id
+	 * @return
+	 */
+	@Override
+	public int findMemberIsExist(String projectId, String id) {
+		return projectMemberMapper.findMemberIsExist(projectId,id);
+	}
 }

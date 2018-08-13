@@ -286,7 +286,7 @@
             <div class="a-line"></div>
             <div class="state">
                 <ul id = "log">
-                    <li class="combox" th:each="log:${logs}">
+                    <li class="combox clearfix" th:each="log:${logs}">
                         <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}" />
                         <span th:text="${log.content}">11</span>
                         <div class="in-what-time" th:text = "${#dates.format(log.createTime,'yyyy-MM-dd HH:mm')}">22</div>

@@ -261,7 +261,7 @@ function getLog(shareLog,shareId){
     var datemin=new Date().getMinutes();
     var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
 
-    var log = '<li class="combox">'+
+    var log = '<li class="combox clearfix">'+
         '<img src="' + IMAGE_SERVER+shareLog.userEntity.userInfo.image+ '" />'+
         '<span>'+ shareLog.content +'</span>'+
         '<div class="in-what-time"  >' + date + '</div>'+

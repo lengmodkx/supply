@@ -555,6 +555,7 @@
 			i.u_job,
 			i.u_default_img
 		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
-		where u.u_account_name like CONCAT('%',#{keyword},'%')
+		where u.u_account_name = #{keyword}
+				<!-- here u.u_account_name like CONCAT('%',#{keyword},'%')-->
 	</select>
 </mapper>

@@ -71,26 +71,31 @@ $(function () {
     $('.user_search').click(function (e) {
         $('.invitation').html('');
         var index = layer.load(1, {shade: [0.1,'#fff']});
-        $.post('/searchMember',{"keyword":$('.keyword').val()},function (data) {
+        $.post('/searchMember',{"keyword":$('.keyword').val(),"projectId":projectId},function (data) {
             parent.layer.close(index);
             if(data.result===1){
-                for(var i=0;i<data.data.length;i++){
-                    var user = data.data[i];
-                    var li = '<li>\n' +
-                        '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
-                        '            <span class="people-name">'+user.userName+'</span>\n' +
-                        '            <span class="people-state no-join" data="'+user.id+'">添加</span>\n' +
-                        '        </li>';
-                    $('.invitation').append(li);
-                }
+                var user = data.data;
+                var li = '<li>\n' +
+                    '            <img src="'+IMAGE_SERVER+user.userInfo.image+'" >\n' +
+                    '            <span class="people-name">'+user.userName+'</span>\n';
+                    if(data.exist){
+                        li +=  '            <span class="people-state no-join can-use-btn" data="'+user.id+'" >添加</span>\n';
+                    } else{
+                        li +=  '            <span class="people-state no-join" data="'+user.id+'" >添加</span>\n' ;
+                    }
+                    li += '        </li>';
             }else{
-
+                parent.layer.close(index);
+                var li = '<li>\n' +
+                    '            <span class="people-name">'+ '该成员的信息不存在' +'</span>\n'+
+                    '        </li>';
             }
+            $('.invitation').append(li);
         });
     });
 
 
-    $("html").on("click",".people-box .people-state",function () {
+    $("html").on("click",".people-box .can-use-btn",function () {
         var id = $(this).attr('data');
         $.post('/addProjectMember',{"projectId":projectId,"memberIds":id},function (data) {
             if(data.result===1){
@@ -109,6 +114,7 @@ $(function () {
                     }
 
                     $('.group-people').append(li);
+                    $('.people-box .people-state').removeClass('can-use-btn');
                 }
             }
             $(this).removeClass("no-join")

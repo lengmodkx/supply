@@ -349,7 +349,7 @@ function getLog(taskLogVO){
     var datemin=new Date().getMinutes();
     var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin
     var log = '';
-    log += '<li class="combox">'+
+    log += '<li class="combox clearfix">'+
         '<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" />'+
         '<span>'+ taskLogVO.content +'</span>'+
         '<div class="in-what-time"  >' + date + '</div>'+

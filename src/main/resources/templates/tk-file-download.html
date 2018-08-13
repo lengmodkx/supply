@@ -35,6 +35,15 @@
                 <iframe th:src="#{OFFICE}+${file.fileUrlTemp}" th:if="${file.catalog eq 0} and (${file.ext eq '.doc'} or ${file.ext eq '.docx'} or ${file.ext eq '.xls'}or ${file.ext eq '.xlsx'}or ${file.ext eq '.ppt'}or ${file.ext eq '.pptx'})"></iframe>
                 <iframe th:src="@{/file/viewer.html(fileId=${file.fileId})}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"></iframe>
                 <iframe th:src="#{IMAGE_SERVER}+${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"></iframe>
+                <div>
+                    <div th:text="${file.fileName}" class = "aaa" style="width: 200px;height: 200px;background-color: #999999" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}">
+                    </div>
+                    <div th:text="${file.ext}" class = "aaa" style="width: 200px;height: 50px;background-color: #AB47BC" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}"></div>
+                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}">
+                        <span th:onclick="'download(\''+${file.fileId}+'\')'">下载文件</span><span th:text="${file.size}"></span>
+                    </div>
+                </div>
+
             </div>
         <!--</div>-->
     </div>
@@ -287,7 +296,7 @@
            <div class="heng-line"></div>
             <div class="state">
                 <ul id = "log">
-                    <li class="combox" th:each="log:${logs}">
+                    <li class="combox clearfix" th:each="log:${logs}">
                         <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}" />
                         <span th:text="${log.content}"></span>
                         <div class="in-what-time" th:text = "${#dates.format(log.createTime,'yyyy-MM-dd HH:mm')}"></div>

@@ -1,5 +1,8 @@
 package com.art1001.supply;
 
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,6 +16,12 @@ import org.springframework.context.annotation.ComponentScan;
 public class SupplyApplication  extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
+        try {
+            Scheduler defaultScheduler = StdSchedulerFactory.getDefaultScheduler();
+            defaultScheduler.start();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
         SpringApplication.run(SupplyApplication.class, args);
     }
 

@@ -190,6 +190,7 @@ $(function () {
  * 点击 任务 分享 文件 日程 时候会加载项目信息
  */
 $('.one-level-nav>li').click(function(){
+    alert(1);
     var j=$(this).index();
     var item = $(this).children('span').html();
     var args= {"label":2};

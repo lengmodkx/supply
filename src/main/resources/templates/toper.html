@@ -66,7 +66,9 @@
             <input type="text" name="keyword"  placeholder="输入手机号/邮箱查找" autocomplete="off" class="layui-input keyword" style="float: left;width: 78%">
             <div class="layui-btn user_search" style="background-color: #017ECA;float: left">搜索</div>
             <div class="people-box" style="margin-top: 40px">
-                <ul class="invitation"></ul>
+                <ul class="invitation">
+
+                </ul>
             </div>
         </div>
 
@@ -143,4 +145,7 @@
             </div>
         </aside>
     </div>
+<script th:inline="javascript">
+    var projectId = [[${project.projectId}]];
+</script>
 </html>

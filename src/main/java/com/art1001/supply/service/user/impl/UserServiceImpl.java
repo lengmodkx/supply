@@ -271,7 +271,7 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     }
 
     @Override
-    public List<UserEntity> findByKey(String keyword) {
+    public UserEntity findByKey(String keyword) {
         return userMapper.findByKey(keyword);
     }
 

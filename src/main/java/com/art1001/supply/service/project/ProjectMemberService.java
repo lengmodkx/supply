@@ -63,4 +63,12 @@ public interface ProjectMemberService {
 	 * 根据项目id 和 用户id 查询
 	 */
 	List<ProjectMember> findByProjectId(String projectId);
+
+	/**
+	 * 查询成员是否存在于项目中
+	 * @param projectId 项目id
+	 * @param id 用户id
+	 * @return
+	 */
+    int findMemberIsExist(String projectId, String id);
 }

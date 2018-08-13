@@ -297,7 +297,7 @@
                     </div>
 
                 </div>
-                <div class="gray-box">
+                <div class="gray-box boxsizing">
                     <div class="boxsizing">
                         <p class="cyz">参与者</p>
                         <div class="work-people boxsizing clearfix">
@@ -318,7 +318,7 @@
                         <!--谁谁 干了 什么-->
                         <div class="state">
                             <ul class = "log" th:data-id = "${share.id}">
-                                <li class="combox"  th:each="log:${share.logs}">
+                                <li class="combox clearfix"  th:each="log:${share.logs}">
                                     <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}" />
                                     <span th:text="${log.content}"></span>
                                     <div class="in-what-time" th:text = "${#dates.format(log.createTime,'yyyy-MM-dd HH:mm')}"></div>
