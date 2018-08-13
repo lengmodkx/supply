@@ -91,22 +91,14 @@ function subscribe() {
             }
         }
 
-        if(taskLog.object.type === 12){
+
+        if(taskLog.type === '添加了标签'){
             var tag = taskLog.object.tag;
             var content = '<span class="tag" id="'+tag.tagId+'"  style="background-color:'+tag.bgColor+'">\n' +
                 '                    <b style="font-weight: 400">'+tag.tagName+'</b>\n' +
                 '                    <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
                 '                </span>';
             $(".has-tags").prepend(content);
-        }
-
-        //移除标签
-        if(taskLog.object.type === 13){
-            $('.has-tags span').each(function () {
-                if($(this).attr('id') === taskLog.object.tag){
-                    $(this).remove();
-                }
-            });
         }
 
 

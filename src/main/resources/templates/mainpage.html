@@ -45,7 +45,7 @@
                                       <div class="task-priority bg-priority-1" th:if="${task.priority=='紧急'}" th:classappend="priority+${task.taskId}"></div>
                                       <div class="task-priority bg-priority-2" th:if="${task.priority=='非常紧急'}" th:classappend="priority+${task.taskId}"></div>
                                       <div class="task-check-box">
-                                          <input type="checkbox" name="" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
+                                          <input type="checkbox" th:checked="${task.taskStatus == '完成'}" title="" th:value="${task.taskId}" lay-skin="primary" class="is-sure" lay-filter="finish_task"/>
                                       </div>
                                       <div class="task-content-set" th:data="${task.taskId}" th:data-value="${task.projectId}" >
                                           <header class="assignment-top-box boxsizing clearfix">
@@ -53,20 +53,19 @@
                                               <img class="assignment-tx" th:classappend="tx+${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
                                           </header>
                                           <section class="assignment-bottom-box clearfix" th:classappend="box+${task.taskId}">
-                                                  <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
+                                              <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
                                               <!-- 标签的点点 -->
                                               <span class="circle-tag" th:each="tag:${task.tagList}" th:data-id = "${tag.tagId}">
                                                   <span class="dian" th:style="'background-color:'+${tag.bgColor}+''"></span>
                                                   <span class="tag-font" th:text="${tag.tagName}"></span>
                                               </span>
-                                              <!--<span class="dot"  th:data-id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''" th:text="${tag.tagName}"></span>-->
-                                                  <img  class="remind" th:src="@{/image/zhong.png}" th:style="'opacity:' + @{(${task.remind=='不提醒'} ? '0':'1')}"/>
-                                                  <img  th:style="'opacity:' + @{(${task.remarks!=null and task.remarks!=''} ? '1':'0')}" th:src="@{/image/file.png}"/>
-                                                  <!--<span class="span-img">-->
-                                                    <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
-                                                      <!--<span class="over-hidden">0/2</span>-->
-                                                  <!--</span>-->
-                                                  <!--<img  src="../static/image/fujian.png" th:src="@{/image/fujian.png}">-->
+                                              <img  class="remind" th:src="@{/image/zhong.png}" th:style="'opacity:' + @{(${task.remind=='不提醒'} ? '0':'1')}"/>
+                                              <img  th:style="'opacity:' + @{(${task.remarks!=null and task.remarks!=''} ? '1':'0')}" th:src="@{/image/file.png}"/>
+                                              <!--<span class="span-img">-->
+                                                <!--<img src="../static/image/hpl.png" th:src="@{/image/hpl.png}">-->
+                                                  <!--<span class="over-hidden">0/2</span>-->
+                                              <!--</span>-->
+                                              <!--<img  src="../static/image/fujian.png" th:src="@{/image/fujian.png}">-->
                                           </section>
                                       </div>
                                   </div>

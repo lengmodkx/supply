@@ -20,33 +20,33 @@
                 <i class="layui-icon layui-icon-edit " style="font-size: 16px; color: gray;"></i>
                 编辑列表
             </div>
-            <div class="lbmenu-add-content">
-                <i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>
-                在此处添加新列表
-            </div>
+            <!--<div class="lbmenu-add-content">-->
+                <!--<i class="layui-icon layui-icon-add-1 " style="font-size: 16px; color: gray;"></i>-->
+                <!--在此处添加新列表-->
+            <!--</div>-->
         </div>
-        <div class="lbmenu-add">
-            <div class="lbmenu-add-content">
-                <i class="layui-icon layui-icon-username " style="font-size: 16px; color: gray;"></i>
-                设置本列表所有任务执行者
-            </div>
-            <div class="lbmenu-add-content">
-                <i class="layui-icon layui-icon-log " style="font-size: 16px; color: gray;"></i>
-                设置本列表所有任务截止时间
-            </div>
-            <div class="lbmenu-add-content">
-                <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: gray;"></i>
-                移动本列表所有任务
-            </div>
-            <div class="lbmenu-add-content">
-                <i class="layui-icon layui-icon-template " style="font-size: 16px; color: gray;"></i>
-                复制本列表所有任务
-            </div>
-            <div class="lbmenu-add-content remove-all-task">
-                <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
-                本列表所有任务移到回收站
-            </div>
-        </div>
+        <!--<div class="lbmenu-add">-->
+            <!--<div class="lbmenu-add-content">-->
+                <!--<i class="layui-icon layui-icon-username " style="font-size: 16px; color: gray;"></i>-->
+                <!--设置本列表所有任务执行者-->
+            <!--</div>-->
+            <!--<div class="lbmenu-add-content">-->
+                <!--<i class="layui-icon layui-icon-log " style="font-size: 16px; color: gray;"></i>-->
+                <!--设置本列表所有任务截止时间-->
+            <!--</div>-->
+            <!--<div class="lbmenu-add-content">-->
+                <!--<i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: gray;"></i>-->
+                <!--移动本列表所有任务-->
+            <!--</div>-->
+            <!--<div class="lbmenu-add-content">-->
+                <!--<i class="layui-icon layui-icon-template " style="font-size: 16px; color: gray;"></i>-->
+                <!--复制本列表所有任务-->
+            <!--</div>-->
+            <!--<div class="lbmenu-add-content remove-all-task">-->
+                <!--<i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>-->
+                <!--本列表所有任务移到回收站-->
+            <!--</div>-->
+        <!--</div>-->
         <div class="lbmenu-add-content remove-this-list" style="margin-top: 5px">
             <i class="layui-icon layui-icon-delete " style="font-size: 16px; color: gray;"></i>
             删除本列表
@@ -59,7 +59,7 @@
             <p>编辑列表</p>
             <i class="layui-icon layui-icon-close lbmenu-close" style="font-size: 16px; color: #A6A6A6;"></i>
         </div>
-        <input class="boxsizing white-input" type="text"/>
+        <input class="boxsizing white-input menu-name" type="text" th:value="${menuName}"/>
         <div class="save-btn">保存</div>
     </div>
     <!--删除列表-->
@@ -89,7 +89,7 @@
 <script th:inline="javascript">
     var taskList = [[${taskList}]];
     var menuId = [[${menuId}]];
-    var menuName = [[${menuName}]];
+    var projectId = [[${projectId}]];
     layui.use('form', function(){
         var form = layui.form;
 
@@ -123,6 +123,11 @@
         $(".lbmenu-nav").hide();
         $(".lbmenu-con-edit").show();
         $(".lbmenu-con-edit").siblings().hide();
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.style(index, {
+            height: '166px'
+        });
+
     });
     // 点击 所有 任务 移到回收站
     $(".remove-all-task").click(function () {
@@ -134,10 +139,14 @@
     //点击 返回
     $(".return").click(function () {
         $(".lbmenu-nav").show().siblings().hide()
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.style(index, {
+            height: '152px'
+        });
     });
     
     $(".save-btn").click(function (e) {
-        $.post("/project/updateMenuName",{"menuId":menuId,"menuName":menuName},function (data) {
+        $.post("/project/updateMenuName",{"menuId":menuId,"menuName":$('.menu-name').val(),"projectId":projectId},function (data) {
             console.log(data);
             parent.layer.closeAll();
         });
@@ -145,7 +154,6 @@
     
 
     $('.remove-this-list').click(function () {
-        console.log("xxxxxx");
         if(taskList.length===0){
             $.post('/relation/delRelation',{"relationId":menuId,"parentId":"0"},function (data) {
                 if(data.result===1){
@@ -157,6 +165,10 @@
             $(".lbmenu-nav").hide();
             $(".lbmenu-con-remove").show();
             $(".lbmenu-con-remove").siblings().hide();
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.style(index, {
+                height: '124px'
+            });
         }
     });
 

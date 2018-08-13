@@ -30,6 +30,7 @@ stompClient.connect({},
     stompClient.subscribe('/topic/'+projectId, function (response) {
         var returnData = JSON.parse(response.body);
         var task = JSON.parse(returnData.responseMessage);
+
         if(task.type === '创建了任务'){
             taskShow(task.task);
         }
@@ -58,22 +59,20 @@ stompClient.connect({},
         }
 
         //移除标签的点点
-        if(task.object.type === 13){
-            $('#'+task.object.publicId + ' .circle-tag').each(function () {
+        if(task.type === '移除标签'){
+            $('.box'+task.object.publicId + ' .circle-tag').each(function () {
                 if($(this).attr('data-id') === task.object.tag){
                     $(this).remove();
                 }
             });
-            return false;
         }
         //添加一个标签点
-        if(task.object.type === 12){
+        if(task.type === '添加了标签'){
             var content = '<span class="circle-tag" data-id="' + task.object.tag.tagId + '">'+
                 '<span class="dian" style="background-color:' + task.object.tag.bgColor + '"></span>'+
                 '<span class="tag-font">' + task.object.tag.tagName + '</span>'+
             '</span>';
-            $('#'+task.object.publicId + ' .assignment-bottom-box').prepend(content);
-            return false;
+            $('.box'+task.object.taskId + ' .assignment-bottom-box').prepend(content);
         }
 
 

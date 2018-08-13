@@ -205,13 +205,13 @@ function lbmenu(top,left,menuId,menuName) {
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: [top,left],
-            area:['250px','400px'],
+            area:['250px','152px'],
             fixed: true,
             shadeClose: true,
             closeBtn: 0,
             shade: ['0.1','#fff'],
             anim: 1,  //动画 0-6
-            content: ['menuList.html?menuId='+menuId+"&menuName="+menuName,'no']
+            content: ['menuList.html?menuId='+menuId+"&menuName="+menuName+"&projectId="+projectId,'no']
         });
     });
 };

@@ -13,6 +13,7 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -263,7 +264,7 @@ public class TagController extends BaseController {
         try {
             tagService.removeTag(publicId,publicType,tagId);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A24.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",tagId);
             map.put("type",ScheduleLogFunction.M.getId());

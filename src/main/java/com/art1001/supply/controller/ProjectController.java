@@ -217,7 +217,7 @@ public class ProjectController extends BaseController {
             projectService.saveProject(project);
 
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
+            String[] funcs = new String[]{"任务","分享","文件","日程"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
@@ -289,7 +289,7 @@ public class ProjectController extends BaseController {
             project.setProjectStatus(0);
             projectService.saveProject(project);
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","统计","群聊"};
+            String[] funcs = new String[]{"任务","分享","文件","日程"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
@@ -584,17 +584,18 @@ public class ProjectController extends BaseController {
 
 
     @GetMapping("/menuList.html")
-    public String menuList(@RequestParam String menuId,@RequestParam String menuName,Model model){
+    public String menuList(@RequestParam String menuId,@RequestParam String menuName,@RequestParam String projectId,Model model){
         model.addAttribute("menuId",menuId);
         model.addAttribute("menuName",menuName);
+        model.addAttribute("projectId",projectId);
         List<Task> taskList = taskService.taskMenu(menuId);
         model.addAttribute("taskList",taskList);
-        return "tk-caidanliebiao";
+        return "tk-menu-list";
     }
 
     @PostMapping("/updateMenuName")
     @ResponseBody
-    public JSONObject updateMenuName(@RequestParam String menuId,@RequestParam String menuName){
+    public JSONObject updateMenuName(@RequestParam String menuId,@RequestParam String menuName,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try{
             Relation relation = new Relation();
@@ -606,7 +607,7 @@ public class ProjectController extends BaseController {
             jsonObject.put("menuId",menuId);
             jsonObject.put("menuName",menuName);
             jsonObject.put("type","更新菜单名称");
-            messagingTemplate.convertAndSend("/topic/subscribe",new ServerMessage(jsonObject.toString()));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(jsonObject.toString()));
         }catch (Exception e){
             throw new AjaxException(e);
         }

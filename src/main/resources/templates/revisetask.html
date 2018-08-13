@@ -462,9 +462,7 @@
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     var curFiles = [];
     $('.files').on('change',function (e) {
-        console.log(e.currentTarget.files);
         Array.prototype.push.apply(curFiles, e.currentTarget.files);
-        console.log(curFiles);
         $('.fileList').html("");
         for(var i=0;i<curFiles.length;i++){
             var file = curFiles[i];
@@ -518,6 +516,7 @@
                 processData:false,
                 success:function(returndata){
                     $('.fileList').html('');
+                    curFiles=[];
                 },
                 error:function(returndata){
                     alert("error:"+returndata);

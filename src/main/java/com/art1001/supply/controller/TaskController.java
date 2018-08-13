@@ -604,10 +604,12 @@ public class TaskController {
             Log taskLogVO = taskService.addTaskTags(tag, taskId,countByTagName);
             jsonObject.put("result",taskLogVO.getResult());
             jsonObject.put("msg","标签添加成功!");
+            jsonObject.put("taskId",taskId);
             jsonObject.put("tag",tagService.findById(tag.getTagId().intValue()));
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A20.getName());
             taskPushType.setObject(jsonObject);
             messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("保存失败,标签名称为:,{},{}",tag.getTagName(),e);
             throw new AjaxException(e);
@@ -636,6 +638,7 @@ public class TaskController {
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A20.getName());
             taskPushType.setObject(jsonObject);
             messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("保存失败,标签名称为:,{},{}",tag.getTagName(),e);
             throw new AjaxException(e);
