@@ -186,15 +186,5 @@
         "taskName": "收尾工程",
         "remarks": ""
       }]
-  },
-  {
-    "menuName": "业主",
-    "taskList": [{
-    }]
-  },
-  {
-    "menuName": "监理方",
-    "taskList": [{
-    }]
   }
 ]
