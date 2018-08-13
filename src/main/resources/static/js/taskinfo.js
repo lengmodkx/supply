@@ -710,10 +710,12 @@ $('.people-ok').click(function () {
         if(taskLogVO.fileIds == undefined || taskLogVO.fileIds === null||taskLogVO.fileIds===''){
             log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
         }else{
-            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span><span class="hide-box download">下载附件</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p ><ul class="up-file-ul clearfix">';
+            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span><span class="hide-box download">下载附件</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p><ul class="up-file-ul clearfix">';
             for(var i=0;i<taskLogVO.fileList.length;i++){
                 var file = taskLogVO.fileList[i];
-                log+='<li class="boxsizing"><img src="/image/defaultFile.png"/><p class=" up-file-ul-name">'+file.fileName.length>10?file.fileName.substring(0,10)+file.ext:file.fileName+'</p><p class="up-file-ul-size">'+file.size+'</p></li>';
+                log+='<li class="boxsizing">';
+                log+='<a target="_blank" href="/file/fileDetail.html?fileId"+file.fileId><img src="/image/defaultFile.png"/><p class="up-file-ul-name">'+file.fileName.length>11?file.fileName.substring(1,10)+file.ext:file.fileName+'</p><p class="up-file-ul-size">'+file.size+'</p></a>';
+                log+='</li>';
             }
 
             log+='</ul></div></div></li>';
@@ -721,6 +723,7 @@ $('.people-ok').click(function () {
 
         $('#log').html(log);
     }
+
 
     /**
      * 点击x 时关闭任务详情窗口

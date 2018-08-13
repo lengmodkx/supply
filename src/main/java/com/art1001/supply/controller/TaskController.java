@@ -906,7 +906,7 @@ public class TaskController {
      * @return
      */
     @GetMapping("initTask.html")
-    public String initTask(Task task,String projectId,Model model){
+    public String initTask(Task task,Model model){
         try {
             //获取当前用户信息
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();

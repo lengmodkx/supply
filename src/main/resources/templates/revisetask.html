@@ -332,9 +332,10 @@
                             <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p >
                             <ul class="up-file-ul clearfix">
                                 <li class="boxsizing" th:each="file:${tasklog.fileList}">
+                                    <a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}">
                                     <img th:src="@{/image/defaultFile.png}" >
                                     <p class=" up-file-ul-name" th:text="${#strings.length(file.fileName) gt 11 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}">啥啥啥文件</p >
-                                    <p class="up-file-ul-size" th:text="${file.size}">13.2kb</p >
+                                    <p class="up-file-ul-size" th:text="${file.size}">13.2kb</p></a>
                                 </li>
                             </ul>
                         </div>

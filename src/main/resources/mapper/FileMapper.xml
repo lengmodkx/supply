@@ -87,8 +87,8 @@
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
-		from prm_file where file_label=0
-		and file_id = #{fileId}
+		from prm_file where
+		file_id = #{fileId}
 	</select>
 
 	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
