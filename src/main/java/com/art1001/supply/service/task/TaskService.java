@@ -5,13 +5,13 @@ import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.statistics.StaticticsVO;
+import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfoEntity;
 
 
 /**
@@ -468,4 +468,11 @@ public interface TaskService {
 	 * @param taskId 任务id
 	 */
 	void cancleCollectTask(String taskId);
+
+	/**
+	 * 查询出该项目下的所有任务 状态数量概览
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Statistics> findTaskCountOverView(String projectId);
 }

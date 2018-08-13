@@ -7,6 +7,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.*;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.stereotype.Service;
 
 /**
@@ -420,4 +421,72 @@ public interface TaskMapper {
 	 */
 	@Delete("delete from prm_public_collect where public_id = #{taskId} and member_id = #{uId}")
     void cancleCollectTask(@Param("taskId") String taskId, @Param("uId") String uId);
+
+	/**
+	 * 查询出该项目下的任务总数
+	 * @param projectId 项目的id
+	 * @return 任务数量
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId}")
+    int findTaskTotalByProjectId(String projectId);
+
+	/**
+	 * 查询某个项目下未完成的任务数量
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and task_status = '未完成'")
+	int findHangInTheAirTaskCount(String projectId);
+
+	/**
+	 * 查询某个项目下完成的任务数量
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and task_status = '完成'")
+	int findCompletedTaskCount(String projectId);
+
+	/**
+	 * 查询某个项目下 今日到期的任务
+	 * @param projectId 项目id
+	 * @param currDate 当前日期 格式为 yyyy-MM-dd
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) = (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d'))")
+	int currDayTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+
+	/**
+	 * 查询某个项目下 已逾期的任务
+	 * @param projectId 项目id
+	 * @param currDate 当前日期 格式为 yyyy-MM-dd
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '未完成'")
+	int findBeoberdueTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+
+	/**
+	 * 查询出该项目下 的所有待认领的任务
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and (executor = '' or executor is null)")
+	int findTobeclaimedTaskCount(String projectId);
+
+	/**
+	 * 查询出该项目下 按时完成的所有任务
+	 * @param projectId 项目id
+	 * @param currDate 当前日期 格式为 yyyy-MM-dd
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) >= (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
+	int findFinishontTimeTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+
+	/**
+	 * 查询出该项目下 按时完成的所有任务
+	 * @param projectId 项目id
+	 * @param currDate 当前日期 格式为 yyyy-MM-dd
+	 * @return
+	 */
+	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
+	int findOverdueCompletion(@Param("projectId")String projectId, @Param("currDate") Long currDate);
 }

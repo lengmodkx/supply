@@ -1,7 +1,9 @@
 package com.art1001.supply.controller;
 
 import com.art1001.supply.controller.base.BaseController;
+import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -18,11 +21,20 @@ public class StatisticsController extends BaseController {
     @Resource
     private ProjectService projectService;
 
-    @RequestMapping("/statistics.html")
-    public String statistics(@RequestParam String projectId, Model model){
+    @Resource
+    private TaskService taskService;
 
+    /**
+     * 加载任务统计页面的信息
+     * @param projectId 项目id
+     * @return
+     */
+    @RequestMapping("statistics.html")
+    public String statistics(@RequestParam String projectId, Model model){
+        List<Statistics> overViewList = taskService.findTaskCountOverView(projectId);
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+        model.addAttribute("overViewList",overViewList);
         return "statistics";
     }
 

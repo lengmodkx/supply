@@ -18,52 +18,10 @@
         <span>今天10：00更新</span>
     </div>
     <ul class="style-ul">
-        <li>
-            <div class="li-header">未完成</div>
+        <li th:each="overView:${overViewList}">
+            <div class="li-header" th:text="${overView.name}"></div>
             <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">已完成</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">任务总量</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">今日到期</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">已逾期</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">待认领</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">按时完成</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
-        </li>
-        <li>
-            <div class="li-header">逾期完成</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
+                <div class="circle" data-dimension="120" th:data-text="${overView.count}" data-width="6" data-fontsize="20" th:data-percent="${overView.percentage}" data-bgcolor="#F3F9FF" data-fgcolor="#77C2F8"></div>
             </div>
         </li>
     </ul>

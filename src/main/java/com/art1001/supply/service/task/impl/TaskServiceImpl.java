@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +12,8 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.statistics.StaticticsVO;
+import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.template.TemplateData;
@@ -30,6 +33,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
@@ -1221,5 +1225,68 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void cancleCollectTask(String taskId) {
         taskMapper.cancleCollectTask(taskId,ShiroAuthenticationManager.getUserId());
+    }
+
+    /**
+     * 查询出该项目下的所有任务 状态数量概览
+     * (多次连库查询比筛选集合效率略高 所以 使用多次按照关键字查库的方式 取出数据)
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Statistics> findTaskCountOverView(String projectId) {
+        int total = taskMapper.findTaskTotalByProjectId(projectId);
+        int taskCount = 0;
+        String[] overViewName = {"未完成","已完成","任务总量","今日到期","已逾期","待认领","按时完成","逾期完成"};
+        List<Statistics> list = new ArrayList<Statistics>();
+        for (String names : overViewName) {
+
+            Statistics statictics = new Statistics();
+            statictics.setName(names);
+
+            //查询出未完成的任务数量
+            if(StaticticsVO.HANGINTHEAIR.equals(names)){
+                taskCount = taskMapper.findHangInTheAirTaskCount(projectId);
+            }
+
+            //查询出已完成的任务
+            if(StaticticsVO.COMPLETED.equals(names)){
+                taskCount = taskMapper.findCompletedTaskCount(projectId);
+            }
+
+            //查询出今日到期的任务
+            if(StaticticsVO.MATURINGTODAY.equals(names)){
+                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis());
+            }
+
+            //查询出已逾期的任务
+            if(StaticticsVO.BEOVERDUE.equals(names)){
+                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis());
+            }
+
+            //查询出待认领的任务
+            if(StaticticsVO.TOBECLAIMED.equals(names)){
+                taskCount = taskMapper.findTobeclaimedTaskCount(projectId);
+            }
+
+            //查询出按时完成的任务
+            if(StaticticsVO.FINISHONTIME.equals(names)){
+                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis());
+            }
+
+            //查询出逾期完成任务
+            if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
+                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis());
+            }
+
+            //设置该组的达标数量
+            statictics.setCount(taskCount);
+            NumberFormat numberFormat = NumberFormat.getInstance();
+            numberFormat.setMaximumFractionDigits(2);
+            //设置百分比
+            statictics.setPercentage(Double.valueOf(numberFormat.format((float)taskCount / (float)total * 100)));
+            list.add(statictics);
+        }
+        return list;
     }
 }
