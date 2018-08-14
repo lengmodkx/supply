@@ -383,43 +383,153 @@
     </div>
     <!--任务菜单 框-->
     <div class="renwu-menu boxsizing layui-form" style="display: none">
-        <div class="scheduling-menu-title">任务菜单
-            <img src="../static/image/close.png" th:src="@{/image/close.png}" />
-        </div>
-        <div class="menu-box edit-rc">
-            <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
-            <span>复制任务</span>
-        </div>
-        <div class="menu-box edit-rc">
-            <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
-            <span>复制任务链接</span>
-        </div>
-        <div class="menu-box edit-rc">
-            <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
-            <span>移动任务</span>
-        </div>
-        <div class="menu-box edit-rc sc">
-            <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
-            <span th:if="${isCollect}">收藏任务</span>
-            <span th:if="${!isCollect}">取消收藏</span>
-        </div>
-        <div class="menu-box edit-rc">
-            <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
-            <span>共享任务</span>
-        </div>
-        <div class="menu-box edit-rc">
-            <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
-            <span>移到回收站</span>
-        </div>
-        <div class="heng-line"></div>
-        <div class="secret menu-box layui-form">
-            <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
-            <span>隐私模式</span>
-            <div class="switch">
-                <input type="checkbox" name="" th:checked="${task.privacyPattern == '0'}" lay-skin="switch" lay-filter="switch-filter" />
+        <div class="task-menu-box" >
+            <div class="scheduling-menu-title">任务菜单
+                <img src="../static/image/close.png" th:src="@{/image/close.png}" />
             </div>
-            <div class="who-can-see">所有成员可见</div>
+            <div class="menu-box edit-rc fz-rw">
+                <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
+                <span>复制任务</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/fzrclj.png" th:src="@{/image/fzrclj.png}" />
+                <span>复制任务链接</span>
+            </div>
+            <div class="menu-box edit-rc yd-rw">
+                <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
+                <span>移动任务</span>
+            </div>
+            <div class="menu-box edit-rc ">
+                <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
+                <span th:if="${isCollect}">收藏任务</span>
+                <span th:if="${!isCollect}">取消收藏</span>
+            </div>
+            <div class="menu-box edit-rc gx-rw">
+                <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
+                <span>共享任务</span>
+            </div>
+            <div class="menu-box edit-rc">
+                <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
+                <span>移到回收站</span>
+            </div>
+            <div class="heng-line"></div>
+            <div class="secret menu-box layui-form">
+                <img src="../static/image/suo.png" th:src="@{/image/suo.png}" />
+                <span>隐私模式</span>
+                <div class="switch">
+                    <input type="checkbox" name="" th:checked="${task.privacyPattern == '0'}" lay-skin="switch" lay-filter="switch-filter" />
+                </div>
+                <div class="who-can-see">所有成员可见</div>
+            </div>
         </div>
+        <div style="display: none" class="clone-task-box">
+            <header class="style-header">
+                <i class="layui-icon layui-icon-left go-return" style="font-size: 18px; color: #a6a6a6;"></i>
+                复制到
+                <i class="layui-icon layui-icon-close close-menu" style="font-size: 18px; color: #a6a6a6;"></i>
+            </header>
+            <p class="gray-font"> 复制到</p>
+            <div class="boxsizing select-wrap-box">
+                <span>项目</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <div class="boxsizing select-wrap-box">
+                <span>分组</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <div class="boxsizing select-wrap-box">
+                <span>列表</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <div class="update-alert-box">
+                <div class="checkbox-wrap">
+                    <input type="checkbox" name=""  lay-skin="primary">
+                </div>
+                <p>原任务接受新任务的更新提醒</p>
+            </div>
+            <div class="update-alert-box">
+                <div class="checkbox-wrap">
+                    <input type="checkbox" name=""  lay-skin="primary">
+                </div>
+                <p>新任务接收原任务的更新提醒</p>
+            </div>
+            <p class="tips-p">标题、子任务、备注将被复制</p>
+            <div class="style-btn">确定</div>
+        </div>
+        <div style="display: none" class="remove-task-box">
+            <header class="style-header">
+                <i class="layui-icon layui-icon-left go-return" style="font-size: 18px; color: #a6a6a6;"></i>
+                移动到
+                <i class="layui-icon layui-icon-close close-menu" style="font-size: 18px; color: #a6a6a6;"></i>
+            </header>
+            <p class="gray-font"> 移动到</p>
+            <div class="boxsizing select-wrap-box">
+                <span>项目</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <div class="boxsizing select-wrap-box">
+                <span>分组</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <div class="boxsizing select-wrap-box">
+                <span>列表</span>
+                <div class="select-boxs">
+                    <select name="city" lay-verify="">
+                        <option value="010">北京</option>
+                        <option value="021">上海</option>
+                        <option value="0571">杭州</option>
+                    </select>
+                </div>
+            </div>
+            <p class="tips-p">跨项目移动时，部分参与者信息不会保留</p>
+            <div class="style-btn ">确定</div>
+        </div>
+        <div style="display: none" class="share-task-box">
+            <header class="style-header">
+                <i class="layui-icon layui-icon-left go-return" style="font-size: 18px; color: #a6a6a6;"></i>
+                共享任务
+                <i class="layui-icon layui-icon-close close-menu" style="font-size: 18px; color: #a6a6a6;"></i>
+            </header>
+            <div class="menu-box edit-rc">
+                <i class="layui-icon layui-icon-share" style="font-size: 18px; color: #a6a6a6;"></i>
+                <span>只读任务</span>
+            </div>
+            <div class="menu-box edit-rc ">
+                <i class="layui-icon layui-icon-group" style="font-size: 18px; color: #a6a6a6;"></i>
+                <span>邀请加入项目</span>
+            </div>
+        </div>
+
     </div>
     <!--人员 参与者 弹框-->
     <div class="people boxsizing" style="display: none;top: 20px;left: 10px">
@@ -444,6 +554,24 @@
     </div>
 </div>
 </body>
+<script>
+    $(".go-return").click(function () {
+        $(".renwu-menu>div").hide();
+        $(".task-menu-box").show()
+    });
+    $(".close-menu").click(function () {
+        $(".renwu-menu").hide()
+    });
+    $(".fz-rw").click(function () {
+        $(".clone-task-box").show().siblings().hide()
+    });
+    $(".yd-rw").click(function () {
+        $(".remove-task-box").show().siblings().hide()
+    });
+    $(".gx-rw").click(function () {
+        $(".share-task-box").show().siblings().hide()
+    })
+</script>
 <script th:inline="javascript">
     //当前项目id
     var projectId = [[${projectId}]];
