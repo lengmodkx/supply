@@ -33,6 +33,7 @@ stompClient.connect({},
 
         if(task.type === '创建了任务'){
             taskShow(task.task);
+            return false;
         }
 
         if(task.type === '把任务执行者指派给了'){
@@ -114,9 +115,13 @@ stompClient.connect({},
             '                                          <header class="assignment-top-box boxsizing clearfix">\n' +
             '                                              <span class="assignment-title">'+task.taskName+'</span>';
         if(task.executorInfo != null) {
-                a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" /></header><section class="assignment-bottom-box clearfix">';
+                a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" />';
         }
-
+        a += "</header>";
+        a += '<section class="assignment-bottom-box clearfix box' + task.taskId + '">'+
+            '<img class="remind" src="/image/zhong.png" style="opacity:0">'+
+            '<img style="opacity:0" src="/image/file.png">'+
+            '</section>';
         if(task.repeat!=='不重复'){
             a+='<span class="how-repeat">'+task.repeat+'</span>';
         }
@@ -125,7 +130,19 @@ stompClient.connect({},
             a+=' <img src="/image/zhong.png"/>';
         }
 
+
         $('.taskList'+task.taskMenuId).append(a);
+        if(task.tagList != null){
+            var tag = task.tagList;
+            var tags = '';
+            for(var i = 0;i < tag.length;i++){
+                 tags += '<span class="circle-tag" data-id="' + tag[i].tagId + '">'+
+                    '<span class="dian" style="background-color:' + tag[i].bgColor + '"></span>'+
+                    '<span class="tag-font">' + tag[i].tagName + '</span>'+
+                    '</span>';
+            }
+            $('.box'+task.taskId).prepend(tags);
+        }
         layui.form.render();
     }
 

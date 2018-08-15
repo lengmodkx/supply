@@ -15,6 +15,7 @@ import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
@@ -256,24 +257,20 @@ public class ScheduleController extends BaseController {
      * @param projectId 项目id
      * @return
      */
-    @PostMapping("findScheduleMemberInfo")
-    @ResponseBody
-    public JSONObject findScheduleMemberInfo(String scheduleId,String projectId){
-        JSONObject jsonObject = new JSONObject();
+    @RequestMapping("findScheduleMemberInfo")
+    public String findScheduleMemberInfo(String scheduleId,String projectId,Model model){
         try {
             Schedule scheduleById = scheduleService.findScheduleById(scheduleId);
             List<UserEntity> joinInfo = userService.findManyUserById(scheduleById.getMemberIds());
             List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
             projectMembers = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());
-            jsonObject.put("joinInfo",joinInfo);
-            jsonObject.put("projectMembers",projectMembers);
-            jsonObject.put("result",1);
+            model.addAttribute("scheduleId",scheduleId);
+            model.addAttribute("joinInfo",joinInfo);
+            model.addAttribute("projectMembers",projectMembers);
         } catch (Exception e){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,数据拉取失败!");
-            log.error("系统异常,数据拉取失败!");
+            throw new SystemException(e);
         }
-        return jsonObject;
+        return "tk-schedule-people";
     }
 
     /**

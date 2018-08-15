@@ -279,7 +279,7 @@ public class RelationServiceImpl implements RelationService {
 		List<Task> tasks = taskService.simpleTaskMenu(oldTaskMenuVO.getTaskMenuId());
 		if(tasks != null && tasks.size() > 0){
 			for (Task task : tasks) {
-				taskService.copyTask(task.getTaskId(),oldTaskMenuVO.getProjectId() ,newTaskMenuVO.getTaskMenuId());
+				//taskService.copyTask(task.getTaskId(),oldTaskMenuVO.getProjectId() ,newTaskMenuVO.getTaskMenuId());
 			}
 		}
 	}

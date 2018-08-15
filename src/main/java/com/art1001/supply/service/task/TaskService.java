@@ -209,8 +209,10 @@ public interface TaskService {
 	 * @param taskId 当前任务信息
 	 * @param projectId 当前任务所在的项目id
 	 * @param menuId 复制到的位置的信息
+	 * @param old_new 原任务接受新任务的更新提醒  是否勾选
+	 * @param new_old 新任务接受原任务的更新提醒  是否勾选
 	 */
-	Log copyTask(String taskId, String projectId, String menuId);
+	String copyTask(String taskId, String projectId, String menuId, boolean old_new, boolean new_old);
 
 	/**
 	 * 收藏任务

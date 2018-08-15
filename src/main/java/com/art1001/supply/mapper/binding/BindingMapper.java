@@ -79,4 +79,17 @@ public interface BindingMapper {
 	 * @return 库中的记录行数
 	 */
     String[] getBindingRecord(@Param("publicId") String publicId,@Param("bindId") String[] bindId);
+
+	/**
+	 * 查询出该信息关联的所有信息
+	 * @param publicId 关联信息id
+	 * @return
+	 */
+    List<Binding> findBindingInfoByPublic(String publicId);
+
+	/**
+	 * 保存多条 关联信息
+	 * @param newBindingList 关联信息的集合
+	 */
+    void saveMany(List<Binding> newBindingList);
 }

@@ -808,7 +808,7 @@ function addBindingStr(binding,type,bindId){
                 content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" disabled="disabled">';
                 content += '</div>'+
                 '<div class="related-rw-info">';
-                if(binding[i].executor == ''){
+                if(binding[i].executor == '' || binding[i].executor == null){
                     content += '<img src="/image/add.png">';
                 } else{
                     content += '<img src="' + IMAGE_SERVER + binding[i].executorInfo.userInfo.image+ '">';

@@ -219,7 +219,6 @@ public class TaskController {
             object.put("task",taskByTaskId);
             object.put("type","创建了任务");
             Subject subject = SecurityUtils.getSubject();
-
             messagingTemplate.convertAndSend("/topic/"+taskByTaskId.getProjectId(), new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -829,16 +828,18 @@ public class TaskController {
      * @param taskId 任务的id
      * @param projectId 项目id
      * @param menuId 菜单id
+     * @param old_new 原任务接受新任务的更新提醒  是否勾选
+     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId){
+    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId, boolean old_new, boolean new_old){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.copyTask(taskId,projectId,menuId);
+            String copyTaskId = taskService.copyTask(taskId,projectId,menuId,old_new,new_old);
+            jsonObject.put("taskId",copyTaskId);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
-            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("系统异常,复制任务失败! ",e);
             throw new AjaxException(e);

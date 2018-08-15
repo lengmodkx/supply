@@ -11,6 +11,7 @@
 <body style="background-color: white;border-radius: 5px">
 <!--设计修改任务界面-->
 <input type="hidden" th:value="${task.taskId}" id = "taskId" />
+<input type="hidden" th:value="${projectId}" id = "projectId" />
 <div id="revise-task" class="revise-task-wrap layui-form" >
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
@@ -710,17 +711,26 @@
      */
     $('.style-btn').click(function () {
         var menuId = $('select[name="menu"]').val();
-        var projectId = $('select[name="project"]').val();
+        var projectId = $('select[name="copy-project"]').val();
        if($('select[name="menu"]').val() == ''){
            layer.msg("必须选择一个菜单!");
            return false;
        }
+
+       var old_new = $('input[name = "old-new"]').prop('checked');
+       var new_old = $('input[name = "new-old"]').prop('checked');
        var url = "/task/copyTask";
-       var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId};
+       var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId,"old_new":old_new,"new_old":new_old};
        $.post(url,args,function (data) {
+           $(".renwu-menu").slideUp();
+           parent.taskId = data.taskId;
+           parent.layer.msg('<div  onclick="changeRenwu(taskId,projectId)">'+ '复制成功:'+ $('.task_name').val() +'</div>', {
+               offset:'lb',
+               icon:1,
+               time: 4000 //2秒关闭（如果不配置，默认是3秒）
+           });
        });
     });
-
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>
