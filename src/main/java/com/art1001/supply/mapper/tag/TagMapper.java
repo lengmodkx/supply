@@ -82,4 +82,9 @@ public interface TagMapper {
 
 	List<Tag> findTagByTagIds(@Param("tagIds") String tagIds);
 
+	/**
+	 * 保存多条tag
+	 * @param newTagList 多个tag信息i
+	 */
+	void saveMany(List<Tag> newTagList);
 }

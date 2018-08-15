@@ -432,30 +432,28 @@
             <div class="boxsizing select-wrap-box">
                 <span>项目</span>
                 <div class="select-boxs">
-                    <select name="city" lay-verify="">
-                        <option value="010">北京</option>
-                        <option value="021">上海</option>
-                        <option value="0571">杭州</option>
+                    <select name="copy-project" lay-verify="" lay-filter="project">
+                        <option th:each="project:${projectByMemberId}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
                     </select>
                 </div>
             </div>
             <div class="boxsizing select-wrap-box">
                 <span>分组</span>
                 <div class="select-boxs">
-                    <select name="city" lay-verify="">
-                        <option value="010">北京</option>
-                        <option value="021">上海</option>
-                        <option value="0571">杭州</option>
+                    <select name="groups" lay-verify="" lay-filter="groups">
+                        <!--<option value="010">北京</option>-->
+                        <!--<option value="021">上海</option>-->
+                        <!--<option value="0571">杭州</option>-->
                     </select>
                 </div>
             </div>
             <div class="boxsizing select-wrap-box">
                 <span>列表</span>
                 <div class="select-boxs">
-                    <select name="city" lay-verify="">
-                        <option value="010">北京</option>
-                        <option value="021">上海</option>
-                        <option value="0571">杭州</option>
+                    <select name="menu" lay-verify="">
+                        <!--<option value="010">北京</option>-->
+                        <!--<option value="021">上海</option>-->
+                        <!--<option value="0571">杭州</option>-->
                     </select>
                 </div>
             </div>
@@ -484,17 +482,15 @@
             <div class="boxsizing select-wrap-box">
                 <span>项目</span>
                 <div class="select-boxs">
-                    <select name="city" lay-verify="">
-                        <option value="010">北京</option>
-                        <option value="021">上海</option>
-                        <option value="0571">杭州</option>
+                    <select name="project" lay-verify="" lay-filter="project">
+                        <option th:each="project:${projectByMemberId}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
                     </select>
                 </div>
             </div>
             <div class="boxsizing select-wrap-box">
                 <span>分组</span>
                 <div class="select-boxs">
-                    <select name="city" lay-verify="">
+                    <select name="group" lay-verify="">
                         <option value="010">北京</option>
                         <option value="021">上海</option>
                         <option value="0571">杭州</option>
@@ -562,9 +558,62 @@
     $(".close-menu").click(function () {
         $(".renwu-menu").hide()
     });
+
+
     $(".fz-rw").click(function () {
         $(".clone-task-box").show().siblings().hide()
     });
+    layui.use('form', function() {
+        var form = layui.form;
+
+        /**
+         * 当选中了项目时 根据选中的项目获取分组信息
+         */
+        form.on('select(project)', function (data) {
+            $('select[name="groups"]').append('');
+            //console.log(data.value); //得到被选中的值
+            var project = data.value;
+            if (project == '') {
+                return false;
+            }
+            var url = "/relation/projectAllGroup";
+            var args = {"projectId": project};
+            var content = '';
+            $.post(url, args, function (data) {
+                var group = data.data;
+                for (var i = 0; i < group.length; i++) {
+                    content += '<option value="' + group[i].relationId + '">' + group[i].relationName + '</option>'
+                }
+                $('select[name="groups"]').append(content);
+                form.render('select');
+            }, "json");
+        });
+
+        /**
+         * 当选中了分组的时候触发事件
+         */
+        form.on('select(groups)', function (data) {
+            $('select[name="menu"]').append('')
+            console.log(data.value); //得到被选中的值
+            groups = data.value;
+            if (groups == '') {
+                return false;
+            }
+            var url = "/relation/groupAllMenu";
+            var args = {"groupId": groups};
+            var content = '';
+            $.post(url, args, function (data) {
+                var menu = data.data;
+                for (var i = 0; i < menu.length; i++) {
+                    content += '<option value="' + menu[i].relationId + '">' + menu[i].relationName + '</option>'
+                }
+                $('select[name="menu"]').append(content);
+                form.render('select');
+            }, "json");
+        });
+
+    });
+
     $(".yd-rw").click(function () {
         $(".remove-task-box").show().siblings().hide()
     });
@@ -657,6 +706,22 @@
 
     $('html').on('click','.download',function () {
         location.href = "/task/download?logId=" + $(this).attr('id')+"&taskId="+taskId;
+    });
+
+    /**
+     * 点击复制的确定的时候
+     */
+    $('.style-btn').click(function () {
+        var menuId = $('select[name="menu"]').val();
+        var projectId = $('select[name="project"]').val();
+       if($('select[name="menu"]').val() == ''){
+           layer.msg("必须选择一个菜单!");
+           return false;
+       }
+       var url = "/task/copyTask";
+       var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId};
+       $.post(url,args,function (data) {
+       });
     });
 
 </script>

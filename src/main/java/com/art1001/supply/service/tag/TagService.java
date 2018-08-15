@@ -93,4 +93,9 @@ public interface TagService {
 	 */
 	void addItemTag(String tagId, String publicId, String publicType);
 
+	/**
+	 * 保存多条tag
+	 * @param newTagList 多个tag信息i
+	 */
+    void saveMany(List<Tag> newTagList);
 }

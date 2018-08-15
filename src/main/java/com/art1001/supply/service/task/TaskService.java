@@ -206,11 +206,11 @@ public interface TaskService {
 	/**
 	 * 复制任务
 	 * @return
-	 * @param task 当前任务信息
+	 * @param taskId 当前任务信息
 	 * @param projectId 当前任务所在的项目id
-	 * @param newTaskMenuVO 复制到的位置的信息
+	 * @param menuId 复制到的位置的信息
 	 */
-	Log copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO);
+	Log copyTask(String taskId, String projectId, String menuId);
 
 	/**
 	 * 收藏任务

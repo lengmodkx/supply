@@ -325,4 +325,12 @@ public class TagServiceImpl implements TagService {
         }
     }
 
+	/**
+	 * 保存多条tag
+	 * @param newTagList 多个tag信息i
+	 */
+	@Override
+	public void saveMany(List<Tag> newTagList) {
+		tagMapper.saveMany(newTagList);
+	}
 }

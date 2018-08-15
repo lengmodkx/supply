@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
+import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,6 +13,7 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
@@ -25,6 +27,7 @@ import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskLogService;
@@ -35,6 +38,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -92,6 +96,10 @@ public class TaskServiceImpl implements TaskService {
     /** 日志逻辑层接口 */
     @Resource
     private LogService logService;
+
+    /** 项目成员逻辑层接口 */
+    @Resource
+    private ProjectMemberService projectMemberService;
 
 	/**
 	 * 重写方法
@@ -650,6 +658,7 @@ public class TaskServiceImpl implements TaskService {
         subLevel.setUpdateTime(System.currentTimeMillis());
         //设置该任务的初始状态
         subLevel.setTaskStatus("未完成");
+        subLevel.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //保存任务信息
         int result = taskMapper.saveTask(subLevel);
         //拼接日志字符串
@@ -696,61 +705,61 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 复制任务
-     * @param task 当前任务信息
+     * @param taskId 当前任务信息
      * @param projectId 当前任务所在的项目id
-     * @param newTaskMenuVO 要复制到的位置信息
+     * @param menuId 要复制到的位置信息
      * @return
      */
     @Override
-    public Log copyTask(Task task, String projectId, TaskMenuVO newTaskMenuVO) {
-        String oldTaskId = task.getTaskId();
-        //把被复制的任务的id更改成新生成的任务的id
-        task.setTaskId(IdGen.uuid());
-        //更新新任务的创建时间
-        task.setCreateTime(System.currentTimeMillis());
-        //设置新任务的更新时间
-        task.setUpdateTime(System.currentTimeMillis());
-        //如果复制到其他项目 则任务的 参与者信息、执行者 不会保留
-        if(!projectId.equals(newTaskMenuVO.getProjectId())){
-            task.setExecutor("");
-        } else{
-            //如果复制到其他分组或者其他菜单的话  保留任务的执行者以及参与者信息
-            List<TaskMember> taskMemberByTaskId = taskMemberService.findTaskMemberByTaskId(oldTaskId);
-            //循环向数据库添加 任务成员关系 和 文件,任务,分享,日程 的关联关系
-            if(taskMemberByTaskId != null && taskMemberByTaskId.size() > 0){
-                for (TaskMember taskMembers : taskMemberByTaskId) {
-                    taskMembers.setId(IdGen.uuid());
-                    taskMembers.setCreateTime(System.currentTimeMillis());
-                    taskMembers.setUpdateTime(System.currentTimeMillis());
-                    taskMemberService.saveTaskMember(taskMembers);
-                }
-            }
+    public Log copyTask(String taskId, String projectId, String menuId) {
+        Task oldTask = taskMapper.findTaskByTaskId(taskId);
 
-            //重新插入关联的文件信息
-        }
-        //保存到数据库
-        taskMapper.saveTask(task);
+        Task copyTask = new Task();
+        //把被复制的任务的id更改成新生成的任务的id
+        copyTask.setTaskId(IdGen.uuid());
+        copyTask.setTaskName(oldTask.getTaskName());
+        copyTask.setProjectId(projectId);
+        copyTask.setTaskMenuId(menuId);
+        copyTask.setPrivacyPattern(1);
+        copyTask.setFabulousCount(0);
+        copyTask.setIsDel(0);
+        copyTask.setParentId("0");
+        copyTask.setMemberId(ShiroAuthenticationManager.getUserId());
+        //更新新任务的创建时间
+        copyTask.setCreateTime(System.currentTimeMillis());
+        //设置新任务的更新时间
+        copyTask.setUpdateTime(System.currentTimeMillis());
+        setCopyTaskInfo(oldTask,copyTask,projectId);
+
+
         int result = 0;
         StringBuilder content = new StringBuilder("");
         //根据被复制任务的id 取出该任务所有的子任务
-        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(task.getTaskId());
+        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(taskId);
         if(subLevelTaskList != null && subLevelTaskList.size() > 0){
             //把所有的子任务信息设置好后插入数据库
             for (Task subLevelTask : subLevelTaskList) {
+                Task copySubleveTask = new Task();
+                try {
+                    copySubleveTask = Task.clone(subLevelTask);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 //设置新的子任务id
-                subLevelTask.setTaskId(IdGen.uuid());
+                copySubleveTask.setTaskId(IdGen.uuid());
                 //设置新的子任务的父任务id
-                subLevelTask.setParentId(task.getTaskId());
+                copySubleveTask.setParentId(copyTask.getTaskId());
                 //设置新子任务的更新时间
-                subLevelTask.setUpdateTime(System.currentTimeMillis());
+                copySubleveTask.setUpdateTime(System.currentTimeMillis());
                 //设置新子任务的创建时间
-                subLevelTask.setCreateTime(System.currentTimeMillis());
-                result += taskMapper.saveTask(subLevelTask);
+                copySubleveTask.setCreateTime(System.currentTimeMillis());
+                copyTask.setParentId("0");
+                setCopyTaskInfo(subLevelTask,copySubleveTask,projectId);
             }
         }
         //追加日志字符串
-        content.append(TaskLogFunction.R.getName()).append(" ").append(task.getTaskName());
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        content.append(TaskLogFunction.R.getName()).append(" ").append(copyTask.getTaskName());
+        Log log = logService.saveLog(copyTask.getTaskId(), content.toString(),1);
         log.setResult(result);
         return log;
     }
@@ -1288,5 +1297,86 @@ public class TaskServiceImpl implements TaskService {
             list.add(statictics);
         }
         return list;
+    }
+
+    public void setCopyTaskInfo(Task oldTask, Task copyTask, String projectId){
+        //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
+        if(!Objects.equals(oldTask.getProjectId(),projectId)){
+            List<ProjectMember> byProjectId = projectMemberService.findByProjectId(projectId);
+
+            //把每个成员的id 取出来 抽成集合 方便比较
+            List<String> members = byProjectId.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+
+            //判断此任务的执行者 在不在新项目中
+            for (String executorId : members) {
+                if(executorId.equals(oldTask.getExecutor())){
+                    copyTask.setExecutor(oldTask.getExecutor());
+                    break;
+                } else{
+                    copyTask.setExecutor("");
+                }
+            }
+
+            //将原来的任务的所有成员id 转为集合 方便比较
+            List<String> oldTaskMembers = new ArrayList<String>();
+            oldTaskMembers = Arrays.asList(oldTask.getTaskUIds().split(","));
+
+            //取出任务成员 和 新项目成员的  交集
+            List<String> intersection = oldTaskMembers.stream().filter(item -> members.contains(item)).collect(Collectors.toList());
+
+            copyTask.setTaskUIds(Joiner.on(",").join(intersection));
+
+            //标签设置
+            //被复制的任务的标签信息
+            List<Tag> tagList = oldTask.getTagList();
+            if(tagList != null && tagList.size() > 0 ){
+                //复制到新项目里的所有标签
+                List<Tag> byProjectIdTag = tagService.findByProjectId(projectId);
+
+                List<Tag> newTagList = new ArrayList<Tag>();
+                List<Long> newTagIds = new ArrayList<Long>();
+
+                if(byProjectIdTag != null && byProjectIdTag.size() > 0){
+                    for(int i = 0;i < tagList.size() ;i++){
+                        for(Tag t : byProjectIdTag){
+                            if(tagList.get(i).getTagName().equals(t.getTagName())){
+                                newTagIds.add(t.getTagId());
+                                tagList.remove(i);
+                                i--;
+                                if(tagList.size() == 0){
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    for (Tag t2 : tagList) {
+                        newTagList.add(t2);
+                    }
+                } else{
+                    newTagList = tagList;
+                }
+                for (Tag t : newTagList) {
+                    t.setTagId(null);
+                    t.setTaskId(null);
+                    t.setMemberId("b350bc19b07c4ae7908d9499c9875055");
+                    t.setProjectId(projectId);
+                    t.setCreateTime(System.currentTimeMillis());
+                    t.setUpdateTime(System.currentTimeMillis());
+                }
+                if(!newTagList.isEmpty()){
+                    tagService.saveMany(newTagList);
+                    for (Tag t : newTagList) {
+                        newTagIds.add(t.getTagId());
+                    }
+                }
+                copyTask.setTagId(Joiner.on(",").join(newTagIds));
+            }
+            //保存到数据库
+            taskMapper.saveTask(copyTask);
+        } else{
+            copyTask.setTagId(copyTask.getTagId());
+            copyTask.setTaskUIds(oldTask.getTaskUIds());
+            taskMapper.saveTask(copyTask);
+        }
     }
 }

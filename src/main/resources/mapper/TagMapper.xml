@@ -241,4 +241,51 @@
         from prm_tag where tag_name like concat('%',#{tagName},'%')
     </select>
 
+    <!-- 保存多条标签信息 -->
+    <insert id="saveMany" useGeneratedKeys="true" keyProperty="tagId" parameterType="java.util.ArrayList">
+        insert into prm_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                tag_name,
+                bg_color,
+                member_id,
+                project_id,
+                create_time,
+                update_time,
+        </trim>
+        values
+        <foreach collection="list" separator="," item="tag">
+            (
+            <if test="tag.tagName != null and tag.tagName != ''">
+                #{tag.tagName},
+            </if>
+            <if test="tag.bgColor != null and tag.bgColor != ''">
+                #{tag.bgColor},
+            </if>
+            <if test="tag.memberId != null and tag.memberId != ''">
+                #{tag.memberId},
+            </if>
+            <if test="tag.projectId != null and tag.projectId != ''">
+                #{tag.projectId},
+            </if>
+
+            <if test="tag.taskId != null and tag.taskId != ''">
+                #{tag.taskId},
+            </if>
+            <if test="tag.scheduleId != null and tag.scheduleId != ''">
+                #{tag.scheduleId},
+            </if>
+            <if test="tag.shareId != null and tag.shareId != ''">
+                #{tag.shareId},
+            </if>
+
+            <if test="tag.createTime != null and tag.createTime != ''">
+                #{tag.createTime},
+            </if>
+            <if test="tag.updateTime != null and tag.updateTime != ''">
+                #{tag.updateTime}
+            </if>
+            )
+        </foreach>
+    </insert>
+
 </mapper>

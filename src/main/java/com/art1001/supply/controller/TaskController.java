@@ -801,14 +801,16 @@ public class TaskController {
 
     /**
      * 复制任务 及 子任务
-     * @param task 任务的实体信息
+     * @param taskId 任务的id
+     * @param projectId 项目id
+     * @param menuId 菜单id
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam Task task,@RequestParam String projectId,@RequestParam TaskMenuVO newTaskMenuVO){
+    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.copyTask(task,projectId,newTaskMenuVO);
+            Log taskLogVO = taskService.copyTask(taskId,projectId,menuId);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
@@ -936,6 +938,10 @@ public class TaskController {
                 model.addAttribute("menuRelation",menuRelation);
                 model.addAttribute("taskMenuVo",taskMenuVO);
             }
+
+            //查询出我参与的所有项目信息
+            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId());
+            model.addAttribute("projectByMemberId",projectByMemberId);
 
             //查询出该任务的日志信息
             List<Log> logList = logService.initLog(task.getTaskId());
