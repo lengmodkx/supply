@@ -55,13 +55,19 @@
   });
 
     $(".people>input").keyup(function () {
-        var list=$(this).val();
-        $(".one-people").hide();
-        $(".one-people").each(function (i,n) {
-            if ($(this).find("span").text().indexOf(list)>0){
-                $(this).show();
-            }
-        })
+        if ($(this).val()==""){
+            $(".peoples>.one-people").show();
+        } else {
+            var list=$(this).val();
+            $(".peoples>.one-people").hide();
+            var reg = new RegExp(list);
+            $(".peoples>.one-people").each(function (i,n){
+                if ($(this).find("span").text().match(reg)) {
+                    $(this).show();
+                }
+            });
+        }
+
     })
 
 </script>
