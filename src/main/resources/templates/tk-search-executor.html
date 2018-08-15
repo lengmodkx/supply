@@ -13,50 +13,46 @@
     <div class="peoples">
         <div>
             <p>执行者</p>
-            <div class="one-people" th:id="${user.id}" >
-                <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
+            <div class="one-people" th:if="${user!=null}" th:id="${user.id}">
+                <img th:src="#{IMAGE_SERVER}+${user.userInfo.image}" />
                 <span th:text="${user.userName}"></span>
-                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
+                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block;"></i>
+            </div>
+
+            <div class="one-people" th:if="${user==null}">
+                <img src="/image/person.png"/>
+                <span>待认领</span>
+                <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block;"></i>
             </div>
         </div>
         <p>推荐</p>
-        <div id = "noExecutor" class="invisit-people" th:each="member:${members}">
+        <div class="one-people" th:each="member:${members}" th:id="${member.memberId}">
             <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER}+${member.memberImg}" />
             <span th:text="${member.memberName}"></span>
             <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>
         </div>
-        <!--<div class="add-new-people">-->
-            <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}" />-->
-            <!--<span>邀请新成员</span>-->
-        <!--</div>-->
     </div>
-    <div class="people-ok">确定</div>
 </div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
-    $(".people-ok").click(function (e) {
-        var id = '';
-        var img = '';
-        var name = '';
-        for (var i=0;i<$(".one-people").length;i++){
-            if ($(".one-people").eq(i).find("i").is(":visible")) {
-                id = $(".one-people").eq(i).attr("id");
-                img = $(".one-people").eq(i).children('img').attr('src');
-                name = $(".one-people").eq(i).children('span').html();
-            }
+    $(".one-people").click(function () {
+        var executor=$(this).attr('id');
+        var uName=$(this).find('span').text();
+        var taskId = [[${taskId}]];
+        if(executor===null||executor===undefined){
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        }else{
+            $.post('/task/updateTaskExecutor',{"taskId":taskId,"executor":executor,"uName":uName},function (data) {
+                if(data.result===1){
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            });
         }
-        parent.changeExecutor(id,name,img);
-        parent.layer.closeAll();
   });
-
-  $(".one-people").click(function (e) {
-      $(".one-people").find("i").hide();
-      $(this).find("i").show();
-  });
-
-
 
 </script>
 </html>

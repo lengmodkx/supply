@@ -173,6 +173,31 @@ public class TaskController {
         }
     }
 
+    /**
+     * 执行者弹窗--汪亚锋
+     * @param projectId 项目id
+     * @param taskId 任务id
+     * @param executorId 执行者id
+     * @return
+     */
+    @GetMapping("executor.html")
+    public String showExecutor(@RequestParam String projectId,@RequestParam String taskId,@RequestParam String executorId, Model model){
+
+
+        ProjectMember projectMember = new ProjectMember();
+        projectMember.setProjectId(projectId);
+        List<ProjectMember> memberAllList = projectMemberService.findProjectMemberAllList(projectMember);
+
+        if(StringUtils.isNotEmpty(executorId)){
+            memberAllList = memberAllList.stream().filter(member->!executorId.equals(member.getMemberId())).collect(Collectors.toList());
+            UserEntity userEntity = userService.findUserInfoById(executorId);
+            model.addAttribute("user",userEntity);
+        }
+        model.addAttribute("members",memberAllList);
+        model.addAttribute("taskId",taskId);
+        return "tk-search-executor";
+    }
+
 
     /**
      * 添加新任务
@@ -843,7 +868,7 @@ public class TaskController {
 
     /**
      * 取消任务收藏
-     * @param task
+     * @param taskId
      * @return
      */
     @PostMapping("cancleCollectTask")

@@ -281,19 +281,6 @@ layui.use('form', function() {
 
     layui.use('laydate', function () {
         var laydate = layui.laydate;
-
-        laydate.render({
-            elem: '#beginTime',
-            type: 'datetime',
-            format: 'yyyy-MM-dd'
-        });
-
-        laydate.render({
-            elem: '#overTime',
-            type: 'datetime',
-            format: 'yyyy-MM-dd'
-        });
-
         laydate.render({
             elem: '#beginTimes',
             type: 'datetime',
@@ -364,34 +351,52 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $('html').on('click','.no-renling',function (e) {
-        danxuan=true;
-        $('.tk_name').html("执行者");
-        $('.joinInfo').html('');
-        $('.Recommend').html('');
-        var url = "/task/findProjectAllMember";
-        var args = {"projectId": projectId,"executorId":""};
-        //异步请求项目人员名单
-        $.post(url,args,function(data){
-            if(data.result===1){
-                var member = data.data;
-                var div = '<div class="one-people">' +
-                    '           <img src="/image/person.png">' +
-                    '           <span>待认领</span>' +
-                    '           <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>' +
-                    '       </div>';
-                $('.joinInfo').append(div);
+        // danxuan=true;
+        //         // $('.tk_name').html("执行者");
+        //         // $('.joinInfo').html('');
+        //         // $('.Recommend').html('');
+        //         // var url = "/task/findProjectAllMember";
+        //         // var args = {"projectId": projectId,"executorId":""};
+        //         // //异步请求项目人员名单
+        //         // $.post(url,args,function(data){
+        //         //     if(data.result===1){
+        //         //         var member = data.data;
+        //         //         var div = '<div class="one-people">' +
+        //         //             '           <img src="/image/person.png">' +
+        //         //             '           <span>待认领</span>' +
+        //         //             '           <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>' +
+        //         //             '       </div>';
+        //         //         $('.joinInfo').append(div);
+        //         //
+        //         //         for(var i = 0;i < member.length;i++){
+        //         //             var content = '<div class="one-people" id="'+member[i].id+'">' +
+        //         //                                 '<img src="'+IMAGE_SERVER+ member[i].userInfo.image +'">' +
+        //         //                                 '<span value = "' + member[i].id + '">' + member[i].userName + '</span>' +
+        //         //                                 '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>' +
+        //         //                             '</div>';
+        //         //             $('.Recommend').append(content);
+        //         //         }
+        //         //     }
+        //         // });
+        //         // $(".people").show(500);
 
-                for(var i = 0;i < member.length;i++){
-                    var content = '<div class="one-people" id="'+member[i].id+'">' +
-                                        '<img src="'+IMAGE_SERVER+ member[i].userInfo.image +'">' +
-                                        '<span value = "' + member[i].id + '">' + member[i].userName + '</span>' +
-                                        '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>' +
-                                    '</div>';
-                    $('.Recommend').append(content);
-                }
-            }
+        var width = parent.window.innerWidth;
+        var heigth = parent.window.innerHeight;
+        var left = (width-600)/2+$(this).offset().left+20;
+        var top = (heigth-600)/2+$(this).offset().top+25;
+
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top, left],
+            area: ['252px', '360px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/task/executor.html?projectId='+projectId+"&taskId="+taskId+"&executorId=",'no']
         });
-        $(".people").show(500);
         e.stopPropagation()
     });
 

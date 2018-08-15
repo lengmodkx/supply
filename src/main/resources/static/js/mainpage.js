@@ -307,7 +307,6 @@ function changeRenwu(taskId,projectId) {
         layer.open({
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
-            offset: '20px',
             area:['600px','600px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
