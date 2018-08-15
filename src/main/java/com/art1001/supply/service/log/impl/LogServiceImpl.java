@@ -80,7 +80,7 @@ public class LogServiceImpl implements LogService {
 		log.setLogType(0);
 		//是(1.任务,2.文件,3.日程,4.分享) 哪个的日志
 		log.setLogFlag(logFlag);
-		log.setContent("何少华" + " " + content);
+		log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + content);
 		//哪个用户操作产生的日志
 		log.setMemberId(ShiroAuthenticationManager.getUserId());
 		//对哪个信息的操作

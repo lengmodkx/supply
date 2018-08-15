@@ -16,12 +16,6 @@ import org.springframework.context.annotation.ComponentScan;
 public class SupplyApplication  extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        try {
-            Scheduler defaultScheduler = StdSchedulerFactory.getDefaultScheduler();
-            defaultScheduler.start();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
         SpringApplication.run(SupplyApplication.class, args);
     }
 
