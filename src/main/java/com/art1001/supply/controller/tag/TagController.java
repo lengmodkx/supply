@@ -314,7 +314,7 @@ public class TagController extends BaseController {
             tagService.addItemTag(String.valueOf(tag.getTagId()),publicId,publicType);
             //包装推送数据
             Tag byId = tagService.findById(tag.getTagId().intValue());
-            TaskPushType taskPushType = new TaskPushType();
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A20.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",byId);
             jsonObject.put("tag",byId);

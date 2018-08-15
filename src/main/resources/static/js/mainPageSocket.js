@@ -72,7 +72,7 @@ stompClient.connect({},
                 '<span class="dian" style="background-color:' + task.object.tag.bgColor + '"></span>'+
                 '<span class="tag-font">' + task.object.tag.tagName + '</span>'+
             '</span>';
-            $('.box'+task.object.taskId + ' .assignment-bottom-box').prepend(content);
+            $('.box'+task.object.publicId).prepend(content);
         }
 
 

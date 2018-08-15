@@ -44,55 +44,7 @@ $('.add-guanlian').click(function (e) {
 });
 layui.use('form', function() {
     var form = layui.form;
-    // //监听提交
-    // form.on('submit(createTask)', function (data) {
-    //     //获取选中的参与者信息
-    //     var members = $('#memberId').val();
-    //     //设置任务的执行者
-    //     var executor = $('#executorId').val();
-    //     //设置任务开始时间
-    //     var beginTime = $('#beginTime').val();
-    //     if(beginTime != null && beginTime != ''){
-    //         var startTime = new Date(beginTime.toString()).getTime();
-    //     } else {
-    //         startTime = null;
-    //     }
-    //     //设置任务结束时间
-    //     var overTime = $('#overTime').val();
-    //     if(overTime != null && overTime != ''){
-    //         var endTime = new Date(overTime.toString()).getTime();
-    //     } else{
-    //         endTime = null;
-    //     }
-    //     //设置任务的内容
-    //     var taskName = $("#taskName").val();
-    //     //设置重复模式
-    //     var repeat = $('#repeat').val();
-    //     //设置任务提醒
-    //     var remind = $('#remand').val();
-    //     //设置任务优先级
-    //     var priority = $('input[name="state"]:checked').val();
-    //     //设置隐私模式
-    //     var privacyPattern = "";
-    //     if($('#privacyPattern').prop('checked')) {
-    //         al
-    //         privacyPattern = "1";
-    //     } else{
-    //         privacyPattern = "0";
-    //     }
-    //     var url = "/task/saveTask";
-    //     var args = {"startTime":startTime ,"endTime":endTime,"taskName":taskName,"repeat":repeat,"remind":remind,"priority":priority,"privacyPattern":privacyPattern,"taskMenuId":taskMenuId,"projectId" : projectId,"members":members,"executor":executor};
-    //     $.post(url,args,function(data){
-    //         if(data.result == 1){
-    //             //关闭遮罩层
-    //             //任务数回显
-    //         }
-    //     },"json");
-    //     return false;
-    // });
-
     form.on('checkbox(bindTask)', function(data){
-        var val=data.value
         var url = "/task/resetAndCompleteTask";
         var args = {"taskId":data.value,"taskStatus":taskStatus};
         $.post(url,args,function (data) {
@@ -351,35 +303,6 @@ layui.use('form', function() {
 
     //点击 待认领 出现 人员名单
     $('html').on('click','.no-renling',function (e) {
-        // danxuan=true;
-        //         // $('.tk_name').html("执行者");
-        //         // $('.joinInfo').html('');
-        //         // $('.Recommend').html('');
-        //         // var url = "/task/findProjectAllMember";
-        //         // var args = {"projectId": projectId,"executorId":""};
-        //         // //异步请求项目人员名单
-        //         // $.post(url,args,function(data){
-        //         //     if(data.result===1){
-        //         //         var member = data.data;
-        //         //         var div = '<div class="one-people">' +
-        //         //             '           <img src="/image/person.png">' +
-        //         //             '           <span>待认领</span>' +
-        //         //             '           <i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i>' +
-        //         //             '       </div>';
-        //         //         $('.joinInfo').append(div);
-        //         //
-        //         //         for(var i = 0;i < member.length;i++){
-        //         //             var content = '<div class="one-people" id="'+member[i].id+'">' +
-        //         //                                 '<img src="'+IMAGE_SERVER+ member[i].userInfo.image +'">' +
-        //         //                                 '<span value = "' + member[i].id + '">' + member[i].userName + '</span>' +
-        //         //                                 '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>' +
-        //         //                             '</div>';
-        //         //             $('.Recommend').append(content);
-        //         //         }
-        //         //     }
-        //         // });
-        //         // $(".people").show(500);
-
         var width = parent.window.innerWidth;
         var heigth = parent.window.innerHeight;
         var left = (width-600)/2+$(this).offset().left+20;
@@ -389,7 +312,7 @@ layui.use('form', function() {
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             offset: [top, left],
-            area: ['252px', '360px'],
+            area: ['252px', '320px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             shade: [0.1, '#fff'],
@@ -397,49 +320,30 @@ layui.use('form', function() {
             anim: 1,  //动画 0-6
             content: ['/task/executor.html?projectId='+projectId+"&taskId="+taskId+"&executorId=",'no']
         });
-        e.stopPropagation()
+        e.stopPropagation();
     });
 
 
     $('html').on('click','.who-wrap',function (e) {
-
-        var url = "/task/findProjectAllMember";
-        var args = {"projectId": projectId,"executorId":$('#executorId').val()};
-        //异步请求项目人员名单
-        $.post(url,args,function(data){
-            if(data.result===1){
-                $('.zx_p').html('');
-                $('.tj_p').html('');
-                var member = data.data;
-                var user  = data.user;
-                var div = '<div class="one-people" id="'+user.id+'"><img src="'+IMAGE_SERVER+user.userInfo.image+'"><span>'+user.userName+'</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;display: block"></i></div>';
-                $('.zx_p').append(div);
-
-                for(var i = 0;i < member.length;i++){
-                    var content = '<div class="one-people" id="'+member[i].id+'"><img src="'+IMAGE_SERVER+ member[i].userInfo.image +'"><span >' + member[i].userName + '</span><i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i></div>';
-                    $('.tj_p').append(content);
-                }
-            }
+        var executorId = $('#executorId').val();
+        var width = parent.window.innerWidth;
+        var heigth = parent.window.innerHeight;
+        var left = (width-600)/2+$(this).offset().left+20;
+        var top = (heigth-600)/2+$(this).offset().top+25;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top, left],
+            area: ['252px', '320px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/task/executor.html?projectId='+projectId+"&taskId="+taskId+"&executorId="+executorId,'no']
         });
-        $(".zx_people").show(500);
         e.stopPropagation()
     });
-
-
-   $('html').on('click','.zx_people .one-people',function () {
-       var executor=$(this).attr('id');
-       var uName=$(this).find('span').text();
-
-       if(executor===null||executor===undefined){
-           $(".zx_people").hide(500);
-       }else{
-           $.post('/task/updateTaskExecutor',{"taskId":taskId,"executor":executor,"uName":uName},function (data) {
-               $(".zx_people").hide(500);
-           });
-       }
-   });
-
-
 
     // 点击  任务菜单出现隐藏
     $(".assignment-menu-show").click(function () {
@@ -451,7 +355,7 @@ layui.use('form', function() {
 
 
     $(".no-tags").click(function (e) {
-        console.log(parent.window.innerHeight)
+        console.log(parent.window.innerHeight);
         var width=(parent.window.innerWidth-600)/2+20;
         var height=(parent.window.innerHeight-600)/2+20;
         var top = $(this).offset().top+height+"px";
@@ -474,7 +378,7 @@ layui.use('form', function() {
 /**
  * 点击x 移除标签
  */
-$('html').on('click','.remove-tag',function (e) {
+    $('html').on('click','.remove-tag',function (e) {
         var tagId = $(this).parent().attr('id');
         var url = "/tag/removeTag";
         var args = {"tagId":tagId,"publicId":taskId,"projectId":projectId,"publicType":"任务"};

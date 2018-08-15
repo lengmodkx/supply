@@ -83,22 +83,17 @@ public abstract class BaseController {
     @ResponseBody
     public JSONObject searchMember(@RequestParam String keyword,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
-        String userId = ShiroAuthenticationManager.getUserId();
         try{
-            UserEntity userEntity = userService.findByKey(keyword);
-            //判断 查找到的用户在当前项目中是不是已经存在
-            if(userEntity != null){
+            List<UserEntity> userEntity = userService.findByKey(keyword);
+            if(userEntity.size()==0){
+                jsonObject.put("msg","无数据");
+                jsonObject.put("result",0);
+            }else{
+                jsonObject.put("data",userEntity);
+                jsonObject.put("msg","获取成功");
                 jsonObject.put("result",1);
-                int result = projectMemberService.findMemberIsExist(projectId,userEntity.getId());
-                if(result > 0){
-                    jsonObject.put("exist",false);
-                } else{
-                    jsonObject.put("exist",true);
-                }
             }
-            //userEntity = userEntity.stream().filter(userEntity1 -> !userEntity1.getId().equals(userId)).collect(Collectors.toList());
-            jsonObject.put("data",userEntity);
-            jsonObject.put("msg","获取成功");
+
         }catch (Exception e){
             throw new AjaxException(e);
         }
@@ -108,38 +103,42 @@ public abstract class BaseController {
     /**
      * 给项目添加成员
      * @param projectId
-     * @param memberIds
+     * @param memberId
      * @return
      */
     @PostMapping("/addProjectMember")
     @ResponseBody
-    public JSONObject addProjectMember(@RequestParam String projectId,@RequestParam String memberIds){
+    public JSONObject addProjectMember(@RequestParam String projectId,@RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();
         try{
 
-            if(StringUtils.isEmpty(memberIds)){
+            if(StringUtils.isEmpty(memberId)){
                 jsonObject.put("result",0);
                 jsonObject.put("msg","请选择成员");
             }else{
-                String[] memberId = memberIds.split(",");
-                for (int i=0;i<memberId.length;i++){
-                    UserEntity userEntity = userService.findById(memberId[i]);
-                    ProjectMember projectMember = new ProjectMember();
-                    projectMember.setProjectId(projectId);
-                    projectMember.setMemberId(memberId[i]);
-                    projectMember.setMemberName(userEntity.getUserName());
-                    projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
-                    projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
-                    projectMember.setMemberImg(userEntity.getUserInfo().getImage());
-                    projectMember.setCreateTime(System.currentTimeMillis());
-                    projectMember.setUpdateTime(System.currentTimeMillis());
-                    projectMember.setMemberLabel(0);
-                    projectMemberService.saveProjectMember(projectMember);
-                }
 
-                jsonObject.put("result",1);
-                jsonObject.put("msg","添加成功");
-                jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+                UserEntity userEntity = userService.findById(memberId);
+                ProjectMember projectMember = new ProjectMember();
+                projectMember.setProjectId(projectId);
+                projectMember.setMemberId(memberId);
+                projectMember.setMemberName(userEntity.getUserName());
+                projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
+                projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
+                projectMember.setMemberImg(userEntity.getUserInfo().getImage());
+                projectMember.setCreateTime(System.currentTimeMillis());
+                projectMember.setUpdateTime(System.currentTimeMillis());
+                projectMember.setMemberLabel(0);
+
+                int isExist = projectMemberService.findMemberIsExist(projectId, memberId);
+                if(isExist==0){
+                    projectMemberService.saveProjectMember(projectMember);
+                    jsonObject.put("result",1);
+                    jsonObject.put("msg","添加成功");
+                    jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+                }else {
+                    jsonObject.put("result",0);
+                    jsonObject.put("msg","成员已经存在");
+                }
             }
         }catch (Exception e){
             throw new AjaxException(e);

@@ -71,8 +71,8 @@ function subscribe() {
         if(taskLog.type === '更新任务优先级为'){
             getLog(taskLog.object.taskLog);
         }
-        if(taskLog.type === '删除了标签'){
-            $('#'+taskLog.object.tagId).remove();
+        if(taskLog.type === '移除标签'){
+            $('#'+taskLog.object.tag).remove();
         }
 
         if(taskLog.type==='更新提醒模式为'){
