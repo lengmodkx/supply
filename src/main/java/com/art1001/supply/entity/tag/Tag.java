@@ -57,18 +57,5 @@ public class Tag extends BaseEntity implements Serializable {
 
 	private boolean flag;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		Tag tag = (Tag) o;
-		return flag == tag.flag &&
-				Objects.equals(tagName, tag.tagName);
-	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), tagName);
-	}
 }

@@ -1333,39 +1333,40 @@ public class TaskServiceImpl implements TaskService {
                 //复制到新项目里的所有标签
                 List<Tag> byProjectIdTag = tagService.findByProjectId(projectId);
 
-                List<Tag> newTagList = new ArrayList<Tag>();
+                List<Tag> newTagListAfter = new ArrayList<Tag>();
                 List<Long> newTagIds = new ArrayList<Long>();
 
                 if(byProjectIdTag != null && byProjectIdTag.size() > 0){
+                    boolean flag = false;
                     for(int i = 0;i < tagList.size() ;i++){
                         for(Tag t : byProjectIdTag){
                             if(tagList.get(i).getTagName().equals(t.getTagName())){
                                 newTagIds.add(t.getTagId());
-                                tagList.remove(i);
-                                i--;
-                                if(tagList.size() == 0){
-                                    break;
-                                }
+                                flag = true;
                             }
                         }
+                        if(!flag){
+                            newTagListAfter.add(tagList.get(i));
+                        }
+                        flag = false;
+
                     }
-                    for (Tag t2 : tagList) {
-                        newTagList.add(t2);
-                    }
+
+
                 } else{
-                    newTagList = tagList;
+                    newTagListAfter = tagList;
                 }
-                for (Tag t : newTagList) {
+                for (Tag t : newTagListAfter) {
                     t.setTagId(null);
                     t.setTaskId(null);
-                    t.setMemberId("b350bc19b07c4ae7908d9499c9875055");
+                    t.setMemberId(ShiroAuthenticationManager.getUserId());
                     t.setProjectId(projectId);
                     t.setCreateTime(System.currentTimeMillis());
                     t.setUpdateTime(System.currentTimeMillis());
                 }
-                if(!newTagList.isEmpty()){
-                    tagService.saveMany(newTagList);
-                    for (Tag t : newTagList) {
+                if(!newTagListAfter.isEmpty()){
+                    tagService.saveMany(newTagListAfter);
+                    for (Tag t : newTagListAfter) {
                         newTagIds.add(t.getTagId());
                     }
                 }

@@ -433,7 +433,8 @@
                 <span>项目</span>
                 <div class="select-boxs">
                     <select name="copy-project" lay-verify="" lay-filter="project">
-                        <option th:each="project:${projectByMemberId}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
+                        <option th:each="project,p:${projectByMemberId}" th:if="${!p.first}" th:value="${project.projectId}" th:text="${project.projectName}"></option>
+                        <option th:each="project,p:${projectByMemberId}" th:if="${p.first}" selected="selected" th:value="${project.projectId}" th:text="${project.projectName}"></option>
                     </select>
                 </div>
             </div>
@@ -459,13 +460,13 @@
             </div>
             <div class="update-alert-box">
                 <div class="checkbox-wrap">
-                    <input type="checkbox" name=""  lay-skin="primary">
+                    <input type="checkbox" name="old-new"  lay-skin="primary">
                 </div>
                 <p>原任务接受新任务的更新提醒</p>
             </div>
             <div class="update-alert-box">
                 <div class="checkbox-wrap">
-                    <input type="checkbox" name=""  lay-skin="primary">
+                    <input type="checkbox" name="new-old"  lay-skin="primary">
                 </div>
                 <p>新任务接收原任务的更新提醒</p>
             </div>
@@ -568,7 +569,8 @@
          * 当选中了项目时 根据选中的项目获取分组信息
          */
         form.on('select(project)', function (data) {
-            $('select[name="groups"]').append('');
+            $('select[name="groups"]').html('');
+            $('select[name="menu"]').html('')
             //console.log(data.value); //得到被选中的值
             var project = data.value;
             if (project == '') {
@@ -591,7 +593,7 @@
          * 当选中了分组的时候触发事件
          */
         form.on('select(groups)', function (data) {
-            $('select[name="menu"]').append('')
+            $('select[name="menu"]').html('')
             console.log(data.value); //得到被选中的值
             groups = data.value;
             if (groups == '') {
