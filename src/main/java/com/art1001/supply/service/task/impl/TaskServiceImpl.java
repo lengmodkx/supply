@@ -706,10 +706,11 @@ public class TaskServiceImpl implements TaskService {
         StringBuilder content = new StringBuilder("");
         //如果子任务为完成则设置成未完成 如果子任务为未完成则设置为完成
         if(task.getTaskStatus().equals("完成")){
-            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("未完成")){
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            task.setTaskStatus("未完成");
+        } else {
+            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            task.setTaskStatus("完成");
         }
         //更新任务信息
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
@@ -1392,6 +1393,7 @@ public class TaskServiceImpl implements TaskService {
 
         } else{
             copyTask.setTagId(oldTask.getTagId());
+            copyTask.setExecutor(oldTask.getExecutor());
             copyTask.setTaskUIds(oldTask.getTaskUIds());
         }
 

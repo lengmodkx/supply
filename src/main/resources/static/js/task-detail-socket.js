@@ -76,6 +76,7 @@ function subscribe() {
         }
 
         if(taskLog.type==='更新提醒模式为'){
+            getLog(taskLog.object.taskLog);
             if(taskLog.object.task.remind==='不提醒'){
                 $('.no-remand i').css('color','#a6a6a6');
             }else{
@@ -84,6 +85,7 @@ function subscribe() {
         }
 
         if(taskLog.type==='更新任务的重复'){
+            getLog(taskLog.object.taskLog);
             if(taskLog.object.task.remind==='不重复') {
                 $('.no-repeat i').css('color','#a6a6a6');
             }else{
@@ -124,6 +126,16 @@ function subscribe() {
                 '                <span>待认领</span>\n' +
                 '            </div>');
             $('.who-wrap').remove();
+        }
+
+        if(taskLog.type === '更新任务开始结束时间'){
+            getLog(taskLog.object.taskLog);
+            if(taskLog.object.task.startTime != null){
+                $('#beginTimes').val(taskLog.object.startTime);
+            } else{
+                alert(1);
+                $('#overTimes').val(taskLog.object.endTime);
+            }
         }
 
 

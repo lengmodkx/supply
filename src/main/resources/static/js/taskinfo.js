@@ -723,7 +723,7 @@ function addBindingStr(binding,type,bindId){
                 content += '</div>'+
                 '<div class="related-rw-info">';
                 if(binding[i].executor == '' || binding[i].executor == null){
-                    content += '<img src="/image/add.png">';
+                    content += '<img src="/image/person.png">';
                 } else{
                     content += '<img src="' + IMAGE_SERVER + binding[i].executorInfo.userInfo.image+ '">';
                 }
@@ -922,6 +922,7 @@ function changeRicheng(scheduleId,projectId) {
         });
     });
 }
+
 
 
 

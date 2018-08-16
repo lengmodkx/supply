@@ -56,7 +56,11 @@ stompClient.connect({},
         }
 
         if(task.type === '更新提醒模式为'){
-            $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png");
+            if(task.object.task.remind === '不提醒'){
+                $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png").css('opacity',0);
+            } else{
+                $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png").css('opacity',1);
+            }
         }
 
         //移除标签的点点
@@ -78,6 +82,11 @@ stompClient.connect({},
 
 
         if(task.type==='更新任务的重复') {
+            $('.how-repeat').remove();
+            if(task.object.task.repeat === '不重复'){
+                return false;
+            }
+            $('.how-repeat').remove();
             $('.box'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
         if(task.object.status === '完成'){

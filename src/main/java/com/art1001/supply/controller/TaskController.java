@@ -61,6 +61,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -493,6 +494,7 @@ public class TaskController {
     @PostMapping("updateTaskStartAndEndTime")
     @ResponseBody
     public JSONObject updateTaskStartAndEndTime(Task task){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
@@ -509,7 +511,15 @@ public class TaskController {
                 jsonObject.put("msg","时间更新失败!");
                 jsonObject.put("result",0);
             }
-            messagingTemplate.convertAndSend("");
+            jsonObject.put("task",task);
+            if(task.getStartTime() != null){
+                jsonObject.put("startTime",format.format(new Date(task.getStartTime())));
+            } else{
+                jsonObject.put("endTime",format.format(new Date(task.getEndTime())));
+            }
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A25.getName());
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/" + task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("任务时间信息更新失败,{}",e);
             throw new AjaxException(e);
