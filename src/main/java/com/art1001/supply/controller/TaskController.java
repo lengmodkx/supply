@@ -199,6 +199,19 @@ public class TaskController {
     }
 
 
+    @GetMapping("invite.html")
+    public String showInvite(@RequestParam String projectId,@RequestParam String taskId,Model model){
+
+        List<UserEntity> members = userService.findProjectAllMember(projectId);
+        Task task = taskService.findTaskByTaskId(taskId);
+        members.removeAll(task.getJoinInfo());
+        model.addAttribute("members",members);
+        model.addAttribute("users",task.getJoinInfo());
+        model.addAttribute("taskId",taskId);
+        return "tk-search-people";
+    }
+
+
     /**
      * 添加新任务
      * @param task 任务实体信息
@@ -239,14 +252,13 @@ public class TaskController {
         try {
             Log log = taskService.addAndRemoveTaskMember(taskId,memberIds);
             Task task = taskService.findTaskByTaskId(taskId);
-            jsonObject.put("members",userService.findManyUserById(task.getTaskUIds()));
+            jsonObject.put("members",task.getJoinInfo());
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
             if(log!=null){
                 jsonObject.put("taskLog",log);
                 TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
                 taskPushType.setObject(jsonObject);
-                String[] memberId = memberIds.split(",");
                 messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
             }
         } catch (Exception e){

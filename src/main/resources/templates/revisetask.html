@@ -299,9 +299,9 @@
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:data-id="${joininfo.id}">
+            <div class="one-work-people" th:each="joininfo,index:${task.joinInfo}" th:data-id="${joininfo.id}">
                 <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
-                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
+                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;" th:data="${index}"></i>
             </div>
 
             <div class="add-work-people">
@@ -527,24 +527,27 @@
 
     </div>
     <!--人员 参与者 弹框-->
-    <div class="people boxsizing" style="display: none;top: 20px;left: 10px">
-        <input type="text" name="" placeholder="搜索" class="layui-input">
-        <div class="peoples">
-            <p class="tk_name">参与者</p>
-            <div class = "joinInfo">
+    <div style="display: none;" class="join-people">
+        <div class="people boxsizing" >
+            <input type="text" name="" placeholder="搜索" class="layui-input">
+            <div class="peoples">
+                <p class="tk_name">参与者</p>
+                <div class = "joinInfo">
 
-            </div>
-            <p>推荐</p>
-            <div class = "Recommend">
+                </div>
+                <p>推荐</p>
+                <div class = "Recommend">
 
+                </div>
+                <!--<div class="add-new-people">-->
+                    <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>-->
+                    <!--<span>邀请新成员</span>-->
+                <!--</div>-->
             </div>
-            <div class="add-new-people">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                <span>邀请新成员</span>
-            </div>
+            <div class="people-ok">确定</div>
         </div>
-        <div class="people-ok">确定</div>
     </div>
+
 </div>
 </body>
 <script>

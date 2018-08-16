@@ -394,6 +394,11 @@
 				and u.u_id in (
 				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
 					#{id}
+				</foreach>
+				)
+				ORDER BY FIELD(u.u_id,
+				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
+					#{id}
 				</foreach>)
 			</if>
 		<if test="memberIds == null and memberIds == ''">
