@@ -566,7 +566,7 @@
                     var content = '';
                     for(var i = 0;i < schedule.object.adduser.length;i++){
                         content +=
-                            '<div class="one-work-people" data-id = '+ schedule.object.adduser[i].id +'>'+
+                            '<div class="one-work-people" id = '+ schedule.object.adduser[i].id +'>'+
                             '<img src="'+IMAGE_SERVER + schedule.object.adduser[i].userInfo.image + '" data = ' + schedule.object.adduser[i].userName +'>'+
                             '<i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>'+
                             '</div>';
@@ -605,6 +605,25 @@
     $("body").on("click",".close-related-menu",function () {
         $(this).parents(".related-menu").slideUp();
     });
+
+    //添加人员 弹框
+    function addpeople(top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset:[top,left],
+                area:['252px','360px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                anim: 1,  //动画 0-6
+                content: "/schedule/findScheduleMemberInfo?projectId=" + projectId + "&scheduleId=" + scheduleId
+            });
+        });
+    }
 
 </script>
 </html>

@@ -149,4 +149,23 @@ public class BindingServiceImpl implements BindingService {
 	public String[] getBindingRecord(String publicId, String[] bindId) {
 		return bindingMapper.getBindingRecord(publicId,bindId);
 	}
+
+	/**
+	 * 查询出该信息关联的所有信息
+	 * @param publicId 关联信息id
+	 * @return
+	 */
+	@Override
+	public List<Binding> findBindingInfoByPublic(String publicId) {
+		return bindingMapper.findBindingInfoByPublic(publicId);
+	}
+
+	/**
+	 * 保存多条 关联信息
+	 * @param newBindingList 关联信息的集合
+	 */
+	@Override
+	public void saveMany(List<Binding> newBindingList) {
+		bindingMapper.saveMany(newBindingList);
+	}
 }

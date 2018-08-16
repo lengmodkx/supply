@@ -215,5 +215,20 @@
 		</foreach>
 	</select>
 
+	<!-- 根据publicId 查询出该信息关联的所有信息 -->
+	<select id="findBindingInfoByPublic" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from prm_binding where public_id = #{publicId}
+	</select>
 
+	<!-- 保存多条关联信息 -->
+	<insert id="saveMany" parameterType="java.util.ArrayList">
+		insert into prm_binding(id,public_id,bind_id,public_type)
+		values
+		<foreach collection="list" item="b" separator=",">
+			(
+			#{b.id},#{b.publicId},#{b.bindId},#{b.publicType}
+			)
+		</foreach>
+	</insert>
 </mapper>

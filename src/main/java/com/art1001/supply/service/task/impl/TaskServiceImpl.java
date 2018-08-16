@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
@@ -25,6 +29,7 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -42,6 +47,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,6 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TaskServiceImpl implements TaskService {
 
+    private String isparent = "0";
     /** taskMapper接口*/
 	@Resource
 	private TaskMapper taskMapper;
@@ -97,9 +104,17 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private LogService logService;
 
+    /** 关联信息的逻辑层接口 */
+    @Resource
+    private BindingService bindingService;
+
     /** 项目成员逻辑层接口 */
     @Resource
     private ProjectMemberService projectMemberService;
+
+    /** 用于订阅推送消息 */
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
 
 	/**
 	 * 重写方法
@@ -691,10 +706,11 @@ public class TaskServiceImpl implements TaskService {
         StringBuilder content = new StringBuilder("");
         //如果子任务为完成则设置成未完成 如果子任务为未完成则设置为完成
         if(task.getTaskStatus().equals("完成")){
-            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("未完成")){
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            task.setTaskStatus("未完成");
+        } else {
+            content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
+            task.setTaskStatus("完成");
         }
         //更新任务信息
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
@@ -708,12 +724,14 @@ public class TaskServiceImpl implements TaskService {
      * @param taskId 当前任务信息
      * @param projectId 当前任务所在的项目id
      * @param menuId 要复制到的位置信息
+     * @param old_new 原任务接受新任务的更新提醒  是否勾选
+     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      * @return
      */
     @Override
-    public Log copyTask(String taskId, String projectId, String menuId) {
+    public String copyTask(String taskId, String projectId, String menuId, boolean old_new, boolean new_old) {
         Task oldTask = taskMapper.findTaskByTaskId(taskId);
-
+        Log log = new Log();
         Task copyTask = new Task();
         //把被复制的任务的id更改成新生成的任务的id
         copyTask.setTaskId(IdGen.uuid());
@@ -729,11 +747,11 @@ public class TaskServiceImpl implements TaskService {
         copyTask.setCreateTime(System.currentTimeMillis());
         //设置新任务的更新时间
         copyTask.setUpdateTime(System.currentTimeMillis());
-        setCopyTaskInfo(oldTask,copyTask,projectId);
-
-
-        int result = 0;
-        StringBuilder content = new StringBuilder("");
+        setCopyTaskInfo(oldTask,copyTask,projectId,old_new,new_old);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type","创建了任务");
+        jsonObject.put("task",taskMapper.findTaskByTaskId(copyTask.getTaskId()));
+        messagingTemplate.convertAndSend("/topic/"+ projectId, new ServerMessage(JSON.toJSONString(jsonObject, SerializerFeature.DisableCircularReferenceDetect)));
         //根据被复制任务的id 取出该任务所有的子任务
         List<Task> subLevelTaskList = taskMapper.findSubLevelTask(taskId);
         if(subLevelTaskList != null && subLevelTaskList.size() > 0){
@@ -747,6 +765,7 @@ public class TaskServiceImpl implements TaskService {
                 }
                 //设置新的子任务id
                 copySubleveTask.setTaskId(IdGen.uuid());
+                copySubleveTask.setProjectId(projectId);
                 //设置新的子任务的父任务id
                 copySubleveTask.setParentId(copyTask.getTaskId());
                 //设置新子任务的更新时间
@@ -754,14 +773,10 @@ public class TaskServiceImpl implements TaskService {
                 //设置新子任务的创建时间
                 copySubleveTask.setCreateTime(System.currentTimeMillis());
                 copyTask.setParentId("0");
-                setCopyTaskInfo(subLevelTask,copySubleveTask,projectId);
+                setCopyTaskInfo(subLevelTask,copySubleveTask,projectId,old_new,new_old);
             }
         }
-        //追加日志字符串
-        content.append(TaskLogFunction.R.getName()).append(" ").append(copyTask.getTaskName());
-        Log log = logService.saveLog(copyTask.getTaskId(), content.toString(),1);
-        log.setResult(result);
-        return log;
+        return copyTask.getTaskId();
     }
 
     /**
@@ -1299,7 +1314,13 @@ public class TaskServiceImpl implements TaskService {
         return list;
     }
 
-    public void setCopyTaskInfo(Task oldTask, Task copyTask, String projectId){
+    /**
+     * 此方法用来设置 复制的新任务的  成员 标签 关联
+      * @param oldTask 被复制的任务的信息
+      * @param copyTask 新的任务信息
+      * @param projectId 项目信息
+      */
+    public void setCopyTaskInfo(Task oldTask, Task copyTask, String projectId, boolean oldNew,boolean newOld){
         //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
         if(!Objects.equals(oldTask.getProjectId(),projectId)){
             List<ProjectMember> byProjectId = projectMemberService.findByProjectId(projectId);
@@ -1338,21 +1359,18 @@ public class TaskServiceImpl implements TaskService {
 
                 if(byProjectIdTag != null && byProjectIdTag.size() > 0){
                     boolean flag = false;
-                    for(int i = 0;i < tagList.size() ;i++){
-                        for(Tag t : byProjectIdTag){
-                            if(tagList.get(i).getTagName().equals(t.getTagName())){
+                    for(int i = 0;i < tagList.size() ;i++) {
+                        for (Tag t : byProjectIdTag) {
+                            if (tagList.get(i).getTagName().equals(t.getTagName())) {
                                 newTagIds.add(t.getTagId());
                                 flag = true;
                             }
                         }
-                        if(!flag){
+                        if (!flag) {
                             newTagListAfter.add(tagList.get(i));
                         }
                         flag = false;
-
                     }
-
-
                 } else{
                     newTagListAfter = tagList;
                 }
@@ -1372,12 +1390,75 @@ public class TaskServiceImpl implements TaskService {
                 }
                 copyTask.setTagId(Joiner.on(",").join(newTagIds));
             }
-            //保存到数据库
-            taskMapper.saveTask(copyTask);
+
         } else{
-            copyTask.setTagId(copyTask.getTagId());
+            copyTask.setTagId(oldTask.getTagId());
+            copyTask.setExecutor(oldTask.getExecutor());
             copyTask.setTaskUIds(oldTask.getTaskUIds());
-            taskMapper.saveTask(copyTask);
         }
+
+        //保存到数据库
+        taskMapper.saveTask(copyTask);
+
+        //关联信息的设置
+        //被复制的任务的关联信息
+        List<Binding> bList = bindingService.findBindingInfoByPublic(oldTask.getTaskId());
+
+        //新的任务的关联信息  用于接受接任务的关联信息
+        List<Binding> newBindingList = new ArrayList<Binding>();
+
+        if(bList != null && bList.size() > 0){
+            for (Binding b : bList) {
+                Binding binding = new Binding();
+                binding.setId(IdGen.uuid());
+                binding.setPublicId(copyTask.getTaskId());
+                binding.setPublicType(b.getPublicType());
+                binding.setBindId(b.getBindId());
+                newBindingList.add(binding);
+            }
+            //保存新任务的关联信息
+            bindingService.saveMany(newBindingList);
+        }
+
+        //如果复制的任务规则为  原任务接受新任务的更新提醒 则把新加的任务关联被被复制的任务
+        if(oldNew){
+            //当前要添加的任务关联 必须不能是子任务
+            if(isparent.equals(copyTask.getParentId())){
+                Binding binding = new Binding();
+                binding.setId(IdGen.uuid());
+                binding.setBindId(copyTask.getTaskId());
+                binding.setPublicId(oldTask.getTaskId());
+                binding.setPublicType(BindingConstants.BINDING_TASK_NAME);
+                bindingService.saveBinding(binding);
+
+                //关联的要推送到任务界面
+                TaskPushType taskPushType = new TaskPushType("关联");
+                Map<String,Object> map = new HashMap<String,Object>();
+                List bInfo = new ArrayList();
+                bInfo.add(taskMapper.findTaskByTaskId(copyTask.getTaskId()));
+                map.put("bindingInfo",bInfo);
+                map.put("publicType",BindingConstants.BINDING_TASK_NAME);
+                taskPushType.setObject(map);
+                messagingTemplate.convertAndSend("/topic/"+oldTask.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
+        }
+        if(newOld){
+            //当前要添加的任务关联 必须不能是子任务
+            if(isparent.equals(copyTask.getParentId())){
+                Binding binding = new Binding();
+                binding.setId(IdGen.uuid());
+                binding.setBindId(oldTask.getTaskId());
+                binding.setPublicId(copyTask.getTaskId());
+                binding.setPublicType(BindingConstants.BINDING_TASK_NAME);
+                bindingService.saveBinding(binding);
+            }
+        }
+
+        int result = 0;
+        StringBuilder content = new StringBuilder("");
+        //追加日志字符串
+        content.append(TaskLogFunction.R.getName()).append(" ").append(copyTask.getTaskName());
+        Log log = logService.saveLog(copyTask.getTaskId(), content.toString(),1);
+        log.setResult(result);
     }
 }

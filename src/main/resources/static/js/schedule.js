@@ -258,35 +258,8 @@ $("body").on("click",".cancle",function (e) {
  */
 $(".add-work-people img").click(function (e) {
     $("#executor").addClass("special-executor");
-    var url = '/schedule/findScheduleMemberInfo';
-    var args = {"projectId":projectId, "scheduleId": scheduleId};
-    $.post(url, args, function (data) {
-        if(data.result===1){
-            $('#executor').html('');
-            $('#noExecutor').html('');
-            for(var i=0;i<data.joinInfo.length;i++){
-                var div = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
-                    '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
-                    '<span value = "' + data.joinInfo[i].id + '">'+ data.joinInfo[i].userName +'</span>'+
-                    '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: rgb(209, 209, 209); display: inline;"></i>' +
-                    '</div>';
-                $('#executor').append(div);
-            }
-
-
-            for(var j=0;j<data.projectMembers.length;j++){
-                var div = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
-                    '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
-                    '<span value = "' + data.projectMembers[j].id + '">'+ data.projectMembers[j].userName +'</span>'+
-                    '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                    '</div>';
-                $('#noExecutor').append(div);
-            }
-        }
-
-    $(".people").show(500);
-});
-e.stopPropagation();
+    addpeople();
+    e.stopPropagation();
 });
 
 //点击人员 出现对勾

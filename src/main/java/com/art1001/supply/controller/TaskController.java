@@ -61,6 +61,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -199,6 +200,19 @@ public class TaskController {
     }
 
 
+    @GetMapping("invite.html")
+    public String showInvite(@RequestParam String projectId,@RequestParam String taskId,Model model){
+
+        List<UserEntity> members = userService.findProjectAllMember(projectId);
+        Task task = taskService.findTaskByTaskId(taskId);
+        members.removeAll(task.getJoinInfo());
+        model.addAttribute("members",members);
+        model.addAttribute("users",task.getJoinInfo());
+        model.addAttribute("taskId",taskId);
+        return "tk-search-people";
+    }
+
+
     /**
      * 添加新任务
      * @param task 任务实体信息
@@ -219,7 +233,6 @@ public class TaskController {
             object.put("task",taskByTaskId);
             object.put("type","创建了任务");
             Subject subject = SecurityUtils.getSubject();
-
             messagingTemplate.convertAndSend("/topic/"+taskByTaskId.getProjectId(), new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
         } catch (Exception e){
             jsonObject.put("msg","任务添加失败!");
@@ -240,14 +253,13 @@ public class TaskController {
         try {
             Log log = taskService.addAndRemoveTaskMember(taskId,memberIds);
             Task task = taskService.findTaskByTaskId(taskId);
-            jsonObject.put("members",userService.findManyUserById(task.getTaskUIds()));
+            jsonObject.put("members",task.getJoinInfo());
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
             if(log!=null){
                 jsonObject.put("taskLog",log);
                 TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
                 taskPushType.setObject(jsonObject);
-                String[] memberId = memberIds.split(",");
                 messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
             }
         } catch (Exception e){
@@ -482,6 +494,7 @@ public class TaskController {
     @PostMapping("updateTaskStartAndEndTime")
     @ResponseBody
     public JSONObject updateTaskStartAndEndTime(Task task){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JSONObject jsonObject = new JSONObject();
         try {
             //更新任务时间信息
@@ -498,7 +511,15 @@ public class TaskController {
                 jsonObject.put("msg","时间更新失败!");
                 jsonObject.put("result",0);
             }
-            messagingTemplate.convertAndSend("");
+            jsonObject.put("task",task);
+            if(task.getStartTime() != null){
+                jsonObject.put("startTime",format.format(new Date(task.getStartTime())));
+            } else{
+                jsonObject.put("endTime",format.format(new Date(task.getEndTime())));
+            }
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A25.getName());
+            taskPushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/" + task.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("任务时间信息更新失败,{}",e);
             throw new AjaxException(e);
@@ -829,16 +850,18 @@ public class TaskController {
      * @param taskId 任务的id
      * @param projectId 项目id
      * @param menuId 菜单id
+     * @param old_new 原任务接受新任务的更新提醒  是否勾选
+     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId){
+    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId, boolean old_new, boolean new_old){
         JSONObject jsonObject = new JSONObject();
         try {
-            Log taskLogVO = taskService.copyTask(taskId,projectId,menuId);
+            String copyTaskId = taskService.copyTask(taskId,projectId,menuId,old_new,new_old);
+            jsonObject.put("taskId",copyTaskId);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
-            jsonObject.put("taskLog",taskLogVO);
         } catch (Exception e){
             log.error("系统异常,复制任务失败! ",e);
             throw new AjaxException(e);

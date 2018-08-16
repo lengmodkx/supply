@@ -428,104 +428,6 @@ layui.use('form', function() {
         });
     });
 
-    //移除任务的参与者
-   $("html").on("click",".remove-work-people",function () {
-
-       var id = $(this).parent().attr('data-id');
-       var ids = [];
-       $('.one-work-people').each(function () {
-           ids.push($(this).attr('data-id'));
-       });
-       for(var i = 0;i < ids.length;i++){
-           if(ids[i] == id){
-               ids.splice(i,1);
-           }
-       }
-
-       var args = {"taskId":taskId,"memberIds":ids.toString()};
-       var url = "/task/addAndRemoveTaskMember";
-       $(this).parent().remove();
-       $.post(url,args,function (data) {
-
-       },"json");
-   });
-
-
-
-    //点击人员 出现对勾
-    $("html").on("click",".one-people",function () {
-        if (danxuan){
-            $(this).siblings().find("i").hide();
-            $(this).find("i").toggle();
-        } else {
-            $(this).find("i").toggle();
-        }
-
-        var arr=[]
-        for (var i=0;i<$(".one-people").length;i++){
-            if ($(this).find(i).is(":visible")) {
-                var value=$(this).find("span").attr("value");
-            }
-        }
-    });
-/**
- * 点击人员 弹框 确定 按钮
- */
-$('.people-ok').click(function () {
-    if(!danxuan){
-        //参与者 确定
-        var addUserEntity=[];
-        var removeUserEntity=[];
-        for (var i=0;i<$(".joinInfo .one-people").length;i++){
-            if ($(".joinInfo .one-people").eq(i).find("i").is(":visible")) {
-                var value =$(".joinInfo .one-people").eq(i).find("span").attr("value");
-                addUserEntity.push(value);
-            }
-        }
-        for (var i=0;i<$(".Recommend .one-people").length;i++){
-            if ($(".Recommend .one-people").eq(i).find("i").is(":visible")) {
-                var value =$(".Recommend .one-people").eq(i).find("span").attr("value");
-                addUserEntity.push(value);
-            }
-        }
-        if(addUserEntity == '' && removeUserEntity == ''){
-            $(".people").hide(500);
-            return false;
-        }
-
-        var url = "/task/addAndRemoveTaskMember";
-        var args = {"taskId":taskId,"memberIds":addUserEntity.toString()};
-        $.post(url,args,function (data) {
-            if(data.result === 1){
-                $(".people").hide(500);
-            }
-        },"json");
-    } else {
-        var uid = '';
-        var name = '';
-        for (var i=0;i<$(".Recommend .one-people").length;i++){
-            if ($(".Recommend .one-people").eq(i).find("i").is(":visible")) {
-                uid = $(".Recommend .one-people").eq(i).find("span").attr("value");
-                name = $(".Recommend .one-people").eq(i).find("span").html();
-            }
-        }
-        var url = "/task/updateTaskExecutor";
-        var args = {"taskId":taskId,"executor":uid,"uName":name};
-        $.post(url,args,function (data) {
-            $(".people").hide(500);
-        });
-
-    }
-
-});
-    //点击空白区域 添加人员消失
-    $(document).click(function (event) {
-        var _con = $('.people ');   // 设置目标区域
-        if (!_con.is(event.target) && _con.has(event.target).length === 0) { // Mark 1
-            //$('#divTop').slideUp('slow');   //滑动消失
-            $('.people ').hide(500);          //淡出消失
-        }
-    });
 
     //点击 添加附件
     $(".publish-bottom img:nth-of-type(1)").click(function () {
@@ -536,36 +438,48 @@ $('.people-ok').click(function () {
      * 任务详情的时候显示的人员信息
      */
     $(".add-work-people img").click(function (e) {
-        danxuan=false;
-        $('.tk_name').html("参与者");
-       $('.joinInfo').html('');
-       $('.Recommend').html('');
-        var url = '/task/findTaskMemberInfo';
-        var args = {"projectId":projectId, "taskId": taskId};
-        $.post(url, args, function (data) {
-           if(data.result===1){
-               for(var i=0;i<data.joinInfo.length;i++){
-                   var div1 = '<div class="one-people" id="'+data.joinInfo[i].id+'">'+
-                       '<img src="'+ IMAGE_SERVER+data.joinInfo[i].userInfo.image +'"/>'+
-                       '<span value = "' + data.joinInfo[i].id + '">'+ data.joinInfo[i].userName +'</span>'+
-                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: rgb(209, 209, 209); display: inline;"></i>' +
-                       '</div>';
-                    $('.joinInfo').append(div1);
-               }
-
-               for(var j=0;j<data.projectMembers.length;j++){
-                   var div2 = '<div class="one-people" id="'+data.projectMembers[j].id+'">'+
-                       '<img src="'+ IMAGE_SERVER+data.projectMembers[j].userInfo.image +'"/>'+
-                       '<span value = "' + data.projectMembers[j].id + '">'+ data.projectMembers[j].userName +'</span>'+
-                       '<i class="layui-icon layui-icon-ok" style="font-size: 16px; color: #D1D1D1;"></i>'+
-                       '</div>';
-                   $('.Recommend').append(div2);
-               }
-           }
-           $(".people").show(500);
+        var width = parent.window.innerWidth;
+        var heigth = parent.window.innerHeight;
+        var left = (width-600)/2+$(this).offset().left+20;
+        var top = (heigth-600)/2+$(this).offset().top+25;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top, left],
+            area: ['252px', '360px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/task/invite.html?projectId='+projectId+"&taskId="+taskId,'no']
         });
+
         e.stopPropagation();
-});
+     });
+
+    //移除任务的参与者
+    $("html").on("click",".remove-work-people",function () {
+
+        var id = $(this).parent().attr('data-id');
+        var ids = [];
+        $('.one-work-people').each(function () {
+            ids.push($(this).attr('data-id'));
+        });
+        for(var i = 0;i < ids.length;i++){
+            if(ids[i] == id){
+                ids.splice(i,1);
+            }
+        }
+
+        var args = {"taskId":taskId,"memberIds":ids.toString()};
+        var url = "/task/addAndRemoveTaskMember";
+        $(this).parent().remove();
+        $.post(url,args,function (data) {
+
+        },"json");
+    });
+
     //监听任务内容的光标离开事件
     $('#remarks').blur(function(){
         var taskId = $('#taskId').val();
@@ -642,11 +556,11 @@ $('.people-ok').click(function () {
         parent.layer.close(index); //再执行关闭
     });
 
-//点击 选择  颜色
-$("html").on("click",".color-pick li",function () {
-    $(".color-pick li i").hide();
-    $(this).find("i").show()
-});
+    //点击 选择  颜色
+    $("html").on("click",".color-pick li",function () {
+        $(".color-pick li i").hide();
+        $(this).find("i").show()
+    });
 
 /**
  * 给该任务点赞
@@ -808,8 +722,8 @@ function addBindingStr(binding,type,bindId){
                 content += '<input type="checkbox" value = "' + binding[i].taskId + '" lay-filter="bindTask" name="" lay-skin="primary" disabled="disabled">';
                 content += '</div>'+
                 '<div class="related-rw-info">';
-                if(binding[i].executor == ''){
-                    content += '<img src="/image/add.png">';
+                if(binding[i].executor == '' || binding[i].executor == null){
+                    content += '<img src="/image/person.png">';
                 } else{
                     content += '<img src="' + IMAGE_SERVER + binding[i].executorInfo.userInfo.image+ '">';
                 }
@@ -1008,6 +922,7 @@ function changeRicheng(scheduleId,projectId) {
         });
     });
 }
+
 
 
 

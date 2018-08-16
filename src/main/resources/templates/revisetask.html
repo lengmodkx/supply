@@ -11,6 +11,7 @@
 <body style="background-color: white;border-radius: 5px">
 <!--设计修改任务界面-->
 <input type="hidden" th:value="${task.taskId}" id = "taskId" />
+<input type="hidden" th:value="${projectId}" id = "projectId" />
 <div id="revise-task" class="revise-task-wrap layui-form" >
     <i class="layui-icon layui-icon-close close-revise-task" style="font-size: 18px; color: #a6a6a6;"></i>
     <i class="layui-icon layui-icon-down assignment-menu-show" style="font-size: 18px; color: #a6a6a6;"></i>
@@ -53,7 +54,7 @@
                 <i class="iconfont icon-repeat" style="font-size: 18px;line-height: 24px;color: #a6a6a6;" th:if="${task.repeat=='不重复'}"></i>
                 <i class="iconfont icon-repeat" style="font-size: 18px;line-height: 24px;color: #3DA8F5;"  th:if="${task.repeat!='不重复'}"></i>
                 <select name="repeat" lay-verify="" lay-filter = "repeat">
-                    <option value="不重复" th:selected="${task.repeat == '不重复'}" th:text="${task.repeat}">不重复</option>
+                    <option value="不重复" th:selected="${task.repeat == '不重复'}">不重复</option>
                     <option value="每天重复" th:selected ="${task.repeat == '每天重复'}">每天重复</option>
                     <option value="每周重复" th:selected ="${task.repeat == '每周重复'}" >每周重复</option>
                     <option value="每月重复" th:selected="${task.repeat == '每月重复'}">每月重复</option>
@@ -75,12 +76,15 @@
 
         <div class="heng-line"></div>
 
-
-        <div class="add-bz combox">
+        <section style="width: 80%;margin: auto;margin-top: 20px">
             <img src="../static/image/beizhu.png" th:src="@{/image/beizhu.png}" />
-            <span>备注</span>
+            <div id="editor" >
+                <p></p>
+            </div>
+        </section>
+        <div class="add-bz combox">
+
             <input type="hidden" th:value="${task.remarks}" id = "oldRemarks"/>
-            <input type="text" name="title" th:value="${task.remarks}" id = "remarks" placeholder="待添加"  class="layui-input label" autocomplete="false" />
         </div>
         <div class="yxj combox">
             <img src="../static/image/yxj.png" th:src="@{/image/yxj.png}" />
@@ -156,7 +160,7 @@
                         </div>
                         <div class="related-rw-info">
                             <img src="../static/image/begintime.png" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+ ${task.executorInfo.userInfo.image}">
-                            <img th:if="${task.executor == ''}" th:src="@{/image/add.png}">
+                            <img th:if="${task.executor == ''}" th:src="@{/image/person.png}">
                             <span th:text="${task.taskName}"></span>
                         </div>
                         <div class="related-rw-describe over-hidden" th:text = "${task.project.projectName}"></div>
@@ -298,9 +302,9 @@
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
-            <div class="one-work-people" th:each="joininfo:${task.joinInfo}" th:data-id="${joininfo.id}">
+            <div class="one-work-people" th:each="joininfo,index:${task.joinInfo}" th:data-id="${joininfo.id}">
                 <img src="../static/image/add.png" th:value="${joininfo.id}" th:src="#{IMAGE_SERVER}+${joininfo.userInfo.image}" />
-                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;"></i>
+                <i class="layui-icon layui-icon-close-fill remove-work-people" style="font-size: 15px; color: #3da8f5;" th:data="${index}"></i>
             </div>
 
             <div class="add-work-people">
@@ -526,27 +530,38 @@
 
     </div>
     <!--人员 参与者 弹框-->
-    <div class="people boxsizing" style="display: none;top: 20px;left: 10px">
-        <input type="text" name="" placeholder="搜索" class="layui-input">
-        <div class="peoples">
-            <p class="tk_name">参与者</p>
-            <div class = "joinInfo">
+    <div style="display: none;" class="join-people">
+        <div class="people boxsizing" >
+            <input type="text" name="" placeholder="搜索" class="layui-input">
+            <div class="peoples">
+                <p class="tk_name">参与者</p>
+                <div class = "joinInfo">
 
-            </div>
-            <p>推荐</p>
-            <div class = "Recommend">
+                </div>
+                <p>推荐</p>
+                <div class = "Recommend">
 
+                </div>
+                <!--<div class="add-new-people">-->
+                    <!--<img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>-->
+                    <!--<span>邀请新成员</span>-->
+                <!--</div>-->
             </div>
-            <div class="add-new-people">
-                <img src="../static/image/adds.png" th:src="@{/image/adds.png}"/>
-                <span>邀请新成员</span>
-            </div>
+            <div class="people-ok">确定</div>
         </div>
-        <div class="people-ok">确定</div>
     </div>
+
 </div>
 </body>
+<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+<script type="text/javascript" src="../static/js/wangEditor.min.js" th:src="@{/js/wangEditor.min.js}"></script>
 <script>
+
+    //文本编辑器
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    editor.create();
+
     $(".go-return").click(function () {
         $(".renwu-menu>div").hide();
         $(".task-menu-box").show()
@@ -710,17 +725,26 @@
      */
     $('.style-btn').click(function () {
         var menuId = $('select[name="menu"]').val();
-        var projectId = $('select[name="project"]').val();
+        var projectId = $('select[name="copy-project"]').val();
        if($('select[name="menu"]').val() == ''){
            layer.msg("必须选择一个菜单!");
            return false;
        }
+
+       var old_new = $('input[name = "old-new"]').prop('checked');
+       var new_old = $('input[name = "new-old"]').prop('checked');
        var url = "/task/copyTask";
-       var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId};
+       var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId,"old_new":old_new,"new_old":new_old};
        $.post(url,args,function (data) {
+           $(".renwu-menu").slideUp();
+           parent.taskId = data.taskId;
+           parent.layer.msg('<div  onclick="changeRenwu(taskId,projectId)">'+ '复制成功:'+ $('.task_name').val() +'</div>', {
+               offset:'lb',
+               icon:1,
+               time: 4000 //2秒关闭（如果不配置，默认是3秒）
+           });
        });
     });
-
 </script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>
