@@ -388,22 +388,17 @@
             layer.msg("请输入确认密码",{icon:5});
         }
 
+        if(newPwd!==surePwd){
+            layer.msg("两次密码输入不一致，请修改",{icon:5});
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        $.post('/public/updatePassword',{"oldPassword":oldPwd,"password":newPwd},function (data) {
+            if(data.result===1){
+                layer.msg(data.msg,{icon:1});
+            }else{
+                layer.msg(data.msg,{icon:5});
+            }
+        });
     });
 
 </script>

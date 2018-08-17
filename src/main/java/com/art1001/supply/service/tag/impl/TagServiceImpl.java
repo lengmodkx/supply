@@ -12,16 +12,19 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.tag.TagMapper;
+import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -46,7 +49,10 @@ public class TagServiceImpl implements TagService {
 
 	@Resource
 	private ShareService shareService;
-	
+
+	@Resource
+	private TagRelationMapper tagRelationMapper;
+
 	/**
 	 * 查询分页tag数据
 	 * 
