@@ -1462,46 +1462,32 @@ public class TaskController {
     /**
      * 下载
      *
-     * @param logId
+     * @param fileId
      */
     @RequestMapping(value = "/download",method = RequestMethod.GET)
     @ResponseBody
-    public void downloadFile(@RequestParam String logId, @RequestParam String taskId, HttpServletResponse response) throws IOException{
-        Log log = logService.findLogById(logId);
-        Task task = taskService.findTaskByTaskId(taskId);
+    public void downloadFile(@RequestParam String fileId,HttpServletResponse response) throws IOException{
         // 通过response对象获取OutputStream流
         OutputStream os = response.getOutputStream();
-        //获取zip的输出流
-        ZipOutputStream zos = new ZipOutputStream(os);
-        //定义输入流
-        BufferedInputStream bis = null;
         try {
-            for (int i=0;i<log.getFileList().size();i++){
-                File file = log.getFileList().get(i);
-                InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl());
-                //设置压缩后的zip文件名
-                String sourceFilePath = task.getTaskName()+".zip";
+            File file = fileService.findFileById(fileId);
+            InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl());
+
                 //设置content-disposition响应头控制浏览器弹出保存框，若没有此句则浏览器会直接打开并显示文件。
                 //中文名要经过URLEncoder.encode编码，否则虽然客户端能下载但显示的名字是乱码
                 // 设置响应类型
                 response.setContentType("application/x-msdownload");
-                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(sourceFilePath, "UTF-8"));
-                byte[] buf = new byte[8192];
-                int len = 0;
-                //创建ZIP实体，并添加进压缩包
-                ZipEntry zipEntry = new ZipEntry(file.getFileName());
-                zos.putNextEntry(zipEntry);
-                bis = new BufferedInputStream(inputStream, 1024*10);
-                while ((len = bis.read(buf)) > 0) {
-                    //使用OutputStream将缓冲区的数据输出到客户端浏览器
-                    zos.write(buf, 0, len);
+                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(file.getFileName(), "UTF-8"));
+                int byteCount;
+                //1M逐个读取
+                byte[] bytes = new byte[1024*1024];
+                while ((byteCount = inputStream.read(bytes)) != -1){
+                    os.write(bytes, 0, byteCount);
                 }
-            }
+                inputStream.close();
+                os.close();
         }catch (Exception e) {
-            e.printStackTrace();
-        }finally{
-            if(null != zos) zos.close();
-            if(null != bis) bis.close();
+                e.printStackTrace();
         }
     }
 }

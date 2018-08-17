@@ -19,7 +19,7 @@ Date.prototype.format = function(format)
                 ("00"+ o[k]).substr((""+ o[k]).length));
     return format;
 }
-var zxz=false;
+
 $("body").on("click",".show-cancel-related",function (e) {
     $(this).parents("li").find(".related-menu").slideToggle();
 
@@ -438,11 +438,6 @@ layui.use('form', function() {
     });
 
 
-    //点击 添加附件
-    $(".publish-bottom img:nth-of-type(1)").click(function () {
-        $(".fujian-box").slideToggle();
-    });
-
     /**
      * 任务详情的时候显示的人员信息
      */
@@ -489,22 +484,32 @@ layui.use('form', function() {
         },"json");
     });
 
-    // //监听任务内容的光标离开事件
-    // $('#remarks').blur(function(){
-    //     var taskId = $('#taskId').val();
-    //     var oldRemarks = $('#oldRemarks').val();
-    //     var remarks = $('#remarks').val();
-    //     if(remarks == oldRemarks){
-    //         return false;
-    //     }
-    //     var url = "/task/upateTaskRemarks";
-    //     var args = {"taskId":taskId,"remarks":remarks,"projectId":projectId};
-    //     $.post(url,args,function(data){
-    //        if(data.result == 1) {
-    //            $('#oldRemarks').val(remarks);
-    //        }
-    //     },"json");
-    //  });
+    //任务上传文件
+    $('.task-upload-file').click(function () {
+        var width = parent.window.innerWidth;
+        var heigth = parent.window.innerHeight;
+        var left = (width-600)/2+$(this).offset().left+20;
+        var top = (heigth-600)/2+$(this).offset().top-160;
+        parent.layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: [top, left],
+            area: ['250px', '150px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: $('.file-upload').html()
+        });
+    });
+
+
+    $('html').on('click','.close-fujian',function () {
+        console.log('xxxxx')
+
+    });
+
 
      //监听任务内容的光标离开事件
     $('.task_name').blur(function(){
@@ -542,18 +547,19 @@ layui.use('form', function() {
         if(taskLogVO.fileIds == undefined || taskLogVO.fileIds === null||taskLogVO.fileIds===''){
             log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
         }else{
-            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span><span class="hide-box download">下载附件</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p><ul class="up-file-ul clearfix">';
+            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p><ul class="up-file-ul clearfix">';
             for(var i=0;i<taskLogVO.fileList.length;i++){
                 var file = taskLogVO.fileList[i];
                 log+='<li class="boxsizing">';
-                log+='<a target="_blank" href="/file/fileDetail.html?fileId"+file.fileId><img src="/image/defaultFile.png"/><p class="up-file-ul-name">'+file.fileName.length>11?file.fileName.substring(1,10)+file.ext:file.fileName+'</p><p class="up-file-ul-size">'+file.size+'</p></a>';
+                log+='<a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}" class="file-content"><img src="/image/defaultFile.png"/><span class="up-file-ul-name" ">'+file.fileName+'</span></a>\n' +
+                    '<div style="float: right"><span class="up-file-ul-size">'+file.size+'</span><span class="download" style="cursor: pointer;float: right" th:id="${file.fileId}">下载文件</span></div>';
                 log+='</li>';
             }
 
             log+='</ul></div></div></li>';
         }
 
-        $('#log').html(log);
+        $('#log').append(log);
     }
 
 

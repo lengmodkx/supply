@@ -79,7 +79,8 @@
         <div class="add-bz combox">
             <img src="../static/image/beizhu.png" th:src="@{/image/beizhu.png}" />
             <span>备注</span>
-            <input type="hidden" th:value="${task.remarks}" id = ""/>
+            <input type="hidden" id = ""/>
+
             <input type="text" name="title" th:value="${task.remarks}" id = "remarks" placeholder="待添加"  class="layui-input label" autocomplete="false" />
         </div>
         <div class="add-beizhu-box" style="display: none;margin-top: 10px">
@@ -339,15 +340,18 @@
                             <div class="file-con-box-header boxsizing">
                                 <span class="file-con-box-name" th:text="${tasklog.userEntity.userName}">谁谁谁</span>
                                 <span class="file-con-box-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}">3月24日12:00</span>
-                                <span class="hide-box download" th:id="${tasklog.id}">下载附件</span>
                             </div>
                             <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p >
                             <ul class="up-file-ul clearfix">
                                 <li class="boxsizing" th:each="file:${tasklog.fileList}">
-                                    <a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}">
-                                    <img th:src="@{/image/defaultFile.png}" >
-                                    <p class=" up-file-ul-name" th:text="${#strings.length(file.fileName) gt 11 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}">啥啥啥文件</p >
-                                    <p class="up-file-ul-size" th:text="${file.size}">13.2kb</p></a>
+                                    <a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}" class="file-content">
+                                        <img th:src="@{/image/defaultFile.png}"/>
+                                        <span class="up-file-ul-name" th:text="${file.fileName}">啥啥啥文件</span>
+                                    </a>
+                                    <div style="float: right">
+                                        <span class="up-file-ul-size" th:text="${file.size}">13.2kb</span>
+                                        <span class="download" style="cursor: pointer;float: right" th:id="${file.fileId}">下载文件</span>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -363,34 +367,31 @@
         </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
-
-            <div style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
+            <div class="task-upload-file" style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
                 <i class="layui-icon" style="color: #ffffff">&#xe67c;</i>
-                <input type="file" multiple name="file" class="files" style="position: absolute;font-size: 0px;cursor: pointer;width: 100%;height: 100%"/>
             </div>
             <div class="publish-btn" id="fileListAction">发布</div>
         </div>
         <!--上传文件框-->
-        <div class="fujian-box boxsizing" style="display: none">
-            <div class="fujian-box-title boxsizing">
-                添加附件
-                <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
-            </div>
-            <div class="zj-up">
-                <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
-                <span>直接上传</span>
-            </div>
-            <div class="xian"></div>
-            <div class="select-up">
-                <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
-                <span>从文件库选择</span>
-            </div>
-            <div class="xian"></div>
-            <div class="fujian-box-bottom boxsizing">
-                <input type="text"  placeholder="粘贴下载链接..." class="layui-input lianjie">
-                <div class="add-fujian">添加</div>
+        <div class="file-upload" style="display: none">
+            <div class="task-fujian-box boxsizing" >
+                <div class="fujian-box-title boxsizing">
+                    添加附件
+                    <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+                </div>
+                <div class="zj-up">
+                    <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>直接上传</span>
+                    <input type="file" multiple name="file" class="zj-up-file"/>
+                </div>
+                <div class="xian"></div>
+                <div class="select-up">
+                    <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                    <span>从文件库选择</span>
+                </div>
             </div>
         </div>
+
 
     </div>
     <!--任务菜单 框-->
@@ -605,7 +606,7 @@
         var url = "/task/upateTaskRemarks";
         var args = {"taskId":taskId,"remarks":obj};
         $.post(url,args,function(data){
-           if(data.result == 1) {
+           if(data.result === 1) {
                layer.msg("更新成功!");
            }
         },"json");
@@ -700,7 +701,9 @@
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     var curFiles = [];
-    $('.files').on('change',function (e) {
+    $('.zj-up-file').change(function (e) {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
         Array.prototype.push.apply(curFiles, e.currentTarget.files);
         $('.fileList').html("");
         for(var i=0;i<curFiles.length;i++){
@@ -714,13 +717,13 @@
             $('.fileList').append(li);
         }
         $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-    });
+    })
 
 
     $('html').on('click', '.fileList li i',function() {
         curFiles.splice($(this).attr('data'), 1);
         $(this).parent().remove();
-        $('.files').val('');
+        $('.zj-up-file').val('');
         $('.fileList').html("");
         for(var i=0;i<curFiles.length;i++){
             var file = curFiles[i];
@@ -766,7 +769,7 @@
 
 
     $('html').on('click','.download',function () {
-        location.href = "/task/download?logId=" + $(this).attr('id')+"&taskId="+taskId;
+        location.href = "/task/download?fileId=" + $(this).attr('id');
     });
 
     /**
