@@ -24,6 +24,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.crypto.EndecryptUtils;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -473,6 +474,38 @@ public class PublicController {
         }
         return jsonObject;
     }
+
+    @PostMapping("updatePassword")
+    public JSONObject updatePassword(@RequestParam String userId,@RequestParam String oldPassword,@RequestParam String password){
+
+        JSONObject jsonObject = new JSONObject();
+        try{
+            UserEntity userEntity = userService.findById(userId);
+            // 加密用户输入的密码，得到密码和加密盐，保存到数据库
+            UserEntity user1 = EndecryptUtils.md5Password(userEntity.getAccountName(), oldPassword, 2);
+            if(user1.getPassword().equals(userEntity.getPassword())){
+                UserEntity user = EndecryptUtils.md5Password(userEntity.getAccountName(), password, 2);
+                //设置添加用户的密码和加密盐
+                userEntity.setPassword(user.getPassword());
+                userEntity.setCredentialsSalt(user.getCredentialsSalt());
+                userService.update(userEntity);
+                jsonObject.put("result", 1);
+                jsonObject.put("msg", "更新成功");
+            }else{
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "原密码错误，请重新输入");
+            }
+
+        }catch (Exception e){
+            throw  new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
+
+
 
     @GetMapping("mypage.html")
     public String findThreeDay(Model model){

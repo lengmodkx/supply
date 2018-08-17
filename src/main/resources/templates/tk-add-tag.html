@@ -17,12 +17,7 @@
         </div>
         <ul class="tags-ul boxsizing" id = "tags">
             <!--这里是标签-->
-            <li class="tags-list" th:each="tag:${tagList}" th:if="${tag.flag}" th:id="${tag.tagId}">
-                <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
-                <span class="tag-font" th:text="${tag.tagName}"></span>
-                <i class="layui-icon layui-icon-ok choose-ok" style="font-size: 16px; color: #D1D1D1;" th:style="'display:' + @{(${tag.flag} ? 'block' : 'none')} + ''"></i>
-            </li>
-            <li class="tags-list" th:each="tag:${tagList}" th:if="${!tag.flag}" th:id="${tag.tagId}">
+            <li class="tags-list" th:each="tag:${tagList}" th:id="${tag.tagId}">
                 <span class="dot" th:style="'background-color:' +  ${tag.bgColor}"></span>
                 <span class="tag-font" th:text="${tag.tagName}"></span>
                 <i class="layui-icon layui-icon-ok choose-ok" style="font-size: 16px; color: #D1D1D1;" th:style="'display:' + @{(${tag.flag} ? 'block' : 'none')} + ''"></i>

@@ -353,7 +353,7 @@ public class TaskController {
 
     /**
      * 更改任务的备注信息
-     * @param task
+     * @param task 任务的信息
      * @return
      */
     @PostMapping("upateTaskRemarks")
@@ -365,7 +365,7 @@ public class TaskController {
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
             jsonObject.put("taskLog",taskLogVO);
-            messagingTemplate.convertAndSend("/topic/"+task.getProjectId(), new ServerMessage(jsonObject.toString()));
+            messagingTemplate.convertAndSend("/topic/"+task.getTaskId(), new ServerMessage(jsonObject.toString()));
         } catch (Exception e){
             log.error("系统异常,更新任务备注失败! 当前任务:{},{}",task.getTaskId(),e);
             throw new AjaxException(e);

@@ -29,6 +29,15 @@ $("body").on("click",".close-related-menu",function () {
     $(this).parents(".related-menu").slideUp();
 });
 
+$("#remarks").click(function () {
+    $(".add-beizhu-box").show(200)
+});
+$(".child-task-no").click(function () {
+    $(".add-beizhu-box").hide(200)
+})
+
+
+
 $('.add-guanlian').click(function (e) {
     parent.layer.open({
         type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
@@ -480,22 +489,22 @@ layui.use('form', function() {
         },"json");
     });
 
-    //监听任务内容的光标离开事件
-    $('#remarks').blur(function(){
-        var taskId = $('#taskId').val();
-        var oldRemarks = $('#oldRemarks').val();
-        var remarks = $('#remarks').val();
-        if(remarks == oldRemarks){
-            return false;
-        }
-        var url = "/task/upateTaskRemarks";
-        var args = {"taskId":taskId,"remarks":remarks,"projectId":projectId};
-        $.post(url,args,function(data){
-           if(data.result == 1) {
-               $('#oldRemarks').val(remarks);
-           }
-        },"json");
-     });
+    // //监听任务内容的光标离开事件
+    // $('#remarks').blur(function(){
+    //     var taskId = $('#taskId').val();
+    //     var oldRemarks = $('#oldRemarks').val();
+    //     var remarks = $('#remarks').val();
+    //     if(remarks == oldRemarks){
+    //         return false;
+    //     }
+    //     var url = "/task/upateTaskRemarks";
+    //     var args = {"taskId":taskId,"remarks":remarks,"projectId":projectId};
+    //     $.post(url,args,function(data){
+    //        if(data.result == 1) {
+    //            $('#oldRemarks').val(remarks);
+    //        }
+    //     },"json");
+    //  });
 
      //监听任务内容的光标离开事件
     $('.task_name').blur(function(){
@@ -651,8 +660,8 @@ $("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
  * 点击关联的分享
  */
 $("html").on("click",'.related-fx li',function () {
-    layer.closeAll();
-    parent.location.href = "/share/share.html?shareId="+ $(this).attr('data-id') + "&projectId=" + projectId;
+    changeShare($(this).attr('data-id'));
+
 });
 
 
@@ -919,6 +928,24 @@ function changeRicheng(scheduleId,projectId) {
             closeBtn: 0,
             anim: 1,  //动画 0-6
             content: "/schedule/editSchedule.html?id="+ scheduleId + "&projectId=" + projectId
+        });
+    });
+}
+
+//分享详情 弹框界面
+function changeShare(shareId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','500px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/share/shareInfo.html?shareId="+shareId
         });
     });
 }
