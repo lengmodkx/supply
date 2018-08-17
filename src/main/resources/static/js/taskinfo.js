@@ -660,8 +660,8 @@ $("html").on("click",'.related-rc .boxsizing .related-rc-info',function () {
  * 点击关联的分享
  */
 $("html").on("click",'.related-fx li',function () {
-    layer.closeAll();
-    parent.location.href = "/share/share.html?shareId="+ $(this).attr('data-id') + "&projectId=" + projectId;
+    changeShare($(this).attr('data-id'));
+
 });
 
 
@@ -932,10 +932,23 @@ function changeRicheng(scheduleId,projectId) {
     });
 }
 
-//修改任务的备注
-$('#editor2').blur(function () {
-    alert(1);
-})
+//分享详情 弹框界面
+function changeShare(shareId) {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset: '20px',
+            area:['600px','500px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: "/share/shareInfo.html?shareId="+shareId
+        });
+    });
+}
 
 
 

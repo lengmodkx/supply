@@ -209,8 +209,10 @@ public class ShareServiceImpl implements ShareService {
 			map.put("adduser",adduser);
 			map.put("shareId",shareId);
 			filePushType.setObject(map);
-			//推送至文件的详情界面
+			//推送至分享的详情界面
 			messagingTemplate.convertAndSend("/topic/"+byId.getProjectId(),new ServerMessage(JSON.toJSONString(filePushType)));
+			//推送至分享的详情界面
+			messagingTemplate.convertAndSend("/topic/"+shareId,new ServerMessage(JSON.toJSONString(filePushType)));
 		}
 	}
 

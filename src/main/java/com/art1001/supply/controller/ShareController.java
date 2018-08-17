@@ -150,7 +150,6 @@ public class ShareController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-//            taskMemberService.saveTaskMember();
             jsonObject.put("result", 1);
             jsonObject.put("msg", "添加成功");
         } catch (Exception e) {
@@ -402,8 +401,10 @@ public class ShareController extends BaseController {
             map.put("shareLog",log1);
             map.put("shareId",shareId);
             taskPushType.setObject(map);
-            //推送至文件的详情界面
+            //推送至分享的详情界面
             messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            //推送至分享的详情界面
+            messagingTemplate.convertAndSend("/topic/"+shareId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             jsonObject.put("result",0);
             log.error("系统异常,发送失败,{}",e);
@@ -424,5 +425,20 @@ public class ShareController extends BaseController {
             jsonObject.put("result",0);
         }
         return jsonObject;
+    }
+
+    /**
+     * 点击被关联的分享的时候要跳转到关联分享的详情页面
+     * @param shareId 分享id
+     * @param model
+     * @return
+     */
+    @RequestMapping("shareInfo.html")
+    public String shareInfoById(String shareId, Model model){
+        Share byId = shareService.findById(shareId);
+        byId.setIsCollect(publicCollectService.isCollItem(shareId));
+        byId.setBindingVo(bindingService.listBindingInfoByPublicId(shareId));
+        model.addAttribute("share",byId);
+        return "revisetShare";
     }
 }

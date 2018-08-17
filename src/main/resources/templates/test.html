@@ -14,7 +14,8 @@ Welcome<br/><input id="text" type="text" />
 <button onclick="closeWebSocket()">关闭WebSocket连接</button>
 <hr/>
 <div id="message"></div>
-<div id="view"></div>
+<div id="editor1"></div>
+<div id="editor2"></div>
 <div th:include="test_moban::test" id="test" style="display:none;"></div>
 
 </body>
@@ -97,4 +98,36 @@ Welcome<br/><input id="text" type="text" />
 
 </script>
 
+<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+<script type="text/javascript" src="../static/js/wangEditor.min.js" th:src="@{/js/wangEditor.min.js}"></script>
+<script th:inline="javascript">
+
+    //文本编辑器
+    var E = window.wangEditor;
+    var editor = new E('#editor1','#editor2');
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',
+        'bold',
+        'italic',
+        'image',
+        'link',
+        'list',
+        'quote',
+        'strikeThrough',
+        'table'
+    ]
+    editor.customConfig.debug=true;
+
+    editor.customConfig.uploadImgShowBase64 = true
+    editor.customConfig.uploadFileName = 'mf';
+    // 隐藏“网络图片”tab
+    editor.customConfig.showLinkImg = false;
+    editor.customConfig.uploadImgParams = {
+        // 如果版本 <=v3.1.0 ，属性值会自动进行 encode ，此处无需 encode
+        // 如果版本 >=v3.1.1 ，属性值不会自动 encode ，如有需要自己手动 encode
+        taskId: taskId
+    }
+    editor.create();
+</script>
 </html>
