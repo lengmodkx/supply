@@ -100,6 +100,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		return DateTime.parse(strDate, format).toDate();
 	}
 
+	@Deprecated
+	public static Date parse2(String strDate) throws Exception {
+		DateTimeFormatter format = DateTimeFormat
+				.forPattern(DEFAULT_YEAR_MON_DAY);
+		return DateTime.parse(strDate, format).toDate();
+	}
+
 	/**
 	 * 获取当前时间 new Date()
 	 *

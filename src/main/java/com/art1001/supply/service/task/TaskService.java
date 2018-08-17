@@ -44,8 +44,7 @@ public interface TaskService {
 
 	/**
 	 * 修改task数据
-	 *
-	 * @param task
+	 * @param task 任务的信息
 	 */
 	public Log updateTask(Task task);
 
