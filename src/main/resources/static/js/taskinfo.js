@@ -484,6 +484,8 @@ layui.use('form', function() {
         },"json");
     });
 
+    var curFiles = [];
+
     //任务上传文件
     $('.task-upload-file').click(function () {
         var width = parent.window.innerWidth;
@@ -502,13 +504,89 @@ layui.use('form', function() {
             anim: 1,  //动画 0-6
             content: $('.file-upload').html()
         });
+        parent.$('.select-up').on('click', function() {
+            parent.layer.closeAll('page');
+            parent.layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area: ['800px', '541px'],
+                fixed: false,
+                shadeClose: true, //点击遮罩关闭
+                shade: [0.1, '#fff'],
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: ['/file/selectFile.html?projectId='+projectId+"&windowName="+window.name,'no']
+            });
+        });
+        parent.$('.close-fujian').on('click',function () {
+            parent.layer.closeAll('page');
+        });
+
+
+        parent.$('.zj-up-file').change(function (e) {
+            parent.layer.closeAll('page');
+            Array.prototype.push.apply(curFiles, e.currentTarget.files);
+            $('.fileList').html("");
+            for(var i=0;i<curFiles.length;i++){
+                var file = curFiles[i];
+                var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
+                    '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
+                    '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
+                    '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
+                    '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
+                    '            </li>';
+                $('.fileList').append(li);
+            }
+            $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
+        })
+
+
+        $('html').on('click', '.fileList li i',function() {
+            if($(this).attr('data')!==undefined){
+                curFiles.splice($(this).attr('data'), 1);
+                $('.zj-up-file').val('');
+            }
+            $(this).parent().remove();
+            $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
+        });
+
+
     });
 
+    $('#fileListAction').click(function () {
+    var fileIds=[];
+    var oMyForm = new FormData();
+    if(curFiles.length>0){
+        for (var i=0;i<curFiles.length;i++){
+            oMyForm.append("file",curFiles[i]);
+        }
+    }
 
-    $('html').on('click','.close-fujian',function () {
-        console.log('xxxxx')
-
+    $('.fileIds').each(function (data,item) {
+        fileIds.push($(item).attr('id'));
     });
+
+    oMyForm.append("fileId",fileIds);
+    oMyForm.append("taskId",taskId);
+    oMyForm.append("projectId",projectId);
+    oMyForm.append("content",$('#chat').val());
+    $.ajax({
+        url:"/task/upload",
+        type:"POST",
+        data:oMyForm,
+        async:false,
+        cache:false,
+        contentType:false,
+        processData:false,
+        success:function(returndata){
+            $('.fileList').html('');
+            curFiles=[];
+        },
+        error:function(returndata){
+            alert("error:"+returndata);
+        }
+    });
+});
 
 
      //监听任务内容的光标离开事件
@@ -542,24 +620,10 @@ layui.use('form', function() {
         var datemin=new Date().getMinutes();
         var date =datey+'-'+datem+'-'+dated+' '+dateh+":"+datemin;
 
-        var log = $('#log').html();
+        var log = '';
         log += '<li class="combox clearfix">';
-        if(taskLogVO.fileIds == undefined || taskLogVO.fileIds === null||taskLogVO.fileIds===''){
-            log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
-        }else{
-            log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+taskLogVO.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span></div><p class="publish-con boxsizing">'+taskLogVO.content+'</p><ul class="up-file-ul clearfix">';
-            for(var i=0;i<taskLogVO.fileList.length;i++){
-                var file = taskLogVO.fileList[i];
-                log+='<li class="boxsizing">';
-                log+='<a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}" class="file-content"><img src="/image/defaultFile.png"/><span class="up-file-ul-name" ">'+file.fileName+'</span></a>\n' +
-                    '<div style="float: right"><span class="up-file-ul-size">'+file.size+'</span><span class="download" style="cursor: pointer;float: right" th:id="${file.fileId}">下载文件</span></div>';
-                log+='</li>';
-            }
-
-            log+='</ul></div></div></li>';
-        }
-
-        $('#log').append(log);
+        log+='<img src="' + IMAGE_SERVER+taskLogVO.userEntity.userInfo.image+ '" /><span>'+ taskLogVO.content +'</span><div class="in-what-time"  >' + date + '</div></li>';
+        $('.log').append(log);
     }
 
 

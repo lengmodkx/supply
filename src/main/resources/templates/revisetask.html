@@ -285,11 +285,6 @@
                                 <div class="related-rw-describe over-hidden" th:text="${share.project.projectName}"></div>
                                 <i class="layui-icon layui-icon-down show-cancel-related" style="font-size: 16px; color: #a6a6a6;"></i>
                             </div>
-                            <!--<div class="related-rc-down">-->
-                            <!--<span>2018-12-25 12:00</span>-->
-                            <!--<span>—</span>-->
-                            <!--<span>2018-12-25 12:00</span>-->
-                            <!--</div>-->
                             <div class="related-menu" style="display: none">
                                 <i class="layui-icon layui-icon-close close-related-menu" style="font-size: 20px; color: #a6a6a6;"></i>
                                 <div class="related-menu-title">关联菜单</div>
@@ -325,14 +320,14 @@
         </div>
         <div class="heng-line"></div>
         <div class="state">
-            <ul id = "log">
+            <ul class="log">
                 <li class="combox clearfix" th:each="tasklog:${taskLogs}">
-                    <div th:if="${#lists.isEmpty(tasklog.fileList)}">
+                    <div th:if="${tasklog.logType eq 0}">
                         <img th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
                         <span th:text="${tasklog.content}"></span>
                         <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                     </div>
-                    <div th:if="${!#lists.isEmpty(tasklog.fileList)}">
+                    <div th:if="${tasklog.logType eq 1}">
                         <div class="touxiang-img">
                             <img th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}">
                         </div>
@@ -341,7 +336,7 @@
                                 <span class="file-con-box-name" th:text="${tasklog.userEntity.userName}">谁谁谁</span>
                                 <span class="file-con-box-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}">3月24日12:00</span>
                             </div>
-                            <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p >
+                            <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p>
                             <ul class="up-file-ul clearfix">
                                 <li class="boxsizing" th:each="file:${tasklog.fileList}">
                                     <a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}" class="file-content">
@@ -358,6 +353,7 @@
                     </div>
                 </li>
             </ul>
+            <div id="showView"></div>
         </div>
     </div>
 
@@ -382,7 +378,7 @@
                 <div class="zj-up">
                     <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
                     <span>直接上传</span>
-                    <input type="file" multiple name="file" class="zj-up-file"/>
+                    <input type="file" multiple name="file" id="file" class="zj-up-file"/>
                 </div>
                 <div class="xian"></div>
                 <div class="select-up">
@@ -632,8 +628,7 @@
          */
         form.on('select(project)', function (data) {
             $('select[name="groups"]').html('');
-            $('select[name="menu"]').html('')
-            //console.log(data.value); //得到被选中的值
+            $('select[name="menu"]').html('');
             var project = data.value;
             if (project == '') {
                 return false;
@@ -700,72 +695,9 @@
     var executor = [[${task.executor}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-    var curFiles = [];
-    $('.zj-up-file').change(function (e) {
-        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        parent.layer.close(index); //再执行关闭
-        Array.prototype.push.apply(curFiles, e.currentTarget.files);
-        $('.fileList').html("");
-        for(var i=0;i<curFiles.length;i++){
-            var file = curFiles[i];
-            var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
-                '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
-                '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
-                '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
-                '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
-                '            </li>';
-            $('.fileList').append(li);
-        }
-        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-    })
 
 
-    $('html').on('click', '.fileList li i',function() {
-        curFiles.splice($(this).attr('data'), 1);
-        $(this).parent().remove();
-        $('.zj-up-file').val('');
-        $('.fileList').html("");
-        for(var i=0;i<curFiles.length;i++){
-            var file = curFiles[i];
-            var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
-                '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
-                '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
-                '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
-                '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
-                '            </li>';
-            $('.fileList').append(li);
-        }
-        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-    });
 
-    $('#fileListAction').click(function (e) {
-        if(curFiles.length>0){
-            var oMyForm = new FormData();
-            oMyForm.append("taskId",taskId);
-            oMyForm.append("projectId",projectId);
-            oMyForm.append("content",$('#chat').val());
-            for (var i=0;i<curFiles.length;i++){
-                oMyForm.append("file",curFiles[i]);
-            }
-
-            $.ajax({
-                url:"/task/upload",
-                type:"POST",
-                data:oMyForm,
-                async:false,
-                cache:false,
-                contentType:false,
-                processData:false,
-                success:function(returndata){
-                    $('.fileList').html('');
-                    curFiles=[];
-                },
-                error:function(returndata){
-                    alert("error:"+returndata);
-                }
-            });
-        }
-    });
 
 
     $('html').on('click','.download',function () {
@@ -798,6 +730,7 @@
        });
     });
 </script>
+<script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>
 </html>

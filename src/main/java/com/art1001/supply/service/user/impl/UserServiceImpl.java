@@ -12,10 +12,7 @@ import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.EmailUtil;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.ImageUtil;
+import com.art1001.supply.util.*;
 import org.elasticsearch.index.mapper.Uid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +56,6 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
                     userEntity.getUserInfo().setId(userEntity.getId());
                     // 图片byte数组
                     byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
-
                     // oss上传
                     String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
                     AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);

@@ -14,7 +14,7 @@ public class ImageUtil {
     /**
      * @throws IOException IO
      **/
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         // 用户名
         String[] names = {"wangyafeng", "汪亚峰", "张苗"};
         for (String name : names) {
@@ -35,79 +35,22 @@ public class ImageUtil {
      * @param name 用户名
      * @throws IOException IO
      */
-    public static byte[] generateImg(String name) throws IOException {
+    public static byte[] generateImg(String name){
         int width = 100;
         int height = 100;
-        int nameLen = name.length();
-        String nameWritten;
-        //如果用户输入的姓名少于等于2个字符，不用截取
-        if (nameLen <= 2) {
-            nameWritten = name;
-        } else {
-            //如果用户输入的姓名大于等于3个字符，截取后面两位
-            String first = name.substring(0, 1);
-            if (isChinese(first)) {
-                //截取倒数两位汉字
-                nameWritten = name.substring(nameLen - 2);
-            } else {
-                //截取前面的两个英文字母
-                nameWritten = name.substring(0, 2).toUpperCase();
-            }
-        }
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = (Graphics2D) bi.getGraphics();
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setBackground(getRandomColor());
         g2.clearRect(0, 0, width, height);
         g2.setPaint(Color.WHITE);
-        Font font;
-        //两个字及以上
-        if (nameWritten.length() >= 2) {
-            font = new Font("微软雅黑", Font.PLAIN, 30);
-            g2.setFont(font);
-            String firstWritten = nameWritten.substring(0, 1);
-            String secondWritten = nameWritten.substring(1, 2);
-            //两个中文 如 小明
-            if (isChinese(firstWritten) && isChinese(secondWritten)) {
-                g2.drawString(nameWritten, 20, 60);
-            }
-            //首中次英 如 罗Q
-            else if (isChinese(firstWritten) && !isChinese(secondWritten)) {
-                g2.drawString(nameWritten, 27, 60);
-                //首英,如 AB
-            } else {
-                nameWritten = nameWritten.substring(0, 1);
-            }
-        }
-        //一个字
-        if (nameWritten.length() == 1) {
-            //中文
-            if (isChinese(nameWritten)) {
-                font = new Font("微软雅黑", Font.PLAIN, 50);
-                g2.setFont(font);
-                g2.drawString(nameWritten, 25, 70);
-            }
-            //英文
-            else {
-                font = new Font("微软雅黑", Font.PLAIN, 50);
-                g2.setFont(font);
-                int xAxis = 0;
-                switch (nameWritten.toUpperCase()) {
-                    case "Q":
-                        xAxis = 30;
-                        break;
-                    case "W":
-                    case "M":
-                        xAxis = 25;
-                        break;
-                    default:
-                        xAxis = 33;
-                        break;
-                }
-                g2.drawString(nameWritten.toUpperCase(), xAxis, 70);
-            }
-        }
-
+        Font font = new Font("微软雅黑", Font.PLAIN, 50);
+        g2.setFont(font);
+        FontMetrics fm = g2.getFontMetrics(font);
+        String nameWittren = HanyuPinyinHelper.getFirstLetter(name).toUpperCase();
+        int textWidth = fm.stringWidth(nameWittren);
+        int widthX = (width - textWidth) / 2;
+        g2.drawString(nameWittren, widthX, 70);
         BufferedImage rounded = makeRoundedCorner(bi);
         return imageToBytes(rounded);
     }

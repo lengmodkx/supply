@@ -241,3 +241,12 @@
     text-align: center;
     cursor: pointer;
 }
+.file-to-upload{
+    position: absolute;
+    font-size: 0px;
+    width: 20px;
+    height: 20px;
+    left: 16px;
+    top: 8px;
+    opacity: 0;
+}

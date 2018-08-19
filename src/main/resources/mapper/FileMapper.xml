@@ -195,7 +195,7 @@
 		select
 		<include refid="Base_Column_List"/>
 		from prm_file
-		where file_label=1
+		where 1=1
 		<if test="fileIds!=null and fileIds!=''">
 			and file_id in <foreach collection="fileIds.split(',')" open="(" separator="," close=")" item="id">
 			#{id}

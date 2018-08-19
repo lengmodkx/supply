@@ -25,7 +25,6 @@
             <!--<li>更多</li>-->
         </ul>
         <!--<img src="../static/image/close.png" th:src="@{/image/close.png}" id="close">-->
-        <i class="layui-icon layui-icon-close" style="font-size: 20px;"></i>
     </div>
     <!--左侧-->
     <div class="download-left boxsizing">
@@ -36,10 +35,10 @@
                 <iframe th:src="@{/file/viewer.html(fileId=${file.fileId})}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"></iframe>
                 <iframe th:src="#{IMAGE_SERVER}+${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"></iframe>
                 <div>
-                    <div th:text="${file.fileName}" class = "aaa" style="width: 200px;height: 200px;background-color: #999999" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}">
+                    <div th:text="${file.fileName}" class = "aaa" style="width: 200px;height: 200px;background-color: #999999" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'} or ${file.ext eq '.gsm'}">
                     </div>
-                    <div th:text="${file.ext}" class = "aaa" style="width: 200px;height: 50px;background-color: #AB47BC" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}"></div>
-                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}">
+                    <div th:text="${file.ext}" class = "aaa" style="width: 200px;height: 50px;background-color: #AB47BC" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}or ${file.ext eq '.gsm'}"></div>
+                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}or ${file.ext eq '.gsm'}">
                         <span th:onclick="'download(\''+${file.fileId}+'\')'">下载文件</span><span th:text="${file.size}"></span>
                     </div>
                 </div>

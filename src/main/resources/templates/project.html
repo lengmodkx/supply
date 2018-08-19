@@ -41,7 +41,7 @@
         <h2 class="titles clearfix">我拥有的项目</h2>
         <div class="content-list possess clearfix" >
             <ul class="layui-row layui-col-space30" >
-                <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
+                <li class="layui-col-md3 layui-anim layui-anim-scaleSpring"
                     th:each="project : ${projects}"
                     th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'"
                     th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"

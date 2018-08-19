@@ -40,6 +40,7 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -1390,41 +1391,52 @@ public class TaskController {
     @PostMapping("/upload")
     @ResponseBody
     public JSONObject uploadFile(
-            @RequestParam String taskId,@RequestParam String projectId,@RequestParam String content,
-            @RequestParam(value = "file") MultipartFile[] fileArray){
+            @RequestParam String taskId,@RequestParam String projectId,
+            @RequestParam(required = false,defaultValue = "") String content,
+            @RequestParam(value = "file",required = false) MultipartFile[] fileArray,
+            @RequestParam(required = false) String[] fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-
+            //文件和内容都为空则不发送推送消息
+            if(fileArray==null&&fileId==null&&StringUtils.isEmpty(content)){
+                return jsonObject;
+            }
             List<String> fileIds = new ArrayList<>();
+            if(fileArray!=null&&fileArray.length>0){
+                for (MultipartFile file : fileArray) {
+                    // 得到文件名
+                    String originalFilename = file.getOriginalFilename();
+                    // 重置文件名
+                    String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+                    // 设置文件url
+                    String fileUrl = "upload/"+ taskId + "/" + fileName;
+                    // 上传oss
+                    AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+                    // 获取后缀名
+                    String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+                    // 写库
+                    File myFile = new File();
+                    // 用原本的文件名
+                    myFile.setFileName(originalFilename);
+                    myFile.setExt(ext);
+                    myFile.setProjectId(projectId);
+                    myFile.setFileUrl(fileUrl);
 
-            for (MultipartFile file : fileArray) {
-                // 得到文件名
-                String originalFilename = file.getOriginalFilename();
-                // 重置文件名
-                String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-                // 设置文件url
-                String fileUrl = "upload/"+ taskId + "/" + fileName;
-                // 上传oss
-                AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
-                // 获取后缀名
-                String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-                // 写库
-                File myFile = new File();
-                // 用原本的文件名
-                myFile.setFileName(originalFilename);
-                myFile.setExt(ext);
-                myFile.setProjectId(projectId);
-                myFile.setFileUrl(fileUrl);
+                    // 得到上传文件的大小
+                    long contentLength = file.getSize();
+                    myFile.setSize(FileUtils.convertFileSize(contentLength));
+                    myFile.setCatalog(0);
+                    myFile.setParentId("0");
+                    myFile.setFileLabel(1);
+                    myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                    fileService.saveFile(myFile);
+                    fileIds.add(myFile.getFileId());
+                }
+            }
 
-                // 得到上传文件的大小
-                long contentLength = file.getSize();
-                myFile.setSize(FileUtils.convertFileSize(contentLength));
-                myFile.setCatalog(0);
-                myFile.setParentId("0");
-                myFile.setFileLabel(1);
-                myFile.setFileUids(ShiroAuthenticationManager.getUserId());
-                fileService.saveFile(myFile);
-                fileIds.add(myFile.getFileId());
+
+            if(fileId!=null&&fileId.length>0){
+                fileIds.addAll(Arrays.asList(fileId));
             }
 
             //保存聊天信息
@@ -1439,13 +1451,13 @@ public class TaskController {
             log.setLogType(1);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             log.setPublicId(taskId);
-            log.setLogFlag(2);
+            log.setLogFlag(1);
             log.setCreateTime(System.currentTimeMillis());
             log.setFileIds(StringUtils.join(fileIds,","));
             Log log1 = logService.saveLog(log);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A23.getName());
+            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
             Map<String,Object> map = new HashMap<>();
             map.put("taskLog",log1);
             taskPushType.setObject(map);

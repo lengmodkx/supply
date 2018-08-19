@@ -15,24 +15,6 @@ stompClient.connect({},
         console.log("连接失败");
     }
 );
-//发送消息
-$('.publish-btn').click(function (e) {
-    if( $('.fileList li').length===0){
-        var chat = $('#chat').val();
-        var args = {"publicId":taskId,"content":chat};
-        $.post("/task/chat",args,function (data) {
-            if(data.result===1){
-                $('#chat').val('');
-                $('#chat').focus();
-                var scrollHeight = $('.revise-task').prop("scrollHeight");
-                $('.revise-task').animate({scrollTop:scrollHeight}, 400);
-            }
-        },"json");
-    }
-
-});
-
-
 
 //订阅消息
 function subscribe() {
@@ -53,11 +35,7 @@ function subscribe() {
 
         }
         if(taskLog.type === '发送消息'){
-            getLog(taskLog.object.taskLog);
-        }
-
-        if(taskLog.type==='任务发送文件'){
-            getLog(taskLog.object.taskLog);
+            showLog(taskLog.object.taskLog);
         }
 
         if(taskLog.type === '关联'){
@@ -159,4 +137,28 @@ function subscribe() {
             });
         }
     });
+}
+
+function showLog(logVo){
+    var date = new Date().pattern('yyyy-MM-dd HH:mm');
+    var log = '<li class="combox clearfix">';
+    log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+logVo.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+logVo.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span></div><p class="publish-con boxsizing">'+logVo.content+'</p>';
+    if(logVo.fileList!=null&&logVo.fileList.length>0){
+        log+='<ul class="up-file-ul clearfix">';
+        for(var i=0;i<logVo.fileList.length;i++){
+            var file = logVo.fileList[i];
+            log+='<li class="boxsizing">';
+            log+='<a target="_blank" href="/file/fileDetail.html?fileId="'+file.fileId+'" class="file-content"><img src="/image/defaultFile.png"/><span class="up-file-ul-name" ">'+file.fileName+'</span></a>\n' +
+                '<div style="float: right"><span class="up-file-ul-size">'+file.size+'</span><span class="download" style="cursor: pointer;float: right" id="'+file.fileId+'">下载文件</span></div>';
+            log+='</li>';
+        }
+        log+='</ul>';
+    }
+
+    log+='</div></div></li>';
+
+    $('.log').append(log);
+    $('#chat').val('');
+    document.getElementById('showView').scrollIntoView(true);
+
 }

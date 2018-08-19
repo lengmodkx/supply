@@ -1157,6 +1157,38 @@ public class FileController extends BaseController {
         return jsonObject;
     }
 
+    @GetMapping("/selectFile.html")
+    public String selectFile(@RequestParam String projectId,@RequestParam String windowName,Model model){
+        List<File> fileList = fileService.findChildFile(projectId, "0", 0);
+        model.addAttribute("fileList",fileList);
+        model.addAttribute("projectId",projectId);
+        model.addAttribute("windowName",windowName);
+        return "tk-select-file";
+    }
+
+
+    @PostMapping("/childFile")
+    @ResponseBody
+    public JSONObject childFile(@RequestParam String projectId,@RequestParam String parentId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<File> fileList = fileService.findChildFile(projectId, parentId, 0);
+            if(fileList.size()==0){
+                jsonObject.put("result",0);
+            }else{
+                jsonObject.put("result",1);
+                jsonObject.put("data",fileList);
+                jsonObject.put("parentId",parentId);
+            }
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
 
 
 }
