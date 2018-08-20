@@ -384,9 +384,9 @@ layui.use('form', function() {
         e.stopPropagation();
     });
 
-/**
- * 点击x 移除标签
- */
+    /**
+     * 点击x 移除标签
+     */
     $('html').on('click','.remove-tag',function (e) {
         var tagId = $(this).parent().attr('id');
         var url = "/tag/removeTag";

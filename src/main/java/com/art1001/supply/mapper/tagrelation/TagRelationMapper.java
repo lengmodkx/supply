@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * mapper接口
@@ -55,4 +56,6 @@ public interface TagRelationMapper {
 	 */
 	List<TagRelation> findTagRelationAllList();
 
+
+	void deleteTagRelationByPublicId(TagRelation tagRelation);
 }

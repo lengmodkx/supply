@@ -4,7 +4,7 @@
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.tagrelation.TagRelation">
 		<result column="id" property="id" jdbcType="VARCHAR" />
-		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
+		<result column="tag_id" property="tagId" jdbcType="BIGINT" />
 		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
 		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
 		<result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
@@ -60,15 +60,35 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_tag_relation c where id = #{id}
+		from prm_tag_relation where id = #{id}
 
 	</select>
-	
+
 	<delete id="deleteTagRelationById" parameterType="java.lang.String">
 		delete from
 		prm_tag_relation where id = #{id}
 	</delete>
-	
+
+
+	<delete id="deleteTagRelationByPublicId" parameterType="com.art1001.supply.entity.tagrelation.TagRelation">
+		delete from
+			prm_tag_relation where tag_id = #{tagId}
+			<if test="taskId != null and taskId != ''">
+				and task_id = #{taskId}
+			</if>
+			<if test="fileId != null and fileId != ''">
+				and file_id = #{fileId}
+			</if>
+			<if test="scheduleId != null and scheduleId != ''">
+				and schedule_id = #{scheduleId}
+			</if>
+			<if test="shareId != null and shareId != ''">
+				and share_id = #{shareId}
+			</if>
+
+	</delete>
+
+
 	<insert id="saveTagRelation" parameterType="com.art1001.supply.entity.tagrelation.TagRelation">
 
 		insert into prm_tag_relation

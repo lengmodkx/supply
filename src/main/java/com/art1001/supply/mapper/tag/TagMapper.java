@@ -87,4 +87,6 @@ public interface TagMapper {
 	 * @param newTagList 多个tag信息i
 	 */
 	void saveMany(List<Tag> newTagList);
+
+	List<Tag> findByPublicId(@Param("publicId")String publicId,@Param("publicType")String publicType);
 }

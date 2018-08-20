@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.tag.Tag;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -83,7 +84,7 @@ public interface TagService {
 	 */
     List<Tag> searchTag(String tagName);
 
-	void removeTag(String publicId, String publicType, String tagId);
+	void removeTag(String publicId, String publicType, long tagId);
 
 	/**
 	 * 给(任务,文件,日程,分享) 添加标签
@@ -91,11 +92,14 @@ public interface TagService {
 	 * @param publicId (任务 ,文件, 日程, 分享) id
 	 * @param publicType (任务,文件,日程,分享) 类型
 	 */
-	void addItemTag(String tagId, String publicId, String publicType);
+	void addItemTag(long tagId, String publicId, String publicType);
 
 	/**
 	 * 保存多条tag
 	 * @param newTagList 多个tag信息i
 	 */
     void saveMany(List<Tag> newTagList);
+
+
+	List<Tag> findByPublicId(@Param("publicId")String publicId, @Param("publicType")String publicType);
 }

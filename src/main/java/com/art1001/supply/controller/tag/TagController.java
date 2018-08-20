@@ -18,6 +18,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -58,40 +56,26 @@ public class TagController extends BaseController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
-
+    /**
+     * 标签初始化
+     * @param projectId 项目id
+     * @param publicId 任务，文件，日程，分享id
+     * @param publicType 任务，文件，日程，分享
+     */
     @RequestMapping("/tag.html")
-    public String tagPage(@RequestParam String projectId,
-                          @RequestParam(required = false) String publicId, String publicType, Model model) {
+    public String tagPage(@RequestParam String projectId, @RequestParam(required = false) String publicId, String publicType, Model model) {
 
         String tagId = "";
         //查询出项目的所有房间
         List<Tag> tagList = tagService.findByProjectId(projectId);
+        //根据publicId 和 publicType查询出tag
+        List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
 
-        //判断出要查询的 是 (任务,文件,日程,分享) 哪个的标签
-        if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
-            Task task = taskService.findTaskByTaskId(publicId);
-            tagId = task.getTagId();
-        }
-        if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
-            Schedule schedule = scheduleService.findScheduleById(publicId);
-            tagId = schedule.getTagId();
-        }
-        if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
-            File file = fileService.findFileById(publicId);
-            tagId = file.getTagId();
-        }
-        if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
-            Share share = shareService.findById(publicId);
-            tagId = share.getTagIds();
-        }
 
-        if(StringUtils.isNotEmpty(tagId)){
-            List<String> tagIds = Arrays.asList(tagId.split(","));
-            for(int i=0;i<tagList.size();i++) {
-                for (int j=0;j<tagIds.size();j++) {
-                    if(tagList.get(i).getTagId().equals(Long.valueOf(tagIds.get(j)))){
-                        tagList.get(i).setFlag(true);
-                    }
+        for (Tag aTagList : tagList) {
+            for (Tag aTagListTemp : tagListTemp) {
+                if (aTagList.getTagId().equals(aTagListTemp.getTagId())) {
+                    aTagList.setFlag(true);
                 }
             }
         }
@@ -259,20 +243,20 @@ public class TagController extends BaseController {
      */
     @PostMapping("removeTag")
     @ResponseBody
-    public JSONObject removeTag(String publicId, String publicType, String tagId,String projectId){
+    public JSONObject removeTag(String publicId, String publicType, long tagId,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             tagService.removeTag(publicId,publicType,tagId);
             //包装推送数据
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A24.getName());
             Map<String,Object> map = new HashMap<String,Object>();
-            map.put("tag",tagId);
+            map.put("tag",String.valueOf(tagId));
             map.put("type",ScheduleLogFunction.M.getId());
             map.put("publicId",publicId);
             taskPushType.setObject(map);
             //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
-                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+ projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
@@ -311,9 +295,10 @@ public class TagController extends BaseController {
                     return jsonObject;
                 }
             }
-            tagService.addItemTag(String.valueOf(tag.getTagId()),publicId,publicType);
+            tagService.addItemTag(tag.getTagId(),publicId,publicType);
             //包装推送数据
             Tag byId = tagService.findById(tag.getTagId().intValue());
+
             TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A20.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",byId);
@@ -321,9 +306,10 @@ public class TagController extends BaseController {
             map.put("type",ScheduleLogFunction.L.getId());
             map.put("publicId",publicId);
             taskPushType.setObject(map);
+
             //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
-                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+ projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));

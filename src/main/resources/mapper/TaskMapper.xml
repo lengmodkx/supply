@@ -55,7 +55,7 @@
 		</collection>
 	</resultMap>
 
-	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task">
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
 		<!--查询执行者-->
 		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
@@ -89,7 +89,7 @@
 		<association property="executorInfo" column="executor" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 		<!--查询标签-->
-		<collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
+		<collection property="tagList" column="tag_id" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
 			<result property="tagName" column="tag_name"/>
 			<result property="bgColor" column="bg_color"/>
@@ -97,67 +97,103 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-						task_id,
-				prm_task.project_id,
-				task_name,
-				prm_task.start_time,
-				prm_task.end_time,
-				prm_task.`repeat`,
-				prm_task.remind,
-				prm_task.remarks,
-				prm_task.priority,
-				prm_task.tag_id,
-				prm_task.`level`,
-				prm_task.parent_id,
-				prm_task.member_id,
-				prm_task.executor,
-				prm_task.task_type,
-				prm_task.task_menu_id,
-				prm_task.task_status,
-				prm_task.task_code,
-				prm_task.task_del,
-				prm_task.create_time,
-				prm_task.update_time,
-				prm_task.remind_time,
-				prm_task.repetition_time,
-				prm_task.fabulous_count,
-				prm_task.privacy_pattern,
-				prm_task.other,
-				prm_task.order,
-				prm_task.task_calendar,
-				prm_task.task_uids
+		prm_task.task_id,
+		prm_task.project_id,
+		prm_task.task_name,
+		prm_task.start_time,
+		prm_task.end_time,
+		prm_task.`repeat`,
+		prm_task.remind,
+		prm_task.remarks,
+		prm_task.priority,
+		prm_task.tag_id,
+		prm_task.`level`,
+		prm_task.parent_id,
+		prm_task.member_id,
+		prm_task.executor,
+		prm_task.task_type,
+		prm_task.task_menu_id,
+		prm_task.task_status,
+		prm_task.task_code,
+		prm_task.task_del,
+		prm_task.create_time,
+		prm_task.update_time,
+		prm_task.remind_time,
+		prm_task.repetition_time,
+		prm_task.fabulous_count,
+		prm_task.privacy_pattern,
+		prm_task.other,
+		prm_task.order,
+		prm_task.task_calendar,
+		prm_task.task_uids
 	</sql>
 	<sql id="Base_Column_List2">
-						task_id,
-				prm_task.project_id,
-				task_name,
-				prm_task.start_time,
-				prm_task.end_time,
-				`repeat`,
-				remind,
-				remarks,
-				priority,
-				tag_id,
-				`level`,
-				parent_id,
-				prm_task.member_id,
-				executor,
-				task_type,
-				task_menu_id,
-				task_status,
-				task_code,
-				task_del,
-				prm_task.create_time,
-				prm_task.update_time,
-				remind_time,
-				repetition_time,
-				fabulous_count,
-				privacy_pattern,
-				other,
-				`order`,
-				task_calendar,
-				task_uids
+		prm_task.task_id,
+		prm_task.project_id,
+		prm_task.task_name,
+		prm_task.start_time,
+		prm_task.end_time,
+		prm_task.`repeat`,
+		prm_task.remind,
+		prm_task.remarks,
+		prm_task.priority,
+		prm_task.tag_id,
+		prm_task.`level`,
+		prm_task.parent_id,
+		prm_task.member_id,
+		prm_task.executor,
+		prm_task.task_type,
+		prm_task.task_menu_id,
+		prm_task.task_status,
+		prm_task.task_code,
+		prm_task.task_del,
+		prm_task.create_time,
+		prm_task.update_time,
+		prm_task.remind_time,
+		prm_task.repetition_time,
+		prm_task.fabulous_count,
+		prm_task.privacy_pattern,
+		prm_task.other,
+		prm_task.`order`,
+		prm_task.task_calendar,
+		prm_task.task_uids
 	</sql>
+
+	<sql id="Base_Column_List3">
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	</sql>
+
+
 
 	<sql id="whereStatement">
 		<where>
@@ -198,9 +234,9 @@
 	<!-- 根据任务id 查询任务的信息 和执行者的信息 -->
 	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
 	SELECT
-	<include refid="Base_Column_List"/>
-	from prm_task
-		where prm_task.task_id = #{taskId}
+	<include refid="Base_Column_List3"/>
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
@@ -623,11 +659,11 @@
 	</select>
 
 	<!-- 查询当前菜单下的全部任务信息 -->
-	<select id="taskMenu" resultMap="findMenuTaskMemberInfo">
+	<select id="taskMenu" resultMap="BaseResultMap2">
 		select
-		<include refid="Base_Column_List"/>
-		from prm_task
-		where prm_task.task_menu_id = #{menuId} order by prm_task.order asc
+		<include refid="Base_Column_List3"/>
+		from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_menu_id = #{menuId} order by t.order asc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->

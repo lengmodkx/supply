@@ -22,7 +22,7 @@ public class TagRelation extends BaseEntity implements Serializable {
 	/**
 	 * 标签id
 	 */
-	private String tagId;
+	private long tagId;
 
 
 	/**

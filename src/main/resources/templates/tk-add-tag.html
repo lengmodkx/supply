@@ -103,11 +103,7 @@
                 console.log(data);
             },"json");
         }else{
-            var url = "/tag/addItemTag";
-            var args = {"tagId":tagId,"publicId":publicId,"projectId":projectId,"publicType":publicType};
-            $.post(url,args,function (data) {
-                console.log(data);
-            },"json");
+            $.post('/tag/addItemTag',{"tagId":tagId,"publicId":publicId,"projectId":projectId,"publicType":publicType},function (data) {},"json");
         }
         $(this).find("i").toggle();
     });
