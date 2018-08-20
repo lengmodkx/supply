@@ -266,7 +266,7 @@
 /*菜单标签 框*/
 .tag-menu{
     width: 250px;
-    height: 140px;
+    /*height: 140px;*/
     background-color: white;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
 }
@@ -290,7 +290,7 @@
 .tag-menu-title i:hover{
     color: #3da8f5;
 }
-.tag-menu li{
+.bqcd li{
     padding: 5px 15px;
     width: 100%;
     height: 40px;
@@ -299,9 +299,152 @@
     cursor: pointer;
     font-size: 14px;
 }
-.tag-menu li:hover{
+.bqcd li:hover{
     background-color: #eee;
 }
-.tag-menu li i{
+.bqcd li i{
     margin-right: 8px;
+}
+
+
+/*新建标签*/
+.build-tags{
+    width: 100%;
+    height: 100%;
+}
+.build-tags-title{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 15px;
+    text-align: center;
+}
+.build-tags-title>i:hover{
+    color: #3DA8F5 !important;
+}
+.go-return{
+    float: left;
+    cursor: pointer;
+}
+.close-tag{
+    float: right;
+    cursor: pointer;
+}
+.build-tags-con{
+    width: 100%;
+    padding: 20px 15px;
+}
+.tag-name-tk{
+    width: 100%;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #e5e5e5;
+    outline-style: none;
+}
+.color-pick{
+    width: 100%;
+    height: 24px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+.color-pick li{
+    width: 24px;
+    height: 24px;
+    float: left;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+}
+.color-pick li:hover{
+    transform: scale(1.1);
+}
+.color-pick li i{
+    display: none;
+}
+.color-pick li:nth-of-type(1){
+    background-color: #3DA8F5;
+}
+.color-pick li:nth-of-type(2){
+    background-color: #75C940;
+}
+.color-pick li:nth-of-type(3){
+    background-color: #2FBDB3;
+}
+.color-pick li:nth-of-type(4){
+    background-color: #797EC9;
+}
+.color-pick li:nth-of-type(5){
+    background-color: #FFAF38;
+}
+.color-pick li:nth-of-type(6){
+    background-color: #FF4F3E;
+}
+.tag-ok{
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+    background-color: #1E9FFF;
+    border: 0 none;
+    outline-style: none;
+    color: white;
+    cursor: pointer;
+}
+.add-tag .label{
+    width: 300px;
+}
+.add-child-task span{
+    color: #2B93D2;
+    cursor: pointer;
+}
+.add-guanlian span{
+    color: #2B93D2;
+    cursor: pointer;
+}
+
+
+.remove-to-trash{
+    width: 100%;
+    padding: 0 15px;
+}
+.remove-to-trash .build-tags-title{
+    height: 48px;
+    line-height: 48px;
+}
+.remove-to-trash .go-return{
+    margin-left: -15px;
+}
+.remove-to-trash .close-tag{
+    margin-right: -15px;
+}
+.remove-to-trash>p{
+    width: 100%;
+    line-height: 20px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #383838;
+}
+.remove-to-trash-btn{
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    background-color: #FF695B;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 5px 0 10px 0;
+}
+.remove-to-trash-btn:hover{
+    opacity: 0.8;
+}
+.zhanwei{
+    width: 100%;
+    height: 10px;
 }

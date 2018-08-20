@@ -111,20 +111,66 @@
 
 <!--菜单标签 框-->
 <div class="tag-menu" style="display: none">
-    <div class="tag-menu-title">
-        标签菜单
-        <i class="layui-icon layui-icon-close close-tag-menu" style="font-size: 16px;"></i>
+    <div class="bqcd" >
+        <div class="tag-menu-title">
+            标签菜单
+            <i class="layui-icon layui-icon-close close-tag-menu" style="font-size: 16px;"></i>
+        </div>
+        <ul>
+            <li class="boxsizing">
+                <i class="layui-icon layui-icon-edit" style="font-size: 16px;"></i>
+                <span>编辑标签</span>
+            </li>
+            <li class="boxsizing">
+                <i class="layui-icon layui-icon-delete" style="font-size: 16px;"></i>
+                <span>移动到回收站</span>
+            </li>
+        </ul>
     </div>
-    <ul>
-        <li class="boxsizing">
-            <i class="layui-icon layui-icon-edit" style="font-size: 16px;"></i>
-            <span>编辑标签</span>
-        </li>
-        <li class="boxsizing">
-            <i class="layui-icon layui-icon-delete" style="font-size: 16px;"></i>
-            <span>移动到回收站</span>
-        </li>
-    </ul>
+    <div class="bjbq" style="display: none">
+        <div class="build-tags">
+            <div class="build-tags-title boxsizing">
+                <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
+                编辑标签
+                <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+            </div>
+            <div class="build-tags-con boxsizing">
+                <input class="tag-name-tk boxsizing" type="text" placeholder="标签名称">
+                <ul class="color-pick">
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                </ul>
+                <button class="tag-ok">创建</button>
+            </div>
+        </div>
+    </div>
+    <div style="display: none" class="boxsizing remove-to-trash">
+        <div class="build-tags-title boxsizing">
+            <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
+            移动到回收站
+            <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
+        </div>
+        <p>您确定要把该标签移到回收站吗？</p>
+        <div class="remove-to-trash-btn">移到回收站</div>
+        <div class="zhanwei"></div>
+    </div>
+
 </div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
@@ -150,7 +196,7 @@
                 type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
                 offset:[top,left],
-                area:['250px','140px'],
+                // area:['250px','140px'],
                 fixed: false,
                 shadeClose: true,
                 closeBtn: 0,
@@ -168,6 +214,29 @@
     });
 
 
+    $(".bqcd li:nth-of-type(1)").click(function () {
+       $(".bjbq").show().siblings().hide()
+    });
+    $(".bqcd li:nth-of-type(2)").click(function () {
+        $(".remove-to-trash").show().siblings().hide()
+    });
+    $(".go-return").click(function () {
+        $(".bqcd").show().siblings().hide();
+    });
+    $(".close-tag").click(function () {
+        layer.closeAll('page');
+    });
+    $(".color-pick li").click(function () {
+        $(this).find("i").show();
+        $(this).siblings().find("i").hide()
+    })
+
+
+
+
+
+
+
     $('.tag-li').click(function () {
        var id =  $(this).attr('data-id');
        $('.look-tag-right').hide();
@@ -180,7 +249,6 @@
 
 
 
-    $
 
 
 
