@@ -64,6 +64,14 @@
 
 	</select>
 
+	<select id="findTagRelationByTagId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_tag_relation where tag_id = #{tagId}
+
+	</select>
+
 	<delete id="deleteTagRelationById" parameterType="java.lang.String">
 		delete from
 		prm_tag_relation where id = #{id}

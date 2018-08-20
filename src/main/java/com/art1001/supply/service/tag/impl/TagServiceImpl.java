@@ -133,27 +133,7 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public Map<String, Object> findByTag(Tag tag) {
 		Map<String, Object> map = new HashMap<>();
-		// 取出任务id
-		String taskIds = tag.getTaskId();
-		if (StringUtils.isNoneEmpty(taskIds)) {
-			// TODO: 2018/6/12 查询任务
-			String[] taskIdArr = taskIds.split(",");
-			List<Task> taskList = taskService.findManyTask(taskIdArr);
-			map.put(Constants.TASK, taskList);
-		}
-		// 去除日程id
-		String scheduleIds = tag.getScheduleId();
-		if (StringUtils.isNoneEmpty(scheduleIds)) {
-			String[] scheduleIdArr = scheduleIds.split(",");
-			List<Schedule> scheduleList = scheduleService.findByIds(scheduleIdArr);
-			map.put(Constants.SCHEDULE, scheduleList);
-		}
-		// 取出分享id
-		String shareIds = tag.getShareId();
-		if (StringUtils.isNoneEmpty(shareIds)) {
-			// TODO: 2018/6/12 查询分享
-			String[] shareIdArr = shareIds.split(",");
-		}
+
 		return map;
 	}
 

@@ -52,5 +52,7 @@ public interface TagRelationService {
 	 * @return
 	 */
 	public List<TagRelation> findTagRelationAllList();
+
+	List<TagRelation> findTagRelationByTagId(long tagId);
 	
 }

@@ -23,25 +23,25 @@
 
             </div>
             <ul class="all-tags">
-                <li class="boxsizing" th:each="tag:${tagList}">
-                    <span class="dot"></span>
+                <li class="boxsizing" th:each="tag:${tagList}" th:id="${tag.tagId}">
+                    <span class="dot" th:style="'background-color:'+${tag.bgColor}+''"></span>
                     <p class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</p>
                     <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:id="${tag.tagId}"></i>
                 </li>
             </ul>
         </div>
         <!--右侧内容-->
-        <div class="look-tag-right boxsizing">
+        <div class="look-tag-right boxsizing" th:each="tag:${tagList}" th:id="${tag.tagId}">
             <div class="right-head boxsizing">
                 <p>
                     <span class="tag">
-                        <span class="dot"></span>
-                        <span class="tag-name over-hidden">标签名称</span>
+                        <span class="dot" th:style="'background-color:'+${tag.bgColor}+''"></span>
+                        <span class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</span>
                     </span>
-                    <span> <span>20</span> 项任务，</span>
-                    <span> <span>2</span> 个日程，</span>
-                    <span> <span>2</span> 篇分享，</span>
-                    <span> <span>2</span> 个文件，</span>
+                    <span> <span th:text="${#lists.size(tag.taskList)}">20</span> 项任务，</span>
+                    <span> <span th:text="${#lists.size(tag.scheduleList)}">2</span> 个日程，</span>
+                    <span> <span th:text="${#lists.size(tag.shareList)}">2</span> 篇分享，</span>
+                    <span> <span th:text="${#lists.size(tag.fileList)}">2</span> 个文件，</span>
                 </p>
             </div>
             <div class="scroll-box">

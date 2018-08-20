@@ -58,4 +58,6 @@ public interface TagRelationMapper {
 
 
 	void deleteTagRelationByPublicId(TagRelation tagRelation);
+
+	List<TagRelation> findTagRelationByTagId(long tagId);
 }

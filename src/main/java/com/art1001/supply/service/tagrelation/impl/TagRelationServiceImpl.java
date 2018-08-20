@@ -78,5 +78,10 @@ public class TagRelationServiceImpl implements TagRelationService {
 	public List<TagRelation> findTagRelationAllList(){
 		return tagRelationMapper.findTagRelationAllList();
 	}
-	
+
+	@Override
+	public List<TagRelation> findTagRelationByTagId(long tagId) {
+		return tagRelationMapper.findTagRelationByTagId(tagId);
+	}
+
 }

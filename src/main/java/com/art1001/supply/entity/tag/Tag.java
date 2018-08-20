@@ -2,8 +2,13 @@ package com.art1001.supply.entity.tag;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.Task;
 import lombok.Data;
 
 /**
@@ -35,25 +40,29 @@ public class Tag extends BaseEntity implements Serializable {
 	private String memberId;
 
 	/**
-	 * 项目id
+	 * 项目
 	 */
 	private String projectId;
 
 	/**
-	 * 任务id
+	 * 任务
 	 */
-	private String taskId;
+	private List<Task> taskList;
 
 	/**
-	 * 日程id
+	 * 日程
 	 */
-	private String scheduleId;
+	private List<Schedule> scheduleList;
 
 	/**
-	 * 分享id
+	 * 分享
 	 */
-	private String shareId;
+	private List<Share> shareList;
 
+	/**
+	 * 文件
+	 */
+	private List<File> fileList;
 	/**
 	 * 判断标签是否选中
 	 */

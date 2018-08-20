@@ -5,13 +5,19 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +53,20 @@ public abstract class BaseController {
 
     @Resource
     private TagService tagService;
+
+    @Resource
+    private TagRelationService tagRelationService;
+
+    @Resource
+    private TaskService taskService;
+
+    @Resource
+    private FileService fileService;
+    @Resource
+    private ScheduleService scheduleService;
+    @Resource
+    private ShareService shareService;
+
 
     //查询全部项目成员
     @PostMapping("/findAllProjectMember")
@@ -209,6 +229,28 @@ public abstract class BaseController {
     @GetMapping("/projectTag.html")
     public String  projectTag(String projectId,Model model){
         List<Tag> tagList = tagService.findByProjectId(projectId);
+        for (Tag tag:tagList) {
+            List<TagRelation> tagRelationList = tagRelationService.findTagRelationByTagId(tag.getTagId());
+            for (TagRelation tagRelation:tagRelationList) {
+                if(StringUtils.isNotEmpty(tagRelation.getTaskId())){
+                    tag.getTaskList().add(taskService.findTaskByTaskId(tagRelation.getTaskId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getFileId())){
+                    tag.getFileList().add(fileService.findFileById(tagRelation.getFileId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getScheduleId())){
+                    tag.getScheduleList().add(scheduleService.findScheduleById(tagRelation.getScheduleId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getShareId())){
+                    tag.getShareList().add(shareService.findById(tagRelation.getShareId()));
+                }
+            }
+
+        }
+
         model.addAttribute("tagList",tagList);
         return "tk-look-tag";
     }

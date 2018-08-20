@@ -21,6 +21,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
@@ -35,6 +36,7 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskLogService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
@@ -115,6 +117,9 @@ public class TaskServiceImpl implements TaskService {
     /** 用于订阅推送消息 */
     @Resource
     private SimpMessagingTemplate messagingTemplate;
+
+    @Resource
+    private TagRelationService tagRelationService;
 
 	/**
 	 * 重写方法
@@ -1348,7 +1353,7 @@ public class TaskServiceImpl implements TaskService {
             copyTask.setTaskUIds(Joiner.on(",").join(intersection));
 
             //标签设置
-            //被复制的任务的标签信息
+            //被复制的任务的标签信
             List<Tag> tagList = oldTask.getTagList();
             if(tagList != null && tagList.size() > 0 ){
                 //复制到新项目里的所有标签
@@ -1376,7 +1381,7 @@ public class TaskServiceImpl implements TaskService {
                 }
                 for (Tag t : newTagListAfter) {
                     t.setTagId(null);
-                    t.setTaskId(null);
+                    //t.setTaskId(null);
                     t.setMemberId(ShiroAuthenticationManager.getUserId());
                     t.setProjectId(projectId);
                     t.setCreateTime(System.currentTimeMillis());
