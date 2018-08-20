@@ -162,16 +162,6 @@
                 project_id,
             </if>
 
-            <if test="taskId != null and taskId != ''">
-                task_id,
-            </if>
-            <if test="scheduleId != null and scheduleId != ''">
-                schedule_id,
-            </if>
-            <if test="shareId != null and shareId != ''">
-                share_id,
-            </if>
-
             <if test="createTime != null and createTime != ''">
                 create_time,
             </if>
@@ -192,16 +182,6 @@
             </if>
             <if test="projectId != null and projectId != ''">
                 #{projectId},
-            </if>
-
-            <if test="taskId != null and taskId != ''">
-                #{taskId},
-            </if>
-            <if test="scheduleId != null and scheduleId != ''">
-                #{scheduleId},
-            </if>
-            <if test="shareId != null and shareId != ''">
-                #{shareId},
             </if>
 
             <if test="createTime != null and createTime != ''">
@@ -230,17 +210,6 @@
             <if test="projectId != null and projectId != ''">
                 project_id = #{projectId},
             </if>
-
-            <if test="taskId != null and taskId != ''">
-                task_id = #{taskId},
-            </if>
-            <if test="scheduleId != null and scheduleId != ''">
-                schedule_id = #{scheduleId},
-            </if>
-            <if test="shareId != null and shareId != ''">
-                share_id = #{shareId},
-            </if>
-
 
             <if test="updateTime != null and updateTime != ''">
                 update_time = #{updateTime},

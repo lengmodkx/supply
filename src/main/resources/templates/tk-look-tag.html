@@ -38,30 +38,34 @@
                         <span class="dot" th:style="'background-color:'+${tag.bgColor}+''"></span>
                         <span class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</span>
                     </span>
-                    <span> <span th:text="${#lists.size(tag.taskList)}">20</span> 项任务，</span>
-                    <span> <span th:text="${#lists.size(tag.scheduleList)}">2</span> 个日程，</span>
-                    <span> <span th:text="${#lists.size(tag.shareList)}">2</span> 篇分享，</span>
-                    <span> <span th:text="${#lists.size(tag.fileList)}">2</span> 个文件，</span>
+                    <span> <span th:text="${#lists.size(tag.taskList)}">0</span> 项任务，</span>
+                    <span> <span th:text="${#lists.size(tag.scheduleList)}">0</span> 个日程，</span>
+                    <span> <span th:text="${#lists.size(tag.shareList)}">0</span> 篇分享，</span>
+                    <span> <span th:text="${#lists.size(tag.fileList)}">0</span> 个文件，</span>
                 </p>
             </div>
             <div class="scroll-box">
-                <h3 class="style-num">任务 ・ <span>20</span></h3>
-                <ul class="task-ul layui-form">
-                    <li class="boxsizing clearfix">
-                        <div class="check-box"><input type="checkbox" name=""  lay-skin="primary"> </div>
-                        <img src="../static/image/begintime.png" th:src="@{/image/begintime.png}">
-                        <div class="style-box">
-                            <span class="task-name">所属任务名称</span>
-                            <span class="task-group">所属任务分组</span>
-                            <span class="a-tag">2132</span>
-                        </div>
-                        <div class="timer">
-                            <i class="layui-icon layui-icon-log" style="font-size: 14px;"></i>
-                            <span>7月15日</span>开始
-                        </div>
+                <div th:if="${!#lists.isEmpty(tag.taskList)}">
+                    <h3 class="style-num">任务 ・ <span th:text="${#lists.size(tag.taskList)}">20</span></h3>
+                    <ul class="task-ul layui-form">
+                        <li class="boxsizing clearfix" th:each="task:${tag.taskList}">
+                            <div class="check-box"><input type="checkbox" lay-skin="primary" th:classappend="${task.taskStatus=='完成'?'layui-form-checked':''}"> </div>
+                            <img th:src="@{/image/person.png}" th:if="${task.executor==null}"/>
+                            <img th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" th:if="${task.executor!=null}"/>
+                            <div class="style-box">
+                                <span class="task-name">所属任务名称</span>
+                                <span class="task-group">所属任务分组</span>
+                                <span class="a-tag">2132</span>
+                            </div>
+                            <div class="timer">
+                                <i class="layui-icon layui-icon-log" style="font-size: 14px;"></i>
+                                <span>7月15日</span>开始
+                            </div>
 
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                </div>
+
                 <h3 class="style-num">日程 ・ <span>20</span></h3>
                 <ul class="rc-ul">
                     <li class="boxsizing">

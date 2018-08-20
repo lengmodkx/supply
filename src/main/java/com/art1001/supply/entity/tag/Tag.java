@@ -2,6 +2,7 @@ package com.art1001.supply.entity.tag;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,22 +48,22 @@ public class Tag extends BaseEntity implements Serializable {
 	/**
 	 * 任务
 	 */
-	private List<Task> taskList;
+	private List<Task> taskList = new ArrayList<>();
 
 	/**
 	 * 日程
 	 */
-	private List<Schedule> scheduleList;
+	private List<Schedule> scheduleList = new ArrayList<>();
 
 	/**
 	 * 分享
 	 */
-	private List<Share> shareList;
+	private List<Share> shareList = new ArrayList<>();
 
 	/**
 	 * 文件
 	 */
-	private List<File> fileList;
+	private List<File> fileList = new ArrayList<>();
 	/**
 	 * 判断标签是否选中
 	 */

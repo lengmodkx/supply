@@ -64,7 +64,7 @@
 
 	</select>
 
-	<select id="findTagRelationByTagId" resultMap="BaseResultMap" parameterType="java.lang.String">
+	<select id="findTagRelationByTagId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 
 		select
 		<include refid="Base_Column_List" />
