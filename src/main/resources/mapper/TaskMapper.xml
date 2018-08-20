@@ -48,8 +48,11 @@
 		<collection property="taskList" column="task_id" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.task.TaskMapper.findSubLevelTask"/>
 		<!--查询标签-->
-		<collection property="tagList" column="{tagIds=tag_id}" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
+		<collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
+			<id property="tagId" column="tag_id"/>
+			<result property="tagName" column="tag_name"/>
+			<result property="bgColor" column="bg_color"/>
+		</collection>
 	</resultMap>
 
 	<resultMap id="findMenuTaskMemberInfo" type="com.art1001.supply.entity.task.Task">
@@ -86,8 +89,11 @@
 		<association property="executorInfo" column="executor" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 		<!--查询标签-->
-		<collection property="tagList" column="{tagIds=tag_id}" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
+		<collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
+			<id property="tagId" column="tag_id"/>
+			<result property="tagName" column="tag_name"/>
+			<result property="bgColor" column="bg_color"/>
+		</collection>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -193,7 +199,8 @@
 	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
 	SELECT
 	<include refid="Base_Column_List"/>
-	from prm_task where prm_task.task_id = #{taskId}
+	from prm_task
+		where prm_task.task_id = #{taskId}
 	</select>
 	
 	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
@@ -204,7 +211,7 @@
 	<insert id="saveTaskBatch">
 		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, tag_id, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
 		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
-		 (#{templateData.id} ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
+		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
 		</foreach>
 	</insert>
 

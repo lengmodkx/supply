@@ -267,7 +267,7 @@ public class ProjectController extends BaseController {
      */
     @PostMapping("/projectTemplate")
     @ResponseBody
-    public JSONObject projectTemplate(@RequestParam String projectName,@RequestParam(required = false)String templateFlag){
+    public JSONObject projectTemplate(@RequestParam String projectName,@RequestParam String projectDes,@RequestParam(required = false)String templateFlag){
         JSONObject jsonObject = new JSONObject();
         if(StringUtils.isEmpty(projectName)){
             jsonObject.put("result",0);
@@ -279,7 +279,7 @@ public class ProjectController extends BaseController {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             Project project = new Project();
             project.setProjectName(projectName);
-            project.setProjectDes("");
+            project.setProjectDes(projectDes);
             project.setProjectCover("upload/project/bj.png");
             project.setProjectDel(0);
             project.setCreateTime(System.currentTimeMillis());
@@ -305,43 +305,13 @@ public class ProjectController extends BaseController {
 
             List<TemplateData> menus = templateDataService.findByTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
             relationService.saveRelationBatch2(menus,project.getProjectId(),relation.getRelationId());
-
+            List<Relation> relationList = relationService.findAllMenuInfoByGroupId(relation.getRelationId());
             for(int i=0;i<menus.size();i++){
                 String menuId = menus.get(i).getId();
+                String relationId = relationList.get(i).getRelationId();
                 List<TemplateData> templateDataList = templateDataService.findByParentId(menuId);
-                taskService.saveTaskBatch(project.getProjectId(),menuId,templateDataList);
+                taskService.saveTaskBatch(project.getProjectId(),relationId,templateDataList);
             }
-
-
-
-//            for (int i=0;i<jsonArray.size();i++) {
-//                JSONObject object = jsonArray.getJSONObject(i);
-//                Relation relation1 = new Relation();
-//                relation1.setProjectId(project.getProjectId());
-//                relation1.setRelationName(object.getString("menuName"));
-//                relation1.setParentId(relation.getRelationId());
-//                relation1.setLable(1);
-//                relation1.setRelationDel(0);
-//                relation1.setOrder(i);
-//                relation1.setCreateTime(System.currentTimeMillis());
-//                relation1.setUpdateTime(System.currentTimeMillis());
-//                relationService.saveRelation(relation1);
-//                JSONArray taskList = object.getJSONArray("taskList");
-//                for(int j=0;j<taskList.size();j++){
-//                    JSONObject object1 = taskList.getJSONObject(j);
-//                    Task task = new Task();
-//                    if(StringUtils.isNotEmpty(object1.getString("taskName"))){
-//                        task.setTaskMenuId(relation1.getRelationId());
-//                        task.setTaskName(object1.getString("taskName"));
-//                        task.setRemarks(object1.getString("remarks"));
-//                        task.setProjectId(project.getProjectId());
-//                        task.setRepeat("不重复");
-//                        task.setRemind("不提醒");
-//                        task.setPriority("普通");
-       //               taskService.saveTask(task);
-//                    }
-//                }
-//            }
 
             //往项目用户关联表插入数据
             ProjectMember projectMember = new ProjectMember();

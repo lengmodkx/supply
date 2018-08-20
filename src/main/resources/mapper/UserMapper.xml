@@ -55,17 +55,17 @@
 			<result property="updateTime" column="r_update_time"/>
 		</association>
 		<association property="userInfo" column="id" javaType="com.art1001.supply.entity.user.UserInfoEntity">
-			<id property="id" column="u_id"/>
-			<result property="sex" column="u_sex"/>
-			<result property="birthday" column="u_birthday"/>
-			<result property="telephone" column="u_telephone"/>
-			<result property="email" column="u_email"/>
-			<result property="image" column="u_image"/>
-			<result property="address" column="u_address"/>
-			<result property="createTime" column="u_create_time"/>
-			<result property="job" column="u_job"/>
-			<result property="defaultImg" column="u_default_img"/>
-		</association>
+		<id property="id" column="u_id"/>
+		<result property="sex" column="u_sex"/>
+		<result property="birthday" column="u_birthday"/>
+		<result property="telephone" column="u_telephone"/>
+		<result property="email" column="u_email"/>
+		<result property="image" column="u_image"/>
+		<result property="address" column="u_address"/>
+		<result property="createTime" column="u_create_time"/>
+		<result property="job" column="u_job"/>
+		<result property="defaultImg" column="u_default_img"/>
+	</association>
 	</resultMap>
 
 	<resultMap id="userInfo" type="com.art1001.supply.entity.user.UserInfoEntity">

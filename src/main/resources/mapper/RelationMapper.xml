@@ -174,7 +174,7 @@
 		insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable, relation_del, `order`) VALUES
 
 		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
-			( #{templateData.id} ,#{templateData.menuName},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
+			( REPLACE(UUID(), '-', '') ,#{templateData.menuName},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
 		</foreach>
 
 	</insert>
@@ -306,7 +306,7 @@
 	<!-- 查询出某个项目下的某个分组信息 -->
 	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
 		select
-		<include refid="Base_Column_List" ></include>
+		<include refid="Base_Column_List" />
 		from prm_relation
 		where parent_id = '0' and project_id = #{projectId}
 	</select>
@@ -314,7 +314,7 @@
 	<!-- 查询出某个分组中的所有菜单 -->
 	<select id="findAllMenuInfoByGroupId" resultMap="BaseResultMapVo">
 		select
-		<include refid="Base_Column_List" ></include>
+		<include refid="Base_Column_List" />
 		from prm_relation
 		where parent_id = #{groupId}
 	</select>
