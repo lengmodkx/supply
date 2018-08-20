@@ -185,6 +185,9 @@
     line-height: 24px;
     cursor: pointer;
 }
+.color-pick li:hover{
+    transform: scale(1.1);
+}
 .color-pick li i{
     display: none;
 }
