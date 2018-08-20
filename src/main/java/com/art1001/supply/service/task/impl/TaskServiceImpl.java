@@ -18,6 +18,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
@@ -1115,6 +1116,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
+     * 根据任务的菜单信息 查询出任务分组信息
+     * @param taskMenuId 任务菜单信息
+     * @return 任务的实体
+     */
+    @Override
+    public Relation findTaskGroupInfoByTaskMenuId(String taskMenuId) {
+        return taskMapper.findTaskGroupInfoByTaskMenuId(taskMenuId);
+    }
+
+    /**
      * 查询出我创建的任务id
      * @param memberId 创建者的id
      * @return
@@ -1329,6 +1340,8 @@ public class TaskServiceImpl implements TaskService {
       * @param projectId 项目信息
       */
     public void setCopyTaskInfo(Task oldTask, Task copyTask, String projectId, boolean oldNew,boolean newOld){
+        //被复制的任务的标签信
+        List<Tag> tagList = oldTask.getTagList();
         //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
         if(!Objects.equals(oldTask.getProjectId(),projectId)){
             List<ProjectMember> byProjectId = projectMemberService.findByProjectId(projectId);
@@ -1356,8 +1369,6 @@ public class TaskServiceImpl implements TaskService {
             copyTask.setTaskUIds(Joiner.on(",").join(intersection));
 
             //标签设置
-            //被复制的任务的标签信
-            List<Tag> tagList = oldTask.getTagList();
             if(tagList != null && tagList.size() > 0 ){
                 //复制到新项目里的所有标签
                 List<Tag> byProjectIdTag = tagService.findByProjectId(projectId);
@@ -1400,11 +1411,28 @@ public class TaskServiceImpl implements TaskService {
                 //copyTask.setTagId(Joiner.on(",").join(newTagIds));
 
                 //插入新的任务和标签的关系到库中
-                tagRelationService.saveManyTagRelation(newTagIds,copyTask.getTaskId());
+                List<TagRelation> tagRelations = new ArrayList<TagRelation>();
+                for (Long tagId : newTagIds) {
+                    TagRelation tagRelation = new TagRelation();
+                    tagRelation.setId(IdGen.uuid());
+                    tagRelation.setTaskId(copyTask.getTaskId());
+                    tagRelation.setTagId(tagId);
+                    tagRelations.add(tagRelation);
+                }
+                tagRelationService.saveManyTagRelation(tagRelations);
             }
 
         } else{
-            copyTask.setTagId(oldTask.getTagId());
+            //插入新的任务和标签的关系到库中
+            List<TagRelation> tagRelations = new ArrayList<TagRelation>();
+            for (Tag tag: tagList) {
+                TagRelation tagRelation = new TagRelation();
+                tagRelation.setId(IdGen.uuid());
+                tagRelation.setTaskId(copyTask.getTaskId());
+                tagRelation.setTagId(tag.getTagId());
+                tagRelations.add(tagRelation);
+            }
+            tagRelationService.saveManyTagRelation(tagRelations);
             copyTask.setExecutor(oldTask.getExecutor());
             copyTask.setTaskUIds(oldTask.getTaskUIds());
         }
@@ -1549,7 +1577,17 @@ public class TaskServiceImpl implements TaskService {
                         newTagIds.add(t.getTagId());
                     }
                 }
-                task.setTagId(Joiner.on(",").join(newTagIds));
+
+                //插入新的任务和标签的关系到库中
+                List<TagRelation> tagRelations = new ArrayList<TagRelation>();
+                for (Long tagId : newTagIds) {
+                    TagRelation tagRelation = new TagRelation();
+                    tagRelation.setId(IdGen.uuid());
+                    tagRelation.setTaskId(task.getTaskId());
+                    tagRelation.setTagId(tagId);
+                    tagRelations.add(tagRelation);
+                }
+                tagRelationService.saveManyTagRelation(tagRelations);
             }
         }
         //更新任务信息

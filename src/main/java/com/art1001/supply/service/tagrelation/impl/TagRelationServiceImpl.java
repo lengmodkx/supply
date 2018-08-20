@@ -87,11 +87,10 @@ public class TagRelationServiceImpl implements TagRelationService {
 
 	/**
 	 * 插入多条消息
-	 * @param newTagIds 要插入的标签id
-	 * @param taskId 任务id
+	 * @param relations 标签关系实体集合
 	 */
 	@Override
-	public void saveManyTagRelation(List<Long> newTagIds, String taskId) {
-		tagRelationMapper.saveManyTagRelation(newTagIds,taskId);
+	public void saveManyTagRelation(List<TagRelation> relations) {
+		tagRelationMapper.saveManyTagRelation(relations);
 	}
 }

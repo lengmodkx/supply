@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
@@ -476,4 +477,11 @@ public interface TaskService {
 	 * @return
 	 */
     List<Statistics> findTaskCountOverView(String projectId);
+
+	/**
+	 * 根据任务的菜单信息 查询出任务分组信息
+	 * @param taskMenuId 任务菜单信息
+	 * @return 任务的实体
+	 */
+	Relation findTaskGroupInfoByTaskMenuId(String taskMenuId);
 }

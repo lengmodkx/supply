@@ -63,8 +63,7 @@ public interface TagRelationMapper {
 
 	/**
 	 * 插入多条消息
-	 * @param newTagIds 要插入的标签id
-	 * @param taskId 任务id
+	 * @param relations 标签关系实体集合
 	 */
-    void saveManyTagRelation(@Param("newTagIds") List<Long> newTagIds, @Param("taskId") String taskId);
+    void saveManyTagRelation(List<TagRelation> relations);
 }

@@ -977,6 +977,8 @@ public class TaskController {
             boolean isCollect = taskService.judgeCollectTask(task);
             model.addAttribute("isCollect",isCollect);
 
+            //查询出该任务的分组信息
+            Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(task.getTaskMenuId());
             //查询出任务的关联信息
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
             model.addAttribute("bindingVo",bindingVo);

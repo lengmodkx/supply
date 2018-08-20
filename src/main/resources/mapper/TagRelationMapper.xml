@@ -171,18 +171,18 @@
 
 	</update>
 
+
+
 	<!-- 插入多条标签关系 -->
 	<insert id="saveManyTagRelation">
 		insert into prm_tag_relation
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-				id,
-		  		tag_id,
-				task_id,
-		</trim>
-
-		<foreach collection="newTagIds" separator="," item="tag">
+		(id,
+		tag_id,
+		task_id)
+		values
+		<foreach collection="list" separator="," item="relation">
 			(
-			SELECT REPLACE(UUID(), '-', ''),#{tag.tagId},#{taskId}
+			#{relation.id},#{relation.tagId},#{relation.taskId}
 			)
 		</foreach>
 	</insert>

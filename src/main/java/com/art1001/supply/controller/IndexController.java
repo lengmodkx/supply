@@ -56,12 +56,18 @@ public class IndexController extends BaseController {
         return "login";
     }
 
+
+    @GetMapping("/register.html")
+    public String register() {
+        return "test";
+    }
+
     /**
      * 跳转到注册
      */
-    @GetMapping("/register.html")
-    public String register() {
-        return "register";
+    @GetMapping("/test.html")
+    public String test() {
+        return "test/test1";
     }
 
 

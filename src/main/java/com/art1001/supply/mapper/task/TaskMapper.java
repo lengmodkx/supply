@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.task;
 import java.util.LinkedList;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.template.TemplateData;
@@ -489,4 +490,7 @@ public interface TaskMapper {
 	 */
 	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
 	int findOverdueCompletion(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+	@Select("select relation_id,relation_name where relation_id = #{taskMenuId}")
+    Relation findTaskGroupInfoByTaskMenuId(String taskMenuId);
 }
