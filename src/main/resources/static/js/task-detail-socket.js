@@ -116,6 +116,11 @@ function subscribe() {
             }
         }
 
+        if(taskLog.type === '更新备注'){
+            getLog(taskLog.taskLog);
+            editor.txt.html(taskLog.task.remarks);
+        }
+
 
         if(taskLog.type === '取消了关联'){
             $('#bind li.data-info ').each(function(){

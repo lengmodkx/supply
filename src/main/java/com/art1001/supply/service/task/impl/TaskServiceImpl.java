@@ -173,8 +173,12 @@ public class TaskServiceImpl implements TaskService {
             log = logService.saveLog(task.getTaskId(),TaskLogFunction.F.getName() + " " + task.getPriority(),1);
         }
         //更新任务备注
-        if(StringUtils.isNotEmpty(task.getRemarks())){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName() + " " + task.getRemarks(),1);
+        if(task.getRemarks() != null){
+            if(!"".equals(task.getRemarks())){
+                log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName(),1);
+            } else{
+                log = logService.saveLog(task.getTaskId(),TaskLogFunction.A26.getName(),1);
+            }
         }
         //更新任务执行者
         if(StringUtils.isNotEmpty(task.getExecutor())){
@@ -350,17 +354,16 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Log mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
-        //如果是跨项目移动 则清空任务成员关系 及 执行者
-        if(!newTaskMenuVO.getProjectId().equals(oldTaskMenuVO.getProjectId())){
-            task.setExecutor("");
-            taskMapper.clearTaskMember(task.getTaskId());
+        task.setTaskMenuId(newTaskMenuVO.getTaskMenuId());
+        //更新新的任务信息
+        updateMoveTaskInfo(task,oldTaskMenuVO,newTaskMenuVO);
+
+        task = taskMapper.findTaskByTaskId(task.getTaskId());
+
+        //循环移动子任务
+        for (Task t : task.getTaskList()) {
+            updateMoveTaskInfo(t,oldTaskMenuVO,newTaskMenuVO);
         }
-        //设置新的项目id
-        task.setProjectId(newTaskMenuVO.getProjectId());
-        //设置更新时间
-        task.setUpdateTime(System.currentTimeMillis());
-        //更新任务信息
-        int result = taskMapper.updateTask(task);
         String content = "";
         //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
         //或者如果分组id不为空说明该任务要移至其他分组,所以 分组id,菜单id,肯定不为空
@@ -369,7 +372,6 @@ public class TaskServiceImpl implements TaskService {
             content = TaskLogFunction.V.getName() + " " + oldTaskMenuVO.getTaskGroupName() + "/" + oldTaskMenuVO.getTaskMenuName() +" "+  TaskLogFunction.W.getName() + " " + newTaskMenuVO.getTaskGroupName() + "/" + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
             Log log = logService.saveLog(task.getTaskId(), content,1);
-            log.setResult(result);
             return log;
         }
         //如果任务的菜单信息不为空 说明该任务要移至其他的任务菜单
@@ -378,7 +380,6 @@ public class TaskServiceImpl implements TaskService {
             content = TaskLogFunction.X.getName() + " " + newTaskMenuVO.getTaskMenuName();
             //保存日志信息
             Log log = logService.saveLog(task.getTaskId(), content,1);
-            log.setResult(result);
             return log;
         }
             return null;
@@ -752,7 +753,9 @@ public class TaskServiceImpl implements TaskService {
         copyTask.setCreateTime(System.currentTimeMillis());
         //设置新任务的更新时间
         copyTask.setUpdateTime(System.currentTimeMillis());
+
         setCopyTaskInfo(oldTask,copyTask,projectId,old_new,new_old);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","创建了任务");
         jsonObject.put("task",taskMapper.findTaskByTaskId(copyTask.getTaskId()));
@@ -1393,7 +1396,11 @@ public class TaskServiceImpl implements TaskService {
                         newTagIds.add(t.getTagId());
                     }
                 }
-                copyTask.setTagId(Joiner.on(",").join(newTagIds));
+                //用逗号将数组隔开
+                //copyTask.setTagId(Joiner.on(",").join(newTagIds));
+
+                //插入新的任务和标签的关系到库中
+                tagRelationService.saveManyTagRelation(newTagIds,copyTask.getTaskId());
             }
 
         } else{
@@ -1465,5 +1472,87 @@ public class TaskServiceImpl implements TaskService {
         content.append(TaskLogFunction.R.getName()).append(" ").append(copyTask.getTaskName());
         Log log = logService.saveLog(copyTask.getTaskId(), content.toString(),1);
         log.setResult(result);
+    }
+
+    /**
+     * 设置移动任务的信息
+     */
+    public void updateMoveTaskInfo(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO){
+        //设置新的项目id
+        task.setProjectId(newTaskMenuVO.getProjectId());
+        //设置更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
+        if(!Objects.equals(oldTaskMenuVO.getProjectId(),newTaskMenuVO.getProjectId())){
+            List<ProjectMember> byProjectId = projectMemberService.findByProjectId(oldTaskMenuVO.getProjectId());
+
+            //把每个成员的id 取出来 抽成集合 方便比较
+            List<String> members = byProjectId.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+
+            //判断此任务的执行者 在不在新项目中
+            for (String executorId : members) {
+                if(executorId.equals(task.getExecutor())){
+                    task.setExecutor(task.getExecutor());
+                    break;
+                } else{
+                    task.setExecutor("");
+                }
+            }
+
+            //将原来的任务的所有成员id 转为集合 方便比较
+            List<String> oldTaskMembers = new ArrayList<String>();
+            oldTaskMembers = Arrays.asList(task.getTaskUIds().split(","));
+
+            //取出任务成员 和 新项目成员的  交集
+            List<String> intersection = oldTaskMembers.stream().filter(item -> members.contains(item)).collect(Collectors.toList());
+
+            task.setTaskUIds(Joiner.on(",").join(intersection));
+
+            //标签设置
+            //被复制的任务的标签信息
+            List<Tag> tagList = task.getTagList();
+            if(tagList != null && tagList.size() > 0 ){
+                //复制到新项目里的所有标签
+                List<Tag> byProjectIdTag = tagService.findByProjectId(newTaskMenuVO.getProjectId());
+
+                List<Tag> newTagListAfter = new ArrayList<Tag>();
+                List<Long> newTagIds = new ArrayList<Long>();
+
+                if(byProjectIdTag != null && byProjectIdTag.size() > 0){
+                    boolean flag = false;
+                    for(int i = 0;i < tagList.size() ;i++) {
+                        for (Tag t : byProjectIdTag) {
+                            if (tagList.get(i).getTagName().equals(t.getTagName())) {
+                                newTagIds.add(t.getTagId());
+                                flag = true;
+                            }
+                        }
+                        if (!flag) {
+                            newTagListAfter.add(tagList.get(i));
+                        }
+                        flag = false;
+                    }
+                } else{
+                    newTagListAfter = tagList;
+                }
+                for (Tag t : newTagListAfter) {
+                    t.setTagId(null);
+                    //t.setTaskId(null);
+                    t.setMemberId(ShiroAuthenticationManager.getUserId());
+                    t.setProjectId(newTaskMenuVO.getProjectId());
+                    t.setCreateTime(System.currentTimeMillis());
+                    t.setUpdateTime(System.currentTimeMillis());
+                }
+                if(!newTagListAfter.isEmpty()){
+                    tagService.saveMany(newTagListAfter);
+                    for (Tag t : newTagListAfter) {
+                        newTagIds.add(t.getTagId());
+                    }
+                }
+                task.setTagId(Joiner.on(",").join(newTagIds));
+            }
+        }
+        //更新任务信息
+        int result = taskMapper.updateTask(task);
     }
 }

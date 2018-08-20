@@ -365,6 +365,8 @@ public class TaskController {
             Log taskLogVO = taskService.updateTask(task);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
+            jsonObject.put("type","更新备注");
+            jsonObject.put("task",task);
             jsonObject.put("taskLog",taskLogVO);
             messagingTemplate.convertAndSend("/topic/"+task.getTaskId(), new ServerMessage(jsonObject.toString()));
         } catch (Exception e){

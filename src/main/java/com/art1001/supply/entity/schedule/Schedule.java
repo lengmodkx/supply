@@ -94,6 +94,11 @@ public class Schedule extends BaseEntity implements Serializable {
 	private Integer isAllday;
 
 	/**
+	 * 标签的集合
+	 */
+	private List<Tag> tagList;
+
+	/**
 	 * 标签集合
 	 */
 	private List<Tag> tags;

@@ -30,11 +30,10 @@ $("body").on("click",".close-related-menu",function () {
 });
 
 $("#remarks").click(function () {
-    $(".add-beizhu-box").show(200)
+    $('.add-bz.combox').hide();
+    $(".add-beizhu-box").show(200);
 });
-$(".child-task-no").click(function () {
-    $(".add-beizhu-box").hide(200)
-})
+
 
 
 
@@ -407,8 +406,12 @@ layui.use('form', function() {
     $(".common-no-style").click(function () {
         $(".click-add-child-task").slideUp(500);
     });
-    $(".common-ok-style").click(function () {
+    $(".common-ok-style.child").click(function () {
         var subTaskName = $('.creat-model-input').val();
+        if(subTaskName == '' || subTaskName == null){
+            layer.msg("子任务名称不能为空!");
+            return false;
+        }
         var url = "/task/addSubLevelTask";
         var args = {"taskName":subTaskName,"parentTaskId":taskId,"projectId":projectId};
         var content = '';

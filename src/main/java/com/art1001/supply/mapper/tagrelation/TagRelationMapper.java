@@ -60,4 +60,11 @@ public interface TagRelationMapper {
 	void deleteTagRelationByPublicId(TagRelation tagRelation);
 
 	List<TagRelation> findTagRelationByTagId(long tagId);
+
+	/**
+	 * 插入多条消息
+	 * @param newTagIds 要插入的标签id
+	 * @param taskId 任务id
+	 */
+    void saveManyTagRelation(@Param("newTagIds") List<Long> newTagIds, @Param("taskId") String taskId);
 }

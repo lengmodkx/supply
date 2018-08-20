@@ -252,17 +252,6 @@
             <if test="tag.projectId != null and tag.projectId != ''">
                 #{tag.projectId},
             </if>
-
-            <if test="tag.taskId != null and tag.taskId != ''">
-                #{tag.taskId},
-            </if>
-            <if test="tag.scheduleId != null and tag.scheduleId != ''">
-                #{tag.scheduleId},
-            </if>
-            <if test="tag.shareId != null and tag.shareId != ''">
-                #{tag.shareId},
-            </if>
-
             <if test="tag.createTime != null and tag.createTime != ''">
                 #{tag.createTime},
             </if>

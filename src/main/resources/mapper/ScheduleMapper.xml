@@ -3,7 +3,7 @@
 <mapper namespace="com.art1001.supply.mapper.schedule.ScheduleMapper">
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.schedule.Schedule">
-		<result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+		<id column="schedule_id" property="scheduleId"/>
 		<result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="start_time" property="startTime" jdbcType="BIGINT" />
@@ -30,9 +30,14 @@
 		<!--查询参与者-->
 		<collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
-		<!--关联标签-->
-		<collection property="tags" column="{tagIds=tag_id}" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
+		<!--查询标签-->
+		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+			<id property="tagId" column="tag_id"/>
+			<result property="tagName" column="tag_name"/>
+			<result property="bgColor" column="bg_color"/>
+		</collection>
+
+
 	</resultMap>
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
@@ -65,6 +70,27 @@
 				member_ids,
 				is_allday,
 				schedule_calendar
+	</sql>
+
+	<sql id="Base_Column_List2">
+				s.schedule_id,
+				s.schedule_name,
+				s.project_id,
+				s.start_time,
+				s.end_time,
+				s.`repeat`,
+				s.remind,
+				s.address,
+				s.remarks,
+				s.create_time,
+				s.update_time,
+				s.member_id,
+				s.member_ids,
+				s.is_allday,
+				s.schedule_calendar,
+				tg.tag_id,
+				tg.tag_name,
+				tg.bg_color
 	</sql>
 
 	<sql id="whereStatement">
@@ -106,9 +132,9 @@
 	<select id="findScheduleById" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
-		<include refid="Base_Column_List" />
-		from prm_schedule c where schedule_id = #{id}
-
+		<include refid="Base_Column_List2" />
+		from prm_schedule s left join prm_tag_relation tr on s.schedule_id = tr.schedule_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where s.schedule_id = #{id}
 	</select>
 	
 	<select id="findByIds" resultMap="BaseResultMap">

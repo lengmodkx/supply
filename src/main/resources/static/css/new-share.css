@@ -184,6 +184,22 @@ body,html{
     /*float: left;*/
     /*position: relative;*/
 }
+.go-xm,.go-fxq{
+    height: 30px;
+    line-height: 30px;
+    max-width: 150px;
+    padding: 0 12px;
+    color: white;
+    background-color:#98FB98;
+    border-radius: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    float: left;
+}
 .share-right{
     width: 100%;
     min-height: 470px;

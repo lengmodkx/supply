@@ -79,23 +79,21 @@
         <div class="add-bz combox">
             <img src="../static/image/beizhu.png" th:src="@{/image/beizhu.png}" />
             <span>备注</span>
-            <input type="hidden" id = ""/>
-
-            <input type="text" name="title" th:value="${task.remarks}" id = "remarks" placeholder="待添加"  class="layui-input label" autocomplete="false" />
+            <div style="float: left;width: 300px;height: 30px;line-height: 30px" id = "remarks">待添加</div>
         </div>
         <div class="add-beizhu-box" style="display: none;margin-top: 10px">
             <!-- 富文本框 -->
              <div>
-                 <div id="editor1" class="toolbar"></div>
+                 <div id="editor1" class="toolbar" style="background-color: #EEEEEE;"></div>
                 <div style="padding: 5px 0; color: #ccc"></div>
 
-                 <div id="editor2" style="height:200px;max-height:200px;background-color: #FAF0E6;" class="text"> <!--可使用 min-height 实现编辑区域自动增加高度-->
+                 <div id="editor2" style="background-color: #FFFFFF;" class="text"> <!--可使用 min-height 实现编辑区域自动增加高度-->
                      <p></p>
                 </div>
             </div>
             <div class="clearfix">
                 <div class="remark-task-ok layui-btn layui-btn-normal common-ok-style">保存</div>
-                <div class="child-task-no common-no-style">取消</div>
+                <div class="child-remarks-no common-no-style">取消</div>
             </div>
         </div>
         <div class="yxj combox">
@@ -147,7 +145,7 @@
             <div class="click-add-child-task common-add-style" style="display: none">
                 <input type="text" name="title"  placeholder="子任务名称..." autocomplete="off" class="layui-input creat-model-input">
                 <div class="clearfix">
-                    <div class="child-task-ok layui-btn layui-btn-normal common-ok-style">保存</div>
+                    <div class="child-task-ok layui-btn layui-btn-normal common-ok-style child">保存</div>
                     <div class="child-task-no common-no-style">取消</div>
                 </div>
             </div>
@@ -592,21 +590,76 @@
         taskId: taskId
     }
     editor.create();
+    editor.txt.html([[${task.remarks}]]);
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+    };
     var remarks = [[${task.remarks}]];
-    editor.txt.html(remarks);
+    if(remarks != null && remarks != ''){
+        $('.add-bz.combox').show();
+        $('#remarks').hide();
+        $('.toolbar.w-e-toolbar').hide();
+        $(".add-beizhu-box").show();
+        $('.remark-task-ok').hide();
+        $('.child-remarks-no').hide();
+    } else{
+        $('.add-bz.combox').show();
+        $(".add-beizhu-box").hide();
+    }
+
+    $('.add-beizhu-box').click(function () {
+        $('.remark-task-ok').show();
+        $('.child-remarks-no').show();
+        $('.toolbar.w-e-toolbar').show();
+    });
 
     //确定备注
     $('.remark-task-ok').click(function () {
         var obj = editor.txt.html();
+        var newobj = obj.replaceAll(/<p><br><\/p>/, "");
+        newobj = newobj.replace('<p></p>','');
         var taskId = $('#taskId').val();
+        if(newobj === remarks){
+            $('.add-bz.combox').show();
+            $('.toolbar.w-e-toolbar').hide();
+            $(".add-beizhu-box").show();
+            $('.remark-task-ok').hide();
+            $('.child-remarks-no').hide();
+            $('#remarks').hide();
+            if(newobj == '' && newobj == null){
+                $('#remarks').show();
+            }
+            return false;
+        }
+        var args = {"taskId":taskId,"remarks":newobj};
+        if(newobj == null || newobj == ''){
+            args = {"taskId":taskId,"remarks":""};
+        }
         var url = "/task/upateTaskRemarks";
-        var args = {"taskId":taskId,"remarks":obj};
         $.post(url,args,function(data){
-           if(data.result === 1) {
-               layer.msg("更新成功!");
-           }
+            $('.toolbar.w-e-toolbar').hide();
+            $('.add-bz.combox').hide();
+            $(".add-beizhu-box").show();
+            $('.remark-task-ok').hide();
+            $('.child-remarks-no').hide();
+            $('#remarks').hide();
+            if(newobj == '' && newobj == null){
+                $('#remarks').show();
+            }
         },"json");
     });
+
+    $(".child-remarks-no").click(function () {
+        $('.toolbar.w-e-toolbar').hide();
+        $('.add-bz.combox').hide();
+        $(".add-beizhu-box").show();
+        $('.remark-task-ok').hide();
+        $('.child-remarks-no').hide();
+        $('#remarks').hide();
+        return false;
+    });
+
 
     $(".go-return").click(function () {
         $(".renwu-menu>div").hide();
@@ -731,6 +784,6 @@
     });
 </script>
 <script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
-<script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>
+<script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
 </html>

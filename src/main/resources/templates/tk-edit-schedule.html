@@ -99,7 +99,7 @@
                 <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
                 <span>标签</span>
                 <div class="has-tags">
-                    <span class="tag" th:each="tag:${tags}" th:id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
+                    <span class="tag" th:each="tag:${schedule.tagList}" th:id = "${tag.tagId}" th:style="'background-color:'+${tag.bgColor}+''">
                         <b style="font-weight: 400" th:text="${tag.tagName}"></b>
                         <i class="layui-icon layui-icon-close-fill remove-tag" style="font-size: 14px; color: #1E9FFF;"></i>
                     </span>

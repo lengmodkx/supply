@@ -418,6 +418,7 @@ public class ShareController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.addAndRemoveShareMember(shareId,addUserEntity);
+            shareService.addAndRemoveShareMember(shareId,addUserEntity);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,操作失败!");

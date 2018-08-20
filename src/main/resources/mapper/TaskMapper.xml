@@ -462,7 +462,7 @@
 			<if test="remind != null and remind != ''">
 				`remind` = #{remind},
 			</if>
-			<if test="remarks != null and remarks != ''">
+			<if test="remarks != null">
 				`remarks` = #{remarks},
 			</if>
 			<if test="priority != null and priority != ''">

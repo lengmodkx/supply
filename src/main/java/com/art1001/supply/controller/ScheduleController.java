@@ -132,7 +132,6 @@ public class ScheduleController extends BaseController {
         model.addAttribute("startTimeTemp",format.format(schedule.getEndTime()));
         model.addAttribute("endTime",format.format(schedule.getEndTime()));
         model.addAttribute("endTimeTemp",format.format(schedule.getEndTime()));
-        model.addAttribute("tags",schedule.getTags());
         model.addAttribute("schedule",schedule);
         //查询出日程的关联信息
         BindingVo bindingVo = bindingService.listBindingInfoByPublicId(id);

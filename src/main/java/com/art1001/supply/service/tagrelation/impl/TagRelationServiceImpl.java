@@ -84,4 +84,14 @@ public class TagRelationServiceImpl implements TagRelationService {
 		return tagRelationMapper.findTagRelationByTagId(tagId);
 	}
 
+
+	/**
+	 * 插入多条消息
+	 * @param newTagIds 要插入的标签id
+	 * @param taskId 任务id
+	 */
+	@Override
+	public void saveManyTagRelation(List<Long> newTagIds, String taskId) {
+		tagRelationMapper.saveManyTagRelation(newTagIds,taskId);
+	}
 }

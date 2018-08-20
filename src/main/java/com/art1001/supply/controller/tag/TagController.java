@@ -66,7 +66,7 @@ public class TagController extends BaseController {
     public String tagPage(@RequestParam String projectId, @RequestParam(required = false) String publicId, String publicType, Model model) {
 
         String tagId = "";
-        //查询出项目的所有房间
+        //查询出项目的所有标签
         List<Tag> tagList = tagService.findByProjectId(projectId);
         //根据publicId 和 publicType查询出tag
         List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
@@ -254,9 +254,9 @@ public class TagController extends BaseController {
             map.put("type",ScheduleLogFunction.M.getId());
             map.put("publicId",publicId);
             taskPushType.setObject(map);
-            //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
-                messagingTemplate.convertAndSend("/topic/"+ projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+ publicId);
             } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
@@ -307,7 +307,6 @@ public class TagController extends BaseController {
             map.put("publicId",publicId);
             taskPushType.setObject(map);
 
-            //推送至日程的详情界面
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+ projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
             } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){

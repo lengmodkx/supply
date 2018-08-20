@@ -54,5 +54,11 @@ public interface TagRelationService {
 	public List<TagRelation> findTagRelationAllList();
 
 	List<TagRelation> findTagRelationByTagId(long tagId);
-	
+
+	/**
+	 * 插入多条消息
+	 * @param newTagIds 要插入的标签id
+	 * @param taskId 任务id
+	 */
+    void saveManyTagRelation(List<Long> newTagIds, String taskId);
 }

@@ -3,7 +3,7 @@
 <mapper namespace="com.art1001.supply.mapper.share.ShareMapper">
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.share.Share">
-		<result column="id" property="id" jdbcType="VARCHAR" />
+		<id column="id" property="id" jdbcType="VARCHAR" />
 		<result column="title" property="title" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
@@ -23,8 +23,11 @@
         <collection property="logs" javaType="java.util.ArrayList" column="id"
                     select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
         <!--查询标签-->
-        <collection property="tagList" column="{tagIds=tag_ids}" javaType="java.util.ArrayList"
-                    select="com.art1001.supply.mapper.tag.TagMapper.findTagByTagIds"/>
+        <collection property="tagList" column="tag_id" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
         <!--查询参与者-->
         <collection property="joinInfo" column="{memberIds=uids}" javaType="java.util.ArrayList"
                     select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
@@ -46,25 +49,43 @@
 		uids
 	</sql>
 
+    <sql id="Base_Column_List2">
+		s.id,
+		s.title,
+		s.content,
+		s.tag_ids,
+		s.project_id,
+		s.member_id,
+		s.member_name,
+		s.member_img,
+		s.is_privacy,
+		s.is_del,
+		s.create_time,
+		s.update_time,
+		s.uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	</sql>
+
     <!-- 根据id查询 -->
     <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
             <include refid="Base_Column_List" />
         FROM
             prm_share
-        WHERE
-            id = #{id}
+        where id = #{id}
     </select>
 
     <!-- 查询项目的分享 -->
     <select id="findByProjectId" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List2" />
         FROM
-            prm_share
+            prm_share s left join prm_tag_relation tr on s.id = tr.share_id left join prm_tag tg on tr.tag_id = tg.tag_id
         WHERE
-            project_id = #{projectId}
-        AND is_del = #{isDel}
+            s.project_id = #{projectId}
+        AND s.is_del = #{isDel}
     </select>
 
     <insert id="saveShare" parameterType="com.art1001.supply.entity.share.Share">

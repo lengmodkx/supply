@@ -3,7 +3,7 @@
 <mapper namespace="com.art1001.supply.mapper.file.FileMapper">
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
-		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
+		<id column="file_id" property="fileId"/>
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
 		<result column="ext" property="ext" jdbcType="VARCHAR" />
 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
@@ -26,6 +26,12 @@
 					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById">
 		</collection>
+		<!--查询标签-->
+		<collection property="tagList" column="file_id" ofType="com.art1001.supply.entity.tag.Tag">
+			<id property="tagId" column="tag_id"/>
+			<result property="tagName" column="tag_name"/>
+			<result property="bgColor" column="bg_color"/>
+		</collection>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -46,6 +52,27 @@
 				update_time,
 				file_uids,
 				file_label
+	</sql>
+	<sql id="Base_Column_List2">
+				f.file_id,
+				f.file_name,
+				f.ext,
+				f.file_url,
+				f.project_id,
+				f.member_id,
+				f.member_name,
+				f.member_img,
+			    f.`catalog`,
+				f.`size`,
+				f.parent_id,
+				f.file_del,
+				f.create_time,
+				f.update_time,
+				f.file_uids,
+				f.file_label,
+				tg.tag_id,
+				tg.tag_name,
+				tg.bg_color
 	</sql>
 
 	<sql id="whereStatement">
@@ -86,9 +113,10 @@
 	
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
-		<include refid="Base_Column_List" />
-		from prm_file where
-		file_id = #{fileId}
+		<include refid="Base_Column_List2" />
+		from prm_file f left join prm_tag_relation tr on f.file_id = tr.file_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where
+		f.file_id = #{fileId}
 	</select>
 
 	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
