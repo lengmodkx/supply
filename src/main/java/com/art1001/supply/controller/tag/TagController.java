@@ -40,19 +40,6 @@ public class TagController extends BaseController {
 
     @Resource
     private TagService tagService;
-
-    @Resource
-    private TaskService taskService;
-
-    @Resource
-    private ScheduleService scheduleService;
-
-    @Resource
-    private FileService fileService;
-
-    @Resource
-    private ShareService shareService;
-
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
@@ -63,19 +50,19 @@ public class TagController extends BaseController {
      * @param publicType 任务，文件，日程，分享
      */
     @RequestMapping("/tag.html")
-    public String tagPage(@RequestParam String projectId, @RequestParam(required = false) String publicId, String publicType, Model model) {
+    public String tagPage(@RequestParam String projectId, @RequestParam(required = false) String publicId, @RequestParam(required = false)String publicType, Model model) {
 
         String tagId = "";
         //查询出项目的所有标签
         List<Tag> tagList = tagService.findByProjectId(projectId);
         //根据publicId 和 publicType查询出tag
-        List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
-
-
-        for (Tag aTagList : tagList) {
-            for (Tag aTagListTemp : tagListTemp) {
-                if (aTagList.getTagId().equals(aTagListTemp.getTagId())) {
-                    aTagList.setFlag(true);
+        if(StringUtils.isNotEmpty(publicId)&&StringUtils.isNotEmpty(publicType)){
+            List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
+            for (Tag aTagList : tagList) {
+                for (Tag aTagListTemp : tagListTemp) {
+                    if (aTagList.getTagId().equals(aTagListTemp.getTagId())) {
+                        aTagList.setFlag(true);
+                    }
                 }
             }
         }
@@ -255,7 +242,7 @@ public class TagController extends BaseController {
             map.put("publicId",publicId);
             taskPushType.setObject(map);
             if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
-                messagingTemplate.convertAndSend("/topic/"+ shareService.findById(publicId).getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+ projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
                 messagingTemplate.convertAndSend("/topic/"+ publicId);
             } else if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
                 messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));

@@ -104,7 +104,9 @@
 .look-tag-right{
     width: 600px;
     height: 100%;
+    display: none;
 }
+
 .right-head{
     width: 100%;
     height: 46px;

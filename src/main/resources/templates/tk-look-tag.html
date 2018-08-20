@@ -23,10 +23,10 @@
 
             </div>
             <ul class="all-tags">
-                <li class="boxsizing" th:each="tag:${tagList}" th:id="${tag.tagId}">
+                <li class="boxsizing tag-li" th:each="tag:${tagList}" th:data-id="${tag.tagId}">
                     <span class="dot" th:style="'background-color:'+${tag.bgColor}+''"></span>
                     <p class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</p>
-                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:id="${tag.tagId}"></i>
+                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:data="${tag.tagId}"></i>
                 </li>
             </ul>
         </div>
@@ -41,7 +41,7 @@
                     <span> <span th:text="${#lists.size(tag.taskList)}">0</span> 项任务，</span>
                     <span> <span th:text="${#lists.size(tag.scheduleList)}">0</span> 个日程，</span>
                     <span> <span th:text="${#lists.size(tag.shareList)}">0</span> 篇分享，</span>
-                    <span> <span th:text="${#lists.size(tag.fileList)}">0</span> 个文件，</span>
+                    <span> <span th:text="${#lists.size(tag.fileList)}">0</span> 个文件</span>
                 </p>
             </div>
             <div class="scroll-box">
@@ -53,49 +53,57 @@
                             <img th:src="@{/image/person.png}" th:if="${task.executor==null}"/>
                             <img th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" th:if="${task.executor!=null}"/>
                             <div class="style-box">
-                                <span class="task-name">所属任务名称</span>
-                                <span class="task-group">所属任务分组</span>
-                                <span class="a-tag">2132</span>
+                                <span class="task-name" th:text="${task.taskName}">任务名称</span>
                             </div>
                             <div class="timer">
-                                <i class="layui-icon layui-icon-log" style="font-size: 14px;"></i>
-                                <span>7月15日</span>开始
+                                <span th:text="${#calendars.format(task.startTime,'yyyy-MM-dd HH:mm')}">7月15日</span>
                             </div>
 
                         </li>
                     </ul>
                 </div>
 
-                <h3 class="style-num">日程 ・ <span>20</span></h3>
-                <ul class="rc-ul">
-                    <li class="boxsizing">
-                        <span class="rc-time"><span>6月25日10:00</span><span>—</span><span>6月25日10:00</span></span>
-                        <span>日程名称</span>
-                    </li>
-                </ul>
-                <h3 class="style-num">分享 ・ <span>20</span></h3>
-                <ul class="fx-ul">
-                    <li class="boxsizing clearfix">
-                        <p class="over-hidden">分享名称</p>
-                        <span class="fx-time">
-                            <span>谁谁</span> 发布于
-                            <span>6月12日10:00</span>
-                        </span>
-                    </li>
-                </ul>
-                <h3 class="style-num">文件 ・ <span>20</span></h3>
-                <ul class="wj-ul">
-                    <li class="boxsizing clearfix">
-                        <img src="../static/image/defaultFile.png" th:src="@{/image/defaultFile.png}">
-                        <span class="wj-name over-hidden">文件名称</span>
-                        <span class="wj-time">
-                            <span>谁谁</span>上传于
-                            <span>6月12日10:00</span>
-                        </span>
-                    </li>
-                </ul>
-            </div>
+                <div th:if="${!#lists.isEmpty(tag.scheduleList)}">
+                    <h3 class="style-num">日程 ・ <span th:text="${#lists.size(tag.scheduleList)}">20</span></h3>
+                    <ul class="rc-ul">
+                        <li class="boxsizing" th:each="schedule:${tag.scheduleList}">
+                            <div class="rc-time">
+                                <span th:text="${#calendars.format(schedule.startTime,'yyyy-MM-dd HH:mm')}">6月25日10:00</span>
+                                <span>—</span>
+                                <span th:text="${#calendars.format(schedule.endTime,'yyyy-MM-dd HH:mm')}">6月25日10:00</span>
+                                <span th:text="${schedule.scheduleName}">日程名称</span>
+                            </div>
+                        </li>
+                    </ul>
 
+                    <div th:if="${!#lists.isEmpty(tag.shareList)}">
+                        <h3 class="style-num">分享 ・ <span th:text="${#lists.size(tag.shareList)}">20</span></h3>
+                        <ul class="fx-ul" >
+                            <li class="boxsizing clearfix" th:each="share:${tag.shareList}">
+                                <p class="over-hidden" th:text="${share.shareName}">分享名称</p>
+                                <span class="fx-time">
+                            <span th:text="${share.userEntity.userName}">谁谁</span> 发布于
+                            <span th:text="${#calendars.format(share.createTime,'yyyy-MM-dd HH:mm')}">6月12日10:00</span>
+                        </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(tag.fileList)}">
+                    <h3 class="style-num">文件 ・ <span th:text="${#lists.size(tag.fileList)}">20</span></h3>
+                    <ul class="wj-ul">
+                        <li class="boxsizing clearfix" th:each="file:${tag.fileList}">
+                            <img th:src="@{/image/defaultFile.png}">
+                            <span class="wj-name over-hidden" th:text="${file.fileName}">文件名称</span>
+                            <span class="wj-time">
+                            <span th:text="${file.userEntity.userName}">谁谁</span>上传于
+                            <span th:text="${#calendars.format(file.createTime,'yyyy-MM-dd HH:mm')}">6月12日10:00</span>
+                        </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -124,8 +132,6 @@
 <script>
     layui.use('form', function(){
         var form = layui.form;
-
-
     });
     $(".close-tag-menu").click(function () {
         layer.closeAll('page');
@@ -152,13 +158,37 @@
                 anim: 1,  //动画 0-6
                 content: $(".tag-menu"),
                 success:function () {
-                    var id = $('.down-jiantou').attr('id');
+                    var data = $('.down-jiantou').attr('data');
                     $('.tag-menu ul li').each(function (data,item) {
-                        $(item).attr('id',id);
+                        $(item).attr('data-id',data);
                     });
                 }
             });
         });
+    });
+
+
+    $('.tag-li').click(function () {
+       var id =  $(this).attr('data-id');
+       $('.look-tag-right').hide();
+       $('#'+id).show();
+    });
+
+    $(function () {
+        $('.look-tag-right').first().show();
     })
+
+
+
+    $
+
+
+
+
+
+
+
+
+
 </script>
 </html>

@@ -252,6 +252,7 @@ public abstract class BaseController {
         }
 
         model.addAttribute("tagList",tagList);
+        model.addAttribute("projectId",projectId);
         return "tk-look-tag";
     }
 
