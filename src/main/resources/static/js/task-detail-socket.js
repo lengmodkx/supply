@@ -111,7 +111,6 @@ function subscribe() {
             if(taskLog.object.task.startTime != null){
                 $('#beginTimes').val(taskLog.object.startTime);
             } else{
-                alert(1);
                 $('#overTimes').val(taskLog.object.endTime);
             }
         }

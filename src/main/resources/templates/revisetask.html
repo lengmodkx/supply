@@ -415,7 +415,7 @@
                 <img src="../static/image/gxrc.png" th:src="@{/image/gxrc.png}" />
                 <span>共享任务</span>
             </div>
-            <div class="menu-box edit-rc">
+            <div class="menu-box edit-rc recycle-bin">
                 <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
                 <span>移到回收站</span>
             </div>
@@ -517,6 +517,10 @@
             </div>
             <p class="tips-p">跨项目移动时，部分参与者信息不会保留</p>
             <div class="style-btn moveTask">确定</div>
+        </div>
+        <div style="display: none" class="recycle">
+            <p class="gray-font"> 您确定把任务移动到回收站吗?</p>
+            <div class="style-btn move-recycle" style="background-color:#FF4F3E;">确定</div>
         </div>
         <div style="display: none" class="share-task-box">
             <header class="style-header">
@@ -724,11 +728,36 @@
 
     });
 
+    /**
+     * 移动任务到回收站 确定按钮
+     */
+    $('.move-recycle').click(function () {
+        var url = "/task/moveToRecycleBin";
+        var args = {"taskId":taskId};
+        $.post(url,args,function (data) {
+            if(data.result == 1){
+                $(".renwu-menu").slideUp();
+                parent.taskId = data.taskId;
+                parent.layer.msg('任务已经移入回收站:'+ $('.task_name').val(), {
+                    offset:'lb',
+                    icon:1,
+                    time: 4000 //2秒关闭（如果不配置，默认是3秒）
+                });
+            } else{
+                layer.msg("系统异常!");
+            }
+        });
+    });
+
     $(".yd-rw").click(function () {
         $(".remove-task-box").show().siblings().hide()
     });
     $(".gx-rw").click(function () {
         $(".share-task-box").show().siblings().hide()
+    })
+
+    $('.recycle-bin').click(function () {
+        $(".recycle").show().siblings().hide()
     })
 </script>
 <script th:inline="javascript">
@@ -783,32 +812,7 @@
        });
     });
 
-    /**
-     * 点击移动任务确定
-     */
-    $('.moveTask').click(function () {
-        var menuId = $('select[name="menu"]').val();
-        var menuName = $('select[name="menu"]').text();
-        var projectId = $('select[name="copy-project"]').val();
-        var projectName = $('select[name = "copy-project"]').text();
-        var groupId = $('select[name = "groups"]').val();
-        var groupName = $('select[name = "groups"]').text();
-        if($('select[name="menu"]').val() == ''){
-            layer.msg("必须选择一个菜单!");
-            return false;
-        }
-        var url = "/task/mobileTask";
-        //拿到任务移动前的位置信息
-        var oldTaskMenuVO = {"projectId":[[${projectId}]],"projectName":[[${projectInfo.projectName}]],"taskGroupId":[[${taskGroup.relationId}]],"taskGroupName":[[${taskGroup.relationName}]],"taskMenuId":[[${menuRelation.relationId}]],"taskMenuName":[[${menuRelation.relationName}]]};
 
-        var newTaskMenuVO = {"projectId":projectId,"projectName" : projectName,"taskMenuId":menuId,"taskMenuName":menuName,"taskGroupId" : groupId,"taskGroupName":groupName};
-
-        var args = {"taskId":taskId,"oldTaskMenuVO":oldTaskMenuVO,"newTaskMenuVO":newTaskMenuVO};
-
-        $.post(url,args,function (data) {
-
-        });
-    })
 </script>
 <script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>

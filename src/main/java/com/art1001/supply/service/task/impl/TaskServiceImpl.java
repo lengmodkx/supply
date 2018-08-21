@@ -205,7 +205,7 @@ public class TaskServiceImpl implements TaskService {
      * @param task task信息
      */
 	@Override
-	public Log saveTask(Task task) {
+	public void saveTask(Task task) {
         task.setTaskId(IdGen.uuid());
 	    //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
@@ -224,14 +224,13 @@ public class TaskServiceImpl implements TaskService {
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        task.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
         //拿到TaskLog对象并且保存
-        return logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
+        logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
     }
 
     @Override

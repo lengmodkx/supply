@@ -318,9 +318,8 @@ public class TaskController {
             //将任务移入回收站
             Log taskLogVO = taskService.moveToRecycleBin(taskId);
             if (taskLogVO.getResult() > 0) {
-                jsonObject.put("msg", "操作成功！");
-                jsonObject.put("result","1");
-                jsonObject.put("taskLog",taskLogVO);
+                jsonObject.put("result",1);
+                jsonObject.put("taskId",taskId);
             } else {
                 jsonObject.put("msg", "操作失败！");
                 jsonObject.put("result","0");

@@ -663,7 +663,7 @@
 		select
 		<include refid="Base_Column_List3"/>
 		from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
-		where t.task_menu_id = #{menuId} order by t.order asc
+		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.order asc
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->

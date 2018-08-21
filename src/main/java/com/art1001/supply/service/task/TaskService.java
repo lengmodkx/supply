@@ -53,7 +53,7 @@ public interface TaskService {
 	 * 保存task数据
 	 * @param task 其他信息
 	 */
-	public Log saveTask(Task task);
+	void saveTask(Task task);
 
 	void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList);
 
