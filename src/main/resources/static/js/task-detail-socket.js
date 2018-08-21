@@ -83,8 +83,8 @@ function subscribe() {
 
 
         if(taskLog.type==='更新了参与者'){
-            getLog(taskLog.object.taskLog);
-            var members = taskLog.object.members;
+            getLog(taskLog.taskLog);
+            var members = taskLog.members;
             $('.work-people .add-work-people').siblings().remove();
             for(var i=0;i<members.length;i++){
                 var div = '<div class="one-work-people" data-id="'+members[i].id+'">\n' +

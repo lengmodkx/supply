@@ -749,7 +749,7 @@ function changeRenwu(taskId,projectId) {
 /**
  * 单击收藏任务的事件
  */
-$('.edit-rc .sc').click(function () {
+$('.edit-rc.sc').click(function () {
     if($(this).find('span').html() === '收藏任务'){
         var url = "/task/collectTask";
         var args = {"taskId":taskId};
@@ -760,8 +760,8 @@ $('.edit-rc .sc').click(function () {
             }
         },"json");
     } else{
-        var url = "/public/cancelCollect";
-        var args = {"pubilcId":taskId};
+        var url = "/public/cancelCollectByUser";
+        var args = {"publicId":taskId};
         var that = $(this);
         $.post(url,args,function(data){
             that.find('span').html("收藏任务");

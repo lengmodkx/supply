@@ -22,8 +22,6 @@
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<!--创建者-->
 		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>

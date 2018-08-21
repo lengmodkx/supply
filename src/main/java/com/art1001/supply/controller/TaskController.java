@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.common.Push;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
@@ -257,11 +258,14 @@ public class TaskController {
             jsonObject.put("members",task.getJoinInfo());
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result",1);
+            jsonObject.put("type",TaskLogFunction.A19.getName());
             if(log!=null){
                 jsonObject.put("taskLog",log);
                 TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A19.getName());
                 taskPushType.setObject(jsonObject);
-                messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(taskPushType)));
+
+                //新的消息推送方式
+                Push.pushMessage(taskId,jsonObject);
             }
         } catch (Exception e){
             log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",taskId,e);
@@ -1300,48 +1304,6 @@ public class TaskController {
     }
 
     /**
-     * 任务的聊天室
-     * @param taskLog 任务聊天的信息
-     * @return
-     */
-    @PostMapping("chat")
-    @ResponseBody
-    public JSONObject chat(Log taskLog){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            //保存聊天信息
-            Log log = new Log();
-            log.setId(IdGen.uuid());
-            if(StringUtils.isEmpty(taskLog.getContent())){
-                jsonObject.put("result",1);
-                return jsonObject;
-            }
-            log.setContent(taskLog.getContent());
-            log.setLogType(1);
-            log.setMemberId(ShiroAuthenticationManager.getUserId());
-            log.setPublicId(taskLog.getPublicId());
-            log.setLogFlag(2);
-            log.setCreateTime(System.currentTimeMillis());
-            Log log1 = logService.saveLog(log);
-            jsonObject.put("result",1);
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskLog",log1);
-            taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+taskLog.getPublicId(),new ServerMessage(JSON.toJSONString(taskPushType)));
-            //查询出该任务的所有成员id
-            Task taskByTaskId = taskService.findTaskByTaskId(taskLog.getPublicId());
-            String[] users = taskByTaskId.getTaskUIds().split(",");
-            //保存消息信息
-            userNewsService.saveUserNews(users,taskLog.getPublicId(),BindingConstants.BINDING_TASK_NAME,taskLog.getContent(),1);
-        } catch (Exception e){
-            log.error("操作失败,{}",e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-    /**
      * 查询出该任务的所有子任务信息
      * @param taskId 任务的id
      * @return 任务实体信息集合
@@ -1458,6 +1420,11 @@ public class TaskController {
                 log.setContent("");
             }else{
                 log.setContent(content);
+                //查询出该任务的所有成员id
+                Task taskByTaskId = taskService.findTaskByTaskId(taskId);
+                String[] users = taskByTaskId.getTaskUIds().split(",");
+                //保存消息信息
+                userNewsService.saveUserNews(users,taskId,BindingConstants.BINDING_TASK_NAME,content,1);
             }
 
             log.setLogType(1);

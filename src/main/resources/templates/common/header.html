@@ -11,12 +11,12 @@
         <!--</div>-->
         <div class="head-right">
             <span class="layui-breadcrumb" lay-separator="">
-                <a th:href="@{/public/mypage.html}">我的</a>
-                <a th:href="@{/public/calendar.html(id=${userId})}">日历</a>
+                <a th:href="@{/public/mypage.html}" target="view_window1">我的</a>
+                <a th:href="@{/public/calendar.html(id=${userId})}" target="view_window2">日历</a>
                 <!--<a href="#">消息</a>-->
             </span>
             <span style="margin-left: 15px;" class="notice-box">
-                <a href="/news/userNewsList.html">
+                <a href="/news/userNewsList.html" target="view_window3">
                     <i class="iconfont icon-nitification"></i>
                     <span class="notice-num" th:style="'display:' + (${newsCount > 0} ? 'block' : 'none') + ''" th:text="${newsCount}"></span>
                 </a>

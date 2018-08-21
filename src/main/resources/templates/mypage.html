@@ -54,7 +54,7 @@
                 </ul>
                 <!--日程-->
                 <ul class="rc">
-                    <li class="thing-list" th:data-id = "${schedule.scheduleId}" th:data-projectId = "${schedule.project.projectId}" th:each="schedule : ${data.scheduleList}">
+                    <li class="thing-list" th:data-id = "${schedule.scheduleId}" th:data-projectId = "${schedule.projectId}" th:each="schedule : ${data.scheduleList}">
                         <div class="things-info boxsizing">
                             <img src="../static/image/rc.png" th:src="@{/image/rc.png}">
                             <div class="rc-span-wrap">
