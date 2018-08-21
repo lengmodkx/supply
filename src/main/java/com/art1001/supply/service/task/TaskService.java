@@ -480,8 +480,8 @@ public interface TaskService {
 
 	/**
 	 * 根据任务的菜单信息 查询出任务分组信息
-	 * @param taskMenuId 任务菜单信息
+	 * @param menuParent 任务菜单所属的分组id
 	 * @return 任务的实体
 	 */
-	Relation findTaskGroupInfoByTaskMenuId(String taskMenuId);
+	Relation findTaskGroupInfoByTaskMenuId(String menuParent);
 }

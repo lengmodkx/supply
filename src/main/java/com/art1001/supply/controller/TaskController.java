@@ -279,7 +279,7 @@ public class TaskController {
      */
     @PostMapping("mobileTask")
     @ResponseBody
-    public JSONObject mobileTask(@RequestParam Task task, @RequestParam TaskMenuVO oldTaskMenuVO, @RequestParam TaskMenuVO newTaskMenuVO){
+    public JSONObject mobileTask(Task task, @RequestParam TaskMenuVO oldTaskMenuVO, @RequestParam TaskMenuVO newTaskMenuVO){
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
@@ -968,24 +968,32 @@ public class TaskController {
             Task taskById = taskService.findTaskByTaskId(task.getTaskId());
             model.addAttribute("task",taskById);
             model.addAttribute("taskId",task.getTaskId());
-            //当前项目信息
+            //当前项目Id
             model.addAttribute("projectId",taskById.getProjectId());
             //判断当前用户有没有对该任务点赞
             boolean isFabulous = taskService.judgeFabulous(task.getTaskId());
             model.addAttribute("isFabulous",isFabulous);
+
+            //查询出当前的项目信息详情
+            model.addAttribute("projectInfo",projectService.findProjectByProjectId(task.getProjectId()));
+
             //判断当前用户有没有收藏该任务
             boolean isCollect = taskService.judgeCollectTask(task);
             model.addAttribute("isCollect",isCollect);
 
-            //查询出该任务的分组信息
-            Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(task.getTaskMenuId());
+            //查询出该任务所在的菜单信息
+            Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
+            model.addAttribute("menuRelation",menuRelation);
+
+            //根据该任务的菜单查询出任务的分组信息
+            Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
+            model.addAttribute("taskGroup",taskGroup);
+
             //查询出任务的关联信息
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
             model.addAttribute("bindingVo",bindingVo);
 
             if(taskById.getParentId() == null){
-                //查询出该任务所在的位置信息
-                Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
                 //根据菜单信息查询出该任务的所在的分组 和 项目信息
                 TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
                 model.addAttribute("menuRelation",menuRelation);

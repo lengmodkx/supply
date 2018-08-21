@@ -491,6 +491,11 @@ public interface TaskMapper {
 	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
 	int findOverdueCompletion(@Param("projectId")String projectId, @Param("currDate") Long currDate);
 
-	@Select("select relation_id,relation_name where relation_id = #{taskMenuId}")
-    Relation findTaskGroupInfoByTaskMenuId(String taskMenuId);
+	/**
+	 * 根据菜单的parent 查询出该菜单的分组id
+	 * @param menuParent 菜单的分组id
+	 * @return
+	 */
+	@Select("select relation_id relationId,relation_name relationName from prm_relation where relation_id = #{menuParent}")
+    Relation findTaskGroupInfoByTaskMenuId(String menuParent);
 }

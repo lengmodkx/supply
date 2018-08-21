@@ -260,7 +260,8 @@
 	<select id="findMenuInfoByTaskId" resultMap="BaseResultMap">
 		SELECT
 			prm_relation.relation_id ,
-			prm_relation.relation_name
+			prm_relation.relation_name,
+			prm_relation.parent_id
 		FROM
 			prm_relation
 		WHERE

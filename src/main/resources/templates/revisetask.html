@@ -406,7 +406,7 @@
                 <img src="../static/image/ydrc.png" th:src="@{/image/ydrc.png}" />
                 <span>移动任务</span>
             </div>
-            <div class="menu-box edit-rc ">
+            <div class="menu-box edit-rc sc">
                 <img src="../static/image/scrc.png" th:src="@{/image/scrc.png}" />
                 <span th:if="${isCollect}">收藏任务</span>
                 <span th:if="${!isCollect}">取消收藏</span>
@@ -478,7 +478,7 @@
                 <p>新任务接收原任务的更新提醒</p>
             </div>
             <p class="tips-p">标题、子任务、备注将被复制</p>
-            <div class="style-btn">确定</div>
+            <div class="style-btn copy-task">确定</div>
         </div>
         <div style="display: none" class="remove-task-box">
             <header class="style-header">
@@ -760,7 +760,7 @@
     /**
      * 点击复制的确定的时候
      */
-    $('.style-btn').click(function () {
+    $('.copy-task').click(function () {
         var menuId = $('select[name="menu"]').val();
         var projectId = $('select[name="copy-project"]').val();
        if($('select[name="menu"]').val() == ''){
@@ -788,24 +788,25 @@
      */
     $('.moveTask').click(function () {
         var menuId = $('select[name="menu"]').val();
+        var menuName = $('select[name="menu"]').text();
         var projectId = $('select[name="copy-project"]').val();
+        var projectName = $('select[name = "copy-project"]').text();
+        var groupId = $('select[name = "groups"]').val();
+        var groupName = $('select[name = "groups"]').text();
         if($('select[name="menu"]').val() == ''){
             layer.msg("必须选择一个菜单!");
             return false;
         }
         var url = "/task/mobileTask";
         //拿到任务移动前的位置信息
-        var oldTaskMenuVO = {"projectId":[[${projectId}]],"taskGroupId":[[${taskGroupId}]],"taskMenuId":[[${menuRelation.relationId}]]};
-        alert(oldTaskMenuVO);
-        var args = {"taskId":taskId,"projectId":projectId,"menuId":menuId,"old_new":old_new,"new_old":new_old};
+        var oldTaskMenuVO = {"projectId":[[${projectId}]],"projectName":[[${projectInfo.projectName}]],"taskGroupId":[[${taskGroup.relationId}]],"taskGroupName":[[${taskGroup.relationName}]],"taskMenuId":[[${menuRelation.relationId}]],"taskMenuName":[[${menuRelation.relationName}]]};
+
+        var newTaskMenuVO = {"projectId":projectId,"projectName" : projectName,"taskMenuId":menuId,"taskMenuName":menuName,"taskGroupId" : groupId,"taskGroupName":groupName};
+
+        var args = {"taskId":taskId,"oldTaskMenuVO":oldTaskMenuVO,"newTaskMenuVO":newTaskMenuVO};
+
         $.post(url,args,function (data) {
-            $(".renwu-menu").slideUp();
-            parent.taskId = data.taskId;
-            parent.layer.msg('<div  onclick="changeRenwu(taskId,projectId)">'+ '复制成功:'+ $('.task_name').val() +'</div>', {
-                offset:'lb',
-                icon:1,
-                time: 4000 //2秒关闭（如果不配置，默认是3秒）
-            });
+
         });
     })
 </script>

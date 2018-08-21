@@ -1117,12 +1117,12 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 根据任务的菜单信息 查询出任务分组信息
-     * @param taskMenuId 任务菜单信息
+     * @param menuParent 根据任务的菜单信息 查询出任务分组信息
      * @return 任务的实体
      */
     @Override
-    public Relation findTaskGroupInfoByTaskMenuId(String taskMenuId) {
-        return taskMapper.findTaskGroupInfoByTaskMenuId(taskMenuId);
+    public Relation findTaskGroupInfoByTaskMenuId(String menuParent) {
+        return taskMapper.findTaskGroupInfoByTaskMenuId(menuParent);
     }
 
     /**
