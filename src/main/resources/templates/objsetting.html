@@ -10,6 +10,7 @@
 <div class="setting-box boxsizing layui-form">
     <div class="setting-title">项目设置
         <!--<img src="../static/image/close.png" >-->
+        <i class="layui-icon layui-icon-close" style="font-size: 18px; color: #a6a6a6;"></i>
     </div>
 <div class="setting-content clearfix">
     <!--左侧导航-->
@@ -243,6 +244,10 @@
             }
         });
     });
+    $(".setting-title>i").click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    })
 
 </script>
 </html>
