@@ -9,128 +9,137 @@
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
 <div class="content">
+    <div class="content-view">
 
-    <!--我收藏的项目-->
-    <div class="complete-wrap" style="display: none">
-        <h2 class="titles clearfix">我收藏的项目</h2>
-        <div class="content-list complete clearfix"  >
-            <ul class="layui-row layui-col-space30">
-                <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
-                    th:each="project : ${collectrojects}"
-                    th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'"
-                    th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
-                    th:id="${project.projectId}">
-                    <div class="describe boxsizing">
-                        <div>
-                            <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
-                            <span class="tools">
-                        <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
-                           th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="取消收藏"
-                           th:onclick="'javascript:cancleCollect(\''+${project.projectId}+'\')'"></i>
-                        </span>
+        <!--我收藏的项目-->
+        <div class="complete-wrap" style="display: none">
+            <h2 class="titles clearfix">我收藏的项目</h2>
+            <div class="content-list complete clearfix"  >
+                <ul class="layui-row layui-col-space30">
+                    <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
+                        th:each="project : ${collectrojects}"
+                        th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
+                        th:id="${project.projectId}">
+                        <div th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'" class="grid-card">
+                            <div class="describe boxsizing">
+                                <div class="clearfix">
+                                    <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
+                                    <span class="tools">
+                                    <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
+                                       th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
+                                    <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="取消收藏"
+                                       th:onclick="'javascript:cancleCollect(\''+${project.projectId}+'\')'"></i>
+                                    </span>
+                                </div>
+                                <p th:text="${project.projectDes}">描述描述</p>
+                            </div>
                         </div>
-                        <p th:text="${project.projectDes}">描述描述</p>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-    <!--我拥有的项目-->
-    <div class="possess-wrap">
-        <h2 class="titles clearfix">我拥有的项目</h2>
-        <div class="content-list possess clearfix" >
-            <ul class="layui-row layui-col-space30" >
-                <li class="layui-col-md3 layui-anim layui-anim-scaleSpring"
-                    th:each="project : ${projects}"
-                    th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'"
-                    th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
-                    th:id="${project.projectId}">
-                    <div class="describe boxsizing">
-                        <div>
-                            <span class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </span>
-                            <span class="tools">
-                        <i class="layui-icon layui-icon-edit project-set" style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
-                           th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
+        <!--我拥有的项目-->
+        <div class="possess-wrap">
+            <h2 class="titles clearfix">我拥有的项目</h2>
+            <div class="content-list possess clearfix" >
+                <ul class="layui-row layui-col-space30" >
+                    <li class="layui-col-md3 layui-anim layui-anim-scaleSpring"
+                        th:each="project : ${projects}"
+                        th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
+                        th:id="${project.projectId}">
+                        <div th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'" class="grid-card">
+                            <div class="describe boxsizing">
+                                <div class="clearfix">
+                                    <span class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </span>
+                                    <span class="tools">
+                                        <i class="layui-icon layui-icon-edit project-set" style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
+                                           th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
 
-                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
-                           th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"
-                           ></i>
-
-                        </span>
-                            <!--<span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>-->
+                                        <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
+                                           th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"
+                                        ></i>
+                                    </span>
+                                    <!--<span class="layui-badge-dot layui-bg-gray newdt" title="有新项目动态"></span>-->
+                                </div>
+                                <p th:text="${project.projectDes}">描述描述</p>
+                            </div>
                         </div>
-                        <p th:text="${project.projectDes}">描述描述</p>
-                    </div>
-                </li>
 
-                <li class="layui-col-md3 layui-anim layui-anim-scaleSpring " id="create-obj" >
-                    <div class="special-li boxsizing">
-                        <img class="add" src="../static/image/add.png" th:src="@{/image/add.png}">
-                        <img class="addnow" src="../static/image/adds.png" th:src="@{/image/adds.png}">
-                        <div class="add-font">创建新项目</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+                    </li>
 
-    <!--我参与的项目-->
-    <div class="partake-wrap" th:style="'display:' + @{(${#lists.isEmpty(joinInproject)} ? 'none' : 'block')} + ''">
-        <h2 class="titles clearfix">我参与的项目</h2>
-        <div class="content-list partake clearfix" >
-            <ul class="layui-row layui-col-space30">
-                <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
-                    th:each="project : ${joinInproject}"
-                    th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'"
-                    th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
-                    th:id="${project.projectId}">
-                    <div class="describe boxsizing">
-                        <div>
-                            <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
-                            <span class="tools">
-                                <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
-                                   th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
-                                <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
-                                   th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
-                            </span>
+                    <li class="layui-col-md3 layui-anim layui-anim-scaleSpring " id="create-obj" >
+                        <div class="special-li boxsizing">
+                            <img class="add" src="../static/image/add.png" th:src="@{/image/add.png}">
+                            <img class="addnow" src="../static/image/adds.png" th:src="@{/image/adds.png}">
+                            <div class="add-font">创建新项目</div>
                         </div>
-                        <p th:text="${project.projectDes}">描述描述</p>
-                    </div>
-                </li>
-
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!--项目回收站-->
-    <div class="recycle-bin-wrap" th:style="'display:' + @{(${#lists.isEmpty(delProjects)} ? 'none' : 'block')} + ''">
-        <h2 class="titles clearfix">项目回收站
-          <span class="show-recycle-bin">显示</span>
-        </h2>
-        <div class="content-list recycle-bin clearfix" style="display: none" >
-            <ul class="layui-row layui-col-space30">
-                <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
-                    th:each="project : ${delProjects}"
-                    th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'"
-                    th:id="${project.projectId}">
-                    <div class="describe boxsizing">
-                        <div>
-                            <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
-                            <span class="tools">
+        <!--我参与的项目-->
+        <div class="partake-wrap" th:style="'display:' + @{(${#lists.isEmpty(joinInproject)} ? 'none' : 'block')} + ''">
+            <h2 class="titles clearfix">我参与的项目</h2>
+            <div class="content-list partake clearfix" >
+                <ul class="layui-row layui-col-space30">
+                    <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
+                        th:each="project : ${joinInproject}"
+                        th:onclick="'javascript:projectClick(\''+${project.projectId}+'\')'"
+                        th:id="${project.projectId}">
+                        <div th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'" class="grid-card">
+                            <div class="describe boxsizing">
+                                <div class="clearfix">
+                                    <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
+                                    <span class="tools">
+                                    <i class="layui-icon layui-icon-edit " style="font-size: 18px; color: #eeeeee;" title="打开项目设置"
+                                       th:onclick="'javascript:setting(\''+${project.projectId}+'\')'"></i>
+                                    <i class="layui-icon layui-icon-rate-solid star" style="font-size: 18px; color: #eeeeee;" title="收藏项目"
+                                       th:onclick="'javascript:projectCollect(\''+${project.projectId}+'\')'"></i>
+                                    </span>
+                                </div>
+                                <p th:text="${project.projectDes}">描述描述</p>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <!--项目回收站-->
+        <div class="recycle-bin-wrap" th:style="'display:' + @{(${#lists.isEmpty(delProjects)} ? 'none' : 'block')} + ''">
+            <h2 class="titles clearfix">项目回收站
+                <span class="show-recycle-bin">显示</span>
+            </h2>
+            <div class="content-list recycle-bin clearfix" style="display: none" >
+                <ul class="layui-row layui-col-space30">
+                    <li class=" layui-col-md3 layui-anim layui-anim-scaleSpring"
+                        th:each="project : ${delProjects}"
+                        th:id="${project.projectId}">
+                        <div th:style="'background-image:url(' + #{IMAGE_SERVER} + ${project.projectCover} + ');'" class="grid-card">
+                        <div class="describe boxsizing">
+                            <div class="clearfix">
+                                <div class="describe-title" th:text="${project.projectName}">测试新手引导，完成项目 </div>
+                                <span class="tools">
                                 <i class="layui-icon layui-icon-refresh" style="font-size: 18px; color: #eeeeee;" title="恢复项目"
                                    th:onclick="'javascript:resetProject(\''+${project.projectId}+'\')'"></i>
                                 <i class="layui-icon layui-icon-delete star" style="font-size: 18px; color: #eeeeee;" title="删除项目"
                                    th:onclick="'javascript:delProject(\''+${project.projectId}+'\')'"></i>
                             </span>
+                            </div>
+                            <p th:text="${project.projectDes}">描述描述</p>
                         </div>
-                        <p th:text="${project.projectDes}">描述描述</p>
-                    </div>
-                </li>
-            </ul>
-            <img class="kong" th:if="${#lists.isEmpty(delProjects)}" th:src="@{/image/kong.png}">
+                        </div>
+                    </li>
+                </ul>
+                <img class="kong" th:if="${#lists.isEmpty(delProjects)}" th:src="@{/image/kong.png}">
+            </div>
         </div>
+
     </div>
+
+
 </div>
 <script th:src="@{/js/project.js}" src="../static/js/project.js"></script>
 </body>
