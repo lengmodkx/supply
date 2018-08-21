@@ -30,6 +30,15 @@ body{
     height: 20px;
     cursor: pointer;
 }
+.setting-title>i{
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+.setting-title>i:hover{
+    color: #208ED1 !important;
+}
 .setting-content{
     margin-top: 30px;
     width: 100%;

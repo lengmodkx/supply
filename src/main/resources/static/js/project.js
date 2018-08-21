@@ -24,6 +24,7 @@ function setting(projectId,e){
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
             area:['800px','600px'],
+            closeBtn: 0,
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
             content: '/project/projectSetting?projectId='+projectId
