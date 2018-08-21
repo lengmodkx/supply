@@ -229,6 +229,18 @@ public class TaskServiceImpl implements TaskService {
         task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
+        //保存任务和标签的关联关系
+        if(StringUtils.isNotEmpty(task.getTagId())){
+            List<String> tagList = Arrays.asList(task.getTagId().split(","));
+            tagList.forEach(tagId->{
+                TagRelation tagRelation = new TagRelation();
+                tagRelation.setTagId(Long.valueOf(tagId));
+                tagRelation.setTaskId(task.getTaskId());
+                tagRelation.setId(IdGen.uuid());
+                tagRelationService.saveTagRelation(tagRelation);
+            });
+
+        }
         //拿到TaskLog对象并且保存
         logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
     }

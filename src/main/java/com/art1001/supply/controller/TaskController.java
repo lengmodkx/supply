@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,14 +89,6 @@ public class TaskController {
     /** 文件逻辑层接口 */
     @Resource
     private FileService fileService;
-
-    /** 日程逻辑层接口 */
-    @Resource
-    private ScheduleService scheduleService;
-
-    /** 分享逻辑层接口 */
-    @Resource
-    private ShareService shareService;
 
     /** 用户逻辑层接口 */
     @Resource
@@ -221,24 +214,19 @@ public class TaskController {
      * @return
      */
     @PostMapping("saveTask")
-    @ResponseBody
     public JSONObject saveTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
             //保存任务信息到数据库
             taskService.saveTask(task);
-            jsonObject.put("msg","添加任务成功!");
+            task = taskService.findTaskByTaskId(task.getTaskId());
             jsonObject.put("result",1);
-            Task taskByTaskId = taskService.findTaskByTaskId(task.getTaskId());
-            jsonObject.put("task",taskByTaskId);
+            jsonObject.put("msg","保存成功");
             JSONObject object = new JSONObject();
-            object.put("task",taskByTaskId);
+            object.put("task",task);
             object.put("type","创建了任务");
-            Subject subject = SecurityUtils.getSubject();
-            messagingTemplate.convertAndSend("/topic/"+taskByTaskId.getProjectId(), new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
+            messagingTemplate.convertAndSend("/topic/"+task.getProjectId(), new ServerMessage(JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect)));
         } catch (Exception e){
-            jsonObject.put("msg","任务添加失败!");
-            jsonObject.put("result","0");
             log.error("当前任务保存失败! ,{}",e);
             throw new AjaxException(e);
         }

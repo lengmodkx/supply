@@ -28,85 +28,12 @@ if ($("#have-executor").val()){
 }
 
 
-
-
-    //点击 待认领 出现 人员名单
-// $('.model').on('click','.no-renling',function (e) {
-//     zxz=true;
-//     $('#identity').html("执行者");
-//     var url = "/task/findProjectAllMember";
-//     var args = {"projectId": projectId,"executor":executorId};
-//     //异步请求项目人员名单
-//     $.post(url,args,function(data){
-//         var member = data.data;
-//         var executor = "";
-//         var content = "";
-//         if(member != null){
-//             for(var i = 0;i < member.length;i++){
-//                 content += "<div class='one-people'>";
-//                 content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
-//                 content += "<span value = '"+ member[i].id +"'>" + member[i].userName + "</span>";
-//                 content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-//                 content += "</div>";
-//             }
-//         } else{
-//             content +=  "<div class='one-people'>";
-//             content += "<img src='/static/image/add.png'>";
-//             content += "<span value = ''>没有成员</span>";
-//             content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
-//             content += "</div>";
-//         }
-//         executor+=
-//             "<div class='one-people'>"+
-//             "<img th:src='\@{}\'>"+
-//             "<span value = ''>待认领</span>"+
-//             "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>"+
-//             "</div>";
-//         $('#members').html(executor);
-//         $('#executor').html(content);
-//     });
-//     $(".people").show(500)
-//     e.stopPropagation()
-// });
-
     // 点击  任务菜单出现隐藏
     $(".assignment-menu-show").click(function () {
         $(".renwu-menu").slideToggle();
     });
     $(".scheduling-menu-title img").click(function () {
         $(".renwu-menu").slideUp();
-    });
-
-    // 点击添加标签
-    $(".no-tags").click(function (e) {
-        var url = "/task/findAllTags";
-        var args = {"projectId":projectId};
-        //异步请求获取项目下的所有标签
-        $.post(url,args,function(data){
-            var tags = data.data;
-            var content = "";
-            for(var i = 0;i < tags.length; i++){
-                content += "<li class='tags-list'>" +
-                                "<span class='dot' style = 'background-color:" + tags[i].bgColor + "'></span>" +
-                                "<span class='tag-font' value='"+ tags[i].tagId +"'>"+ tags[i].tagName +"</span>"+
-                            "</li>";
-            }
-            $('#tags').html(content);
-            $(".tags-search-build").show();
-            $(".tag-search").show();
-        },"json");
-        e.stopPropagation();
-    });
-
-
-    // 点击某个具体标签
-    $(".tags-list").click(function () {
-        var tag = $(this).find(".tag-font").text();
-        $(".has-tags").show()
-        $(".has-tags").prepend('<span class="tag">\n' +
-            '                    ' + tag + '  \n' +
-            '                    <i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>\n' +
-            '                </span>')
     });
 
     //移除任务的参与者
@@ -359,25 +286,23 @@ if ($("#have-executor").val()){
 
 // 点击某个具体标签
 $("html").on("click",".tags-list",function () {
-    var index = 0;
-    var tagId = $(this).find(".tag-font").attr("value");
-    $('.tag').each(function () {
-       if($(this).attr('value') == tagId){
-            index = 1;
-            var that = $(this);
-            that.remove();
-            return false;
-       }
-    });
-    if(index == 0){
-        var tagName = $(this).find(".tag-font").html();
-        var tagColor = $(this).find(".dot").css("background-color");
-        var content = '';
-        content += '<span class="tag" value="' + tagId + '" style="background-color:' + tagColor + '">'+
-                '<b style="font-weight: 400">' + tagName + '</b>'+
-                '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-            '</span>';
-        $('.has-tags').prepend(content);
+    var flag = true;
+    var tag = $(this).find(".tag-font").text();
+    var tagId = $(this).find(".tag-font").attr("id");
+    if($(".has-tags .tag").length===0){
+        $(".has-tags").prepend('<span class="tag" id="'+tagId+'">' + tag + '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i></span>');
+    }else{
+        $('.tag').each(function (data,item) {
+            if($(item).attr('id') === tagId){
+                flag = false;
+                return false;
+            }
+        });
+        if(flag){
+            $(".has-tags").prepend('<span class="tag" id="'+tagId+'">' + tag + '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i></span>');
+        }else{
+            layer.msg("请勿重复添加",{icon:5});
+        }
     }
 });
 

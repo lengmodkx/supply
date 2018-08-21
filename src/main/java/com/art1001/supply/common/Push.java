@@ -37,7 +37,7 @@ public class Push {
      * @param channel 频道
      * @param object 推送内容
      */
-    public static void pushMessage(String channel, Object object){
-        messagePush.convertAndSend(pushHead + channel,new ServerMessage(JSONObject.toJSONString(object)));
+    public static void pushMessage(String channel, JSONObject object){
+        messagePush.convertAndSend("/topic/" + channel,new ServerMessage(JSONObject.toJSONString(object)));
     }
 }

@@ -62,15 +62,6 @@ public class IndexController extends BaseController {
         return "test";
     }
 
-    /**
-     * 跳转到注册
-     */
-    @GetMapping("/test.html")
-    public String test() {
-        return "test/test1";
-    }
-
-
     @GetMapping("/forget.html")
     public String forget(){
         return "forget-pwd";

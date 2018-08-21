@@ -195,7 +195,7 @@ $('.ul-wrap').on('click','.no-tags',function () {
                     var tags = data.data;
                     for(var i=0;i<tags.length;i++){
                         var li = '<li class="tags-list">\n' +
-                            '        <span class="dot" style = \'background-color:" + tags[i].bgColor + "\'></span>\n' +
+                            '        <span class="dot" style = "background-color: '+ tags[i].bgColor + '"></span>\n' +
                             '        <span class="tag-font" id="'+tags[i].tagId+'">'+tags[i].tagName+'</span>\n' +
                             '     </li>';
                         $('.tags-ul').append(li);
@@ -216,12 +216,6 @@ $('.ul-wrap').on('click','.no-tags',function () {
     });
     $(".close-tag").click(function () {
         layer.closeAll();
-    });
-    $(".has-tags>i").click(function (e) {
-        $(".tags-search-build").show();
-        $(".tag-search").show();
-
-        e.stopPropagation();
     });
 
     //点击颜色，颜色出现对勾
@@ -248,8 +242,6 @@ $('.ul-wrap').on('click','.no-tags',function () {
             console.log("xx");
             return false;
         }
-
-        var content = '';
         var color='';
         $(".color-pick li i").each(function () {
             if ($(this).is(":visible")){
@@ -259,13 +251,8 @@ $('.ul-wrap').on('click','.no-tags',function () {
         var url = "/tag/add";
         var args = {"tagName":tagName,"bgColor":color,"projectId":projectId}
         $.post(url,args,function (data) {
-            if(data.result > 0){
-                content +=
-                    '<span class="tag" value="' + data.data.tagId + '" style="background-color:' + color + '">'+
-                    '<b style="font-weight: 400">' + tagName + '</b>'+
-                    '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i>'+
-                    '</span>';
-                $(".has-tags").prepend(content);
+            if(data.result ===1){
+                $(".has-tags").prepend('<span class="tag" id="'+data.data.tagId+'">' + tagName + '<i class="layui-icon layui-icon-close-fill" style="font-size: 14px; color: #1E9FFF;"></i></span>');
             } else{
                 layer.msg(data.msg);
             }
@@ -357,13 +344,13 @@ function peopleConfirm(that,flag) {
     var userName = that.find('span').text();
     if(flag==1){
         content+='<img src="'+image+'"/>\n' +
-            '            <input type="hidden" th:id="executorId" value="'+id+'"/>\n' +
+            '            <input type="hidden" id="executorId" value="'+id+'"/>\n' +
             '            <span id = "showExecutor">'+userName+'</span>\n' +
             '            <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i>';
         $('.who-wrap').html(content);
     }else{
         content+='<div class="who-wrap"><img src="'+image+'"/>\n' +
-            '            <input type="hidden" th:id="executorId" value="'+id+'"/>\n' +
+            '            <input type="hidden" id="executorId" value="'+id+'"/>\n' +
             '            <span id = "showExecutor">'+userName+'</span>\n' +
             '            <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i></div>';
         $('.no-renling').before(content);
@@ -458,7 +445,7 @@ function addTask(taskMenuId) {
     //获取标签信息
     var tags = [];
     $('.tag').each(function () {
-        tags.push($(this).attr('value'));
+        tags.push($(this).attr('id'));
     });
     //设置任务的执行者
     var executor = $('#executorId').val();

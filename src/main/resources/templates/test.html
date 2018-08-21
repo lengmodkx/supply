@@ -14,10 +14,6 @@ Welcome<br/><input id="text" type="text" />
 <button onclick="closeWebSocket()">关闭WebSocket连接</button>
 <hr/>
 <div id="message"></div>
-<div id="editor1"></div>
-<div id="editor2"></div>
-<div th:include="test_moban::test" id="test" style="display:none;"></div>
-
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
@@ -25,7 +21,7 @@ Welcome<br/><input id="text" type="text" />
 <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script type="text/javascript">
     // 建立连接对象（还未发起连接）
-    var socket = new SockJS("http://localhost:8080/webSocketServer");
+    var socket = new SockJS("/webSocketServer");
 
     // 获取 STOMP 子协议的客户端对象
     var stompClient = Stomp.over(socket);
@@ -58,7 +54,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe1() {
-        stompClient.subscribe('/queue/abc', function (response) {
+        stompClient.subscribe('/queue/subscribeTest', function (response) {
             setMessageInnerHTML("已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
@@ -79,55 +75,5 @@ Welcome<br/><input id="text" type="text" />
         document.getElementById('message').innerHTML += innerHTML + '<br/>';
     }
 
-
-    //第三步：渲染模版
-    var data = { //数据
-        "title":"Layui常用模块"
-        ,"list":[{"modname":"弹层","alias":"layer","site":"layer.layui.com"},{"modname":"表单","alias":"form"}]
-    };
-    var getTpl = $('#test').html();
-    console.log(getTpl);
-    var view = document.getElementById('view');
-    layui.use('laytpl', function() {
-        var laytpl = layui.laytpl;
-        laytpl(getTpl).render(data, function(html){
-            view.innerHTML = html;
-        });
-    });
-
-
-</script>
-
-<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
-<script type="text/javascript" src="../static/js/wangEditor.min.js" th:src="@{/js/wangEditor.min.js}"></script>
-<script th:inline="javascript">
-
-    //文本编辑器
-    var E = window.wangEditor;
-    var editor = new E('#editor1','#editor2');
-    // 自定义菜单配置
-    editor.customConfig.menus = [
-        'head',
-        'bold',
-        'italic',
-        'image',
-        'link',
-        'list',
-        'quote',
-        'strikeThrough',
-        'table'
-    ]
-    editor.customConfig.debug=true;
-
-    editor.customConfig.uploadImgShowBase64 = true
-    editor.customConfig.uploadFileName = 'mf';
-    // 隐藏“网络图片”tab
-    editor.customConfig.showLinkImg = false;
-    editor.customConfig.uploadImgParams = {
-        // 如果版本 <=v3.1.0 ，属性值会自动进行 encode ，此处无需 encode
-        // 如果版本 >=v3.1.1 ，属性值不会自动 encode ，如有需要自己手动 encode
-        taskId: taskId
-    }
-    editor.create();
 </script>
 </html>
