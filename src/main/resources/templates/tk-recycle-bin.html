@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/recycle-bin.css}" href="../static/css/recycle-bin.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_buq96x2sqow.css">
+</head>
+<body>
+
+<div class="recycle-bin-wrap">
+    <header>
+       <span> 查看回收站</span>
+        <i class="layui-icon layui-icon-close" style="font-size: 20px; color: #a6a6a6;"></i>
+    </header>
+    <section class="main-content">
+        <nav class="left-nav">
+            <ul>
+                <li class="boxsizing">
+                    <i class="iconfont icon-renwuwancheng"></i>
+                    <span>任务</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-icon_share"></i>
+                    <span>分享</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-wenjian" style="font-size: 20px"></i>
+                    <span>文件</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-date"></i>
+                    <span>日程</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-78"></i>
+                    <span>文件夹</span>
+                </li>
+                <li class="boxsizing">
+                    <i class="iconfont icon-wenjian1"></i>
+                    <span>任务分组</span>
+                </li>
+            </ul>
+        </nav>
+        <article class="right-content">
+            <!--有内容-->
+            <div class="have-content" >
+                <div class="top-div boxsizing">
+                    <span>名称</span>
+                    <span>修改时间</span>
+                </div>
+                <ul class="scroll-ul">
+                    <li class="boxsizing">
+                        <div class="name over-hidden">点按拖动该任务至右边的项目阶段</div>
+                        <div class="right-time">
+                            <div class="time">7月16日 12:00</div>
+                            <div class="hover-show-box">
+                                <div class="box huifu-btn">
+                                    <i class="iconfont icon-iconhuifu"></i>
+                                    <span>恢复内容</span>
+                                </div>
+                                <div class="box delete-btn">
+                                    <i class="iconfont icon-lajixiang"></i>
+                                    <span>彻底删除</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--无内容-->
+           <div class="no-content" style="display: none">
+               <div>
+                   <img src="../static/image/lajixiang.png" th:src="@{/image/lajixiang.png}">
+                   <p>回收站暂无内容</p>
+               </div>
+
+           </div>
+        </article>
+
+    </section>
+</div>
+<!--恢复内容 框-->
+<div class="recover-box boxsizing">
+    <div class="recover-box-head">
+        选择位置
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+    </div>
+    <div class="xm-lb-box boxsizing">
+        <span>项目</span>
+        <p class="xm-name">Teambition 新手引导</p>
+    </div>
+    <div class="xm-lb-box lb-box boxsizing">
+        <span>列表</span>
+        <div class="xm-name layui-form">
+            <select name="" lay-verify="">
+                <option value="">北京</option>
+                <option value="">上海</option>
+                <option value="">杭州</option>
+            </select>
+        </div>
+    </div>
+    <p class="font-p">你可以在任务板中添加和修改任务分组及任务列表。</p>
+    <div class="o-btn">确定</div>
+</div>
+
+<!--彻底删除 框-->
+<div class="forever-delete boxsizing">
+    <div class="recover-box-head">
+        彻底删除
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+    </div>
+    <p>彻底删除任务后，该任务及其子任务将会被永久被删除。</p>
+    <div class="forever-delete-btn">删除</div>
+</div>
+</body>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
+
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+    });
+    $("html").on("click",".huifu-btn",function () {
+        var top=$(this).offset().top+50+'px';
+        var left=$(this).offset().left-100+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: false,
+                offset: [top, left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                // shade: 0,
+                shadeClose:true,
+                content: $(".recover-box")
+            });
+        });
+    });
+    $("html").on("click",".delete-btn",function () {
+        var top=$(this).offset().top+50+'px';
+        var left=$(this).offset().left-160+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: false,
+                offset: [top, left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                // shade: 0,
+                shadeClose:true,
+                content: $(".forever-delete")
+            });
+        });
+    });
+    $(".close-tk").click(function () {
+        layer.closeAll('page'); //关闭所有页面层
+    })
+</script>
+
+</html>
