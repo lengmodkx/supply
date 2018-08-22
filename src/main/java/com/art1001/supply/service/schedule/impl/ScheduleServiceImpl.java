@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSON;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.PublicVO;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
@@ -346,7 +347,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 * @return
 	 */
 	@Override
-	public List<Schedule> findRecycleBin(String projectId) {
+	public List<RecycleBinVO> findRecycleBin(String projectId) {
 		return scheduleMapper.findRecycleBin(projectId);
 	}
 

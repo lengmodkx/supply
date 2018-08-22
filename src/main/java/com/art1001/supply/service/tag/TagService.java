@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
 import org.apache.ibatis.annotations.Param;
 
@@ -108,7 +109,7 @@ public interface TagService {
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<Tag> findRecycleBin(String projectId);
+	List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 将标签移入回收站

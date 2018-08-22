@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -225,7 +226,7 @@ public class TagServiceImpl implements TagService {
 	 * @return
 	 */
 	@Override
-	public List<Tag> findRecycleBin(String projectId) {
+	public List<RecycleBinVO> findRecycleBin(String projectId) {
 		return tagMapper.findRecycleBin(projectId);
 	}
 

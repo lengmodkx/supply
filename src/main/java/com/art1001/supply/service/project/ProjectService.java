@@ -2,6 +2,7 @@ package com.art1001.supply.service.project;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.Project;
 
 
@@ -101,4 +102,10 @@ public interface ProjectService {
 	 */
 	List<Project> findProjectByUserId(String userId);
 
+	/**
+	 * 用于展示回收站的数据
+	 * @param projectId 项目id
+	 * @param type 选项卡的类型
+	 */
+	List<RecycleBinVO> recycleBinInfo(String projectId, String type);
 }

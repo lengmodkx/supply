@@ -697,17 +697,23 @@ public class FileController extends BaseController {
      * 回收站
      *
      * @param fileIds ids
+     * @param projectId 项目id
      */
-    @RequestMapping("/recoveryFile")
+    @RequestMapping("/moveToRecycleBin")
     @ResponseBody
-    public JSONObject recoveryFile(
-            @RequestParam String[] fileIds
+    public JSONObject moveToRecycleBin(
+            @RequestParam String[] fileIds, String projectId
     ) {
         JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
         try {
             fileService.moveToRecycleBin(fileIds);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "移入回收站成功");
+
+            pushData.put("fileIds",fileIds);
+            pushData.put("type","将文件移入了回收站");
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e) {
             log.error("移入回收站异常, {}", e);
             jsonObject.put("result", 0);

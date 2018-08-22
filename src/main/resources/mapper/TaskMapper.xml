@@ -96,6 +96,14 @@
 		</collection>
 	</resultMap>
 
+	<!-- 回收站专用 -->
+	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
+		<!--查询执行者-->
+		<id column="task_id" property="id" />
+		<result column="task_name" property="name" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.project_id,
@@ -911,8 +919,8 @@
 	</select>
 
 	<!-- 查询出在该项目回收站中的任务 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
+	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap3">
+		select task_id,task_name,update_time
 		from prm_task where project_id = #{projectId} and task_del = 1
 	</select>
 

@@ -344,12 +344,17 @@ public class TaskController {
      */
     @PostMapping("recoveryTask")
     @ResponseBody
-    public JSONObject recoveryTask(String taskId,String menuId){
+    public JSONObject recoveryTask(String taskId, String menuId, String projectId){
         JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
         try {
             taskService.recoveryTask(taskId,menuId);
             jsonObject.put("msg","恢复任务成功!");
             jsonObject.put("result","1");
+
+            //封装推送数据
+            pushData.put("task",taskService.findTaskByTaskId(taskId));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e){
             log.error("系统异常,任务恢复失败!");
             throw new AjaxException(e);

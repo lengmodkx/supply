@@ -12,4 +12,5 @@ public class BindingConstants {
     public static final String BINDING_SHARE_NAME= "分享";
     public static final String BINDING_FILE_NAME = "文件";
     public static final String BINDING_SCHEDULE_NAME = "日程";
+    public static final String BINDING_TAG_NAME = "标签";
 }

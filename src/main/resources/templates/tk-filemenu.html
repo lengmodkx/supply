@@ -84,10 +84,8 @@
 
         // 移入回收站
         $(".recoveryFile").click(function () {
-            $.post("/file/recoveryFile", {fileIds: fileId}, function (data) {
-                if (data.result === 1) {
-                    parent.location.reload();
-                } else {
+            $.post("/file/moveToRecycleBin", {fileIds: fileId,"projectId":projectId}, function (data) {
+                if (data.result != 1) {
                     layer.msg(data.msg, {icon: 2})
                 }
             });

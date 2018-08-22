@@ -39,6 +39,13 @@
 
 	</resultMap>
 
+	<!-- 映射回收站数据 -->
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
+		<id column="schedule_id" property="id"/>
+		<result column="schedule_name" property="name" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id property="date" column="date" />
 		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
@@ -432,9 +439,9 @@
 	</select>
 
 	<!-- 查询出在该项目回收站中的日程 -->
-	<select id="findRecycleBin" resultMap="BaseResultMap" parameterType="java.lang.String">
-		select <include refid="Base_Column_List"/>
-		from prm_schedule where is_del = 0 and project_id = #{projectId}
+	<select id="findRecycleBin" resultMap="BaseResultMap2" parameterType="java.lang.String">
+		select schedule_id,schedule_name,update_time
+		from prm_schedule where is_del = 1 and project_id = #{projectId}
 	</select>
 
 </mapper>

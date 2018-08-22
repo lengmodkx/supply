@@ -105,6 +105,7 @@ $(function () {
 
         // 移到回收站
         $(".deleteFile").click(function () {
+            alert(1);
             var checks = document.getElementsByName("fileCheck");
             var fileIds = "";
             for (var k in checks) {
@@ -113,7 +114,7 @@ $(function () {
             }
             var obj = $(this);
             fileIds = fileIds.substring(0, fileIds.length - 1);
-            $.post("/file/recoveryFile", {fileIds: fileIds}, function (data) {
+            $.post("/file/moveToRecycleBin", {fileIds: fileIds}, function (data) {
                 if (data.result === 1) {
                     layer.msg('移除成功', {icon: 1});
                 } else {

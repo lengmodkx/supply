@@ -1,6 +1,7 @@
 package com.art1001.supply.service.file;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
@@ -183,7 +184,7 @@ import java.util.List;
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<File> findRecycleBin(String projectId);
+	List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 恢复文件

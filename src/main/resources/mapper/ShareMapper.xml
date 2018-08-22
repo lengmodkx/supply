@@ -32,6 +32,13 @@
         <collection property="joinInfo" column="{memberIds=uids}" javaType="java.util.ArrayList"
                     select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 	</resultMap>
+
+    <!-- 映射回收站数据 -->
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
+        <id column="id" property="id"/>
+        <result column="title" property="name" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    </resultMap>
     
 	<sql id="Base_Column_List">
 		id,
@@ -243,8 +250,8 @@
     </select>
 
     <!-- 查询出在此项目回收站中的所有分享 -->
-    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
+    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
+        select id,title,update_time
         from prm_share where is_del = 1 and project_id = #{projectId}
     </select>
 

@@ -1,12 +1,20 @@
 package com.art1001.supply.service.project.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.mapper.project.ProjectMapper;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +27,21 @@ public class ProjectServiceImpl implements ProjectService {
 	/** projectMapper接口*/
 	@Resource
 	private ProjectMapper projectMapper;
+
+	@Resource
+	private TaskService taskService;
+
+	@Resource
+	private ShareService shareService;
+
+	@Resource
+	private ScheduleService scheduleService;
+
+	@Resource
+	private TagService tagService;
+
+	@Resource
+	private FileService fileService;
 	
 	/**
 	 * 查询分页project数据
@@ -150,5 +173,32 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<Project> findProjectByUserId(String userId) {
 		return projectMapper.findProjectByUserId(userId);
+	}
+
+	/**
+	 * 用于展示回收站的数据
+	 * @param projectId 项目id
+	 * @param type 选项卡的类型
+	 */
+	@Override
+	public List<RecycleBinVO> recycleBinInfo(String projectId, String type) {
+
+		List<RecycleBinVO> recycleBin = new ArrayList<RecycleBinVO>();
+		if(BindingConstants.BINDING_TASK_NAME.equals(type)){
+			recycleBin = taskService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.BINDING_FILE_NAME.equals(type)){
+			recycleBin = fileService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.BINDING_SHARE_NAME.equals(type)){
+			recycleBin = shareService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.BINDING_SCHEDULE_NAME.equals(type)){
+			recycleBin = scheduleService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.BINDING_TAG_NAME.equals(type)){
+			recycleBin = tagService.findRecycleBin(projectId);
+		}
+		return recycleBin;
 	}
 }

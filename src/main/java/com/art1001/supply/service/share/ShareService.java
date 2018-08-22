@@ -2,6 +2,7 @@ package com.art1001.supply.service.share;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 
@@ -89,7 +90,7 @@ public interface ShareService {
 	 * @param projectId 项目id
 	 * @return 该项目下所有在回收站的分享集合
 	 */
-	List<Share> findRecycleBin(String projectId);
+	List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 恢复分享内容

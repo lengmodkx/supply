@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.task;
 import java.util.LinkedList;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
@@ -496,7 +497,7 @@ public interface TaskMapper {
 	 * @param projectId 项目id
 	 * @return 该项目下所有在回收站的任务集合
 	 */
-    List<Task> findRecycleBin(String projectId);
+    List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 永久删除任务
