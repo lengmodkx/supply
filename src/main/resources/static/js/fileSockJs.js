@@ -8,7 +8,6 @@ stompClient.connect({},
     function connectCallback(frame) {
         // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
         console.log("连接成功");
-        alert(1);
         subscribe1();
     },
     function errorCallBack(error) {
