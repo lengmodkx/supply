@@ -109,12 +109,16 @@
 .up-prople-info li{
     margin-bottom: 10px;
     cursor: pointer;
+    height: 25px;
+    line-height: 25px;
 }
+.up-prople-info li:hover{
+    background-color: #E5E5E5;
+}
+
 .up-prople-info{
     width: 100%;
-    line-height: 24px;
     font-size: 14px;
-    height: 24px;
 }
 .up-prople-info img{
     width: 24px;
@@ -205,4 +209,14 @@
 .scroll-box::-webkit-scrollbar{
     width: 1px;
     height: 1px;
+}
+
+.dot2 {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #3DA8F5;
+    float: left;
+    margin-right: 10px;
+    margin-top: 6px;
 }

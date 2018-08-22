@@ -1188,6 +1188,41 @@ public class FileController extends BaseController {
     }
 
 
+    @PostMapping("/fileUpload")
+    @ResponseBody
+    public JSONObject fileUpload(@RequestParam String projectId,
+                                 @RequestParam(defaultValue = "0") String parentId,
+                                 @RequestParam(value = "files",required = false) String files){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            JSONObject object = JSON.parseObject(files);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+            // 写库
+            File myFile = new File();
+            // 用原本的文件名
+            myFile.setFileName(fileName);
+            myFile.setExt(ext);
+            myFile.setProjectId(projectId);
+            myFile.setFileUrl(fileUrl);
+            // 得到上传文件的大小
+            myFile.setSize(size);
+            myFile.setCatalog(0);
+            myFile.setParentId("0");
+            myFile.setFileLabel(1);
+            myFile.setParentId(parentId);
+            myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+            fileService.saveFile(myFile);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 
 
 

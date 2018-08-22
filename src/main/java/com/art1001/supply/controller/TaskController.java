@@ -1,6 +1,7 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.common.Constants;
@@ -120,6 +121,13 @@ public class TaskController {
     /** 用户消息逻辑层接口 */
     @Resource
     private UserNewsService userNewsService;
+
+    @GetMapping("fileModal.html")
+    public String taskFileModal(String windowName,Model model){
+        model.addAttribute("windowName",windowName);
+        return "task-file-modal";
+    }
+
 
     /**
      * 在日历上创建任务
@@ -1355,38 +1363,32 @@ public class TaskController {
     public JSONObject uploadFile(
             @RequestParam String taskId,@RequestParam String projectId,
             @RequestParam(required = false,defaultValue = "") String content,
-            @RequestParam(value = "file",required = false) MultipartFile[] fileArray,
+            @RequestParam(value = "files",required = false) String files,
             @RequestParam(required = false) String[] fileId){
         JSONObject jsonObject = new JSONObject();
         try {
             //文件和内容都为空则不发送推送消息
-            if(fileArray==null&&fileId==null&&StringUtils.isEmpty(content)){
+            if(files==null&&fileId==null&&StringUtils.isEmpty(content)){
                 return jsonObject;
             }
             List<String> fileIds = new ArrayList<>();
-            if(fileArray!=null&&fileArray.length>0){
-                for (MultipartFile file : fileArray) {
-                    // 得到文件名
-                    String originalFilename = file.getOriginalFilename();
-                    // 重置文件名
-                    String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-                    // 设置文件url
-                    String fileUrl = "upload/"+ taskId + "/" + fileName;
-                    // 上传oss
-                    AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
-                    // 获取后缀名
-                    String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            if(StringUtils.isNotEmpty(files)){
+                JSONArray array = JSON.parseArray(files);
+                for (int i=0;i<array.size();i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    String fileName = object.getString("fileName");
+                    String fileUrl = object.getString("fileUrl");
+                    String size = object.getString("size");
+                    String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                     // 写库
                     File myFile = new File();
                     // 用原本的文件名
-                    myFile.setFileName(originalFilename);
+                    myFile.setFileName(fileName);
                     myFile.setExt(ext);
                     myFile.setProjectId(projectId);
                     myFile.setFileUrl(fileUrl);
-
                     // 得到上传文件的大小
-                    long contentLength = file.getSize();
-                    myFile.setSize(FileUtils.convertFileSize(contentLength));
+                    myFile.setSize(size);
                     myFile.setCatalog(0);
                     myFile.setParentId("0");
                     myFile.setFileLabel(1);

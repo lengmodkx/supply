@@ -361,30 +361,29 @@
         </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
+            <div class="file-upload" >
+                <div class="task-fujian-box boxsizing" id="container">
+                    <div class="fujian-box-title boxsizing">
+                        添加附件
+                        <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+                    </div>
+                    <div class="zj-up" id="selectfiles">
+                        <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <span>直接上传</span>
+                    </div>
+                    <div class="xian"></div>
+                    <div class="select-up">
+                        <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <span>从文件库选择</span>
+                    </div>
+                </div>
+            </div>
             <div class="task-upload-file" style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
                 <i class="layui-icon" style="color: #ffffff">&#xe67c;</i>
             </div>
             <div class="publish-btn" id="fileListAction">发布</div>
         </div>
-        <!--上传文件框-->
-        <div class="file-upload" style="display: none">
-            <div class="task-fujian-box boxsizing" >
-                <div class="fujian-box-title boxsizing">
-                    添加附件
-                    <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
-                </div>
-                <div class="zj-up">
-                    <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
-                    <span>直接上传</span>
-                    <input type="file" multiple name="file" id="file" class="zj-up-file"/>
-                </div>
-                <div class="xian"></div>
-                <div class="select-up">
-                    <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
-                    <span>从文件库选择</span>
-                </div>
-            </div>
-        </div>
+
 
 
     </div>
@@ -778,10 +777,6 @@
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 
-
-
-
-
     $('html').on('click','.download',function () {
         location.href = "/task/download?fileId=" + $(this).attr('id');
     });
@@ -814,7 +809,16 @@
 
 
 </script>
+
+<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/upload.js}"></script>
+
 <script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>
 <script th:src="@{/js/taskinfo.js}" src="../static/js/taskinfo.js"></script>
+
 </html>

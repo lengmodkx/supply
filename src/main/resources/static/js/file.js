@@ -72,7 +72,6 @@ $(function () {
         /**
          * 文件上传
          */
-        var liVal="";
         upload.render({
             elem: '#uploadFile' //绑定元素
             , url: '/file/uploadFile' //上传接口

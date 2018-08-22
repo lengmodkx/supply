@@ -1,5 +1,3 @@
-var danxuan=false;
-
 Date.prototype.format = function(format)
 {
     var o = {
@@ -490,105 +488,52 @@ layui.use('form', function() {
     var curFiles = [];
 
     //任务上传文件
-    $('.task-upload-file').click(function () {
-        var width = parent.window.innerWidth;
-        var heigth = parent.window.innerHeight;
-        var left = (width-600)/2+$(this).offset().left+20;
-        var top = (heigth-600)/2+$(this).offset().top-160;
+    $('.task-upload-file').click(function (e) {
+        $('.file-upload').addClass("show-file-upload");
+        e.stopPropagation()
+    });
+
+    $('.select-up').on('click', function() {
         parent.layer.open({
-            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
-            offset: [top, left],
-            area: ['250px', '150px'],
+            area: ['800px', '541px'],
             fixed: false,
             shadeClose: true, //点击遮罩关闭
             shade: [0.1, '#fff'],
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: $('.file-upload').html()
+            content: ['/file/selectFile.html?projectId='+projectId+"&windowName="+window.name,'no']
         });
-        parent.$('.select-up').on('click', function() {
-            parent.layer.closeAll('page');
-            parent.layer.open({
-                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                title: false, //标题
-                area: ['800px', '541px'],
-                fixed: false,
-                shadeClose: true, //点击遮罩关闭
-                shade: [0.1, '#fff'],
-                closeBtn: 0,
-                anim: 1,  //动画 0-6
-                content: ['/file/selectFile.html?projectId='+projectId+"&windowName="+window.name,'no']
-            });
-        });
-        parent.$('.close-fujian').on('click',function () {
-            parent.layer.closeAll('page');
-        });
-
-
-        parent.$('.zj-up-file').change(function (e) {
-            parent.layer.closeAll('page');
-            Array.prototype.push.apply(curFiles, e.currentTarget.files);
-            $('.fileList').html("");
-            for(var i=0;i<curFiles.length;i++){
-                var file = curFiles[i];
-                var li ='<li class="boxsizing" style="width: 550px;height: 48px;background-color: #eee;padding: 4px 8px;line-height: 40px;font-size: 12px;margin: 2px auto;margin-top: 0">\n' +
-                    '                <img src="/image/defaultFile.png" style="width: 32px;height: 32px;float: left;margin-right: 8px;margin-top: 4px" />\n' +
-                    '                <p class="over-hidden" style="width: 390px;float: left">'+file.name+'</p>\n' +
-                    '                <p class="over-hidden" style="margin-left: 16px;color: gray;float: left;text-align: right;width: 50px">'+(file.size/1024).toFixed(1) +'kb</p>\n' +
-                    '                <i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer" data="'+i+'"></i>\n' +
-                    '            </li>';
-                $('.fileList').append(li);
-            }
-            $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-        })
-
-
-        $('html').on('click', '.fileList li i',function() {
-            if($(this).attr('data')!==undefined){
-                curFiles.splice($(this).attr('data'), 1);
-                $('.zj-up-file').val('');
-            }
-            $(this).parent().remove();
-            $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-        });
-
-
+        $('.file-upload').removeClass("show-file-upload");
     });
+
+    $('.close-fujian').click(function () {
+        $('.file-upload').removeClass("show-file-upload")
+    });
+
+
+    $('html').on('click', '.fileList li i',function() {
+        $(this).parent().parent().remove();
+        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
+    });
+
+
+
 
     $('#fileListAction').click(function () {
-    var fileIds=[];
-    var oMyForm = new FormData();
-    if(curFiles.length>0){
-        for (var i=0;i<curFiles.length;i++){
-            oMyForm.append("file",curFiles[i]);
-        }
-    }
+        var fileIds=[];
+        $('.fileList li').each(function (data,item) {
+            if($(item).attr('id')!==null&&$(item).attr('id')!==undefined){
+                fileIds.push($(item).attr('id'));
+            }
+        });
 
-    $('.fileIds').each(function (data,item) {
-        fileIds.push($(item).attr('id'));
-    });
-
-    oMyForm.append("fileId",fileIds);
-    oMyForm.append("taskId",taskId);
-    oMyForm.append("projectId",projectId);
-    oMyForm.append("content",$('#chat').val());
-    $.ajax({
-        url:"/task/upload",
-        type:"POST",
-        data:oMyForm,
-        async:false,
-        cache:false,
-        contentType:false,
-        processData:false,
-        success:function(returndata){
-            $('.fileList').html('');
-            curFiles=[];
-        },
-        error:function(returndata){
-            alert("error:"+returndata);
-        }
-    });
+        $.post('/task/upload',{"projectId":projectId,"taskId":taskId,"content":$('#chat').val(),"files":JSON.stringify(fileTemps),"fileId":fileIds.toString()},function (data) {
+            if(data.result===1){
+                $('.fileList').html('');
+            }
+        });
 });
 
 

@@ -54,9 +54,9 @@
                 <ul>
                     <li th:each="fileVersion:${fileVersionList}">
                         <div class="fileVersion" th:data="#{IMAGE_SERVER} + ${fileVersion.fileUrl}">
-                            <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} +${file.memberImg}"/>
-                            <span th:text="${fileVersion.info}"></span>
-                            <span th:text="${fileVersion.fileSize}"></span>
+                            <span class="dot2"></span>
+                            <span th:text="${fileVersion.info}"><span th:if="${fileVersion.isMaster==1}">主版本</span></span>
+                            <span th:text="${fileVersion.fileSize}" style="float: right"></span>
                         </div>
                     </li>
                 </ul>
@@ -571,6 +571,7 @@
                 , data: {fileId: fileId}
                 , exts: '|' // 可上传所有类型的文件
                 , done: function (data) {
+                    layer.closeAll('loading');
                     //上传完毕回调
                     if (data.result === 1) {
                         parent.location.reload();
@@ -580,8 +581,12 @@
                 }
                 , error: function () {
                     //请求异常回调
+                    layer.closeAll('loading');
                     layer.msg('更新失败', {icon: 2});
-                }
+                },
+                before: function () {
+                layer.load();
+            }
             });
 
             // 下载按钮

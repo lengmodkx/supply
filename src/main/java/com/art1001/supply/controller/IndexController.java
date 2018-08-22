@@ -59,7 +59,7 @@ public class IndexController extends BaseController {
 
     @GetMapping("/register.html")
     public String register() {
-        return "test";
+        return "register";
     }
 
     @GetMapping("/forget.html")

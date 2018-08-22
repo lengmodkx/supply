@@ -23,7 +23,7 @@
     <input type="hidden" th:value="${parentId}" id="parentId">
     <div class="content boxsizing">
         <div class="file-box boxsizing layui-form">
-            <div class="file-toper">
+            <div class="file-toper" id="container">
                 <span><a href="javascript: void(0)"
                          onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
                 <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
@@ -84,7 +84,7 @@
                                 <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
                                 <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
                                 <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.sh'}and ${file.ext eq '.gsm'}"/>
+                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.sh'} and ${file.ext eq '.gsm'}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                 <div class="img-show-operate">
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
@@ -105,6 +105,7 @@
         var form = layui.form;
     });
 </script>
+
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/Sortable.min.js}" src="../static/js/Sortable.min.js"></script>

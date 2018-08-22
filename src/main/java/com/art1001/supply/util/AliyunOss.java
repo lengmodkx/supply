@@ -22,12 +22,6 @@ public class AliyunOss {
     private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
     private static String bucketName = "art1001-bim-5d";
 
-    // TODO 正式使用
-//    private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-//    private static String accessKeyId = "LTAIP4MyTAbONGJx";
-//    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
-//    private static String bucketName = "art1001-bim-5d";
-
     // Object是OSS存储数据的基本单元，称为OSS的对象，也被称为OSS的文件。详细描述请参看“开发人员指南 > 基本概念 > OSS基本概念介绍”。
     // Object命名规范如下：使用UTF-8编码，长度必须在1-1023字节之间，不能以“/”或者“\”字符开头。
     private static String firstKey = "my-first-key";
