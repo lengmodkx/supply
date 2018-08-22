@@ -19,6 +19,7 @@
 		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
 		<result column="is_allday" property="isAllday" jdbcType="INTEGER" />
 		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
+		<result column="is_del" property="isDel" jdbcType="INTEGER" />
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -67,7 +68,8 @@
 				member_id,
 				member_ids,
 				is_allday,
-				schedule_calendar
+				schedule_calendar,
+				is_del
 	</sql>
 
 	<sql id="Base_Column_List2">
@@ -85,6 +87,7 @@
 				s.member_id,
 				s.member_ids,
 				s.is_allday,
+				s.is_del,
 				s.schedule_calendar,
 				tg.tag_id,
 				tg.tag_name,
@@ -203,6 +206,9 @@
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				schedule_calendar,
 			</if>
+			<if test="idDel != null and isDel != ''">
+				is_del,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -254,6 +260,9 @@
 			</if>
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				#{scheduleCalendar},
+			</if>
+			<if test="isDel != null and isDel != ''">
+				#{isDel},
 			</if>
 		</trim>
 
@@ -310,6 +319,9 @@
 			</if>
 			<if test="scheduleCalendar != null">
 				schedule_calendar = #{scheduleCalendar},
+			</if>
+			<if test="isDel != null">
+				is_del = #{isDel},
 			</if>
 		</set>
 
@@ -417,6 +429,12 @@
 	<select id="findCalendarSchedule" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_schedule where schedule_calendar is not null  and member_id = #{uId}
+	</select>
+
+	<!-- 查询出在该项目回收站中的日程 -->
+	<select id="findRecycleBin" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select <include refid="Base_Column_List"/>
+		from prm_schedule where is_del = 0 and project_id = #{projectId}
 	</select>
 
 </mapper>

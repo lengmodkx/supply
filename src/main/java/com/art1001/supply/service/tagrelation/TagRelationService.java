@@ -60,4 +60,11 @@ public interface TagRelationService {
 	 * @param relations 标签关系实体集合
 	 */
     void saveManyTagRelation(List<TagRelation> relations);
+
+	/**
+	 * 删除此项的标签关联信息
+	 * @param publicId 项的id
+	 * @param publicType 删除的项的类型 (任务,文件,分享,日程)
+	 */
+	void deleteItemTagRelation(String publicId,String publicType);
 }

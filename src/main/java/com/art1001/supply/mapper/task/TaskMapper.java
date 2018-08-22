@@ -41,13 +41,6 @@ public interface TaskMapper {
 	Task findTaskByTaskId(String taskId);
 
 	/**
-	 * 删除任务
-	 * 通过taskId删除task数据
-	 * @param taskId 任务id
-	 */
-	int deleteTaskByTaskId(String taskId);
-
-	/**
 	 * 修改task数据
 	 * 
 	 * @param task
@@ -242,9 +235,8 @@ public interface TaskMapper {
 	 * @param taskId 任务的id
 	 * @param menuId 恢复后放到哪个菜单
 	 * @param updateTime 更新时间
-	 * @param projectId 项目id
 	 */
-	void recoverTask(@Param("taskId") String taskId, @Param("menuId") String menuId,@Param("updateTime") Long updateTime,@Param("projectId") String projectId);
+	void recoverTask(@Param("taskId") String taskId, @Param("menuId") String menuId,@Param("updateTime") Long updateTime);
 
 	/**
 	 * 查询某个菜单下的所有任务的信息 不包括执行者信息
@@ -498,4 +490,17 @@ public interface TaskMapper {
 	 */
 	@Select("select relation_id relationId,relation_name relationName from prm_relation where relation_id = #{menuParent}")
     Relation findTaskGroupInfoByTaskMenuId(String menuParent);
+
+	/**
+	 * 查询出在回收站中的任务
+	 * @param projectId 项目id
+	 * @return 该项目下所有在回收站的任务集合
+	 */
+    List<Task> findRecycleBin(String projectId);
+
+	/**
+	 * 永久删除任务
+	 * @param taskId 任务id
+	 */
+	void deleteTask(String taskId);
 }

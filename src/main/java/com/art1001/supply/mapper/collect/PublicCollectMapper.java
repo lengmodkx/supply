@@ -109,4 +109,10 @@ public interface PublicCollectMapper {
 	 */
 	@Delete("delete from prm_public_collect where member_id = #{userId} and public_id = #{publicId}")
 	int cancelCollectByUser(@Param("publicId") String publicId, @Param("userId") String userId);
+
+	/**
+	 * 删除关于 此项的所有收藏记录
+	 */
+	@Delete("delete from prm_public_collect where public_id = #{publicId}")
+    void deleteCollectByItemId(String publicId);
 }

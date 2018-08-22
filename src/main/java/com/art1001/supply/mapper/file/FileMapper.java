@@ -118,7 +118,7 @@ public interface FileMapper {
 	 *
 	 * @param fileIds ids
 	 */
-	void recoveryFile(String[] fileIds);
+	void moveToRecycleBin(String[] fileIds);
 
 	/**
 	 * 移动文件
@@ -173,4 +173,18 @@ public interface FileMapper {
 	 * @return
 	 */
     List<File> findJoinFile(String userId);
+
+	/**
+	 * 查询出在该项目回收站中的文件
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<File> findRecycleBin(String projectId);
+
+	/**
+	 * 恢复文件
+	 * @param fileId 文件id
+	 */
+	@Update("update prm_file set parent_id = '0',file_del = 0 where file_id = #{fileId}")
+	void recoveryFile(String fileId);
 }

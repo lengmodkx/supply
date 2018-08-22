@@ -239,7 +239,7 @@
 		where t.task_id = #{taskId}
 	</select>
 	
-	<delete id="deleteTaskByTaskId" parameterType="java.lang.String">
+	<delete id="deleteTask" parameterType="java.lang.String">
 		delete from
 		prm_task where task_id = #{taskId}
 	</delete>
@@ -554,7 +554,6 @@
 			<if test="updateTime != null">
 				update_time = #{updateTime},
 			</if>
-			project_id = #{projectId}
 			task_menu_id = #{menuId},
 		</set>
 		<where>
@@ -911,5 +910,10 @@
 		from prm_task where executor = #{uId} or member_id = #{uId}
 	</select>
 
+	<!-- 查询出在该项目回收站中的任务 -->
+	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_task where project_id = #{projectId} and task_del = 1
+	</select>
 
 </mapper>

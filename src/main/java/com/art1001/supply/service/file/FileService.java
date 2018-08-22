@@ -121,7 +121,7 @@ import java.util.List;
 	 *
 	 * @param fileIds ids
 	 */
-	void recoveryFile(String[] fileIds);
+	void moveToRecycleBin(String[] fileIds);
 
 	/**
 	 * 获取一个文件夹下所有的子目录
@@ -177,4 +177,17 @@ import java.util.List;
 	 * @return
 	 */
 	List<File> findJoinFile();
+
+	/**
+	 * 查询出在该项目回收站中的文件
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<File> findRecycleBin(String projectId);
+
+	/**
+	 * 恢复文件
+	 * @param fileId 文件的id
+	 */
+	void recoveryFile(String fileId);
 }

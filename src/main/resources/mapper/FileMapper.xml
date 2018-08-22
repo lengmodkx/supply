@@ -254,7 +254,7 @@
 		</foreach>
 	</update>
 
-	<update id="recoveryFile" parameterType="java.lang.String">
+	<update id="moveToRecycleBin" parameterType="java.lang.String">
 		update prm_file set file_del = 1
 		where file_id in
 		<foreach collection="array" open="(" separator="," close=")" item="id">
@@ -453,5 +453,10 @@
 		from prm_file where find_in_set(#{uId}, file_uIds);
 	</select>
 
+	<!-- 查询出在该项目回收站中的文件 -->
+	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_file where file_del = 1 where project_id = #{projectId}
+	</select>
 	
 </mapper>

@@ -102,4 +102,25 @@ public interface TagService {
 
 
 	List<Tag> findByPublicId(@Param("publicId")String publicId, @Param("publicType")String publicType);
+
+	/**
+	 * 查询出在该项目回收站中的标签
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Tag> findRecycleBin(String projectId);
+
+	/**
+	 * 将标签移入回收站
+	 * @param tagId 标签id
+	 */
+	void moveToRecycleBin(String tagId);
+
+	/**
+	 * 恢复标签
+	 * @param tagId 标签id
+	 */
+	void recoveryTag(String tagId);
+
+
 }

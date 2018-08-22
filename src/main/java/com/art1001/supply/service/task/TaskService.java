@@ -37,13 +37,6 @@ public interface TaskService {
 	public Task findTaskByTaskId(String taskId);
 
 	/**
-	 * 通过taskId删除task数据
-	 *
-     * @param taskId
-     */
-	public int deleteTaskByTaskId(String taskId);
-
-	/**
 	 * 修改task数据
 	 * @param task 任务的信息
 	 */
@@ -326,9 +319,8 @@ public interface TaskService {
 	 * 恢复任务的功能
 	 * @param taskId 任务的id
 	 * @param menuId 恢复后放到哪个菜单
-	 * @param projectId 项目id
 	 */
-	void recoveryTask(String taskId, String menuId,String projectId);
+	void recoveryTask(String taskId, String menuId);
 
 	/**
 	 * 查询此任务的关联
@@ -484,4 +476,19 @@ public interface TaskService {
 	 * @return 任务的实体
 	 */
 	Relation findTaskGroupInfoByTaskMenuId(String menuParent);
+
+	/**
+	 * 查询出在回收站中的任务
+	 * @param projectId 项目id
+	 * @return 该项目下所有在回收站的任务集合
+	 */
+	List<Task> findRecycleBin(String projectId);
+
+	/**
+	 * 永久删除任务
+	 * @param taskId 任务id
+	 */
+	void deleteTask(String taskId);
+
+
 }

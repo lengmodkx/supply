@@ -89,4 +89,25 @@ public interface TagMapper {
 	void saveMany(List<Tag> newTagList);
 
 	List<Tag> findByPublicId(@Param("publicId")String publicId,@Param("publicType")String publicType);
+
+	/**
+	 * 查询出在该项目回收站中的标签
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Tag> findRecycleBin(String projectId);
+
+	/**
+	 * 将标签移入回收站
+	 * @param tagId 标签id
+	 */
+	@Update("update prm_tag set is_del = 1,update_time = #{currTime} where tag_id = #{tagId}")
+	void moveToRecycleBin(@Param("tagId") String tagId, @Param("currTime") long currTime);
+
+	/**
+	 * 恢复标签
+	 * @param tagId 标签id
+	 */
+	@Update("update prm_tag set is_del = 0 where tag_id = #{tagId}")
+	void recoveryTag(String tagId);
 }

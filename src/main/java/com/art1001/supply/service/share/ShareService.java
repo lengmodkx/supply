@@ -83,4 +83,23 @@ public interface ShareService {
 	 * @param publicId 分享id
 	 */
     String findShareNameById(String publicId);
+
+	/**
+	 * 查询出在回收站中的分享
+	 * @param projectId 项目id
+	 * @return 该项目下所有在回收站的分享集合
+	 */
+	List<Share> findRecycleBin(String projectId);
+
+	/**
+	 * 恢复分享内容
+	 * @param shareId 分享的id
+	 */
+	void recoveryShare(String shareId);
+
+	/**
+	 * 移入回收站
+	 * @param shareId 分享id
+	 */
+	void moveToRecycleBin(String shareId);
 }

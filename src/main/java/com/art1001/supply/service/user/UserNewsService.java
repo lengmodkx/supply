@@ -98,4 +98,10 @@ public interface UserNewsService {
 	 * @param id 消息id
 	 */
 	void updateIsRead(String id);
+
+	/**
+	 * 删除某个信息的所有通知消息
+	 * @param publicId 信息id
+	 */
+	void deleteNewsByPublicId(String publicId);
 }

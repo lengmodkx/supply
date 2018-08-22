@@ -33,7 +33,7 @@ public interface ScheduleService {
 	 * 
 	 * @param id
 	 */
-	public void deleteScheduleById(String id);
+	void deleteScheduleById(String id);
 
 	/**
 	 * 修改schedule数据
@@ -135,4 +135,23 @@ public interface ScheduleService {
 	 * @return
 	 */
     List<Schedule> findCalendarSchedule();
+
+	/**
+	 * 查询出在该项目回收站中的日程
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Schedule> findRecycleBin(String projectId);
+
+	/**
+	 * 将日程移入到回收站
+	 * @param scheduleId 日程id
+	 */
+	void moveToRecycleBin(String scheduleId);
+
+	/**
+	 * 恢复日程
+	 * @param scheduleId 日程id
+	 */
+	void recoverySchedule(String scheduleId);
 }

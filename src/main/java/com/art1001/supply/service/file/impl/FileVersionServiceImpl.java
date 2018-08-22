@@ -107,4 +107,12 @@ public class FileVersionServiceImpl implements FileVersionService {
 		return fileVersionMapper.findByFileId(fileId);
 	}
 
+	/**
+	 * 删除一个文件的所有历史版本信息
+	 * @param fileId 文件id
+	 */
+	@Override
+	public void deleteVersionInfoByFileId(String fileId) {
+		fileVersionMapper.deleteVersionInfoByFileId(fileId);
+	}
 }

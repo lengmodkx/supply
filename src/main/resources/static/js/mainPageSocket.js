@@ -62,6 +62,10 @@ stompClient.connect({},
                 $('.box'+task.object.task.taskId+' .remind').attr('src',"/image/zhong.png").css('opacity',1);
             }
         }
+        if(task.type === '把任务移入了回收站'){
+            $('#'+ task.taskId).remove();
+            return false;
+        }
 
         //移除标签的点点
         if(task.type === '移除标签'){

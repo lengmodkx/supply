@@ -134,4 +134,26 @@ public interface ScheduleMapper {
 	 * @return
 	 */
     List<Schedule> findCalendarSchedule(String uId);
+
+	/**
+	 * 查询出在该项目回收站中的日程
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Schedule> findRecycleBin(String projectId);
+
+	/**
+	 * 日程移入到回收站
+	 * @param scheduleId 日程id
+	 * @param currTime 当前时间
+	 */
+	@Update("update prm_schedule set is_del = 1,update_time = #{currTime} where schedule_id = #{scheduleId}")
+	void moveToRecycleBin(@Param("scheduleId") String scheduleId, @Param("currTime")long currTime);
+
+	/**
+	 * 恢复日程
+	 * @param scheduleId 日程id
+	 */
+	@Update("update prm_schedule set is_del = 0 where schedule_id = #{scheduleId}")
+	void recoverySchedule(String scheduleId);
 }

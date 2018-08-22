@@ -705,7 +705,7 @@ public class FileController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.recoveryFile(fileIds);
+            fileService.moveToRecycleBin(fileIds);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "移入回收站成功");
         } catch (Exception e) {

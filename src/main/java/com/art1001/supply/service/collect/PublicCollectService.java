@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.share.Share;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 
 
@@ -113,4 +114,9 @@ public interface PublicCollectService {
 	 * @return
 	 */
 	int cancelCollectByUser(String publicId);
+
+	/**
+	 * 删除关于此项的所有收藏记录
+	 */
+	void deleteCollectByItemId(String publicId);
 }

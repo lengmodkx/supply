@@ -186,5 +186,22 @@
 			)
 		</foreach>
 	</insert>
+
+	<!-- 删除某个项的所有标签关联信息 -->
+	<delete id="deleteItemTagRelation">
+		delete from prm_tag_relation where
+		<if test="publicType == '任务'">
+			task_id = #{publicId}
+		</if>
+		<if test="publicType == '文件'">
+			file_id = #{publicId}
+		</if>
+		<if test="publicType == '日程'">
+			schedule_id = #{publicId}
+		</if>
+		<if test="publicType == '分享'">
+			share_id = #{publicId}
+		</if>
+	</delete>
 	
 </mapper>

@@ -733,7 +733,7 @@
      */
     $('.move-recycle').click(function () {
         var url = "/task/moveToRecycleBin";
-        var args = {"taskId":taskId};
+        var args = {"taskId":taskId,"projectId":projectId};
         $.post(url,args,function (data) {
             if(data.result == 1){
                 $(".renwu-menu").slideUp();

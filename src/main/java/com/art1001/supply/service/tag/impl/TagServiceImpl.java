@@ -83,6 +83,8 @@ public class TagServiceImpl implements TagService {
 	 */
 	@Override
 	public void deleteTagByTagId(Long tagId){
+		//删除和这个标签绑定的关系信息
+		tagRelationMapper.deleteTagRelationByTagId(tagId);
 		tagMapper.deleteTagByTagId(tagId);
 	}
 
@@ -214,5 +216,33 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public List<Tag> findByPublicId(String publicId, String publicType) {
 		return tagMapper.findByPublicId(publicId,publicType);
+	}
+
+	/**
+	 * 查询出在该项目回收站中的标签
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<Tag> findRecycleBin(String projectId) {
+		return tagMapper.findRecycleBin(projectId);
+	}
+
+	/**
+	 * 将标签移入回收站
+	 * @param tagId 标签id
+	 */
+	@Override
+	public void moveToRecycleBin(String tagId) {
+		tagMapper.moveToRecycleBin(tagId,System.currentTimeMillis());
+	}
+
+	/**
+	 * 恢复标签
+	 * @param tagId 标签id
+	 */
+	@Override
+	public void recoveryTag(String tagId) {
+		tagMapper.recoveryTag(tagId);
 	}
 }

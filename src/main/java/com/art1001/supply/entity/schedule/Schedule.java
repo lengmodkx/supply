@@ -108,5 +108,10 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private Long scheduleCalendar;
 
+	/**
+	 * 是否删除
+	 */
+	private int isDel;
+
 
 }

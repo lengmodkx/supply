@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 
 /**
  * sharemapper接口
@@ -85,4 +86,25 @@ public interface ShareMapper {
      */
     @Select("select title from prm_share where id = #{publicId}")
     String findShareNameById(String publicId);
+
+    /**
+     * 查询出在回收站中的分享
+     * @param projectId 项目id
+     * @return 该项目下所有在回收站的分享集合
+     */
+    List<Share> findRecycleBin(String projectId);
+
+    /**
+     * 恢复分享内容
+     * @param shareId 分享的id
+     */
+    @Update("update prm_share set is_del = 0 where id = #{shareId}")
+    void recoveryShare(String shareId);
+
+    /**
+     * 移入回收站
+     * @param shareId 分享id
+     */
+    @Update("update prm_share set is_del = 1,update_time = #{currTime} where id = #{shareId}")
+    void moveToRecycleBin(@Param("shareId") String shareId, @Param("currTime")long currTime);
 }

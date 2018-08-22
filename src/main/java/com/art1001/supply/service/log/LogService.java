@@ -68,4 +68,10 @@ public interface LogService {
 	 * @return 日志集合
 	 */
     List<Log> initLog(String publicId);
+
+	/**
+	 * 删除某个信息的日志信息
+	 * @param publicId 信息id 如:(任务id,文件id 等);
+	 */
+	void deleteByPublicId(String publicId);
 }

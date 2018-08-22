@@ -224,4 +224,12 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 	public int cancelCollectByUser(String publicId) {
 		return publicCollectMapper.cancelCollectByUser(publicId, ShiroAuthenticationManager.getUserId());
 	}
+
+	/**
+	 * 删除关于 此项的所有收藏记录
+	 */
+	@Override
+	public void deleteCollectByItemId(String publicId) {
+		publicCollectMapper.deleteCollectByItemId(publicId);
+	}
 }

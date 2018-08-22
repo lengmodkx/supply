@@ -93,4 +93,14 @@ public class TagRelationServiceImpl implements TagRelationService {
 	public void saveManyTagRelation(List<TagRelation> relations) {
 		tagRelationMapper.saveManyTagRelation(relations);
 	}
+
+	/**
+	 * 删除此项的标签关联信息
+	 * @param publicId 项的id
+	 * @param publicType 删除的项的类型 (任务,文件,分享,日程)
+	 */
+	@Override
+	public void deleteItemTagRelation(String publicId,String publicType) {
+		tagRelationMapper.deleteItemTagRelation(publicId,publicType);
+	}
 }

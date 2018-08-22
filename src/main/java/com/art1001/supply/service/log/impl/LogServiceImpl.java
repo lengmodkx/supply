@@ -122,4 +122,13 @@ public class LogServiceImpl implements LogService {
 	public List<Log> initLog(String publicId) {
 		return logMapper.initLog(publicId);
 	}
+
+	/**
+	 * 删除某个信息的日志信息
+	 * @param publicId 信息id 如:(任务id,文件id 等);
+	 */
+	@Override
+	public void deleteByPublicId(String publicId) {
+		logMapper.deleteByPublicId(publicId);
+	}
 }

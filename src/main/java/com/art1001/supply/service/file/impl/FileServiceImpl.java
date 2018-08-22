@@ -3,8 +3,10 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
+import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.file.FileVersion;
@@ -63,6 +65,9 @@ public class FileServiceImpl implements FileService {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    @Resource
+    private Base base;
+
     /**
      * 查询分页file数据
      *
@@ -86,15 +91,27 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
+     * 何少华
      * 通过id删除file数据
-     *
      * @param id 文件id
      */
     @Override
     public void deleteFileById(String id) {
+        //删除和该文件相关的所有信息
+        base.deleteItemOther(id,BindingConstants.BINDING_FILE_NAME);
+
         File file = fileMapper.findFileById(id);
+        List<FileVersion> byFileId = fileVersionService.findByFileId(id);
+
+        //删除文件的oss版本记录
+        byFileId.forEach(item -> {
+            AliyunOss.deleteFile(item.getFileUrl());
+        });
         // 删除oss数据
         AliyunOss.deleteFile(file.getFileUrl());
+
+        //删除库中的文件版本信息
+        fileVersionService.deleteVersionInfoByFileId(id);
         fileMapper.deleteFileById(id);
     }
 
@@ -330,8 +347,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void recoveryFile(String[] fileIds) {
-        fileMapper.recoveryFile(fileIds);
+    public void moveToRecycleBin(String[] fileIds) {
+        fileMapper.moveToRecycleBin(fileIds);
     }
 
     @Override
@@ -462,5 +479,25 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> findJoinFile() {
         return fileMapper.findJoinFile(ShiroAuthenticationManager.getUserId());
+    }
+
+    /**
+     * 查询出在该项目回收站中的文件
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<File> findRecycleBin(String projectId) {
+        return fileMapper.findRecycleBin(projectId);
+    }
+
+    /**
+     * 恢复文件
+     * @param fileId 文件的id
+     */
+    @Override
+    public void recoveryFile(String fileId) {
+        fileMapper.recoveryFile(fileId);
+        Log log = logService.saveLog(fileId,TaskLogFunction.A28.getName(),1);
     }
 }

@@ -219,4 +219,13 @@ public class UserNewsServiceImpl implements UserNewsService {
 	public void updateIsRead(String id) {
 		userNewsMapper.updateIsRead(id);
 	}
+
+	/**
+	 * 删除某个信息的所有通知消息
+	 * @param publicId 信息id
+	 */
+	@Override
+	public void deleteNewsByPublicId(String publicId) {
+		userNewsMapper.deleteNewsByPublicId(publicId);
+	}
 }

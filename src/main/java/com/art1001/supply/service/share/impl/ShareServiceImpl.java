@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.art1001.supply.base.Base;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
@@ -40,6 +42,9 @@ public class ShareServiceImpl implements ShareService {
 	@Resource
     private LogService logService;
 
+	@Resource
+	private Base base;
+
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 	
@@ -69,6 +74,7 @@ public class ShareServiceImpl implements ShareService {
 	 */
 	@Override
 	public void deleteById(String id){
+		base.deleteItemOther(id,BindingConstants.BINDING_SHARE_NAME);
 		shareMapper.deleteById(id);
 	}
 
@@ -233,5 +239,34 @@ public class ShareServiceImpl implements ShareService {
 	@Override
 	public String findShareNameById(String publicId) {
 		return shareMapper.findShareNameById(publicId);
+	}
+
+	/**
+	 * 查询出在回收站中的分享
+	 * @param projectId 项目id
+	 * @return 该项目下所有在回收站的分享集合
+	 */
+	@Override
+	public List<Share> findRecycleBin(String projectId) {
+		return shareMapper.findRecycleBin(projectId);
+	}
+
+	/**
+	 * 恢复分享内容
+	 * @param shareId 分享的id
+	 */
+	@Override
+	public void recoveryShare(String shareId) {
+		shareMapper.recoveryShare(shareId);
+		logService.saveLog(shareId,TaskLogFunction.A27.getName(),1);
+	}
+
+	/**
+	 * 移入回收站
+	 * @param shareId 分享id
+	 */
+	@Override
+	public void moveToRecycleBin(String shareId) {
+		shareMapper.moveToRecycleBin(shareId,System.currentTimeMillis());
 	}
 }

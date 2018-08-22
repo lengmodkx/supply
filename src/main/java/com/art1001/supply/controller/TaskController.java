@@ -300,14 +300,21 @@ public class TaskController {
      */
     @PostMapping("moveToRecycleBin")
     @ResponseBody
-    public JSONObject moveToRecycleBin(@RequestParam String taskId) {
+    public JSONObject moveToRecycleBin(@RequestParam String taskId, @RequestParam String projectId) {
         JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
         try {
             //将任务移入回收站
             Log taskLogVO = taskService.moveToRecycleBin(taskId);
             if (taskLogVO.getResult() > 0) {
                 jsonObject.put("result",1);
                 jsonObject.put("taskId",taskId);
+
+                //推送的数据
+                pushData.put("type",TaskLogFunction.P.getName());
+                pushData.put("taskId",taskId);
+                messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(pushData)));
+                messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
             } else {
                 jsonObject.put("msg", "操作失败！");
                 jsonObject.put("result","0");
@@ -325,15 +332,14 @@ public class TaskController {
      * 任务恢复
      * @param taskId 任务id
      * @param menuId 要恢复到的菜单的id
-     * @param projectId 要恢复到的任务的id
      * @return
      */
     @PostMapping("recoveryTask")
     @ResponseBody
-    public JSONObject recoveryTask(String taskId,String menuId,String projectId){
+    public JSONObject recoveryTask(String taskId,String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
-            taskService.recoveryTask(taskId,menuId,projectId);
+            taskService.recoveryTask(taskId,menuId);
             jsonObject.put("msg","恢复任务成功!");
             jsonObject.put("result","1");
         } catch (Exception e){
@@ -406,14 +412,9 @@ public class TaskController {
         JSONObject jsonObject = new JSONObject();
         try {
             //永久删除任务
-            int result = taskService.deleteTaskByTaskId(taskId);
-            if(result >1){
+            taskService.deleteTask(taskId);
                 jsonObject.put("msg","以将该任务清除!");
                 jsonObject.put("result","1");
-            } else{
-                jsonObject.put("msg","移除任务失败!");
-                jsonObject.put("result","0");
-            }
         } catch (Exception e){
             log.error("系统异常,移除失败! 任务: ,{},{}",taskId,e);
             throw new AjaxException(e);

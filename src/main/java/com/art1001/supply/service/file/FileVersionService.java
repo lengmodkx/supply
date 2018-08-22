@@ -66,4 +66,10 @@ public interface FileVersionService {
 	 */
 	List<FileVersion> findByFileId(String fileId);
 
+	/**
+	 * 删除一个文件的所有历史版本信息
+	 * @param fileId 文件id
+	 */
+	void deleteVersionInfoByFileId(String fileId);
+
 }

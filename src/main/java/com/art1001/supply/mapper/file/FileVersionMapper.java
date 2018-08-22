@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.file;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.FileVersion;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -60,4 +61,12 @@ public interface FileVersionMapper {
 	int findCountByFileId(String fileId);
 
 	List<FileVersion> findByFileId(String fileId);
+
+	/**
+	 * 何少华
+	 * 删除一个文件的所有历史版本信息
+	 * @param fileId 文件id
+	 */
+	@Delete("delete from prm_file_version where file_id = #{fileId}")
+	void deleteVersionInfoByFileId(String fileId);
 }

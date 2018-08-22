@@ -3,10 +3,7 @@ package com.art1001.supply.mapper.user;
 import java.util.List;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.base.Pager;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 /**
  * mapper接口
@@ -96,4 +93,11 @@ public interface UserNewsMapper {
 	 */
 	@Update("update prm_user_news set news_handle = 1,news_count = 0 where news_id = #{id}")
     void updateIsRead(String id);
+
+	/**
+	 * 删除某个信息的所有通知消息
+	 * @param publicId 信息id
+	 */
+	@Delete("delete from prm_user_news where news_public_id = #{publicId}")
+    void deleteNewsByPublicId(String publicId);
 }

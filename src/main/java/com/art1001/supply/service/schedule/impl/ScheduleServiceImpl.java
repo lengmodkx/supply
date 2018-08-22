@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.PublicVO;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -45,6 +47,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 	private LogService logService;
 
 	@Resource
+	private Base base;
+
+	@Resource
 	private SimpMessagingTemplate messagingTemplate;
 	/**
 	 * 查询分页schedule数据
@@ -75,6 +80,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	 */
 	@Override
 	public void deleteScheduleById(String id){
+		base.deleteItemOther(id,BindingConstants.BINDING_SCHEDULE_NAME);
 		scheduleMapper.deleteScheduleById(id);
 	}
 
@@ -332,5 +338,34 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public List<Schedule> findCalendarSchedule() {
 		return scheduleMapper.findCalendarSchedule(ShiroAuthenticationManager.getUserId());
+	}
+
+	/**
+	 * 查询出在该项目回收站中的日程
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<Schedule> findRecycleBin(String projectId) {
+		return scheduleMapper.findRecycleBin(projectId);
+	}
+
+	/**
+	 * 将日程移入到回收站
+	 * @param scheduleId 日程id
+	 */
+	@Override
+	public void moveToRecycleBin(String scheduleId) {
+		scheduleMapper.moveToRecycleBin(scheduleId,System.currentTimeMillis());
+	}
+
+	/**
+	 * 恢复日程
+	 * @param scheduleId 日程id
+	 */
+	@Override
+	public void recoverySchedule(String scheduleId) {
+		scheduleMapper.recoverySchedule(scheduleId);
+		Log log = logService.saveLog(scheduleId,TaskLogFunction.A29.getName(),1);
 	}
 }

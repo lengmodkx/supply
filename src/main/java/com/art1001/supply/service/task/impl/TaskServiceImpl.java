@@ -10,10 +10,12 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
@@ -29,6 +31,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.fabulous.FabulousMapper;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.binding.BindingService;
@@ -119,8 +122,13 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    /** 标签标签的逻辑层接口 */
     @Resource
     private TagRelationService tagRelationService;
+
+    /** 公共封装的方法 */
+    @Resource
+    private Base base;
 
 	/**
 	 * 重写方法
@@ -143,20 +151,6 @@ public class TaskServiceImpl implements TaskService {
 	public Task findTaskByTaskId(String taskId){
 		return taskMapper.findTaskByTaskId(taskId);
 	}
-
-    /**
-	 * 重写方法
-	 * 删除任务
-	 * 通过taskId删除task数据
-     * @param taskId 任务id
-     */
-	@Override
-	public int deleteTaskByTaskId(String taskId){
-	    //删除任务-成员-文件的关联信息
-        taskMemberService.clearTaskMemberByTaskId(taskId);
-        //删除任务信息
-	    return taskMapper.deleteTaskByTaskId(taskId);
-    }
 
 	/**
 	 * 重写方法
@@ -626,7 +620,7 @@ public class TaskServiceImpl implements TaskService {
     public int clickFabulous(Task task) {
         Integer taskFabulous = taskMapper.findTaskFabulousCount(task.getTaskId());
         Fabulous fabulous = new Fabulous();
-        fabulous.setTaskId(task.getTaskId());
+        fabulous.setPublicId(task.getTaskId());
         fabulous.setMemberId(ShiroAuthenticationManager.getUserId());
         fabulous.setFabulousId(System.currentTimeMillis());
         //添加任务和赞的关系数据
@@ -1009,16 +1003,13 @@ public class TaskServiceImpl implements TaskService {
      * 恢复任务
      * @param taskId 任务的id
      * @param menuId 恢复后放到哪个菜单
-     * @param projectId 项目id
      */
     @Override
-    public void recoveryTask(String taskId, String menuId,String projectId) {
-        taskMapper.recoverTask(taskId,menuId,System.currentTimeMillis(),projectId);
-        //任务状态为0 日志打印内容为 xxx把任务移入了回收站
-        TaskLogVO taskLogVO = new TaskLogVO();
+    public void recoveryTask(String taskId, String menuId) {
+        taskMapper.recoverTask(taskId,menuId,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
-        logService.saveLog(task.getTaskId(),TaskLogFunction.P.getName(),1);
+        logService.saveLog(task.getTaskId(),TaskLogFunction.O.getName(),1);
     }
 
 
@@ -1134,6 +1125,16 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Relation findTaskGroupInfoByTaskMenuId(String menuParent) {
         return taskMapper.findTaskGroupInfoByTaskMenuId(menuParent);
+    }
+
+    /**
+     * 查询出在回收站中的任务
+     * @param projectId 项目id
+     * @return 该项目下所有在回收站的任务集合
+     */
+    @Override
+    public List<Task> findRecycleBin(String projectId) {
+        return taskMapper.findRecycleBin(projectId);
     }
 
     /**
@@ -1603,5 +1604,23 @@ public class TaskServiceImpl implements TaskService {
         }
         //更新任务信息
         int result = taskMapper.updateTask(task);
+    }
+
+    /**
+     * 永久删除任务
+     * 步骤1 : 删除此任务的所有关联信息
+     * 步骤2 : 删除此任务的所有日志记录
+     * 步骤3 : 删除此任务的所有评论记录
+     * 步骤4 : 删除此任务的所有得赞记录
+     * 步骤5 : 删除此任务的所有收藏记录
+     * 步骤6 : 删除此任务的所有标签记录
+     * 步骤7 : 删除和此任务相关的用户消息信息
+     * 步骤8 : 删除此任务上传的文件信息
+     * @param taskId 任务id
+     */
+    @Override
+    public void deleteTask(String taskId) {
+        base.deleteItemOther(taskId,BindingConstants.BINDING_TASK_NAME);
+        taskMapper.deleteTask(taskId);
     }
 }

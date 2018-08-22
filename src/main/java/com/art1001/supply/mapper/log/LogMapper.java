@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.log;
 import java.util.List;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.base.Pager;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -63,4 +64,11 @@ public interface LogMapper {
     List<Log> initLog(String publicId);
 
     List<Log> findLogByProjectId(String projectId);
+
+	/**
+	 * 删除某个信息的所有日志和聊天信息
+	 * @param publicId 信息id
+	 */
+	@Delete("delete from prm_log where public_id = #{publicId}")
+	void deleteByPublicId(String publicId);
 }

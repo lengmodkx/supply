@@ -242,4 +242,10 @@
         from prm_share where project_id = #{projectId}
     </select>
 
+    <!-- 查询出在此项目回收站中的所有分享 -->
+    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from prm_share where is_del = 1 and project_id = #{projectId}
+    </select>
+
 </mapper>
