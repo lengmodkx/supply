@@ -109,6 +109,7 @@ public class TagServiceImpl implements TagService {
 		tag.setUpdateTime(System.currentTimeMillis());
 		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
 		tag.setMemberId(userEntity.getId());
+		tag.setIsDel(0);
         tagMapper.saveTag(tag);
         return tag;
     }

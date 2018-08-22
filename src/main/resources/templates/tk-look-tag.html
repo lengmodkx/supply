@@ -196,7 +196,6 @@
                 type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
                 offset:[top,left],
-                area:['250px','140px'],
                 fixed: false,
                 shadeClose: true,
                 closeBtn: 0,
@@ -224,6 +223,7 @@
         $(".bqcd").show().siblings().hide();
     });
     $(".close-tag").click(function () {
+        $(".bqcd").show().siblings().hide();
         layer.closeAll('page');
     });
     $(".color-pick li").click(function () {
@@ -243,5 +243,12 @@
         $('.look-tag-right').first().show();
     })
 
+    $('.remove-to-trash-btn').click(function () {
+        
+    });
+    
+    
+    
+    
 </script>
 </html>

@@ -8,6 +8,7 @@
         <result column="bg_color" property="bgColor" jdbcType="VARCHAR"/>
         <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
         <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="BIGINT"/>
         <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
     </resultMap>
@@ -18,6 +19,7 @@
 		bg_color,
 		member_id,
 		project_id,
+            is_del,
 		create_time,
 		update_time
 	</sql>
@@ -68,7 +70,7 @@
 
         select
         <include refid="Base_Column_List"/>
-        from prm_tag where tag_id = #{tagId}
+        from prm_tag where tag_id = #{tagId} and is_del=0
 
     </select>
 
@@ -79,7 +81,7 @@
         tg.tag_name,
         tg.bg_color
         from prm_tag tg left join prm_tag_relation tr on tg.tag_id = tr.tag_id
-        where 1=1
+        where is_del=0
         <if test="publicType =='任务'">
              and tr.task_id = #{publicId}
         </if>
@@ -98,13 +100,13 @@
     <select id="findTagByTagIds" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from prm_tag where 1=1
+        from prm_tag where is_del=0
         <if test="tagIds != null and tagIds != ''">
             and tag_id in
             <foreach collection="tagIds.split(',')" item="tagId" index="index" open="(" separator="," close=")">
                 #{tagId}
             </foreach>
-            order by field
+            order by tagId
             <foreach collection="tagIds.split(',')" item="tagId" index="index" open="(tag_id," separator="," close=")">
                  #{tagId}
             </foreach>
@@ -118,24 +120,25 @@
 		SELECT COUNT(0) FROM prm_tag
 		WHERE
 		  tag_name = #{tagName}
-		and project_id = #{projectId}
+		and project_id = #{projectId} and is_del=0
 	</select>
 
     <select id="findByProjectId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from prm_tag
-        where project_id = #{projectId}
+        where project_id = #{projectId} and is_del=0
     </select>
 
     <select id="findByIds" resultMap="BaseResultMap">
         select
         <include refid="List_Column_List"/>
         from prm_tag
-        where tag_id in
+        where is_del=0 and tag_id in
         <foreach collection="array" open="(" separator="," close=")" item="id">
             #{id}
         </foreach>
+
     </select>
 
     <delete id="deleteTagByTagId" parameterType="java.lang.Long">
@@ -161,7 +164,9 @@
             <if test="projectId != null and projectId != ''">
                 project_id,
             </if>
-
+            <if test="isDel != null and isDel != ''">
+                is_del,
+            </if>
             <if test="createTime != null and createTime != ''">
                 create_time,
             </if>
@@ -183,7 +188,9 @@
             <if test="projectId != null and projectId != ''">
                 #{projectId},
             </if>
-
+            <if test="isDel != null and isDel != ''">
+                #{isDel},
+            </if>
             <if test="createTime != null and createTime != ''">
                 #{createTime},
             </if>
@@ -210,7 +217,9 @@
             <if test="projectId != null and projectId != ''">
                 project_id = #{projectId},
             </if>
-
+            <if test="isDel != null and isDel != ''">
+                is_del = #{isDel},
+            </if>
             <if test="updateTime != null and updateTime != ''">
                 update_time = #{updateTime},
             </if>
@@ -223,7 +232,7 @@
     <!-- 模糊查询标签 -->
     <select id="searchTag" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
-        from prm_tag where tag_name like concat('%',#{tagName},'%')
+        from prm_tag where tag_name like concat('%',#{tagName},'%') and is_del=0
     </select>
 
     <!-- 保存多条标签信息 -->
@@ -265,6 +274,6 @@
     <!-- 查询出在该项目回收站中的标签 -->
     <select id="findRecycleBin" parameterType="java.lang.String">
         select <include refid="Base_Column_List"/>
-        from prm_tag where is_del = 0 and project_id = #{projectId}s
+        from prm_tag where is_del = 1 and project_id = #{projectId}
     </select>
 </mapper>

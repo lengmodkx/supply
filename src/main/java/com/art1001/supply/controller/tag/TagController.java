@@ -14,6 +14,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskPushType;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -309,4 +310,17 @@ public class TagController extends BaseController {
         }
         return jsonObject;
     }
+
+    @PostMapping("updateTag")
+    public JSONObject updateTag(Tag tag){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            tagService.updateTag(tag);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 }
