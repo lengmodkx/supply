@@ -312,10 +312,12 @@ public class TagController extends BaseController {
     }
 
     @PostMapping("updateTag")
+    @ResponseBody
     public JSONObject updateTag(Tag tag){
         JSONObject jsonObject = new JSONObject();
         try{
             tagService.updateTag(tag);
+            jsonObject.put("result",1);
         }catch (Exception e){
             throw new AjaxException(e);
         }
