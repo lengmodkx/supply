@@ -133,6 +133,7 @@ $(function () {
         layer.open({
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
+            closeBtn: 0,
             area:['800px','600px'],
             shadeClose: true, //点击遮罩关闭
             anim: 1,  //动画 0-6
