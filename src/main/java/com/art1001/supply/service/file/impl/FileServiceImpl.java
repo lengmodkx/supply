@@ -6,6 +6,7 @@ import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
@@ -487,7 +488,7 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<File> findRecycleBin(String projectId) {
+    public List<RecycleBinVO> findRecycleBin(String projectId) {
         return fileMapper.findRecycleBin(projectId);
     }
 

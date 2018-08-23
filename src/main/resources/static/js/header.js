@@ -153,6 +153,28 @@ $(function () {
         });
     });
 
+    $('.menu-recycle-bin').click(function () {
+        recycleBinShow($(this).attr('data'));
+    })
+
+    function recycleBinShow() {
+        //修改任务 弹框界面
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            parent.layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset: '20px',
+                area:['800px','600px'],
+                fixed: false,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: "/project/viewRecycleBin.html?projectId="+ projectId
+            });
+        });
+    }
+
 
     $('.head-right .avatar').click(function () {
          $('.vertical-nav').slideToggle();

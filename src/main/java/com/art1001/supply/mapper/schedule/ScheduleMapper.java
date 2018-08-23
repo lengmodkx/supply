@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.schedule;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -140,7 +141,7 @@ public interface ScheduleMapper {
 	 * @param projectId 项目id
 	 * @return
 	 */
-    List<Schedule> findRecycleBin(String projectId);
+    List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 日程移入到回收站

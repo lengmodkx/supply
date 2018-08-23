@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -1133,7 +1134,7 @@ public class TaskServiceImpl implements TaskService {
      * @return 该项目下所有在回收站的任务集合
      */
     @Override
-    public List<Task> findRecycleBin(String projectId) {
+    public List<RecycleBinVO> findRecycleBin(String projectId) {
         return taskMapper.findRecycleBin(projectId);
     }
 

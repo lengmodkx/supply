@@ -24,6 +24,8 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.IdGen;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
@@ -351,6 +353,34 @@ public class ShareController extends BaseController {
 
         }catch (Exception e){
             throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移入回收站
+     * @param shareId 分享id
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("moveToRecycleBin")
+    @ResponseBody
+    public JSONObject moveToRecycleBin(String shareId, String projectId){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            shareService.moveToRecycleBin(shareId);
+            jsonObject.put("result",1);
+
+            //封装推送数据
+            pushData.put("shareId",shareId);
+            pushData.put("type","将分享移入了回收站");
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+            e.printStackTrace();
+            log.error("系统异常,操作失败!");
         }
         return jsonObject;
     }

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
@@ -622,4 +623,40 @@ public class ProjectController extends BaseController {
         }
         return jsonObject;
     }
+
+    /**
+     * 弹出回收站页面 并且查询出回收站中的任务
+     * @param projectId 项目id
+     * @param model
+     * @return
+     */
+    @RequestMapping("viewRecycleBin.html")
+    public String viewRecycleBin(String projectId,Model model){
+        //查询出该项目下 回收站中的任务
+        model.addAttribute("tasks",taskService.findRecycleBin(projectId));
+        model.addAttribute("projectId",projectId);
+        return "tk-recycle-bin";
+    }
+
+    /**
+     * 在回收站页面点击左边选项卡时 查询相应的信息
+     * @param projectId 项目id
+     * @param type 要查询的类型
+     * @return
+     */
+    @PostMapping("recycleBinInfo")
+    @ResponseBody
+    public JSONObject recycleBinInfo(String projectId, String type){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<RecycleBinVO> recycleBinVOS = projectService.recycleBinInfo(projectId, type);
+            jsonObject.put("data",recycleBinVOS);
+        } catch (Exception e){
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+            log.error("系统异常,数据拉取失败!,{}",e);
+        }
+        return jsonObject;
+    }
+
 }

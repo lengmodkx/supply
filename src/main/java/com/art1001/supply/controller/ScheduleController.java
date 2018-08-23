@@ -251,6 +251,32 @@ public class ScheduleController extends BaseController {
     }
 
     /**
+     * 将日程移入回收站
+     * @param scheduleId 日程id
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("moveToRecycleBin")
+    @ResponseBody
+    public JSONObject moveToRecycleBin(String scheduleId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            scheduleService.moveToRecycleBin(scheduleId);
+
+            pushData.put("scheduleId",scheduleId);
+            pushData.put("type","将日程移入了回收站");
+            messagingTemplate.convertAndSend("/topic/"+scheduleId,new ServerMessage(JSON.toJSONString(pushData)));
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常,操作失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+        }
+        return jsonObject;
+    }
+
+    /**
      * 查询出日程的全部成员信息
      * @param scheduleId 日程id
      * @param projectId 项目id

@@ -454,6 +454,19 @@ layui.use('form', function(){
 });
 
 /**
+ * 点击移入回收站
+ */
+$('.to-bin').click(function () {
+    var args = {"scheduleId":scheduleId,"projectId":projectId};
+    var url = "/schedule/moveToRecycleBin";
+    $.post(url,args,function (data) {
+       if(data.result == 0){
+           layer.msg(data.msg);
+       }
+    });
+});
+
+/**
  * 监听提醒模式的选择
  */
 layui.use('form', function(){

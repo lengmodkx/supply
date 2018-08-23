@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSON;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
@@ -247,7 +248,7 @@ public class ShareServiceImpl implements ShareService {
 	 * @return 该项目下所有在回收站的分享集合
 	 */
 	@Override
-	public List<Share> findRecycleBin(String projectId) {
+	public List<RecycleBinVO> findRecycleBin(String projectId) {
 		return shareMapper.findRecycleBin(projectId);
 	}
 

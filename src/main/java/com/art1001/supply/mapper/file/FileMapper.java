@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -179,7 +180,7 @@ public interface FileMapper {
 	 * @param projectId 项目id
 	 * @return
 	 */
-    List<File> findRecycleBin(String projectId);
+    List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
 	 * 恢复文件

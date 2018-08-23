@@ -33,6 +33,13 @@
 			<result property="bgColor" column="bg_color"/>
 		</collection>
 	</resultMap>
+
+	<!-- 映射回收站数据 -->
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
+		<id column="file_id" property="id"/>
+		<result column="file_name" property="name" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
     
 	<sql id="Base_Column_List">
 				file_id,
@@ -454,9 +461,9 @@
 	</select>
 
 	<!-- 查询出在该项目回收站中的文件 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_file where file_del = 1 where project_id = #{projectId}
+	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
+		select file_name,file_id,update_time
+		from prm_file where file_del = 1 and project_id = #{projectId}
 	</select>
 	
 </mapper>

@@ -446,7 +446,18 @@
             if(share.type == '更新了参与者'){
                 getLog(share.object.log,share.object.shareId);
                 updatePeopel(share);
-
+            }
+            if(share.type === '将分享移入了回收站'){
+                $('.share-list').each(function () {
+                   if($(this).attr('data') === share.shareId){
+                       $(this).remove();
+                   }
+                });
+                $('.share-right').each(function () {
+                   if($(this).attr('data') === share.shareId){
+                       $(this).remove();
+                   }
+                });
             }
             //添加标签
             if(share.object.type === 12){
@@ -685,14 +696,10 @@
     });
 
     $('.delete_share').click(function () {
-        $.post('/share/shareDelete',{"shareId":$('.delete_share').attr('id')},function (data) {
-
-            if(data.result===1){
-                layer.msg(data.msg,{icon:1});
-            }else{
+        $.post('/share/moveToRecycleBin',{"shareId":$('.delete_share').attr('id'),"projectId":projectId},function (data) {
+            if(data.result != 1) {
                 layer.msg("移除失败",{icon:1});
             }
-
         });
     });
 
