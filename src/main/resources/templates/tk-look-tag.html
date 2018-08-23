@@ -16,7 +16,7 @@
         <!--左侧 标签-->
         <div class="look-tag-left">
             <div class="left-head boxsizing">
-                <div class="add-new-tag">
+                <div class="add-new-tag" th:id="${projectId}">
                     <i class="layui-icon layui-icon-add-circle" style="font-size: 16px;"></i>
                     <span>新标签</span>
                 </div>
@@ -26,7 +26,7 @@
                 <li class="boxsizing tag-li" th:each="tag:${tagList}" th:data-id="${tag.tagId}">
                     <span class="dot" th:style="'background-color:'+${tag.bgColor}+''"></span>
                     <p class="tag-name over-hidden" th:text="${tag.tagName}">标签名称</p>
-                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:data="${tag.tagId}"></i>
+                    <i class="layui-icon layui-icon-down down-jiantou" style="font-size: 14px;" th:data="${tag.tagId}" th:value="${tag.tagName}"></i>
                 </li>
             </ul>
         </div>
@@ -117,11 +117,11 @@
             <i class="layui-icon layui-icon-close close-tag-menu" style="font-size: 16px;"></i>
         </div>
         <ul>
-            <li class="boxsizing">
+            <li class="boxsizing edit_tag">
                 <i class="layui-icon layui-icon-edit" style="font-size: 16px;"></i>
                 <span>编辑标签</span>
             </li>
-            <li class="boxsizing">
+            <li class="boxsizing delete_tag" >
                 <i class="layui-icon layui-icon-delete" style="font-size: 16px;"></i>
                 <span>移动到回收站</span>
             </li>
@@ -135,8 +135,41 @@
                 <i class="layui-icon layui-icon-close close-tag" style="font-size: 15px; color: #a6a6a6;"></i>
             </div>
             <div class="build-tags-con boxsizing">
-                <input class="tag-name-tk boxsizing" type="text" placeholder="标签名称">
-                <ul class="color-pick">
+                <input class="tag-name-tk boxsizing" id="tag-name-edit" type="text" placeholder="标签名称">
+                <ul class="color-pick edit_color_tag">
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                    <li>
+                        <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;"></i>
+                    </li>
+                </ul>
+                <button class="tag-save">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cjbq" style="display: none">
+        <div class="build-tags">
+            <div class="build-tags-title boxsizing">
+                添加标签
+                <i class="layui-icon layui-icon-close close-tag add_close_tag" style="font-size: 15px; color: #a6a6a6;"></i>
+            </div>
+            <div class="build-tags-con boxsizing">
+                <input class="tag-name-tk boxsizing" id="add_tag_input" type="text" placeholder="标签名称">
+                <ul class="color-pick add_color_tag">
                     <li>
                         <i class="layui-icon layui-icon-ok" style="font-size: 14px; color: #fff;display: block"></i>
                     </li>
@@ -160,6 +193,7 @@
             </div>
         </div>
     </div>
+
     <div style="display: none" class="boxsizing remove-to-trash">
         <div class="build-tags-title boxsizing">
             <i class="layui-icon layui-icon-left go-return" style="font-size: 15px; color: #a6a6a6;"></i>
@@ -175,7 +209,8 @@
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script>
+<script th:inline="javascript">
+    var projectId = [[${projectId}]];
     layui.use('form', function(){
         var form = layui.form;
     });
@@ -190,23 +225,37 @@
     $("html").on("click",".down-jiantou",function () {
         var top=$(this).offset().top+20+'px';
         var left=$(this).offset().left-120+'px';
-        layui.use('layer', function(){
-            var layer = layui.layer;
-            layer.open({
-                type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                title: false, //标题
-                offset:[top,left],
-                fixed: false,
-                shadeClose: true,
-                closeBtn: 0,
-                shade: 0,
-                anim: 1,  //动画 0-6
-                content: $(".tag-menu"),
-                success:function () {
-                    var data_id = $('.down-jiantou').attr('data');
-                    $('.tag-menu ul li').each(function (data,item) {
-                        $(item).attr('data-id',data_id);
-                    });
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset:[top,left],
+            fixed: false,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: $(".tag-menu"),
+            success:function () {
+                var tagId = $('.down-jiantou').attr('data');
+                var tagName = $('.down-jiantou').attr('value');
+                $('.tag-menu ul li').each(function (data,item) {
+                    $(item).attr('data-id',tagId);
+                });
+                $('#tag-name-edit').val(tagName);
+            }
+        });
+        $('.tag-save').click(function () {
+            var tagId = $('.edit_tag').attr('data-id');
+            var tagName = $(this).siblings('#tag-name-edit').val();
+            var bgColor="";
+            $(this).siblings('.edit_color_tag').find('li').each(function () {
+                if ($(this).find('i').is(":visible")) {
+                    bgColor = $(this).css("background-color");
+                }
+            });
+            $.post('/tag/updateTag',{"tagId":tagId,"tagName":tagName,"bgColor":bgColor},function (data) {
+                if(data.result===1){
+                    window.location.reload();
                 }
             });
         });
@@ -241,14 +290,59 @@
 
     $(function () {
         $('.look-tag-right').first().show();
-    })
+    });
 
     $('.remove-to-trash-btn').click(function () {
-        
+        var tagId = $('.delete_tag').attr('data-id');
+        $.post('/tag/updateTag',{"tagId":tagId,"isDel":1},function (data) {
+            if(data.result===1){
+                window.location.reload();
+            }
+        });
     });
+
     
-    
-    
-    
+    $('.add-new-tag').click(function () {
+        var top=$(this).offset().top+20+'px';
+        var left=$(this).offset().left+20+'px';
+        layer.open({
+            type: 1,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            offset:[top,left],
+            fixed: false,
+            shadeClose: true,
+            closeBtn: 0,
+            shade: 0,
+            anim: 1,  //动画 0-6
+            content: $(".cjbq").html()
+        });
+        $(".add_close_tag").click(function () {
+            layer.closeAll('page');
+        });
+        $(".add_color_tag li").click(function () {
+            $(this).find("i").show();
+            $(this).siblings().find("i").hide()
+        });
+
+        $('.tag-ok').click(function () {
+            var tagName = $(this).siblings('#add_tag_input').val();
+            var bgColor="";
+            $(this).siblings('.add_color_tag').find('li').each(function () {
+                if ($(this).find('i').is(":visible")) {
+                    bgColor = $(this).css("background-color");
+                }
+            });
+            if(tagName==null||tagName===''){
+                layer.msg("请输入标签名称",{icon:5});
+            }else{
+                $.post('/tag/add',{"projectId":projectId,"tagName":tagName,"bgColor":bgColor},function (data) {
+                    if(data.result===1){
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    });
+
 </script>
 </html>
