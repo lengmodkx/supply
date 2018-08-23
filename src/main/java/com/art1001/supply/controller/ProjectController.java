@@ -635,6 +635,8 @@ public class ProjectController extends BaseController {
         //查询出该项目下 回收站中的任务
         model.addAttribute("tasks",taskService.findRecycleBin(projectId));
         model.addAttribute("projectId",projectId);
+        model.addAttribute("project",projectService.findProjectByProjectId(projectId));
+        model.addAttribute("menus",relationService.findMenusByProjectId(projectId));
         return "tk-recycle-bin";
     }
 

@@ -491,5 +491,11 @@ public interface TaskService {
 	 */
 	void deleteTask(String taskId);
 
+	/**
+	 * 删除一个任务的所有子任务
+	 * @param taskId 任务id
+	 */
+	void deleteSubTaskByParentId(String taskId);
+
 
 }

@@ -161,7 +161,6 @@
 	</delete>
 	
 	<insert id="saveSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
-
 		insert into prm_schedule
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
@@ -212,9 +211,6 @@
 			</if>
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				schedule_calendar,
-			</if>
-			<if test="idDel != null and isDel != ''">
-				is_del,
 			</if>
 		</trim>
 
@@ -267,9 +263,6 @@
 			</if>
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				#{scheduleCalendar},
-			</if>
-			<if test="isDel != null and isDel != ''">
-				#{isDel},
 			</if>
 		</trim>
 
@@ -350,7 +343,7 @@
 	</select>
 	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.lang.String">
 
-		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date}
+		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date} and is_del = 0
 
 	</select>
 

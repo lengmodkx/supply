@@ -36,6 +36,11 @@ stompClient.connect({},
             return false;
         }
 
+        if(task.type === '恢复了任务'){
+            taskShow(task.task);
+            return false;
+        }
+
         if(task.type === '把任务执行者指派给了'){
             $('.tx'+task.object.taskId).attr('src',IMAGE_SERVER+task.object.executorInfo.userInfo.image);
             $('.tx'+task.object.taskId).css('opacity',"1");
@@ -93,10 +98,10 @@ stompClient.connect({},
             $('.how-repeat').remove();
             $('.box'+task.object.task.taskId+' .remind').before('<span class="how-repeat">'+task.object.task.repeat+'</span>');
         }
-        if(task.object.status === '完成'){
-            $('#'+task.object.taskId +' .layui-form-checkbox').addClass('layui-form-checked')
+        if(task.status === '完成'){
+            $('#'+task.taskId +' .layui-form-checkbox').addClass('layui-form-checked')
         } else{
-            $('#'+task.object.taskId +' .layui-form-checkbox').removeClass('layui-form-checked')
+            $('#'+task.taskId +' .layui-form-checkbox').removeClass('layui-form-checked')
         }
 
 

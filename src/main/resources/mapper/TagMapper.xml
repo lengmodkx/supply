@@ -272,7 +272,7 @@
     </insert>
 
     <!-- 查询出在该项目回收站中的标签 -->
-    <select id="findRecycleBin" parameterType="java.lang.String">
+    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
         from prm_tag where is_del = 1 and project_id = #{projectId}
     </select>

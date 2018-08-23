@@ -324,5 +324,13 @@ public class TagController extends BaseController {
         return jsonObject;
     }
 
+    @RequestMapping("allTag")
+    @ResponseBody
+    public String allTag(){
+        List<Tag> tagAllList = tagService.findTagAllList();
+        return JSON.toJSONString(tagAllList);
+
+    }
+
 
 }

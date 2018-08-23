@@ -86,7 +86,7 @@
                         <span>标签</span>
                     </div>
                     <div class="menu-list menu-recycle-bin" th:data="${project.projectId}">
-                        <img src="../static/image/biaoqian.png" th:src="@{/image/biaoqian.png}" />
+                        <img src="../static/image/hsz.png" th:src="@{/image/hsz.png}" />
                         <span>查看回收站</span>
                     </div>
                     <!--<div class="menu-list menu-cj">-->
@@ -103,7 +103,7 @@
                     <!--<span>项目进展</span>-->
                     <!--</div>-->
                     <!--<img src="" class="pro-evolve">-->
-                    <div class="heng-line"></div>
+                    <!--<div class="heng-line"></div>-->
                     <div class="menu-list menu-trends-title" style="margin-top: 24px">
                         <img src="../static/image/dongtai.png" th:src="@{/image/dongtai.png}" />
                         <span>项目动态</span>
@@ -153,12 +153,10 @@
     var projectId = [[${project.projectId}]];
 
     $('.menu-recycle-bin').click(function () {
-        alert(1);
         recycleBinShow($(this).attr('data'));
     })
 
     function recycleBinShow() {
-        //修改任务 弹框界面
         function changeRenwu2(projectId) {
             layui.use('layer', function(){
                 var layer = layui.layer;

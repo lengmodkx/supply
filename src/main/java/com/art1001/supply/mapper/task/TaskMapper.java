@@ -504,4 +504,11 @@ public interface TaskMapper {
 	 * @param taskId 任务id
 	 */
 	void deleteTask(String taskId);
+
+	/**
+	 * 删除一个任务的所有子任务
+	 * @param taskId 任务id
+	 */
+	@Delete("delete from prm_task where parent_id = #{taskId}")
+    void deleteSubTaskByParentId(String taskId);
 }

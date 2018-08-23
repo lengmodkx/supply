@@ -140,4 +140,11 @@ public interface RelationMapper {
 	Relation getRelationAndAllTaskInfo(String relationId);
 
 	int findMenuMaxOrder();
+
+	/**
+	 * 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息)
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Relation> findMenusByProjectId(String projectId);
 }

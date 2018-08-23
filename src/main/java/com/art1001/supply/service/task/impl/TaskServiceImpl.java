@@ -1617,11 +1617,22 @@ public class TaskServiceImpl implements TaskService {
      * 步骤6 : 删除此任务的所有标签记录
      * 步骤7 : 删除和此任务相关的用户消息信息
      * 步骤8 : 删除此任务上传的文件信息
+     * 步骤9 : 删除此任务的子任务
      * @param taskId 任务id
      */
     @Override
     public void deleteTask(String taskId) {
         base.deleteItemOther(taskId,BindingConstants.BINDING_TASK_NAME);
+        taskMapper.deleteSubTaskByParentId(taskId);
         taskMapper.deleteTask(taskId);
+    }
+
+    /**
+     * 删除一个任务的所有子任务
+     * @param taskId 任务id
+     */
+    @Override
+    public void deleteSubTaskByParentId(String taskId) {
+        taskMapper.deleteSubTaskByParentId(taskId);
     }
 }

@@ -325,4 +325,10 @@
 		select <include refid="Base_Column_List"/>
 		from prm_relation where relation_id = #{id}
 	</select>
+
+	<!-- 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息) -->
+	<select id="findMenusByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		  select <include refid="Base_Column_List"/>
+		  from prm_relation where project_id = #{projectId} and lable = 1
+	</select>
 </mapper>

@@ -266,7 +266,7 @@ public class ScheduleController extends BaseController {
 
             pushData.put("scheduleId",scheduleId);
             pushData.put("type","将日程移入了回收站");
-            messagingTemplate.convertAndSend("/topic/"+scheduleId,new ServerMessage(JSON.toJSONString(pushData)));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e){
             e.printStackTrace();
             log.error("系统异常,操作失败!");
@@ -584,6 +584,58 @@ public class ScheduleController extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 永久的删除日程
+     * @param id 日程id
+     * @return
+     */
+    @PostMapping("/deleteSchedule")
+    @ResponseBody
+    public JSONObject deleteSchedule(String id,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            scheduleService.deleteScheduleById(id);
+            pushData.put("id",id);
+            pushData.put("type","删除回收站信息");
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+            log.error("系统异常,操作失败!");
+        }
+        return jsonObject;
+    }
 
+    /**
+     * 恢复
+     * @param scheduleId 日程id
+     * @param projectId 项目
+     * @return
+     */
+    @PostMapping("recoverySchedule")
+    @ResponseBody
+    public JSONObject recoverySchedule(String scheduleId,String projectId){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            scheduleService.recoverySchedule(scheduleId);
+            jsonObject.put("result",1);
+            Schedule scheduleById = scheduleService.findScheduleById(scheduleId);
+            pushData.put("schedule",scheduleById);
+            pushData.put("date",DateUtils.getDateStr(new Date(scheduleById.getCreateTime()),"yyyy-MM"));
+            pushData.put("type","恢复了日程");
 
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            pushData.put("type","恢复了信息");
+            pushData.put("id",scheduleId);
+            pushData.remove("schedule");
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+            log.error("系统异常,操作失败!");
+        }
+        return jsonObject;
+    }
 }

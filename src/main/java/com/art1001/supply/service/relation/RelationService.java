@@ -182,4 +182,11 @@ public interface RelationService {
 	 * 根据菜单的id 查询出该菜单的信息及菜单下的所有任务信息
 	 */
 	Relation getRelationAndAllTaskInfo(String id);
+
+	/**
+	 * 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息)
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<Relation> findMenusByProjectId(String projectId);
 }

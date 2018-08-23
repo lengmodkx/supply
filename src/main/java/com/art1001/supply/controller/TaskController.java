@@ -350,11 +350,17 @@ public class TaskController {
         try {
             taskService.recoveryTask(taskId,menuId);
             jsonObject.put("msg","恢复任务成功!");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
 
             //封装推送数据
             pushData.put("task",taskService.findTaskByTaskId(taskId));
+            pushData.put("type","恢复了任务");
             messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            pushData.put("type","恢复了信息");
+            pushData.remove("task");
+            pushData.put("id",taskId);
+            //推送到项目的回收站的频道
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e){
             log.error("系统异常,任务恢复失败!");
             throw new AjaxException(e);
@@ -421,13 +427,22 @@ public class TaskController {
      */
     @PostMapping("delTask")
     @ResponseBody
-    public JSONObject delTask(@RequestParam String taskId){
+    public JSONObject delTask(@RequestParam String taskId, @RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
         try {
             //永久删除任务
             taskService.deleteTask(taskId);
-                jsonObject.put("msg","以将该任务清除!");
-                jsonObject.put("result","1");
+            jsonObject.put("msg","以将该任务清除!");
+            jsonObject.put("result",1);
+
+            //封装推送数据
+            pushData.put("id",taskId);
+            pushData.put("type","删除回收站信息");
+
+            //推送到项目的回收站的频道
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
+
         } catch (Exception e){
             log.error("系统异常,移除失败! 任务: ,{},{}",taskId,e);
             throw new AjaxException(e);
@@ -451,12 +466,10 @@ public class TaskController {
             jsonObject.put("msg","修改成功!");
             jsonObject.put("result",1);
             jsonObject.put("taskLog",taskLogVO);
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.S.getName());
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("taskId",task.getTaskId());
-            map.put("status",taskInfo.getTaskStatus());
-            taskPushType.setObject(map);
-            messagingTemplate.convertAndSend("/topic/"+taskInfo.getProjectId(),new ServerMessage(JSON.toJSONString(taskPushType)));
+            jsonObject.put("taskId",task.getTaskId());
+            jsonObject.put("type",TaskLogFunction.S.getName());
+            jsonObject.put("status",taskInfo.getTaskStatus());
+            messagingTemplate.convertAndSend("/topic/"+taskInfo.getProjectId(),new ServerMessage(JSON.toJSONString(jsonObject)));
         } catch (ServiceException e){
             jsonObject.put("result",0);
             jsonObject.put("msg",e.getMessage());

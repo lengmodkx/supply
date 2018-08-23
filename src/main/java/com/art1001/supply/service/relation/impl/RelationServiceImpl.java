@@ -385,4 +385,14 @@ public class RelationServiceImpl implements RelationService {
 	public Relation getRelationAndAllTaskInfo(String relationId) {
 		return relationMapper.getRelationAndAllTaskInfo(relationId);
 	}
+
+	/**
+	 * 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息)
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<Relation> findMenusByProjectId(String projectId) {
+		return relationMapper.findMenusByProjectId(projectId);
+	}
 }

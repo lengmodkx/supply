@@ -460,12 +460,47 @@ public class FileController extends BaseController {
      */
     @RequestMapping("/deleteFile")
     @ResponseBody
-    public JSONObject deleteFile(@RequestParam String fileId) {
+    public JSONObject deleteFile(@RequestParam String fileId,String projectId) {
         JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
         try {
             fileService.deleteFileById(fileId);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "删除成功");
+
+            pushData.put("id",fileId);
+            pushData.put("type","删除回收站信息");
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
+        } catch (Exception e) {
+            log.error("删除文件异常, {}", e);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "删除成功");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 恢复
+     *
+     * @param fileId 文件id
+     */
+    @RequestMapping("/recoveryFile")
+    @ResponseBody
+    public JSONObject recoveryFile(@RequestParam String fileId,String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            fileService.recoveryFile(fileId);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "恢复成功");
+
+            pushData.put("file",fileService.findFileById(fileId));
+            pushData.put("id",fileId);
+            pushData.put("type","恢复了文件");
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            pushData.remove("file");
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e) {
             log.error("删除文件异常, {}", e);
             jsonObject.put("result", 1);

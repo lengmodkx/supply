@@ -472,4 +472,37 @@ public class ShareController extends BaseController {
         model.addAttribute("share",byId);
         return "revisetShare";
     }
+
+    /**
+     * 恢复分享
+     * @param shareId 分享id
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("recoveryShare")
+    @ResponseBody
+    public JSONObject recoveryShare(String shareId, String projectId){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject pushData = new JSONObject();
+        try {
+            shareService.recoveryShare(shareId);
+            jsonObject.put("result",1);
+
+            //包装推送数据
+            pushData.put("share",shareService.findById(shareId));
+            pushData.put("type","恢复了信息");
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+
+            pushData.remove("share");
+            pushData.put("id",shareId);
+            //推送至回收站界面
+            messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
+
+        } catch (Exception e){
+            log.error("系统异常,操作失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+        }
+        return jsonObject;
+    }
 }

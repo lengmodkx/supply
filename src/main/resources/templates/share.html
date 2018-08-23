@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="share-list-wrap">
-            <ul>
+            <ul id="shareList">
                 <li class="boxsizing share-list" th:each="share: ${shareList}" th:data="${share.id}">
                     <img th:src="#{IMAGE_SERVER}+${share.memberImg}"/>
                     <div class="share-people-time">
@@ -443,6 +443,23 @@
             if(share.type == "发送消息"){
                 getLog(share.object.shareLog,share.object.shareId);
             }
+            if(share.type == '恢复了信息'){
+                var share = share.share;
+                var content = '';
+                var content2 = '';
+                content += '<li class="boxsizing share-list" th:data="' + share.id + '">'+
+                    '<img th:src="' + IMAGE_SERVER+share.userEntity.userInfo.image + '"/>'+
+                    '<div class="share-people-time">'+
+                    '<h3 class="over-hidden">' + share.title + '</h3>'+
+                    '<p><span>' + share.userEntity.userName + '</span> 发布于 <span>' + new Date(share.createTime).format('yyyy-MM-dd HH:mm:ss') + '</span></p>'+
+                '</div>'+
+                '</li>';
+
+                content2 += ''
+                $('#shareList').append(content);
+
+            }
+
             if(share.type == '更新了参与者'){
                 getLog(share.object.log,share.object.shareId);
                 updatePeopel(share);
