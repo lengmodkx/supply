@@ -1,4 +1,41 @@
-
+.has-con.show{
+    display: block;
+}
+.no-con.show{
+    display: block;
+}
+.no-con{
+    width: 800px;
+    height: 600px;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -300px;
+    margin-left: -400px;
+    display: none;
+}
+.no-con>div{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #a6a6a6;
+    text-align: center;
+}
+.no-con>div i{
+    display: block;
+    font-size: 48px;
+}
+.no-con>div h2{
+    font-size: 18px;
+    margin-top: 15px;
+}
+.no-con>div p{
+    font-size: 14px;
+    margin-top: 5px;
+}
 html,body{
     width: 100%;
     height: 100%;
@@ -15,6 +52,7 @@ html,body{
     width: 1100px;
     margin: 0 auto;
     height: 100%;
+    display: none;
 }
 .head-left{
     line-height: 50px;

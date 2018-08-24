@@ -13,96 +13,109 @@
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-<div class="head">
-    <div class="head-con">
-        <div class="head-left">
-            <i class="iconfont icon-nitification"></i>
-            <span>通知 <i class="layui-icon layui-icon-down" style="font-size: 14px; color: gray;"></i> </span>
-            <i class="layui-icon layui-icon-more more" style="font-size: 20px;"></i>
 
-            <!--通知 下拉 盒子-->
-            <ul class="style-box" style="display: none">
-                <li class="boxsizing now">
-                    <i class="iconfont icon-nitification"></i>
-                    <span>通知</span>
-                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
-                </li>
-                <li class="boxsizing">
-                    <i class="iconfont icon-nitification"></i>
-                    <span>未读消息</span>
-                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
-                </li>
-                <li class="boxsizing">
-                    <i class="iconfont icon-nitification"></i>
-                    <span>@我的通知</span>
-                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
-                </li>
-                <li class="boxsizing">
-                    <i class="iconfont icon-nitification"></i>
-                    <span>稍后处理</span>
-                    <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
-                </li>
-            </ul>
-            <!--更多 下拉 盒子-->
-            <ul class="style-box-tz"  style="display: none">
-                <li class="boxsizing">
-                    <i class="layui-icon layui-icon-ok" style="font-size: 20px;"></i>
-                    <span>标记全部已读</span>
-                </li>
-                <li class="boxsizing">
-                    <i class="layui-icon layui-icon-delete" style="font-size: 20px;"></i>
-                    <span>清空已读消息</span>
-                </li>
-                <li class="boxsizing">
-                    <i class="layui-icon layui-icon-set-sm" style="font-size: 20px;"></i>
-                    <span>通知设置</span>
-                </li>
-            </ul>
-        </div>
+<div class="has-con" th:classappend="${newsList.size() > 0} ? 'show'">
+    <div class="head">
+        <div class="head-con">
+            <div class="head-left">
+                <i class="iconfont icon-nitification"></i>
+                <span>通知 <i class="layui-icon layui-icon-down" style="font-size: 14px; color: gray;"></i> </span>
+                <i class="layui-icon layui-icon-more more" style="font-size: 20px;"></i>
 
-        <div class="heads-right boxsizing">
-            <a href="#">前往项目：啥啥啥</a>
-            <a href="#">前往任务模板</a>
-        </div>
-    </div>
+                <!--通知 下拉 盒子-->
+                <ul class="style-box" style="display: none">
+                    <li class="boxsizing now">
+                        <i class="iconfont icon-nitification"></i>
+                        <span>通知</span>
+                        <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                    </li>
+                    <li class="boxsizing">
+                        <i class="iconfont icon-nitification"></i>
+                        <span>未读消息</span>
+                        <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                    </li>
+                    <li class="boxsizing">
+                        <i class="iconfont icon-nitification"></i>
+                        <span>@我的通知</span>
+                        <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                    </li>
+                    <li class="boxsizing">
+                        <i class="iconfont icon-nitification"></i>
+                        <span>稍后处理</span>
+                        <i class="layui-icon layui-icon-ok gou" style="font-size: 20px;"></i>
+                    </li>
+                </ul>
+                <!--更多 下拉 盒子-->
+                <ul class="style-box-tz"  style="display: none">
+                    <li class="boxsizing">
+                        <i class="layui-icon layui-icon-ok" style="font-size: 20px;"></i>
+                        <span>标记全部已读</span>
+                    </li>
+                    <li class="boxsizing">
+                        <i class="layui-icon layui-icon-delete" style="font-size: 20px;"></i>
+                        <span>清空已读消息</span>
+                    </li>
+                    <li class="boxsizing">
+                        <i class="layui-icon layui-icon-set-sm" style="font-size: 20px;"></i>
+                        <span>通知设置</span>
+                    </li>
+                </ul>
+            </div>
 
-</div>
-<div class="content">
-    <div class="content-left boxsizing">
-        <ul class="notice-ul">
-            <li class="boxsizing clearfix" th:each="news:${newsList}" th:class="${news.newsHandle == 1}? 'isread'" th:data-id= "${news.newsId}" th:data-public-id= "${news.newsPublicId}">
-                <input type="hidden" th:value="${news.newsType}" class = "newsType"/>
-                <input type="hidden" th:value="${news.newsHandle}" class = "read"/>
-                <div class="li-title">
-                    <i class="iconfont icon-renwuyiwancheng"></i>
-                    <span th:text="${news.newsName}"></span>
-                    <span class="num" th:if = "${news.newsHandle == 0}" th:text = "${news.newsCount}"></span>
-                    <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                    <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
-                </div>
-                <div class="li-con clearfix">
-                    <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${news.newsFromUser.userInfo.image}">
-                    <div class="thing" th:text="${news.newsContent}">
-
-                    </div>
-
-                    <div class="what-time" th:text="${#dates.format(news.updateTime,'MM月dd日 HH:mm')}"></div>
-                </div>
-            </li>
-        </ul>
-
-    </div>
-
-    <!--右侧 盒子-->
-    <div class="content-right boxsizing">
-        <div class="scroll-box">
-            <div class = "task layui-anim layui-anim-scale">
-
+            <div class="heads-right boxsizing">
+                <a href="#">前往项目：啥啥啥</a>
+                <a href="#">前往任务模板</a>
             </div>
         </div>
-    </div>
 
+    </div>
+    <div class="content">
+        <div class="content-left boxsizing">
+            <ul class="notice-ul">
+                <li class="boxsizing clearfix" th:each="news:${newsList}" th:class="${news.newsHandle == 1}? 'isread'" th:data-id= "${news.newsId}" th:data-public-id= "${news.newsPublicId}">
+                    <input type="hidden" th:value="${news.newsType}" class = "newsType"/>
+                    <input type="hidden" th:value="${news.newsHandle}" class = "read"/>
+                    <div class="li-title">
+                        <i class="iconfont icon-renwuyiwancheng"></i>
+                        <span th:text="${news.newsName}"></span>
+                        <span class="num" th:if = "${news.newsHandle == 0}" th:text = "${news.newsCount}"></span>
+                        <i class="layui-icon layui-icon-close hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <i class="layui-icon layui-icon-log hide-i" style="font-size: 16px; color: #a6a6a6;"></i>
+                    </div>
+                    <div class="li-con clearfix">
+                        <img src="../static/image/begintime.png" th:src="#{IMAGE_SERVER} + ${news.newsFromUser.userInfo.image}">
+                        <div class="thing" th:text="${news.newsContent}">
+
+                        </div>
+
+                        <div class="what-time" th:text="${#dates.format(news.updateTime,'MM月dd日 HH:mm')}"></div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+        <!--右侧 盒子-->
+        <div class="content-right boxsizing">
+            <div class="scroll-box">
+                <div class = "task layui-anim layui-anim-scale">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+<div th:classappend="${newsList.size() == 0} ? 'show'" class="no-con">
+    <div >
+        <div>
+            <i class="iconfont icon-nitification"></i>
+            <h2>项目内容更新时</h2>
+            <p>你就会在这里收到通知提醒</p>
+        </div>
+    </div>
+</div>
+
 
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>

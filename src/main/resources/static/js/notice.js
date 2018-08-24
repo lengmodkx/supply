@@ -72,6 +72,13 @@ $('.layui-icon-close').click(function (e) {
         if(data.result > 0){
             that.parents('li').slideUp(300,function () {
                 that.parents('li').remove()
+                if($('.notice-ul li').length === 0){
+                    // $('.has-con').hide();
+                    //当你在iframe页面关闭自身时
+                    layer.closeAll('iframe');
+
+                    $('.no-con').show();
+                }
             })
             if(data.data === 0){
                 $('.notice-num').remove();
