@@ -9,30 +9,24 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
-import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
-import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.print.attribute.standard.JobSheets;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import java.beans.ExceptionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 项目，任务分组，菜单之间的关系处理
@@ -171,7 +165,7 @@ public class RelationController {
             relation.setRelationId(IdGen.uuid());
             relation.setProjectId(projectId);
             relationService.addMenu(parentId,relation);
-            TaskPushType taskPushType = new TaskPushType("添加菜单");
+            PushType taskPushType = new PushType("添加菜单");
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("menu",relation);
             taskPushType.setObject(map);

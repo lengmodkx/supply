@@ -11,16 +11,21 @@ import java.util.Map;
  * @date 2018/7/8 15:09
  **/
 @Data
-public class TaskPushType {
+public class PushType {
 
     private String type;
     private Map<String,Object> object;
 
-    public TaskPushType(String type){
+    public PushType(String type){
         this.type = type;
     }
 
-    public TaskPushType(){
+    public PushType(String type,Map<String,Object> object){
+        this.type = type;
+        this.object = object;
+    }
+
+    public PushType() {
 
     }
 }

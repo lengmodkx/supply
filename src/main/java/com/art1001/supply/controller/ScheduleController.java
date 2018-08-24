@@ -10,8 +10,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
-import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
@@ -27,11 +26,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
-import io.netty.handler.codec.json.JsonObjectDecoder;
-import jdk.jfr.events.ExceptionThrownEvent;
-import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -39,7 +34,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.annotation.Resources;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -341,7 +335,7 @@ public class ScheduleController extends BaseController {
             Log log1 = logService.saveLog(log);
             jsonObject.put("result",1);
             //推送数据
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A14.getName());
+            PushType taskPushType = new PushType(TaskLogFunction.A14.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("scheduleLog",log1);
             taskPushType.setObject(map);
@@ -370,7 +364,7 @@ public class ScheduleController extends BaseController {
             schedule.setScheduleName(scheduleName);
             schedule.setUpdateTime(System.currentTimeMillis());
             Log log = scheduleService.updateSchedule(schedule);
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("name",scheduleName);
             map.put("type",ScheduleLogFunction.D.getId());
@@ -402,7 +396,7 @@ public class ScheduleController extends BaseController {
             Log log = scheduleService.updateScheduleStartAndEndTime(scheduleId,startTime,endTime);
 
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             if(!StringUtils.isEmpty(startTime)){
                 map.put("type",ScheduleLogFunction.B.getId());
@@ -439,7 +433,7 @@ public class ScheduleController extends BaseController {
             Log log = scheduleService.updateSchedule(schedule);
             jsonObject.put("result",1);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("repeat",repeat);
             map.put("type",ScheduleLogFunction.E.getId());
@@ -471,7 +465,7 @@ public class ScheduleController extends BaseController {
             schedule.setRemind(remind);
             Log log = scheduleService.updateSchedule(schedule);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("remind",remind);
             map.put("type",ScheduleLogFunction.F.getId());
@@ -504,7 +498,7 @@ public class ScheduleController extends BaseController {
             schedule.setAddress(address);
             Log log = scheduleService.updateSchedule(schedule);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("address",address);
             map.put("type",ScheduleLogFunction.G.getId());
@@ -541,7 +535,7 @@ public class ScheduleController extends BaseController {
             }
             Log log = scheduleService.updateSchedule(schedule);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType();
+            PushType taskPushType = new PushType();
             Map<String,Object> map = new HashMap<String,Object>();
             if(!isAllday){
                 Schedule scheduleById = scheduleService.findScheduleById(scheduleId);

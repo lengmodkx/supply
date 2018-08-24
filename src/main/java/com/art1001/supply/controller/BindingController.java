@@ -11,7 +11,7 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
@@ -101,7 +101,7 @@ public class BindingController {
                 }
             }
             //数据推送包装类
-            TaskPushType taskPushType = new TaskPushType("关联");
+            PushType taskPushType = new PushType("关联");
             Map<String,Object> map = new HashMap<String,Object>();
             List bInfo = new ArrayList();
             for (int i = 0;i < bindList.size();i++){
@@ -174,7 +174,7 @@ public class BindingController {
             bindingService.deleteBindingById(publicId,bindingId);
             jsonObject.put("result",1);
             jsonObject.put("msg","删除成功");
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A17.getName());
+            PushType taskPushType = new PushType(TaskLogFunction.A17.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("bId",bindingId);
             taskPushType.setObject(map);

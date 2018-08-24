@@ -20,11 +20,15 @@
     <script th:src="@{/js/pushbar.js}"></script>
     <script th:src="@{/js/clipboard.min.js}"></script>
     <script th:src="@{/js/jquery-ui.min.js}"></script>
+    <script th:src="@{/js/vue.min.js}"></script>
+    <script th:src="@{/js/axios.min.js}"></script>
     <script th:src="@{/js/header.js}"></script>
     <title th:replace="${title}">The awesome application</title>
     <th:block th:replace="${links}" />
     <script th:inline="javascript">
         var userId;
+        axios.defaults.baseURL = "http://localhost:8080/";
+        Vue.prototype.$http = axios;
     </script>
     <script>
         // 建立连接对象（还未发起连接）

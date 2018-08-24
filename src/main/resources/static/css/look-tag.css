@@ -107,6 +107,11 @@
     display: none;
 }
 
+.show{
+    display: block;
+}
+
+
 .right-head{
     width: 100%;
     height: 46px;

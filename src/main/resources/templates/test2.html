@@ -3,31 +3,32 @@
 
 <head>
     <title>stomp</title>
+    <script src="../static/js/vue.min.js"></script>
 </head>
 
 <body>
 
+<ul class="ul-tmp">
+    <li v-for="todo in todos">
+        {{ todo.text }}
+    </li>
+</ul>
 
-<div class="date"> xxxxx </div>
-<div class="date1"> xxxxx </div>
-
-<script src="../static/js/jquery-2.2.4.min.js"></script>
-<script src="../static/js/datautil.js"></script>
-
-<script>
-
-    var date = new Date();
-
-    var fmt = date.pattern("EE HH:mm");
-
-    var tmp = 1533008172-date.getTime()/1000;
-
-
-    $('.date').html(tmp);
-    $('.date1').html(date.getTime());
-
-
+<script type="text/javascript">
+    var app = new Vue({
+        el: '.ul-tmp',
+        data: {
+            todos: [
+                { text: 'javaScript' },
+                { text: 'Vue' },
+                { text: 'java' }
+            ]
+        }
+    })
+    app.todos.push({ text: 'c#' });
 </script>
+
 </body>
+
 </html>
 

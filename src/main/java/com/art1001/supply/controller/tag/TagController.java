@@ -4,15 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
-import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskPushType;
+import com.art1001.supply.entity.tagrelation.TagRelation;
+import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
@@ -21,9 +17,7 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
-import jdk.jfr.events.ExceptionThrownEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -32,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tag")
@@ -44,6 +37,18 @@ public class TagController extends BaseController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    @Resource
+    private TagRelationService tagRelationService;
+
+    @Resource
+    private TaskService taskService;
+
+    @Resource
+    private FileService fileService;
+    @Resource
+    private ScheduleService scheduleService;
+    @Resource
+    private ShareService shareService;
     /**
      * 标签初始化
      * @param projectId 项目id
@@ -79,28 +84,38 @@ public class TagController extends BaseController {
     /**
      * 查询标签列表，根据项目
      */
-    @PostMapping("/findByProjectId")
+    @GetMapping("/tags/{projectId}")
     @ResponseBody
-    public JSONObject findByProjectId(
-            @RequestParam String projectId
-    ) {
+    public JSONObject tags(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<Tag> tagList =  tagService.findByProjectId(projectId);
-            if (tagList.size() > 0) {
-                jsonObject.put("result", 1);
-                jsonObject.put("data", JSON.toJSON(tagList));
-                jsonObject.put("msg", "获取成功");
-            } else {
-                jsonObject.put("result", 0);
-                jsonObject.put("data", null);
-                jsonObject.put("msg", "没有数据");
-            }
+            List<Tag> tagList = tagService.findByProjectId(projectId);
+            for (Tag tag:tagList) {
+                List<TagRelation> tagRelationList = tagRelationService.findTagRelationByTagId(tag.getTagId());
+                for (TagRelation tagRelation:tagRelationList) {
+                    if(StringUtils.isNotEmpty(tagRelation.getTaskId())){
+                        tag.getTaskList().add(taskService.findTaskByTaskId(tagRelation.getTaskId()));
+                    }
 
+                    if(StringUtils.isNotEmpty(tagRelation.getFileId())){
+                        tag.getFileList().add(fileService.findFileById(tagRelation.getFileId()));
+                    }
+
+                    if(StringUtils.isNotEmpty(tagRelation.getScheduleId())){
+                        tag.getScheduleList().add(scheduleService.findScheduleById(tagRelation.getScheduleId()));
+                    }
+
+                    if(StringUtils.isNotEmpty(tagRelation.getShareId())){
+                        tag.getShareList().add(shareService.findById(tagRelation.getShareId()));
+                    }
+                }
+            }
+            jsonObject.put("result", 1);
+            jsonObject.put("tagList", tagList);
+            jsonObject.put("projectId", projectId);
         } catch (Exception e) {
             log.error("获取标签异常, {}", e);
             jsonObject.put("result", 0);
-            jsonObject.put("data", null);
             jsonObject.put("msg", "没有数据");
         }
         return jsonObject;
@@ -163,7 +178,6 @@ public class TagController extends BaseController {
             int count = tagService.findCountByTagName(tag.getProjectId(), tag.getTagName());
             if (count > 0) {
                 jsonObject.put("result", 0);
-                jsonObject.put("data", null);
                 jsonObject.put("msg", "标签已经存在");
                 return jsonObject;
             }
@@ -172,6 +186,10 @@ public class TagController extends BaseController {
             jsonObject.put("result", 1);
             jsonObject.put("data", tag);
             jsonObject.put("msg", "添加成功");
+            //包装推送数据
+            PushType pushType = new PushType(TaskLogFunction.A10.getName());
+            pushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/tag/"+ tag.getProjectId(),new ServerMessage(JSON.toJSONString(pushType)));
         } catch (Exception e) {
             log.error("添加标签异常, {}", e);
             jsonObject.put("result", 0);
@@ -236,7 +254,7 @@ public class TagController extends BaseController {
         try {
             tagService.removeTag(publicId,publicType,tagId);
             //包装推送数据
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A24.getName());
+            PushType taskPushType = new PushType(TaskLogFunction.A24.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",String.valueOf(tagId));
             map.put("type",ScheduleLogFunction.M.getId());
@@ -287,7 +305,7 @@ public class TagController extends BaseController {
             //包装推送数据
             Tag byId = tagService.findById(tag.getTagId().intValue());
 
-            TaskPushType taskPushType = new TaskPushType(TaskLogFunction.A20.getName());
+            PushType taskPushType = new PushType(TaskLogFunction.A20.getName());
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("tag",byId);
             jsonObject.put("tag",byId);
@@ -318,18 +336,32 @@ public class TagController extends BaseController {
         try{
             tagService.updateTag(tag);
             jsonObject.put("result",1);
+            jsonObject.put("data",tag);
+            //包装推送数据
+            PushType pushType = new PushType(TaskLogFunction.A30.getName());
+            pushType.setObject(jsonObject);
+            messagingTemplate.convertAndSend("/topic/tag/"+ tag.getProjectId(),new ServerMessage(JSON.toJSONString(pushType)));
         }catch (Exception e){
             throw new AjaxException(e);
         }
         return jsonObject;
     }
 
-    @RequestMapping("allTag")
-    @ResponseBody
-    public String allTag(){
-        List<Tag> tagAllList = tagService.findTagAllList();
-        return JSON.toJSONString(tagAllList);
 
+    @PostMapping("dropTag")
+    @ResponseBody
+    public JSONObject dropTag(Tag tag){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            tagService.updateTag(tag);
+            jsonObject.put("result",1);
+            //包装推送数据
+            PushType pushType = new PushType(TaskLogFunction.A11.getName());
+            messagingTemplate.convertAndSend("/topic/tag/"+ tag.getProjectId(),new ServerMessage(JSON.toJSONString(pushType)));
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 
 

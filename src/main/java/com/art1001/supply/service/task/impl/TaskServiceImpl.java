@@ -1,6 +1,5 @@
 package com.art1001.supply.service.task.impl;
 
-import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,7 +18,6 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StaticticsVO;
@@ -29,7 +27,6 @@ import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
@@ -48,17 +45,13 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * taskServiceImpl
@@ -1485,7 +1478,7 @@ public class TaskServiceImpl implements TaskService {
                 bindingService.saveBinding(binding);
 
                 //关联的要推送到任务界面
-                TaskPushType taskPushType = new TaskPushType("关联");
+                PushType taskPushType = new PushType("关联");
                 Map<String,Object> map = new HashMap<String,Object>();
                 List bInfo = new ArrayList();
                 bInfo.add(taskMapper.findTaskByTaskId(copyTask.getTaskId()));

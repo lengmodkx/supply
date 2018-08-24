@@ -25,7 +25,7 @@ public class WebSocketAction {
 
     @RequestMapping("/test.html")
     public String test() {
-        return "test";
+        return "test2";
     }
 
     @MessageMapping("/sendTest")
