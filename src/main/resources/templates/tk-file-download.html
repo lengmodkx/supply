@@ -6,21 +6,31 @@
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/tk-download.css}" href="../static/css/tk-download.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/recycle-bin.css}" href="../static/css/recycle-bin.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_buq96x2sqow.css">
 </head>
 <body>
+<input type = "hidden" id="isdel" th:value="${file.fileDel}" />
 <!--下载文件 弹框-->
 <div class="download-wrap">
     <input type="hidden" th:value="${projectId}" id="projectId">
     <!--顶部-->
     <div class="download-toper boxsizing">
         <input type="hidden" th:value="${file.fileId}" id="fileId">
-        <span class="download-name" th:text="${file.fileName}">啥啥啥任务</span>
+        <span class="download-name" th:text="${file.fileName}"></span>
+        <span class="download-name" style="margin-left: 15px;color: #C6C6C6;" th:if="${file.fileDel == 1}">(文件已在回收站中，不可修改)</span>
         <ul class="download-toper-ul">
             <!--<li>详情</li>-->
             <li id="uploadFile">版本更新</li>
-            <li th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
+            <li id="xiazai" th:onclick="'download(\''+${file.fileId}+'\')'">下载</li>
             <li class="more">
                 <img src="../static/image/more.png" th:src="@{/image/more.png}">&nbsp;更多
+            </li>
+            <li th:style="'display:' + (${file.fileDel == 1} ? 'block' : 'none') + '' "class="huifu-btn">
+                <i class="iconfont icon-iconhuifu"></i>&nbsp;恢复内容
+            </li>
+            <li th:style="'display:' + (${file.fileDel == 1} ? 'block' : 'none') + ''" class="delete-btn">
+                <i class="iconfont icon-lajixiang"></i>&nbsp;彻底删除
             </li>
             <!--<li>更多</li>-->
         </ul>
@@ -369,7 +379,7 @@
 <!--文件菜单 框-->
 <div style="position: absolute;right: 70px;top: 50px;z-index: 200;width: 220px;background-color: white;padding: 0 15px;display: none" class="file-menu boxsizing layui-form" >
     <div class="scheduling-menu-title">文件菜单
-        <img src="../static/image/close.png" th:src="@{/image/close.png}" />
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 16px; color: #a6a6a6;"></i>
     </div>
     <div class="menu-box edit-rc">
         <img src="../static/image/fzrc.png" th:src="@{/image/fzrc.png}" />
@@ -406,6 +416,25 @@
         <div class="who-can-see">所有成员可见</div>
     </div>
 </div>
+<!--恢复文件内容 框-->
+<div class="recover-box recover-file boxsizing">
+    <div class="recover-box-head">
+        恢复内容
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+    </div>
+    <p class="font-p">恢复内容后将移动至根目录，确认恢复内容?</p>
+    <div class="o-btn o-file-btn">确定</div>
+</div>
+
+<!--彻底删除文件 框-->
+<div class="forever-delete delete-file boxsizing">
+    <div class="recover-box-head">
+        彻底删除
+        <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+    </div>
+    <p>确认彻底删除该文件吗？</p>
+    <div class="forever-delete-btn">删除</div>
+</div>
 </body>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
@@ -415,6 +444,20 @@
 <script th:src="@{/js/filedownload.js}" src="../static/js/filedownload.js"></script>
 
 <script th:inline="javascript">
+    $(function () {
+        var isdel = $('#isdel').val();
+        if(isdel === '1'){
+            $(".download-right *").unbind();
+            $("#uploadFile").css("cursor"," not-allowed");
+            $("#uploadFile").removeAttr("id")
+            $(".more").unbind();
+            $(".more").css("cursor"," not-allowed");
+            $("#xiazai").hide()
+            $(".download-right *").css("cursor"," not-allowed");
+        }
+    });
+
+
     var fileId = [[${fileId}]];
     var fileUids = [[${file.fileUids}]];
     var projectId = [[${projectId}]]
@@ -446,7 +489,9 @@
         $('#chat').focus();
 
     });
-
+$(".close-tk").click(function () {
+    $(".file-menu").slideUp()
+});
 
 
     //订阅消息
@@ -462,6 +507,24 @@
                 var scrollHeight = $('.revise-task').prop("scrollHeight");
                 $('.revise-task').animate({scrollTop:scrollHeight}, 400);
             }
+
+            if(file.type === '恢复了文件') {
+                location.reload();
+            }
+
+            if(file.type === '将文件移入了回收站'){
+
+                $('.huifu-btn').show();
+                $('.delete-btn').show();
+                $(".download-right *").unbind();
+                $("#uploadFile").css("cursor"," not-allowed");
+                $("#uploadFile").removeAttr("id")
+                $(".more").unbind();
+                $(".more").css("cursor"," not-allowed");
+                $("#xiazai").hide()
+                $(".download-right *").css("cursor"," not-allowed");
+            }
+
             if(file.type == '更新了参与者'){
                 getLog(file.object.log);
                 if(file.object.reduce1 != ''){
@@ -559,6 +622,80 @@
                     window.location.href = host + "/file/list.html" + "?projectId=" + projectId + "&fileId=" + parentId
                 }
 
+            });
+
+            //恢复按钮弹窗
+            $("html").on("click",".huifu-btn",function (e) {
+                var top=$(this).offset().top+50+'px';
+                var left=$(this).offset().left-100+'px';
+                layui.use('layer', function(){
+
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        title: false,
+                        offset: [top, left],
+                        closeBtn: 0,
+                        shade: [0.1, '#fff'],
+                        // shade: 0,
+                        shadeClose:true,
+                        content: $('.recover-file')
+                    });
+                });
+            });
+
+            /**
+             * 点击彻底删除按钮
+             */
+            $("html").on("click",".delete-btn",function (e) {
+                var top=$(this).offset().top+50+'px';
+                var left=$(this).offset().left-180+'px';
+                layui.use('layer', function(){
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        title: false,
+                        offset: [top, left],
+                        closeBtn: 0,
+                        shade: [0.1, '#fff'],
+                        // shade: 0,
+                        shadeClose:true,
+                        content: $('.delete-file')
+                    });
+                });
+                e.stopPropagation();
+            });
+
+
+
+            /**
+             * 恢复文件的确定按钮
+             */
+            $('.o-file-btn').click(function () {
+                var url = "/file/recoveryFile";
+                var args = {"projectId":projectId,"fileId":fileId};
+                $.post(url,args,function (data) {
+                    if(data.result < 1){
+                        layer.msg("系统异常,操作失败!");
+                    } else{
+                        layer.close(layer.index);
+                    }
+                });
+            });
+
+            /**
+             * 删除按钮
+             */
+            $('.forever-delete-btn').click(function () {
+                var url = '/file/deleteFile';
+                var args = {"fileId":fileId,"projectId":projectId}
+                $.post(url,args,function (data) {
+                    if(data.result == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        window.location.href = '/file/list.html?projectId='+projectId;
+                    }
+                });
             });
 
             /**

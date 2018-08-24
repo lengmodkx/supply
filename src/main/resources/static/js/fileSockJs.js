@@ -40,7 +40,7 @@ function subscribe1() {
             });
         }
 
-        if(file.type === '恢复了信息'){
+        if(file.type === '恢复了文件'){
             var file = file.file;
             if(file.fileName.length > 15){
                 file.fileName.substring(0,10) + '...' + file.ext;
@@ -76,6 +76,9 @@ function subscribe1() {
             } else if(file.catalog == 0 && file.ext == '.rar'){
 
                 content += '<img class="folderFile collect-item-touxiang" src="/image/rar.png" />';
+            } else if(file.catalog == 0 && file.ext == '.txt'){
+
+                content += '<img class="folderFile collect-item-touxiang" src="/image/txt.png" />';
             } else {
                 content += '<img class="folderFile collect-item-touxiang" src="/image/defaultFile.png" />';
             }

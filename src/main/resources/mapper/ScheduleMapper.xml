@@ -48,7 +48,8 @@
 
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id property="date" column="date" />
-		<collection property="scheduleList" column="date" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
+		<result property="proejctId" column="project_id" />
+		<collection property="scheduleList" column="{date=date,projectId=project_id}" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
 		select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
 	</resultMap>
 
@@ -330,7 +331,7 @@
 	</update>
 
 	<select id="findScheduleGroupByCreateTime" resultMap="resultMap">
-		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') as date from prm_schedule
+		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') as date,project_id from prm_schedule
 		<where>
 			<if test="currTime != null and currTime != ''">
 				and start_time > #{currTime}
@@ -341,9 +342,9 @@
 		</where>
 		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
 	</select>
-	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.lang.String">
+	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.util.Map">
 
-		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date} and is_del = 0
+		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date} and is_del = 0 and project_id = #{projectId}
 
 	</select>
 

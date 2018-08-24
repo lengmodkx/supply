@@ -52,6 +52,17 @@ function subscribe() {
         if(taskLog.type === '移除标签'){
             $('#'+taskLog.object.tag).remove();
         }
+        if(taskLog.type === '把任务移入了回收站'){
+            $(".detele-box").show()
+            $(".revise-task *").attr("disabled","true");
+            $(".revise-task *").css("cursor"," not-allowed");
+
+            $(".hide-zan-x").hide();
+            $(".revise-task *").unbind();
+            $(".no-renling").click(function (e) {
+                return false
+            });
+        }
 
         if(taskLog.type==='更新提醒模式为'){
             getLog(taskLog.object.taskLog);

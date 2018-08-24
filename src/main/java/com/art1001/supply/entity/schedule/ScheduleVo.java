@@ -10,6 +10,8 @@ public class ScheduleVo {
 
     private String userId;
 
+    private String proejctId;
+
     private List<Schedule> scheduleList;
 
 }

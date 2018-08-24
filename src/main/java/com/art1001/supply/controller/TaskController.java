@@ -981,6 +981,10 @@ public class TaskController {
             Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
             model.addAttribute("menuRelation",menuRelation);
 
+            //查询出当前项目下所有的菜单信息
+            List<Relation> menusByProjectId = relationService.findMenusByProjectId(taskById.getProjectId());
+            model.addAttribute("menus",menusByProjectId);
+
             //根据该任务的菜单查询出任务的分组信息
             Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
             model.addAttribute("taskGroup",taskGroup);

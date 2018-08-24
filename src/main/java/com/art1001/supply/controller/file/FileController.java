@@ -492,7 +492,9 @@ public class FileController extends BaseController {
             pushData.put("id",fileId);
             pushData.put("type","恢复了文件");
             messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(pushData)));
             pushData.remove("file");
+            pushData.put("type","恢复了信息");
             messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
         } catch (Exception e) {
             log.error("删除文件异常, {}", e);
@@ -742,6 +744,9 @@ public class FileController extends BaseController {
             pushData.put("fileIds",fileIds);
             pushData.put("type","将文件移入了回收站");
             messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            for(int i = 0;i < fileIds.length;i++){
+                messagingTemplate.convertAndSend("/topic/"+fileIds[i],new ServerMessage(JSON.toJSONString(pushData)));
+            }
         } catch (Exception e) {
             log.error("移入回收站异常, {}", e);
             jsonObject.put("result", 0);

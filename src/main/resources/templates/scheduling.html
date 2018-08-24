@@ -37,7 +37,7 @@
                                 <div class="layui-colla-item" th:each="schedulevo:${scheduleVo}">
                                     <h2 class="layui-colla-title" th:text="${schedulevo.date}">杜甫</h2>
                                     <div class="layui-colla-content">
-                                        <ul>
+                                        <ul id = "schedules">
                                             <li th:each="schedule:${schedulevo.scheduleList}" style="height: 30px" class="schedule" th:id="${schedule.scheduleId}">
                                                 <div class="scheduling-time">
                                                     <span th:text="${#calendars.format(schedule.startTime,'MM-dd HH:mm')}">8:15</span>
@@ -132,6 +132,9 @@
             }
             if(schedule.type === '将日程移入了回收站') {
                $('#'+schedule.scheduleId).remove();
+               // if($('#schedules li').length === 0){
+               //     $('#schedules').parents('.layui-tab-item').remove();
+               // }
             }
 
         });

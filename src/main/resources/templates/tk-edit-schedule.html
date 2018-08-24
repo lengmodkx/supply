@@ -6,11 +6,35 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/schedule_temp.css}" href="../static/css/schedule_temp.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_2w226gygtpg.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/recycle-bin.css}" href="../static/css/recycle-bin.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
 </head>
 <body>
+    <input type="hidden" th:value="${schedule.isDel}" id = "isdel" />
     <div class="modal-detail layui-form">
+
     <section class="detail-content">
+        <div  class="delete-box boxsizing" style="margin-bottom: 0;background-color: #53A9F8;padding: 0" th:data-ids="${schedule.isDel}">
+            <div style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0,0,0,.2);;"></div>
+            <div style="padding: 0 10px;color: white;z-index: 100;position: absolute;top: 0;left: 0;width: 100%" class="boxsizing">
+                <p>
+                    <i class="iconfont icon-lajixiang "></i>
+                    <span>任务已在回收站中，不可修改</span>
+                </p>
+                <i class="layui-icon layui-icon-close " style="font-size: 18px; color: #a6a6a6;"></i>
+                <div class="box delete-btn">
+                    <i class="iconfont icon-lajixiang"></i>
+                    <span>彻底删除</span>
+                </div>
+                <div class="box huifu-btn">
+                    <i class="iconfont icon-iconhuifu"></i>
+                    <span>恢复内容</span>
+                </div>
+            </div>
+
+
+
+        </div>
         <div class="detail-header">
             <span class="project_name">管控平台xxxxxx</span>
             <div class="detail-coo">
@@ -388,10 +412,25 @@
         </div>
     </div>
 
+    <!--彻底删除日程 框-->
+    <div class="forever-delete delete-schedule boxsizing">
+        <div class="recover-box-head">
+            彻底删除
+            <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+        </div>
+        <p>确认彻底删除该日程吗？</p>
+        <div class="forever-delete-btn">删除</div>
+    </div>
 
-
-
-
+    <!--恢复日程内容 框-->
+    <div class="recover-box recover-schedule boxsizing">
+        <div class="recover-box-head">
+            恢复内容
+            <i class="layui-icon layui-icon-close close-tk" style="font-size: 20px; color: #a6a6a6;"></i>
+        </div>
+        <p class="font-p">确认恢复内容?</p>
+        <div class="o-btn o-schedule-btn">确定</div>
+    </div>
 </body>
 <script th:inline="javascript">
     //头像某模板
@@ -405,6 +444,25 @@
 <script th:src="@{/js/stomp.js}"></script>
 <script th:src="@{/js/schedule.js}" src="../static/js/schedule.js"></script>
 <script>
+
+    $(function () {
+        if ($(".delete-box").attr("data-ids")==0){
+        } else {
+            $(".delete-box").show();
+            $(".detail-header *").unbind();
+            $(".detail-header *").css("cursor"," not-allowed");
+            $(".detail-middle *").unbind();
+            $(".detail-middle *").css("cursor"," not-allowed");
+            $(".bj-box *").css("cursor"," not-allowed");
+            $(".bj-box *").unbind();
+            $(".left-boxs a").removeAttr("href");
+            $("#test1").attr("disabled","disabled");
+            $("#test2").attr("disabled","disabled");
+            $(".allday").attr("disabled","disabled");
+            $(".no-repeat").hide();
+            $(".no-remand ").hide()
+        }
+    });
 
     $(".dd-will-add").click(function () {
         var old = $('.dd-will-add').html();
@@ -477,8 +535,19 @@
             }
 
             if(schedule.type === '将日程移入了回收站'){
-                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                parent.layer.close(index);
+                $(".delete-box").show();
+                $(".detail-header *").unbind();
+                $(".detail-header *").css("cursor"," not-allowed");
+                $(".detail-middle *").unbind();
+                $(".detail-middle *").css("cursor"," not-allowed");
+                $(".bj-box *").css("cursor"," not-allowed");
+                $(".bj-box *").unbind();
+                $(".left-boxs a").removeAttr("href");
+                $("#test1").attr("disabled","disabled");
+                $("#test2").attr("disabled","disabled");
+                $(".allday").attr("disabled","disabled");
+                $(".no-repeat").hide();
+                $(".no-remand ").hide()
             }
 
             if(schedule.type === '关联'){
@@ -602,6 +671,85 @@
             }
         });
     }
+
+    /**
+     * 删除按钮
+     */
+    $('.forever-delete-btn').click(function () {
+        var url = '/schedule/deleteSchedule';
+        var args = {"id":scheduleId,"projectId":projectId}
+        $.post(url,args,function (data) {
+            if(data.result == 0){
+                layer.msg(data.msg);
+            } else{
+                //当你在iframe页面关闭自身时
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+            }
+        });
+    });
+
+    /**
+     * 恢复日程的确定按钮
+     */
+    $('.o-schedule-btn').click(function () {
+        var url = "/schedule/recoverySchedule";
+        var args = {"projectId":projectId,"scheduleId":scheduleId};
+        $.post(url,args,function (data) {
+            if(data.result < 1){
+                layer.msg("系统异常,操作失败!");
+            } else{
+                layer.close(layer.index);
+                //当你在iframe页面关闭自身时
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+            }
+        });
+    });
+
+    //恢复按钮弹窗
+    $("html").on("click",".huifu-btn",function (e) {
+        var top=$(this).offset().top+50+'px';
+        var left=$(this).offset().left-100+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: false,
+                offset: [top, left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                // shade: 0,
+                shadeClose:true,
+                content: $('.recover-schedule')
+            });
+        });
+    });
+
+    /**
+     * 点击彻底删除按钮
+     */
+    $("html").on("click",".delete-btn",function (e) {
+        var top=$(this).offset().top+50+'px';
+        var left=$(this).offset().left-180+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: false,
+                offset: [top, left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                // shade: 0,
+                shadeClose:true,
+                content: $('.delete-schedule')
+
+            });
+        });
+        e.stopPropagation();
+    });
+
+
 
     $("body").on("click",".show-cancel-related",function (e) {
         $(this).parents("li").find(".related-menu").slideToggle();
