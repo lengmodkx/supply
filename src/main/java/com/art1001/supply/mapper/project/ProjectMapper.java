@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * projectmapper接口
@@ -61,7 +62,7 @@ public interface ProjectMapper {
 	 *
 	 * @return
 	 */
-	List<Project> findProjectByMemberId(String memberId);
+	List<Project> findProjectByMemberId(@Param("memberId") String memberId,@Param("projectDel") int projectDel);
 
 	/**
 	 * 查询出当前用户执行的任务信息和该任务所在的项目信息
@@ -103,5 +104,5 @@ public interface ProjectMapper {
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<Project> findProjectByUserId(String userId);
+	List<Project> findProjectByUserId(@Param("userId") String userId, @Param("collect") int collect);
 }

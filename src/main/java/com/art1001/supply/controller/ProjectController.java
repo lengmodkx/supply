@@ -99,7 +99,7 @@ public class ProjectController extends BaseController {
             String userId = ShiroAuthenticationManager.getUserId();
             UserEntity userEntity = userService.findById(userId);
             //我创建的任务
-            List<Project> projects = projectService.findProjectByMemberId(userEntity.getId());
+            List<Project> projects = projectService.findProjectByMemberId(userEntity.getId(),0);
             model.addAttribute("projects",projects);
             //我参与的任务
             List<Project> joinInproject = projectMemberService.findProjectByMemberId(userEntity.getId(), 0);
@@ -151,7 +151,7 @@ public class ProjectController extends BaseController {
             List<Project> projects = new ArrayList<>();
             //我创建的项目
             if(label==1){
-                projects = projectService.findProjectByMemberId(userId);
+                projects = projectService.findProjectByMemberId(userId,0);
             }
 
             //我参与的项目

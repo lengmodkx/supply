@@ -119,7 +119,7 @@ public class TaskController {
             model.addAttribute("date",date.getTime());
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
             //查询出该用户所参与的项目
-            model.addAttribute("projectList",projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId()));
+            model.addAttribute("projectList",projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0));
         } catch (Exception e){
             log.error("系统异常,{}",e);
             throw new SystemException(e);
@@ -1001,7 +1001,7 @@ public class TaskController {
             }
 
             //查询出我参与的所有项目信息
-            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId());
+            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0);
             model.addAttribute("projectByMemberId",projectByMemberId);
 
             //查询出该任务的日志信息

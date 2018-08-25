@@ -56,7 +56,7 @@ public interface ProjectService {
 	public List<Project> findProjectAllList();
 
 
-	List<Project> findProjectByMemberId(String memberId);
+	List<Project> findProjectByMemberId(String memberId,int projectDel);
 
 	/**
 	 * 查询出当前用户所执行的任务的 任务信息 和 项目信息
@@ -96,11 +96,12 @@ public interface ProjectService {
 
 
 	/**
-	 *  根据用户id查询所有项目，包含我创建的，我参与的，星标项目，回收站的项目
+	 *  根据用户id查询我参与的项目
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<Project> findProjectByUserId(String userId);
+	List<Project> findProjectByUserId(String userId,int collect);
+
 
 	/**
 	 * 用于展示回收站的数据

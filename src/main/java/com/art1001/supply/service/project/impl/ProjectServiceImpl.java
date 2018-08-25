@@ -110,8 +110,8 @@ public class ProjectServiceImpl implements ProjectService {
 	 * @return
 	 */
 	@Override
-	public List<Project> findProjectByMemberId(String memberId) {
-		return projectMapper.findProjectByMemberId(memberId);
+	public List<Project> findProjectByMemberId(String memberId,int projectDel) {
+		return projectMapper.findProjectByMemberId(memberId,projectDel);
 	}
 
 	/**
@@ -171,8 +171,8 @@ public class ProjectServiceImpl implements ProjectService {
 	 * @return
 	 */
 	@Override
-	public List<Project> findProjectByUserId(String userId) {
-		return projectMapper.findProjectByUserId(userId);
+	public List<Project> findProjectByUserId(String userId,int collect) {
+		return projectMapper.findProjectByUserId(userId,collect);
 	}
 
 	/**

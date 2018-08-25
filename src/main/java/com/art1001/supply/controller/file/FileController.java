@@ -592,7 +592,7 @@ public class FileController extends BaseController {
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 获取所有参与的项目
-        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId());
+        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId(),0);
 
         // 获取项目顶级的文件夹
         File file = new File();
@@ -634,7 +634,7 @@ public class FileController extends BaseController {
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 获取所有参与的项目
-        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId());
+        List<Project> projectList = projectService.findProjectByMemberId(userEntity.getId(),0);
 
         // 获取项目顶级的文件夹
         File file = new File();

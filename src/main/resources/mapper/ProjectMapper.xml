@@ -50,12 +50,8 @@
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
 		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
-		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
-		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
-		<result column="collect" property="collect" jdbcType="INTEGER" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -268,33 +264,28 @@
 
 
 	<!-- 查询我创建的所有项目 -->
-	<select id="findProjectByMemberId" resultMap="BaseResultMap1"
-			parameterType="java.lang.String">
+	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_project where project_del = 0 and member_id = #{memberId}
+		from prm_project where project_del = #{projectDel} and member_id = #{memberId}
 		order by create_time asc
 	</select>
 
 
-	<!---->
-	<select id="findProjectByUserId" resultMap="BaseResultMap1" parameterType="java.lang.String">
+	<!--查询我参与的项目-->
+	<select id="findProjectByUserId" resultMap="BaseResultMap1">
 		  select p.project_id,
 			  p.project_name,
-			  p.member_id,
 			  p.project_cover,
-			  p.project_des,
-			  p.project_del,
-			  pm.member_label,
-			  pm.collect
+			  p.project_des
 		  from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		  where pm.member_id = #{userId}
+		  where p.project_del=0 and pm.member_id = #{userId} and pm.collect=#{collect} order by pm.create_time asc
 	</select>
 
 	<!-- 查询出该用户执行的任务信息和所在项目信息 -->
 	<select id="findProjectAndTaskByExecutorId" resultMap="ProjectAndTaskByExecutor">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
@@ -302,14 +293,14 @@
 	<!-- 查询出该用户参与的任务信息和所在项目信息 -->
 	<select id="findProjectAndTaskByUserId" resultMap="ProjectAndTaskByUser">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
 
 	<select id="findProjectAndTaskByCreateMember" resultMap="ProjectAndTaskByCreateMember">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		,#{id} as mid
 		from prm_project where project_id in( select project_id from prm_project_member where member_id = #{id})
 	</select>
