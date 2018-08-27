@@ -138,8 +138,8 @@
     padding: 10px 20px;
 }
 .add-file-box{
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border: 1px solid #D5D5D5;
     display: flex;
     justify-content: center;
@@ -150,15 +150,53 @@
 
 .all-file-ul li{
     float: left;
-    width: 100px;
-    height: 100px;
-    margin-right: 15px;
+    width: 120px;
+    height: 120px;
+    margin-right: 40px;
     position: relative;
     display: flex;
     flex-direction:column;
     align-items: center;
+    border: 1px solid #D5D5D5;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+.all-file-ul li:nth-of-type(3n){
+    margin-right: 0;
 }
 .all-file-ul li img{
+    width: 60px;
+    height: 60px;
+    margin-top: 10px;
 
 
+}
+.all-file-ul li p{
+    width: 100%;
+    text-align: center;
+    line-height: 44px;
+    font-size: 14px;
+}
+.layui-progress{
+    width: 100%;
+    display: none;
+}
+.remove-it{
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: -8px;
+    top: -8px;
+    border-radius: 50%;
+   text-align: center;
+    line-height: 16px;
+    display: none;
+}
+.remove-it i{
+ font-size: 18px;
+    color: #3DA8F5;
+    cursor: pointer;
+}
+.all-file-ul li:hover .remove-it{
+    display: block;
 }
