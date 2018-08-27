@@ -985,9 +985,11 @@ public class TaskController {
             List<Relation> menusByProjectId = relationService.findMenusByProjectId(taskById.getProjectId());
             model.addAttribute("menus",menusByProjectId);
 
-            //根据该任务的菜单查询出任务的分组信息
-            Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
-            model.addAttribute("taskGroup",taskGroup);
+            if(menuRelation != null){
+                //根据该任务的菜单查询出任务的分组信息
+                Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
+                model.addAttribute("taskGroup",taskGroup);
+            }
 
             //查询出任务的关联信息
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
