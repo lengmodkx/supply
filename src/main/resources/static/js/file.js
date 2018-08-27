@@ -6,106 +6,136 @@ $(function () {
     var selectNum = 0;
 
     layui.use(['form', 'upload', 'layer'], function () {
-        var form = layui.form
-            , upload = layui.upload
-            , layer = layui.layer;
+            var form = layui.form
+                , upload = layui.upload
+                , layer = layui.layer;
 
-        form.on('switch(switch-filter)', function (data) {
-            console.log(data.elem.checked); //开关是否开启，true或者false
-            if (data.elem.checked) {
-                $(".who-can-see").text("仅自己可见")
-            } else {
-                $(".who-can-see").text("所有成员可见")
-            }
-        });
-        //选中复选框
-        form.on('checkbox(checks)', function (data) {
-            if (data.elem.checked) {
-                selectNum += 1;
-                $(this).parent().css("border", "4px solid #3da8f5");
-                movein($(this).parent());
-                $(".file-caozuo-wrap").show();
-                $(".file-names>span").text("已选择" + selectNum + "项")
-            } else {
-                selectNum -= 1;
-                $(this).parent().css("border", "1px solid #e5e5e5");
-                moveout($(this).parent());
-                if (selectNum <= 0) {
-                    $(".file-caozuo-wrap").hide();
-                    $(".file-names>span").text("全选");
+            form.on('switch(switch-filter)', function (data) {
+                console.log(data.elem.checked); //开关是否开启，true或者false
+                if (data.elem.checked) {
+                    $(".who-can-see").text("仅自己可见")
                 } else {
-                    $(".file-names>span").text("已选择" + selectNum + "项");
+                    $(".who-can-see").text("所有成员可见")
                 }
-            }
+            });
+            //选中复选框
+            form.on('checkbox(checks)', function (data) {
+                if (data.elem.checked) {
+                    selectNum += 1;
+                    $(this).parent().css("border", "4px solid #3da8f5");
+                    movein($(this).parent());
+                    $(".file-caozuo-wrap").show();
+                    $(".file-names>span").text("已选择" + selectNum + "项")
+                } else {
+                    selectNum -= 1;
+                    $(this).parent().css("border", "1px solid #e5e5e5");
+                    moveout($(this).parent());
+                    if (selectNum <= 0) {
+                        $(".file-caozuo-wrap").hide();
+                        $(".file-names>span").text("全选");
+                    } else {
+                        $(".file-names>span").text("已选择" + selectNum + "项");
+                    }
+                }
 
-        });
-        // 点击全选
-        form.on('checkbox(check-all)', function (data) {
-            var i = $(".one-file").length - 1;
-            if (data.elem.checked) {
-                $(".file-caozuo-wrap").show();
-                $(".one-file").css("border", "4px solid #3da8f5");
-                $(".one-file input").attr('checked', true);
-                layui.use('form', function () {
-                    var form = layui.form;
-                    form.render();
-                });
-                $(".one-file>div").addClass("layui-form-checked");
-                movein($(".one-file"));
-                $(".one-file>div").css("opacity", "1");
-                $(".file-names>span").text("已选择" + i + "项")
-
-            } else {
-                $(".file-caozuo-wrap").hide();
-                $(".one-file").css("border", "1px solid #e5e5e5");
-                $(".one-file-wrap input").attr('checked', false);
-                layui.use('form', function () {
-                    var form = layui.form;
-                    form.render();
-                });
-                moveout($(".one-file"));
-                $(".file-names>span").text("全选")
-            }
-
-        });
-
-        /**
-         * 文件上传
-         */
-        upload.render({
-            elem: '#uploadFile' //绑定元素
-            , url: '/file/uploadFile' //上传接口
-            , method: 'post'
-            , data: {projectId: projectId, parentId: parentId}
-            , exts: '|' // 可上传所有类型的文件
-            , done: function (data) {
-                //上传完毕回调
-                if (data.result === 1) {
-                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
-                        layer.closeAll('loading');
-                        window.location.reload();
+            });
+            // 点击全选
+            form.on('checkbox(check-all)', function (data) {
+                var i = $(".one-file").length - 1;
+                if (data.elem.checked) {
+                    $(".file-caozuo-wrap").show();
+                    $(".one-file").css("border", "4px solid #3da8f5");
+                    $(".one-file input").attr('checked', true);
+                    layui.use('form', function () {
+                        var form = layui.form;
+                        form.render();
                     });
+                    $(".one-file>div").addClass("layui-form-checked");
+                    movein($(".one-file"));
+                    $(".one-file>div").css("opacity", "1");
+                    $(".file-names>span").text("已选择" + i + "项")
+
                 } else {
-                    layer.closeAll('loading');
-                    layer.msg(data.msg, {icon: 2});
-
+                    $(".file-caozuo-wrap").hide();
+                    $(".one-file").css("border", "1px solid #e5e5e5");
+                    $(".one-file-wrap input").attr('checked', false);
+                    layui.use('form', function () {
+                        var form = layui.form;
+                        form.render();
+                    });
+                    moveout($(".one-file"));
+                    $(".file-names>span").text("全选")
                 }
-            }
-            , error: function () {
-                //请求异常回调
-                layer.closeAll('loading');
-                layer.msg('上传失败', {icon: 2});
 
-            }
-            , before: function () {
-                layer.load();
-            }
-        });
+            });
+
+
+            /**
+             * 文件上传
+             */
+
+
+
+
+
+
+
+
+
+
+
+        //     upload.render({
+        //         elem: '#uploadFile' //绑定元素
+        //         , url: '/file/uploadFile' //上传接口
+        //         , method: 'post'
+        //         , multiple: true
+        //         , xhr: xhrOnProgress
+        //         ,progress:function(value){//上传进度回调 value进度值
+        //             console.log(value);
+        //             element.progress('demo', value+'%')//设置页面进度条
+        //         }
+        //         , data: {projectId: projectId, parentId: parentId}
+        //         , exts: '|' // 可上传所有类型的文件
+        //         , done: function (data) {
+        //         //上传完毕回调
+        //         if (data.result === 1) {
+        //             layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+        //                 layer.closeAll('loading');
+        //                // window.location.reload();
+        //             });
+        //         } else {
+        //             layer.closeAll('loading');
+        //             layer.msg(data.msg, {icon: 2});
+        //
+        //         }
+        //     }
+        //     , error: function () {
+        //         //请求异常回调
+        //         layer.closeAll('loading');
+        //         layer.msg('上传失败', {icon: 2});
+        //
+        //     }
+        //     , before: function (obj) {
+        //             var content = '';
+        //             //将每次选择的文件追加到文件队列
+        //             var files = obj.pushFile();
+        //
+        //             //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+        //             obj.preview(function(index, file, result){
+        //                 content += '<li class="boxsizing">'+
+        //                             '<p class="files-names over-hidden">' + file.name + '</p>'+
+        //                             '<span class="files-szies over-hidden">' + file.size + '</span>'+
+        //                             '<div class="progress-bar"></div>'+
+        //                             '</li>';
+        //                 $('.file-scroll-ul.file').html(content);
+        //                 $('.upload-box').show();
+        //     })
+        //         }
+        // });
 
 
         // 移到回收站
         $(".deleteFile").click(function () {
-            alert(1);
             var checks = document.getElementsByName("fileCheck");
             var fileIds = "";
             for (var k in checks) {
@@ -219,6 +249,10 @@ $(function () {
         }
     });
 
+    // 文件点击
+    $('html').on('click','.one-file-wrap',function () {
+        loadFile($(this).attr('data-id'));
+    })
 
     // 文件菜单 弹出框
     $(".show-operate").click(function () {
@@ -251,12 +285,6 @@ $(function () {
             $(this).find(".folderFile").click(function () {
                 var fileId = $(this).parent().next().attr("data");
                 window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
-            });
-
-            // 文件点击
-            $(this).find(".textFile").click(function () {
-                var fileId = $(this).parent().next().attr("data");
-                loadFile(fileId);
             });
 
             // 下载

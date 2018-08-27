@@ -14,7 +14,7 @@
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-<div th:include="toper::toper (${project.projectName},${project.projectId})"></div>
+<div th:include="toper::toper (${project})"></div>
 
 <div class="chat-box-wrap">
     <div class="chat-box boxsizing">
@@ -96,16 +96,18 @@
             <div class="chat-footer boxsizing">
                 <div class="chat-footer-content">
                     <div class="message-box boxsizing">
+                        <ul class="fileList" style="background-color: #fff;padding-bottom: 5px">
+                        </ul>
                         <textarea class="boxsizing"  rows="1"></textarea>
                     </div>
                     <div class="message-bottom">
                         <!--添加 附件-->
-                        <div class="fujian-box boxsizing" >
+                        <div class="fujian-box boxsizing" id="container" >
                             <div class="fujian-box-title boxsizing">
                                 添加附件
                                 <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
                             </div>
-                            <div class="zj-up">
+                            <div class="zj-up" id="selectfiles">
                                 <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
                                 <span>直接上传</span>
                             </div>
@@ -141,7 +143,8 @@
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
-<script>
+<script th:inline="javascript">
+    var projectId = [[${project.projectId}]];
     layui.use(['element','form'], function() {});
     layui.use('layer', function(){
         var layer = layui.layer;
@@ -169,7 +172,12 @@
         });
         $(".close-fujian").click(function () {
             $(".fujian-box").slideUp()
-        })
+        });
+
+        //点击一个上传完成文件的x 移除掉该文件
+       $('html').on('click','.layui-icon-close',function () {
+          $(this).parents('li').remove();
+       });
 
         //底部 展开收起
         $(document).click(function(event){
@@ -183,7 +191,22 @@
         $(".message-box textarea").focus(function () {
             $('.message-bottom').slideDown();
         })
-
     });
+
+    //点击发送按钮
+    $('.send-msg').click(function () {
+        $.post('/chat/saveChat',{"projectId":projectId,"content":$('#chat').val(),"files":JSON.stringify(fileTemps),"fileId":fileIds.toString()},function (data) {
+            if(data.result===1){
+                $('.fileList').html('');
+            }
+        });
+    });
+
 </script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script th:src="@{/js/file_upload.js}" src="../static/js/file_upload.js"></script>
 </html>

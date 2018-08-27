@@ -1,10 +1,12 @@
 package com.art1001.supply.controller.file;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
@@ -12,6 +14,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.PushType;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
@@ -25,10 +28,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.CommonUtils;
-import com.art1001.supply.util.FileUtils;
-import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -132,6 +132,9 @@ public class FileController extends BaseController {
                 Collections.reverse(logs);
                 model.addAttribute("logs",logs);
 
+                //获取文件的后缀名
+                model.addAttribute("exts",FileExt.extMap);
+
                 //查询该文件有没有被当前用户收藏
                 model.addAttribute("isCollect",publicCollectService.isCollItem(file.getFileId()));
                 // 文件的tag
@@ -151,7 +154,8 @@ public class FileController extends BaseController {
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
-
+        //获取文件的后缀名
+        model.addAttribute("exts",FileExt.extMap);
         model.addAttribute("user",userEntity);
         return "file";
     }
@@ -341,7 +345,7 @@ public class FileController extends BaseController {
      * @param parentId  上级目录id
      * @param file      文件
      */
-    @PostMapping("/uploadFile")
+    @PostMapping("/upadFile")
     @ResponseBody
     public JSONObject uploadFile(
             @RequestParam String projectId,
@@ -364,6 +368,55 @@ public class FileController extends BaseController {
             jsonObject.put("msg", "上传失败");
         }
 
+        return jsonObject;
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param projectId 项目id
+     */
+    @PostMapping("/upload")
+    @ResponseBody
+    public JSONObject uploadFile(
+            @RequestParam String projectId,
+            @RequestParam(value = "files",required = false) String files
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //文件为空则不执行
+            if(files==null){
+                return jsonObject;
+            }
+            List<String> fileIds = new ArrayList<>();
+            if(StringUtils.isNotEmpty(files)){
+                JSONObject object = JSON.parseObject(files);
+                String fileName = object.getString("fileName");
+                String fileUrl = object.getString("fileUrl");
+                String size = object.getString("size");
+                String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+                // 写库
+                File myFile = new File();
+                // 用原本的文件名
+                myFile.setFileName(fileName);
+                myFile.setExt(ext);
+                myFile.setProjectId(projectId);
+                myFile.setFileUrl(fileUrl);
+                // 得到上传文件的大小
+                myFile.setSize(size);
+                myFile.setCatalog(0);
+                myFile.setParentId("0");
+                myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                fileService.saveFile(myFile);
+                fileIds.add(myFile.getFileId());
+                jsonObject.put("files",myFile);
+                jsonObject.put("result",1);
+            }
+        } catch (Exception e) {
+            log.error("上传文件异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "上传失败");
+        }
         return jsonObject;
     }
 
@@ -1255,6 +1308,7 @@ public class FileController extends BaseController {
             myFile.setParentId(parentId);
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             fileService.saveFile(myFile);
+            jsonObject.put("result",1);
         }catch (Exception e){
             throw new AjaxException(e);
         }

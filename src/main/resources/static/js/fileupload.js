@@ -3,7 +3,7 @@ var accessid= 'LTAIP4MyTAbONGJx';
 var accesskey= 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW';
 var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
-g_dirname = 'uplaod/'+projectId+"/";
+g_dirname = 'upload/'+projectId;
 g_object_name = '';
 g_object_name_type = 'random_name';
 now = timestamp = Date.parse(new Date()) / 1000;
@@ -94,7 +94,7 @@ function set_upload_param(up, filename, ret)
 var uploader = new plupload.Uploader({
     runtimes : 'html5,flash,silverlight,html4',
     browse_button : 'selectfiles',
-    multi_selection: false,
+    //multi_selection: false,
     container: document.getElementById('container'),
     flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
     silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
@@ -104,12 +104,13 @@ var uploader = new plupload.Uploader({
         FilesAdded: function(up, files) {
             $('.file-upload').removeClass("show-file-upload");
             plupload.each(files, function(file) {
-                $('.fileList').append('<li class="boxsizing" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>'
+                $('.upload-box').show();
+                $('.file-scroll-ul.file').append( '<li class="boxsizing" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>'
                     +'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
                     +'</div></li>');
                 set_upload_param(up, file.name, true);
-                $(".fujian-box").slideUp();
             });
+
         },
         UploadProgress: function(up, file) {
             var d = $('#'+file.id);
@@ -125,7 +126,13 @@ var uploader = new plupload.Uploader({
                 fileT.fileName = file.name;
                 fileT.fileUrl = get_uploaded_object_name(file.name);
                 fileT.size = plupload.formatSize(file.size);
-                fileTemps.push(fileT);
+                //fileTemps.push(fileT);
+                $.post('/file/upload',{"projectId": projectId,"files":JSON.stringify(fileT)},function (data) {
+                    var files = data.files;
+                    if(data.result === 1){
+                        window.reload();
+                    }
+                });
             }
             else
             {

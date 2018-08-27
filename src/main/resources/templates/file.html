@@ -12,7 +12,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
+
 </head>
+
 <body>
 <header th:include="common/header::frag (${user.userInfo.image}, ${user.id})"></header>
 
@@ -26,7 +28,7 @@
             <div class="file-toper" id="container">
                 <span><a href="javascript: void(0)"
                          onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
-                <div class="add-share" id="uploadFile"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+                <div class="add-share" id="selectfiles"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
                 </div>
                 <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
                 </div>
@@ -72,11 +74,11 @@
                             </div>
                             <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
                         </li>
-                        <li class="boxsizing one-file-wrap" th:each="file:${fileList}">
+                        <li class="boxsizing one-file-wrap" th:each="file:${fileList}" th:data-id = "${file.fileId}">
                             <div class="one-file boxsizing fileList" th:data="${file.fileId}">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0}and (${file.ext eq '.jpg'} or ${file.ext eq '.png'} or ${file.ext eq '.jpeg'}or ${file.ext eq '.bmp'}or ${file.ext eq '.svg'})"/>
+                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${exts.get('images').contains(file.ext)}"/>
                                 <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.doc'} or ${file.ext eq '.docx'})"/>
                                 <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.xls'} or ${file.ext eq '.xlsx'})"/>
                                 <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.pptx'} or ${file.ext eq '.ppt'})"/>
@@ -84,7 +86,9 @@
                                 <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
                                 <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
                                 <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.sh'} and ${file.ext eq '.gsm'}"/>
+                                <img class="folderFile" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
+                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
+                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                 <div class="img-show-operate">
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
@@ -98,13 +102,42 @@
         </div>
     </div>
 </div>
+
+<!--上传 进度 框-->
+<div class="upload-box" style="display: none;">
+    <div class="upload-box-head boxsizing">
+        <span class="jindu">上传中</span>
+        <i class="layui-icon layui-icon-close" style="font-size: 20px; color: #A6A6A6;"></i>
+    </div>
+    <ul class="file-scroll-ul file boxsizing">
+        <!--<li class="boxsizing">-->
+            <!--<p class="files-names over-hidden"></p>-->
+            <!--<span class="files-szies over-hidden"></span>-->
+            <!--<div class="layui-progress" lay-filter = "demo">-->
+                <!--<div class="layui-progress-bar" lay-percent="10%"></div>-->
+            <!--</div>-->
+        <!--</li>-->
+    </ul>
+</div>
 </body>
 <script th:inline="javascript">
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
+    var projectId = [[${projectId}]];
     layui.use(['element','form'], function() {
         var form = layui.form;
     });
+
+    layui.use('element', function(){
+        var element = layui.element;
+    });
 </script>
+
+<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/fileupload.js}"></script>
 
 <script th:src="@{/js/fileSockJs.js}" src="../static/js/fileSockJs.js"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>

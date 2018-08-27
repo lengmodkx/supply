@@ -47,8 +47,8 @@
                 <div>
                     <div th:text="${file.fileName}" class = "aaa" style="width: 200px;height: 200px;background-color: #999999" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'} or ${file.ext eq '.gsm'}">
                     </div>
-                    <div th:text="${file.ext}" class = "aaa" style="width: 200px;height: 50px;background-color: #AB47BC" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}or ${file.ext eq '.gsm'}"></div>
-                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${file.ext eq '.zip'} or ${file.ext eq '.rar'}or ${file.ext eq '.gsm'}">
+                    <div th:text="${file.ext}" class = "aaa" style="width: 200px;height: 50px;background-color: #AB47BC" th:if="${!exts.get('images').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)}"></div>
+                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${!exts.get('images').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and  ${!exts.get('sensitive').contains(file.ext)}">
                         <span th:onclick="'download(\''+${file.fileId}+'\')'">下载文件</span><span th:text="${file.size}"></span>
                     </div>
                 </div>
