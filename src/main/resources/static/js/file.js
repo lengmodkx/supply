@@ -268,7 +268,7 @@ $(function () {
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
                 offset: [top, left],
-                area: ['340px', '360px'],
+                area: ['220px', '210px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,
@@ -294,10 +294,11 @@ $(function () {
             });
 
             // 点击下拉箭头
-            $(this).find(".img-show-operate").click(function () {
+            $(this).find(".img-show-operate").click(function (e) {
+                e.stopPropagation();
                 var fileId = $(this).parent().next().attr("data");
-                var top = $(this).offset().top - 365 + 'px';
-                var left = $(this).offset().left - 170 + 'px';
+                var top = $(this).offset().top+10;
+                var left = $(this).offset().left+10;
                 headPhoto(top, left, fileId)
             });
         });

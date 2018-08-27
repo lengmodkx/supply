@@ -108,8 +108,8 @@
 
 /*文件菜单 弹框*/
 .scheduling-menu{
-    width: 340px;
-    padding: 0 20px 1px 20px;
+    width: 220px;
+    padding-left: 5px;
     background-color: white;
 }
 .scheduling-menu-title{
