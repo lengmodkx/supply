@@ -120,6 +120,11 @@ public class File extends BaseEntity implements Serializable {
      */
     private String fileUids;
 
+    /**
+     * 文件的缩略图
+     */
+    private String fileThumbnail;
+
     private String fileUrlTemp;
 
     private int fileLabel;

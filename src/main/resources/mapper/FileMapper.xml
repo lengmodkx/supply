@@ -20,6 +20,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="file_uids" property="fileUids" jdbcType="CLOB" />
 		<result column="file_label" property="fileLabel" jdbcType="INTEGER" />
+		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -58,7 +59,8 @@
 				create_time,
 				update_time,
 				file_uids,
-				file_label
+				file_label,
+				file_thumbnail
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
@@ -77,6 +79,7 @@
 				f.update_time,
 				f.file_uids,
 				f.file_label,
+				f.file_thumbnail,
 				tg.tag_id,
 				tg.tag_name,
 				tg.bg_color
@@ -330,6 +333,9 @@
 			<if test="fileLabel != null ">
 				file_label,
 			</if>
+			<if test="fileThumbnail != null ">
+				file_thumbnail,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -385,6 +391,9 @@
 			<if test="fileLabel != null ">
 				#{fileLabel},
 			</if>
+			<if test="fileThumbnail != null ">
+				#{fileThumbnail},
+			</if>
 		</trim>
 
 	</insert>
@@ -434,9 +443,12 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
-			</if>
+			</if>fileThumbnail
 			<if test="fileUids != null ">
 				file_uids = #{fileUids},
+			</if>
+			<if test="fileThumbnail != null ">
+				file_thumbnail = #{fileThumbnail},
 			</if>
 		</set>
 
