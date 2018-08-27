@@ -79,19 +79,16 @@ public class IndexController extends BaseController {
     public JSONObject login(
             @RequestParam String accountName,
             @RequestParam String password,
-            @RequestParam(required = false, defaultValue = "true") Boolean rememberMe,
-            HttpServletRequest request
+            @RequestParam(required = false, defaultValue = "true") Boolean rememberMe
     ) {
         JSONObject jsonObject = new JSONObject();
-        // 得到是哪个页面跳转的登陆
-        String refer = request.getHeader("REFERER");
         try {
             Subject subject = SecurityUtils.getSubject();
             UsernamePasswordToken token = new UsernamePasswordToken(accountName, password, rememberMe);
             subject.login(token);
             if (subject.isAuthenticated()) {
                 jsonObject.put("result", 1);
-                jsonObject.put("refer", refer);
+                jsonObject.put("token", token);
                 jsonObject.put("msg", "登陆成功");
             } else {
                 jsonObject.put("result", 0);
