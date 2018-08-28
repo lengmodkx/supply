@@ -134,7 +134,9 @@
     right: 0;
     top: 0;
     font-size: 16px;
+   color: black;
     display: none;
+    opacity: 1 !important;
 }
 .one-file .layui-form-checkbox[lay-skin=primary]{
     position: absolute;

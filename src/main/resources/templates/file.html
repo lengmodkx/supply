@@ -12,7 +12,6 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/myscheduling.css}" href="../static/css/myscheduling.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" href="../static/css/chat.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/file.css}" href="../static/css/file.css">
-
 </head>
 
 <body>
@@ -94,6 +93,7 @@
                                 <div class="img-show-operate">
                                     <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
                                 </div>
+                                <i class="iconfont icon-suo"></i>
                             </div>
                             <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:data="${file.fileId}">图片222.zip</div>
                         </li>
