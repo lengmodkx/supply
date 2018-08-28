@@ -6,10 +6,10 @@ var accessid= 'LTAIP4MyTAbONGJx';
 var accesskey= 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW';
 var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
-g_dirname = 'upload/project/'+projectId;
-g_object_name = '';
-g_object_name_type = 'random_name';
-now = timestamp = Date.parse(new Date()) / 1000;
+var g_dirname = 'upload/project/'+projectId+"/";
+var g_object_name = '';
+var g_object_name_type = 'random_name';
+var now = timestamp = Date.parse(new Date()) / 1000;
 var fileCommon = {};
 var fileModel = {};
 var fileTemps = [];
@@ -37,23 +37,19 @@ function random_string(len) {
 }
 
 function get_suffix(filename) {
-    pos = filename.lastIndexOf('.')
-    suffix = ''
-    if (pos != -1) {
+    var pos = filename.lastIndexOf('.')
+    var suffix = ''
+    if (pos !== -1) {
         suffix = filename.substring(pos)
     }
     return suffix;
 }
 
-function calculate_object_name(filename)
+function calculate_object_name(suffix,filename)
 {
-    if (g_object_name_type == 'local_name')
-    {
+    if (g_object_name_type === 'local_name') {
         g_object_name += "${filename}"
-    }
-    else if (g_object_name_type == 'random_name')
-    {
-        suffix = get_suffix(filename)
+    }else if (g_object_name_type === 'random_name') {
         g_object_name = g_dirname + random_string(10) + suffix
     }
     return ''
@@ -61,24 +57,23 @@ function calculate_object_name(filename)
 
 function get_uploaded_object_name(filename)
 {
-    if (g_object_name_type == 'local_name')
+    if (g_object_name_type === 'local_name')
     {
         tmp_name = g_object_name
         tmp_name = tmp_name.replace("${filename}", filename);
         return tmp_name
-    }
-    else if(g_object_name_type == 'random_name')
+    }else if(g_object_name_type === 'random_name')
     {
-        return g_object_name
+        return g_object_name;
     }
 }
 
 function set_upload_param(up, filename, ret)
 {
     g_object_name = g_dirname;
-    if (filename != '') {
-        suffix = get_suffix(filename)
-        calculate_object_name(filename)
+    if (filename !== '') {
+        var suffix = get_suffix(filename);
+        calculate_object_name(suffix,filename)
     }
     new_multipart_params = {
         'key' : g_object_name,
@@ -212,15 +207,14 @@ uploader.init();
     var uploader2 = new plupload.Uploader({
         runtimes : 'html5,flash,silverlight,html4',
         browse_button : 'upload',
-        //multi_selection: false,
+        multi_selection: false,
         container: document.getElementById('container'),
         flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
         silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
         url : 'http://oss.aliyuncs.com',
         filters: {
             mime_types : [
-                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" },
-                { title : "files", extensions : "" }
+                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" }
             ],
             max_file_size : '1024mb', //最大只能上传400kb的文件
             prevent_duplicates : true //不允许选取重复文件
