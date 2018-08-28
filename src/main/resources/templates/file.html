@@ -87,7 +87,7 @@
                                 <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
                                 <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
                                 <img class="folderFile" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
+                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
                                 <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                 <div class="img-show-operate">
@@ -132,12 +132,12 @@
     });
 </script>
 
-<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/fileupload.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>-->
+<!--<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>-->
+<!--<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>-->
+<!--<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>-->
+<!--<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>-->
+<!--<script type="text/javascript" th:src="@{/js/fileupload.js}"></script>-->
 
 <script th:src="@{/js/fileSockJs.js}" src="../static/js/fileSockJs.js"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>

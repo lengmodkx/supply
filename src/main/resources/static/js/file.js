@@ -73,7 +73,11 @@ $(function () {
             /**
              * 文件上传
              */
-
+            $('#selectfiles').click(function () {
+                var top=$(this).offset().top+60+'px';
+                var left=$(this).offset().left-50+'px';
+                tk_up_type(top,left,projectId,parentId);
+            });
 
 
 
@@ -278,6 +282,24 @@ $(function () {
         });
     }
 
+    function tk_up_type(top, left) {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                offset: [top, left],
+                area:['200px','148px'],
+                fixed: true,
+                shadeClose: true,
+                shade: [0.1, '#fff'],
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: '/file/selectUpType?projectId='+projectId+'&parentId='+parentId
+            });
+        });
+    }
+
     function fileDetail() {
 
         $(".fileList").each(function () {
@@ -288,7 +310,8 @@ $(function () {
             });
 
             // 下载
-            $(this).find(".img-show-download").click(function () {
+            $(this).find(".img-show-download").click(function (e) {
+                e.stopPropagation();
                 var fileId = $(this).parent().next().attr("data");
                 location.href = "/file/downloadFile?fileId=" + fileId;
             });
@@ -321,7 +344,7 @@ $(function () {
                 shade: 0,
                 closeBtn: 0,
                 anim: 1,  //动画 0-6
-                content: ['/file/openDownloadFile?fileId=' + fileId]
+                content: ['/file/fileDetail.html?fileId=' + fileId]
             });
         });
     }

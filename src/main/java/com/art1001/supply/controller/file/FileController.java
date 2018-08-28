@@ -29,6 +29,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -174,6 +175,42 @@ public class FileController extends BaseController {
             jsonObject.put("msg", "获取失败");
         }
         return jsonObject;
+    }
+
+    /**
+     * 弹出文件选择框
+     * @param model
+     * @return
+     */
+    @RequestMapping("selectUpType")
+    public String selectUpType(Model model,String projectId,String parentId){
+        model.addAttribute("projectId",projectId);
+        model.addAttribute("parentId",parentId);
+        return "select-up-type";
+    }
+
+    /**
+     * 弹出普通文件框
+     * @param model
+     * @return
+     */
+    @RequestMapping("ordinaryFile")
+    public String ordinaryFile(Model model,String projectId,String parentId){
+        model.addAttribute("projectId",projectId);
+        model.addAttribute("parentId",parentId);
+        return "select-ordinary-file-up";
+    }
+
+    /**
+     * 弹出模型选择框
+     * @param model
+     * @return
+     */
+    @RequestMapping("tkModelFile")
+    public String tkModelFile(Model model,String projectId,String parentId){
+        model.addAttribute("projectId",projectId);
+        model.addAttribute("parentId",parentId);
+        return "tk-model-file-up";
     }
 
     /**
@@ -380,7 +417,8 @@ public class FileController extends BaseController {
     @ResponseBody
     public JSONObject uploadFile(
             @RequestParam String projectId,
-            @RequestParam(value = "files",required = false) String files
+            @RequestParam(value = "files",required = false) String files,
+            String parentId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -388,30 +426,80 @@ public class FileController extends BaseController {
             if(files==null){
                 return jsonObject;
             }
-            List<String> fileIds = new ArrayList<>();
             if(StringUtils.isNotEmpty(files)){
-                JSONObject object = JSON.parseObject(files);
-                String fileName = object.getString("fileName");
-                String fileUrl = object.getString("fileUrl");
-                String size = object.getString("size");
-                String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-                // 写库
-                File myFile = new File();
-                // 用原本的文件名
-                myFile.setFileName(fileName);
-                myFile.setExt(ext);
-                myFile.setProjectId(projectId);
-                myFile.setFileUrl(fileUrl);
-                // 得到上传文件的大小
-                myFile.setSize(size);
-                myFile.setCatalog(0);
-                myFile.setParentId("0");
-                myFile.setFileUids(ShiroAuthenticationManager.getUserId());
-                fileService.saveFile(myFile);
-                fileIds.add(myFile.getFileId());
-                jsonObject.put("files",myFile);
-                jsonObject.put("result",1);
+                JSONArray array = JSON.parseArray(files);
+                for (int i=0;i<array.size();i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    String fileName = object.getString("fileName");
+                    String fileUrl = object.getString("fileUrl");
+                    String size = object.getString("size");
+                    String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+                    // 写库
+                    File myFile = new File();
+                    // 用原本的文件名
+                    myFile.setFileName(fileName);
+                    myFile.setExt(ext);
+                    myFile.setProjectId(projectId);
+                    myFile.setFileUrl(fileUrl);
+                    // 得到上传文件的大小
+                    myFile.setSize(size);
+                    myFile.setParentId(parentId);
+                    myFile.setCatalog(0);
+                    myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                    fileService.saveFile(myFile);
+                    jsonObject.put("result",1);
+                }
             }
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("上传文件异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "上传失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param projectId 项目id
+     */
+    @PostMapping("/uploadModel")
+    @ResponseBody
+    public JSONObject uploadModel(
+            @RequestParam String projectId,
+            @RequestParam(value = "fileCommon") String fileCommon
+            ,String fileModel
+            ,String parentId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        if(fileModel.equals("{}") || fileCommon.equals("{}")){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","请补充 模型文件或者缩略图!");
+            return jsonObject;
+        }
+        try {
+            JSONObject array = JSON.parseObject(fileCommon);
+            JSONObject object = JSON.parseObject(fileModel);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+            // 写库
+            File myFile = new File();
+            // 用原本的文件名
+            myFile.setFileName(fileName);
+            myFile.setExt(ext);
+            myFile.setProjectId(projectId);
+            myFile.setFileUrl(fileUrl);
+            // 得到上传文件的大小
+            myFile.setSize(size);
+            myFile.setParentId(parentId);
+            myFile.setCatalog(0);
+            myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+            myFile.setFileThumbnail(array.getString("fileUrl"));
+            fileService.saveFile(myFile);
+            jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);
             jsonObject.put("result", 0);

@@ -15,15 +15,24 @@
         <i class="layui-icon layui-icon-close close-tk" style="font-size: 18px; color: #A6A6A6;"></i>
     </header>
     <ul>
-        <li class="boxsizing">上传模型文件</li>
-        <li class="boxsizing">上传普通文件</li>
+        <li class="boxsizing model-file">上传模型文件</li>
+        <li class="boxsizing ordinary-file">上传普通文件</li>
     </ul>
 </div>
 
 </body>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
+<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/fileModelUpload.js}"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
-<script>
+<script th:inline="javascript">
+    var projectId = [[${projectId}]];
+    var parentId = [[${parentId}]];
+
     layui.use('form', function(){
         var form = layui.form;
     });
@@ -31,6 +40,39 @@
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     })
+
+
+    $('.model-file').click(function (top, left) {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            parent.layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area:['500px','380px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: '/file/tkModelFile?projectId='+projectId+'&parentId='+parentId
+            });
+        });
+    });
+
+    $('.ordinary-file').click(function (top, left) {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            parent.layer.open({
+                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: false, //标题
+                area:['500px','415px'],
+                fixed: true,
+                shadeClose: true,
+                closeBtn: 0,
+                anim: 1,  //动画 0-6
+                content: '/file/ordinaryFile?projectId='+projectId+'&parentId='+parentId
+            });
+        });
+    });
 </script>
 
 </html>
