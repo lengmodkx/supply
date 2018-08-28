@@ -6,9 +6,7 @@ $(function () {
     var selectNum = 0;
 
     layui.use(['form', 'upload', 'layer'], function () {
-            var form = layui.form
-                , upload = layui.upload
-                , layer = layui.layer;
+            var form = layui.form, layer = layui.layer;
 
             form.on('switch(switch-filter)', function (data) {
                 console.log(data.elem.checked); //开关是否开启，true或者false
@@ -69,7 +67,6 @@ $(function () {
 
             });
 
-
             /**
              * 文件上传
              */
@@ -78,84 +75,6 @@ $(function () {
                 var left=$(this).offset().left-50+'px';
                 tk_up_type(top,left,projectId,parentId);
             });
-
-
-
-
-
-
-
-
-
-
-        //     upload.render({
-        //         elem: '#uploadFile' //绑定元素
-        //         , url: '/file/uploadFile' //上传接口
-        //         , method: 'post'
-        //         , multiple: true
-        //         , xhr: xhrOnProgress
-        //         ,progress:function(value){//上传进度回调 value进度值
-        //             console.log(value);
-        //             element.progress('demo', value+'%')//设置页面进度条
-        //         }
-        //         , data: {projectId: projectId, parentId: parentId}
-        //         , exts: '|' // 可上传所有类型的文件
-        //         , done: function (data) {
-        //         //上传完毕回调
-        //         if (data.result === 1) {
-        //             layer.msg(data.msg, {icon: 1, time: 1000}, function () {
-        //                 layer.closeAll('loading');
-        //                // window.location.reload();
-        //             });
-        //         } else {
-        //             layer.closeAll('loading');
-        //             layer.msg(data.msg, {icon: 2});
-        //
-        //         }
-        //     }
-        //     , error: function () {
-        //         //请求异常回调
-        //         layer.closeAll('loading');
-        //         layer.msg('上传失败', {icon: 2});
-        //
-        //     }
-        //     , before: function (obj) {
-        //             var content = '';
-        //             //将每次选择的文件追加到文件队列
-        //             var files = obj.pushFile();
-        //
-        //             //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
-        //             obj.preview(function(index, file, result){
-        //                 content += '<li class="boxsizing">'+
-        //                             '<p class="files-names over-hidden">' + file.name + '</p>'+
-        //                             '<span class="files-szies over-hidden">' + file.size + '</span>'+
-        //                             '<div class="progress-bar"></div>'+
-        //                             '</li>';
-        //                 $('.file-scroll-ul.file').html(content);
-        //                 $('.upload-box').show();
-        //     })
-        //         }
-        // });
-
-
-        // 移到回收站
-        $(".deleteFile").click(function () {
-            var checks = document.getElementsByName("fileCheck");
-            var fileIds = "";
-            for (var k in checks) {
-                if (checks[k].checked)
-                    fileIds += checks[k].value + ",";
-            }
-            var obj = $(this);
-            fileIds = fileIds.substring(0, fileIds.length - 1);
-            $.post("/file/moveToRecycleBin", {fileIds: fileIds}, function (data) {
-                if (data.result === 1) {
-                    layer.msg('移除成功', {icon: 1});
-                } else {
-                    layer.msg(data.msg, {icon: 2});
-                }
-            });
-        });
 
         // 复制文件
         $(".copyFile").click(function () {
@@ -253,16 +172,13 @@ $(function () {
         }
     });
 
-    // 文件点击
-    $('html').on('click','.one-file.fieList',function () {
-        loadFile($(this).attr('data'));
-    })
-
-    // 文件菜单 弹出框
-    $(".show-operate").click(function () {
-        var top = $(this).offset().top + 30 + 'px';
-        var left = $(this).offset().left - 170 + 'px';
-        headphoto(top, left)
+    // 点击下拉箭头
+    $('html').on('click','.img-show-operate',function (e) {
+        e.stopPropagation();
+        var fileId = $(this).parent().next().attr("data");
+        var top = $(this).offset().top+10;
+        var left = $(this).offset().left+10;
+        headPhoto(top, left, fileId)
     });
 
     function headPhoto(top, left, fileId) {
@@ -300,54 +216,39 @@ $(function () {
         });
     }
 
-    function fileDetail() {
-
-        $(".fileList").each(function () {
-            // 进入下级目录
-            $(this).find(".folderFile").click(function () {
-                var fileId = $(this).parent().next().attr("data");
-                window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
+    // 进入下级目录
+    $('html').on('click','.one-file',function (e) {
+        e.stopPropagation();
+        var fileId = $(this).attr("data");
+        var catalog = $(this).attr("data-id");
+        if(catalog==="1"){
+            window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
+        }else{
+            $.post('/file/hasPermission',{"fileId":fileId},function (data) {
+                if(data.result===1&&data.hasPermission){
+                    window.location.href = "/file/fileDetail.html?fileId="+fileId;
+                }else{
+                    layer.msg("无权访问",{icon:5});
+                }
             });
+        }
+    });
 
-            // 下载
-            $(this).find(".img-show-download").click(function (e) {
-                e.stopPropagation();
-                var fileId = $(this).parent().next().attr("data");
+    // 下载
+    $('html').on('click','.img-show-download',function (e) {
+        e.stopPropagation();
+        var fileId = $(this).parent().attr("data");
+        $.post('/file/hasPermission',{"fileId":fileId},function (data) {
+            if(data.result===1&&data.hasPermission){
                 location.href = "/file/downloadFile?fileId=" + fileId;
-            });
-
-            // 点击下拉箭头
-            $(this).find(".img-show-operate").click(function (e) {
-                e.stopPropagation();
-                var fileId = $(this).parent().next().attr("data");
-                var top = $(this).offset().top+10;
-                var left = $(this).offset().left+10;
-                headPhoto(top, left, fileId)
-            });
+            }else{
+                layer.msg("无权访问",{icon:5});
+            }
         });
-    }
 
-    fileDetail();
+    });
 
 
-    //下载文件弹框
-    function loadFile(fileId) {
-        layui.use('layer', function () {
-            var layer = layui.layer;
-            layer.open({
-                type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                title: false, //标题
-                offset: '50px',
-                area: ['100%', '100%'],
-                fixed: true,
-                shadeClose: true,
-                shade: 0,
-                closeBtn: 0,
-                anim: 1,  //动画 0-6
-                content: ['/file/fileDetail.html?fileId=' + fileId]
-            });
-        });
-    }
 
     var url = window.location.href;
     if (url.indexOf("file") > 0) {

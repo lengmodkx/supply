@@ -21,6 +21,7 @@
 		<result column="file_uids" property="fileUids" jdbcType="CLOB" />
 		<result column="file_label" property="fileLabel" jdbcType="INTEGER" />
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
+		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -60,7 +61,8 @@
 				update_time,
 				file_uids,
 				file_label,
-				file_thumbnail
+				file_thumbnail,
+				file_privacy
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
@@ -80,6 +82,7 @@
 				f.file_uids,
 				f.file_label,
 				f.file_thumbnail,
+				f.file_privacy,
 				tg.tag_id,
 				tg.tag_name,
 				tg.bg_color
@@ -336,6 +339,9 @@
 			<if test="fileThumbnail != null ">
 				file_thumbnail,
 			</if>
+			<if test="filePrivacy != null ">
+				file_privacy,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -394,6 +400,9 @@
 			<if test="fileThumbnail != null ">
 				#{fileThumbnail},
 			</if>
+			<if test="filePrivacy != null ">
+				#{filePrivacy},
+			</if>
 		</trim>
 
 	</insert>
@@ -449,6 +458,9 @@
 			</if>
 			<if test="fileThumbnail != null ">
 				file_thumbnail = #{fileThumbnail},
+			</if>
+			<if test="filePrivacy != null ">
+				file_privacy = #{filePrivacy},
 			</if>
 		</set>
 

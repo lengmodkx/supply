@@ -219,7 +219,7 @@ public class FileServiceImpl implements FileService {
         projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
-        String[] childFolderNameArr = {"图片", "文档", "视频", "音频"};
+        String[] childFolderNameArr = {"北欧", "简欧", "美式", "现代","新中式"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
             // 写库
