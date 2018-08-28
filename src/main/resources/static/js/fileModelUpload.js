@@ -162,7 +162,7 @@ uploader.init();
         silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
         url : 'http://oss.aliyuncs.com',
         filters: {
-            mime_types : [ //只允许上传图片和zip文件
+            mime_types : [
                 { title : "Image files", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP" }
             ],
             max_file_size : '10mb', //最大只能上传400kb的文件
@@ -218,6 +218,10 @@ uploader.init();
         silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
         url : 'http://oss.aliyuncs.com',
         filters: {
+            mime_types : [
+                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" },
+                { title : "files", extensions : "" }
+            ],
             max_file_size : '1024mb', //最大只能上传400kb的文件
             prevent_duplicates : true //不允许选取重复文件
         },
@@ -233,7 +237,7 @@ uploader.init();
                             '                </div>\n' +
                             '                <img src="/image/choose.png" alt="">\n' +
                             '                <p class="over-hidden">' + file.name + '</p>\n' +
-                            '                <div class="layui-progress ordinaryFile" lay-filter ='+ "upModel" +'>\n' +
+                            '                <div class="layui-progress ordinaryFile" lay-filter ='+ file.id +'>\n' +
                             '                    <div class="layui-progress-bar" lay-percent="0%"></div>\n' +
                             '                </div>\n' +
                             '            </li>'
@@ -247,7 +251,7 @@ uploader.init();
                 // var prog = d.find('.progress');
                 // var progBar = prog.find('.progress-bar');
                 // progBar.width(5*file.percent+'px');
-                element.progress('upModel', file.percent+'%');
+                element.progress(file.id, file.percent+'%');
                 // progBar.attr('aria-valuenow', file.percent);
             },
             FileUploaded: function(up, file, info) {

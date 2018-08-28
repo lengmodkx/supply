@@ -45,6 +45,10 @@
 }
 
 /*模型文件框*/
+.no-file>img{
+    width: 120px;
+    height: 120px;
+}
 .model-file-up-box{
     width: 500px;
     background-color: white;
@@ -67,11 +71,11 @@
     justify-content: space-between;
 }
 .mx-box-wrap,.slt-box-wrap{
-    width: 200px;
+    width: 150px;
 }
 .mx-box,.slt-box{
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     border: 1px solid #D5D5D5;
     position: relative;
 }
@@ -95,6 +99,10 @@
 .has-file{
     font-size: 16px;
     text-align: center;
+}
+.no-img>img{
+    width: 120px;
+    height: 120px;
 }
 .has-img img{
     width: 130px;
@@ -136,6 +144,13 @@
 .select-all-file-box{
     width: 100%;
     padding: 10px 20px;
+    height: 285px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.select-all-file-box::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
 }
 .add-file-box{
     width: 120px;

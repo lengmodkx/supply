@@ -443,7 +443,7 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
-			</if>fileThumbnail
+			</if>
 			<if test="fileUids != null ">
 				file_uids = #{fileUids},
 			</if>

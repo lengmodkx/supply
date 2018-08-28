@@ -254,8 +254,8 @@ $(function () {
     });
 
     // 文件点击
-    $('html').on('click','.one-file-wrap',function () {
-        loadFile($(this).attr('data-id'));
+    $('html').on('click','.one-file.fieList',function () {
+        loadFile($(this).attr('data'));
     })
 
     // 文件菜单 弹出框
