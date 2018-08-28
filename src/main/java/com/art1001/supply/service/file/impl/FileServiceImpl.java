@@ -177,8 +177,6 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public void saveFile(File file) {
-        // 设置uuid
-        file.setFileId(IdGen.uuid());
         // 获取操作用户
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 设置操作用户信息

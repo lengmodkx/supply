@@ -131,4 +131,14 @@ public class LogServiceImpl implements LogService {
 	public void deleteByPublicId(String publicId) {
 		logMapper.deleteByPublicId(publicId);
 	}
+
+	/**
+	 * 初始一个信息下的所有 日志信息 和聊天信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+	@Override
+	public List<Log> initAllLog(String publicId) {
+		return logMapper.initAllLog(publicId);
+	}
 }

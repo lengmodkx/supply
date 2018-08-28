@@ -3,8 +3,10 @@ var accessid= 'LTAIP4MyTAbONGJx';
 var accesskey= 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW';
 var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
+var index = 0;
 g_dirname = 'upload/'+projectId+"/";
 g_object_name = '';
+var g_object_names = [];
 g_object_name_type = 'random_name';
 now = timestamp = Date.parse(new Date()) / 1000;
 var fileTemps = [];
@@ -51,6 +53,7 @@ function calculate_object_name(filename)
         suffix = get_suffix(filename)
         g_object_name = g_dirname + random_string(10) + suffix
     }
+    g_object_names.push(g_object_name);
     return ''
 }
 
@@ -87,14 +90,13 @@ function set_upload_param(up, filename, ret)
         'url': host,
         'multipart_params': new_multipart_params
     });
-
     up.start();
 }
 
 var uploader = new plupload.Uploader({
     runtimes : 'html5,flash,silverlight,html4',
     browse_button : 'selectfiles',
-    multi_selection: false,
+    //multi_selection: false,
     container: document.getElementById('container'),
     flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
     silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
@@ -104,7 +106,7 @@ var uploader = new plupload.Uploader({
         FilesAdded: function(up, files) {
             $('.file-upload').removeClass("show-file-upload");
             plupload.each(files, function(file) {
-                $('.fileList').append('<li class="boxsizing" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>'
+                $('.fileList').append('<li class="boxsizing" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div id="' + file.id + '" class="over-hidden">' + file.name + ' (' + plupload.formatSize(file.size) + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>'
                     +'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
                     +'</div></li>');
                 set_upload_param(up, file.name, true);
@@ -123,7 +125,7 @@ var uploader = new plupload.Uploader({
             {
                 var fileT = {};
                 fileT.fileName = file.name;
-                fileT.fileUrl = get_uploaded_object_name(file.name);
+                fileT.fileUrl = g_object_names[index];
                 fileT.size = plupload.formatSize(file.size);
                 fileTemps.push(fileT);
             }
@@ -131,6 +133,7 @@ var uploader = new plupload.Uploader({
             {
                 console.log(info.response);
             }
+            index++;
         },
 
         Error: function(up, err) {

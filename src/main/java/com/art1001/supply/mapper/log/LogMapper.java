@@ -71,4 +71,11 @@ public interface LogMapper {
 	 */
 	@Delete("delete from prm_log where public_id = #{publicId}")
 	void deleteByPublicId(String publicId);
+
+	/**
+	 * 初始一个信息下的所有 日志信息 和聊天信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+    List<Log> initAllLog(String publicId);
 }

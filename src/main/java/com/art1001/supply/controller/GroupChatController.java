@@ -16,9 +16,11 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,9 +48,14 @@ public class GroupChatController extends BaseController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+
     @RequestMapping("/chat.html")
     public String share(@RequestParam String projectId, Model model){
-
+        List<Log> logs = logService.initAllLog(projectId);
+        model.addAttribute("logs",logs);
+        model.addAttribute("exts",FileExt.extMap.get("images"));
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         return "chat";
@@ -59,7 +66,6 @@ public class GroupChatController extends BaseController {
      * @param projectId 项目id
      * @param content 消息内容
      * @param files 上传的文件
-     * @param fileId 文件的id
      * @return
      */
     @PostMapping("saveChat")
@@ -67,19 +73,19 @@ public class GroupChatController extends BaseController {
     public JSONObject saveChat(
             @RequestParam String projectId,
             @RequestParam(required = false,defaultValue = "") String content,
-            @RequestParam(value = "files",required = false) String files,
-            @RequestParam(required = false) String[] fileId){
+            @RequestParam(value = "files",required = false) String files){
         JSONObject jsonObject = new JSONObject();
+
+        JSONObject pushData = new JSONObject();
         try {
             //文件和内容都为空则不发送推送消息
-            if(files==null&&fileId==null&&StringUtils.isEmpty(content)){
+            if(files==null&&StringUtils.isEmpty(content)){
                 return jsonObject;
             }
 
-            List<String> fileIds = new ArrayList<>();
+            List<String> fileIds = new ArrayList<String>();
             if(StringUtils.isNotEmpty(files)){
                 JSONArray array = JSON.parseArray(files);
-
                 for (int i=0;i<array.size();i++) {
                     JSONObject object = array.getJSONObject(i);
                     String fileName = object.getString("fileName");
@@ -98,38 +104,36 @@ public class GroupChatController extends BaseController {
                     myFile.setSize(size);
                     myFile.setCatalog(0);
                     myFile.setParentId("0");
-                    myFile.setFileLabel(1);
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
-                    fileService.saveFile(myFile);
                     fileIds.add(myFile.getFileId());
+                    fileService.saveFile(myFile);
                 }
             }
 
+            //处理聊天内容
+            if(StringUtils.isNotEmpty(content)){
+                Log log = new Log();
+                log.setId(IdGen.uuid());
+                if(StringUtils.isEmpty(content)){
+                    log.setContent("");
+                }
+                log.setLogType(1);
+                log.setMemberId(ShiroAuthenticationManager.getUserId());
+                log.setPublicId(projectId);
+                log.setCreateTime(System.currentTimeMillis());
+                log.setContent(content);
+                log.setFileIds(StringUtils.join(fileIds,","));
+                Log log1 = logService.saveLog(log);
+                jsonObject.put("result", 1);
+                jsonObject.put("msg", "上传成功");
 
-            if(fileId!=null&&fileId.length>0){
-                fileIds.addAll(Arrays.asList(fileId));
+                //封装推送数据包
+                pushData.put("exts",FileExt.extMap.get("images"));
+                pushData.put("type","收到消息");
+                pushData.put("data",log1);
+                pushData.put("userId",ShiroAuthenticationManager.getUserId());
+                messagingTemplate.convertAndSend("/topic/chat/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
             }
-
-            //保存聊天信息
-            Log log = new Log();
-            log.setId(IdGen.uuid());
-            if(StringUtils.isEmpty(content)){
-                log.setContent("");
-            }
-            log.setLogType(1);
-            log.setMemberId(ShiroAuthenticationManager.getUserId());
-            log.setPublicId(projectId);
-            log.setLogFlag(1);
-            log.setCreateTime(System.currentTimeMillis());
-            log.setFileIds(StringUtils.join(fileIds,","));
-            Log log1 = logService.saveLog(log);
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "上传成功");
-            PushType taskPushType = new PushType(TaskLogFunction.A14.getName());
-            Map<String,Object> map = new HashMap<>();
-            map.put("taskLog",log1);
-            taskPushType.setObject(map);
-            //messagingTemplate.convertAndSend("/topic/"+taskId,new ServerMessage(JSON.toJSONString(taskPushType)));
         } catch (Exception e){
             log.error("系统异常,消息发送失败,{}",e);
             jsonObject.put("result",0);
