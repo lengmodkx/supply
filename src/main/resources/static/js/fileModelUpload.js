@@ -45,12 +45,11 @@ function get_suffix(filename) {
     return suffix;
 }
 
-function calculate_object_name(suffix,filename)
-{
+function calculate_object_name(suffix,filename) {
     if (g_object_name_type === 'local_name') {
         g_object_name += "${filename}"
     }else if (g_object_name_type === 'random_name') {
-        g_object_name = g_dirname + random_string(10) + suffix
+        g_object_name = g_dirname+random_string(10) + suffix
     }
     return ''
 }
@@ -207,7 +206,7 @@ uploader.init();
     var uploader2 = new plupload.Uploader({
         runtimes : 'html5,flash,silverlight,html4',
         browse_button : 'upload',
-        multi_selection: false,
+        //multi_selection: false,
         container: document.getElementById('container'),
         flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
         silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
@@ -224,6 +223,7 @@ uploader.init();
             FilesAdded: function(up, files) {
                 // $('.file-upload').removeClass("show-file-upload");
                 plupload.each(files, function(file) {
+                    set_upload_param(up, file.name, true);
                     var content = '';
                         content += '<li class="boxsizing">\n' +
                             '                <div class="remove-it">\n' +
@@ -237,7 +237,6 @@ uploader.init();
                             '            </li>'
                     $('.all-file-ul').prepend(content);
                         $('.ordinaryFile').show();
-                    set_upload_param(up, file.name, true);
                 });
             },
             UploadProgress: function(up, file) {
