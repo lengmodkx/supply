@@ -129,6 +129,13 @@
     display: flex;
     align-items: center;
 }
+.one-file .icon-suo{
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 16px;
+    display: none;
+}
 .one-file .layui-form-checkbox[lay-skin=primary]{
     position: absolute;
     top: 0;
