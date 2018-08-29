@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * taskFileEntity
+ * Entity
  */
 @Data
 public class TaskFile extends BaseEntity implements Serializable {
@@ -22,28 +22,42 @@ public class TaskFile extends BaseEntity implements Serializable {
 	/**
 	 * 绑定id
 	 */
-	private String bindingId;
+	private String taskId;
 
 
 	/**
 	 * 其他id
 	 */
-	private String otherId;
+	private String fileId;
 
 
 	/**
 	 * 关联的类型
 	 */
-	private String otherType;
+	private String fileName;
 
 
 	/**
-	 * 创建时间
+	 * file_ext
 	 */
+	private String fileExt;
 
 
 	/**
-	 * 更新时间
+	 * file_size
 	 */
+	private String fileSize;
+
+
+	/**
+	 * file_url
+	 */
+	private String fileUrl;
+
+
+	/**
+	 * file_thumbnail
+	 */
+	private String fileThumbnail;
 
 }

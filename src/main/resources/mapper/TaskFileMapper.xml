@@ -4,20 +4,24 @@
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskFile">
 		<result column="id" property="id" jdbcType="VARCHAR" />
-		<result column="binding_id" property="bindingId" jdbcType="VARCHAR" />
-		<result column="other_id" property="otherId" jdbcType="VARCHAR" />
-		<result column="other_type" property="otherType" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
+		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="file_ext" property="fileExt" jdbcType="VARCHAR" />
+		<result column="file_size" property="fileSize" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="file_thumbnail" property="fileThumbnail" jdbcType="VARCHAR" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
 						id,
-				binding_id,
-				other_id,
-				other_type,
-				create_time,
-				update_time
+				task_id,
+				file_id,
+				file_name,
+				file_ext,
+				file_size,
+				file_url,
+				file_thumbnail
 	</sql>
 
 	<sql id="whereStatement">
@@ -77,20 +81,26 @@
 			<if test="id != null and id != ''">
 			id,
 			</if>
-			<if test="bindingId != null and bindingId != ''">
-			binding_id,
+			<if test="taskId != null and taskId != ''">
+			task_id,
 			</if>
-			<if test="otherId != null and otherId != ''">
-			other_id,
+			<if test="fileId != null and fileId != ''">
+			file_id,
 			</if>
-			<if test="otherType != null and otherType != ''">
-			other_type,
+			<if test="fileName != null and fileName != ''">
+			file_name,
 			</if>
-			<if test="createTime != null ">
-			create_time,
+			<if test="fileExt != null and fileExt != ''">
+			file_ext,
 			</if>
-			<if test="updateTime != null ">
-			update_time,
+			<if test="fileSize != null and fileSize != ''">
+			file_size,
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+			file_url,
+			</if>
+			<if test="fileThumbnail != null and fileThumbnail != ''">
+			file_thumbnail,
 			</if>
 		</trim>
 
@@ -99,20 +109,26 @@
 			<if test="id != null and id != ''">
 				#{id},
 			</if>
-			<if test="bindingId != null and bindingId != ''">
-				#{bindingId},
+			<if test="taskId != null and taskId != ''">
+				#{taskId},
 			</if>
-			<if test="otherId != null and otherId != ''">
-				#{otherId},
+			<if test="fileId != null and fileId != ''">
+				#{fileId},
 			</if>
-			<if test="otherType != null and otherType != ''">
-				#{otherType},
+			<if test="fileName != null and fileName != ''">
+				#{fileName},
 			</if>
-			<if test="createTime != null ">
-				#{createTime},
+			<if test="fileExt != null and fileExt != ''">
+				#{fileExt},
 			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
+			<if test="fileSize != null and fileSize != ''">
+				#{fileSize},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				#{fileUrl},
+			</if>
+			<if test="fileThumbnail != null and fileThumbnail != ''">
+				#{fileThumbnail},
 			</if>
 		</trim>
 
@@ -122,20 +138,26 @@
 
 		update prm_task_file
 		<set>
-			<if test="bindingId != null and bindingId != ''">
-				binding_id = #{bindingId},
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId},
 			</if>
-			<if test="otherId != null and otherId != ''">
-				other_id = #{otherId},
+			<if test="fileId != null and fileId != ''">
+				file_id = #{fileId},
 			</if>
-			<if test="otherType != null and otherType != ''">
-				other_type = #{otherType},
+			<if test="fileName != null and fileName != ''">
+				file_name = #{fileName},
 			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
+			<if test="fileExt != null and fileExt != ''">
+				file_ext = #{fileExt},
 			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
+			<if test="fileSize != null and fileSize != ''">
+				file_size = #{fileSize},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				file_url = #{fileUrl},
+			</if>
+			<if test="fileThumbnail != null and fileThumbnail != ''">
+				file_thumbnail = #{fileThumbnail},
 			</if>
 		</set>
 
