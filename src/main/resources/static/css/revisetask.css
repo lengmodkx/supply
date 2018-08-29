@@ -352,7 +352,15 @@
 .file-queue-box ul li:hover .cover-box{
    opacity: 1;
 }
-
+.file-queue-box ul li .zhezhao{
+    position: absolute;
+    width: 100%;
+    height: 138px;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    opacity: 0;
+}
 .file-queue-box ul li>img{
     box-sizing: border-box;
     display: block;
