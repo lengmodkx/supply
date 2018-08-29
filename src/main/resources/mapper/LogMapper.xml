@@ -11,6 +11,7 @@
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="log_flag" property="logFlag" jdbcType="INTEGER" />
+		<result column="log_is_withdraw" property="logIsWithdraw" jdbcType="INTEGER" />
 		<result column="file_ids" property="fileIds" jdbcType="CLOB" />
 		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
@@ -26,7 +27,8 @@
 				log_type,
 				create_time,
 				log_flag,
-				file_ids
+				file_ids,
+				log_is_withdraw
 	</sql>
 
 	<sql id="whereStatement">
@@ -113,6 +115,9 @@
 			<if test="fileIds != null and fileIds != ''">
 				file_ids,
 			</if>
+			<if test="logIsWithdraw != null">
+				log_is_withdraw,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -143,6 +148,9 @@
 			</if>
 			<if test="fileIds != null and fileIds != ''">
 				#{fileIds},
+			</if>
+			<if test="logIsWithdraw != null">
+				#{logIsWithdraw},
 			</if>
 		</trim>
 
@@ -176,6 +184,9 @@
 			<if test="fileIds != null and fileIds != ''">
 				file_ids = #{fileIds},
 			</if>
+			<if test="logIsWithdraw != null and logIsWithdraw != ''">
+				log_is_withdraw = #{logIsWithdraw},
+			</if>
 		</set>
 
 		WHERE id = #{id}
@@ -200,6 +211,6 @@
 	<!-- 初始一个信息下的所有 日志信息 和聊天信息 -->
 	<select id="initAllLog" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"></include>
-		from prm_log where public_id = #{publicId}
+		from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
 	</select>
 </mapper>

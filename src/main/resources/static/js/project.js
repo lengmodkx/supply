@@ -47,8 +47,8 @@ function cancleCollect(projectId,e){
 
 //点击项目进入任务界面
 function projectClick(projectId,e){
-    stopBubbling(e);
     window.location.href = "/project/task.html?projectId="+projectId;
+    e.stopPropagation();
     return false;
 }
 

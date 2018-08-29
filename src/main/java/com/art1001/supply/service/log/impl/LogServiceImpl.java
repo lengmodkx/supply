@@ -141,4 +141,13 @@ public class LogServiceImpl implements LogService {
 	public List<Log> initAllLog(String publicId) {
 		return logMapper.initAllLog(publicId);
 	}
+
+	/**
+	 * 撤回消息
+	 * @param id 消息id
+	 */
+	@Override
+	public void withdrawMessage(String id) {
+		logMapper.withdrawMessage(id);
+	}
 }

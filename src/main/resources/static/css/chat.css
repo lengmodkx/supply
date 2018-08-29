@@ -108,6 +108,7 @@
 }
 .my-msg .message-body{
     text-align: right;
+    min-width: 240px;
 }
 .my-msg .message-content{
     background-color: #e5f6fb;
@@ -146,6 +147,10 @@
     padding: 10px 12px;
     border-radius: 10px;
     margin: 5px 0;
+    align-items: center;
+}
+.file-flex-box>img{
+    max-width: 200px;
 }
 .chat-file-ul .file-flex-box img{
     width: 32px;
@@ -318,8 +323,40 @@
     float: right;
     display: none;
 }
+.no-msg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
 
-
+}
+.no-msg>div{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.no-msg>div h3{
+    font-size: 18px;
+    color: #DBDBDB;
+    text-align: center;
+    margin-top: 10px;
+}
+.no-msg>div p{
+    font-size: 14px;
+    color: #DBDBDB;
+    text-align: center;
+    margin-top: 5px;
+}
+.no-msg>div img{
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    height: 80px;
+}
 
 
 

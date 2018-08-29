@@ -81,4 +81,10 @@ public interface LogService {
 	 * @return
 	 */
     List<Log> initAllLog(String publicId);
+
+	/**
+	 * 撤回消息
+	 * @param id 消息id
+	 */
+	void withdrawMessage(String id);
 }

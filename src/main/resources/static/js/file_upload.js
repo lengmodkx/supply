@@ -103,44 +103,62 @@ var uploader = new plupload.Uploader({
     url : 'http://oss.aliyuncs.com',
 
     init: {
+        PostInit: function() {
+            document.getElementById('postfiles').onclick = function() {
+                set_upload_param(uploader, '', false);
+                return false;
+            };
+        },
         FilesAdded: function(up, files) {
             $('.file-upload').removeClass("show-file-upload");
             plupload.each(files, function(file) {
                 $('.fileList').append('<li class="boxsizing" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div id="' + file.id + '" class="over-hidden">' + file.name + ' (' + plupload.formatSize(file.size) + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>'
                     +'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
                     +'</div></li>');
-                set_upload_param(up, file.name, true);
                 $(".fujian-box").slideUp();
             });
+        },
+        BeforeUpload: function(up, file) {
+            set_upload_param(up, file.name, true);
         },
         UploadProgress: function(up, file) {
             var d = $('#'+file.id);
             var prog = d.find('.progress');
             var progBar = prog.find('.progress-bar');
-            progBar.width(5*file.percent+'px');
+            progBar.width(file.percent+'%');
             progBar.attr('aria-valuenow', file.percent);
         },
         FileUploaded: function(up, file, info) {
-            if (info.status === 200)
-            {
+            if (info.status === 200) {
                 var fileT = {};
                 fileT.fileName = file.name;
-                fileT.fileUrl = g_object_names[index];
+                fileT.fileUrl = get_uploaded_object_name(file.name);
                 fileT.size = plupload.formatSize(file.size);
                 fileTemps.push(fileT);
             }
-            else
-            {
+            else {
                 console.log(info.response);
             }
             index++;
         },
-
+        UploadComplete:function(uploader,files){
+            if(($('#chat').val() === '' && $('#chat').val() === null) && fileTemps.length === 0){
+                return false;
+            }
+            $.post('/chat/saveChat',{"projectId":projectId,"content":$('#chat').val(),"files":JSON.stringify(fileTemps)},function (data) {
+                if(data.result===1){
+                    fileTemps = [];
+                    $('.no-msg').remove();
+                    $('#chat').val('');
+                    $('.fileList').html('');
+                }
+            });
+        },
         Error: function(up, err) {
+            alert(err.message);
             console.log(err.response);
         }
     }
 });
-
 uploader.init();
 

@@ -74,4 +74,10 @@ public class Log extends BaseEntity implements Serializable {
 	private UserEntity userEntity;
 
 	private List<File> fileList;
+
+	/**
+	 * 标记是否为撤回消息
+	 * (0.正常 1.撤回)
+	 */
+	private int logIsWithdraw;
 }

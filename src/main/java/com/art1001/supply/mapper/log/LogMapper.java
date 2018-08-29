@@ -5,6 +5,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * mapper接口
@@ -78,4 +79,11 @@ public interface LogMapper {
 	 * @return
 	 */
     List<Log> initAllLog(String publicId);
+
+	/**
+	 * 撤回消息
+	 * @param id 消息id
+	 */
+	@Update("update prm_log set content = null,file_ids = null,log_is_withdraw = 1 where id = #{id}")
+    void withdrawMessage(String id);
 }

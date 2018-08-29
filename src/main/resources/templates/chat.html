@@ -20,81 +20,105 @@
     <div class="chat-box boxsizing">
         <header class="chat-header boxsizing">bim5d过程管理</header>
         <section class="chat-content">
-            <ul class="section-ul boxsizing">
-                <!--撤回消息-->
-                <li class="msg-li recall-li boxsizing">
-                    <div class="message-recall">”水水谁“撤回了一条消息</div>
-                </li>
-                <!--敌方消息-->
-                <li class="msg-li boxsizing their-msg" th:each = "log:${logs}" th:if="${log.fileList == null and log.userEntity.id != user.id}">
-                    <img th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}">
-                    <div class="message-body">
-                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
-                        <div class="msg-timer clearfix boxsizing">
-                            <span th:text="${log.userEntity.userName}"></span>
-                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
-                        </div>
-                    </div>
-                </li>
-                <!--敌方文件-->
-                <li class="msg-li boxsizing their-msg have-file-li" th:each = "log:${logs}" th:if="${log.fileList != null and log.userEntity.id != user.id}">
-                    <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER} + ${log.userEntity.userInfo.image}">
-                    <div class="message-body">
-                        <ul class="chat-file-ul boxsizing">
-                            <li class="clearfix" th:each="file:${log.fileList}">
-                                <div class="file-flex-box">
-                                    <img src="../static/image/excel.png" th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
-                                    <img src="../static/image/chatDefault.png" th:if="${!exts.contains(file.ext)}" th:src="@{/static/image/chatDefault.png}">
-                                    <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
-                                    <p class="chat-file-size" th:text="${file.size}"></p>
-                                </div>
-                                <!--<img class="chat-file-img" src="../static/image/adds.png" alt="">-->
-                            </li>
-                        </ul>
-                        <div class="msg-timer clearfix boxsizing">
-                            <span th:text="${log.userEntity.userName}"></span>
-                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
-                            <span class="download-chat-file">下载附件</span>
-                        </div>
-                    </div>
-                </li>
+            <ul class="section-ul boxsizing" th:style="'display:' + (${logs != null or logs.size() > 0} ? 'block' : 'none') + ''">
+                <div th:each="log:${logs}">
+                    <!--撤回消息-->
+                    <li class="msg-li recall-li boxsizing" th:if="${log.logIsWithdraw == 1 and log.memberId == user.id}">
+                        <div class="message-recall">你撤回了一条消息</div>
+                    </li>
+                    <li class="msg-li recall-li boxsizing" th:if="${log.logIsWithdraw == 1 and log.memberId != user.id}">
+                        <div class="message-recall" th:text="${log.userEntity.userName}+撤回了一条消息"></div>
+                    </li>
 
-                <!--我方 消息-->
-                <li class="msg-li boxsizing my-msg" th:each = "log:${logs}" th:if="${log.fileList == null and log.userEntity.id == user.id}">
-                    <div class="message-body">
-                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
-                        <div class="msg-timer clearfix boxsizing">
-                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
+                    <!--敌方消息-->
+                    <li class="msg-li boxsizing their-msg" th:data-id = "${log.id}" th:if="${log.fileList == null and log.userEntity.id != user.id and log.logIsWithdraw == 0}">
+                        <input type="hidden" th:value="${log.createTime}" class="createTime"/>
+                        <img th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}">
+                        <div class="message-body">
+                            <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
+                            <div class="msg-timer clearfix boxsizing">
+                                <span th:text="${log.userEntity.userName}"></span>
+                                <span th:text="${#dates.format(log.createTime,'MM月-dd日 hh:mm:ss')}"></span>
+                            </div>
                         </div>
-                    </div>
-                </li>
-                <!--我方文件-->
-                <li class="msg-li boxsizing my-msg have-file-li" th:each = "log:${logs}" th:if="${log.fileList != null and log.userEntity.id == user.id}">
-                    <div class="message-body">
-                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
-                        <ul class="chat-file-ul boxsizing">
-                            <li class="clearfix" th:each="file:${log.fileList}">
-                                <div class="file-flex-box">
-                                    <img  th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
-                                    <img  th:if="${!exts.contains(file.ext)}" th:src="@{/image/chatDefault.png}">
-                                    <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
-                                    <p class="chat-file-size" th:text="${file.size}"></p>
-                                </div>
-                            </li>
-                            <li class="clearfix">
-                                <img class="chat-file-img" src="../static/image/adds.png" alt="">
-                            </li>
-                        </ul>
+                    </li>
+                    <!--敌方文件-->
+                    <li class="msg-li boxsizing their-msg have-file-li" th:data-id = "${log.id}" th:if="${log.fileList != null and log.userEntity.id != user.id and log.logIsWithdraw == 0}">
+                        <input type="hidden" th:value="${log.createTime}" class="createTime"/>
+                        <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER} + ${log.userEntity.userInfo.image}">
+                        <div class="message-body">
+                            <div class="message-content boxsizing" th:if="${log.content != null}"><p th:text="${log.content}"></p></div>
+                            <ul class="chat-file-ul boxsizing">
+                                <li class="clearfix" th:each="file:${log.fileList}" th:data-id = "${file.fileId}">
+                                    <div class="file-flex-box">
+                                        <img src="../static/image/excel.png" th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
+                                        <img src="../static/image/chatDefault.png" th:if="${!exts.contains(file.ext)}" th:src="@{/image/chatDefault.png}">
+                                        <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
+                                        <p class="chat-file-size" th:text="${file.size}"></p>
+                                    </div>
+                                    <!--<img class="chat-file-img" src="../static/image/adds.png" alt="">-->
+                                </li>
+                            </ul>
+                            <div class="msg-timer clearfix boxsizing">
+                                <span th:text="${log.userEntity.userName}"></span>
+                                <span th:text="${#dates.format(log.createTime,'MM月-dd日 hh:mm:ss')}"></span>
+                                <span class="download-chat-file">下载附件</span>
+                            </div>
+                        </div>
+                    </li>
 
-                        <div class="msg-timer clearfix boxsizing">
-                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
-                            <span class="download-chat-file">下载附件</span>
-                            <span class="recall">撤回</span>
+                    <!--我方 消息-->
+                    <li class="msg-li boxsizing my-msg" th:data-id = "${log.id}" th:if="${log.fileList == null and log.userEntity.id == user.id and log.logIsWithdraw == 0}">
+                        <input type="hidden" th:value="${log.createTime}" class="createTime"/>
+                        <div class="message-body">
+                            <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
+                            <div class="msg-timer clearfix boxsizing">
+                                <span th:text="${#dates.format(log.createTime,'MM月-dd日 hh:mm:ss')}"></span>
+                                <span class="recall">撤回</span>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                    <!--我方文件-->
+                    <li class="msg-li boxsizing my-msg have-file-li" th:data-id = "${log.id}" th:if="${log.fileList != null and log.userEntity.id == user.id and log.logIsWithdraw == 0}">
+                        <input type="hidden" th:value="${log.createTime}" class="createTime"/>
+                        <div class="message-body">
+                            <div class="message-content boxsizing" th:if="${log.content != null}"><p th:text="${log.content}"></p></div>
+                            <ul class="chat-file-ul boxsizing">
+                                <li class="clearfix" th:each="file:${log.fileList}" th:data-id = "${file.fileId}">
+                                    <div class="file-flex-box">
+                                        <img  th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
+                                        <img  th:if="${!exts.contains(file.ext)}" th:src="@{/image/chatDefault.png}">
+                                        <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
+                                        <p class="chat-file-size" th:text="${file.size}"></p>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="msg-timer clearfix boxsizing">
+                                <span th:text="${#dates.format(log.createTime,'MM月-dd日 hh:mm:ss')}"></span>
+                                <span class="download-chat-file">下载附件</span>
+                                <span class="recall">撤回</span>
+                            </div>
+                        </div>
+                    </li>
+                </div>
+                
+
+
+                
 
             </ul>
+            <div class="no-msg" th:if="${logs == null or logs.size() == 0}">
+                <div>
+                    <div>
+                        <img src="/image/no-message.png">
+                        <h3>还没有项目群聊消息</h3>
+                        <p>项目中的成员都可以在这里参与群聊</p>
+                    </div>
+
+                </div>
+
+            </div>
             <div class="place-box"></div>
         </section>
         <footer class="chat-footer-wrap">
@@ -120,7 +144,7 @@
                         <i class="layui-icon layui-icon-upload-drag upload-files" style="font-size: 18px; color: #a6a6a6;"></i>
                         <i class="layui-icon layui-icon-face-smile-b" style="font-size: 18px; color: #a6a6a6;"></i>
                         <div class="btn-box">
-                            <span class="send-msg">发送</span>
+                            <span class="send-msg" id="postfiles">发送</span>
                             <span class="shuxian"></span>
                             <div class="reply-switch">
                                 <i class="layui-icon layui-icon-down " style="font-size: 12px; color: #fff;"></i>
@@ -159,6 +183,12 @@
 
     });
     $(function () {
+            var hei=parseInt($(".section-ul").css("height"));
+            $(".chat-content").scrollTop(hei);
+
+
+
+
         var url = window.location.href;
         if(url.indexOf("chat") > 0){
             $(".toper-nav ul li:nth-of-type(5)").addClass("now").siblings().removeClass("now");
