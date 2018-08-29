@@ -60,8 +60,8 @@ public enum TaskLogFunction {
     A27(52,"恢复了分享"),
     A28(53,"恢复了文件"),
     A29(54,"恢复了日程"),
-    A30(55,"更新标签");
-
+    A30(55,"更新标签"),
+    A31(56,"添加附件");
 
     private String name;
     private TaskLogFunction(int id,String name){

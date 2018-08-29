@@ -180,37 +180,22 @@
             <span>添加关联</span>
         </div>
 
-
-
-
         <div class="file-queue-box">
-            <ul>
-                <li class="boxsizing">
-                    <img src="../static/image/file_1.png" >
-                    <p class="over-hidden file-name">文件名称 文件名称</p>
-                    <div class="cover-box">
-                        <span>预览</span>
-                        <span>下载</span>
-                    </div>
-                </li>
+            <ul th:class="task-file+${task.taskId}" >
+                <li class="boxsizing" th:each="taskFile:${task.taskFileList}" th:if="${taskFile.fileThumbnail!=null}"><img th:src="#{IMAGE_SERVER}+${taskFile.fileThumbnail}"/><p class="over-hidden file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p><div class="cover-box"><span th:id="${taskFile.id}" class="download">下载</span></div></li>
+                <li class="boxsizing" th:each="taskFile:${task.taskFileList}" th:if="${taskFile.fileThumbnail==null}"><img src="/image/file_1.png"/><p class="over-hidden file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p><div class="cover-box"><a th:id="${taskFile.id}" class="download">下载</a></div></li>
             </ul>
-
         </div>
-        <div class="add-file-btn-box combox">
-            <img src="../static/image/add-file.png" th:src="@{/image/add-file.png}" />
+        <div class="add-file-btn-box combox task-upload-file">
+            <img th:src="@{/image/adds.png}" />
             <span>添加附件</span>
-
-            <div class="file-upload" >
+            <div class="file-upload">
                 <div class="task-fujian-box boxsizing" id="container">
                     <div class="fujian-box-title boxsizing">
                         添加附件
                         <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
                     </div>
-                    <!--<div class="zj-up" id="selectfiles">-->
-                    <!--<i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>-->
-                    <!--<span>直接上传</span>-->
-                    <!--</div>-->
-                    <div class="zj-up" >
+                    <div class="zj-up model-file">
                         <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
                         <span>上传模型文件</span>
                     </div>
@@ -227,11 +212,6 @@
             </div>
 
         </div>
-
-
-
-
-
 
         <div id = "bind">
             <!--关联 部分-->
@@ -377,11 +357,6 @@
             </div>
         </div>
 
-
-
-
-
-
         <div class="heng-line"></div>
         <p class="cyz">参与者</p>
         <div class="work-people boxsizing clearfix" id = "participate" >
@@ -435,13 +410,8 @@
 
     <div class="publish boxsizing">
         <textarea id="chat" name=""  placeholder="请输入内容，点击发布按钮" class="layui-textarea publish-input" ></textarea>
-        <ul class="fileList" style="background-color: #fff;padding-bottom: 5px">
-        </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
-            <div class="task-upload-file" style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
-                <i class="layui-icon" style="color: #ffffff">&#xe67c;</i>
-            </div>
             <div class="publish-btn" id="fileListAction">发布</div>
         </div>
 
@@ -962,10 +932,6 @@
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
 
-    $('html').on('click','.download',function () {
-        location.href = "/task/download?fileId=" + $(this).attr('id');
-    });
-
     /**
      * 点击复制的确定的时候
      */
@@ -994,13 +960,6 @@
 
 
 </script>
-
-<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/upload.js}"></script>
 
 <script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
 <script th:src="@{/js/task-detail-socket.js}" src="../static/js/task-detail-socket.js"></script>

@@ -209,6 +209,10 @@ public class Task extends BaseEntity implements Serializable {
 
 	private List<Task> taskList;
 
+	/**
+	 * 任务附件
+	 */
+	private List<TaskFile> taskFileList;
 
 	public static <T> T clone(T obj) throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();

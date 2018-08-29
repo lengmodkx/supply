@@ -485,7 +485,28 @@ layui.use('form', function() {
         },"json");
     });
 
-    var curFiles = [];
+    //上传模型文件
+    $('.model-file').click(function (e) {
+        e.stopPropagation();
+        $('.file-upload').removeClass("show-file-upload");
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area: ['500px', '330px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/task/file/modelUplaod.html?projectId='+projectId+'&taskId='+taskId+"&windowName="+window.name,'no']
+        });
+    });
+    /**
+     * 下载文件
+     */
+    $('html').on('click','.download',function () {
+        location.href = "/task/file/download?fileId=" + $(this).attr('id');
+    });
 
     //任务上传文件
     $('.task-upload-file').click(function (e) {
@@ -493,7 +514,7 @@ layui.use('form', function() {
         e.stopPropagation()
     });
 
-    $('.select-up').on('click', function() {
+    $('.select-up').on('click', function(e) {
         parent.layer.open({
             type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
             title: false, //标题
@@ -506,32 +527,19 @@ layui.use('form', function() {
             content: ['/file/selectFile.html?projectId='+projectId+"&windowName="+window.name,'no']
         });
         $('.file-upload').removeClass("show-file-upload");
+        e.stopPropagation();
     });
 
-    $('.close-fujian').click(function () {
-        $('.file-upload').removeClass("show-file-upload")
+    $('.close-fujian').click(function (e) {
+        $('.file-upload').removeClass("show-file-upload");
+        e.stopPropagation();
     });
-
-
-    $('html').on('click', '.fileList li i',function() {
-        $(this).parent().parent().remove();
-        $(".revise-task").css("height",480-parseInt($(".fileList").css("height"))+'px')
-    });
-
-
 
 
     $('#fileListAction').click(function () {
-        var fileIds=[];
-        $('.fileList li').each(function (data,item) {
-            if($(item).attr('id')!==null&&$(item).attr('id')!==undefined){
-                fileIds.push($(item).attr('id'));
-            }
-        });
-
-        $.post('/task/upload',{"projectId":projectId,"taskId":taskId,"content":$('#chat').val(),"files":JSON.stringify(fileTemps),"fileId":fileIds.toString()},function (data) {
+        $.post('/task/upload',{"projectId":projectId,"taskId":taskId,"content":$('#chat').val()},function (data) {
             if(data.result===1){
-                $('.fileList').html('');
+                $('#chat').val("");
             }
         });
 });
