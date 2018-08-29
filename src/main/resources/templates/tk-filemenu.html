@@ -74,12 +74,18 @@
         });
 
         form.on('switch(switch-filter)', function(data){
-            console.log(data.elem.checked); //开关是否开启，true或者false
+            var filePrivacy = 0;
             if (data.elem.checked) {
-                $(".who-can-see").text("仅自己可见")
+                $(".who-can-see").text("仅参与者可见");
+                filePrivacy = 1;
             }else {
-                $(".who-can-see").text("所有成员可见")
+                $(".who-can-see").text("所有成员可见");
+                filePrivacy = 0;
             }
+
+            $.post('/file/updateFile',{"fileId":fileId,"filePrivacy":filePrivacy},function (data) {
+
+            });
         });
 
         // 移入回收站

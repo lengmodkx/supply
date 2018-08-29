@@ -74,4 +74,11 @@ public interface LogService {
 	 * @param publicId 信息id 如:(任务id,文件id 等);
 	 */
 	void deleteByPublicId(String publicId);
+
+	/**
+	 * 初始一个信息下的所有 日志信息 和聊天信息
+	 * @param publicId 信息id
+	 * @return
+	 */
+    List<Log> initAllLog(String publicId);
 }

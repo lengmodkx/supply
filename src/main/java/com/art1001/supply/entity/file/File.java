@@ -129,6 +129,11 @@ public class File extends BaseEntity implements Serializable {
 
     private int fileLabel;
 
+    /**
+     * 文件隐私模式 0所有成员可见，1参与者可见
+     */
+    private int filePrivacy;
+
     public String getFileUrlTemp(){
         try {
             return URLEncoder.encode("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/"+fileUrl,"utf-8");

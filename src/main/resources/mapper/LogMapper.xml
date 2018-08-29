@@ -196,4 +196,10 @@
 		from prm_log where project_id = #{projectId} and log_type = 0
 
 	</select>
+
+	<!-- 初始一个信息下的所有 日志信息 和聊天信息 -->
+	<select id="initAllLog" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"></include>
+		from prm_log where public_id = #{publicId}
+	</select>
 </mapper>

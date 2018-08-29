@@ -8,7 +8,6 @@ var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
 var g_dirname = 'upload/project/'+projectId+"/";
 var g_object_name = '';
-var g_object_name_type = 'random_name';
 var now = timestamp = Date.parse(new Date()) / 1000;
 var fileCommon = {};
 var fileModel = {};
@@ -20,9 +19,8 @@ var policyText = {
     ]
 };
 
-var policyBase64 = Base64.encode(JSON.stringify(policyText))
-message = policyBase64
-var bytes = Crypto.HMAC(Crypto.SHA1, message, accesskey, { asBytes: true }) ;
+var policyBase64 = Base64.encode(JSON.stringify(policyText));
+var bytes = Crypto.HMAC(Crypto.SHA1, policyBase64, accesskey, { asBytes: true }) ;
 var signature = Crypto.util.bytesToBase64(bytes);
 
 function random_string(len) {
@@ -37,49 +35,33 @@ function random_string(len) {
 }
 
 function get_suffix(filename) {
-    var pos = filename.lastIndexOf('.')
-    var suffix = ''
+    var pos = filename.lastIndexOf('.');
+    var suffix = '';
     if (pos !== -1) {
         suffix = filename.substring(pos)
     }
     return suffix;
 }
 
-function calculate_object_name(suffix,filename) {
-    if (g_object_name_type === 'local_name') {
-        g_object_name += "${filename}"
-    }else if (g_object_name_type === 'random_name') {
-        g_object_name = g_dirname+random_string(10) + suffix
-    }
-    return ''
+function calculate_object_name(suffix) {
+    g_object_name = g_dirname+random_string(10) + suffix;
 }
 
-function get_uploaded_object_name(filename)
-{
-    if (g_object_name_type === 'local_name')
-    {
-        tmp_name = g_object_name
-        tmp_name = tmp_name.replace("${filename}", filename);
-        return tmp_name
-    }else if(g_object_name_type === 'random_name')
-    {
-        return g_object_name;
-    }
+function get_uploaded_object_name() {
+    return g_object_name;
 }
 
-function set_upload_param(up, filename, ret)
-{
-    g_object_name = g_dirname;
+function set_upload_param(up, filename, ret) {
     if (filename !== '') {
         var suffix = get_suffix(filename);
         calculate_object_name(suffix,filename)
     }
-    new_multipart_params = {
+    var new_multipart_params = {
         'key' : g_object_name,
         'policy': policyBase64,
         'OSSAccessKeyId': accessid,
         'success_action_status' : '200', //让服务端返回200,不然，默认会返回204
-        'signature': signature,
+        'signature': signature
     };
 
     up.setOption({
@@ -93,22 +75,20 @@ function set_upload_param(up, filename, ret)
 var uploader = new plupload.Uploader({
     runtimes : 'html5,flash,silverlight,html4',
     browse_button : 'upModel',
-    //multi_selection: false,
+    multi_selection: false,
     container: document.getElementById('container'),
     flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
     silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
     url : 'http://oss.aliyuncs.com',
     filters: {
         mime_types : [ //只允许上传图片和zip文件
-            { title : "model files", extensions : "pln,skp,dwg,dxf,dae,gsm,tpl,3ds,ifc,obj" }
+            { title : "model files", extensions : "pln,skp,dwg,dxf,dae,gsm,tpl,3ds,ifc,obj"}
         ],
-        max_file_size : '1024mb', //最大只能上传400kb的文件
+        max_file_size : '1024mb', //最大只能上传1024mb的文件
         prevent_duplicates : true //不允许选取重复文件
     },
     init: {
-
         FilesAdded: function(up, files) {
-            // $('.file-upload').removeClass("show-file-upload");
             plupload.each(files, function(file) {
                 $('.model-name').html(file.name);
                 $('.upModel').show();
@@ -118,12 +98,7 @@ var uploader = new plupload.Uploader({
             });
         },
         UploadProgress: function(up, file) {
-            // var d = $('#'+file.id);
-            // var prog = d.find('.progress');
-            // var progBar = prog.find('.progress-bar');
-            // progBar.width(5*file.percent+'px');
             element.progress('upModel', file.percent+'%');
-            // progBar.attr('aria-valuenow', file.percent);
         },
         FileUploaded: function(up, file, info) {
             if (info.status === 200)
@@ -147,156 +122,112 @@ var uploader = new plupload.Uploader({
 uploader.init();
 
 
-    var uploader1 = new plupload.Uploader({
-        runtimes : 'html5,flash,silverlight,html4',
-        browse_button : 'upModel2',
-        //multi_selection: false,
-        container: document.getElementById('container'),
-        flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
-        silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
-        url : 'http://oss.aliyuncs.com',
-        filters: {
-            mime_types : [
-                { title : "Image files", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP" }
-            ],
-            max_file_size : '10mb', //最大只能上传400kb的文件
-            prevent_duplicates : true //不允许选取重复文件
+var uploader1 = new plupload.Uploader({
+    runtimes : 'html5,flash,silverlight,html4',
+    browse_button : 'upModel2',
+    multi_selection: false,
+    container: document.getElementById('container'),
+    flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
+    silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
+    url : 'http://oss.aliyuncs.com',
+    filters: {
+        mime_types : [
+            { title : "Image files", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP" }
+        ],
+        max_file_size : '10mb', //最大只能上传10mb的文件
+        prevent_duplicates : true //不允许选取重复文件
+    },
+    init: {
+
+        FilesAdded: function(up, files) {
+            plupload.each(files, function(file) {
+                $('.model-name2').html(file.name);
+                $('.upMode2').show();
+                set_upload_param(up, file.name, true);
+            });
         },
-        init: {
-
-            FilesAdded: function(up, files) {
-                // $('.file-upload').removeClass("show-file-upload");
-                plupload.each(files, function(file) {
-                    $('.model-name2').html(file.name);
-                    $('.upMode2').show();
-                    set_upload_param(up, file.name, true);
-                });
-            },
-            UploadProgress: function(up, file) {
-                // var d = $('#'+file.id);
-                // var prog = d.find('.progress');
-                // var progBar = prog.find('.progress-bar');
-                // progBar.width(5*file.percent+'px');
-                element.progress('upMode2', file.percent+'%');
-                // progBar.attr('aria-valuenow', file.percent);
-            },
-            FileUploaded: function(up, file, info) {
-                if (info.status === 200)
-                {
-                    fileCommon.fileName = file.name;
-                    fileCommon.fileUrl = get_uploaded_object_name(file.name);
-                    fileCommon.size = plupload.formatSize(file.size);
-                    $('.suolue').attr('src',IMAGE_SERVER+fileCommon.fileUrl);
-                    $('.suolue').show();
-                    $('.suolue-icon').hide();
-                }
-                else
-                {
-                    console.log(info.response);
-                }
-            },
-            Error: function(up, err) {
-                console.log(err.response);
-            }
-        }
-    });
-    uploader1.init();
-
-
-    var uploader2 = new plupload.Uploader({
-        runtimes : 'html5,flash,silverlight,html4',
-        browse_button : 'upload',
-        //multi_selection: false,
-        container: document.getElementById('container'),
-        flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
-        silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
-        url : 'http://oss.aliyuncs.com',
-        filters: {
-            mime_types : [
-                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" }
-            ],
-            max_file_size : '1024mb', //最大只能上传400kb的文件
-            prevent_duplicates : true //不允许选取重复文件
+        UploadProgress: function(up, file) {
+            element.progress('upMode2', file.percent+'%');
         },
-        init: {
-
-            FilesAdded: function(up, files) {
-                // $('.file-upload').removeClass("show-file-upload");
-                plupload.each(files, function(file) {
-                    set_upload_param(up, file.name, true);
-                    var content = '';
-                        content += '<li class="boxsizing">\n' +
-                            '                <div class="remove-it">\n' +
-                            '                    <i class="layui-icon layui-icon-close-fill " style=""></i>\n' +
-                            '                </div>\n' +
-                            '                <img src="/image/choose.png" alt="">\n' +
-                            '                <p class="over-hidden">' + file.name + '</p>\n' +
-                            '                <div class="layui-progress ordinaryFile" lay-filter ='+ file.id +'>\n' +
-                            '                    <div class="layui-progress-bar" lay-percent="0%"></div>\n' +
-                            '                </div>\n' +
-                            '            </li>'
-                    $('.all-file-ul').prepend(content);
-                        $('.ordinaryFile').show();
-                });
-            },
-            UploadProgress: function(up, file) {
-                // var d = $('#'+file.id);
-                // var prog = d.find('.progress');
-                // var progBar = prog.find('.progress-bar');
-                // progBar.width(5*file.percent+'px');
-                element.progress(file.id, file.percent+'%');
-                // progBar.attr('aria-valuenow', file.percent);
-            },
-            FileUploaded: function(up, file, info) {
-                if (info.status === 200)
-                {
-                    var fileT = {};
-                    fileT.fileName = file.name;
-                    fileT.fileUrl = get_uploaded_object_name(file.name);
-                    fileT.size = plupload.formatSize(file.size);
-                    fileTemps.push(fileT);
-                }
-                else
-                {
-                    console.log(info.response);
-                }
-            },
-
-            Error: function(up, err) {
-                console.log(err.response);
+        FileUploaded: function(up, file, info) {
+            if (info.status === 200) {
+                fileCommon.fileName = file.name;
+                fileCommon.fileUrl = get_uploaded_object_name(file.name);
+                fileCommon.size = plupload.formatSize(file.size);
+                $('.suolue').attr('src',IMAGE_SERVER + fileCommon.fileUrl);
+                $('.suolue').show();
+                $('.suolue-icon').hide();
             }
-
+            else {
+                console.log(info.response);
+            }
+        },
+        Error: function(up, err) {
+            console.log(err.response);
         }
-    });
-    uploader2.init();
+    }
+});
+uploader1.init();
 
-    /**
-     * 确定上传模型文件
-     */
-    $('.model-ok-btn').click(function () {
-       if(fileCommon === null || fileModel === null){
-           layer.msg("请选择模型和缩略图!");
-       } else{
-           $.post('/file/uploadModel',{"projectId":projectId,"fileCommon":JSON.stringify(fileCommon),"fileModel":JSON.stringify(fileModel),"parentId":parentId},function (data) {
-                if(data.result == 1){
-                    parent.window.location.reload();
-                    //当你在iframe页面关闭自身时
-                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                    parent.layer.close(index); //再执行关闭
-                }else{
-                    layer.msg(data.msg);
-                }
-            },"json");
-       }
-    });
+var uploader2 = new plupload.Uploader({
+    runtimes : 'html5,flash,silverlight,html4',
+    browse_button : 'upload',
+    //multi_selection: false,
+    container: document.getElementById('container'),
+    flash_swf_url : 'js/lib/plupload-2.1.2/js/Moxie.swf',
+    silverlight_xap_url : 'js/lib/plupload-2.1.2/js/Moxie.xap',
+    url : 'http://oss.aliyuncs.com',
+    filters: {
+        mime_types : [
+            { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" }
+        ],
+        max_file_size : '1024mb', //最大只能上传400kb的文件
+        prevent_duplicates : true //不允许选取重复文件
+    },
+    init: {
+        PostInit: function() {
+            document.getElementById('postfiles').onclick = function() {
+                set_upload_param(uploader2, '', false);
+                return false;
+            };
+        },
+        FilesAdded: function(up, files) {
+            plupload.each(files, function(file) {
+                var content = '';
+                    content += '<li class="boxsizing">\n' +
+                        '                <div class="remove-it">\n' +
+                        '                    <i class="layui-icon layui-icon-close-fill " style=""></i>\n' +
+                        '                </div>\n' +
+                        '                <img src="/image/file_1.png" alt="">\n' +
+                        '                <p class="over-hidden">' + file.name + '</p>\n' +
+                        '                <div class="layui-progress ordinaryFile" lay-filter ='+ file.id +'>\n' +
+                        '                    <div class="layui-progress-bar" lay-percent="0%"></div>\n' +
+                        '                </div>\n' +
+                        '            </li>'
+                $('.all-file-ul').prepend(content);$('.ordinaryFile').show();
+            });
+        },
 
-    /**
-     * 确定上传文件
-     */
-    $('.ordinary-ok-btn').click(function () {
-        if(fileTemps === null){
-            return false;
-        } else{
+        BeforeUpload: function(up, file) {
+            set_upload_param(up, file.name, true);
+        },
+        UploadProgress: function(up, file) {
+            element.progress(file.id, file.percent+'%');
+        },
+        FileUploaded: function(up, file, info) {
+            if (info.status === 200) {
+                var fileT = {};
+                fileT.fileName = file.name;
+                fileT.fileUrl = get_uploaded_object_name(file.name);
+                fileT.size = plupload.formatSize(file.size);
+                fileTemps.push(fileT);
+            }
+            else {
+                console.log(info.response);
+            }
+        },
+
+        UploadComplete:function(uploader,files){
             $.post('/file/upload',{"projectId":projectId,"files":JSON.stringify(fileTemps),"parentId":parentId},function (data) {
                 if(data.result === 1){
                     //当你在iframe页面关闭自身时
@@ -307,7 +238,33 @@ uploader.init();
                     layer.msg(data.msg);
                 }
             });
+        },
+        Error: function(up, err) {
+            console.log(err.response);
         }
+
+    }
+});
+uploader2.init();
+
+    /**
+     * 确定上传模型文件
+     */
+    $('.model-ok-btn').click(function () {
+       if(JSON.stringify(fileCommon) === "{}"|| JSON.stringify(fileModel) === "{}"){
+           layer.msg("请选择模型和缩略图!");
+       } else{
+           $.post('/file/uploadModel',{"projectId":projectId,"fileCommon":JSON.stringify(fileCommon),"fileModel":JSON.stringify(fileModel),"parentId":parentId},function (data) {
+                if(data.result === 1){
+                    parent.window.location.reload();
+                    //当你在iframe页面关闭自身时
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }else{
+                    layer.msg(data.msg);
+                }
+            },"json");
+       }
     });
 });
 

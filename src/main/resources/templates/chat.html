@@ -26,65 +26,70 @@
                     <div class="message-recall">”水水谁“撤回了一条消息</div>
                 </li>
                 <!--敌方消息-->
-                <li class="msg-li boxsizing their-msg">
-                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}">
+                <li class="msg-li boxsizing their-msg" th:each = "log:${logs}" th:if="${log.fileList == null and log.userEntity.id != user.id}">
+                    <img th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}">
                     <div class="message-body">
-                        <div class="message-content boxsizing"><p>131545</p></div>
+                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
                         <div class="msg-timer clearfix boxsizing">
-                            <span>谁谁谁</span>
-                            <span>今天12:15</span>
+                            <span th:text="${log.userEntity.userName}"></span>
+                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
                         </div>
                     </div>
                 </li>
                 <!--敌方文件-->
-                <li class="msg-li boxsizing their-msg have-file-li">
-                    <img src="../static/image/adds.png" th:src="@{/image/adds.png}">
+                <li class="msg-li boxsizing their-msg have-file-li" th:each = "log:${logs}" th:if="${log.fileList != null and log.userEntity.id != user.id}">
+                    <img src="../static/image/adds.png" th:src="#{IMAGE_SERVER} + ${log.userEntity.userInfo.image}">
                     <div class="message-body">
                         <ul class="chat-file-ul boxsizing">
-                            <li class="clearfix">
+                            <li class="clearfix" th:each="file:${log.fileList}">
                                 <div class="file-flex-box">
-                                    <img src="../static/image/excel.png" th:src="@{/image/excel.png}">
-                                    <p class="chat-file-name over-hidden">bim5d管理系统-项目5456464646464协同开发计划（7.10测试结果）(</p>
-                                    <p class="chat-file-size">133.2kb</p>
+                                    <img src="../static/image/excel.png" th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
+                                    <img src="../static/image/chatDefault.png" th:if="${!exts.contains(file.ext)}" th:src="@{/static/image/chatDefault.png}">
+                                    <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
+                                    <p class="chat-file-size" th:text="${file.size}"></p>
                                 </div>
-                                <img class="chat-file-img" src="../static/image/adds.png" alt="">
+                                <!--<img class="chat-file-img" src="../static/image/adds.png" alt="">-->
                             </li>
                         </ul>
                         <div class="msg-timer clearfix boxsizing">
-                            <span>谁谁谁</span>
-                            <span>今天12:15</span>
+                            <span th:text="${log.userEntity.userName}"></span>
+                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
                             <span class="download-chat-file">下载附件</span>
                         </div>
                     </div>
                 </li>
 
                 <!--我方 消息-->
-                <li class="msg-li boxsizing my-msg">
+                <li class="msg-li boxsizing my-msg" th:each = "log:${logs}" th:if="${log.fileList == null and log.userEntity.id == user.id}">
                     <div class="message-body">
-                        <div class="message-content boxsizing"><p>131545</p></div>
+                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
                         <div class="msg-timer clearfix boxsizing">
-                            <span>谁谁谁</span>
-                            <span>今天12:15</span>
+                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
                         </div>
                     </div>
                 </li>
                 <!--我方文件-->
-                <li class="msg-li boxsizing my-msg have-file-li">
+                <li class="msg-li boxsizing my-msg have-file-li" th:each = "log:${logs}" th:if="${log.fileList != null and log.userEntity.id == user.id}">
                     <div class="message-body">
+                        <div class="message-content boxsizing"><p th:text="${log.content}"></p></div>
                         <ul class="chat-file-ul boxsizing">
-                            <li class="clearfix">
+                            <li class="clearfix" th:each="file:${log.fileList}">
                                 <div class="file-flex-box">
-                                    <img src="../static/image/excel.png" th:src="@{/image/excel.png}">
-                                    <p class="chat-file-name over-hidden">bim5d管理系统-项目5456464646464协同开发计划（7.10测试结果）(</p>
-                                    <p class="chat-file-size">133.2kb</p>
+                                    <img  th:if="${exts.contains(file.ext)}" th:src="#{IMAGE_SERVER}+${file.fileUrl}">
+                                    <img  th:if="${!exts.contains(file.ext)}" th:src="@{/image/chatDefault.png}">
+                                    <p class="chat-file-name over-hidden" th:text="${file.fileName}"></p>
+                                    <p class="chat-file-size" th:text="${file.size}"></p>
                                 </div>
+                            </li>
+                            <li class="clearfix">
                                 <img class="chat-file-img" src="../static/image/adds.png" alt="">
                             </li>
                         </ul>
+
                         <div class="msg-timer clearfix boxsizing">
-                            <span>今天12:15</span>
+                            <span th:text="${#dates.format(log.createTime,'MM月-dd日 HH:mm:ss')}"></span>
                             <span class="download-chat-file">下载附件</span>
-                            <span class=" recall">撤回</span>
+                            <span class="recall">撤回</span>
                         </div>
                     </div>
                 </li>
@@ -98,7 +103,7 @@
                     <div class="message-box boxsizing">
                         <ul class="fileList" style="background-color: #fff;padding-bottom: 5px">
                         </ul>
-                        <textarea class="boxsizing"  rows="1"></textarea>
+                        <textarea class="boxsizing"  rows="1" id = "chat"></textarea>
                     </div>
                     <div class="message-bottom">
                         <!--添加 附件-->
@@ -145,6 +150,9 @@
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script th:inline="javascript">
     var projectId = [[${project.projectId}]];
+    var userId = [[${user.id}]];
+    //头像某模板
+    var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     layui.use(['element','form'], function() {});
     layui.use('layer', function(){
         var layer = layui.layer;
@@ -166,6 +174,7 @@
             $(".how-to-send").slideUp();
             e.stopPropagation()
         });
+
         // 点击上传文件 图标
         $(".upload-files").click(function () {
            $(".fujian-box").slideToggle();
@@ -193,20 +202,13 @@
         })
     });
 
-    //点击发送按钮
-    $('.send-msg').click(function () {
-        $.post('/chat/saveChat',{"projectId":projectId,"content":$('#chat').val(),"files":JSON.stringify(fileTemps),"fileId":fileIds.toString()},function (data) {
-            if(data.result===1){
-                $('.fileList').html('');
-            }
-        });
-    });
-
 </script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script th:src="@{/js/datautil.js}" src="../static/js/datautil.js"></script>
 <script th:src="@{/js/file_upload.js}" src="../static/js/file_upload.js"></script>
+<script th:src="@{/js/chat.js}" src="../static/js/chat.js"></script>
 </html>

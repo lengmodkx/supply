@@ -103,49 +103,6 @@ public class FileController extends BaseController {
         String parentId = file.getFileId();
         if (StringUtils.isEmpty(file.getFileId())) {
             parentId = "0";
-        } else {
-            File fileById = fileService.findFileById(parentId);
-            if (fileById.getCatalog() != 1) { // 目录
-                String tagIds = fileById.getTagId();
-                List<Tag> tagList = new ArrayList<>();
-                if (StringUtils.isNotEmpty(tagIds)) {
-                    String[] tagIdStrArr = tagIds.split(",");
-                    Integer[] tagIdArr = new Integer[tagIdStrArr.length];
-                    for (int i = 0; i < tagIdStrArr.length; i++) {
-                        tagIdArr[i] = Integer.valueOf(tagIdStrArr[i]);
-                    }
-                    tagList = tagService.findByIds(tagIdArr);
-                }
-
-                List<FileVersion> fileVersionList = fileVersionService.findByFileId(parentId);
-                List<Tag> tags = tagService.findByProjectId(projectId);
-
-                //查询出该文件的所有参与者信息
-                List<UserEntity> joinInfo = userService.findManyUserById(fileService.findJoinId(file.getFileId()));
-                model.addAttribute("joinInfos",joinInfo);
-                //查询出文件的关联信息
-                BindingVo bindingVo = bindingService.listBindingInfoByPublicId(file.getFileId());
-                model.addAttribute("bindingVo",bindingVo);
-                model.addAttribute("file", fileById);
-                model.addAttribute("fileId", fileById.getFileId());
-                model.addAttribute("projectId", projectId);
-                List<Log> logs = logService.initLog(file.getFileId());
-                Collections.reverse(logs);
-                model.addAttribute("logs",logs);
-
-                //获取文件的后缀名
-                model.addAttribute("exts",FileExt.extMap);
-
-                //查询该文件有没有被当前用户收藏
-                model.addAttribute("isCollect",publicCollectService.isCollItem(file.getFileId()));
-                // 文件的tag
-                model.addAttribute("tagList", tagList);
-                // 项目的tag
-                model.addAttribute("tags", tags);
-                model.addAttribute("fileVersionList", fileVersionList);
-                model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
-                return "tk-file-download";
-            }
         }
 
         // 删除标识
@@ -255,6 +212,8 @@ public class FileController extends BaseController {
         model.addAttribute("projectId", projectId);
         model.addAttribute("tagList", tagList);
         model.addAttribute("fileVersionList", fileVersionList);
+        //获取文件的后缀名
+        model.addAttribute("exts",FileExt.extMap);
         return "tk-file-download";
     }
 
@@ -652,66 +611,66 @@ public class FileController extends BaseController {
      */
     @RequestMapping("/downloadFile")
     @ResponseBody
-    public void downloadFile(
-            @RequestParam String fileId,
-            HttpServletResponse response
-    ) throws IOException {
-        InputStream inputStream = null;
-        // 获取文件
-        File file = fileService.findFileById(fileId);
-        String fileName = file.getFileName();
+    public void downloadFile(@RequestParam String fileId, HttpServletResponse response){
+        try {
+            InputStream inputStream = null;
+            // 获取文件
+            File file = fileService.findFileById(fileId);
+            String fileName = file.getFileName();
+            String deleteUrl = "";
+            // 如果下载的是目录，则打包成zip
+            if (file.getCatalog() == 1) {
+                // 得到临时下载文件目录
+                String tempPath = FileUtils.getTempPath();
+                // 创建文件夹，加时间戳，区分
+                String path = tempPath + "\\" + System.currentTimeMillis() + "\\" + fileName;
+                java.io.File folder = new java.io.File(path);
+                folder.mkdirs();
+                // 设置查询条件
+                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
+                if (childFile.size() > 0) {
+                    // 下载到临时文件
+                    this.downloadZip(childFile, path);
+                }
 
-        String deleteUrl = "";
-        // 如果下载的是目录，则打包成zip
-        if (file.getCatalog() == 1) {
-            // 得到临时下载文件目录
-            String tempPath = FileUtils.getTempPath();
-            // 创建文件夹，加时间戳，区分
-            String path = tempPath + "\\" + System.currentTimeMillis() + "\\" + fileName;
-            java.io.File folder = new java.io.File(path);
-            folder.mkdirs();
-            // 设置查询条件
-            List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
-            if (childFile.size() > 0) {
-                // 下载到临时文件
-                this.downloadZip(childFile, path);
+                // 把临时文件打包成zip下载
+                String downloadPath = path + ".zip";
+                FileOutputStream fos1 = new FileOutputStream(new java.io.File(downloadPath));
+                FileUtils.toZip(path, fos1, true);
+
+                // 开始下载
+
+                // 以流的形式下载文件。
+                inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
+                fileName += ".zip";
+                // 删除临时文件
+                deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
+            } else {
+                // 文件  在oss上得到流
+                inputStream = AliyunOss.downloadInputStream(file.getFileUrl());
             }
 
-            // 把临时文件打包成zip下载
-            String downloadPath = path + ".zip";
-            FileOutputStream fos1 = new FileOutputStream(new java.io.File(downloadPath));
-            FileUtils.toZip(path, fos1, true);
+            // 设置响应类型
+            response.setContentType("multipart/form-data");
+            // 设置头信息
+            // 设置fileName的编码
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            ServletOutputStream outputStream = response.getOutputStream();
+            byte[] bytes = new byte[1024];
+            int n;
+            assert inputStream != null;
+            while ((n = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, n);
+            }
+            outputStream.close();
+            inputStream.close();
 
-            // 开始下载
-
-            // 以流的形式下载文件。
-            inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
-            fileName += ".zip";
-            // 删除临时文件
-            deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
-        } else {
-            // 文件  在oss上得到流
-            inputStream = AliyunOss.downloadInputStream(file.getFileUrl());
-        }
-
-        // 设置响应类型
-        response.setContentType("application/x-msdownload");
-        // 设置头信息
-        // 设置fileName的编码
-        fileName = URLEncoder.encode(fileName, "UTF-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-        ServletOutputStream outputStream = response.getOutputStream();
-        byte[] bytes = new byte[1024];
-        int n;
-        assert inputStream != null;
-        while ((n = inputStream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, n);
-        }
-        outputStream.close();
-        inputStream.close();
-
-        if (file.getCatalog() == 1) {
-            FileUtils.delFolder(deleteUrl);
+            if (file.getCatalog() == 1) {
+                FileUtils.delFolder(deleteUrl);
+            }
+        }catch (Exception e){
+            throw new SystemException(e);
         }
     }
 
@@ -1404,7 +1363,29 @@ public class FileController extends BaseController {
     }
 
 
+    @PostMapping("/hasPermission")
+    @ResponseBody
+    public JSONObject hasPermission(String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            File file = fileService.findFileById(fileId);
+            jsonObject.put("result",1);
+            if(file.getFilePrivacy()==1){
+                if(Arrays.asList(file.getFileUids().split(",")).contains(userId)){
+                    jsonObject.put("hasPermission",true);
+                }else{
+                    jsonObject.put("hasPermission",false);
+                }
+            }else{
+                jsonObject.put("hasPermission",true);
+            }
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
 
+        return jsonObject;
+    }
 
 
 }

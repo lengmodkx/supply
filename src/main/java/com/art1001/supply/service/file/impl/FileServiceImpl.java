@@ -177,8 +177,6 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public void saveFile(File file) {
-        // 设置uuid
-        file.setFileId(IdGen.uuid());
         // 获取操作用户
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 设置操作用户信息
@@ -219,7 +217,7 @@ public class FileServiceImpl implements FileService {
         projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
-        String[] childFolderNameArr = {"图片", "文档", "视频", "音频"};
+        String[] childFolderNameArr = {"北欧", "简欧", "美式", "现代","新中式"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
             // 写库
