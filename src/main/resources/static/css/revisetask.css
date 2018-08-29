@@ -311,6 +311,46 @@
 
 }
 
+.add-file-btn-box{
+ cursor: pointer;
+}
+.file-queue-box ul{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.file-queue-box ul li{
+    width: 120px;
+    height: 130px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    padding: 0 10px;
+    border: 1px solid #D5D5D5;
+    cursor: pointer;
+
+}
+.file-queue-box ul li>img{
+    display: block;
+    width: 80px;
+    height: 80px;
+    margin: 10px auto;
+    transition: 0.3s;
+    transform: scale(1);
+}
+.file-queue-box ul li>img:hover{
+    transform: scale(1.1);
+}
+.file-queue-box ul li .file-name{
+    line-height: 30px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+}
+
+
+
 .tag-box {
     width: 100%;
     margin-top: 20px;
