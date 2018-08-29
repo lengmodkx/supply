@@ -21,6 +21,7 @@ function subscribe() {
     stompClient.subscribe('/topic/'+taskId, function (response) {
         var returnData = JSON.parse(response.body);
         var taskLog = JSON.parse(returnData.responseMessage);
+        console.log(">>>>>",taskLog);
         if(taskLog.type === '把任务执行者指派给了'){
             getLog(taskLog.object.taskLog);
             var executorInfo = taskLog.object.executorInfo;
@@ -53,7 +54,7 @@ function subscribe() {
             $('#'+taskLog.object.tag).remove();
         }
         if(taskLog.type === '把任务移入了回收站'){
-            $(".detele-box").show()
+            $(".detele-box").show();
             $(".revise-task *").attr("disabled","true");
             $(".revise-task *").css("cursor"," not-allowed");
 
@@ -131,6 +132,28 @@ function subscribe() {
             editor.txt.html(taskLog.task.remarks);
         }
 
+        if(taskLog.type==='添加附件'){
+            var taskFile = taskLog.object.taskFile;
+            var li='<li class="boxsizing">';
+            if(taskFile.fileThumbnail!=null){
+                li+='<img src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
+                if(taskFile.fileName.length>10){
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                }else{
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                }
+
+            }else{
+                li+='<img src="/image/file_1.png" />';
+                if(taskFile.fileName.length>10){
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                }else{
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                }
+            }
+            li+='</li>';
+            $('.task-file'+taskLog.object.taskId).append(li);
+        }
 
         if(taskLog.type === '取消了关联'){
             $('#bind li.data-info ').each(function(){
@@ -158,22 +181,8 @@ function showLog(logVo){
     var date = new Date().pattern('yyyy-MM-dd HH:mm');
     var log = '<li class="combox clearfix">';
     log+='<div><div class="touxiang-img"><img src="'+IMAGE_SERVER+logVo.userEntity.userInfo.image+'"></div><div class="file-con-box"><div class="file-con-box-header boxsizing"><span class="file-con-box-name">'+logVo.userEntity.userName+'</span><span class="file-con-box-time">'+date+'</span></div><p class="publish-con boxsizing">'+logVo.content+'</p>';
-    if(logVo.fileList!=null&&logVo.fileList.length>0){
-        log+='<ul class="up-file-ul clearfix">';
-        for(var i=0;i<logVo.fileList.length;i++){
-            var file = logVo.fileList[i];
-            log+='<li class="boxsizing">';
-            log+='<a target="_blank" href="/file/fileDetail.html?fileId="'+file.fileId+'" class="file-content"><img src="/image/defaultFile.png"/><span class="up-file-ul-name" ">'+file.fileName+'</span></a>\n' +
-                '<div style="float: right"><span class="up-file-ul-size">'+file.size+'</span><span class="download" style="cursor: pointer;float: right" id="'+file.fileId+'">下载文件</span></div>';
-            log+='</li>';
-        }
-        log+='</ul>';
-    }
-
     log+='</div></div></li>';
-
     $('.log').append(log);
-    $('#chat').val('');
     document.getElementById('showView').scrollIntoView(true);
 
 }

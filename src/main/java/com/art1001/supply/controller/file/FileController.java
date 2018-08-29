@@ -381,6 +381,7 @@ public class FileController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             //文件为空则不执行
             if(files==null){
                 return jsonObject;
@@ -406,7 +407,17 @@ public class FileController extends BaseController {
                     myFile.setCatalog(0);
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                     fileService.saveFile(myFile);
-                    jsonObject.put("result",1);
+
+                    FileVersion fileVersion = new FileVersion();
+                    fileVersion.setFileId(myFile.getFileId());
+                    fileVersion.setFileSize(size);
+                    fileVersion.setFileUrl(fileUrl);
+                    fileVersion.setIsMaster(1);
+                    Date time = Calendar.getInstance().getTime();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String format = simpleDateFormat.format(time);
+                    fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+                    fileVersionService.saveFileVersion(fileVersion);
                 }
             }
             jsonObject.put("result", 1);
@@ -438,6 +449,7 @@ public class FileController extends BaseController {
             return jsonObject;
         }
         try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             JSONObject array = JSON.parseObject(fileCommon);
             JSONObject object = JSON.parseObject(fileModel);
             String fileName = object.getString("fileName");
@@ -458,6 +470,17 @@ public class FileController extends BaseController {
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             myFile.setFileThumbnail(array.getString("fileUrl"));
             fileService.saveFile(myFile);
+
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(myFile.getFileId());
+            fileVersion.setFileSize(size);
+            fileVersion.setFileUrl(fileUrl);
+            fileVersion.setIsMaster(1);
+            Date time = Calendar.getInstance().getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String format = simpleDateFormat.format(time);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+            fileVersionService.saveFileVersion(fileVersion);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);

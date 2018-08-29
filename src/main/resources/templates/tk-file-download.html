@@ -92,7 +92,7 @@
                         </div>
                         <ul class="tags-ul boxsizing" id = "tags">
                             <!--这里是标签-->
-                            <li class="tags-list" th:each="tag:${tags}">
+                            <li class="tags-list" th:each="tag:${tagList}">
                                 <i class="dot" th:style="'background-color:'+${tag.bgColor}+''"></i>
                                 <span class="tag-font" th:text="${tag.tagName}" th:data="${tag.tagId}"></span>
                             </li>

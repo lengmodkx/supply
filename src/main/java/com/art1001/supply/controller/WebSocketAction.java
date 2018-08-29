@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
@@ -28,9 +29,9 @@ public class WebSocketAction {
         return "test2";
     }
 
-    @MessageMapping("/sendTest")
-    @SendTo("/topic/taskMessage")
-    public ServerMessage sendDemo(ClientMessage message,@Header String taskId) {
+    @MessageMapping("/sendTest/{id}")
+    @SendTo("/topic/{id}")
+    public ServerMessage sendDemo(ClientMessage message,@PathVariable String id) {
         logger.info("接收到了信息" + message.getName());
         return new ServerMessage(message.getName());
     }

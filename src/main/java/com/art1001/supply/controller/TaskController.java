@@ -1364,47 +1364,13 @@ public class TaskController {
     @ResponseBody
     public JSONObject uploadFile(
             @RequestParam String taskId,@RequestParam String projectId,
-            @RequestParam(required = false,defaultValue = "") String content,
-            @RequestParam(value = "files",required = false) String files,
-            @RequestParam(required = false) String[] fileId){
+            @RequestParam(required = false,defaultValue = "") String content){
         JSONObject jsonObject = new JSONObject();
         try {
             //文件和内容都为空则不发送推送消息
-            if(files==null&&fileId==null&&StringUtils.isEmpty(content)){
+            if(StringUtils.isEmpty(content)){
                 return jsonObject;
             }
-            List<String> fileIds = new ArrayList<>();
-            if(StringUtils.isNotEmpty(files)){
-                JSONArray array = JSON.parseArray(files);
-                for (int i=0;i<array.size();i++) {
-                    JSONObject object = array.getJSONObject(i);
-                    String fileName = object.getString("fileName");
-                    String fileUrl = object.getString("fileUrl");
-                    String size = object.getString("size");
-                    String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-                    // 写库
-                    File myFile = new File();
-                    // 用原本的文件名
-                    myFile.setFileName(fileName);
-                    myFile.setExt(ext);
-                    myFile.setProjectId(projectId);
-                    myFile.setFileUrl(fileUrl);
-                    // 得到上传文件的大小
-                    myFile.setSize(size);
-                    myFile.setCatalog(0);
-                    myFile.setParentId("0");
-                    myFile.setFileLabel(1);
-                    myFile.setFileUids(ShiroAuthenticationManager.getUserId());
-                    fileService.saveFile(myFile);
-                    fileIds.add(myFile.getFileId());
-                }
-            }
-
-
-            if(fileId!=null&&fileId.length>0){
-                fileIds.addAll(Arrays.asList(fileId));
-            }
-
             //保存聊天信息
             Log log = new Log();
             log.setId(IdGen.uuid());
@@ -1424,7 +1390,6 @@ public class TaskController {
             log.setPublicId(taskId);
             log.setLogFlag(1);
             log.setCreateTime(System.currentTimeMillis());
-            log.setFileIds(StringUtils.join(fileIds,","));
             Log log1 = logService.saveLog(log);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "上传成功");
@@ -1437,40 +1402,5 @@ public class TaskController {
             throw new SystemException(e);
         }
         return jsonObject;
-    }
-
-
-
-
-    /**
-     * 下载
-     *
-     * @param fileId
-     */
-    @RequestMapping(value = "/download",method = RequestMethod.GET)
-    @ResponseBody
-    public void downloadFile(@RequestParam String fileId,HttpServletResponse response) throws IOException{
-        // 通过response对象获取OutputStream流
-        OutputStream os = response.getOutputStream();
-        try {
-            File file = fileService.findFileById(fileId);
-            InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl());
-
-                //设置content-disposition响应头控制浏览器弹出保存框，若没有此句则浏览器会直接打开并显示文件。
-                //中文名要经过URLEncoder.encode编码，否则虽然客户端能下载但显示的名字是乱码
-                // 设置响应类型
-                response.setContentType("application/x-msdownload");
-                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(file.getFileName(), "UTF-8"));
-                int byteCount;
-                //1M逐个读取
-                byte[] bytes = new byte[1024*1024];
-                while ((byteCount = inputStream.read(bytes)) != -1){
-                    os.write(bytes, 0, byteCount);
-                }
-                inputStream.close();
-                os.close();
-        }catch (Exception e) {
-                e.printStackTrace();
-        }
     }
 }

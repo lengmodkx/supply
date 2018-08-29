@@ -20,43 +20,36 @@ public class TaskFile extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 绑定id
+	 * 任务id
 	 */
 	private String taskId;
 
-
 	/**
-	 * 其他id
-	 */
-	private String fileId;
-
-
-	/**
-	 * 关联的类型
+	 * 文件名称
 	 */
 	private String fileName;
 
 
 	/**
-	 * file_ext
+	 * 文件后缀
 	 */
 	private String fileExt;
 
 
 	/**
-	 * file_size
+	 * 文件大小
 	 */
 	private String fileSize;
 
 
 	/**
-	 * file_url
+	 * 文件阿里云路径
 	 */
 	private String fileUrl;
 
 
 	/**
-	 * file_thumbnail
+	 * 模型文件缩略图路径
 	 */
 	private String fileThumbnail;
 
