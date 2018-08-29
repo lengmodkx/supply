@@ -311,6 +311,72 @@
 
 }
 
+.add-file-btn-box{
+ cursor: pointer;
+    position: relative;
+}
+.file-queue-box ul{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.file-queue-box ul li{
+    width: 120px;
+    height: 130px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    padding: 0 10px;
+    border: 1px solid #D5D5D5;
+    cursor: pointer;
+
+}
+.file-queue-box ul li .cover-box{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    top: 0 ;
+    left: 0;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cover-box span{
+    font-size: 14px;
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.cover-box span:hover{
+    color: #1E9FFF;
+}
+.file-queue-box ul li:hover .cover-box{
+   opacity: 1;
+
+}
+.file-queue-box ul li>img{
+    display: block;
+    width: 80px;
+    height: 80px;
+    margin: 10px auto;
+    transition: 0.3s;
+    transform: scale(1);
+}
+.file-queue-box ul li:hover img{
+    transform: scale(1.1);
+}
+.file-queue-box ul li .file-name{
+    line-height: 30px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+}
+
+
+
 .tag-box {
     width: 100%;
     margin-top: 20px;
@@ -1478,18 +1544,19 @@
 
 .file-upload{
     position: absolute;
-    left: 10px;
+    left: 0;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
     display: none;
-    top:200px
+    top:40px;
+    z-index: 200;
 
 }
 .file-upload.show-file-upload{
     animation: mymove 0.5s;
-    display: block;opacity: 1;top:-150px
+    display: block;opacity: 1;top:40px
 
 }
 @keyframes mymove{
-    from {display:none;opacity: 0;top:-100px}
-    to {display: block;opacity: 1;top:-150px}
+    from {display:none;opacity: 0;top:100px}
+    to {display: block;opacity: 1;top:40px}
 }
