@@ -332,6 +332,31 @@
     cursor: pointer;
 
 }
+.file-queue-box ul li .cover-box{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    top: 0 ;
+    left: 0;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cover-box span{
+    font-size: 14px;
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.cover-box span:hover{
+    color: #1E9FFF;
+}
+.file-queue-box ul li:hover .cover-box{
+   opacity: 1;
+
+}
 .file-queue-box ul li>img{
     display: block;
     width: 80px;
@@ -340,7 +365,7 @@
     transition: 0.3s;
     transform: scale(1);
 }
-.file-queue-box ul li>img:hover{
+.file-queue-box ul li:hover img{
     transform: scale(1.1);
 }
 .file-queue-box ul li .file-name{
