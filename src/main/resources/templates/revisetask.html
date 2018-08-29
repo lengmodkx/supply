@@ -195,6 +195,33 @@
         <div class="add-file-btn-box combox">
             <img src="../static/image/add-file.png" th:src="@{/image/add-file.png}" />
             <span>添加附件</span>
+
+            <div class="file-upload" >
+                <div class="task-fujian-box boxsizing" id="container">
+                    <div class="fujian-box-title boxsizing">
+                        添加附件
+                        <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
+                    </div>
+                    <!--<div class="zj-up" id="selectfiles">-->
+                    <!--<i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>-->
+                    <!--<span>直接上传</span>-->
+                    <!--</div>-->
+                    <div class="zj-up" id="">
+                        <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <span>上传模型文件</span>
+                    </div>
+                    <div class="zj-up" id="">
+                        <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <span>上传普通文件</span>
+                    </div>
+                    <div class="xian"></div>
+                    <div class="select-up">
+                        <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
+                        <span>从文件库选择</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -408,23 +435,6 @@
         </ul>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
-            <div class="file-upload" >
-                <div class="task-fujian-box boxsizing" id="container">
-                    <div class="fujian-box-title boxsizing">
-                        添加附件
-                        <i class="layui-icon layui-icon-close close-fujian" style="font-size: 18px; color: #a6a6a6;"></i>
-                    </div>
-                    <div class="zj-up" id="selectfiles">
-                        <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
-                        <span>直接上传</span>
-                    </div>
-                    <div class="xian"></div>
-                    <div class="select-up">
-                        <i class="layui-icon layui-icon-file" style="font-size: 16px; color: #a6a6a6;"></i>
-                        <span>从文件库选择</span>
-                    </div>
-                </div>
-            </div>
             <div class="task-upload-file" style="background-color: #1E9FFF;float: left;width: 50px;height: 30px;line-height: 30px;margin-left: 10px;margin-top: 5px;position: relative;text-align: center">
                 <i class="layui-icon" style="color: #ffffff">&#xe67c;</i>
             </div>

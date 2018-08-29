@@ -313,6 +313,7 @@
 
 .add-file-btn-box{
  cursor: pointer;
+    position: relative;
 }
 .file-queue-box ul{
     width: 100%;
@@ -1518,18 +1519,19 @@
 
 .file-upload{
     position: absolute;
-    left: 10px;
+    left: 0;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
     display: none;
-    top:200px
+    top:40px;
+    z-index: 200;
 
 }
 .file-upload.show-file-upload{
     animation: mymove 0.5s;
-    display: block;opacity: 1;top:-150px
+    display: block;opacity: 1;top:40px
 
 }
 @keyframes mymove{
-    from {display:none;opacity: 0;top:-100px}
-    to {display: block;opacity: 1;top:-150px}
+    from {display:none;opacity: 0;top:100px}
+    to {display: block;opacity: 1;top:40px}
 }
