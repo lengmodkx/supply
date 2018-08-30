@@ -44,6 +44,7 @@ stompClient.connect({},
         if(task.type === '把任务执行者指派给了'){
             $('.tx'+task.object.taskId).attr('src',IMAGE_SERVER+task.object.executorInfo.userInfo.image);
             $('.tx'+task.object.taskId).css('opacity',"1");
+            $('.tx'+task.object.taskId).show();
         }
 
         if(task.type === '移除了执行者'){
