@@ -46,9 +46,9 @@
                 <iframe th:src="#{IMAGE_SERVER}+${file.fileUrl}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"></iframe>
                 <div>
                     <img th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" style="width: 200px;height: 200px" th:if="${exts.get('model').contains(file.ext)}"/>
-                    <img th:src="/images/file-1.png" style="width: 200px;height: 200px" th:if="${exts.get('compress').contains(file.ext)}"/>
+                    <img th:src="@{/image/file_1.png}" style="width: 200px;height: 200px" th:if="${exts.get('compress').contains(file.ext)}"/>
                     <div th:text="${file.fileName}" class = "aaa" style="width: 200px;height: 30px;background-color: #999999" th:if="${exts.get('compress').contains(file.ext)}"></div>
-                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${exts.get('model').contains(file.ext)}" th:onclick="'download(\''+${file.fileId}+'\')'">
+                    <div class = "aaa" style="width: 200px;height: 50px;background-color: #4D4D51;margin-top: 20px; border-radius: 3px;font-size: 16px;color: #D8DBE0;cursor: pointer" th:if="${exts.get('model').contains(file.ext) or exts.get('compress').contains(file.ext)}" th:onclick="'download(\''+${file.fileId}+'\')'">
                         <span>下载文件</span><span th:text="${file.size}"></span>
                     </div>
                 </div>

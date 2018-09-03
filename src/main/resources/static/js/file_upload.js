@@ -103,7 +103,7 @@ layui.use(['element','form','layer'], function() {
             PostInit: function () {
                 document.getElementById('postfiles').onclick = function () {
                     set_upload_param(uploader, '', false);
-                    $('.btn-box').addClass('layui-btn layui-btn-disabled');
+                    $('.btn-box').addClass('layui-btn-disabled');
                     return false;
                 };
             },
@@ -180,7 +180,8 @@ layui.use(['element','form','layer'], function() {
                 index++;
             },
             UploadComplete: function (uploader, files) {
-                if (($('#chat').val() === '' && $('#chat').val() === null) && fileTemps.length === 0) {
+                if (($('#chat').val() === '' || $('#chat').val() === undefined || $('#chat').val() === null) && fileTemps.length === 0) {
+                    $('.btn-box').removeClass('layui-btn-disabled');
                     return false;
                 }
                 $.post('/chat/saveChat', {

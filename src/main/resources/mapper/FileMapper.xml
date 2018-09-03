@@ -42,6 +42,21 @@
 		<result column="file_name" property="name" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
+
+	<resultMap id="PublicMap" type="com.art1001.supply.entity.file.File">
+		<id column="file_id" property="fileId"/>
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="ext" property="ext" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="catalog" property="catalog" jdbcType="INTEGER" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
+	</resultMap>
     
 	<sql id="Base_Column_List">
 				file_id,
@@ -489,5 +504,93 @@
 		select file_name,file_id,update_time
 		from prm_file where file_del = 1 and project_id = #{projectId}
 	</select>
+
+	<!-- 查询出所有的公开文件 -->
+	<select id="findPublicFile" resultMap="PublicMap">
+		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file
+	</select>
+
+	<insert id="savePublicFile">
+		insert into prm_public_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="fileId != null and fileId != ''">
+				file_id,
+			</if>
+			<if test="fileName != null and fileName != ''">
+				file_name,
+			</if>
+			<if test="ext != null and ext != ''">
+				ext,
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				file_url,
+			</if>
+			<if test="projectId != null and projectId != ''">
+				project_id,
+			</if>
+			<if test="catalog != null ">
+				catalog,
+			</if>
+			<if test="size != null and size != ''">
+				size,
+			</if>
+			<if test="parentId != null and parentId != ''">
+				parent_id,
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+				file_del,
+			</if>
+			<if test="createTime != null ">
+				create_time,
+			</if>
+			<if test="updateTime != null ">
+				update_time,
+			</if>
+			<if test="fileThumbnail != null ">
+				file_thumbnail,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="fileId != null and fileId != ''">
+				#{fileId},
+			</if>
+			<if test="fileName != null and fileName != ''">
+				#{fileName},
+			</if>
+			<if test="ext != null and ext != ''">
+				#{ext},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				#{fileUrl},
+			</if>
+			<if test="projectId != null and projectId != ''">
+				#{projectId},
+			</if>
+			<if test="catalog != null ">
+				#{catalog},
+			</if>
+			<if test="size != null and size != ''">
+				#{size},
+			</if>
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+				#{fileDel},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+			<if test="fileThumbnail != null ">
+				#{fileThumbnail},
+			</if>
+		</trim>
+	</insert>
 	
 </mapper>

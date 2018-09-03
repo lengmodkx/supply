@@ -1,6 +1,7 @@
 package com.art1001.supply.service.file.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.base.Base;
@@ -218,7 +219,7 @@ public class FileServiceImpl implements FileService {
         projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
-        String[] childFolderNameArr = {"北欧", "简欧", "美式", "现代","新中式"};
+        String[] childFolderNameArr = {"图片", "文档","模型文件"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
             // 写库
@@ -494,5 +495,71 @@ public class FileServiceImpl implements FileService {
     public void recoveryFile(String fileId) {
         fileMapper.recoveryFile(fileId);
         Log log = logService.saveLog(fileId,TaskLogFunction.A28.getName(),1);
+    }
+
+    /**
+     * 查询出所有的 公开文件
+     * @return
+     */
+    @Override
+    public List<File> findPublicFile() {
+        return fileMapper.findPublicFile();
+    }
+
+    /**
+     * 上传文件到公开的文件库
+     * @param projectId 项目Id
+     * @param parentId
+     * @param multipartFile
+     */
+    @Override
+    public File uploadPublicFile(String projectId, String parentId, MultipartFile multipartFile) {
+        // 得到文件名
+        String originalFilename = multipartFile.getOriginalFilename();
+        // 获取要创建文件的上级目录实体
+        String parentUrl = fileService.findProjectUrl(projectId);
+        // 重置文件名
+        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+        // 设置文件url
+        String fileUrl = parentUrl + fileName;
+        // 上传oss
+        try {
+            AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
+        } catch (Exception e){
+            throw new ServiceException(e);
+        }
+        // 获取后缀名
+        String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+
+        // 写库
+        File file = new File();
+        // 用原本的文件名
+        file.setFileName(originalFilename);
+        file.setExt(ext);
+        file.setProjectId(projectId);
+        file.setFileUrl(fileUrl);
+
+        // 得到上传文件的大小
+        long contentLength = multipartFile.getSize();
+        file.setSize(FileUtils.convertFileSize(contentLength));
+        file.setCatalog(0);
+        file.setParentId(parentId);
+        file.setFileUids(ShiroAuthenticationManager.getUserId());
+        file.setFileLabel(0);
+        fileService.savePublicFile(file);
+
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+
+        return file;
+    }
+
+    /**
+     * 保存文件信息到公开文件表
+     * @param file 文件信息
+     */
+    @Override
+    public void savePublicFile(File file) {
+        file.setFileId(IdGen.uuid());
+        fileMapper.savePublicFile(file);
     }
 }

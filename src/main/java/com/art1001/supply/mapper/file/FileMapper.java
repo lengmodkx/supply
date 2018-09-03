@@ -188,4 +188,16 @@ public interface FileMapper {
 	 */
 	@Update("update prm_file set parent_id = '0',file_del = 0 where file_id = #{fileId}")
 	void recoveryFile(String fileId);
+
+	/**
+	 * 查询出所有的 公开文件
+	 * @return
+	 */
+    List<File> findPublicFile();
+
+	/**
+	 * 保存文件信息到公开文件表
+	 * @param file 文件信息
+	 */
+	void savePublicFile(File file);
 }

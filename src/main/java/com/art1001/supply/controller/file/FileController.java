@@ -58,6 +58,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileController extends BaseController {
 
+    /**
+     * 标注是不是模型文件夹
+     */
+    private final String publicName = "模型文件";
+
     @Resource
     private FileService fileService;
 
@@ -96,6 +101,10 @@ public class FileController extends BaseController {
     @GetMapping("/list.html")
     public String list(File file, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
+        File fileById = new File();
+        if(file.getFileId() != null){
+            fileById = fileService.findFileById(file.getFileId());
+        }
         UserEntity userEntity = userService.findById(userId);
         // 项目id
         String projectId = file.getProjectId();
@@ -107,7 +116,14 @@ public class FileController extends BaseController {
 
         // 删除标识
         Integer fileDel = file.getFileDel();
-        List<File> fileList = fileService.findChildFile(projectId, parentId, fileDel);
+        List<File> fileList;
+
+        //如果用户点击的 模型文件 的文件夹 则去文件公共表查询数据
+        if(publicName.equals(fileById.getFileName())){
+            fileList = fileService.findPublicFile();
+        } else{
+            fileList = fileService.findChildFile(projectId, parentId, fileDel);
+        }
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
@@ -353,6 +369,8 @@ public class FileController extends BaseController {
             if (StringUtils.isEmpty(parentId)) {
                 parentId = "0";
             }
+
+            File fileById = fileService.findFileById(parentId);
             File f = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
             jsonObject.put("data", f);
@@ -382,6 +400,9 @@ public class FileController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+
+            File fileById = fileService.findFileById(parentId);
+
             //文件为空则不执行
             if(files==null){
                 return jsonObject;
@@ -403,24 +424,30 @@ public class FileController extends BaseController {
                     myFile.setFileUrl(fileUrl);
                     // 得到上传文件的大小
                     myFile.setSize(size);
+                    myFile.setFileId(IdGen.uuid());
                     myFile.setParentId(parentId);
                     myFile.setCatalog(0);
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                     if(FileExt.extMap.get("images").contains(ext)){
                         myFile.setFileThumbnail(fileUrl);
                     }
-                    fileService.saveFile(myFile);
 
-                    FileVersion fileVersion = new FileVersion();
-                    fileVersion.setFileId(myFile.getFileId());
-                    fileVersion.setFileSize(size);
-                    fileVersion.setFileUrl(fileUrl);
-                    fileVersion.setIsMaster(1);
-                    Date time = Calendar.getInstance().getTime();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    String format = simpleDateFormat.format(time);
-                    fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-                    fileVersionService.saveFileVersion(fileVersion);
+                    //如果是在公共文件夹里上传的文件 则把文件信息把存在公共文件表中
+                    if(publicName.equals(fileById.getFileName())){
+                        fileService.savePublicFile(myFile);
+                    } else{
+                        fileService.saveFile(myFile);
+                        FileVersion fileVersion = new FileVersion();
+                        fileVersion.setFileId(myFile.getFileId());
+                        fileVersion.setFileSize(size);
+                        fileVersion.setFileUrl(fileUrl);
+                        fileVersion.setIsMaster(1);
+                        Date time = Calendar.getInstance().getTime();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        String format = simpleDateFormat.format(time);
+                        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+                        fileVersionService.saveFileVersion(fileVersion);
+                    }
                 }
             }
             jsonObject.put("result", 1);

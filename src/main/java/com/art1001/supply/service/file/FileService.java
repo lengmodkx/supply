@@ -191,4 +191,24 @@ import java.util.List;
 	 * @param fileId 文件的id
 	 */
 	void recoveryFile(String fileId);
+
+	/**
+	 * 查询出所有的 公开文件
+	 * @return
+	 */
+	List<File> findPublicFile();
+
+	/**
+	 * 上传文件到公开的文件库
+	 * @param projectId 项目Id
+	 * @param parentId
+	 * @param file 文件 信息
+	 */
+    File uploadPublicFile(String projectId, String parentId, MultipartFile file);
+
+	/**
+	 * 保存文件信息到公开文件表
+	 * @param file 文件信息
+	 */
+	void savePublicFile(File file);
 }

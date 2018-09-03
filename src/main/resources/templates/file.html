@@ -88,7 +88,7 @@
                                 <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
                                 <img class="folderFile" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
                                 <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)}"/>
+                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${!exts.get('compress').contains(file.ext)}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
                                 <i class="iconfont icon-suo" th:style="'display:' + @{(${file.filePrivacy}==0? 'none' : 'block')} + ''"></i>
                                 <div class="img-show-operate">
