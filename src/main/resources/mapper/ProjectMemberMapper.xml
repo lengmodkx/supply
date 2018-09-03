@@ -13,7 +13,6 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
-		<result column="is_receivemessage" property="IsReceiveMessage" jdbcType="INTEGER" />
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
@@ -46,8 +45,7 @@
 		prm_project.create_time,
 		prm_project.update_time,
 		prm_project.is_public,
-		prm_project.project_remind,
-		prm_project.is_receivemessage
+		prm_project.project_remind
     </sql>
 
 	<sql id="Base_Column_List">
@@ -60,8 +58,7 @@
 				member_email,
 				create_time,
 				update_time,
-				member_label,
-				is_receivemessage
+				member_label
 	</sql>
 
 	<sql id="whereStatement">
