@@ -182,8 +182,12 @@
 
         <div class="file-queue-box">
             <ul th:class="task-file+${task.taskId}" >
-                <li class="boxsizing" th:each="taskFile:${task.taskFileList}" th:if="${taskFile.fileThumbnail!=null}"><img th:src="#{IMAGE_SERVER}+${taskFile.fileThumbnail}"/><p class="over-hidden file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p><a th:id="${taskFile.id}" class="download">下载</a></li>
-                <li class="boxsizing" th:each="taskFile:${task.taskFileList}" th:if="${taskFile.fileThumbnail==null}"><img src="/image/file_1.png"/><p class="over-hidden file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p><div class="cover-box"><a th:id="${taskFile.id}" class="download">下载</a></div></li>
+                <li class="boxsizing" th:each="taskFile:${task.taskFileList}" >
+                    <img th:src="#{IMAGE_SERVER}+${taskFile.fileThumbnail}" th:if="${taskFile.fileThumbnail!=null}"/>
+                    <img src="/image/file_1.png" th:if="${taskFile.fileThumbnail==null}"/>
+                    <p class="file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p>
+                    <span th:id="${taskFile.id}" class="download">下载文件</span>
+                </li>
             </ul>
         </div>
         <div class="add-file-btn-box combox task-upload-file">
@@ -199,7 +203,7 @@
                         <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
                         <span>上传模型文件</span>
                     </div>
-                    <div class="zj-up" >
+                    <div class="zj-up common-file">
                         <i class="layui-icon layui-icon-upload" style="font-size: 16px; color: #a6a6a6;"></i>
                         <span>上传普通文件</span>
                     </div>

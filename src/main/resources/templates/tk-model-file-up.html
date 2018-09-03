@@ -18,12 +18,13 @@
         <div class="flex-content boxsizing">
             <div class="mx-box-wrap">
                 <div class="mx-box boxsizing">
-                <div class="style-div" id = "upModel">把 上传插件绑定到这个盒子上,自己起个名字</div>
+                <!--<div class="style-div" id="upModel"></div>-->
+                    <input id="file" type="file" style="position: absolute;width: 150px;height: 150px;font-size: 0px;opacity: 0"/>
                     <div class="no-file">
                         <img th:src="@{/image/5dModel.png}" class="model" src="../static/image/model.png" style="display: none">
                         <i class="layui-icon layui-icon-upload model-icon" style="font-size: 80px; color: #3DA8F5;cursor: pointer"></i>
                     </div>
-                    <div class="has-file" style="display: none">文件名文件名温家明.gks</div>
+                    <div class="has-file" style="display: none">文件名.gks</div>
                 </div>
                 <div class="layui-progress upModel" lay-filter="upModel">
                     <div class="layui-progress-bar" lay-percent="0%"></div>
@@ -32,7 +33,7 @@
             </div>
             <div class="slt-box-wrap">
                 <div class="slt-box boxsizing">
-                    <div class="style-div" id = "upModel2">把上传插件绑定到这个盒子上,自己起个名字</div>
+                    <div class="style-div" id = "upModel2">自己起个名字</div>
                     <div class="no-img">
                         <img th:src="@{/image/model.png}" class="suolue" src="" style="display: none">
                         <i class="layui-icon layui-icon-upload suolue-icon" style="font-size: 80px; color: #3DA8F5;cursor: pointer"></i>
@@ -54,8 +55,6 @@
     </div>
 
 </div>
-
-</body>
 <script th:inline="javascript">
     var projectId = [[${projectId}]];
     var parentId = [[${parentId}]];
@@ -65,13 +64,15 @@
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     })
-
-
+    var g_dirname = 'upload/project/'+projectId+"/";
 </script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jszip.js}"></script>
+<script type="text/javascript" th:src="@{/js/aliyun-oss-sdk.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/fileModelUpload.js}"></script>
+</body>
 </html>

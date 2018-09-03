@@ -370,14 +370,12 @@
     transition: 0.3s;
     transform: scale(1);
 }
-.file-queue-box ul li:hover img{
-    transform: scale(1.1);
-}
+
 .file-queue-box ul li .file-name{
     padding: 0 5px;
     box-sizing: border-box;
     line-height: 28px;
-    font-size: 14px;
+    font-size: 10px;
     width: 100%;
     text-align: center;
     border-bottom: 1px solid #D5D5D5;

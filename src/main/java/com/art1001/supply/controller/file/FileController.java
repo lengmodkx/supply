@@ -406,6 +406,9 @@ public class FileController extends BaseController {
                     myFile.setParentId(parentId);
                     myFile.setCatalog(0);
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                    if(FileExt.extMap.get("images").contains(ext)){
+                        myFile.setFileThumbnail(fileUrl);
+                    }
                     fileService.saveFile(myFile);
 
                     FileVersion fileVersion = new FileVersion();
@@ -1317,15 +1320,6 @@ public class FileController extends BaseController {
             jsonObject.put("result",0);
         }
         return jsonObject;
-    }
-
-    @GetMapping("/selectFile.html")
-    public String selectFile(@RequestParam String projectId,@RequestParam String windowName,Model model){
-        List<File> fileList = fileService.findChildFile(projectId, "0", 0);
-        model.addAttribute("fileList",fileList);
-        model.addAttribute("projectId",projectId);
-        model.addAttribute("windowName",windowName);
-        return "tk-select-file";
     }
 
 

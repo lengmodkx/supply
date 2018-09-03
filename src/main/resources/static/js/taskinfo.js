@@ -501,6 +501,25 @@ layui.use('form', function() {
             content: ['/task/file/modelUplaod.html?projectId='+projectId+'&taskId='+taskId+"&windowName="+window.name,'no']
         });
     });
+
+    $('.common-file').click(function (e) {
+        e.stopPropagation();
+        $('.file-upload').removeClass("show-file-upload");
+        parent.layer.open({
+            type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: false, //标题
+            area: ['500px', '395px'],
+            fixed: false,
+            shadeClose: true, //点击遮罩关闭
+            shade: [0.1, '#fff'],
+            closeBtn: 0,
+            anim: 1,  //动画 0-6
+            content: ['/task/file/commonFile.html?projectId='+projectId+'&taskId='+taskId+"&windowName="+window.name,'no']
+        });
+    });
+
+
+
     /**
      * 下载文件
      */
@@ -524,7 +543,7 @@ layui.use('form', function() {
             shade: [0.1, '#fff'],
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: ['/file/selectFile.html?projectId='+projectId+"&windowName="+window.name,'no']
+            content: ['/task/file/selectFile.html?projectId='+projectId+"&taskId="+taskId,'no']
         });
         $('.file-upload').removeClass("show-file-upload");
         e.stopPropagation();

@@ -25,7 +25,7 @@
             <ul class="scroll-ul">
                 <!--每一列-->
                 <li class="column boxsizing" >
-                    <div class="li-header boxsizing">
+                    <div class="li-header boxsizing" style="display: none">
                         <input type="file" name="fileToUpload" id="fileToUpload" class="file-to-upload" data="0"/>
                         <i class="layui-icon layui-icon-upload-drag upload-file" style="font-size: 18px; color: #a6a6a6;"></i>
                         <i class="layui-icon layui-icon-add-circle create-wjj" style="font-size: 18px; color: #a6a6a6;"></i>
@@ -40,9 +40,10 @@
                     </ul>
                     <p class="style-wjj boxsizing">文件</p>
                     <ul class="wj-ul">
-                        <li class="style-li boxsizing over-hidden" th:each="file : ${fileList}" th:if="${file.catalog eq 0}" th:id="${file.fileId}" th:data="${file.fileName}" th:value="${file.size}">
-                            <img src="../static/image/defaultFile.png" th:src="@{/image/defaultFile.png}">
-                            <span th:text="${file.fileName}">adkasd.zip</span>
+                        <li class="style-li boxsizing over-hidden" th:each="file : ${fileList}" th:if="${file.catalog eq 0}" th:id="${file.fileId}">
+                            <img th:src="@{/image/file_1.png}" th:if="${file.fileThumbnail==null}">
+                            <img th:src="#{IMAGE_SERVER}+${file.fileThumbnail}" th:if="${file.fileThumbnail!=null}">
+                            <span th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,14)+file.ext:file.fileName}">adkasd.zip</span>
                         </li>
                     </ul>
                 </li>
@@ -63,7 +64,7 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
     var projectId = [[${projectId}]];
-    var windowName = [[${windowName}]];
+    var taskId = [[${taskId}]];
     layui.use(['form','upload'], function(){
         var form = layui.form;
     });
@@ -192,20 +193,19 @@
     });
 
     $('.clone-ok').click(function () {
+        var files = [];
         $('.wj-ul li').each(function (data,item) {
             if($(item).hasClass('now')){
                 var fileId = $(item).attr('id');
-                var fileName = $(item).attr('data');
-                var size = $(item).attr('value');
-                var li ='<li class="boxsizing" id="' + fileId + '" style="width: 550px;height: 40px;background-color: #eee;padding: 4px 8px;line-height: 20px;font-size: 12px;margin: 2px auto;margin-top: 0"><div>' + fileName + ' (' + size + ')<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i></div></li>';
-                var ifrc = window.parent.frames[windowName];
-                var winc = ifrc.window || ifrc.contentWindow;
-                winc.$('.fileList').append(li);
+                files.push(fileId);
             }
         });
-
-        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        parent.layer.close(index); //再执行关闭
+        $.post('/task/file/uploadLibrary',{"projectId":projectId,"files":files.toString(),"taskId":taskId},function (data) {
+            if(data.result===1){
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+            }
+        });
     });
 </script>
 </html>

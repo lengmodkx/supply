@@ -138,21 +138,47 @@ function subscribe() {
             if(taskFile.fileThumbnail!=null){
                 li+='<img src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
                 if(taskFile.fileName.length>10){
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
                 }else{
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载</span>';
                 }
 
             }else{
                 li+='<img src="/image/file_1.png" />';
                 if(taskFile.fileName.length>10){
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
                 }else{
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><div class="cover-box"><span id="'+taskFile.id+'" class="download">下载</span></div>';
+                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载</span>';
                 }
             }
             li+='</li>';
             $('.task-file'+taskLog.object.taskId).append(li);
+        }
+
+        if(taskLog.type==='添加普通附件'){
+            var taskFiles = taskLog.object.taskFiles;
+            for(var j=0;j<taskFiles.length;j++){
+                var taskFile = taskFiles[j];
+                var li='<li class="boxsizing">';
+                if(taskFile.fileThumbnail!=null){
+                    li+='<img src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
+                    if(taskFile.fileName.length>10){
+                        li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
+                    }else{
+                        li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
+                    }
+
+                }else{
+                    li+='<img src="/image/file_1.png" />';
+                    if(taskFile.fileName.length>10){
+                        li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
+                    }else{
+                        li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
+                    }
+                }
+                li+='</li>';
+                $('.task-file'+taskLog.object.taskId).append(li);
+            }
         }
 
         if(taskLog.type === '取消了关联'){

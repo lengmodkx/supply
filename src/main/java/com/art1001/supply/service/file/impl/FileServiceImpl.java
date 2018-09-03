@@ -186,6 +186,7 @@ public class FileServiceImpl implements FileService {
         // 设置时间
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
+        file.setFileId(IdGen.uuid());
         fileMapper.saveFile(file);
     }
 

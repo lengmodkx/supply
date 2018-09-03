@@ -19,7 +19,7 @@
 	<select id="findTaskFileAllList" resultMap="BaseResultMap" parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
-		from prm_task_file where task_id = #{taskId}
+		from prm_task_file where task_id = #{taskId} order by task_id ASC
 	</select>
 	
 	<select id="findTaskFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
