@@ -153,6 +153,9 @@
 			<if test="memberLabel != null ">
 				member_label,
 			</if>
+			<if test="IsReceiveMessage != null ">
+				is_receivemessage,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -187,6 +190,11 @@
 			<if test="memberLabel != null ">
 				#{memberLabel},
 			</if>
+
+			<if test="IsReceiveMessage != null ">
+				#{IsReceiveMessage},
+			</if>
+
 		</trim>
 
 	</insert>
@@ -221,6 +229,9 @@
 			</if>
 			<if test="memberLabel != null ">
 				member_label = #{memberLabel},
+			</if>
+			<if test="IsReceiveMessage != null ">
+				is_receivemessage = #{IsReceiveMessage},
 			</if>
 		</set>
 

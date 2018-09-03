@@ -138,6 +138,8 @@ function subscribe1() {
                         '                </li>';
                 }
             }
+            var hei=parseInt($(".section-ul").css("height"));
+            $(".chat-content").scrollTop(hei);
             $('.section-ul').append(content);
         }
 
@@ -194,7 +196,7 @@ $('html').on('click','.download-chat-file',function () {
     $(this).parents('.msg-timer').siblings('.chat-file-ul').children('li').each(function () {
         files.push($(this).attr('data-id'));
     });
-    var args = {"fileIds":files.toString()};
+    //var args = {"fileIds":files.toString()};
     location.href='/chat/downLoadEnclosure?fileIds='+files.toString();
 
 });

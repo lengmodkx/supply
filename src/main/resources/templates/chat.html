@@ -125,7 +125,18 @@
             <div class="chat-footer boxsizing">
                 <div class="chat-footer-content">
                     <div class="message-box boxsizing">
-                        <ul class="fileList" style="background-color: #fff;padding-bottom: 5px">
+                        <ul class="fileList boxsizing" style="background-color: #fff;padding-bottom: 5px">
+                            <!--<li class="file-list-li boxsizing">-->
+                                <!--<div class="file-list-li-con">-->
+                                    <!--<img src="../static/image/file_1.png">-->
+                                    <!--<p class="file-con-name over-hidden">asdasdasdasdas.lkl</p>-->
+                                    <!--<i class="layui-icon layui-icon-close" style="font-size: 16px; color: gray;float: right;cursor: pointer"></i>-->
+                                    <!--<p class="file-con-size over-hidden">135.3kb</p>-->
+                                <!--</div>-->
+                                <!--<div class="layui-progress">-->
+                                    <!--<div class="layui-progress-bar" lay-percent="10%"></div>-->
+                                <!--</div>-->
+                            <!--</li>-->
                         </ul>
                         <textarea class="boxsizing"  rows="1" id = "chat"></textarea>
                     </div>
@@ -175,6 +186,7 @@
 <script th:inline="javascript">
     var projectId = [[${project.projectId}]];
     var userId = [[${user.id}]];
+    var exts = [[${exts}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     layui.use(['element','form'], function() {});
@@ -213,10 +225,7 @@
             $(".fujian-box").slideUp()
         });
 
-        //点击一个上传完成文件的x 移除掉该文件
-       $('html').on('click','.layui-icon-close',function () {
-          $(this).parents('li').remove();
-       });
+
 
         //底部 展开收起
         $(document).click(function(event){

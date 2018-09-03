@@ -51,6 +51,7 @@
                                           <header class="assignment-top-box boxsizing clearfix">
                                               <span class="assignment-title" th:text="${task.taskName}" th:classappend="title+${task.taskId}">设计修改任务界面</span>
                                               <img class="assignment-tx" th:classappend="tx+${task.taskId}" th:if="${task.executorInfo != null}" th:src="#{IMAGE_SERVER}+${task.executorInfo.userInfo.image}" />
+                                              <img class="assignment-tx" th:classappend="tx+${task.taskId}" th:if="${task.executorInfo == null}" style="opacity:0"/>
                                           </header>
                                           <section class="assignment-bottom-box clearfix" th:classappend="box+${task.taskId}">
                                               <span class="how-repeat" th:if="${task.repeat != '不重复'}" th:text="${task.repeat}">每天重复</span>
