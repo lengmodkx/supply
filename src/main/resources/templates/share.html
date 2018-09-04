@@ -10,6 +10,14 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/new-share.css}" href="../static/css/new-share.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
 
+    <!-- 表情样式 -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <!--<link rel="stylesheet" th:href="@{/expression/css/bootstrap.css}" href="../static/expression/css/bootstrap.css"/>-->
+    <link rel="stylesheet" th:href="@{/expression/css/jquery.mCustomScrollbar.min.css}" href="../static/expression/css/jquery.mCustomScrollbar.min.css"/>
+    <link rel="stylesheet" th:href="@{/expression/dist/css/jquery.emoji.css}" href="../static/expression/dist/css/jquery.emoji.css"/>
+    <link rel="stylesheet" th:href="@{/expression/css/railscasts.css}" href="../static/expression/css/railscasts.css"/>
+    <link rel="stylesheet" th:href="@{/expression/dist/css/index.css}" href="../static/expression/dist/css/index.css"/>
+
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
@@ -320,7 +328,7 @@
                             <ul class = "log" th:data-id = "${share.id}">
                                 <li class="combox clearfix"  th:each="log:${share.logs}">
                                     <img src="../static/image/dongtai.png" th:src="#{IMAGE_SERVER}+${log.userEntity.userInfo.image}" />
-                                    <span th:text="${log.content}"></span>
+                                    <span th:utext="${log.content}"></span>
                                     <div class="in-what-time" th:text = "${#dates.format(log.createTime,'yyyy-MM-dd HH:mm')}"></div>
                                 </li>
                             </ul>
@@ -332,11 +340,11 @@
             </div>
             <!--发布消息 框-->
             <div class="publish boxsizing">
-                <textarea name="" placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input chat" ></textarea>
+                <!--<textarea name="" placeholder="@快速提及他人，enter快速发布" class="layui-textarea publish-input chat" ></textarea>-->
+                <div class="publish-input text-div" contenteditable="true" id = "chat"></div>
                 <div class="fenge-line"></div>
                 <div class="publish-bottom">
-                    <i class="layui-icon layui-icon-file upload-fujian" style="font-size: 20px; color: #B5B5B5;"></i>
-                    <i class="layui-icon layui-icon-face-smile-fine" style="font-size: 20px; color: #B5B5B5;"></i>
+                    <i class="layui-icon layui-icon-face-smile-fine bq" style="font-size: 20px; color: #B5B5B5;"></i>
                     <div class="publish-btn" th:data-id = "${share.id}">发布</div>
                 </div>
                 <!--上传文件框-->
@@ -394,6 +402,9 @@
 
 </body>
 <script type="text/javascript" src="../static/js/wangEditor.min.js" th:src="@{/js/wangEditor.min.js}"></script>
+<script th:src="@{/expression/js/jquery.mousewheel-3.0.6.min.js}" src="../static/expression/js/jquery.mousewheel-3.0.6.min.js"></script>
+<script th:src="@{/expression/js/jquery.mCustomScrollbar.min.js}" src="../static/expression/js/jquery.mCustomScrollbar.min.js"></script>
+<script th:src="@{/expression/js/jquery.emoji.js}" src="../static/expression/js/jquery.emoji.js"></script>
 <script th:src="@{/js/share.js}" src="../static/js/share.js"></script>
 <script th:inline="javascript">
     //头像某模板
@@ -415,21 +426,29 @@
             console.log("连接失败");
         }
     );
+
+    $('.text-div').focus(function () {
+        $(this).removeClass('text-div');
+    });
+    $('.publish-input').blur(function () {
+       $(this).addClass('text-div');
+    });
+
     //发送消息
     $('.publish-btn').click(function (e) {
         var sId = $('.share-list.selected').attr('data');
         var chat = '';
+        var that;
         $('.publish-btn').each(function () {
-           if($(this).attr("data-id") == $('.share-list.selected').attr('data')) {
-               chat = $(this).parent().siblings('textarea').val();
+           if($(this).attr("data-id") === $('.share-list.selected').attr('data')) {
+               that = $(this).parent().siblings('.text-div');
+               chat = $(this).parent().siblings('.text-div').html();
            }
         });
-        var args = {"shareId":shareId,"projectId":projectId,"content":chat}
-        $.post("/share/chat",args,function (data) {
+        var args = {"publicId":shareId,"publicType":"分享","content":chat,"projectId":projectId}
+        $.post("/public/chat",args,function (data) {
+            that.html('');
         },"json");
-        $('.chat').val('');
-        $('.chat').focus();
-
     });
 
     //订阅项目消息
@@ -437,13 +456,13 @@
         stompClient.subscribe('/topic/'+projectId, function (response) {
             var returnData = JSON.parse(response.body);
             var share = JSON.parse(returnData.responseMessage);
-            if(share.type == '关联'){
+            if(share.type === '关联'){
                 addBindingStr(share.object.bindingInfo,share.object.publicType,share.object.bId);
             }
-            if(share.type == "发送消息"){
+            if(share.type === "发送消息"){
                 getLog(share.object.shareLog,share.object.shareId);
             }
-            if(share.type == '恢复了信息'){
+            if(share.type === '恢复了信息'){
                 var share = share.share;
                 var content = '';
                 var content2 = '';
@@ -460,7 +479,7 @@
 
             }
 
-            if(share.type == '更新了参与者'){
+            if(share.type === '更新了参与者'){
                 getLog(share.object.log,share.object.shareId);
                 updatePeopel(share);
             }
@@ -880,5 +899,36 @@
             }
         })
     });
+
+    /**
+     * 表情
+     */
+    $("#chat").emoji({
+        button: ".bq",
+        showTab: false,
+        animation: 'slide',
+        position: 'topRight',
+        icons: [{
+            name: "QQ表情",
+            path: "/expression/dist/img/qq/",
+            maxNum: 91,
+            excludeNums: [41, 45, 54],
+            file: ".gif"
+        },{
+            name: "贴吧表情",
+            path: "/expression/dist/img/tieba/",
+            maxNum: 50,
+            excludeNums: [41, 45, 54],
+            file: ".jpg",
+            placeholder: "#qq_{alias}#"
+        }, {
+            name: "emoji高清",
+            path: "/expression/dist/img/emoji/",
+            maxNum: 84,
+            file: ".png",
+            placeholder: "#emoji_{alias}#"
+        }]
+    });
+
 </script>
 </html>

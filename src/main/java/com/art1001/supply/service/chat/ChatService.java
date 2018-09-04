@@ -52,5 +52,13 @@ public interface ChatService {
 	 * @return
 	 */
 	public List<Chat> findChatAllList();
+
+	/**
+	 * 根据类型查询出 该项信息的参与者
+	 * @param publicId 信息id
+	 * @param publicType 信息类型
+	 * @return 所有参与者的id 字符串
+	 */
+	String findMemberByPublicType(String publicId, String publicType);
 	
 }

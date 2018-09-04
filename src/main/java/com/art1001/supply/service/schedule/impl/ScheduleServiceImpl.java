@@ -369,4 +369,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 		scheduleMapper.recoverySchedule(scheduleId);
 		Log log = logService.saveLog(scheduleId,TaskLogFunction.A29.getName(),1);
 	}
+
+	/**
+	 * 根据日程id 查询出该日程的所有参与者信息
+	 * @param scheduleId 日程id
+	 * @return
+	 */
+	@Override
+	public String findUidsByScheduleId(String scheduleId) {
+		return scheduleMapper.findUidsByScheduleId(scheduleId);
+	}
 }

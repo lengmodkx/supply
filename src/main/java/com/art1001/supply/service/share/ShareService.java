@@ -103,4 +103,10 @@ public interface ShareService {
 	 * @param shareId 分享id
 	 */
 	void moveToRecycleBin(String shareId);
+
+	/**
+	 * 根据分享id 查询出分享的 参与者id
+	 * @param shareId 分享id
+	 */
+    String findUidsByShareId(String shareId);
 }

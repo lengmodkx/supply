@@ -498,4 +498,10 @@ public interface TaskService {
 	void deleteSubTaskByParentId(String taskId);
 
 
+	/**
+	 * 根据任务的id 查询出该任务的 所有参与者信息
+	 * @param taskId 任务id
+	 * @return
+	 */
+    String findUidsByTaskId(String taskId);
 }

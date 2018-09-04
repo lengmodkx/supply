@@ -3,32 +3,42 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.PublicVO;
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfoEntity;
+import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskCollectService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +74,21 @@ public class PublicController {
     private PublicCollectService publicCollectService;
 
     @Resource
+    private UserNewsService userNewsService;
+
+    @Resource
     private UserService userService;
+
+    @Resource
+    private LogService logService;
+
+
+    @Resource
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Resource
+    private ChatService chatService;
+
     /**
      * 所有收藏的常量
      */
@@ -579,5 +603,80 @@ public class PublicController {
     }
 
 
+    @PostMapping("chat")
+    @ResponseBody
+    public JSONObject chat(String publicId, String publicType, String content, String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            int logFlag = 0;
+            if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                logFlag = 1;
+            }
+            if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
+                logFlag = 2;
+            }
+            if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
+                logFlag = 3;
+            }
+            if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                logFlag = 4;
+            }
+
+            if(StringUtils.isEmpty(content)){
+                return jsonObject;
+            }
+            //保存聊天信息
+            Log log = new Log();
+            log.setId(IdGen.uuid());
+            if(StringUtils.isEmpty(content)){
+                log.setContent("");
+            }else{
+                log.setContent(content);
+                //查询出该任务的所有成员id
+
+                String[] users = chatService.findMemberByPublicType(publicId,publicType).split(",");
+                //保存消息信息
+                userNewsService.saveUserNews(users,publicId,publicType,content,1);
+            }
+
+            log.setLogType(1);
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            log.setPublicId(publicId);
+            log.setLogFlag(logFlag);
+            log.setCreateTime(System.currentTimeMillis());
+            Log log1 = logService.saveLog(log);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "上传成功");
+
+            PushType taskPushType = new PushType(TaskLogFunction.A14.getName());
+            Map<String,Object> map = new HashMap<>();
+            if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+                map.put("taskLog",log1);
+            }
+            if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
+                map.put("fileLog",log1);
+            }
+            if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                map.put("shareLog",log1);
+                map.put("shareId",publicId);
+            }
+            if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
+                map.put("scheduleLog",log1);
+            }
+            taskPushType.setObject(map);
+
+            if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+                messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(taskPushType)));
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            } else{
+                messagingTemplate.convertAndSend("/topic/"+publicId,new ServerMessage(JSON.toJSONString(taskPushType)));
+            }
+        } catch (Exception e){
+             log.error("系统异常, 消息发送失败!");
+             jsonObject.put("result",0);
+             jsonObject.put("msg","系统异常, 消息发送失败!");
+        }
+        return jsonObject;
+    }
 
 }

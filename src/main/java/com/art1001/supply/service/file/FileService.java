@@ -211,4 +211,11 @@ import java.util.List;
 	 * @param file 文件信息
 	 */
 	void savePublicFile(File file);
+
+	/**
+	 * 根据文件id 查询出该文件的 ids
+	 * @param fileId 文件id
+	 * @return
+	 */
+    String findUidsByFileId(String fileId);
 }

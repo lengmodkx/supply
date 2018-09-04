@@ -180,19 +180,19 @@ layui.use(['element','form','layer'], function() {
                 index++;
             },
             UploadComplete: function (uploader, files) {
-                if (($('#chat').val() === '' || $('#chat').val() === undefined || $('#chat').val() === null) && fileTemps.length === 0) {
+                if (($('#chat').html() === '' || $('#chat').html() === undefined || $('#chat').html() === null) && fileTemps.length === 0) {
                     $('.btn-box').removeClass('layui-btn-disabled');
                     return false;
                 }
                 $.post('/chat/saveChat', {
                     "projectId": projectId,
-                    "content": $('#chat').val(),
+                    "content": $('#chat').html(),
                     "files": JSON.stringify(fileTemps)
                 }, function (data) {
                     if (data.result === 1) {
                         fileTemps = [];
                         $('.no-msg').remove();
-                        $('#chat').val('');
+                        $('#chat').html('');
                         $('.fileList').html('');
                         $('.btn-box').removeClass('layui-btn layui-btn-disabled');
                     }

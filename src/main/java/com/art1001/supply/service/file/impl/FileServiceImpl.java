@@ -187,7 +187,6 @@ public class FileServiceImpl implements FileService {
         // 设置时间
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
-        file.setFileId(IdGen.uuid());
         fileMapper.saveFile(file);
     }
 
@@ -561,5 +560,15 @@ public class FileServiceImpl implements FileService {
     public void savePublicFile(File file) {
         file.setFileId(IdGen.uuid());
         fileMapper.savePublicFile(file);
+    }
+
+    /**
+     * 根据文件id 查询出该文件的 ids
+     * @param fileId 文件id
+     * @return
+     */
+    @Override
+    public String findUidsByFileId(String fileId) {
+        return fileMapper.findUidsByFileId(fileId);
     }
 }

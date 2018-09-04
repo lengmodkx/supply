@@ -511,4 +511,12 @@ public interface TaskMapper {
 	 */
 	@Delete("delete from prm_task where parent_id = #{taskId}")
     void deleteSubTaskByParentId(String taskId);
+
+	/**
+	 * 根据任务的id 查询出该任务的 所有参与者信息
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Select("select task_uids from prm_task where task_id = #{taskId}")
+    String findUidsByTaskId(String taskId);
 }

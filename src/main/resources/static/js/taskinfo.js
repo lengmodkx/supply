@@ -554,14 +554,16 @@ layui.use('form', function() {
         e.stopPropagation();
     });
 
-
+    /**
+     * 发送消息
+     */
     $('#fileListAction').click(function () {
-        $.post('/task/upload',{"projectId":projectId,"taskId":taskId,"content":$('#chat').val()},function (data) {
-            if(data.result===1){
-                $('#chat').val("");
-            }
-        });
-});
+            $.post('/public/chat',{"publicId":taskId,"publicType":"任务","content":$('#chat').html(),"projectId":projectId},function (data) {
+                if(data.result===1){
+                    $('#chat').html("");
+                }
+            });
+    });
 
 
      //监听任务内容的光标离开事件

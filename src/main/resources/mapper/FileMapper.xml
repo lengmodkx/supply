@@ -77,7 +77,8 @@
 				file_uids,
 				file_label,
 				file_thumbnail,
-				file_privacy
+				file_privacy,
+				file_source_id
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
@@ -159,6 +160,7 @@
 		and project_id = #{projectId}
 		and parent_id = #{parentId}
 		and file_del = #{isDel}
+		and file_source_id is null
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -357,6 +359,9 @@
 			<if test="filePrivacy != null ">
 				file_privacy,
 			</if>
+			<if test="fileSourceId != null ">
+				file_source_id,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -417,6 +422,9 @@
 			</if>
 			<if test="filePrivacy != null ">
 				#{filePrivacy},
+			</if>
+			<if test="fileSourceId != null ">
+				#{fileSourceId},
 			</if>
 		</trim>
 

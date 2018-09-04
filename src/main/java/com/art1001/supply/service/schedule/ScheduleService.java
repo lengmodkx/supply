@@ -155,4 +155,11 @@ public interface ScheduleService {
 	 * @param scheduleId 日程id
 	 */
 	void recoverySchedule(String scheduleId);
+
+	/**
+	 * 根据日程id 查询出该日程的所有参与者信息
+	 * @param scheduleId 日程id
+	 * @return
+	 */
+    String findUidsByScheduleId(String scheduleId);
 }

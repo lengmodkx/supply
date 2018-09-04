@@ -102,9 +102,6 @@ public class FileController extends BaseController {
     public String list(File file, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
         File fileById = new File();
-        if(file.getFileId() != null){
-            fileById = fileService.findFileById(file.getFileId());
-        }
         UserEntity userEntity = userService.findById(userId);
         // 项目id
         String projectId = file.getProjectId();
@@ -225,6 +222,9 @@ public class FileController extends BaseController {
         model.addAttribute("joinInfos",joinInfo);
         model.addAttribute("bindingVo",bindingVo);
         model.addAttribute("file", file);
+        List<Log> logs = logService.initLog(fileId);
+        Collections.reverse(logs);
+        model.addAttribute("logs",logs);
         model.addAttribute("projectId", projectId);
         model.addAttribute("tagList", tagList);
         model.addAttribute("fileVersionList", fileVersionList);

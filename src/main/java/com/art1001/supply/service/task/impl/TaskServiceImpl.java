@@ -1628,4 +1628,14 @@ public class TaskServiceImpl implements TaskService {
     public void deleteSubTaskByParentId(String taskId) {
         taskMapper.deleteSubTaskByParentId(taskId);
     }
+
+    /**
+     * 根据任务的id 查询出该任务的 所有参与者信息
+     * @param taskId 任务id
+     * @return
+     */
+    @Override
+    public String findUidsByTaskId(String taskId) {
+        return taskMapper.findUidsByTaskId(taskId);
+    }
 }

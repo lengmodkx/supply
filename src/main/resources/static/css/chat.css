@@ -112,6 +112,10 @@
 }
 .my-msg .message-content{
     background-color: #e5f6fb;
+    width: 100%;
+}
+.my-msg .message-content>p{
+    white-space: normal;
 }
 .message-content{
     display: inline-block;

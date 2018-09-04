@@ -8,6 +8,14 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/mainpage.css}" href="../static/css/mainpage.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/recycle-bin.css}" href="../static/css/recycle-bin.css">
+
+    <!-- 表情样式 -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" th:href="@{/expression/css/bootstrap.css}" href="../static/expression/css/bootstrap.css"/>
+    <link rel="stylesheet" th:href="@{/expression/css/jquery.mCustomScrollbar.min.css}" href="../static/expression/css/jquery.mCustomScrollbar.min.css"/>
+    <link rel="stylesheet" th:href="@{/expression/dist/css/jquery.emoji.css}" href="../static/expression/dist/css/jquery.emoji.css"/>
+    <link rel="stylesheet" th:href="@{/expression/css/railscasts.css}" href="../static/expression/css/railscasts.css"/>
+    <link rel="stylesheet" th:href="@{/expression/dist/css/index.css}" href="../static/expression/dist/css/index.css"/>
 </head>
 <body style="background-color: white;border-radius: 5px">
 <!--设计修改任务界面-->
@@ -379,7 +387,7 @@
                 <li class="combox clearfix" th:each="tasklog:${taskLogs}">
                     <div th:if="${tasklog.logType eq 0}">
                         <img th:src="#{IMAGE_SERVER}+${tasklog.userEntity.userInfo.image}" />
-                        <span th:text="${tasklog.content}"></span>
+                        <span th:utext="${tasklog.content}"></span>
                         <div class="in-what-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}"></div>
                     </div>
                     <div th:if="${tasklog.logType eq 1}">
@@ -391,7 +399,7 @@
                                 <span class="file-con-box-name" th:text="${tasklog.userEntity.userName}">谁谁谁</span>
                                 <span class="file-con-box-time" th:text = "${#dates.format(tasklog.createTime,'yyyy-MM-dd HH:mm')}">3月24日12:00</span>
                             </div>
-                            <p class="publish-con boxsizing" th:text="${tasklog.content}">啊啊啊啊啊</p>
+                            <p class="publish-con boxsizing" th:utext="${tasklog.content}">啊啊啊啊啊</p>
                             <ul class="up-file-ul clearfix">
                                 <li class="boxsizing" th:each="file:${tasklog.fileList}">
                                     <a target="_blank" th:href="@{/file/fileDetail.html(fileId=${file.fileId})}" class="file-content">
@@ -413,9 +421,11 @@
     </div>
 
     <div class="publish boxsizing">
-        <textarea id="chat" name=""  placeholder="请输入内容，点击发布按钮" class="layui-textarea publish-input" ></textarea>
+        <!--<textarea id="chat" name=""  placeholder="请输入内容，点击发布按钮" class="layui-textarea publish-input" ></textarea>-->
+        <div class="publish-input text-div" contenteditable="true" id = "chat"></div>
         <div class="fenge-line"></div>
         <div class="publish-bottom">
+            <i class="layui-icon layui-icon-face-smile-fine" id = "bq" style="font-size: 20px; color: #B5B5B5;margin: 10px;display: inline-block;cursor: pointer;"></i>
             <div class="publish-btn" id="fileListAction">发布</div>
         </div>
 
@@ -630,8 +640,24 @@
 </body>
 <!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
 <script type="text/javascript" src="../static/js/wangEditor.min.js" th:src="@{/js/wangEditor.min.js}"></script>
+
+<script th:src="@{/expression/js/jquery.mousewheel-3.0.6.min.js}" src="../static/expression/js/jquery.mousewheel-3.0.6.min.js"></script>
+<script th:src="@{/expression/js/jquery.mCustomScrollbar.min.js}" src="../static/expression/js/jquery.mCustomScrollbar.min.js"></script>
+<script th:src="@{/expression/js/jquery.emoji.js}" src="../static/expression/js/jquery.emoji.js"></script>
+
 <script th:inline="javascript">
     $(function () {
+
+        $(".publish-input").focus(function () {
+           $(this).removeClass("text-div");
+        });
+        $(".publish-input").blur(function () {
+            if ($(this).text()==''){
+                $(this).addClass("text-div")
+            }else {
+
+            }
+        });
         if ($(".revise-task").attr("date-ids")==0){
             $(".revise-task *").removeAttr("disabled")
         } else {
@@ -905,6 +931,36 @@
                 parent.layer.close(index); //再执行关闭
             }
         });
+    });
+
+    /**
+     * 表情
+     */
+    $("#chat").emoji({
+        button: "#bq",
+        showTab: false,
+        animation: 'slide',
+        position: 'topRight',
+        icons: [{
+            name: "QQ表情",
+            path: "/expression/dist/img/qq/",
+            maxNum: 91,
+            excludeNums: [41, 45, 54],
+            file: ".gif"
+        },{
+            name: "贴吧表情",
+            path: "/expression/dist/img/tieba/",
+            maxNum: 50,
+            excludeNums: [41, 45, 54],
+            file: ".jpg",
+            placeholder: "#qq_{alias}#"
+        }, {
+            name: "emoji高清",
+            path: "/expression/dist/img/emoji/",
+            maxNum: 84,
+            file: ".png",
+            placeholder: "#emoji_{alias}#"
+        }]
     });
 
     $(".yd-rw").click(function () {

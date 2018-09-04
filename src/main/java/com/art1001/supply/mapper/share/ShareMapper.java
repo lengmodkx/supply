@@ -108,4 +108,11 @@ public interface ShareMapper {
      */
     @Update("update prm_share set is_del = 1,update_time = #{currTime} where id = #{shareId}")
     void moveToRecycleBin(@Param("shareId") String shareId, @Param("currTime")long currTime);
+
+    /**
+     * 根据分享id 查询出分享的 参与者id
+     * @param shareId 分享id
+     */
+    @Select("select uids from prm_share where id = #{shareId}")
+    String findUidsByShareId(String shareId);
 }

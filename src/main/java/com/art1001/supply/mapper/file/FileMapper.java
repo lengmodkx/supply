@@ -200,4 +200,12 @@ public interface FileMapper {
 	 * @param file 文件信息
 	 */
 	void savePublicFile(File file);
+
+	/**
+	 * 根据文件id 查询出该文件的 ids
+	 * @param fileId 文件id
+	 * @return
+	 */
+	@Select("select file_uids from prm_file where file_id = #{fileId}")
+    String findUidsByFileId(String fileId);
 }

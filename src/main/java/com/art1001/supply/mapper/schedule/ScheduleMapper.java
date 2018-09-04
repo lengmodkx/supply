@@ -157,4 +157,12 @@ public interface ScheduleMapper {
 	 */
 	@Update("update prm_schedule set is_del = 0 where schedule_id = #{scheduleId}")
 	void recoverySchedule(String scheduleId);
+
+	/**
+	 * 根据日程id 查询出该日程的所有参与者信息
+	 * @param scheduleId 日程id
+	 * @return
+	 */
+	@Select("select member_ids from prm_schedule where schedule_id = #{scheduleId}")
+    String findUidsByScheduleId(String scheduleId);
 }

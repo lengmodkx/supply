@@ -270,4 +270,13 @@ public class ShareServiceImpl implements ShareService {
 	public void moveToRecycleBin(String shareId) {
 		shareMapper.moveToRecycleBin(shareId,System.currentTimeMillis());
 	}
+
+	/**
+	 * 根据分享id 查询出分享的 参与者id
+	 * @param shareId 分享id
+	 */
+	@Override
+	public String findUidsByShareId(String shareId) {
+		return shareMapper.findUidsByShareId(shareId);
+	}
 }

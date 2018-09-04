@@ -3,8 +3,13 @@ package com.art1001.supply.service.chat.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.mapper.chat.ChatMapper;
 import com.art1001.supply.service.chat.ChatService;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.task.TaskService;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.chat.Chat;
@@ -18,6 +23,18 @@ public class ChatServiceImpl implements ChatService {
 	/** Mapper接口*/
 	@Resource
 	private ChatMapper chatMapper;
+
+	@Resource
+	private FileService fileService;
+
+	@Resource
+	private ShareService shareService;
+
+	@Resource
+	private TaskService taskService;
+
+	@Resource
+	ScheduleService scheduleService;
 	
 	/**
 	 * 查询分页数据
@@ -78,5 +95,28 @@ public class ChatServiceImpl implements ChatService {
 	public List<Chat> findChatAllList(){
 		return chatMapper.findChatAllList();
 	}
-	
+
+	/**
+	 * 根据类型查询出 该项信息的参与者
+	 * @param publicId 信息id
+	 * @param publicType 信息类型
+	 * @return 所有参与者的id 字符串
+	 */
+	@Override
+	public String findMemberByPublicType(String publicId, String publicType) {
+		String ids = "";
+		if(BindingConstants.BINDING_FILE_NAME.equals(publicType)){
+			ids = fileService.findUidsByFileId(publicId);
+		}
+		if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
+			ids = taskService.findUidsByTaskId(publicId);
+		}
+		if(BindingConstants.BINDING_SCHEDULE_NAME.equals(publicType)){
+			ids = scheduleService.findUidsByScheduleId(publicId);
+		}
+		if(BindingConstants.BINDING_SHARE_NAME.equals(publicType)){
+			ids = shareService.findUidsByShareId(publicId);
+		}
+		return ids;
+	}
 }

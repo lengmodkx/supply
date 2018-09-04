@@ -113,6 +113,7 @@ public class GroupChatController extends BaseController {
                     myFile.setCatalog(0);
                     myFile.setParentId("0");
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                    myFile.setFileSourceId(projectId);
                     fileIds.add(myFile.getFileId());
                     fileService.saveFile(myFile);
                 }
