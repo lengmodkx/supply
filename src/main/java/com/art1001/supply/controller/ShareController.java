@@ -6,6 +6,7 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.PushType;
@@ -17,6 +18,7 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
@@ -71,10 +73,13 @@ public class ShareController extends BaseController {
     @Resource
     private SimpMessagingTemplate messagingTemplate;
 
+    @Resource
+    private RelationService relationService;
+
 
     //导航到分享界面
     @RequestMapping("/share.html")
-    public String share(@RequestParam String projectId,String shareId, Model model){
+    public String share(@RequestParam String projectId,String shareId,String currentGroup, Model model){
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
         for (Share s : shareList) {
@@ -90,12 +95,17 @@ public class ShareController extends BaseController {
             share.setIsCollect(publicCollectService.isCollItem(share.getId()));
         }
         model.addAttribute("shareList",shareList);
+        model.addAttribute("currentGroup",currentGroup);
 
         //查询出分享的关联信息
         for (Share s : shareList) {
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
             s.setBindingVo(bindingVo);
         }
+
+        //加载该项目下所有分组的信息
+        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+        model.addAttribute("groups",groups);
 
         if(!StringUtils.isEmpty(shareId)){
             model.addAttribute("shareId",shareId);

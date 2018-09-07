@@ -23,7 +23,7 @@
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-<div th:include="toper::toper (${project})"></div>
+<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
 
 <div class="chat-box-wrap">
     <div class="chat-box boxsizing">
@@ -192,6 +192,7 @@
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/ajaxfileupload.js}" src="../static/js/ajaxfileupload.js"></script>
 <script th:inline="javascript">
+    var groupId = [[${currentGroup}]];
     var projectId = [[${project.projectId}]];
     var userId = [[${user.id}]];
     var exts = [[${exts}]];

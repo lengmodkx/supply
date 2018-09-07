@@ -11,7 +11,7 @@
             <div class="toper-nav">
                 <ul>
                     <li class="now a-special-li" style="width: 62px">
-                        <a th:href="@{/project/task.html(projectId=${project.projectId})}">任务
+                        <a th:href="@{/relation/changeGroup(groupId=${currentGroup},projectId=${project.projectId})}">任务
 </a><span class="groups-down-select" style="margin-left: 3px;color: #333"><span style="font-size: 18px">|</span><i class="layui-icon layui-icon-down" style="font-size: 14px; color: #333;margin-left: 3px;line-height: 20px"></i></span>
 
                         <!--分组下拉框-->
@@ -169,19 +169,19 @@
 
                     </li>
                     <li>
-                        <a th:href="@{/share/share.html(projectId=${project.projectId})}">分享</a>
+                        <a th:href="@{/share/share.html(projectId=${project.projectId},currentGroup=${currentGroup})}">分享</a>
                     </li>
                     <li>
-                        <a th:href="@{/file/list.html(projectId=${project.projectId})}">文件</a>
+                        <a th:href="@{/file/list.html(projectId=${project.projectId},currentGroup=${currentGroup})}">文件</a>
                     </li>
                     <li>
-                        <a th:href="@{/schedule/schedule.html(projectId=${project.projectId})}">日程</a>
+                        <a th:href="@{/schedule/schedule.html(projectId=${project.projectId},currentGroup=${currentGroup})}">日程</a>
                     </li>
                     <li>
-                        <a th:href="@{/chat/chat.html(projectId=${project.projectId})}">群聊</a>
+                        <a th:href="@{/chat/chat.html(projectId=${project.projectId},currentGroup=${currentGroup})}">群聊</a>
                     </li>
                     <li>
-                        <a th:href="@{/statistics/statistics.html(projectId=${project.projectId})}">统计</a>
+                        <a th:href="@{/statistics/statistics.html(projectId=${project.projectId},currentGroup=${currentGroup})}">统计</a>
                     </li>
                 </ul>
             </div>

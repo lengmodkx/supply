@@ -315,7 +315,7 @@ $(".xialakuang").click(function (e) {
             shadeClose: true,
             closeBtn: 0,
             anim: 1,  //动画 0-6
-            content: ['projectTag.html?projectId='+$('.menu-tag').attr('id'),'no']
+            content: ['/projectTag.html?projectId='+$('.menu-tag').attr('id'),'no']
         });
     });
 

@@ -21,8 +21,7 @@
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-
-<div th:include="toper::toper (${project})"></div>
+<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
 
 <div class="share-wrap" style="margin-top: 100px">
     <!--左侧内容-->
@@ -407,6 +406,7 @@
 <script th:src="@{/expression/js/jquery.emoji.js}" src="../static/expression/js/jquery.emoji.js"></script>
 <script th:src="@{/js/share.js}" src="../static/js/share.js"></script>
 <script th:inline="javascript">
+    var groupId = [[${currentGroup}]];
     //头像某模板
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
     // 建立连接对象（还未发起连接）

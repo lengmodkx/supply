@@ -7,6 +7,7 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
@@ -20,6 +21,7 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
@@ -69,14 +71,22 @@ public class ScheduleController extends BaseController {
     @Resource
     private PublicCollectService publicCollectService;
 
+    @Resource
+    private RelationService relationService;
+
 
     @RequestMapping("/schedule.html")
-    public String schedule(@RequestParam String projectId, Model model){
+    public String schedule(@RequestParam String projectId, String currentGroup, Model model){
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = userService.findById(userId);
+        model.addAttribute("currentGroup",currentGroup);
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,projectId));
+
+        //加载该项目下所有分组的信息
+        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+        model.addAttribute("groups",groups);
         return "scheduling";
     }
 

@@ -8,12 +8,14 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
@@ -56,15 +58,22 @@ public class GroupChatController extends BaseController {
     private LogService logService;
 
     @Resource
+    private RelationService relationService;
+
+    @Resource
     private SimpMessagingTemplate messagingTemplate;
 
     @RequestMapping("/chat.html")
-    public String share(@RequestParam String projectId, Model model) {
+    public String share(@RequestParam String projectId, String currentGroup,Model model) {
         List<Log> logs = logService.initAllLog(projectId);
         model.addAttribute("logs", logs);
         model.addAttribute("exts", FileExt.extMap.get("images"));
         model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
+        model.addAttribute("currentGroup",currentGroup);
+        //加载该项目下所有分组的信息
+        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+        model.addAttribute("groups",groups);
         return "chat";
     }
 

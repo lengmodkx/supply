@@ -12,6 +12,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
@@ -25,6 +26,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -64,6 +66,9 @@ public class FileController extends BaseController {
     private final String publicName = "公共模型库";
 
     @Resource
+    private RelationService relationService;
+
+    @Resource
     private FileService fileService;
 
     @Resource
@@ -99,7 +104,7 @@ public class FileController extends BaseController {
      *             isDel     删除标识 默认为0
      */
     @GetMapping("/list.html")
-    public String list(File file, Model model) {
+    public String list(File file,String currentGroup, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
 
         File fileById = new File();
@@ -130,7 +135,13 @@ public class FileController extends BaseController {
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
+        model.addAttribute("currentGroup",currentGroup);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
+
+        //加载该项目下所有分组的信息
+        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+        model.addAttribute("groups",groups);
+
         //获取文件的后缀名
         model.addAttribute("exts",FileExt.extMap);
         model.addAttribute("user",userEntity);
