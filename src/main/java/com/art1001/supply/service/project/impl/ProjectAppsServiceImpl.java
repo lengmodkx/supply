@@ -5,15 +5,14 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.mapper.project.ProjectFuncMapper;
-import com.art1001.supply.service.project.ProjectFuncService;
+import com.art1001.supply.service.project.ProjectAppsService;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
 
 /**
  * projectServiceImpl
  */
 @Service
-public class ProjectFuncServiceImpl implements ProjectFuncService {
+public class ProjectAppsServiceImpl implements ProjectAppsService {
 
 	/** projectMapper接口*/
 	@Resource

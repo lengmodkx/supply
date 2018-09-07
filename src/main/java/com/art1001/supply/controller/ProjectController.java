@@ -19,7 +19,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.project.ProjectFuncService;
+import com.art1001.supply.service.project.ProjectAppsService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -30,7 +30,6 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -72,7 +71,7 @@ public class ProjectController extends BaseController {
     private FileService fileService;
 
     @Resource
-    private ProjectFuncService funcService;
+    private ProjectAppsService funcService;
 
     @Resource
     private TagService tagService;
@@ -215,7 +214,7 @@ public class ProjectController extends BaseController {
             projectService.saveProject(project);
 
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程"};
+            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
@@ -288,7 +287,7 @@ public class ProjectController extends BaseController {
             project.setProjectStatus(0);
             projectService.saveProject(project);
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程"};
+            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
