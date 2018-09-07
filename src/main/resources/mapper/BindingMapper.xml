@@ -231,4 +231,19 @@
 			)
 		</foreach>
 	</insert>
+
+	<!-- 通过pubilcid 删除多条关联信息 -->
+	<delete id="deleteManyByPublicId">
+		delete from prm_binding where public_id in
+		(
+			<foreach collection="list" separator="," item="publicId">
+				#{publicId}
+			</foreach>
+		)  or bind_id in
+		(
+			<foreach collection="list" separator="," item="publicId">
+				#{publicId}
+			</foreach>
+		)
+	</delete>
 </mapper>

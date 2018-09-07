@@ -203,5 +203,15 @@
 			share_id = #{publicId}
 		</if>
 	</delete>
+
+	<!-- 删除多个项的标签关联信息 -->
+	<delete id="deleteManyItemTagRelation">
+		delete from prm_tag_relation where task_id in
+		(
+			<foreach collection="list" separator="," item="taskId">
+				#{taskId}
+			</foreach>
+		)
+	</delete>
 	
 </mapper>

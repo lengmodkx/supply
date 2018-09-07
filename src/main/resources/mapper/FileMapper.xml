@@ -515,7 +515,7 @@
 
 	<!-- 查询出所有的公开文件 -->
 	<select id="findPublicFile" resultMap="PublicMap">
-		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file
+		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file where catalog = 0
 	</select>
 
 	<insert id="savePublicFile">

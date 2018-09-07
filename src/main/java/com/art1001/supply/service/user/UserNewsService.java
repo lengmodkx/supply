@@ -104,4 +104,10 @@ public interface UserNewsService {
 	 * @param publicId 信息id
 	 */
 	void deleteNewsByPublicId(String publicId);
+
+	/**
+	 * 删除多个信息的所有通知消息
+	 * @param publicId 信息id
+	 */
+	void deleteManyNewsByPublicId(List<String> publicId);
 }

@@ -144,9 +144,16 @@ $(function () {
 
     // 鼠标移入 函数
     function movein(that) {
-        that.find("div").css("opacity", "1");
-        that.find(".img-show-operate").css("opacity", "1");
+        // that.find("div").css("opacity", "1");
         that.find("i").css("opacity", "1");
+         // console.log(that.siblings('.one-file-name').text());
+        if(that.siblings('.one-file-name').text() !== '公共模型库'){
+            that.find("i").css("opacity", "1");
+            that.find(".img-show-operate").css("opacity", "1");
+        }else {
+            that.find("i").css("opacity", "0");
+            that.find(".img-show-operate").css("opacity", "0");
+        }
     }
 
     function moveout(that) {

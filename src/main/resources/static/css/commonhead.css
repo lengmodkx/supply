@@ -204,7 +204,7 @@ a:hover {
   margin-left: -235px;
 }
 
-.toper-nav li {
+.toper-nav>ul>li {
   float: left;
   margin-right: 34px;
   height: 49px;
@@ -214,23 +214,26 @@ a:hover {
 .head-left .logo {
   height: 45px;
 }
-
+.a-special-li{
+  position: relative;
+  width: 62px!important;
+}
 /*.toper-nav li:nth-of-type(1){*/
 /*margin-right: 10px;*/
 /*}*/
-.toper-nav li:hover {
+.toper-nav>ul>li:hover {
   border-bottom: 2px solid #017ECA;
 }
 
-.toper-nav li.now {
+.toper-nav>ul>li.now {
   border-bottom: 2px solid #017ECA;
 }
 
-.toper-nav li.now a {
+.toper-nav>ul>li.now a {
   color: #017ECA;
 }
 
-.toper-nav li:hover a {
+.toper-nav>ul>li:hover a {
   color: #017ECA;
 }
 

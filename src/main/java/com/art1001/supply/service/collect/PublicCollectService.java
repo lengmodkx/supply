@@ -119,4 +119,9 @@ public interface PublicCollectService {
 	 * 删除关于此项的所有收藏记录
 	 */
 	void deleteCollectByItemId(String publicId);
+
+	/**
+	 * 删除关于多个此项的所有收藏记录
+	 */
+	void deleteManyCollectByItemId(List<String> publicId);
 }

@@ -6,27 +6,30 @@ import com.art1001.supply.dtgrid.model.Column;
 import com.art1001.supply.dtgrid.model.Pager;
 import com.art1001.supply.dtgrid.util.ExportUtils;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 项目，任务分组，菜单之间的关系处理
@@ -45,6 +48,9 @@ public class RelationController {
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Resource
+    private ProjectService projectService;
+
 
     /**
      * 添加分组/分组下的菜单
@@ -52,24 +58,18 @@ public class RelationController {
      * @return
      */
     @RequestMapping("/addRelation")
-    public JSONObject addRelation(Relation relation){
+    @ResponseBody
+    public JSONObject addRelation(Relation relation,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            relation.setRelationId(IdGen.uuid());
+            relation.setCreator(ShiroAuthenticationManager.getUserId());
             relation.setCreateTime(System.currentTimeMillis());
+            relationService.saveRelation(relation);
             //初始化菜单
             String[] menus  = new String[]{"待处理","进行中","已完成"};
-            for (String menu:menus) {
-                Relation relation1 = new Relation();
-                relation1.setRelationName(menu);
-                relation1.setParentId(relation.getRelationId());
-                relation1.setLable(1);
-                relation1.setRelationDel(0);
-                relation1.setCreateTime(System.currentTimeMillis());
-                relation1.setUpdateTime(System.currentTimeMillis());
-                relationService.saveRelation(relation1);
-            }
-            relationService.saveRelation(relation);
+            relationService.saveRelationBatch(Arrays.asList(menus),projectId,relation.getRelationId());
+
+            jsonObject.put("groupId",relation.getRelationId());
             jsonObject.put("result",1);
             jsonObject.put("msg","添加成功");
         }catch (Exception e){
@@ -86,6 +86,7 @@ public class RelationController {
      * @return
      */
     @RequestMapping("/updateRelation")
+    @ResponseBody
     public JSONObject updateRelation(Relation relation){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -109,7 +110,7 @@ public class RelationController {
     @RequestMapping("/delRelation")
     @ResponseBody
     public JSONObject delRelation(@RequestParam String relationId,
-                                  @RequestParam String parentId){
+                                  String parentId){
         JSONObject jsonObject = new JSONObject();
         try {
             //删除分组
@@ -220,8 +221,8 @@ public class RelationController {
 
     /**
      * 将分组移动到回收站中
-     * @param relationId
-     * @param relationDel
+     * @param relationId 分组id
+     * @param relationDel 分组状态
      * @return
      */
     @PostMapping("moveRecycleBin")
@@ -230,7 +231,7 @@ public class RelationController {
         JSONObject jsonObject = new JSONObject();
         try {
             relationService.moveRecycleBin(relationId,relationDel);
-            jsonObject.put("msg","成功将任务移至回收站!");
+            jsonObject.put("msg","成功将分组移至回收站!");
             jsonObject.put("result","1");
         } catch (Exception e){
             log.error("系统异常,移动失败",e);
@@ -453,5 +454,62 @@ public class RelationController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 加载项目下所有分组信息
+     * @param projectId 项目id
+     * @param currentGroupId 当前分组的id
+     * @return
+     */
+    @PostMapping("/loadGroupInfo")
+    @ResponseBody
+    public JSONObject loadGroupInfo(@RequestParam String projectId, @RequestParam String currentGroupId, Model model){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<GroupVO> groupos = relationService.loadGroupInfo(projectId);
+            jsonObject.put("groups",groupos);
+            jsonObject.put("groupId",currentGroupId);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 用户选择分组完成后 切换任务列表以及任务信息
+     * @param groupId 分组的名称
+     * @return
+     */
+    @RequestMapping("changeGroup")
+    public String changeGroup(@RequestParam String groupId, @RequestParam String projectId, Model model){
+        try {
+            Relation groupInfo = relationService.findRelationByRelationId(groupId);
+
+            Relation relation1 = new Relation();
+            relation1.setParentId(groupInfo.getRelationId());
+            relation1.setLable(1);
+            //获取当前分组下的所有菜单 和 菜单下的任务信息
+            List<Relation> menu = relationService.findRelationAllList(relation1);
+            model.addAttribute("taskMenus",menu);
+
+            Project project = projectService.findProjectByProjectId(groupInfo.getProjectId());
+            model.addAttribute("project",project);
+
+            //加载该项目下所有分组的信息
+            List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+            model.addAttribute("groups",groups);
+
+            model.addAttribute("currentGroup",groupId);
+
+            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        } catch (Exception e){
+            log.error("系统异常,切换失败!");
+            throw new SystemException(e);
+        }
+        return "mainpage";
     }
 }

@@ -232,4 +232,12 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 	public void deleteCollectByItemId(String publicId) {
 		publicCollectMapper.deleteCollectByItemId(publicId);
 	}
+
+	/**
+	 * 删除关于多个此项的所有收藏记录
+	 */
+	@Override
+	public void deleteManyCollectByItemId(List<String> publicId) {
+		publicCollectMapper.deleteManyCollectByItemId(publicId);
+	}
 }

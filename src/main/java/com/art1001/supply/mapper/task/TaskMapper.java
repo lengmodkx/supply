@@ -519,4 +519,10 @@ public interface TaskMapper {
 	 */
 	@Select("select task_uids from prm_task where task_id = #{taskId}")
     String findUidsByTaskId(String taskId);
+
+	/**
+	 * 永久删除多个任务
+	 * @param taskIds 任务id 的集合
+	 */
+    void deleteManyTask(List<String> taskIds);
 }

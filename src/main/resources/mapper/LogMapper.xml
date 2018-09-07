@@ -213,4 +213,14 @@
 		select <include refid="Base_Column_List"></include>
 		from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
 	</select>
+
+	<!-- 删除多个任务的日志信息 -->
+	<delete id="deleteManyByPublicId">
+		delete from prm_log where public_id in
+		(
+			<foreach collection="list" item="publicId" separator=",">
+				#{publicId}
+			</foreach>
+		)
+	</delete>
 </mapper>

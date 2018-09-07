@@ -909,26 +909,28 @@
         animation: 'slide',
         position: 'topRight',
         icons: [{
-            name: "QQ表情",
+            name: "表情1",
             path: "/expression/dist/img/qq/",
             maxNum: 91,
             excludeNums: [41, 45, 54],
             file: ".gif"
         },{
-            name: "贴吧表情",
+            name: "表情2",
             path: "/expression/dist/img/tieba/",
             maxNum: 50,
             excludeNums: [41, 45, 54],
             file: ".jpg",
             placeholder: "#qq_{alias}#"
         }, {
-            name: "emoji高清",
+            name: "表情3",
             path: "/expression/dist/img/emoji/",
             maxNum: 84,
             file: ".png",
             placeholder: "#emoji_{alias}#"
         }]
     });
+
+    $('.emoji_container').css('width','278px');
 
 </script>
 </html>

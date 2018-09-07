@@ -150,4 +150,13 @@ public class LogServiceImpl implements LogService {
 	public void withdrawMessage(String id) {
 		logMapper.withdrawMessage(id);
 	}
+
+	/**
+	 * 删除多个任务的日志信息
+	 * @param publicId 信息id 如:(任务id,文件id 等);
+	 */
+	@Override
+	public void deleteManyByPublicId(List<String> publicId) {
+		logMapper.deleteManyByPublicId(publicId);
+	}
 }

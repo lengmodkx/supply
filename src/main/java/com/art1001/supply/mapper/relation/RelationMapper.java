@@ -2,13 +2,13 @@ package com.art1001.supply.mapper.relation;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 /**
  * relationmapper接口
@@ -147,4 +147,38 @@ public interface RelationMapper {
 	 * @return
 	 */
     List<Relation> findMenusByProjectId(String projectId);
+
+	/**
+	 * 加载所有分组信息
+	 * @param projectId 项目Id
+	 * @return
+	 */
+    List<GroupVO> loadGroupInfo(String projectId);
+
+	/**
+	 * 查询出某个项目下 回收站中的所有任务分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<RecycleBinVO> findRecycleBin(String projectId);
+
+	/**
+	 * 根据分组id 查询出 分组下所有菜单的id
+	 * @param relationId 分组id
+	 * @return
+	 */
+	List<String> findMenuIdByGroup(String relationId);
+
+	/**
+	 * 分组下菜单的所有任务id
+	 * @param menuIds 菜单集合
+	 * @return
+	 */
+	List<String> findTaskIdByMenus(List<String> menuIds);
+
+	/**
+	 * 删除多个 relation
+	 * @param menuIds relationId 集合
+	 */
+    void deleteManyRelation(List<String> menuIds);
 }

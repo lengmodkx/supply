@@ -99,4 +99,10 @@ public interface BindingMapper {
 	 */
 	@Delete("delete from prm_binding where public_id = #{publicId} or bind_id = #{publicId}")
     void deleteByPublicId(String publicId);
+
+	/**
+	 * 删除多条关联信息
+	 * @param publicId 记录关联的 publicId (哪个信息关联的其他信息)
+	 */
+    void deleteManyByPublicId(List<String> publicId);
 }

@@ -21,6 +21,10 @@ public class Relation extends BaseEntity implements Serializable {
 	 */
 	private String relationId;
 
+	/**
+	 * 分组的创建人id
+	 */
+	private String creator;
 
 	/**
 	 * 名称
@@ -50,6 +54,11 @@ public class Relation extends BaseEntity implements Serializable {
 	private Integer relationDel;
 
 	private List<Task> taskList;
+
+	/**
+	 * 分组 或者 菜单的描述
+	 */
+	private String describe;
 
 	/**
 	 * 菜单的当前顺序

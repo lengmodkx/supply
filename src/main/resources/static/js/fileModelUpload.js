@@ -2,7 +2,7 @@
 var fileCommon = {};
 var fileModel = {};
 var fileTemps = [];
-var g_dirname  = '';
+var g_dirname  = 'upload/' + projectId + "/";
 var g_object_name = '';
 function random_string(len) {
     len = len || 32;

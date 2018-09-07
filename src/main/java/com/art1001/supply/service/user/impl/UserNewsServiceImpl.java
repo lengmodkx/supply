@@ -228,4 +228,13 @@ public class UserNewsServiceImpl implements UserNewsService {
 	public void deleteNewsByPublicId(String publicId) {
 		userNewsMapper.deleteNewsByPublicId(publicId);
 	}
+
+	/**
+	 * 删除多个信息的所有通知消息
+	 * @param publicId 信息id
+	 */
+	@Override
+	public void deleteManyNewsByPublicId(List<String> publicId) {
+		userNewsMapper.deleteManyNewsByPublicId(publicId);
+	}
 }

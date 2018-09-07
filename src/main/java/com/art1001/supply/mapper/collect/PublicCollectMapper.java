@@ -115,4 +115,9 @@ public interface PublicCollectMapper {
 	 */
 	@Delete("delete from prm_public_collect where public_id = #{publicId}")
     void deleteCollectByItemId(String publicId);
+
+	/**
+	 * 删除关于多个此项的所有收藏记录
+	 */
+    void deleteManyCollectByItemId(List<String> publicId);
 }

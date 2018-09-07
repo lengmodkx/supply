@@ -12,6 +12,26 @@
 		<result column="lable" property="lable" jdbcType="INTEGER" />
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 		<result column="order" property="order" jdbcType="INTEGER" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">
+		<id column="id" property="groupId" jdbcType="VARCHAR"></id>
+		<result column="NAME" property="groupName" jdbcType="VARCHAR" />
+		<result column="创建人" property="creator" jdbcType="VARCHAR" />
+		<result column="分组状态" property="isDel" jdbcType="INTEGER" />
+		<result column="完成" property="complete" jdbcType="INTEGER" />
+		<result column="未完成" property="hangInTheAir" jdbcType="INTEGER" />
+		<result column="已逾期" property="overdue" jdbcType="INTEGER" />
+		<result column="近期的任务" property="recent" jdbcType="INTEGER" />
+		<result column="分组内任务总数" property="taskTotal" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 回收站专用 -->
+	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
+		<id column="relation_id" property="id" />
+		<result column="relation_name" property="name" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
 	<!-- 根据菜单查询 分组,项目信息的resultMap -->
@@ -36,7 +56,20 @@
 				update_time,
 				lable,
 				relation_del,
-				`order`
+				`order`,
+				creator
+	</sql>
+
+	<sql id = "groupInfo">
+		a.未完成,
+		b.完成,
+		c.`NAME`,
+		c.id,
+		c.创建人,
+		c.`分组状态`,
+		d.`已逾期`,
+		e.`近期的任务`,
+		f.`分组内任务总数`
 	</sql>
 
 	<sql id="whereStatement">
@@ -125,6 +158,9 @@
 			<if test="order != null ">
 				`order`,
 			</if>
+			<if test="creator != null ">
+				`creator`,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -155,6 +191,9 @@
 			</if>
 			<if test="order != null ">
 				#{order},
+			</if>
+			<if test="creator != null ">
+				#{creator},
 			</if>
 		</trim>
 
@@ -209,6 +248,9 @@
 			</if>
 			<if test="order != null ">
 				`order` = #{order},
+			</if>
+			<if test="creator != null ">
+				`creator` = #{creator},
 			</if>
 		</set>
 		WHERE relation_id = #{relationId}
@@ -331,4 +373,129 @@
 		  select <include refid="Base_Column_List"/>
 		  from prm_relation where project_id = #{projectId} and lable = 1
 	</select>
+
+	<!-- 加载所有分组信息 -->
+	<select id="loadGroupInfo" resultMap="groupInfo" parameterType="java.lang.String">
+		SELECT
+		<include refid="groupInfo"/>
+		FROM
+		(
+		SELECT
+		count(task_name) AS 未完成,
+		r.parent_id AS pid,
+		t.project_id
+		FROM
+		prm_task t
+		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+		WHERE
+		r.project_id = #{projectId}
+		AND t.task_status = '未完成'
+		GROUP BY
+		r.parent_id
+		) AS a
+		LEFT JOIN (
+		SELECT
+		count(t.task_name) AS 完成,
+		r.parent_id AS pid
+		FROM
+		prm_task t
+		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+		WHERE
+		r.project_id = #{projectId}
+		AND t.task_status = '完成'
+		GROUP BY
+		r.parent_id
+		) AS b ON a.pid = b.pid
+		RIGHT JOIN (
+		SELECT
+		relation_name AS NAME,
+		relation_id AS id,
+		creator AS 创建人,
+		relation_del AS 分组状态
+		FROM
+		prm_relation
+		WHERE
+		project_id = #{projectId}
+		AND parent_id = '0'
+		AND relation_del = 0
+		) AS c ON c.id = a.pid
+		LEFT JOIN (
+		SELECT
+		count(task_name) AS 已逾期,
+		r.parent_id AS pid,
+		t.project_id
+		FROM
+		prm_task t
+		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+		WHERE
+		r.project_id = #{projectId}
+		AND t.end_time / 1000 &lt; (
+		SELECT
+		unix_timestamp(now())
+		)
+		GROUP BY
+		r.parent_id
+		) AS d ON c.id = d.pid
+		LEFT JOIN (
+		SELECT
+		count(task_name) AS 近期的任务,
+		r.parent_id AS pid,
+		t.project_id
+		FROM
+		prm_task t
+		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+		WHERE
+		r.project_id = #{projectId}
+		AND t.task_status = '未完成'
+		AND (
+		t.end_time / 1000 &gt; (
+		SELECT
+		unix_timestamp(now())
+		)
+		OR t.end_time IS NULL
+		)
+		GROUP BY
+		r.parent_id
+		) AS e ON c.id = e.pid
+		LEFT JOIN (
+		SELECT
+		count(0) AS 分组内任务总数,
+		r.parent_id pid
+		FROM
+		prm_task AS t
+		LEFT JOIN prm_relation AS r ON t.task_menu_id = r.relation_id
+		GROUP BY
+		r.parent_id
+		) AS f ON f.pid = c.id
+	</select>
+
+	<!-- 查询出项目下回收站中的所有任务分组 -->
+	<select id="findRecycleBin" resultMap="BaseResultMap3">
+		select relation_id,relation_name,update_time from prm_relation where project_id = #{projectId} and `lable` = 0 and relation_del = 1
+	</select>
+
+	<!-- 根据分组id 查询出 分组下所有菜单的id -->
+	<select id="findMenuIdByGroup" resultType="java.lang.String">
+		select relation_id from prm_relation where parent_id = #{relationId}
+	</select>
+
+	<!-- 分组下菜单的所有任务id -->
+	<select id="findTaskIdByMenus" resultType="java.lang.String">
+		select task_id from prm_task where task_menu_id in
+		(
+		<foreach collection="list" item="menuId" separator=",">
+			#{menuId}
+		</foreach>
+		)
+	</select>
+
+	<!-- 删除多个relation -->
+	<delete id="deleteManyRelation">
+		delete from prm_relation where relation_id in (
+		<foreach collection="list" item="relationId" separator=",">
+			#{relationId}
+		</foreach>
+		)
+	</delete>
+
 </mapper>

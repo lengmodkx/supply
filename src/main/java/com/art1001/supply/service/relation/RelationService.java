@@ -2,6 +2,8 @@ package com.art1001.supply.service.relation;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
@@ -189,4 +191,18 @@ public interface RelationService {
 	 * @return
 	 */
     List<Relation> findMenusByProjectId(String projectId);
+
+	/**
+	 * 加载所有分组信息
+	 * @param projectId 项目Id
+	 * @return
+	 */
+	List<GroupVO> loadGroupInfo(String projectId);
+
+	/**
+	 * 查询出某个项目下 回收站中的所有任务分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<RecycleBinVO> findRecycleBin(String projectId);
 }

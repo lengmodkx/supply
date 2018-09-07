@@ -165,5 +165,15 @@
 		</if>
 		order by create_time desc
 	</select>
+
+	<!-- 删除多个任务的收藏记录 -->
+	<delete id="deleteManyCollectByItemId">
+		delete from prm_public_collect where public_id in
+		(
+			<foreach collection="list" item="publicId" separator=",">
+				#{publicId}
+			</foreach>
+		)
+	</delete>
 	
 </mapper>

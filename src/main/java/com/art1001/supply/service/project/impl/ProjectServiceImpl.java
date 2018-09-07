@@ -11,6 +11,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
@@ -42,6 +43,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Resource
 	private FileService fileService;
+
+	@Resource
+	private RelationService relationService;
 	
 	/**
 	 * 查询分页project数据
@@ -198,6 +202,9 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		if(BindingConstants.BINDING_TAG_NAME.equals(type)){
 			recycleBin = tagService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.TASK_GROUP.equals(type)){
+			recycleBin = relationService.findRecycleBin(projectId);
 		}
 		return recycleBin;
 	}

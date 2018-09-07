@@ -56,4 +56,6 @@ public class Base {
         tagRelationService.deleteItemTagRelation(publicId,pubicType);
         userNewsService.deleteNewsByPublicId(publicId);
     }
+
+
 }

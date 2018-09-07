@@ -6,7 +6,7 @@ $(".close-tk").click(function () {
 var fileCommon = {};
 var fileModel = {};
 var fileTemps = [];
-var g_object_name = '';
+var g_object_name ='upload/' + projectId + "/";
 function random_string(len) {
     len = len || 32;
     var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';

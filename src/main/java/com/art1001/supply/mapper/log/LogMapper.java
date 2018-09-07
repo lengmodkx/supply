@@ -86,4 +86,10 @@ public interface LogMapper {
 	 */
 	@Update("update prm_log set content = null,file_ids = null,log_is_withdraw = 1 where id = #{id}")
     void withdrawMessage(String id);
+
+	/**
+	 * 删除多个任务的日志信息
+	 * @param publicId 信息id 如:(任务id,文件id 等);
+	 */
+    void deleteManyByPublicId(List<String> publicId);
 }

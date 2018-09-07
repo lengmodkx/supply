@@ -1638,4 +1638,13 @@ public class TaskServiceImpl implements TaskService {
     public String findUidsByTaskId(String taskId) {
         return taskMapper.findUidsByTaskId(taskId);
     }
+
+    /**
+     * 永久删除多个任务
+     * @param taskIds 任务id 的集合
+     */
+    @Override
+    public void deleteManyTask(List<String> taskIds) {
+        taskMapper.deleteManyTask(taskIds);
+    }
 }

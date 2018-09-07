@@ -103,4 +103,13 @@ public class TagRelationServiceImpl implements TagRelationService {
 	public void deleteItemTagRelation(String publicId,String publicType) {
 		tagRelationMapper.deleteItemTagRelation(publicId,publicType);
 	}
+
+	/**
+	 * 删除多个项的标签关联信息
+	 * @param publicId 项的id
+	 */
+	@Override
+	public void deleteManyItemTagRelation(List<String> publicId) {
+		tagRelationMapper.deleteManyItemTagRelation(publicId);
+	}
 }

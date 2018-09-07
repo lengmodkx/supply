@@ -9,6 +9,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
@@ -29,6 +30,7 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -222,6 +224,7 @@ public class ProjectController extends BaseController {
             relation.setProjectId(project.getProjectId());
             relation.setLable(0);
             relation.setRelationDel(0);
+            relation.setCreator(ShiroAuthenticationManager.getUserId());
             relation.setCreateTime(System.currentTimeMillis());
             relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
@@ -294,10 +297,10 @@ public class ProjectController extends BaseController {
             relation.setProjectId(project.getProjectId());
             relation.setLable(0);
             relation.setRelationDel(0);
+            relation.setCreator(ShiroAuthenticationManager.getUserId());
             relation.setCreateTime(System.currentTimeMillis());
             relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
-
 
             List<TemplateData> menus = templateDataService.findByTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
             relationService.saveRelationBatch2(menus,project.getProjectId(),relation.getRelationId());
@@ -514,6 +517,11 @@ public class ProjectController extends BaseController {
                 model.addAttribute("taskGroups",taskGroups);
                 model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
             }
+
+
+            //加载该项目下所有分组的信息
+            List<GroupVO> groups = relationService.loadGroupInfo(projectId);
+            model.addAttribute("groups",groups);
 
             //获取当前登录用户的消息总数
             int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());

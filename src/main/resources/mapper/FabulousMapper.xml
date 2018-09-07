@@ -118,5 +118,15 @@
 		select count(0) from prm_fabulous where public_id = #{publicId} and member_id = #{memberId}
 	</select>
 
+	<!-- 删除多个信息的所有赞 -->
+	<delete id="deleteManyFabulousByInfoId">
+		delete from prm_fabulous where public_id in
+		(
+			<foreach collection="list" separator="," item="publicId">
+				#{publicId}
+			</foreach>
+		)
+	</delete>
+
 	
 </mapper>

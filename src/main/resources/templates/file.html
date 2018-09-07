@@ -27,9 +27,9 @@
             <div class="file-toper" id="container">
                 <span><a href="javascript: void(0)"
                          onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
-                <div class="add-share" id="selectfiles"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+                <div class="add-share" id="selectfiles" th:if="${fileName != '公共模型库'}"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
                 </div>
-                <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
+                <div class="add-share" id="createFolder" th:if="${fileName != '公共模型库'}"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
                 </div>
             </div>
             <div class="check-all-file">

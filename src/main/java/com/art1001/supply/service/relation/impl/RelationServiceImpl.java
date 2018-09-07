@@ -3,6 +3,8 @@ package com.art1001.supply.service.relation.impl;
 import java.util.*;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMember;
@@ -11,14 +13,21 @@ import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
+import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.fabulous.FabulousService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * relationServiceImpl
@@ -46,6 +55,24 @@ public class RelationServiceImpl implements RelationService {
 	/**userService接口  */
 	private UserService userService;
 
+	@Resource
+	private LogService logService;
+
+	@Resource
+	private BindingService bindingService;
+
+	@Resource
+	private FabulousService fabulousService;
+
+	@Resource
+	private PublicCollectService publicCollectService;
+
+	@Resource
+	private TagRelationService tagRelationService;
+
+	@Resource
+	private UserNewsService userNewsService;
+
 	/**
 	 * 查询分页relation数据
 	 * 
@@ -69,12 +96,37 @@ public class RelationServiceImpl implements RelationService {
 	}
 
 	/**
-	 * 通过relationId删除relation数据
+	 * 删除分组
 	 * 
-	 * @param relationId
+	 * @param relationId 分组id
 	 */
+	@Transactional(propagation=Propagation.REQUIRED,rollbackFor=Exception.class)
 	@Override
 	public void deleteRelationByRelationId(String relationId){
+
+		//分组下所有菜单的id
+		List<String> menuIds = relationMapper.findMenuIdByGroup(relationId);
+
+		//分组下菜单的所有任务id
+		List<String> taskIds = relationMapper.findTaskIdByMenus(menuIds);
+
+		//删除该任务的绑定信息
+		bindingService.deleteManyByPublicId(taskIds);
+		//删除任务的日志 和 评论信息
+		logService.deleteManyByPublicId(taskIds);
+		//删除任务得赞信息
+		fabulousService.deleteManyFabulousByInfoId(taskIds);
+		//删除任务收藏信息
+		publicCollectService.deleteManyCollectByItemId(taskIds);
+		//删除任务的标签关联信息
+		tagRelationService.deleteManyItemTagRelation(taskIds);
+		//删除任务的消息通知信息
+		userNewsService.deleteManyNewsByPublicId(taskIds);
+		//删除任务
+		taskService.deleteManyTask(taskIds);
+
+		relationMapper.deleteManyRelation(menuIds);
+
 		relationMapper.deleteRelationByRelationId(relationId);
 	}
 
@@ -94,7 +146,7 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void saveRelation(Relation relation){
-		relation.setRelationId(IdGen.uuid());
+        relation.setRelationId(IdGen.uuid());
 		relationMapper.saveRelation(relation);
 	}
 
@@ -394,5 +446,25 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<Relation> findMenusByProjectId(String projectId) {
 		return relationMapper.findMenusByProjectId(projectId);
+	}
+
+	/**
+	 * 加载所有分组信息
+	 * @param projectId 项目Id
+	 * @return
+	 */
+	@Override
+	public List<GroupVO> loadGroupInfo(String projectId) {
+		return relationMapper.loadGroupInfo(projectId);
+	}
+
+	/**
+	 * 查询出某个项目下 回收站中的所有任务分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<RecycleBinVO> findRecycleBin(String projectId) {
+		return relationMapper.findRecycleBin(projectId);
 	}
 }

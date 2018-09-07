@@ -12,6 +12,7 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
@@ -19,6 +20,7 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -64,6 +66,9 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private Base base;
+
+    @Resource
+    private PublicFileService publicFileService;
 
     /**
      * 查询分页file数据
@@ -211,6 +216,7 @@ public class FileServiceImpl implements FileService {
         // 在oss中为每个项目创建一个目录
         AliyunOss.createFolder(folderName);
         File projectFile = new File();
+        projectFile.setFileId(IdGen.uuid());
         projectFile.setFileName(project.getProjectName());
         projectFile.setProjectId(project.getProjectId());
         projectFile.setFileUrl(folderName);
@@ -221,6 +227,7 @@ public class FileServiceImpl implements FileService {
         String[] childFolderNameArr = {"图片", "文档","模型文件"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
+            file.setFileId(IdGen.uuid());
             // 写库
             file.setFileName(childFolderName);
             // 项目id
@@ -229,6 +236,19 @@ public class FileServiceImpl implements FileService {
             file.setCatalog(1);
             fileService.saveFile(file);
         }
+
+        //查询出公共模型库的信息
+        PublicFile publicFile = publicFileService.findPublicFolder("公共模型库");
+
+        //封装公共模型库信息
+        File file = new File();
+        file.setFileId(publicFile.getFileId());
+        file.setFileName(publicFile.getFileName());
+        file.setCatalog(1);
+        file.setProjectId(project.getProjectId());
+        file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
+        fileService.saveFile(file);
     }
 
     @Override

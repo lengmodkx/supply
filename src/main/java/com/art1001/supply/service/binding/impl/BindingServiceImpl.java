@@ -177,4 +177,13 @@ public class BindingServiceImpl implements BindingService {
 	public void deleteByPublicId(String publicId) {
 		bindingMapper.deleteByPublicId(publicId);
 	}
+
+	/**
+	 * 删除多条关联信息
+	 * @param publicId 记录关联的 publicId (哪个信息关联的其他信息)
+	 */
+	@Override
+	public void deleteManyByPublicId(List<String> publicId) {
+		bindingMapper.deleteManyByPublicId(publicId);
+	}
 }

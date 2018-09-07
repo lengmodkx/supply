@@ -211,7 +211,7 @@ function lbmenu(top,left,menuId,menuName) {
             closeBtn: 0,
             shade: ['0.1','#fff'],
             anim: 1,  //动画 0-6
-            content: ['menuList.html?menuId='+menuId+"&menuName="+menuName+"&projectId="+projectId,'no']
+            content: ['/project/menuList.html?menuId='+menuId+"&menuName="+menuName+"&projectId="+projectId,'no']
         });
     });
 };

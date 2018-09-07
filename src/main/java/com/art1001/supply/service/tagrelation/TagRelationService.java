@@ -67,4 +67,10 @@ public interface TagRelationService {
 	 * @param publicType 删除的项的类型 (任务,文件,分享,日程)
 	 */
 	void deleteItemTagRelation(String publicId,String publicType);
+
+	/**
+	 * 删除多个项的标签关联信息
+	 * @param publicId 项的id
+	 */
+	void deleteManyItemTagRelation(List<String> publicId);
 }

@@ -31,6 +31,7 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
+		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 		<!--查询创建者-->
 		<association property="creatorInfo" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -656,15 +657,15 @@
 	<!-- 根据任务状态查询多个任务信息 -->
 	<select id="findTaskByStatus" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_status = #{status} and project_id = #{projectId}
+		<include refid="Base_Column_List"/>,r.parent_id as task_group
+		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where task_status = #{status} and project_id = #{projectId}
 	</select>
 
 	<!-- 查询今天的任务 -->
 	<select id="findTaskByToday" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"/>
-		from prm_task where (SELECT FROM_UNIXTIME(prm_task.create_time/1000, '%Y-%m-%d')) = ( select CURDATE())
+		<include refid="Base_Column_List"/>,r.parent_id as task_group
+		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where (SELECT FROM_UNIXTIME(prm_task.create_time/1000, '%Y-%m-%d')) = ( select CURDATE())
 		and project_id = #{projectId}
 	</select>
 
@@ -679,9 +680,8 @@
 	<!-- 查询某个执行者的所有任务 -->
 	<select id="findTaskByExecutor" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where executor = #{uId} and task_status = '未完成'
+		<include refid="Base_Column_List2"/>,r.parent_id as task_group
+		from prm_task t left join prm_relation r on t.task_menu_id = r.relation_id where executor = #{uId} and task_status = '未完成'
 		<if test="orderType != null and orderType != ''">
 			<if test="orderType == '2'.toString()">
 				order by end_time asc
@@ -695,8 +695,8 @@
 	<!-- 查询项目下所有待认领的任务 -->
 	<select id="waitClaimTask" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"/>
-		from prm_task where project_id = #{projectId} and executor = ''
+		<include refid="Base_Column_List"/>,r.parent_id as task_group
+		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where project_id = #{projectId} and (executor = '' or executor is null)
 	</select>
 
 	<!-- 将任务的执行者设置为空字符串 -->
@@ -926,5 +926,14 @@
 		select task_id,task_name,update_time
 		from prm_task where project_id = #{projectId} and task_del = 1
 	</select>
+
+	<!-- 永久删除多个任务 -->
+	<delete id="deleteManyTask">
+		delete from prm_task where task_id in (
+		<foreach collection="list" separator="," item="taskId">
+			#{taskId}
+		</foreach>
+		)
+	</delete>
 
 </mapper>

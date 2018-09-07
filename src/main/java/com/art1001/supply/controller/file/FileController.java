@@ -61,7 +61,7 @@ public class FileController extends BaseController {
     /**
      * 标注是不是模型文件夹
      */
-    private final String publicName = "模型文件";
+    private final String publicName = "公共模型库";
 
     @Resource
     private FileService fileService;
@@ -101,7 +101,12 @@ public class FileController extends BaseController {
     @GetMapping("/list.html")
     public String list(File file, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
+
         File fileById = new File();
+        if(!StringUtils.isEmpty(file.getFileId())){
+            fileById = fileService.findFileById(file.getFileId());
+            model.addAttribute("fileName",fileById.getFileName());
+        }
         UserEntity userEntity = userService.findById(userId);
         // 项目id
         String projectId = file.getProjectId();
@@ -116,11 +121,12 @@ public class FileController extends BaseController {
         List<File> fileList;
 
         //如果用户点击的 模型文件 的文件夹 则去文件公共表查询数据
-        if(publicName.equals(fileById.getFileName())){
+        if(fileById != null && publicName.equals(fileById.getFileName())){
             fileList = fileService.findPublicFile();
         } else{
             fileList = fileService.findChildFile(projectId, parentId, fileDel);
         }
+
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
@@ -381,7 +387,6 @@ public class FileController extends BaseController {
             jsonObject.put("result", 0);
             jsonObject.put("msg", "上传失败");
         }
-
         return jsonObject;
     }
 
@@ -433,7 +438,7 @@ public class FileController extends BaseController {
                     }
 
                     //如果是在公共文件夹里上传的文件 则把文件信息把存在公共文件表中
-                    if(publicName.equals(fileById.getFileName())){
+                    if(fileById != null && publicName.equals(fileById.getFileName())){
                         fileService.savePublicFile(myFile);
                     } else{
                         fileService.saveFile(myFile);

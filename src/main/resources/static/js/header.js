@@ -4,6 +4,170 @@ $(function () {
         blur:false,
         overlay:false
     });
+// 分组查询 框
+    $(".groups-down-select").click(function (e) {
+        var url = "/relation/loadGroupInfo";
+        var args = {"projectId":projectId,"currentGroupId":groupId};
+
+        $(this).siblings(".task-select-box").toggle();
+        e.stopPropagation()
+    });
+
+    /**
+     * 选择一个分组的时候
+     */
+    $(".fenzu-ul li").click(function () {
+        $(this).find('h4').css('color','#3DA8F5');
+        var id = $(this).attr('data-id');
+        location.href = '/relation/changeGroup?groupId='+id+'&projectId='+projectId;
+    });
+
+    /**
+     * 点击创建分组按钮
+     */
+    $(".create-btn").click(function () {
+       var groupName = $('.groupname').val();
+       var args = {"relationName":groupName,"projectId":projectId};
+       var url = "/relation/addRelation";
+       $.post(url,args,function (data) {
+           if(data.result === 1){
+               location.href = '/relation/changeGroup?groupId='+data.groupId+'&projectId='+projectId;
+           }
+       });
+    });
+// var a=(1/6)*100;
+// var b=2/6*100;
+// var c=3/6*100
+//     $(".tasklist-strip-wrap>div:nth-of-type(1)").css("width",a+'%')
+//     $(".tasklist-strip-wrap>div:nth-of-type(2)").css("width",b+'%')
+//     $(".tasklist-strip-wrap>div:nth-of-type(3)").css("width",c+'%')
+
+    $(".icon-arrow-circle-o-down").click(function (e) {
+        var length = $('.fenzu-ul li').length;
+        if(length === 1){
+            $('.recycle-bin').remove();
+        }
+        $(".fzcd-box-c").show().siblings().hide()
+        $(this).siblings(".fzcd-box").slideToggle();
+        e.stopPropagation()
+    });
+    $(".fzcd-header i").click(function () {
+        $(this).parents(".fzcd-box").slideUp()
+    });
+    $(".add-task-group").click(function () {
+        $(".new-built-muban-box").toggle();
+        if ($(".new-built-muban-box").is(":visible")){
+            $(".task-select-box").css({"overflow-y":"auto","max-height":"550px"});
+            $(".add-task-group").css("background-color","#f7f7f7")
+        } else {
+            $(".task-select-box").css({"overflow-y":"inherit","max-height":"initial"});
+            $(".add-task-group").css("background-color","#fff")
+        }
+    });
+    $(".new-build-btn").click(function () {
+        $(this).addClass("now");
+        $(".muban-btn").removeClass("now");
+        $(".new-built-box").show();
+        $(".muban-box").hide()
+    });
+    $(".muban-btn").click(function () {
+        $(this).addClass("now");
+        $(".new-build-btn").removeClass("now");
+        $(".new-built-box").hide();
+        $(".muban-box").show()
+    });
+
+
+
+    $(".dairenling-li").click(function () {
+        var top=$(this).offset().top-260+'px';
+        var left=$(this).offset().left+20+'px';
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title:false,
+                btn:0,
+                area:['243px','260px'],
+                offset: [top, left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                shadeClose:true,
+                content: $(".sou-person")
+            });
+        });
+    });
+$(".xialakuang").click(function (e) {
+    e.stopPropagation()
+})
+    /**
+     * 点击移入回收站
+     */
+    $('.recycle-bin').click(function (e) {
+        $(".recycle").show();
+        e.stopPropagation();
+    });
+
+    $('.groupname').focus(function (e) {
+        e.stopPropagation();
+    });
+
+    /**
+     * 保存分组名称
+     */
+    $('.save-group-name').click(function (e) {
+        var id = $(this).parents('li').attr('data-id');
+        var name = $('#'+id+'name').val();
+        if(name !== '' && name !== null){
+            var args = {"relationName":name,"relationId":id};
+            var url = "/relation/updateRelation";
+            $.post(url,args,function(data){
+               if(data.result === 1){
+                   $('.fenzu-ul li').each(function () {
+                      if($(this).attr('data-id') === id){
+                          $(this).find('.gname').html(name);
+                      }
+                   });
+                   $('.fzcd-box-e').hide();
+               }
+            });
+        }
+        e.stopPropagation();
+    });
+
+    /**
+     * 点击回收站确定
+     */
+    $('.move-recycle').click(function (e) {
+        var url = "/relation/moveRecycleBin";
+        var that = $(this).parents('li.boxsizing');
+        var id = that.attr('data-id');
+        var firstId = that.siblings('li');
+        // console.log()
+        // console.log(firstId.attr("data-id"))
+
+        var args = {"relationId":id,"relationDel":that.attr('isDel')};
+        $.post(url,args,function (data) {
+            if(data.result == 1){
+                $(".renwu-menu").slideUp();
+                that.remove();
+                location.href = '/relation/changeGroup?groupId='+ firstId.eq(0).attr("data-id") +'&projectId='+projectId;
+                // parent.layer.msg('任务分组: '+ $('.gname').html() + ' 已经移入回收站', {
+                //     offset:'lb',
+                //     icon:1,
+                //     time: 4000 //2秒关闭（如果不配置，默认是3秒）
+                // });
+            } else{
+                layer.msg("系统异常!");
+            }
+        });
+        e.stopPropagation();
+        return false
+    });
+
+
+
+
     // 群组弹框
     $(".team").click(function () {
         pushbar.open('projectMembers');
@@ -15,6 +179,7 @@ $(function () {
 
     //点击菜单，打开项目菜单区域
     $(".menu").click(function () {
+
         pushbar.open("projectMenu");
     });
 
@@ -180,4 +345,32 @@ $(function () {
     $('.head-right .avatar').click(function () {
          $('.vertical-nav').slideToggle();
     });
+
+
+        $( "#sortable" ).sortable();
+
+    // $('.sortable').sortable({
+    //     cursor:"move",
+    //     items:'.tile',
+    //     handle:'.model-title',
+    //     axis: 'x',
+    //     tolerance: 'pointer',
+    //     placeholder: 'model',
+    //     stop:function (event,ui) {
+    //         console.log(ui);
+    //         var ids = $('.sortable').sortable('toArray');
+    //         // $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
+    //         //     console.log(data);
+    //         // });
+    //     }
+    // });
+
+    /**
+     * 点击编辑任务分组
+     */
+    $('.edit-group').click(function (e) {
+        $(this).parents(".fzcd-box-c").siblings(".fzcd-box-e").show().siblings().hide()
+        e.stopPropagation();
+    });
+
 });

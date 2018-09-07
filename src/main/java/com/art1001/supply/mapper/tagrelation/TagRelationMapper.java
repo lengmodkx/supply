@@ -81,4 +81,10 @@ public interface TagRelationMapper {
 	 */
 	@Delete("delete from prm_tag_relation where tag_id = #{tagId}")
 	void deleteTagRelationByTagId(Long tagId);
+
+	/**
+	 * 删除多个项的标签关联信息
+	 * @param publicId 项的id
+	 */
+    void deleteManyItemTagRelation(List<String> publicId);
 }

@@ -16,7 +16,8 @@
 <body>
 <!--头部-->
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-<div th:include="toper::toper (${project})"></div>
+<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
+
 <!--内容区域-->
 <div class="content-wrap-wrap boxsizing">
    <div class="content boxsizing">
@@ -124,10 +125,17 @@
     }
 
 </script>
+<script th:src="@{/js/Sortable.min.js}"></script>
 <script th:src="@{/js/addandchangetask.js}" src="../static/js/addandchangetask.js"></script>
 <script th:src="@{/js/mainpage.js}" src="../static/js/mainpage.js"></script>
 <script th:src="@{/js/mainPageSocket.js}" src="../static/js/mainPageSocket.js"></script>
 <script th:src="@{/js/add_task.js}" src="../static/js/add_task.js"></script>
+
 </body>
 
 </html>
+<script>
+    $(function () {
+
+    })
+</script>

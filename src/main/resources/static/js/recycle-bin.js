@@ -47,6 +47,9 @@ $("html").on("click",".huifu-btn",function (e) {
     if(type === '分享'){
         that = $(".recover-share");
     }
+    if(type === '任务分组'){
+        that = $(".recover-group");
+    }
     layui.use('layer', function(){
 
         var layer = layui.layer;
@@ -82,6 +85,9 @@ $("html").on("click",".delete-btn",function (e) {
     }
     if(type === '分享'){
         that = $(".delete-share");
+    }
+    if(type === '任务分组'){
+        that = $(".delete-group");
     }
     var top=$(this).offset().top+50+'px';
     var left=$(this).offset().left-180+'px';
@@ -253,6 +259,26 @@ $('.o-task-btn').click(function () {
 });
 
 /**
+ * 恢复分享的确定按钮
+ */
+$('.o-group-btn').click(function () {
+    var url = "/relation/recoveryRelation";
+    var args = {"relationId":oli,"relationDel":1};
+    $.post(url,args,function (data) {
+        if(data.result < 1){
+            layer.msg("系统异常,操作失败!");
+        } else{
+            $('#data li').each(function () {
+               if($(this).attr('data-id') === oli){
+                   $(this).remove();
+               }
+            });
+            layer.close(layer.index);
+        }
+    });
+});
+
+/**
  * 恢复日程的确定按钮
  */
 $('.o-schedule-btn').click(function () {
@@ -305,10 +331,23 @@ $('.forever-delete-btn').click(function () {
         url = '/schedule/deleteSchedule';
         args = {"id":oli,"projectId":projectId}
     }
+    if(type === '任务分组'){
+        url = '/relation/delRelation';
+        args = {"relationId":oli}
+    }
     $.post(url,args,function (data) {
         if(data.result == 0){
             layer.msg(data.msg);
         } else{
+            $('#data li').each(function () {
+               if($(this).attr('data-id') === oli){
+                   $(this).remove();
+               }
+            });
+            if($('#data li').length == 0){
+                $('.have-content').hide();
+                $('.no-content').show();
+            }
             layer.close(layer.index);
         }
     });

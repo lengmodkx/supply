@@ -79,4 +79,13 @@ public class FabulousServiceImpl implements FabulousService {
 	public void deleteFabulousByInfoId(String publicId) {
 		fabulousMapper.deleteFabulousByInfoId(publicId);
 	}
+
+	/**
+	 * @param publicId 信息id
+	 * 删除多个信息的所有赞
+	 */
+	@Override
+	public void deleteManyFabulousByInfoId(List<String> publicId) {
+		fabulousMapper.deleteManyFabulousByInfoId(publicId);
+	}
 }

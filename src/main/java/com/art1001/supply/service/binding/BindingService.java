@@ -90,4 +90,10 @@ public interface BindingService {
 	 * @param publicId 记录关联的 publicId (哪个信息关联的其他信息)
 	 */
     void deleteByPublicId(String publicId);
+
+	/**
+	 * 删除多条关联信息
+	 * @param publicId
+	 */
+	void deleteManyByPublicId(List<String> publicId);
 }

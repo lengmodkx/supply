@@ -119,6 +119,11 @@ public class Task extends BaseEntity implements Serializable {
 	 */
 	private String taskMenuId;
 
+	/**
+	 * 任务分组id
+	 */
+	private String taskGroupId;
+
 
 	/**
 	 * 任务状态
