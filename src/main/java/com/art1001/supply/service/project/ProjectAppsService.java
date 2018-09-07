@@ -8,7 +8,7 @@ import com.art1001.supply.entity.project.ProjectFunc;
 /**
  * projectService接口
  */
-public interface ProjectFuncService {
+public interface ProjectAppsService {
 
 	/**
 	 * 修改project数据
