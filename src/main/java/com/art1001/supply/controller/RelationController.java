@@ -115,12 +115,11 @@ public class RelationController {
         try {
             //删除分组
             if(StringUtils.isEmpty(parentId)){
-                relationService.deleteRelationByRelationId(relationId);
+                relationService.deleteGroup(relationId);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","删除成功");
             }else {
-                //删除分组的菜单
-                relationService.deleteRelationByRelationId(relationId);
+                relationService.deleteRelationById(relationId);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","删除成功");
             }

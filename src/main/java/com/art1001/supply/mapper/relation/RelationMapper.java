@@ -7,6 +7,7 @@ import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -37,7 +38,7 @@ public interface RelationMapper {
 	 * 
 	 * @param relationId
 	 */
-	void deleteRelationByRelationId(String relationId);
+	void deleteGroup(String relationId);
 
 	/**
 	 * 修改relation数据
@@ -181,4 +182,11 @@ public interface RelationMapper {
 	 * @param menuIds relationId 集合
 	 */
     void deleteManyRelation(List<String> menuIds);
+
+	/**
+	 * 删除一条relation
+	 * @param relationId
+	 */
+	@Delete("delete from prm_relation where relation_id = #{relationId}")
+    void deleteRelationById(String relationId);
 }

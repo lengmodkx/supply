@@ -37,7 +37,7 @@ public interface RelationService {
 	 * 
 	 * @param relationId
 	 */
-	public void deleteRelationByRelationId(String relationId);
+	public void deleteGroup(String relationId);
 
 	/**
 	 * 修改relation数据
@@ -205,4 +205,10 @@ public interface RelationService {
 	 * @return
 	 */
 	List<RecycleBinVO> findRecycleBin(String projectId);
+
+	/**
+	 * 删除一条relation
+	 * @param relationId
+	 */
+    void deleteRelationById(String relationId);
 }

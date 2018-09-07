@@ -102,7 +102,7 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Transactional(propagation=Propagation.REQUIRED,rollbackFor=Exception.class)
 	@Override
-	public void deleteRelationByRelationId(String relationId){
+	public void deleteGroup(String relationId){
 
 		//分组下所有菜单的id
 		List<String> menuIds = relationMapper.findMenuIdByGroup(relationId);
@@ -127,7 +127,7 @@ public class RelationServiceImpl implements RelationService {
 
 		relationMapper.deleteManyRelation(menuIds);
 
-		relationMapper.deleteRelationByRelationId(relationId);
+		relationMapper.deleteGroup(relationId);
 	}
 
 	/**
@@ -466,5 +466,14 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public List<RecycleBinVO> findRecycleBin(String projectId) {
 		return relationMapper.findRecycleBin(projectId);
+	}
+
+	/**
+	 * 删除一条relation
+	 * @param relationId
+	 */
+	@Override
+	public void deleteRelationById(String relationId) {
+		relationMapper.deleteRelationById(relationId);
 	}
 }
