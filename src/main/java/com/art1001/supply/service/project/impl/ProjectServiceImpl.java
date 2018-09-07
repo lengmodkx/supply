@@ -96,6 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void saveProject(Project project){
 		project.setProjectId(IdGen.uuid());
+
 		projectMapper.saveProject(project);
 	}
 	/**

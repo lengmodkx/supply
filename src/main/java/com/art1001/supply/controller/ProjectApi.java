@@ -2,14 +2,20 @@ package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.project.ProjectFuncService;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectAppsService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,8 +34,66 @@ public class ProjectApi {
     private ProjectService projectService;
 
     @Resource
-    private ProjectFuncService projectFuncService;
+    private ProjectAppsService appsService;
 
+    @Resource
+    private RelationService relationService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
+
+    @Resource
+    private FileService fileService;
+
+    /**
+     * 创建项目
+     * @param projectName 项目名称
+     * @param projectDes 项目描述
+     * @return
+     */
+    @PostMapping
+    public JSONObject createProject(@RequestParam(value = "projectName")String projectName,
+                                    @RequestParam(value = "projectDes")String projectDes){
+        JSONObject object = new JSONObject();
+        try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            Project project = new Project();
+            project.setProjectName(projectName);
+            project.setProjectDes(projectDes);
+            project.setProjectCover("upload/project/bj.png");
+            project.setCreateTime(System.currentTimeMillis());
+            project.setMemberId(userId);
+            projectService.saveProject(project);
+            //初始化项目功能菜单
+            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+            appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
+            //初始化分组
+            Relation relation = new Relation();
+            relation.setRelationName("任务");
+            relation.setProjectId(project.getProjectId());
+            relation.setCreator(userId);
+            relation.setCreateTime(System.currentTimeMillis());
+            relation.setUpdateTime(System.currentTimeMillis());
+            relationService.saveRelation(relation);
+            //往项目用户关联表插入数据
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setProjectId(project.getProjectId());
+            projectMember.setMemberId(userId);
+            projectMember.setCreateTime(System.currentTimeMillis());
+            projectMember.setUpdateTime(System.currentTimeMillis());
+            projectMember.setMemberLabel(1);
+            projectMemberService.saveProjectMember(projectMember);
+            //初始化项目文件夹
+            fileService.initProjectFolder(project);
+            //写资源表
+            object.put("result",1);
+            object.put("msg","项目创建成功");
+            object.put("projectId",project.getProjectId());
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 
 
     /**
@@ -71,22 +135,6 @@ public class ProjectApi {
 
         return object;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
@@ -140,14 +188,22 @@ public class ProjectApi {
         return object;
     }
 
-
-
-
-
-
-
-
-
-
+    /**
+     * 删除项目
+     * @param projectId 项目id
+     * @return
+     */
+    @DeleteMapping("/{projectId}")
+    public JSONObject deleteProject(@PathVariable String projectId){
+        JSONObject object = new JSONObject();
+        try{
+            projectService.deleteProjectByProjectId(projectId);
+            object.put("result",1);
+            object.put("msg","删除成功");
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 
 }

@@ -197,17 +197,9 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(IdGen.uuid());
 	    //获取当前登录用户的id
         String id = ShiroAuthenticationManager.getUserEntity().getId();
-        //初始创建任务设置为父任务
-        task.setParentId("0");
         //设置任务的创建者
         task.setMemberId(id);
         task.setTaskUIds(id);
-        //设置该任务的初始状态
-        task.setTaskStatus("未完成");
-        //设置该任务是否删除 0 未删除 1 已删除
-        task.setTaskDel(0);
-        //设置任务的初始得赞数
-        task.setFabulousCount(0);
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
