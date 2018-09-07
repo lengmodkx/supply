@@ -109,21 +109,22 @@ public class RelationServiceImpl implements RelationService {
 
 		//分组下菜单的所有任务id
 		List<String> taskIds = relationMapper.findTaskIdByMenus(menuIds);
-
-		//删除该任务的绑定信息
-		bindingService.deleteManyByPublicId(taskIds);
-		//删除任务的日志 和 评论信息
-		logService.deleteManyByPublicId(taskIds);
-		//删除任务得赞信息
-		fabulousService.deleteManyFabulousByInfoId(taskIds);
-		//删除任务收藏信息
-		publicCollectService.deleteManyCollectByItemId(taskIds);
-		//删除任务的标签关联信息
-		tagRelationService.deleteManyItemTagRelation(taskIds);
-		//删除任务的消息通知信息
-		userNewsService.deleteManyNewsByPublicId(taskIds);
-		//删除任务
-		taskService.deleteManyTask(taskIds);
+		if(taskIds != null && taskIds.size() > 0){
+			//删除该任务的绑定信息
+			bindingService.deleteManyByPublicId(taskIds);
+			//删除任务的日志 和 评论信息
+			logService.deleteManyByPublicId(taskIds);
+			//删除任务得赞信息
+			fabulousService.deleteManyFabulousByInfoId(taskIds);
+			//删除任务收藏信息
+			publicCollectService.deleteManyCollectByItemId(taskIds);
+			//删除任务的标签关联信息
+			tagRelationService.deleteManyItemTagRelation(taskIds);
+			//删除任务的消息通知信息
+			userNewsService.deleteManyNewsByPublicId(taskIds);
+			//删除任务
+			taskService.deleteManyTask(taskIds);
+		}
 
 		relationMapper.deleteManyRelation(menuIds);
 
