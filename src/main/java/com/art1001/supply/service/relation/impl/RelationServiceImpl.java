@@ -128,7 +128,7 @@ public class RelationServiceImpl implements RelationService {
 
 		relationMapper.deleteManyRelation(menuIds);
 
-		relationMapper.deleteGroup(relationId);
+		relationMapper.deleteRelationById(relationId);
 	}
 
 	/**
