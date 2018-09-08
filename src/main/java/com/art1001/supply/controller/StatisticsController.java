@@ -2,7 +2,7 @@ package com.art1001.supply.controller;
 
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.statistics.Statistics;
-import com.art1001.supply.entity.statistics.TaskCondition;
+import com.art1001.supply.entity.statistics.StatisticsDTO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskInfoService;
@@ -64,12 +64,12 @@ public class StatisticsController extends BaseController {
 
     @RequestMapping("/chart/{chartId}")
     @ResponseBody
-    public Map statisticsChart(@PathVariable String chartId, TaskCondition taskCondition){
+    public Map statisticsChart(@PathVariable String chartId, StatisticsDTO statisticsDTO){
         Map map=new HashMap<>(16);
 
         if (chartId!=null && !"".equals(chartId)){
             try {
-                map = this.taskInfoService.selectTask(taskCondition,chartId);
+                map = this.taskInfoService.selectTask(statisticsDTO,chartId);
             } catch (Exception e) {
                 map=null;
                 e.printStackTrace();
