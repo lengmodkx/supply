@@ -1,83 +1,87 @@
 package com.art1001.supply.entity.statistics;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
 
 /**
- * 模块
+ * 统计页面的总量概览详细数据实体类
  *
  * @author lujing
  * @date 2018-09-05 10:04
- * @Description 统计页面的总量概览详细数据实体类
  */
 public class TotalOverView {
 
     /**
      *任务完成时间
      */
-    private String successTime;
+    private String finishTime;
+
     /**
      *任务截至时间
      */
-    private  String endTime;
+    private String endTime;
+
     /**
      *任务是否完成
      */
     private String taskCase;
-    /*
-    *创建时间
-    **/
 
+    /**
+     *创建时间
+     */
     private String createTime;
-    /*
-    *任务名称
-    **/
 
+    /**
+     *任务名称
+     */
     private String taskName;
-    /*
-    *执行者
-    **/
 
+    /**
+     *执行者
+     */
     private String executor;
-    /*
-    *任务分组
-    **/
 
+    /**
+     *任务分组
+     */
     private String taskGroup;
-    /*
-    *列表
-    **/
 
+    /**
+     *列表
+     */
     private String listView;
-    /*
-    *逾期天数
-    **/
 
+    /**
+     *逾期天数
+     */
     private int overdueNum;
     /**
      *动态数
      */
-    private int  dymamicNum;
+    private int dymamicNum;
+
     /**
      *变动类型
      */
     private String change;
+
     /**
      *任务数
      */
     private String taskNum;
+
     /**
      *完成天数
      */
     private String taskDayNum;
 
-    public String getSuccessTime() {
-        return successTime;
+
+    //封装
+    public String getFinishTime() {
+        return finishTime;
     }
 
-    public void setSuccessTime(String successTime) {
-        this.successTime = successTime;
+    public void setFinishTime(String finishTime) {
+        this.finishTime = finishTime;
     }
 
     public String getEndTime() {
@@ -179,7 +183,7 @@ public class TotalOverView {
     @Override
     public String toString() {
         return "TotalOverView{" +
-                "successTime='" + successTime + '\'' +
+                "finishTime='" + finishTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", taskCase='" + taskCase + '\'' +
                 ", createTime='" + createTime + '\'' +
