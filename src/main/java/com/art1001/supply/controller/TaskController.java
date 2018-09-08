@@ -200,6 +200,7 @@ public class TaskController {
      * @return
      */
     @PostMapping("saveTask")
+    @ResponseBody
     public JSONObject saveTask(Task task){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -1074,7 +1075,7 @@ public class TaskController {
     }
 
     /**
-     * @param status 要按照智能分组的方式查询的类别
+     * @param id 任务的分组id  也可能是要按照智能分组的方式查询
      * @param projectId 当前选中项目的id
      * 在添加任务关联的时候查询任务
      * 1. 可以按照任务的分组查询任务
@@ -1083,13 +1084,21 @@ public class TaskController {
      */
     @PostMapping("findRelationTask")
     @ResponseBody
-    public JSONObject findRelationTask(String status,String projectId){
+    public JSONObject findRelationTask(String id,String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //如果id为 智能分组的选项 则按照智能分组的方式查询任务
-            List<Task> task = taskService.intelligenceGroup(status, projectId);
-            jsonObject.put("data",task);
-            jsonObject.put("result",1);
+            if(TaskStatusConstant.COMPLETE_TASK.equals(id) || TaskStatusConstant.CURRENT_DAY_TASK.equals(id) || TaskStatusConstant.HANG_IN_THE_AIR_TASK.equals(id)){
+                List<Task> task = taskService.intelligenceGroup(id, projectId);
+                jsonObject.put("data",task);
+                jsonObject.put("result",1);
+                return jsonObject;
+            } else{
+                //查询出该分组下的所有任务信息
+                List<Relation> relations = relationService.findGroupAllTask(id);
+                jsonObject.put("data",relations);
+                jsonObject.put("result",1);
+            }
         } catch (Exception e){
             log.error("系统异常,数据拉取失败,{}",e);
             jsonObject.put("result",0);
