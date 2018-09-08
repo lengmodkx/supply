@@ -4,8 +4,8 @@ import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.TaskCondition;
 import com.art1001.supply.entity.statistics.TaskDistribution;
 import com.art1001.supply.entity.statistics.TotalOverView;
+import com.art1001.supply.mapper.task.TaskInfoMapper;
 import com.art1001.supply.service.task.TaskInfoService;
-import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Service;
 
 import java.text.NumberFormat;
@@ -26,7 +26,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     /**
      * 统计页面数据详情
      */
-    // private TaskInfoMapper taskInfoMapper;
+     private TaskInfoMapper taskInfoMapper;
 
     private static Map<String, Object> map = null;
 
@@ -134,48 +134,14 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     }
 
     /**
-     *每日完成任务的平均完成天数
-     */
-    private Map selectDayFinishByAVG(TaskCondition taskCondition) {
-        map = new HashMap<>(16);
-        try {
-//        this.taskInfoMapper.selectUnfinishedTask(taskCondition);
-            List<TotalOverView> totalOverViewList = new ArrayList<>();
-            TotalOverView to1 = new TotalOverView();
-            to1.setSuccessTime("2018-08-21  15:00");
-            to1.setTaskName("施工计划");
-            to1.setExecutor("Z先生");
-            to1.setTaskDayNum("4");
-            TotalOverView to2 = new TotalOverView();
-            to2.setEndTime("2018-08-22  17:00");
-            to2.setTaskName("深化设计");
-            to2.setExecutor("W先生");
-            to2.setTaskDayNum("8");
-            totalOverViewList.add(to1);
-            totalOverViewList.add(to2);
-
-            String  excutor="8-31,9-01,9-02,9-03,9-04,9-05";
-            String  finish="1.0,0.9,2.0,1.5,1.5,1.7";
-
-            map.put("日期",excutor);
-            map.put("平均完成天数",finish);
-            map.put("详情表", totalOverViewList);
-        } catch (Exception e) {
-            map = null;
-            e.printStackTrace();
-        }
-        return map;
-    }
-
-
-    /**
      * 未完成数据
      */
     private Map selectUnfinishedTask(TaskCondition taskCondition) {
         map = new HashMap<>(16);
         try {
-            //总任务数
-            double count = 62D;
+            // 总任务数
+            // double count = 62D;
+            int count=this.taskInfoMapper.selectTaskCount();
             //未完成数
             double unFinish = 13D;
             double percent = unFinish / count;
@@ -208,6 +174,40 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     }
 
     /**
+     *每日完成任务的平均完成天数
+     */
+    private Map selectDayFinishByAVG(TaskCondition taskCondition) {
+        map = new HashMap<>(16);
+        try {
+//        this.taskInfoMapper.selectUnfinishedTask(taskCondition);
+            List<TotalOverView> totalOverViewList = new ArrayList<>();
+            TotalOverView to1 = new TotalOverView();
+            to1.setFinishTime("2018-08-21  15:00");
+            to1.setTaskName("施工计划");
+            to1.setExecutor("Z先生");
+            to1.setTaskDayNum("4");
+            TotalOverView to2 = new TotalOverView();
+            to2.setEndTime("2018-08-22  17:00");
+            to2.setTaskName("深化设计");
+            to2.setExecutor("W先生");
+            to2.setTaskDayNum("8");
+            totalOverViewList.add(to1);
+            totalOverViewList.add(to2);
+
+            String  excutor="8-31,9-01,9-02,9-03,9-04,9-05";
+            String  finish="1.0,0.9,2.0,1.5,1.5,1.7";
+
+            map.put("日期",excutor);
+            map.put("平均完成天数",finish);
+            map.put("详情表", totalOverViewList);
+        } catch (Exception e) {
+            map = null;
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
      * 已完成数据
      */
     private Map selectFinishedTask(TaskCondition taskCondition) {
@@ -221,13 +221,13 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 //        this.taskInfoMapper.selectUnfinishedTask(taskCondition);
             List<TotalOverView> taskConditionsList = new ArrayList<>();
             TotalOverView to1 = new TotalOverView();
-            to1.setSuccessTime("2018-08-23");
+            to1.setFinishTime("2018-08-23");
             to1.setTaskName("施工计划2");
             to1.setExecutor("李先生");
             to1.setTaskGroup("任务One");
             to1.setListView("项目评估");
             TotalOverView to2 = new TotalOverView();
-            to2.setSuccessTime("2018-08-24");
+            to2.setFinishTime("2018-08-24");
             to2.setTaskName("深化设计2");
             to2.setExecutor("赵先生");
             to2.setTaskGroup("任务Two");
@@ -759,13 +759,13 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             List<TotalOverView> totalOverViewList1 = new ArrayList<>();
             TotalOverView to3 = new TotalOverView();
             to3.setTaskName("零零发");
-            to3.setSuccessTime("2018-08-31");
+            to3.setFinishTime("2018-08-31");
             to3.setExecutor("冯先生");
             to3.setTaskGroup("任务10");
             to3.setListView("分组1");
             TotalOverView to4 = new TotalOverView();
             to4.setTaskName("零零白板");
-            to4.setSuccessTime("2018-09-01");
+            to4.setFinishTime("2018-09-01");
             to4.setExecutor("陈先生");
             to4.setTaskGroup("任务11");
             to4.setListView("分组2");
@@ -918,12 +918,12 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             to1.setEndTime("2018-08-21");
             to1.setTaskName("施工计划");
             to1.setTaskCase("未完成");
-            to1.setSuccessTime("2018-08-21 18:00");
+            to1.setFinishTime("2018-08-21 18:00");
             to1.setExecutor("王先生");
             TotalOverView to2 = new TotalOverView();
             to2.setEndTime("2018-08-22");
             to2.setTaskName("深化设计");
-            to2.setSuccessTime("2018-08-22 18:00");
+            to2.setFinishTime("2018-08-22 18:00");
             to2.setExecutor("玉先生");
             totalOverViewList.add(to1);
             totalOverViewList.add(to2);
@@ -951,12 +951,12 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             to1.setEndTime("2018-08-21  10:00");
             to1.setTaskName("V计划");
             to1.setTaskCase("未完成");
-            to1.setSuccessTime("2018-08-21 18:00");
+            to1.setFinishTime("2018-08-21 18:00");
             to1.setExecutor("王先生");
             TotalOverView to2 = new TotalOverView();
             to2.setEndTime("2018-08-22 10:00");
             to2.setTaskName("Z设计");
-            to2.setSuccessTime("2018-08-22 18:00");
+            to2.setFinishTime("2018-08-22 18:00");
             to2.setExecutor("玉先生");
             totalOverViewList.add(to1);
             totalOverViewList.add(to2);
@@ -1018,7 +1018,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 //        this.taskInfoMapper.selectUnfinishedTask(taskCondition);
             List<TotalOverView> totalOverViewList = new ArrayList<>();
             TotalOverView to1 = new TotalOverView();
-            to1.setSuccessTime("2018-08-21");
+            to1.setFinishTime("2018-08-21");
             to1.setTaskName("施工计划");
             to1.setExecutor("张先生");
             to1.setTaskDayNum("1");
