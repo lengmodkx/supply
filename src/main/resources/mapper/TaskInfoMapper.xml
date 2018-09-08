@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.task.TaskInfoMapper">
 
-    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.statistics.TotalOverView">
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
         <result column="end_time" property="endTime" jdbcType="VARCHAR" />
         <result column="task_name" property="taskName" jdbcType="VARCHAR" />
         <result column="u_name" property="executor" jdbcType="VARCHAR" />
