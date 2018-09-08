@@ -77,8 +77,7 @@
 				file_uids,
 				file_label,
 				file_thumbnail,
-				file_privacy,
-				file_source_id
+				file_privacy
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
