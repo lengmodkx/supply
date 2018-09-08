@@ -3,7 +3,7 @@ var accessid= 'LTAIP4MyTAbONGJx';
 var accesskey= 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW';
 var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
-g_dirname ='upload/' + projectId + "/";
+g_dirname ='upload/project/' + projectId + "/";
 g_object_name = '';
 g_object_name_type = 'random_name';
 now = timestamp = Date.parse(new Date()) / 1000;

@@ -8,7 +8,7 @@ layui.use(['element','form','layer'], function() {
     var host = 'https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com';
 
     var index = 0;
-    g_dirname = 'upload/' + projectId + "/";
+    g_dirname = 'upload/project/' + projectId + "/";
     g_object_name = '';
     var g_object_names = [];
     g_object_name_type = 'random_name';
