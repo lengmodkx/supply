@@ -159,7 +159,6 @@
 		and project_id = #{projectId}
 		and parent_id = #{parentId}
 		and file_del = #{isDel}
-		and file_source_id is null
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -357,9 +356,6 @@
 			</if>
 			<if test="filePrivacy != null ">
 				file_privacy,
-			</if>
-			<if test="fileSourceId != null ">
-				file_source_id,
 			</if>
 		</trim>
 

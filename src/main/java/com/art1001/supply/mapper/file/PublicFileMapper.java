@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.file;
 
 import java.util.List;
 
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.base.Pager;
@@ -27,7 +28,7 @@ public interface PublicFileMapper {
 	 * @param id
 	 * @return
 	 */
-	PublicFile findPublicFileById(String id);
+	File findPublicFileById(String id);
 
 	/**
 	 * 通过id删除公共文件库数据
@@ -63,4 +64,11 @@ public interface PublicFileMapper {
 	 * @return
 	 */
     PublicFile findPublicFolder(String publicName);
+
+	/**
+	 * 查询出该文件夹的 子文件 及文件夹
+	 * @param parentId 父文件夹id
+	 * @return
+	 */
+    List<PublicFile> findChildFile(String parentId);
 }

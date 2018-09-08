@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.file.PublicFileMapper">
 	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.PublicFile">
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
 		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
 		<result column="ext" property="ext" jdbcType="VARCHAR" />
@@ -74,7 +74,7 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_public_file c where id = #{id}
+		from prm_public_file c where file_id = #{id}
 
 	</select>
 	
@@ -226,6 +226,12 @@
 	<!-- 查询出公共模型库的信息 -->
 	<select id="findPublicFolder" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/> from prm_public_file where file_name = #{publicName}
+	</select>
+
+	<!-- 查询出该文件夹的子文件 -->
+	<select id="findChildFile" resultMap = "BaseResultMap">
+		select <include refid="Base_Column_List"></include>
+		from prm_public_file where parent_id = #{parentId}
 	</select>
 	
 </mapper>

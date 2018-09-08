@@ -119,7 +119,8 @@ $(function () {
                             layer.closeAll('loading');
                             window.location.reload();
                         } else {
-                            layer.msg(data.msg, {icon: 2, time: 1000})
+                            layer.closeAll('loading');
+                            layer.msg(data.msg, {icon: 2, time: 1000});
                         }
                     });
 
@@ -144,6 +145,11 @@ $(function () {
 
     // 鼠标移入 函数
     function movein(that) {
+        if(fileName === '公共模型库'){
+            that.find("i").css("opacity", "1");
+            that.find(".img-show-operate").css("opacity", "0");
+            return false;
+        }
         // that.find("div").css("opacity", "1");
         that.find("i").css("opacity", "1");
          // console.log(that.siblings('.one-file-name').text());
@@ -170,6 +176,7 @@ $(function () {
         $(".new-file-wrap input").focus();
         e.stopPropagation();
     });
+
     //点击空白区域， 创建文件夹消失
     $(document).click(function (event) {
         var _con = $('.new-file-wrap');  // 设置目标区域
@@ -229,7 +236,7 @@ $(function () {
         var fileId = $(this).attr("data");
         var catalog = $(this).attr("data-id");
         if(catalog==="1"){
-            window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
+            window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId+"&currentGroup="+groupId;
         }else{
             $.post('/file/hasPermission',{"fileId":fileId},function (data) {
                 if(data.result===1&&data.hasPermission){
@@ -245,16 +252,20 @@ $(function () {
     $('html').on('click','.img-show-download',function (e) {
         e.stopPropagation();
         var fileId = $(this).parent().attr("data");
-        $.post('/file/hasPermission',{"fileId":fileId},function (data) {
+        var args = {"fileId":fileId};
+        if(fileName === '公共模型库'){
+            args = {"fileId":fileId,"isPublic":true};
+            location.href = "/file/downloadFile?fileId=" + fileId+"&isPublic="+true;
+            return false;
+        }
+        $.post('/file/hasPermission',args,function (data) {
             if(data.result===1&&data.hasPermission){
                 location.href = "/file/downloadFile?fileId=" + fileId;
             }else{
                 layer.msg("无权访问",{icon:5});
             }
         });
-
     });
-
 
 
     var url = window.location.href;

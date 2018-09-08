@@ -10,6 +10,7 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.GroupVO;
@@ -24,6 +25,7 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -95,6 +97,9 @@ public class FileController extends BaseController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private PublicFileService publicFileService;
+
 
     /**
      * 文件列表
@@ -125,7 +130,7 @@ public class FileController extends BaseController {
         Integer fileDel = file.getFileDel();
         List<File> fileList;
 
-        //如果用户点击的 模型文件 的文件夹 则去文件公共表查询数据
+        //如果用户点击的 公共模型库 的文件夹 则去文件公共表查询数据
         if(fileById != null && publicName.equals(fileById.getFileName())){
             fileList = fileService.findPublicFile();
         } else{
@@ -138,7 +143,7 @@ public class FileController extends BaseController {
         model.addAttribute("currentGroup",currentGroup);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
 
-        //加载该项目下所有分组的信息
+        //加载该项目下所有任务分组的信息
         List<GroupVO> groups = relationService.loadGroupInfo(projectId);
         model.addAttribute("groups",groups);
 
@@ -352,6 +357,15 @@ public class FileController extends BaseController {
             if (StringUtils.isEmpty(parentId)) {
                 parentId = "0";
             }
+
+            //判断当前文件夹的名字是否在库中存在
+            int result = fileService.findFolderIsExist(folderName,projectId,parentId);
+            if(result > 0){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","文件夹已经存在！");
+                return jsonObject;
+            }
+
             File file = fileService.createFolder(projectId, parentId, folderName);
 
             jsonObject.put("result", 1);
@@ -677,14 +691,20 @@ public class FileController extends BaseController {
      * 下载
      *
      * @param fileId 文件
+     * @param isPublic 下载的是不是模型文件
      */
     @RequestMapping("/downloadFile")
     @ResponseBody
-    public void downloadFile(@RequestParam String fileId, HttpServletResponse response){
+    public void downloadFile(@RequestParam String fileId, boolean isPublic, HttpServletResponse response){
         try {
             InputStream inputStream = null;
+            File file = null;
             // 获取文件
-            File file = fileService.findFileById(fileId);
+            if(isPublic){
+                file = publicFileService.findPublicFileById(fileId);
+            } else{
+                file = fileService.findFileById(fileId);
+            }
             String fileName = file.getFileName();
             String deleteUrl = "";
             // 如果下载的是目录，则打包成zip
@@ -1366,6 +1386,7 @@ public class FileController extends BaseController {
     }
 
 
+
     @PostMapping("/childFile")
     @ResponseBody
     public JSONObject childFile(@RequestParam String projectId,@RequestParam String parentId){
@@ -1446,6 +1467,5 @@ public class FileController extends BaseController {
 
         return jsonObject;
     }
-
 
 }

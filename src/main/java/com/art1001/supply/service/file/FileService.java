@@ -218,4 +218,13 @@ import java.util.List;
 	 * @return
 	 */
     String findUidsByFileId(String fileId);
+
+	/**
+	 * 判断文件夹的名字 是否存在
+	 * @param folderName 文件夹名字
+	 * @param projectId 项目id
+	 * @param parentId 当前目录id
+	 * @return
+	 */
+    int findFolderIsExist(String folderName, String projectId,String parentId);
 }

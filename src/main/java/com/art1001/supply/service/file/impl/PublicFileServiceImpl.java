@@ -3,9 +3,11 @@ package com.art1001.supply.service.file.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.mapper.file.PublicFileMapper;
 import com.art1001.supply.service.file.PublicFileService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.PublicFile;
@@ -38,7 +40,7 @@ public class PublicFileServiceImpl implements PublicFileService {
 	 * @return
 	 */
 	@Override 
-	public PublicFile findPublicFileById(String id){
+	public File findPublicFileById(String id){
 		return publicFileMapper.findPublicFileById(id);
 	}
 
@@ -68,6 +70,7 @@ public class PublicFileServiceImpl implements PublicFileService {
 	 */
 	@Override
 	public void savePublicFile(PublicFile publicFile){
+		publicFile.setFileId(IdGen.uuid());
 		publicFileMapper.savePublicFile(publicFile);
 	}
 	/**
@@ -88,5 +91,15 @@ public class PublicFileServiceImpl implements PublicFileService {
 	@Override
 	public PublicFile findPublicFolder(String publicName) {
 		return publicFileMapper.findPublicFolder(publicName);
+	}
+
+	/**
+	 * 查询出该文件夹的 子文件 及文件夹
+	 * @param parentId 父文件夹id
+	 * @return
+	 */
+	@Override
+	public List<PublicFile> findChildFile(String parentId) {
+		return publicFileMapper.findChildFile(parentId);
 	}
 }

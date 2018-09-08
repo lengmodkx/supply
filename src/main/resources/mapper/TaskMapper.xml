@@ -657,8 +657,8 @@
 	<!-- 根据任务状态查询多个任务信息 -->
 	<select id="findTaskByStatus" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List3"/>,r.parent_id as task_group
-		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where task_status = #{status} and project_id = #{projectId}
+		<include refid="Base_Column_List"/>,r.parent_id as task_group
+		from prm_task LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where task_status = #{status} and prm_task.project_id = #{projectId}
 	</select>
 
 	<!-- 查询今天的任务 -->

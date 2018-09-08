@@ -260,6 +260,7 @@ public class FileServiceImpl implements FileService {
     public File createFolder(String projectId, String parentId, String fileName) {
         // 存库
         File file = new File();
+        file.setFileId(IdGen.uuid());
         // 拿到项目的名字作为初始化的文件名
         file.setFileName(fileName);
         // 设置父级id
@@ -590,5 +591,17 @@ public class FileServiceImpl implements FileService {
     @Override
     public String findUidsByFileId(String fileId) {
         return fileMapper.findUidsByFileId(fileId);
+    }
+
+    /**
+     * 判断文件夹的名字 是否存在
+     * @param folderName 文件夹名字
+     * @param projectId 项目id
+     * @param parentId 当前目录id
+     * @return
+     */
+    @Override
+    public int findFolderIsExist(String folderName, String projectId,String parentId) {
+        return fileMapper.findFolderIsExist(folderName,projectId,parentId);
     }
 }

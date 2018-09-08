@@ -208,4 +208,14 @@ public interface FileMapper {
 	 */
 	@Select("select file_uids from prm_file where file_id = #{fileId}")
     String findUidsByFileId(String fileId);
+
+	/**
+	 * 判断文件夹的名字 是否存在
+	 * @param folderName 文件夹名字
+	 * @param projectId 项目id
+	 * @param parentId 当前目录id
+	 * @return
+	 */
+	@Select("select count(0) from prm_file where project_id = #{projectId} and parent_id = #{parentId}  and file_name = #{folderName}")
+    int findFolderIsExist(@Param("folderName") String folderName, @Param("projectId") String projectId, @Param("parentId") String parentId);
 }
