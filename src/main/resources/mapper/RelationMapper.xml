@@ -469,6 +469,11 @@
 		) AS f ON f.pid = c.id
 	</select>
 
+	<!--  -->
+	<!--<select id="loadGroupInfo" resultMap="groupInfo" parameterType="java.lang.String">-->
+
+	<!--</select>-->
+
 	<!-- 查询出项目下回收站中的所有任务分组 -->
 	<select id="findRecycleBin" resultMap="BaseResultMap3">
 		select relation_id,relation_name,update_time from prm_relation where project_id = #{projectId} and `lable` = 0 and relation_del = 1

@@ -530,6 +530,7 @@ public class ProjectController extends BaseController {
             model.addAttribute("project",project);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
         }catch (Exception e){
+            e.printStackTrace();
             throw new SystemException(e);
         }
 
