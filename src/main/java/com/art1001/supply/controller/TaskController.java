@@ -74,7 +74,7 @@ public class TaskController {
     @Resource
     private UserService userService;
 
-    /** 任务 分组、菜单 逻辑层接口   */
+    /** 任务 分组 菜单 逻辑层接口   */
     @Resource
     private RelationService relationService;
 
