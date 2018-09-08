@@ -42,7 +42,7 @@
 	</select>
 	
 	<select id="findTemplateAllList" resultMap="BaseResultMap"
-		parameterType="com.leimingtech.core.entity.base.Template">
+		parameterType="com.art1001.supply.entity.template.Template">
 		SELECT
 		<include refid="Base_Column_List" />
 		from template
