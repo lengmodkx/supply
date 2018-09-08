@@ -10,51 +10,52 @@ import org.joda.time.DateTime;
  * @date 2018-09-05 17:08
  * @Description  统计页面查询条件
  */
-public class TaskCondition {
+public class StatisticsDTO {
 
-    /*
-    *根据任务数或其他条件
-    **/
+    /**
+     *根据任务数  \ 工时  \  Story Points
+     */
+    private String taskCount;
 
-    private String taskNum;
-    /*
-    *根据成员查询
-    **/
-
+    /**
+     *根据成员查询
+     */
     private String taskMember;
-    /*
-    *根据任务分组
-    **/
 
-    private String taskGroupBy;
-    /*
-    *根据是否是子任务
-    **/
+    /**
+     *根据任务分组
+     */
+    private String taskGroup;
 
+    /**
+     *根据是否是子任务
+     */
     private int taskChild;
-    /*
-    *根据是否是回收站
-    **/
 
+    /**
+     *根据是否是回收站
+     */
     private int recycle;
-    /*
-    *根据天数，开始时天数和结束时天数
-    **/
 
+    /**
+     *根据天数，开始时天数和结束时天数
+     */
     private String startDay;
+
     private String endDay;
-    /*
-    *根据是否成功
-    **/
 
-    private String taskSucOrFail;
+    /**
+     *根据是否成功
+     */
+    private String taskCase;
 
-    public String getTaskNum() {
-        return taskNum;
+
+    public String getTaskCount() {
+        return taskCount;
     }
 
-    public void setTaskNum(String taskNum) {
-        this.taskNum = taskNum;
+    public void setTaskCount(String taskCount) {
+        this.taskCount = taskCount;
     }
 
     public String getTaskMember() {
@@ -65,12 +66,12 @@ public class TaskCondition {
         this.taskMember = taskMember;
     }
 
-    public String getTaskGroupBy() {
-        return taskGroupBy;
+    public String getTaskGroup() {
+        return taskGroup;
     }
 
-    public void setTaskGroupBy(String taskGroupBy) {
-        this.taskGroupBy = taskGroupBy;
+    public void setTaskGroup(String taskGroup) {
+        this.taskGroup = taskGroup;
     }
 
     public int getTaskChild() {
@@ -89,15 +90,6 @@ public class TaskCondition {
         this.recycle = recycle;
     }
 
-
-    public String getTaskSucOrFail() {
-        return taskSucOrFail;
-    }
-
-    public void setTaskSucOrFail(String taskSucOrFail) {
-        this.taskSucOrFail = taskSucOrFail;
-    }
-
     public String getStartDay() {
         return startDay;
     }
@@ -114,17 +106,25 @@ public class TaskCondition {
         this.endDay = endDay;
     }
 
+    public String getTaskCase() {
+        return taskCase;
+    }
+
+    public void setTaskCase(String taskCase) {
+        this.taskCase = taskCase;
+    }
+
     @Override
     public String toString() {
-        return "TaskCondition{" +
-                "taskNum='" + taskNum + '\'' +
+        return "StatisticsDTO{" +
+                "taskCount='" + taskCount + '\'' +
                 ", taskMember='" + taskMember + '\'' +
-                ", taskGroupBy='" + taskGroupBy + '\'' +
+                ", taskGroup='" + taskGroup + '\'' +
                 ", taskChild=" + taskChild +
                 ", recycle=" + recycle +
-                ", startDay=" + startDay +
-                ", endDay=" + endDay +
-                ", taskSucOrFail='" + taskSucOrFail + '\'' +
+                ", startDay='" + startDay + '\'' +
+                ", endDay='" + endDay + '\'' +
+                ", taskCase='" + taskCase + '\'' +
                 '}';
     }
 }
