@@ -214,7 +214,7 @@ public class ProjectController extends BaseController {
             projectService.saveProject(project);
 
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+            String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
@@ -287,7 +287,7 @@ public class ProjectController extends BaseController {
             project.setProjectStatus(0);
             projectService.saveProject(project);
             //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+            String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
