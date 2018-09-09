@@ -7,6 +7,7 @@ import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.PublicFileService;
 import lombok.extern.log4j.Log4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ import java.util.List;
  * @date 2018/9/8 15:21
  **/
 @Log4j
-@RestController
+@Controller
 @RequestMapping("publicfile")
 public class PublicFileController {
 
@@ -34,6 +35,7 @@ public class PublicFileController {
      * @return
      */
     @PostMapping("findAllPublicFile")
+    @ResponseBody
     public JSONObject findAllPublicFile(){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -49,14 +51,16 @@ public class PublicFileController {
      * 返回公共该文件夹的数据
      * @return
      */
-    @PostMapping("findPublicFolder")
-    public JSONObject findPublicFolder(){
+    @GetMapping("findPublicFolder")
+    @ResponseBody
+    public JSONObject findPublicFolder(@RequestParam("folderName") String folderName){
         JSONObject jsonObject = new JSONObject();
         try {
+            PublicFile publicFolder = publicFileService.findPublicFolder(folderName);
             jsonObject.put("result",1);
-            PublicFile publicFolder = publicFileService.findPublicFolder("公共模型库");
             jsonObject.put("data",publicFolder);
         } catch (Exception e){
+            e.printStackTrace();
             log.error(e.getMessage());
             jsonObject.put("msg","系统异常");
         }
@@ -67,6 +71,7 @@ public class PublicFileController {
      * 上传公共文件数据
      */
     @PostMapping("uploadFileToPublicFile")
+    @ResponseBody
     public JSONObject uploadFileToPublicFile(PublicFile file){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -85,7 +90,8 @@ public class PublicFileController {
      * @param parentId 父文件夹id
      * @return
      */
-    @PostMapping("loadChildFile")
+    @GetMapping("loadChildFile")
+    @ResponseBody
     public JSONObject loadChildFile(@RequestParam(value = "fileId") String parentId){
         JSONObject jsonObject = new JSONObject();
         try {

@@ -4,14 +4,12 @@ $(function () {
         blur:false,
         overlay:false
     });
-// 分组查询 框
-    $(".groups-down-select").click(function (e) {
-        var url = "/relation/loadGroupInfo";
-        var args = {"projectId":projectId,"currentGroupId":groupId};
 
-        $(this).siblings(".task-select-box").toggle();
-        e.stopPropagation()
-    });
+    // // 分组查询 框
+    // $(".groups-down-select").click(function (e) {
+    //     $(this).siblings(".task-select-box").toggle();
+    //     e.stopPropagation()
+    // });
 
     /**
      * 选择一个分组的时候
@@ -21,6 +19,27 @@ $(function () {
         var id = $(this).attr('data-id');
         location.href = '/relation/changeGroup?groupId='+id+'&projectId='+projectId;
     });
+
+
+    $(".groups-down-select").click(function (top,left) {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type:1,
+                title:false,
+                btn:0,
+                area:['304px','400px'],
+                offset: [top,left],
+                closeBtn: 0,
+                shade: [0.1, '#fff'],
+                shadeClose:true,
+                content: $(".task-select-box")
+            });
+        });
+    });
+
+
+
 
     /**
      * 点击创建分组按钮
@@ -347,23 +366,23 @@ $(".xialakuang").click(function (e) {
     });
 
 
-        $( "#sortable" ).sortable();
-
-    // $('.sortable').sortable({
-    //     cursor:"move",
-    //     items:'.tile',
-    //     handle:'.model-title',
-    //     axis: 'x',
-    //     tolerance: 'pointer',
-    //     placeholder: 'model',
-    //     stop:function (event,ui) {
-    //         console.log(ui);
-    //         var ids = $('.sortable').sortable('toArray');
-    //         // $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
-    //         //     console.log(data);
-    //         // });
-    //     }
-    // });
+    //     $( "#sortable" ).sortable();
+    //
+    // // $('.sortable').sortable({
+    // //     cursor:"move",
+    // //     items:'.tile',
+    // //     handle:'.model-title',
+    // //     axis: 'x',
+    // //     tolerance: 'pointer',
+    // //     placeholder: 'model',
+    // //     stop:function (event,ui) {
+    // //         console.log(ui);
+    // //         var ids = $('.sortable').sortable('toArray');
+    // //         // $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
+    // //         //     console.log(data);
+    // //         // });
+    // //     }
+    // // });
 
     /**
      * 点击编辑任务分组

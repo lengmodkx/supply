@@ -17,6 +17,22 @@
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="VARCHAR" />
 		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
 	</resultMap>
+
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.file.PublicFile">
+		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="ext" property="ext" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="catalog" property="catalog" jdbcType="INTEGER" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="file_del" property="fileDel" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="file_thumbnail" property="fileThumbnail" jdbcType="VARCHAR" />
+		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
+	</resultMap>
     
 	<sql id="Base_Column_List">
 						file_id,
@@ -224,7 +240,7 @@
 	</update>
 
 	<!-- 查询出公共模型库的信息 -->
-	<select id="findPublicFolder" resultMap="BaseResultMap">
+	<select id="findPublicFolder" resultMap="BaseResultMap2">
 		select <include refid="Base_Column_List"/> from prm_public_file where file_name = #{publicName}
 	</select>
 
