@@ -111,7 +111,6 @@ public class GroupChatController extends BaseController {
                     String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                     // 写库
                     File myFile = new File();
-                    myFile.setFileId(IdGen.uuid());
                     // 用原本的文件名
                     myFile.setFileName(fileName);
                     myFile.setExt(ext);
@@ -123,8 +122,8 @@ public class GroupChatController extends BaseController {
                     myFile.setParentId("0");
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                     //myFile.setFileSourceId(projectId);
-                    fileIds.add(myFile.getFileId());
                     fileService.saveFile(myFile);
+                    fileIds.add(myFile.getFileId());
                 }
             }
 
