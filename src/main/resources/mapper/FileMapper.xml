@@ -503,6 +503,12 @@
 	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
 		select file_name,file_id,update_time
 		from prm_file where file_del = 1 and project_id = #{projectId}
+		<if test="type == '文件'">
+			and catalog = 0
+		</if>
+		<if test="type == '文件夹'">
+			and catalog = 1
+		</if>
 	</select>
 
 	<!-- 查询某个文件夹下的公开文件 -->

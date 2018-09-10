@@ -50,6 +50,9 @@ $("html").on("click",".huifu-btn",function (e) {
     if(type === '任务分组'){
         that = $(".recover-group");
     }
+    if(type === '文件夹'){
+        that = $(".recover-folder");
+    }
     layui.use('layer', function(){
 
         var layer = layui.layer;
@@ -88,6 +91,9 @@ $("html").on("click",".delete-btn",function (e) {
     }
     if(type === '任务分组'){
         that = $(".delete-group");
+    }
+    if(type === '文件夹'){
+        that = $(".delete-folder");
     }
     var top=$(this).offset().top+50+'px';
     var left=$(this).offset().left-180+'px';
@@ -299,7 +305,22 @@ $('.o-schedule-btn').click(function () {
  */
 $('.o-file-btn').click(function () {
     var url = "/file/recoveryFile";
-    var args = {"projectId":projectId,"fileId":oli};
+    var args = {"projectId":projectId,"fileId":oli,"isFolder":false};
+    $.post(url,args,function (data) {
+        if(data.result < 1){
+            layer.msg("系统异常,操作失败!");
+        } else{
+            layer.close(layer.index);
+        }
+    });
+});
+
+/**
+ * 恢复文件夹的确定按钮
+ */
+$('.o-folder-btn').click(function () {
+    var url = "/file/recoveryFile";
+    var args = {"projectId":projectId,"fileId":oli,"isFolder":true};
     $.post(url,args,function (data) {
         if(data.result < 1){
             layer.msg("系统异常,操作失败!");
@@ -319,7 +340,7 @@ $('.forever-delete-btn').click(function () {
         url = '/task/delTask';
         args = {"taskId":oli,"projectId":projectId}
     }
-    if(type === '文件'){
+    if(type === '文件' || type === '文件夹'){
        url = '/file/deleteFile';
         args = {"fileId":oli,"projectId":projectId}
     }

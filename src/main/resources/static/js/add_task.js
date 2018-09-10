@@ -40,7 +40,7 @@ function addRenwu(addBox,taskMenuId) {
         '            <div class="develop" style="display: none">\n' +
         '               <div class="begin-time abox">\n' +
         '                   <img src="/image/begintime.png"/>\n' +
-        '                   <input type="text" class="layui-input" id="beginTime" name="startTime"  placeholder="开始时间">\n' +
+        '                   <input type="text" class="layui-input" id="beginTime" name="startTime"  placeholder="开始时间" autocomplete="off">\n' +
         '               </div>\n' +
         '               <div class="over-time abox">\n' +
         '                   <img src="/image/begintime.png"/>\n' +
@@ -155,6 +155,14 @@ function addRenwu(addBox,taskMenuId) {
         '</div>';
 
     addBox.html(taskItem);
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#beginTime' //指定元素
+        });
+    });
     layui.form.render();
 }
 
@@ -411,7 +419,7 @@ function peopleok() {
         if($(item).is(":visible")){
             var id = $(item).attr('id');
             var image = $(item).siblings('img').attr("src");
-            content+='<div class="one-work-people">\n' +
+            content+='<div class="one-work-people" data-id = ' + id + '">\n' +
                 '                                           <img src="'+image+'">\n' +
                 '                                           <input type="hidden" value="'+id+'">\n' +
                 '                                           <i class="layui-icon layui-icon-close-fill remove-work-people " style="font-size: 15px; color: #3da8f5;"></i>\n' +
@@ -427,15 +435,15 @@ function peopleok() {
  */
 model.on('click','.new-assignment-ok',function () {
 
-    var taskName = $("#taskName").val();
+    var taskName = $(this).parent().siblings("textarea").val();
     if(taskName===null||taskName===''||taskName===undefined){
         layer.msg("请输入任务名称",{icon:5});
         return false;
     }
-    addTask($(this).attr('data'));
+    addTask($(this).attr('data'),taskName);
 });
 
-function addTask(taskMenuId) {
+function addTask(taskMenuId,taskNames) {
     //获取选中的参与者信息
     var members = [];
     $('.work-people .one-work-people').each(function () {
@@ -464,7 +472,7 @@ function addTask(taskMenuId) {
         endTime = null;
     }
     //设置任务的内容
-    var taskName = $("#taskName").val();
+    var taskName = taskNames
     //设置重复模式
     var repeat = $('#repeat').val();
     //设置任务提醒

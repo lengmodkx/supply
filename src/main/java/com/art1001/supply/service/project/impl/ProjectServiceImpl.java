@@ -193,7 +193,7 @@ public class ProjectServiceImpl implements ProjectService {
 			recycleBin = taskService.findRecycleBin(projectId);
 		}
 		if(BindingConstants.BINDING_FILE_NAME.equals(type)){
-			recycleBin = fileService.findRecycleBin(projectId);
+			recycleBin = fileService.findRecycleBin(projectId,type);
 		}
 		if(BindingConstants.BINDING_SHARE_NAME.equals(type)){
 			recycleBin = shareService.findRecycleBin(projectId);
@@ -206,6 +206,9 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		if(BindingConstants.TASK_GROUP.equals(type)){
 			recycleBin = relationService.findRecycleBin(projectId);
+		}
+		if(BindingConstants.FOLDER.equals(type)){
+			recycleBin = fileService.findRecycleBin(projectId,type);
 		}
 		return recycleBin;
 	}

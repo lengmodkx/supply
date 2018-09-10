@@ -835,9 +835,8 @@ public class TaskController {
         } catch (ServiceException e){
             jsonObject.put("result",0);
             jsonObject.put("msg","父任务已经完成,不能操作子任务!");
-            return jsonObject;
         } catch (Exception e){
-            log.error("系统异常! 状态更新失败 当前任务id: {},{}",task.getTaskId(),e);
+            log.error("系统异常! 状态更新失败!",e);
             throw new AjaxException(e);
         }
         return jsonObject;
