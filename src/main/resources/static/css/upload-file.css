@@ -51,7 +51,6 @@
 }
 .model-file-up-box{
     width: 500px;
-    /*height: 395px;*/
     background-color: white;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
     overflow: hidden;
@@ -195,8 +194,10 @@
     font-size: 14px;
 }
 .layui-progress{
-    width: 100%;
+    width: 96%;
+    margin-left: 2%;
     display: none;
+    margin-top: 8px;
 }
 .remove-it{
     position: absolute;

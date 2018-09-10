@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head>
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
@@ -21,12 +21,6 @@
 </div>
 
 </body>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/crypto1/sha1/sha1.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/base64.js}"></script>
-<script type="text/javascript" th:src="@{/js/lib/plupload-2.1.2/js/plupload.full.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/fileModelUpload.js}"></script>
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:inline="javascript">
@@ -44,11 +38,10 @@
 
     $('.model-file').click(function (top, left) {
         layui.use('layer', function () {
-            var layer = layui.layer;
             parent.layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
-                area:['500px','330px'],
+                area:['602px','235px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,
@@ -60,7 +53,6 @@
 
     $('.ordinary-file').click(function (top, left) {
         layui.use('layer', function () {
-            var layer = layui.layer;
             parent.layer.open({
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题

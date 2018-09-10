@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head>
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
@@ -9,52 +9,50 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/upload-file.css}" href="../static/css/upload-file.css">
 </head>
 <body>
-<div class="model-file-up-box">
+<div class="model-file-up-box layui-form" style="width: 600px">
     <header class="boxsizing">
         <div>选择模型文件</div>
         <i class="layui-icon layui-icon-close close-tk" style="font-size: 18px; color: #A6A6A6;"></i>
     </header>
-    <div id = "container">
-        <div class="flex-content boxsizing">
-            <div class="mx-box-wrap">
-                <div class="mx-box boxsizing">
-                <!--<div class="style-div" id="upModel"></div>-->
-                    <input id="file" type="file" accept=".pln,.gsm,.skp,.mod" style="position: absolute;width: 150px;height: 150px;font-size: 0px;opacity: 0"/>
-                    <div class="no-file">
-                        <img th:src="@{/image/5dModel.png}" class="model" src="../static/image/model.png" style="display: none">
-                        <i class="layui-icon layui-icon-upload model-icon" style="font-size: 80px; color: #3DA8F5;cursor: pointer"></i>
+    <form id = "container">
+        <input type="hidden" class="data1"/>
+        <input type="hidden" class="data2"/>
+        <table border="1" style="border-color: #e5e5e5">
+            <thead>
+            <th width="200">模型文件名称</th>
+            <th width="200">选择模型文件</th>
+            <th width="200">选择模型缩略图</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="text" id="fileName" required lay-verify="required" placeholder="请输入文件名称" autocomplete="off" class="layui-input"></td>
+                <td style="text-align: center;position: relative">
+                    <img th:src="@{/image/5dModel.png}" class="model" src="../static/image/model.png" style="display: none;left: 70px;width: 60px;height: 60px;"/>
+                    <i class="layui-icon layui-icon-upload model-icon" style="font-size: 60px; color: #3DA8F5;cursor: pointer"></i>
+                    <input id="file" type="file" accept=".pln,.gsm,.skp,.mod" style="position: absolute;width: 60px;height: 60px;font-size: 0px;opacity: 0;left:70px" title=" "/>
+                    <div class="layui-progress upModel" lay-filter="upModel" lay-showPercent="yes">
+                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
                     </div>
-                    <div class="has-file" style="display: none">文件名.gks</div>
-                </div>
-                <div class="layui-progress upModel" lay-filter="upModel">
-                    <div class="layui-progress-bar" lay-percent="0%"></div>
-                </div>
-                <p class="tips-p model-name over-hidden">请选择模型文件</p>
-            </div>
-            <div class="slt-box-wrap">
-                <div class="slt-box boxsizing">
-                    <div class="style-div" id = "upModel2">自己起个名字</div>
-                    <div class="no-img">
-                        <img th:src="@{/image/model.png}" class="suolue" src="" style="display: none">
-                        <i class="layui-icon layui-icon-upload suolue-icon" style="font-size: 80px; color: #3DA8F5;cursor: pointer"></i>
+                </td>
+                <td height="100" style="text-align: center;position: relative">
+                    <img class="suolue" style="display: none;left: 70px;width: 60px;height: 60px;"/>
+                    <i class="layui-icon layui-icon-upload model2-icon" style="font-size: 60px; color: #3DA8F5;cursor: pointer"></i>
+                    <input id="file1" type="file" accept=".gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.bmp,.BMP" style="position: absolute;width: 60px;height: 60px;font-size: 0px;opacity: 0;left:70px" title=" "/>
+                    <div class="layui-progress upModel2" lay-filter="upModel2" lay-showPercent="yes">
+                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
                     </div>
-                    <div class="has-img" style="display: none"></div>
-                </div>
-                <div class="layui-progress upMode2" lay-filter="upMode2">
-                    <div class="layui-progress-bar" lay-percent="0%"></div>
-                </div>
-                <p class="tips-p model-name2 over-hidden">请上传模型文件缩略图</p>
-            </div>
-
-        </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <div class="btn-box boxsizing">
             <div class="ok-btn model-ok-btn">确定</div>
-            <!--<div class="up-btn" id = "postfiles">上传</div>-->
         </div>
-
-    </div>
+    </form>
 
 </div>
+<script th:src="@{/js/jquery-2.2.4.min.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
 <script th:inline="javascript">
     var projectId = [[${projectId}]];
     alert(projectId);
