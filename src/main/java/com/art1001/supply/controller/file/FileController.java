@@ -47,6 +47,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -686,7 +687,6 @@ public class FileController extends BaseController {
         }
         return jsonObject;
     }
-
     /**
      * 下载
      *
@@ -697,6 +697,7 @@ public class FileController extends BaseController {
     @ResponseBody
     public void downloadFile(@RequestParam String fileId, boolean isPublic, HttpServletResponse response){
         try {
+
             InputStream inputStream = null;
             File file = null;
             // 获取文件
@@ -708,37 +709,36 @@ public class FileController extends BaseController {
             String fileName = file.getFileName();
             String deleteUrl = "";
             // 如果下载的是目录，则打包成zip
-            if (file.getCatalog() == 1) {
-                // 得到临时下载文件目录
-                String tempPath = FileUtils.getTempPath();
-                // 创建文件夹，加时间戳，区分
-                String path = tempPath + "\\" + System.currentTimeMillis() + "\\" + fileName;
-                java.io.File folder = new java.io.File(path);
-                folder.mkdirs();
-                // 设置查询条件
-                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
-                if (childFile.size() > 0) {
-                    // 下载到临时文件
-                    this.downloadZip(childFile, path);
-                }
-
-                // 把临时文件打包成zip下载
-                String downloadPath = path + ".zip";
-                FileOutputStream fos1 = new FileOutputStream(new java.io.File(downloadPath));
-                FileUtils.toZip(path, fos1, true);
-
-                // 开始下载
-
-                // 以流的形式下载文件。
-                inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
-                fileName += ".zip";
-                // 删除临时文件
-                deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
-            } else {
-                // 文件  在oss上得到流
-                inputStream = AliyunOss.downloadInputStream(file.getFileUrl());
-            }
-
+//            if (file.getCatalog() == 1) {
+//                // 得到临时下载文件目录
+//                String tempPath = FileUtils.getTempPath();
+//                // 创建文件夹，加时间戳，区分
+//                String path = tempPath + "\\" + System.currentTimeMillis() + "\\" + fileName;
+//                java.io.File folder = new java.io.File(path);
+//                folder.mkdirs();
+//                // 设置查询条件
+//                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
+//                if (childFile.size() > 0) {
+//                    // 下载到临时文件
+//                    this.downloadZip(childFile, path,response);
+//                }
+//
+//                // 把临时文件打包成zip下载
+//                String downloadPath = path + ".zip";
+//                FileOutputStream fos1 = new FileOutputStream(new java.io.File(downloadPath));
+//                FileUtils.toZip(path, fos1, true);
+//
+//                // 开始下载
+//
+//                // 以流的形式下载文件。
+//                inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
+//                fileName += ".zip";
+//                // 删除临时文件
+//                deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
+//            } else {
+//                // 文件  在oss上得到流
+//            }
+            inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
             // 设置响应类型
             response.setContentType("multipart/form-data");
             // 设置头信息
@@ -1106,7 +1106,7 @@ public class FileController extends BaseController {
      * @param fileList 下载条件
      * @param path     url
      */
-    private void downloadZip(List<File> fileList, String path) {
+    private void downloadZip(List<File> fileList, String path,HttpServletResponse response) {
         List<File> fileUrl = new ArrayList<>();
         for (File file : fileList) {
             if (file.getCatalog() == 1) { // 目录
@@ -1120,7 +1120,7 @@ public class FileController extends BaseController {
                 InputStream inStream = null;
                 FileOutputStream fs = null;
                 try {
-                    inStream = AliyunOss.downloadInputStream(file.getFileUrl());
+                    inStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
                     fs = new FileOutputStream(path + "\\" + file.getFileName());
 
                     byte[] buffer = new byte[1204];
@@ -1148,7 +1148,7 @@ public class FileController extends BaseController {
         if (fileUrl.size() > 0) {
             for (File file : fileUrl) {
                 List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
-                this.downloadZip(childFile, path + "\\" + file.getFileName());
+                this.downloadZip(childFile, path + "\\" + file.getFileName(),response);
             }
         }
     }

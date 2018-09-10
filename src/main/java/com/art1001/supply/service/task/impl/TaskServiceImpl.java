@@ -289,15 +289,15 @@ public class TaskServiceImpl implements TaskService {
                 }
             }
         }
-	    if(task.getTaskStatus().equals("完成")){
-	        task.setTaskStatus("未完成");
+        if(task.getTaskStatus().equals("完成")){
+            task.setTaskStatus("未完成");
         } else if (task.getTaskStatus().equals("未完成")){
-	        task.setTaskStatus("完成");
+            task.setTaskStatus("完成");
         } else if (task.getTaskStatus().equals("重新开始")){
-	        task.setTaskStatus("完成");
+            task.setTaskStatus("完成");
         }
-	    //修改任务状态
-	    int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
+        //修改任务状态
+        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
         log.setResult(result);
         return log;

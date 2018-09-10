@@ -38,10 +38,6 @@
                     <span>全选</span>
                 </div>
                 <div class="file-caozuo-wrap" style="display: none">
-                    <div class="file-caozuo">
-                        <i class="layui-icon layui-icon-download-circle " style="font-size: 16px; color: #ADADAD;"></i>
-                        下载
-                    </div>
                     <div class="file-caozuo moveFile">
                         <i class="layui-icon layui-icon-spread-left " style="font-size: 16px; color: #ADADAD;"></i> 移动
                     </div>
@@ -88,11 +84,11 @@
                                 <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
                                 <img class="folderFile" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
                                 <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${!exts.get('compress').contains(file.ext)}"/>
-                                <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;"></i>
+                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${exts.get('compress').contains(file.ext)}"/>
+                                <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;" th:if="${file.catalog eq 0}"></i>
                                 <i class="iconfont icon-suo" th:style="'display:' + @{(${file.filePrivacy}==0? 'none' : 'block')} + ''"></i>
-                                <div class="img-show-operate">
-                                    <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;"></i>
+                                <div class="img-show-operate" th:if="${file.catalog eq 0}">
+                                    <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;" ></i>
                                 </div>
                             </div>
                             <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:data="${file.fileId}">图片222.zip</div>
@@ -107,7 +103,6 @@
 <script th:inline="javascript">
     var groupId = [[${currentGroup}]];
     var IMAGE_SERVER = [[#{IMAGE_SERVER}]];
-    var projectId = [[${projectId}]];
     var fileName = [[${fileName}]];
     layui.use('element', function(){
         var element = layui.element;

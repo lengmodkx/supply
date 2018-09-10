@@ -2,7 +2,6 @@
 var fileCommon = {};
 var fileModel = {};
 var fileTemps = [];
-var g_dirname  = 'upload/project/' + projectId + "/";
 var g_object_name = '';
 function random_string(len) {
     len = len || 32;
@@ -51,7 +50,7 @@ layui.use(['element','form','layer'], function() {
     function set_upload_param(up, filename, ret) {
         if (filename !== '') {
             var suffix = get_suffix(filename);
-            calculate_object_name(suffix,filename)
+            calculate_object_name(suffix)
         }
         var new_multipart_params = {
             'key' : g_object_name,
@@ -126,7 +125,11 @@ layui.use(['element','form','layer'], function() {
         url : 'http://oss.aliyuncs.com',
         filters: {
             mime_types : [
-                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" }
+                { title : "images", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP" },
+                { title : "medias", extensions : "swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb,mp4,SWF,FLV,MP3,WAV,WMA,WMV,MID,AVI,MPG,ASF,RM,RMVB,MP4" },
+                { title : "sensitive", extensions : "txt,TXT" },
+                { title : "sensitive", extensions : "zip,rar,gz" },
+                { title : "model", extensions : "dwg,dxf,dae,tpl,3ds,ifc,obj" }
             ],
             max_file_size : '1024mb', //最大只能上传400kb的文件
             prevent_duplicates : true //不允许选取重复文件
@@ -195,6 +198,7 @@ layui.use(['element','form','layer'], function() {
     uploader2.init();
 
     $('#file').change(function () {
+        var array =['.pln','.skp','.dwg','.dxf','.dae','.gsm','.tpl','.3ds','.ifc','.obj','.mod'];
         var zip = new JSZip();
         var client = new OSS({
             region: "oss-cn-beijing",
@@ -204,35 +208,42 @@ layui.use(['element','form','layer'], function() {
         });
 
         var f = document.getElementById("file").files[0];
-        $('.model-name').html(f.name);
-        $('.upModel').show();
-        $('.model-icon').hide();
-        $('.model').show();
-        var fileName = g_dirname+random_string(10) + get_suffix(f.name);
-        layer.load();
-        zip.file(f.name, f, {type: 'blob'});
-        zip.generateAsync({
-            type: 'blob',
-            compression: 'DEFLATE', //  force a compression for this file
-            compressionOptions: { //  使用压缩等级，1-9级，1级压缩比最低，9级压缩比最高
-                level: 6
-            }
-        }).then(function(data) {  //promise对象中的数据只能在then方法中取到
-            layer.closeAll('loading');
-            var file = new File([data],fileName);
-            client.multipartUpload(file.name, file,{
-                progress: function (p) {
-                    var percent = Math.floor(p * 100) + '%';
-                    element.progress('upModel',percent);
+        var suffix = get_suffix(f.name);
+
+        if(array.indexOf(suffix)===-1){
+            layer.msg("请选择模型文件",{icon:5})
+        }else{
+            $('.model-name').html(f.name);
+            $('.upModel').show();
+            $('.model-icon').hide();
+            $('.model').show();
+            var fileName = g_dirname+random_string(10) + get_suffix(f.name);
+            layer.load();
+            zip.file(f.name, f, {type: 'blob'});
+            zip.generateAsync({
+                type: 'blob',
+                compression: 'DEFLATE', //  force a compression for this file
+                compressionOptions: { //  使用压缩等级，1-9级，1级压缩比最低，9级压缩比最高
+                    level: 6
                 }
-            }).then(function (result) {
-                fileModel.fileName = f.name;
-                fileModel.fileUrl = result.name;
-                fileModel.size = plupload.formatSize(file.size);
-            }).catch(function (err) {
-                console.log(err);
+            }).then(function(data) {  //promise对象中的数据只能在then方法中取到
+                layer.closeAll('loading');
+                var file = new File([data],fileName);
+                client.multipartUpload(file.name, file,{
+                    progress: function (p) {
+                        var percent = Math.floor(p * 100) + '%';
+                        element.progress('upModel',percent);
+                    }
+                }).then(function (result) {
+                    fileModel.fileName = f.name;
+                    fileModel.fileUrl = result.name;
+                    fileModel.size = plupload.formatSize(file.size);
+                }).catch(function (err) {
+                    console.log(err);
+                });
             });
-        });
+        }
+
     });
 });
 

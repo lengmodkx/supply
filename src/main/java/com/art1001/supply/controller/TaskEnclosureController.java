@@ -202,28 +202,6 @@ public class TaskEnclosureController {
         return jsonObject;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * 下载
      *
@@ -236,7 +214,7 @@ public class TaskEnclosureController {
         OutputStream os = response.getOutputStream();
         try {
             TaskFile file = taskFileService.findTaskFileById(fileId);
-            InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl());
+            InputStream inputStream  = AliyunOss.downloadInputStream(file.getFileUrl(),response);
 
             //设置content-disposition响应头控制浏览器弹出保存框，若没有此句则浏览器会直接打开并显示文件。
             //中文名要经过URLEncoder.encode编码，否则虽然客户端能下载但显示的名字是乱码

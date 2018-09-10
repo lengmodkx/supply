@@ -418,9 +418,6 @@
 			<if test="filePrivacy != null ">
 				#{filePrivacy},
 			</if>
-			<if test="fileSourceId != null ">
-				#{fileSourceId},
-			</if>
 		</trim>
 
 	</insert>

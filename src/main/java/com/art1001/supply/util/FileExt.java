@@ -26,9 +26,9 @@ public class FileExt {
         extMap.put("flashs", Arrays.asList("swf,SWF,flv,FLV".split(",")));
         extMap.put("medias", Arrays.asList(".swf,.flv,.mp3,.wav,.wma,.wmv,.mid,.avi,.mpg,.asf,.rm,.rmvb,.mp4,.SWF,.FLV,.MP3,.WAV,.WMA,.WMV,.MID,.AVI,.MPG,.ASF,.RM,.RMVB,.MP4".split(",")));
         extMap.put("files", Arrays.asList(".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.htm,.html,.bz2,.DOC,.DOCX,.XLS,.XLSX,.PPT,.PPTX,.HTM,.HTML,.BZ2".split(",")));
-        extMap.put("sensitive", Arrays.asList(".txt,.TXT".split(",")));
-        extMap.put("model",Arrays.asList(".pln,.skp,.dwg,.dxf,.dae,.gsm,.tpl,.3ds,.ifc,.obj,.mod".split(",")));
-        extMap.put("compress",Arrays.asList(".zip,.rar,.gz".split(",")));
+        extMap.put("sensitive", Arrays.asList(".txt,.TXT,.zip,.rar,.gz".split(",")));
+        extMap.put("model",Arrays.asList(".pln,.skp,.gsm,.mod".split(",")));
+        extMap.put("compress",Arrays.asList(".dwg,.dxf,.dae,.tpl,.3ds,.ifc,.obj".split(",")));
     }
 
 }

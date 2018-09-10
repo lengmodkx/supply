@@ -38,7 +38,7 @@
     $(document).on("click",".remove-it i",function () {
         $(this).parents("li").remove();
     })
-
+    var g_dirname = 'upload/project/'+projectId+"/";
 </script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/crypto/crypto.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/crypto1/hmac/hmac.js}"></script>

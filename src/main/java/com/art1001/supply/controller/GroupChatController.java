@@ -222,7 +222,7 @@ public class GroupChatController extends BaseController {
             //判断要下载的文件的数量 如果只有1个 就下载当前文件  如果有多个  就打成压缩包下载
             if (fileIds.length == 1) {
                 // 文件  在oss上得到流
-                inputStream = AliyunOss.downloadInputStream(file.getFileUrl());
+                inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
             } else {
                 // 得到临时下载文件目录
                 String tempPath = FileUtils.getTempPath();
@@ -232,7 +232,7 @@ public class GroupChatController extends BaseController {
                 folder.mkdirs();
 
                 // 下载到临时文件
-                this.downloadZip(fileService.findByIds(fileIds), path);
+                this.downloadZip(fileService.findByIds(fileIds), path,response);
 
                 // 把临时文件打包成zip下载
                 String downloadPath = path + ".zip";
@@ -283,7 +283,7 @@ public class GroupChatController extends BaseController {
      * @param fileList 下载条件
      * @param path     url
      */
-    private void downloadZip(List<File> fileList, String path) {
+    private void downloadZip(List<File> fileList, String path,HttpServletResponse response) {
         List<File> fileUrl = new ArrayList<>();
         for (File file : fileList) {
             int byteSum = 0;
@@ -291,7 +291,7 @@ public class GroupChatController extends BaseController {
             InputStream inStream = null;
             FileOutputStream fs = null;
             try {
-                inStream = AliyunOss.downloadInputStream(file.getFileUrl());
+                inStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
                 fs = new FileOutputStream(path + "\\" + file.getFileName());
 
                 byte[] buffer = new byte[1204];

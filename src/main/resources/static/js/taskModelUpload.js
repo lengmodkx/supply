@@ -6,7 +6,7 @@ $(".close-tk").click(function () {
 var fileCommon = {};
 var fileModel = {};
 var fileTemps = [];
-var g_object_name ='upload/' + projectId + "/";
+var g_object_name ='';
 function random_string(len) {
     len = len || 32;
     var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -124,7 +124,11 @@ layui.use(['element','form','layer'], function() {
         url : 'http://oss.aliyuncs.com',
         filters: {
             mime_types : [
-                { title : "file", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP,pdf,doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2,DOC,DOCX,XLS,XLSX,PPT,HTM,HTML,TXT,ZIP,RAR,GZ,BZ2,txt,TXT" }
+                { title : "images", extensions : "gif,GIF,jpg,JPG,jpeg,JPEG,png,PNG,bmp,BMP" },
+                { title : "medias", extensions : "swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb,mp4,SWF,FLV,MP3,WAV,WMA,WMV,MID,AVI,MPG,ASF,RM,RMVB,MP4" },
+                { title : "sensitive", extensions : "txt,TXT" },
+                { title : "sensitive", extensions : "zip,rar,gz" },
+                { title : "model", extensions : "dwg,dxf,dae,tpl,3ds,ifc,obj" }
             ],
             max_file_size : '1024mb', //最大只能上传400kb的文件
             prevent_duplicates : true //不允许选取重复文件

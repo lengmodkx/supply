@@ -8,9 +8,11 @@ import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Slf4j
@@ -149,15 +151,17 @@ public class AliyunOss {
      * @param path 文件的完整路径
      * @return InputStream
      */
-    public static InputStream downloadInputStream(String path) {
+    public static InputStream downloadInputStream(String path, HttpServletResponse response) {
         // 创建OSSClient实例
-        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        HttpURLConnection urlcon = null;
         try {
-            return new URL(Constants.OSS_URL + path).openStream();
+            URL url =  new URL(Constants.OSS_URL + path);
+            urlcon=(HttpURLConnection)url.openConnection();
+            //根据响应获取文件大小
+            response.setContentLengthLong(urlcon.getContentLengthLong());
+            return urlcon.getInputStream();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            ossClient.shutdown();
         }
         return null;
     }

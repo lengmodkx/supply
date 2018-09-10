@@ -18,6 +18,7 @@ $(function () {
             });
             //选中复选框
             form.on('checkbox(checks)', function (data) {
+                layui.stope();
                 if (data.elem.checked) {
                     selectNum += 1;
                     $(this).parent().css("border", "4px solid #3da8f5");
@@ -44,10 +45,6 @@ $(function () {
                     $(".file-caozuo-wrap").show();
                     $(".one-file").css("border", "4px solid #3da8f5");
                     $(".one-file input").attr('checked', true);
-                    layui.use('form', function () {
-                        var form = layui.form;
-                        form.render();
-                    });
                     $(".one-file>div").addClass("layui-form-checked");
                     movein($(".one-file"));
                     $(".one-file>div").css("opacity", "1");
@@ -57,14 +54,9 @@ $(function () {
                     $(".file-caozuo-wrap").hide();
                     $(".one-file").css("border", "1px solid #e5e5e5");
                     $(".one-file-wrap input").attr('checked', false);
-                    layui.use('form', function () {
-                        var form = layui.form;
-                        form.render();
-                    });
                     moveout($(".one-file"));
                     $(".file-names>span").text("全选")
                 }
-
             });
 
             /**
@@ -145,21 +137,8 @@ $(function () {
 
     // 鼠标移入 函数
     function movein(that) {
-        if(fileName === '公共模型库'){
-            that.find("i").css("opacity", "1");
-            that.find(".img-show-operate").css("opacity", "0");
-            return false;
-        }
-        // that.find("div").css("opacity", "1");
         that.find("i").css("opacity", "1");
-         // console.log(that.siblings('.one-file-name').text());
-        if(that.siblings('.one-file-name').text() !== '公共模型库'){
-            that.find("i").css("opacity", "1");
-            that.find(".img-show-operate").css("opacity", "1");
-        }else {
-            that.find("i").css("opacity", "0");
-            that.find(".img-show-operate").css("opacity", "0");
-        }
+        that.find(".img-show-operate").css("opacity", "1");
     }
 
     function moveout(that) {

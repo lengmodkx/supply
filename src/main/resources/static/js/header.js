@@ -54,12 +54,6 @@ $(function () {
            }
        });
     });
-// var a=(1/6)*100;
-// var b=2/6*100;
-// var c=3/6*100
-//     $(".tasklist-strip-wrap>div:nth-of-type(1)").css("width",a+'%')
-//     $(".tasklist-strip-wrap>div:nth-of-type(2)").css("width",b+'%')
-//     $(".tasklist-strip-wrap>div:nth-of-type(3)").css("width",c+'%')
 
     $(".icon-arrow-circle-o-down").click(function (e) {
         var length = $('.fenzu-ul li').length;
@@ -364,25 +358,6 @@ $(".xialakuang").click(function (e) {
     $('.head-right .avatar').click(function () {
          $('.vertical-nav').slideToggle();
     });
-
-
-    //     $( "#sortable" ).sortable();
-    //
-    // // $('.sortable').sortable({
-    // //     cursor:"move",
-    // //     items:'.tile',
-    // //     handle:'.model-title',
-    // //     axis: 'x',
-    // //     tolerance: 'pointer',
-    // //     placeholder: 'model',
-    // //     stop:function (event,ui) {
-    // //         console.log(ui);
-    // //         var ids = $('.sortable').sortable('toArray');
-    // //         // $.post("/project/updateMenusOrder",{"ids":ids.toString()},function (data) {
-    // //         //     console.log(data);
-    // //         // });
-    // //     }
-    // // });
 
     /**
      * 点击编辑任务分组
