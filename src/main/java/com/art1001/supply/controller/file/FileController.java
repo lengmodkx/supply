@@ -133,7 +133,7 @@ public class FileController extends BaseController {
 
         //如果用户点击的 公共模型库 的文件夹 则去文件公共表查询数据
         if(fileById != null && publicName.equals(fileById.getFileName())){
-            fileList = fileService.findPublicFile();
+            fileList = fileService.findPublicFile(parentId);
         } else{
             fileList = fileService.findChildFile(projectId, parentId, fileDel);
         }

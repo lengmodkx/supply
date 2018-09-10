@@ -193,10 +193,11 @@ import java.util.List;
 	void recoveryFile(String fileId);
 
 	/**
-	 * 查询出所有的 公开文件
+	 * 查询某个文件夹下的公开文件
+	 * @param parentId 父文件夹id
 	 * @return
 	 */
-	List<File> findPublicFile();
+	List<File> findPublicFile(String parentId);
 
 	/**
 	 * 上传文件到公开的文件库

@@ -31,16 +31,16 @@ public class PublicFileController {
     private FileService fileService;
 
     /**
-     * 查询出公共文件库的所有文件
+     * 查询出公共文件库的文件
      *
      * @return
      */
-    @PostMapping("findAllPublicFile")
+    @GetMapping("findAllPublicFile")
     @ResponseBody
-    public JSONObject findAllPublicFile() {
+    public JSONObject findAllPublicFile(@RequestParam(value = "parentId",defaultValue = "0",required = false) String parentId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<File> publicFile = fileService.findPublicFile();
+            List<File> publicFile = fileService.findPublicFile(parentId);
             jsonObject.put("data", publicFile);
         } catch (Exception e) {
             log.error(e.getMessage());

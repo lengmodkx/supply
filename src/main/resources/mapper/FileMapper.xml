@@ -505,9 +505,9 @@
 		from prm_file where file_del = 1 and project_id = #{projectId}
 	</select>
 
-	<!-- 查询出所有的公开文件 -->
+	<!-- 查询某个文件夹下的公开文件 -->
 	<select id="findPublicFile" resultMap="PublicMap">
-		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file where catalog = 0
+		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file where parent_id = #{parentId}
 	</select>
 
 	<insert id="savePublicFile">

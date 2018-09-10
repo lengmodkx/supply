@@ -519,12 +519,13 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * 查询出所有的 公开文件
+     * 查询某个文件夹下的公开文件
+     * @param parentId 父文件夹id
      * @return
      */
     @Override
-    public List<File> findPublicFile() {
-        return fileMapper.findPublicFile();
+    public List<File> findPublicFile(String parentId) {
+        return fileMapper.findPublicFile(parentId);
     }
 
     /**
