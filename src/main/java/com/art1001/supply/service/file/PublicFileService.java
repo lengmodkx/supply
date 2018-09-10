@@ -76,4 +76,12 @@ public interface PublicFileService {
 	 * @return
 	 */
     void createPublicFolder(String folderName, String parentId);
+
+	/**
+	 * 查询同名的文件数量
+	 * @param fileName 文件名称
+	 * @param parentId 文件的父id
+	 * @return
+	 */
+	int findFileNameCount(String fileName,String parentId);
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.PublicFileService;
 import lombok.extern.log4j.Log4j;
@@ -123,6 +124,10 @@ public class PublicFileController {
             PublicFile publicFile = new PublicFile();
             publicFileService.createPublicFolder(folderName,parentId);
             jsonObject.put("result",1);
+        } catch (ServiceException e){
+            log.error(e.getMessage());
+            jsonObject.put("result",0);
+            jsonObject.put("msg",e.getMessage());
         } catch (Exception e){
             e.printStackTrace();
             log.error(e.getMessage());

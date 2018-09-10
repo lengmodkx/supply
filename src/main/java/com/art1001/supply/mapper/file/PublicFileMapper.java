@@ -8,6 +8,8 @@ import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 
 /**
  * 公共文件库mapper接口
@@ -75,4 +77,13 @@ public interface PublicFileMapper {
 
 
     void createPublicFolder(@Param("folderName") String folderName, @Param("parentId") String parentId);
+
+	/**
+	 * 查询同名的文件数量
+	 * @param fileName 文件名称
+	 * @param parentId 文件的父id
+	 * @return
+	 */
+	@Select("select count(0) from prm_public_file where file_name = #{fileName} and parent_id = #{parentId}")
+    int findFileNameCount(@Param("fileName") String fileName, @Param("parentId")String parentId);
 }

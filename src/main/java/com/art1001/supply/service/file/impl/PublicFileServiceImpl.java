@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.PublicFileMapper;
 import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.util.IdGen;
@@ -111,12 +112,28 @@ public class PublicFileServiceImpl implements PublicFileService {
 	 */
 	@Override
 	public void createPublicFolder(String folderName, String parentId) {
-		PublicFile publicFile = new PublicFile();
+		//查询出该名称的文件数量
+        int fileNameCount = findFileNameCount(folderName, parentId);
+        if(fileNameCount > 0){
+            throw new ServiceException("该名称已存在!");
+        }
+        PublicFile publicFile = new PublicFile();
 		publicFile.setFileId(IdGen.uuid());
 		publicFile.setFileName(folderName);
 		publicFile.setParentId(parentId);
 		publicFile.setCreateTime(System.currentTimeMillis());
 		publicFile.setCatalog(1);
 		publicFileMapper.savePublicFile(publicFile);
+	}
+
+	/**
+	 * 查询同名的文件数量
+	 * @param fileName 文件名称
+	 * @param parentId 文件的父id
+	 * @return
+	 */
+	@Override
+	public int findFileNameCount(String fileName, String parentId) {
+		return publicFileMapper.findFileNameCount(fileName,parentId);
 	}
 }
