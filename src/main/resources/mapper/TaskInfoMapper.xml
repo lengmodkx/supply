@@ -27,28 +27,34 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-       ,pt.task_name,tu.u_name,pr.relation_name,
-      (SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id) AS task_group
+       ,pt.task_name,
+       tu.u_name,
+       pr.relation_name,
+       <include refid="Base_Column_Group"/> AS task_group
        FROM prm_task pt
        LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
        LEFT JOIN tb_user tu ON pt.executor=tu.u_name
     </sql>
 
+    <sql id="Base_Column_Group">
+        (SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id)
+    </sql>
+
     <sql id="Base_Column_QBC">
-        <if test="taskGroup != null and taskGroup != ''">
-            AND (SELECT pr1.relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id) IN (#{taskGroup})  -- 按分组查询
+        <if test="stDTO.taskGroup != null and stDTO.taskGroup != ''">
+            AND <include refid="Base_Column_Group"/> IN (#{taskGroup})  -- 按分组查询
         </if>
-        <if test="taskMember != null and taskMember != ''">
+        <if test="stDTO.taskMember != null and stDTO.taskMember != ''">
             AND tu.u_name  IN (#{taskMember})      -- 按成员  可以是 u_id 也可以是 u_name  建议使用 u_id
         </if>
-        <if test="taskChild != null and taskChild != ''">
+        <if test="stDTO.taskChild != null and stDTO.taskChild != ''">
             AND  pt.parent_id!='0'                 -- 按是否是子任务查询
         </if>
-        <if test="recycle != null and recycle != ''">
+        <if test="stDTO.recycle != null and stDTO.recycle != ''">
             AND pt.task_del = 0                     -- 是否按回收站进行查询
         </if>
-        <if test="taskCount != null and taskCount != ''">
-             -- 按任务数或者工时  要另写一个sql
+        <if test="stDTO.taskCount != null and stDTO.taskCount != ''">
+             -- 按任务数或者工时
         </if>
     </sql>
 
@@ -58,22 +64,25 @@
     </select>
 
     <!-- 未完成任务数据 -->
-    <select id="selectUnfinishTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+    <select id="selectUnfinishTask"  resultMap="BaseResultMap">
         SELECT
         FROM_UNIXTIME(pt.end_time,'%Y-%m-%d') as  end_time
         <include refid="Base_Column_List"/>
-       WHERE pt.task_status='未完成'
+       WHERE pt.task_status=#{unfinishTaskCase}
        <include refid="Base_Column_QBC"/>
     </select>
 
+
+
     <!-- 已完成任务数据 -->
-    <select id="selectFinishTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+    <select id="selectFinishTask"  resultMap="BaseResultMap">
         SELECT
         FROM_UNIXTIME(pt.update_time,'%Y-%m-%d') as finish_time
         <include refid="Base_Column_List"/>
-       WHERE pt.task_status='完成'
+       WHERE pt.task_status=#{finishTaskCase}
        <include refid="Base_Column_QBC"/>
     </select>
+
 
     <!-- 今日到期任务数据   获取今天的时间 和 任务截至时间做一个对比  end_time = NOW()-->
     <select id="selectExpireTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
@@ -113,18 +122,32 @@
         <include refid="Base_Column_QBC"/>
     </select>
 
-    <!-- 按时完成任务数据   update_time 比当前时间小 且任务状态为完成   -->
-    <select id="selectExpiredToCompleteTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+    <!-- 任务按完成情况分布 -->
+
+    <!--  未完成任务数量 -->
+    <select id="selectUnfinishCount" resultType="java.lang.Integer">
+            SELECT COUNT(1) FROM prm_task pt WHERE pt.task_status=#{unfinishTaskCase}
+            <include refid="Base_Column_QBC"/>
+        </select>
+
+    <!--  已完成任务数量 -->
+    <select id="selectFinishCount" resultType="java.lang.Integer">
+            SELECT COUNT(1) FROM prm_task pt WHERE pt.task_status=#{finishTaskCase}
+            <include refid="Base_Column_QBC"/>
+        </select>
+
+    <!-- 任务按任务分组分布 -->
+    <select id="selectGroupByTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
         SELECT
-         FROM_UNIXTIME(pt.update_time,'%Y-%m-%d') as finish_time,
-        <![CDATA[ (DATEDIFF(FROM_UNIXTIME(pt.update_time,'%Y-%m-%d %T') ,FROM_UNIXTIME(pt.end_time,'%Y-%m-%d %T')))  as overdue_num]]>
-        <include refid="Base_Column_List"/>
-        WHERE <![CDATA[ FROM_UNIXTIME(pt.update_time,'%Y-%m-%d %T')  > FROM_UNIXTIME(pt.end_time,'%Y-%m-%d %T')  ]]>
-        AND pt.task_status='完成'
+        <include refid="Base_Column_Group"/> as task_group,
+        (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成' AND pt1.project_id=pr.project_id) AS task_finish,
+        (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成' AND pt1.project_id=pr.project_id) AS task_unfinish
+        FROM prm_task pt
+        LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
+        WHERE 1=1
         <include refid="Base_Column_QBC"/>
+        GROUP BY <include refid="Base_Column_Group"/>
     </select>
-
-
 
 
 </mapper>

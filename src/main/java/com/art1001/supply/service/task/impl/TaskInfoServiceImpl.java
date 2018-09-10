@@ -29,7 +29,14 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     @Resource
      private TaskInfoMapper taskInfoMapper;
 
-    private static Map<String, Object> map = null;
+     private static Map<String, Object> map = null;
+
+     /**
+      * 查询未完成和已完成时的传值
+      */
+     private static  final String  UNFINISH_TASK_CASE="未完成";
+
+     private static  final String  FINISH_TASK_CASE="完成";
 
 
 
@@ -83,7 +90,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             // 总任务数
             int count=this.taskInfoMapper.selectTaskCount();
             //查询未完成数据
-            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectUnfinishTask(statisticsDTO);
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectUnfinishTask(statisticsDTO,UNFINISH_TASK_CASE);
             map.put("未完成百分比", numChange((double)statisticsResultVOList.size()/count));
             map.put("未完成", statisticsResultVOList.size());
             map.put("详情表", statisticsResultVOList);
@@ -103,7 +110,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             //总任务数
             int count = this.taskInfoMapper.selectTaskCount();
             //查询已完成任务
-            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectFinishTask(statisticsDTO);
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectFinishTask(statisticsDTO,FINISH_TASK_CASE);
             map.put("已完成百分比",numChange((double)statisticsResultVOList.size()/count));
             map.put("已完成", statisticsResultVOList.size());
             map.put("详情表", statisticsResultVOList);
@@ -232,6 +239,69 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     }
 
     /**
+     * 任务按完成情况分布
+     */
+    private Map selectCompletionTask(StatisticsDTO statisticsDTO) {
+        try {
+            //总任务数
+            int count = this.taskInfoMapper.selectTaskCount();
+            //未完成任务
+            int unfinishCount = this.taskInfoMapper.selectUnfinishCount(statisticsDTO,UNFINISH_TASK_CASE);
+            //已完成任务
+            int finishCount = this.taskInfoMapper.selectFinishCount(statisticsDTO,FINISH_TASK_CASE);
+            List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
+            StatisticsResultVO vO1=new StatisticsResultVO();
+            vO1.setFinishTaskNum(unfinishCount);
+            vO1.setTaskCase(UNFINISH_TASK_CASE);
+            StatisticsResultVO vO2=new StatisticsResultVO();
+            vO2.setFinishTaskNum(finishCount);
+            vO2.setTaskCase(FINISH_TASK_CASE);
+            statisticsResultVOList.add(vO1);
+            statisticsResultVOList.add(vO2);
+            map.put("未完成百分比", numChange((double)unfinishCount / count));
+            map.put("已完成百分比", numChange((double)finishCount / count));
+            map.put("详情表", statisticsResultVOList);
+        } catch (Exception e) {
+            map = null;
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
+     * 任务按任务分组分布
+     */
+    private Map selectGroupByTask(StatisticsDTO statisticsDTO) {
+        try {
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectGroupByTask(statisticsDTO);
+            //创建String对象 拼接前端需要的分组和任务数量数据
+            StringBuilder groupName = new StringBuilder();
+            StringBuilder unFinishNum = new StringBuilder();
+            StringBuilder finishNum = new StringBuilder();
+            //循环获取已完成和未完成 组名和任务数
+            if (statisticsResultVOList!=null && statisticsResultVOList.size()>0){
+                    for (StatisticsResultVO t : statisticsResultVOList) {
+                        groupName.append(t.getTaskGroup()).append(",");
+                        unFinishNum.append(t.getUnfinishTaskNum()).append(",");
+                        finishNum.append(t.getFinishTaskNum()).append(",");
+                    }
+                    if (groupName.length() > 0 && unFinishNum.length() > 0 && finishNum.length() > 0){
+                        map.put("任务分组", percentChange(groupName.toString()));
+                        map.put("未完成", percentChange(unFinishNum.toString()));
+                        map.put("已完成", percentChange(finishNum.toString()));
+                    }
+
+            }
+            map.put("详情表", statisticsResultVOList);
+        } catch (Exception e) {
+            map = null;
+            e.printStackTrace();
+        }
+        return  map;
+    }
+
+
+    /**
      * 任务按优先级分布
      */
     private Map selectPriorityTask(StatisticsDTO statisticsDTO) {
@@ -318,82 +388,9 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         return map;
     }
 
-    /**
-     * 任务按任务分组分布
-     */
-    private Map selectGroupByTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
-        try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskDistributionList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setListView("任务1");
-            to1.setUnfinishTaskNum(12);
-            to1.setFinishTaskNum(4);
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setListView("任务2");
-            to2.setUnfinishTaskNum(22);
-            to2.setFinishTaskNum(8);
-            taskDistributionList.add(to1);
-            taskDistributionList.add(to2);
-            //创建String对象 拼接前端需要的分组和任务数量数据
-            StringBuilder groupName = new StringBuilder();
-            StringBuilder unFinishNum = new StringBuilder();
-            StringBuilder finishNum = new StringBuilder();
-            //循环获取已完成和未完成 组名和任务数
-            for (StatisticsResultVO t : taskDistributionList) {
-                groupName.append(t.getListView()).append(",");
-                unFinishNum.append(t.getUnfinishTaskNum()).append(",");
-                finishNum.append(t.getFinishTaskNum()).append(",");
-            }
-            if (groupName.length() > 0 && unFinishNum.length() > 0 && finishNum.length() > 0){
-                map.put("任务分组", percentChange(groupName.toString()));
-                map.put("未完成", percentChange(unFinishNum.toString()));
-                map.put("已完成", percentChange(finishNum.toString()));
-            }
-            map.put("详情表", taskDistributionList);
-        } catch (Exception e) {
-            map = null;
-            e.printStackTrace();
-        }
-        return  map;
-    }
 
-    /**
-     * 任务按完成情况分布
-     */
-    private Map selectCompletionTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
-        try {
-            //总任务数
-            double count = 62D;
-            //未完成数
-            double unFinishd = 10D;
-            //已完成数
-            double finishd = 52D;
-            //计算小数
-            double percent = unFinishd / count;
-            double percentT = finishd / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskDistributionList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setTaskCase("未完成");
-            to1.setTaskCountInt(10);
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setTaskCase("已完成");
-            to2.setTaskCountInt(52);
-            taskDistributionList.add(to1);
-            taskDistributionList.add(to2);
 
-            map.put("未完成百分比",numChange(percent));
-            map.put("已完成百分比", numChange(percentT));
-            map.put("详情表", taskDistributionList);
-        } catch (Exception e) {
-            map = null;
-            e.printStackTrace();
-        }
-        return map;
-    }
+
 
     private Map selectTimeOverdue(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);

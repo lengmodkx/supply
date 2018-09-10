@@ -355,22 +355,22 @@ public class FileController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if (StringUtils.isEmpty(parentId)) {
-                parentId = "0";
-            }
 
-            //判断当前文件夹的名字是否在库中存在
-            int result = fileService.findFolderIsExist(folderName,projectId,parentId);
-            if(result > 0){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","文件夹已经存在！");
-                return jsonObject;
+            File fileById = fileService.findFileById(parentId);
+            if(fileById != null && publicName.equals(fileById.getFileName())){
+                publicFileService.createPublicFolder(folderName,parentId);
+            }else{
+                //判断当前文件夹的名字是否在库中存在
+                int result = fileService.findFolderIsExist(folderName,projectId,parentId);
+                if(result > 0){
+                    jsonObject.put("result",0);
+                    jsonObject.put("msg","文件夹已经存在！");
+                    return jsonObject;
+                }
+                fileService.createFolder(projectId, parentId, folderName);
             }
-
-            File file = fileService.createFolder(projectId, parentId, folderName);
 
             jsonObject.put("result", 1);
-            jsonObject.put("data", file);
             jsonObject.put("msg", "创建成功");
         } catch (Exception e) {
             log.error("创建文件夹异常, {}", e);
@@ -502,6 +502,7 @@ public class FileController extends BaseController {
             @RequestParam(value = "fileCommon") String fileCommon
             ,String fileModel
             ,String parentId
+            ,String filename
     ) {
         JSONObject jsonObject = new JSONObject();
         if(fileModel.equals("{}") || fileCommon.equals("{}")){
@@ -520,7 +521,7 @@ public class FileController extends BaseController {
             // 写库
             File myFile = new File();
             // 用原本的文件名
-            myFile.setFileName(fileName);
+            myFile.setFileName(filename+ext);
             myFile.setExt(ext);
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
@@ -530,18 +531,22 @@ public class FileController extends BaseController {
             myFile.setCatalog(0);
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             myFile.setFileThumbnail(array.getString("fileUrl"));
-            fileService.saveFile(myFile);
-
-            FileVersion fileVersion = new FileVersion();
-            fileVersion.setFileId(myFile.getFileId());
-            fileVersion.setFileSize(size);
-            fileVersion.setFileUrl(fileUrl);
-            fileVersion.setIsMaster(1);
-            Date time = Calendar.getInstance().getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String format = simpleDateFormat.format(time);
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-            fileVersionService.saveFileVersion(fileVersion);
+            File fileById = fileService.findFileById(parentId);
+            if(fileById != null && publicName.equals(fileById.getFileName())){
+                fileService.savePublicFile(myFile);
+            } else {
+                fileService.saveFile(myFile);
+                FileVersion fileVersion = new FileVersion();
+                fileVersion.setFileId(myFile.getFileId());
+                fileVersion.setFileSize(size);
+                fileVersion.setFileUrl(fileUrl);
+                fileVersion.setIsMaster(1);
+                Date time = Calendar.getInstance().getTime();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String format = simpleDateFormat.format(time);
+                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+                fileVersionService.saveFileVersion(fileVersion);
+            }
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);

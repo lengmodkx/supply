@@ -191,8 +191,8 @@
         <div class="file-queue-box">
             <ul th:class="task-file+${task.taskId}" >
                 <li class="boxsizing" th:each="taskFile:${task.taskFileList}" >
-                    <img th:src="#{IMAGE_SERVER}+${taskFile.fileThumbnail}" th:if="${taskFile.fileThumbnail!=null}"/>
-                    <img src="/image/file_1.png" th:if="${taskFile.fileThumbnail==null}"/>
+                    <img th:data-id="${taskFile.id}+${taskFile.fileExt}" th:src="#{IMAGE_SERVER}+${taskFile.fileThumbnail}" th:if="${taskFile.fileThumbnail!=null}"/>
+                    <img th:src="@{/image/file_1.png}" th:if="${taskFile.fileThumbnail==null}"/>
                     <p class="file-name" th:text="${#strings.length(taskFile.fileName) gt 10 ? #strings.substring(taskFile.fileName,0,9)+taskFile.fileExt:taskFile.fileName}">文件</p>
                     <span th:id="${taskFile.id}" class="download">下载文件</span>
                 </li>

@@ -69,7 +69,7 @@ public class TaskEnclosureController {
      */
     @PostMapping("/uploadModel")
     @ResponseBody
-    public JSONObject uploadModel(String projectId, String fileCommon,String fileModel,String taskId) {
+    public JSONObject uploadModel(String projectId, String fileCommon,String fileModel,String taskId,String filename) {
         JSONObject jsonObject = new JSONObject();
         if(fileModel.equals("{}") || fileCommon.equals("{}")){
             jsonObject.put("result",0);
@@ -86,7 +86,7 @@ public class TaskEnclosureController {
             // 写库
             TaskFile taskFile = new TaskFile();
             taskFile.setTaskId(taskId);
-            taskFile.setFileName(fileName);
+            taskFile.setFileName(filename+ext);
             taskFile.setFileSize(size);
             taskFile.setFileExt(ext);
             taskFile.setFileUrl(fileUrl);

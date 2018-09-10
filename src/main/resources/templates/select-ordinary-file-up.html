@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
+<head>
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
@@ -26,7 +26,8 @@
 </div>
 
 </body>
-
+<script th:src="@{/js/jquery-2.2.4.min.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
 <script th:inline="javascript">
     var projectId = [[${projectId}]];
     var parentId = [[${parentId}]];

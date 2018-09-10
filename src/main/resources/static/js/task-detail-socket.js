@@ -136,20 +136,14 @@ function subscribe() {
             var taskFile = taskLog.object.taskFile;
             var li='<li class="boxsizing">';
             if(taskFile.fileThumbnail!=null){
-                li+='<img src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
-                if(taskFile.fileName.length>10){
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                }else{
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载</span>';
-                }
-
+                li+='<img data-id="'+taskFile.id+taskFile.fileExt+'" src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
             }else{
-                li+='<img src="/image/file_1.png" />';
-                if(taskFile.fileName.length>10){
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                }else{
-                    li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载</span>';
-                }
+                li+='<img data-id="'+taskFile.id+taskFile.fileExt+'" src="/image/file_1.png" />';
+            }
+            if(taskFile.fileName.length>10){
+                li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
+            }else{
+                li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
             }
             li+='</li>';
             $('.task-file'+taskLog.object.taskId).append(li);
@@ -157,27 +151,23 @@ function subscribe() {
 
         if(taskLog.type==='添加普通附件'){
             var taskFiles = taskLog.object.taskFiles;
+            $('.task-file'+taskLog.object.taskId).html("");
             for(var j=0;j<taskFiles.length;j++){
-                var taskFile = taskFiles[j];
-                var li='<li class="boxsizing">';
-                if(taskFile.fileThumbnail!=null){
-                    li+='<img src="'+IMAGE_SERVER+taskFile.fileThumbnail+'"/>';
-                    if(taskFile.fileName.length>10){
-                        li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                    }else{
-                        li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                    }
-
+                var taskFile1 = taskFiles[j];
+                var temp='<li class="boxsizing">';
+                if(taskFile1.fileThumbnail!=null){
+                    temp+='<img data-id="'+taskFile1.id+taskFile1.fileExt+'" src="'+IMAGE_SERVER+taskFile1.fileThumbnail+'"/>';
                 }else{
-                    li+='<img src="/image/file_1.png" />';
-                    if(taskFile.fileName.length>10){
-                        li += '<p class="over-hidden file-name">'+taskFile.fileName.substring(0,9)+taskFile.fileExt+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                    }else{
-                        li += '<p class="over-hidden file-name">'+taskFile.fileName+'</p><span id="'+taskFile.id+'" class="download">下载文件</span>';
-                    }
+                    temp+='<img data-id="'+taskFile1.id+taskFile1.fileExt+'" src="/image/file_1.png" />';
+
                 }
-                li+='</li>';
-                $('.task-file'+taskLog.object.taskId).append(li);
+                if(taskFile1.fileName.length>10){
+                    temp += '<p class="over-hidden file-name">'+taskFile1.fileName.substring(0,9)+taskFile1.fileExt+'</p><span id="'+taskFile1.id+'" class="download">下载文件</span>';
+                }else{
+                    temp += '<p class="over-hidden file-name">'+taskFile1.fileName+'</p><span id="'+taskFile1.id+'" class="download">下载文件</span>';
+                }
+                temp+='</li>';
+                $('.task-file'+taskLog.object.taskId).append(temp);
             }
         }
 

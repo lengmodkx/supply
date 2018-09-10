@@ -27,9 +27,9 @@
             <div class="file-toper" id="container">
                 <span><a href="javascript: void(0)"
                          onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
-                <div class="add-share" id="selectfiles" th:if="${fileName != '公共模型库'}"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
+                <div class="add-share" id="selectfiles"><img th:src="@{/image/upload.png}" src="../static/image/upload.png">上传
                 </div>
-                <div class="add-share" id="createFolder" th:if="${fileName != '公共模型库'}"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
+                <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" src="../static/image/add.png">创建文件夹
                 </div>
             </div>
             <div class="check-all-file">
@@ -65,7 +65,6 @@
                     <ul class="img-show clearfix" id="fileListUl">
                         <li class="boxsizing new-file-wrap" style="display: none">
                             <div class="one-file">
-                                <i class="iconfont icon-suo"></i>
                                 <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
                             </div>
                             <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
@@ -74,17 +73,17 @@
                             <div class="one-file boxsizing fileList" th:data="${file.fileId}" th:data-id="${file.catalog}">
                                 <input class="pick-it" type="checkbox" name="fileCheck" th:value="${file.fileId}" title="" lay-skin="primary" lay-filter="checks">
                                 <img class="folderFile" th:src="@{/image/nofile.png}" th:if="${file.catalog eq 1}">
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${exts.get('images').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.doc'} or ${file.ext eq '.docx'})"/>
-                                <img class="folderFile" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.xls'} or ${file.ext eq '.xlsx'})"/>
-                                <img class="folderFile" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.pptx'} or ${file.ext eq '.ppt'})"/>
-                                <img class="folderFile" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
-                                <img class="folderFile" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
-                                <img class="folderFile" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
-                                <img class="folderFile" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
-                                <img class="folderFile" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
-                                <img class="folderFile" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${exts.get('compress').contains(file.ext)}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="#{IMAGE_SERVER} + ${file.fileUrl}" th:if="${file.catalog eq 0} and ${exts.get('images').contains(file.ext)}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/word_1.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.doc'} or ${file.ext eq '.docx'})"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/excel.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.xls'} or ${file.ext eq '.xlsx'})"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/ppt.png}" th:if="${file.catalog eq 0} and (${file.ext eq '.pptx'} or ${file.ext eq '.ppt'})"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/pdf_1.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.pdf'}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/zip.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.zip'}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/rar.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.rar'}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/txt.png}" th:if="${file.catalog eq 0} and ${file.ext eq '.txt'}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/duomeiti.png}" th:if="${file.catalog eq 0} and ${exts.get('medias').contains(file.ext)}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="#{IMAGE_SERVER} + ${file.fileThumbnail}" th:if="${file.catalog eq 0} and ${exts.get('model').contains(file.ext)}"/>
+                                <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${exts.get('compress').contains(file.ext)}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;" th:if="${file.catalog eq 0}"></i>
                                 <i class="iconfont icon-suo" th:style="'display:' + @{(${file.filePrivacy}==0? 'none' : 'block')} + ''"></i>
                                 <div class="img-show-operate" th:if="${file.catalog eq 0}">
