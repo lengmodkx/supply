@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.task;
 
 import com.art1001.supply.entity.statistics.StatisticsDTO;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,21 +23,26 @@ public interface TaskInfoMapper {
     /**
      *查询未完成
      * @param statisticsDTO 条件查询数据
+     * @param unfinishTaskCase 查询任务状态为未完成
      * @return  int
      */
-    int selectUnfinishCount(StatisticsDTO statisticsDTO);
+    int selectUnfinishCount(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("unfinishTaskCase") String unfinishTaskCase);
 
-    List<StatisticsResultVO> selectUnfinishTask(StatisticsDTO statisticsDTO);
+    int selectFinishCount(@Param("stDTO") StatisticsDTO statisticsDTO,  @Param("finishTaskCase") String finishTaskCase);
 
-    List<StatisticsResultVO> selectFinishTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectExpireTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 
-    List<StatisticsResultVO> selectExpireTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectOverdueTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 
-    List<StatisticsResultVO> selectOverdueTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectWaitClaimTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 
-    List<StatisticsResultVO> selectWaitClaimTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectPunctualityTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 
-    List<StatisticsResultVO> selectPunctualityTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectExpiredToCompleteTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 
-    List<StatisticsResultVO> selectExpiredToCompleteTask(StatisticsDTO statisticsDTO);
+    List<StatisticsResultVO> selectUnfinishTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("unfinishTaskCase") String unfinishTaskCase);
+
+    List<StatisticsResultVO> selectFinishTask(@Param("stDTO") StatisticsDTO statisticsDTO,  @Param("finishTaskCase") String finishTaskCase);
+
+    List<StatisticsResultVO> selectGroupByTask(@Param("stDTO") StatisticsDTO statisticsDTO);
 }
