@@ -7,6 +7,7 @@ import com.art1001.supply.mapper.task.TaskInfoMapper;
 import com.art1001.supply.service.task.TaskInfoService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     /**
      * 统计页面数据详情
      */
+    @Resource
      private TaskInfoMapper taskInfoMapper;
 
     private static Map<String, Object> map = null;
@@ -33,102 +35,43 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 
     @Override
     public Map selectTask(StatisticsDTO statisticsDTO, String chartId) {
-        /*
-         *获取任务总量
-         */
-        //int count=62;
-
-
+        map = new HashMap<>(16);
         /*
          *查询统计页面总量概览的chart参数
          * 1 未完成 2 已完成 3 总量 4 今日到期 5 已逾期 6 待认领 7 按时完成 8 逾期完成
-         */
-        /*
-         *查询任务分布的chart数据
          * TASKONE 任务按完成情况分布 TASKTWO 任务按任务分组分布 TASKTHREE 任务按执行者分布 TASKFOUR 任务按优先级分布
          * TASKFIVE  期间完成的任务   TASKSIX 期间未完成的任务   TASKSERVEN   期间逾期的任务
          */
         if (chartId != null && !"".equals(chartId)) {
-            if (StaticticsVO.HANGINTHEAIR.equals(chartId)) {
-                return this.selectUnfinishedTask(statisticsDTO);
-            }
-            else if (StaticticsVO.COMPLETED.equals(chartId)) {
-                return this.selectFinishedTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKTOTALCOUNT.equals(chartId)) {
-                return this.selectTotalTask(statisticsDTO);
-            }
-            else if (StaticticsVO.MATURINGTODAY.equals(chartId)) {
-                return this.selectExpireTask(statisticsDTO);
-            }
-            else if (StaticticsVO.BEOVERDUE.equals(chartId)) {
-                return this.selectOverdueTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TOBECLAIMED.equals(chartId)) {
-                return this.selectWaitClaimTask(statisticsDTO);
-            }
-            else if (StaticticsVO.FINISHONTIME.equals(chartId)) {
-                return this.selectPunctualityTask(statisticsDTO);
-            }
-            else if (StaticticsVO.OVERDUECOMPLETION.equals(chartId)) {
-                return this.selectExpiredToCompleteTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKONE.equals(chartId)) {
-                return this.selectCompletionTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKTWO.equals(chartId)) {
-                return this.selectGroupByTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKTHREE.equals(chartId)) {
-                return this.selectExcutorTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKFOUR.equals(chartId)) {
-                return this.selectPriorityTask(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKFIVE.equals(chartId)) {
-                return this.selectTimeFinish(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKSIX.equals(chartId)) {
-                return this.selectTimeUnfinish(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKSERVEN.equals(chartId)) {
-                return this.selectTimeOverdue(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKEIGHT.equals(chartId)) {
-                return this.selectUpdateTaskTime(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKNINE.equals(chartId)) {
-                return this.selectMoreParticipation(statisticsDTO);
-            }
-            else if (StaticticsVO.TASKTEN.equals(chartId)) {
-                return this.selectEndTimeTaskFinish(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK1.equals(chartId)) {
-                return this.selectTaskByExcutor(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK2.equals(chartId)) {
-                return this.selectTaskByEndTime(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK3.equals(chartId)) {
-                return this.selectProjectProgress(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK4.equals(chartId)) {
-                return this.selectDayFinish(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK5.equals(chartId)) {
-                return this.selectDayFinishByAVG(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK6.equals(chartId)) {
-                return this.selectTaskBurnOut(statisticsDTO);
-            }
-            else if (StaticticsVO.TASK7.equals(chartId)) {
-                return this.selectTaskDifSuccess(statisticsDTO);
-            }
+            if (StaticticsVO.HANGINTHEAIR.equals(chartId)) { return this.selectUnfinishedTask(statisticsDTO); }
+            else if (StaticticsVO.COMPLETED.equals(chartId)) { return this.selectFinishedTask(statisticsDTO); }
+            else if (StaticticsVO.TASKTOTALCOUNT.equals(chartId)) { return this.selectTotalTask(); }
+            else if (StaticticsVO.MATURINGTODAY.equals(chartId)) { return this.selectExpireTask(statisticsDTO); }
+            else if (StaticticsVO.BEOVERDUE.equals(chartId)) { return this.selectOverdueTask(statisticsDTO); }
+            else if (StaticticsVO.TOBECLAIMED.equals(chartId)) { return this.selectWaitClaimTask(statisticsDTO); }
+            else if (StaticticsVO.FINISHONTIME.equals(chartId)) { return this.selectPunctualityTask(statisticsDTO); }
+            else if (StaticticsVO.OVERDUECOMPLETION.equals(chartId)) { return this.selectExpiredToCompleteTask(statisticsDTO); }
+            else if (StaticticsVO.TASKONE.equals(chartId)) { return this.selectCompletionTask(statisticsDTO); }
+            else if (StaticticsVO.TASKTWO.equals(chartId)) { return this.selectGroupByTask(statisticsDTO); }
+            else if (StaticticsVO.TASKTHREE.equals(chartId)) { return this.selectExcutorTask(statisticsDTO); }
+            else if (StaticticsVO.TASKFOUR.equals(chartId)) { return this.selectPriorityTask(statisticsDTO); }
+            else if (StaticticsVO.TASKFIVE.equals(chartId)) { return this.selectTimeFinish(statisticsDTO); }
+            else if (StaticticsVO.TASKSIX.equals(chartId)) { return this.selectTimeUnfinish(statisticsDTO); }
+            else if (StaticticsVO.TASKSERVEN.equals(chartId)) { return this.selectTimeOverdue(statisticsDTO); }
+            else if (StaticticsVO.TASKEIGHT.equals(chartId)) { return this.selectUpdateTaskTime(statisticsDTO); }
+            else if (StaticticsVO.TASKNINE.equals(chartId)) { return this.selectMoreParticipation(statisticsDTO); }
+            else if (StaticticsVO.TASKTEN.equals(chartId)) { return this.selectEndTimeTaskFinish(statisticsDTO); }
+            else if (StaticticsVO.TASK1.equals(chartId)) { return this.selectTaskByExcutor(statisticsDTO); }
+            else if (StaticticsVO.TASK2.equals(chartId)) { return this.selectTaskByEndTime(statisticsDTO); }
+            else if (StaticticsVO.TASK3.equals(chartId)) { return this.selectProjectProgress(statisticsDTO); }
+            else if (StaticticsVO.TASK4.equals(chartId)) { return this.selectDayFinish(statisticsDTO); }
+            else if (StaticticsVO.TASK5.equals(chartId)) { return this.selectDayFinishByAVG(statisticsDTO); }
+            else if (StaticticsVO.TASK6.equals(chartId)) { return this.selectTaskBurnOut(statisticsDTO); }
+            else if (StaticticsVO.TASK7.equals(chartId)) { return this.selectTaskDifSuccess(statisticsDTO); }
         } else {
             System.out.println(">>>>>>>>>chartId=" + chartId + "statisticsDTO=" + statisticsDTO + ">>>>>>>");
             throw new NullPointerException();
         }
-
         return map;
     }
 
@@ -136,70 +79,16 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 未完成数据
      */
     private Map selectUnfinishedTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             // 总任务数
-            // double count = 62D;
             int count=this.taskInfoMapper.selectTaskCount();
-            //未完成数
-            double unFinish = 13D;
-            double percent = unFinish / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setEndTime("2018-08-21");
-            to1.setTaskName("施工计划");
-            to1.setExecutor("张先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22");
-            to2.setTaskName("深化设计");
-            to2.setExecutor("王先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订");
-            statisticsResultVOList.add(to1);
-            statisticsResultVOList.add(to2);
-
-            map.put("未完成百分比", numChange(percent));
-            map.put("未完成", unFinish);
+            //查询未完成数据
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectUnfinishTask(statisticsDTO);
+            map.put("未完成百分比", numChange((double)statisticsResultVOList.size()/count));
+            map.put("未完成", statisticsResultVOList.size());
             map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
-            System.out.println("-------------未完成报错-----------");
-            map = null;
-            e.printStackTrace();
-        }
-        return map;
-    }
-
-    /**
-     *每日完成任务的平均完成天数
-     */
-    private Map selectDayFinishByAVG(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
-        try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setFinishTime("2018-08-21  15:00");
-            to1.setTaskName("施工计划");
-            to1.setExecutor("Z先生");
-            to1.setTaskDayNum("4");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22  17:00");
-            to2.setTaskName("深化设计");
-            to2.setExecutor("W先生");
-            to2.setTaskDayNum("8");
-            statisticsResultVOList.add(to1);
-            statisticsResultVOList.add(to2);
-
-            String  excutor="8-31,9-01,9-02,9-03,9-04,9-05";
-            String  finish="1.0,0.9,2.0,1.5,1.5,1.7";
-
-            map.put("日期",excutor);
-            map.put("平均完成天数",finish);
-            map.put("详情表", statisticsResultVOList);
-        } catch (Exception e) {
+            System.out.println("---未完成报错---");
             map = null;
             e.printStackTrace();
         }
@@ -210,35 +99,16 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 已完成数据
      */
     private Map selectFinishedTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //未完成数
-            double finish = 49D;
-            double percent = finish / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setFinishTime("2018-08-23");
-            to1.setTaskName("施工计划2");
-            to1.setExecutor("李先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setFinishTime("2018-08-24");
-            to2.setTaskName("深化设计2");
-            to2.setExecutor("赵先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订2");
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("已完成百分比",numChange(percent));
-            map.put("已完成", finish);
-            map.put("详情表", taskConditionsList);
+            int count = this.taskInfoMapper.selectTaskCount();
+            //查询已完成任务
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectFinishTask(statisticsDTO);
+            map.put("已完成百分比",numChange((double)statisticsResultVOList.size()/count));
+            map.put("已完成", statisticsResultVOList.size());
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
-            System.out.println("已完成报错");
+            System.out.println("---已完成报错---");
             map = null;
             e.printStackTrace();
         }
@@ -248,10 +118,9 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     /**
      * 总数据
      */
-    private Map selectTotalTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
+    private Map selectTotalTask() {
         try {
-            int count = 62;
+            int count = this.taskInfoMapper.selectTaskCount();
             map.put("任务总量", count);
         } catch (Exception e) {
             System.out.println("任务总量报错");
@@ -265,33 +134,14 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 今日到期
      */
     private Map selectExpireTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //今日到期
-            double expire = 8D;
-            double percent = expire / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setCreateTime("2018-08-18");
-            to1.setTaskName("施工计划3");
-            to1.setExecutor("万先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估3");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setCreateTime("2018-08-19");
-            to2.setTaskName("深化设计3");
-            to2.setExecutor("亿先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订3");
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("已到期百分比",numChange(percent));
-            map.put("已到期", expire);
-            map.put("详情表", taskConditionsList);
+            int count = this.taskInfoMapper.selectTaskCount();
+            //查询今日到期的数据
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectExpireTask(statisticsDTO);
+            map.put("已到期百分比",numChange((double) statisticsResultVOList.size() / count));
+            map.put("已到期", statisticsResultVOList.size() / count);
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
             System.out.println("今日到期报错");
             map = null;
@@ -304,33 +154,14 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 已逾期
      */
     private Map selectOverdueTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //今日到期
-            double overdue = 6D;
-            double percent = overdue / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setEndTime("2018-08-21");
-            to1.setTaskName("施工计划4");
-            to1.setExecutor("赵先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估4");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22");
-            to2.setTaskName("深化设计4");
-            to2.setExecutor("黄先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订4");
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("已逾期百分比", numChange(percent));
-            map.put("已逾期", overdue);
-            map.put("详情表", taskConditionsList);
+            int count = this.taskInfoMapper.selectTaskCount();
+            //已逾期数据
+            List<StatisticsResultVO>  statisticsResultVOList = this.taskInfoMapper.selectOverdueTask(statisticsDTO);
+            map.put("已逾期百分比", numChange((double) statisticsResultVOList.size() / count));
+            map.put("已逾期", statisticsResultVOList.size());
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
             System.out.println("已逾期报错");
             map = null;
@@ -343,39 +174,21 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 待认领
      */
     private Map selectWaitClaimTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //今日到期
-            double waitClaim = 10D;
-            double percent = waitClaim / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setEndTime("2018-08-25");
-            to1.setTaskName("施工计划5");
-            to1.setExecutor("孙先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估5");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22");
-            to2.setTaskName("深化设计5");
-            to2.setExecutor("＃先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订5");
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("待认领百分比", numChange(percent));
-            map.put("待认领", waitClaim);
-            map.put("详情表", taskConditionsList);
+            int count = this.taskInfoMapper.selectTaskCount();
+            //待认领数据
+            List<StatisticsResultVO> statisticsResultVOList =this.taskInfoMapper.selectWaitClaimTask(statisticsDTO);
+            map.put("待认领百分比", numChange((double)statisticsResultVOList.size() / count));
+            map.put("待认领", statisticsResultVOList.size() / count);
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
             System.out.println("待认领报错");
             map = null;
             e.printStackTrace();
         }
         return map;
+
     }
 
     /**
@@ -385,30 +198,12 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //未完成数
-            double punctuality = 40D;
-            double percent = punctuality / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setEndTime("2018-08-21");
-            to1.setTaskName("施工计划7");
-            to1.setExecutor("冯先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估7");
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22");
-            to2.setTaskName("深化设计7");
-            to2.setExecutor("陈先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订7");
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("按时完成百分比",numChange(percent));
-            map.put("按时完成", punctuality);
-            map.put("详情表", taskConditionsList);
+            int count = this.taskInfoMapper.selectTaskCount();
+            //按时完成数据
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectPunctualityTask(statisticsDTO);
+            map.put("按时完成百分比",numChange((double)statisticsResultVOList.size()/count));
+            map.put("按时完成", statisticsResultVOList.size());
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
             System.out.println("按时完成报错");
             map = null;
@@ -421,35 +216,13 @@ public class TaskInfoServiceImpl implements TaskInfoService {
      * 逾期完成数据
      */
     private Map selectExpiredToCompleteTask(StatisticsDTO statisticsDTO) {
-        map = new HashMap<>(16);
         try {
             //总任务数
-            double count = 62D;
-            //未完成数
-            double expiredToComplete = 10D;
-            double percent = expiredToComplete / count;
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-            List<StatisticsResultVO> taskConditionsList = new ArrayList<>();
-            StatisticsResultVO to1 = new StatisticsResultVO();
-            to1.setEndTime("2018-08-21");
-            to1.setTaskName("施工计划8");
-            to1.setExecutor("刘先生");
-            to1.setTaskGroup("任务One");
-            to1.setListView("项目评估8");
-            to1.setOverdueNum(3);
-            StatisticsResultVO to2 = new StatisticsResultVO();
-            to2.setEndTime("2018-08-22");
-            to2.setTaskName("深化设计8");
-            to2.setExecutor("石先生");
-            to2.setTaskGroup("任务Two");
-            to2.setListView("合同签订8");
-            to2.setOverdueNum(5);
-            taskConditionsList.add(to1);
-            taskConditionsList.add(to2);
-
-            map.put("逾期完成百分比", numChange(percent));
-            map.put("逾期完成", expiredToComplete);
-            map.put("详情表", taskConditionsList);
+            int count =  this.taskInfoMapper.selectTaskCount();
+            List<StatisticsResultVO> statisticsResultVOList = this.taskInfoMapper.selectExpiredToCompleteTask(statisticsDTO);
+            map.put("逾期完成百分比", numChange((double)statisticsResultVOList.size()/count));
+            map.put("逾期完成", statisticsResultVOList.size());
+            map.put("详情表", statisticsResultVOList);
         } catch (Exception e) {
             System.out.println("逾期完成报错");
             map = null;
@@ -464,7 +237,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectPriorityTask(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
             List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
             StatisticsResultVO to1 = new StatisticsResultVO();
             to1.setTaskPrecedence("十万火急");
@@ -521,7 +293,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectExcutorTask(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
             List<StatisticsResultVO> taskDistributionList = new ArrayList<>();
             StatisticsResultVO to1 = new StatisticsResultVO();
             to1.setExecutor("李雷");
@@ -679,7 +450,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectTimeUnfinish(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
             List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
             StatisticsResultVO to1 = new StatisticsResultVO();
             to1.setExecutor("赵XX");
@@ -731,7 +501,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectTimeFinish(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
             List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
             StatisticsResultVO to1 = new StatisticsResultVO();
             to1.setExecutor("张XX");
@@ -781,7 +550,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectMoreParticipation(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
             List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
             StatisticsResultVO to1 = new StatisticsResultVO();
             to1.setTaskName("78910J");
@@ -867,8 +635,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private Map selectUpdateTaskTime(StatisticsDTO statisticsDTO) {
         map = new HashMap<>(16);
         try {
-//        this.taskInfoMapper.selectUnfinishedTask(statisticsDTO);
-
 
             //详情表信息
             List<StatisticsResultVO> statisticsResultVOList1 = new ArrayList<>();
@@ -1125,6 +891,39 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         String format = nt.format(num);
         return format;
 
+    }
+
+    /**
+     *每日完成任务的平均完成天数
+     */
+    private Map selectDayFinishByAVG(StatisticsDTO statisticsDTO) {
+        map = new HashMap<>(16);
+        try {
+            List<StatisticsResultVO> statisticsResultVOList = new ArrayList<>();
+            StatisticsResultVO to1 = new StatisticsResultVO();
+            to1.setFinishTime("2018-08-21  15:00");
+            to1.setTaskName("施工计划");
+            to1.setExecutor("Z先生");
+            to1.setTaskDayNum("4");
+            StatisticsResultVO to2 = new StatisticsResultVO();
+            to2.setEndTime("2018-08-22  17:00");
+            to2.setTaskName("深化设计");
+            to2.setExecutor("W先生");
+            to2.setTaskDayNum("8");
+            statisticsResultVOList.add(to1);
+            statisticsResultVOList.add(to2);
+
+            String  excutor="8-31,9-01,9-02,9-03,9-04,9-05";
+            String  finish="1.0,0.9,2.0,1.5,1.5,1.7";
+
+            map.put("日期",excutor);
+            map.put("平均完成天数",finish);
+            map.put("详情表", statisticsResultVOList);
+        } catch (Exception e) {
+            map = null;
+            e.printStackTrace();
+        }
+        return map;
     }
 
 }
