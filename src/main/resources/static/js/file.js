@@ -169,7 +169,7 @@ $(function () {
     $('html').on('click','.img-show-operate',function (e) {
         e.stopPropagation();
         var fileId = $(this).parent().next().attr("data");
-        var top = $(this).offset().top+10;
+        var top = $(this).offset().top-200;
         var left = $(this).offset().left+10;
         headPhoto(top, left, fileId)
     });

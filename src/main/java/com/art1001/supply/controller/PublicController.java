@@ -57,7 +57,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/public")
 public class PublicController {
 
-    /** 任务逻辑层接口  */
+    /** 任务逻辑层接口 */
     @Resource
     private TaskService taskService;
 

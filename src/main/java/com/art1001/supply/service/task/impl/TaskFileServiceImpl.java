@@ -28,7 +28,6 @@ public class TaskFileServiceImpl implements TaskFileService {
 
 	@Override
 	public void saveTaskFile(TaskFile taskFile) {
-		taskFile.setId(IdGen.uuid());
 		taskFileMapper.saveTaskFile(taskFile);
 	}
 
