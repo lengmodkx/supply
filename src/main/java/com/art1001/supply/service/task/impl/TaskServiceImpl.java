@@ -199,7 +199,6 @@ public class TaskServiceImpl implements TaskService {
         String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置任务的创建者
         task.setMemberId(id);
-        task.setTaskUIds(id);
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -219,7 +218,6 @@ public class TaskServiceImpl implements TaskService {
                 tagRelation.setId(IdGen.uuid());
                 tagRelationService.saveTagRelation(tagRelation);
             });
-
         }
         //拿到TaskLog对象并且保存
         logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
@@ -697,22 +695,22 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Log resetAndCompleteSubLevelTask(Task task) {
-        Task taskByTaskId = taskMapper.findTaskBySubTaskId(task.getTaskId());
-        if(taskByTaskId.getTaskStatus().equals("完成")){
+        Task parentTask = taskMapper.findTaskBySubTaskId(task.getTaskId());
+        if(parentTask.getTaskStatus().equals("完成")){
             throw new ServiceException();
         }
         StringBuilder content = new StringBuilder("");
-        //如果子任务为完成则设置成未完成 如果子任务为未完成则设置为完成
+
+        //拼接日志
         if(task.getTaskStatus().equals("完成")){
-            content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-            task.setTaskStatus("未完成");
-        } else {
             content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-            task.setTaskStatus("完成");
+        } else {
+            content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
         //更新任务信息
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        Log log = logService.saveLog(task.getTaskId(),content.toString(),1);
+        logService.saveLog(task.getTaskId(),content.toString(),1);
+        Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
         log.setResult(result);
         return log;
     }

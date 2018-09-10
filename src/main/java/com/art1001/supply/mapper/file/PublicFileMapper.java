@@ -84,6 +84,6 @@ public interface PublicFileMapper {
 	 * @param parentId 文件的父id
 	 * @return
 	 */
-	@Select("select count(0) from prm_public_file where file_name = #{fileName} and parent_id = #{parentId}")
+	@Select("select count(0) from prm_public_file where file_name = #{fileName} and parent_id = #{parentId} and catalog = 1")
     int findFileNameCount(@Param("fileName") String fileName, @Param("parentId")String parentId);
 }

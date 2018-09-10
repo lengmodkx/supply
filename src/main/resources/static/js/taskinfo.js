@@ -68,7 +68,7 @@ layui.use('form', function() {
      */
     form.on('checkbox(subTask)', function(data){
         var subStatus = '';
-        if(data.elem.checked == false){
+        if(data.elem.checked === false){
             subStatus = '未完成';
         } else{
             subStatus = '完成';
