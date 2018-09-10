@@ -504,8 +504,8 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<RecycleBinVO> findRecycleBin(String projectId) {
-        return fileMapper.findRecycleBin(projectId);
+    public List<RecycleBinVO> findRecycleBin(String projectId,String type) {
+        return fileMapper.findRecycleBin(projectId,type);
     }
 
     /**

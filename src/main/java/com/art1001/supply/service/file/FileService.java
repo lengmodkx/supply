@@ -184,7 +184,7 @@ import java.util.List;
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<RecycleBinVO> findRecycleBin(String projectId);
+	List<RecycleBinVO> findRecycleBin(String projectId,String type);
 
 	/**
 	 * 恢复文件

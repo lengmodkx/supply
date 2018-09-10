@@ -180,7 +180,7 @@ public interface FileMapper {
 	 * @param projectId 项目id
 	 * @return
 	 */
-    List<RecycleBinVO> findRecycleBin(String projectId);
+    List<RecycleBinVO> findRecycleBin(@Param("projectId") String projectId, @Param("type") String type);
 
 	/**
 	 * 恢复文件
