@@ -68,4 +68,12 @@ public interface PublicFileService {
 	 * @return
 	 */
 	List<PublicFile> findChildFile(String parentId);
+
+	/**
+	 * 在公共模型库下创建文件夹
+	 * @param folderName 文件夹名称
+	 * @param parentId 父文件夹id
+	 * @return
+	 */
+    void createPublicFolder(String folderName, String parentId);
 }

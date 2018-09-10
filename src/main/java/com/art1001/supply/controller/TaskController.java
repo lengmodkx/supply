@@ -308,8 +308,6 @@ public class TaskController {
             }
         } catch (Exception e) {
             log.error("操作失败!", e);
-            jsonObject.put("msg", "系统异常,操作失败！");
-            jsonObject.put("result","0");
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -334,7 +332,7 @@ public class TaskController {
             //封装推送数据
             pushData.put("task",taskService.findTaskByTaskId(taskId));
             pushData.put("type","恢复了任务");
-            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData,SerializerFeature.DisableCircularReferenceDetect)));
             pushData.put("type","恢复了信息");
             pushData.remove("task");
             pushData.put("id",taskId);

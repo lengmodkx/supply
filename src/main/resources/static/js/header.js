@@ -21,7 +21,9 @@ $(function () {
     });
 
 
-    $(".groups-down-select").click(function (top,left) {
+    $(".groups-down-select").click(function () {
+        var top=$(this).offset().top+40+'px';
+        var left=$(this).offset().left-150+'px';
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
@@ -33,7 +35,10 @@ $(function () {
                 closeBtn: 0,
                 shade: [0.1, '#fff'],
                 shadeClose:true,
-                content: $(".task-select-box")
+                content: $(".task-select-box"),
+                success:function () {
+                    $(".layui-layer-shade").css("z-index",1)
+                }
             });
         });
     });

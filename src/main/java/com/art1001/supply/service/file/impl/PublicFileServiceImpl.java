@@ -102,4 +102,21 @@ public class PublicFileServiceImpl implements PublicFileService {
 	public List<PublicFile> findChildFile(String parentId) {
 		return publicFileMapper.findChildFile(parentId);
 	}
+
+	/**
+	 * 在公共模型库下创建文件夹
+	 * @param folderName 文件夹名称
+	 * @param parentId 父文件夹id
+	 * @return
+	 */
+	@Override
+	public void createPublicFolder(String folderName, String parentId) {
+		PublicFile publicFile = new PublicFile();
+		publicFile.setFileId(IdGen.uuid());
+		publicFile.setFileName(folderName);
+		publicFile.setParentId(parentId);
+		publicFile.setCreateTime(System.currentTimeMillis());
+		publicFile.setCatalog(1);
+		publicFileMapper.savePublicFile(publicFile);
+	}
 }

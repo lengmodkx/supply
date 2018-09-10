@@ -255,7 +255,7 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskId(taskId);
         TaskLogVO taskLogVO = new TaskLogVO();
         //任务状态为0 日志打印内容为 xxx把任务移入了回收站
-        Log log = logService.saveLog(task.getTaskId(),TaskLogFunction.P.getName(),1);
+        Log log = logService.saveLog(taskId,TaskLogFunction.P.getName(),1);
         log.setResult(result);
         return log;
     }

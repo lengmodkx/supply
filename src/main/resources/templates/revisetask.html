@@ -564,7 +564,7 @@
         </div>
         <div style="display: none" class="recycle">
             <p class="gray-font"> 您确定把任务移动到回收站吗?</p>
-            <div class="style-btn move-recycle" style="background-color:#FF4F3E;">确定</div>
+            <div class="style-btn move-recycle-task" style="background-color:#FF4F3E;">确定</div>
         </div>
         <div style="display: none" class="share-task-box">
             <header class="style-header">
@@ -859,7 +859,7 @@
     /**
      * 移动任务到回收站 确定按钮
      */
-    $('.move-recycle').click(function () {
+    $('.move-recycle-task').click(function () {
         var url = "/task/moveToRecycleBin";
         var args = {"taskId":taskId,"projectId":projectId};
         $.post(url,args,function (data) {

@@ -98,6 +98,7 @@ layui.use(['element','form','layer'], function() {
         flash_swf_url: 'js/lib/plupload-2.1.2/js/Moxie.swf',
         silverlight_xap_url: 'js/lib/plupload-2.1.2/js/Moxie.xap',
         url: 'http://oss.aliyuncs.com',
+        max_file_size : '100mb',
 
         init: {
             PostInit: function () {

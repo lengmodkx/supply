@@ -7,6 +7,7 @@ import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.base.Pager;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 公共文件库mapper接口
@@ -71,4 +72,7 @@ public interface PublicFileMapper {
 	 * @return
 	 */
     List<PublicFile> findChildFile(String parentId);
+
+
+    void createPublicFolder(@Param("folderName") String folderName, @Param("parentId") String parentId);
 }

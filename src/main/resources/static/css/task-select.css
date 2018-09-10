@@ -1,12 +1,15 @@
-
+div::-webkit-scrollbar{
+    width: 1px;
+    height: 1px;
+}
 .task-select-box{
     width: 300px;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
-    position: absolute;
-    top: 50px;
-    left: 0;
+    /*position: absolute;*/
+    /*top: 50px;*/
+    /*left: 0;*/
     background-color: white;
-    z-index: 208;
+    z-index: 19899999;
 }
 .task-select-box::-webkit-scrollbar{
     width: 1px;

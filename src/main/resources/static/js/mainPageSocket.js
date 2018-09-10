@@ -123,6 +123,7 @@ stompClient.connect({},
     });
 
     function taskShow(task) {
+        console.log(task);
         var a = '<li class="task-card-mode clearfix" id="'+task.taskId+'">\n' +
             '                                  <div class="task-card">\n' +
             '                                      <!--//左边框线-->\n' +
@@ -135,6 +136,8 @@ stompClient.connect({},
             '                                              <span class="assignment-title">'+task.taskName+'</span>';
         if(task.executorInfo != null) {
                 a += '<img class="assignment-tx" src="' + IMAGE_SERVER + task.executorInfo.userInfo.image + '" />';
+        } else{
+            a += '<img class="assignment-tx" src="/image/person.png" />';
         }
         a += "</header>";
         a += '<section class="assignment-bottom-box clearfix box' + task.taskId + '">'+

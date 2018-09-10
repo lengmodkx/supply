@@ -51,7 +51,7 @@
 }
 .model-file-up-box{
     width: 500px;
-    height: 395px;
+    /*height: 395px;*/
     background-color: white;
     box-shadow: 0 7px 21px rgba(0,0,0,.1);
     overflow: hidden;

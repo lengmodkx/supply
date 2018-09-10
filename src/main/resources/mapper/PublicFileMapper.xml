@@ -125,7 +125,7 @@
 			<if test="size != null and size != ''">
 			size,
 			</if>
-			<if test="parent.id != null and parent.id != ''">
+			<if test="parentId != null and parentId != ''">
 			parent_id,
 			</if>
 			<if test="fileDel != null ">
@@ -168,8 +168,8 @@
 			<if test="size != null and size != ''">
 				#{size},
 			</if>
-			<if test="parent.id != null and parent.id != ''">
-				#{parent.id},
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
 			</if>
 			<if test="fileDel != null ">
 				#{fileDel},
