@@ -446,7 +446,7 @@ public interface TaskMapper {
 	 * @param currDate 当前日期 格式为 yyyy-MM-dd
 	 * @return
 	 */
-	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) = (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d'))")
+	@Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') = FROM_UNIXTIME(#{currDate}, '%Y-%m-%d'	)")
 	int currDayTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
 	/**
@@ -455,7 +455,7 @@ public interface TaskMapper {
 	 * @param currDate 当前日期 格式为 yyyy-MM-dd
 	 * @return
 	 */
-	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '未完成'")
+	@Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = '未完成'")
 	int findBeoberdueTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
 	/**
@@ -472,7 +472,7 @@ public interface TaskMapper {
 	 * @param currDate 当前日期 格式为 yyyy-MM-dd
 	 * @return
 	 */
-	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) >= (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
+	@Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') >= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = '完成'")
 	int findFinishontTimeTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
 	/**
@@ -481,7 +481,7 @@ public interface TaskMapper {
 	 * @param currDate 当前日期 格式为 yyyy-MM-dd
 	 * @return
 	 */
-	@Select("select count(0) from prm_task where project_id = #{projectId} and (SELECT FROM_UNIXTIME(prm_task.end_time/1000, '%Y-%m-%d')) < (SELECT FROM_UNIXTIME(#{currDate}/1000, '%Y-%m-%d')) and task_status = '完成'")
+	@Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = '完成'")
 	int findOverdueCompletion(@Param("projectId")String projectId, @Param("currDate") Long currDate);
 
 	/**
