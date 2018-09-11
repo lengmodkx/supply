@@ -344,18 +344,36 @@ public class TaskServiceImpl implements TaskService {
      * @param menuId 菜单id
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public Log mobileTask(String taskId, String projectId, String menuId) {
         Task task = new Task();
+        task.setTaskId(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setUpdateTime(System.currentTimeMillis());
         taskMapper.updateTask(task);
 
-        //taskMapper
+        //移动子任务
+        for(Task subTask : taskMapper.findSubLevelTask(taskId)){
+            subTask.setProjectId(projectId);
+            subTask.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateTask(subTask);
+        }
 
-        String content = "";
-        return null;
+        //生成日志信息
+        String oldMenuId = taskMapper.findMenuNameByTaskId(taskId);
+        TaskMenuVO oldTaskMenuVO = relationService.findRelationNameAndProjectName(menuId);
+        TaskMenuVO newTaskMenuVO = relationService.findRelationNameAndProjectName(oldMenuId);
+        String oldProjectId = taskMapper.findTaskProjectId(taskId);
+        StringBuilder content = new StringBuilder();
+        if(projectId.equals(oldProjectId)){
+            content.append(TaskLogFunction.X.getName()).append(newTaskMenuVO.getTaskMenuName());
+        } else{
+            content.append(TaskLogFunction.V.getName()).append(oldTaskMenuVO.getProjectName()).append("/").append(oldTaskMenuVO.getTaskMenuName()).append(TaskLogFunction.W.getName()).append(newTaskMenuVO.getProjectName()).append("/").append(newTaskMenuVO.getTaskMenuName());
+        }
+        Log log = logService.saveLog(taskId, content.toString(),1);
+        return log;
     }
 
     /**

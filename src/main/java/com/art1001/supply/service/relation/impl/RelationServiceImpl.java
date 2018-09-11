@@ -317,7 +317,7 @@ public class RelationServiceImpl implements RelationService {
 			for (Task task : tasks) {
 				Task newTask = new Task();
 				newTask.setTaskId(task.getTaskId());
-				taskService.mobileTask(newTask,oldTaskMenuVO,newTaskMenuVO);
+				//taskService.mobileTask(newTask,oldTaskMenuVO,newTaskMenuVO);
 			}
 		}
 	}
@@ -476,5 +476,14 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void deleteRelationById(String relationId) {
 		relationMapper.deleteRelationById(relationId);
+	}
+
+	/**
+	 * 查询一个菜单的名称 和  该菜单所属项目的名称
+	 * @param menuId 菜单id
+	 */
+	@Override
+	public TaskMenuVO findRelationNameAndProjectName(String menuId) {
+		return relationMapper.findRelationNameAndProjectName(menuId);
 	}
 }
