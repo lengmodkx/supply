@@ -1323,10 +1323,21 @@ public class TaskServiceImpl implements TaskService {
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(2);
             //设置百分比
-            statictics.setPercentage(Double.valueOf(numberFormat.format((float)taskCount / (float)total * 100)));
+            if (total!=0){
+                statictics.setPercentage(Double.valueOf(numberFormat.format((float)taskCount / (float)total * 100)));
+            }
             list.add(statictics);
         }
         return list;
+    }
+
+    private String  numChange(double num){
+        //获取格式化对象
+        NumberFormat nt = NumberFormat.getPercentInstance();
+        //设置百分数精确度2即保留两位小数
+        nt.setMinimumFractionDigits(2);
+        String format = nt.format(num);
+        return format;
     }
 
     /**
