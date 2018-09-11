@@ -169,7 +169,7 @@ $(function () {
     $('html').on('click','.img-show-operate',function (e) {
         e.stopPropagation();
         var fileId = $(this).parent().next().attr("data");
-        var top = $(this).offset().top+10;
+        var top = $(this).offset().top-200;
         var left = $(this).offset().left+10;
         headPhoto(top, left, fileId)
     });
@@ -181,7 +181,7 @@ $(function () {
                 type: 2,  //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 title: false, //标题
                 offset: [top, left],
-                area: ['220px', '210px'],
+                area: ['220px', '245px'],
                 fixed: true,
                 shadeClose: true,
                 closeBtn: 0,

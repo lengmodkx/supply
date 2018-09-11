@@ -225,10 +225,9 @@ public class FileServiceImpl implements FileService {
         projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
-        String[] childFolderNameArr = {"图片", "文档","模型文件"};
+        String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
         for (String childFolderName : childFolderNameArr) {
             File file = new File();
-            file.setFileId(IdGen.uuid());
             // 写库
             file.setFileName(childFolderName);
             // 项目id
@@ -237,19 +236,6 @@ public class FileServiceImpl implements FileService {
             file.setCatalog(1);
             fileService.saveFile(file);
         }
-
-        //查询出公共模型库的信息
-        PublicFile publicFile = publicFileService.findPublicFolder("公共模型库");
-
-        //封装公共模型库信息
-        File file = new File();
-        file.setFileId(publicFile.getFileId());
-        file.setFileName(publicFile.getFileName());
-        file.setCatalog(1);
-        file.setProjectId(project.getProjectId());
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileService.saveFile(file);
     }
 
     @Override

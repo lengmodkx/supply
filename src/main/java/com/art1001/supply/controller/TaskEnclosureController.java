@@ -12,6 +12,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.task.TaskFileService;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
+import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -91,6 +92,7 @@ public class TaskEnclosureController {
             taskFile.setFileExt(ext);
             taskFile.setFileUrl(fileUrl);
             taskFile.setFileThumbnail(array.getString("fileUrl"));
+            taskFile.setId(IdGen.uuid());
             taskFileService.saveTaskFile(taskFile);
 
             PushType pushType = new PushType(TaskLogFunction.A31.getName());
@@ -124,6 +126,7 @@ public class TaskEnclosureController {
                 String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                 // 写库
                 TaskFile taskFile = new TaskFile();
+                taskFile.setId(IdGen.uuid());
                 taskFile.setTaskId(taskId);
                 taskFile.setFileName(fileName);
                 taskFile.setFileSize(size);
@@ -174,6 +177,7 @@ public class TaskEnclosureController {
                 File file = fileService.findFileById(fileId);
                 // 写库
                 TaskFile taskFile = new TaskFile();
+                taskFile.setId(fileId);
                 taskFile.setTaskId(taskId);
                 taskFile.setFileName(file.getFileName());
                 taskFile.setFileSize(file.getSize());

@@ -114,6 +114,7 @@
     width: 100%;
     line-height: 46px;
     text-align: center;
+    display: block;
 }
 .one-file-name input{
     width: 100%;
@@ -183,7 +184,7 @@
     height: 15px;
     text-align: center;
     line-height: 16px;
-   border: 1px solid #a6a6a6;
+    border: 1px solid #a6a6a6;
     border-radius: 50%;
     opacity: 0;
 }

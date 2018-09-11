@@ -129,15 +129,8 @@ public class FileController extends BaseController {
 
         // 删除标识
         Integer fileDel = file.getFileDel();
-        List<File> fileList;
-
         //如果用户点击的 公共模型库 的文件夹 则去文件公共表查询数据
-        if(fileById != null && publicName.equals(fileById.getFileName())){
-            fileList = fileService.findPublicFile(parentId);
-        } else{
-            fileList = fileService.findChildFile(projectId, parentId, fileDel);
-        }
-
+        List<File> fileList = fileService.findChildFile(projectId, parentId, fileDel);
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", parentId);
         model.addAttribute("projectId", projectId);
@@ -355,21 +348,14 @@ public class FileController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-            File fileById = fileService.findFileById(parentId);
-            if(fileById != null && publicName.equals(fileById.getFileName())){
-                publicFileService.createPublicFolder(folderName,parentId);
-            }else{
-                //判断当前文件夹的名字是否在库中存在
-                int result = fileService.findFolderIsExist(folderName,projectId,parentId);
-                if(result > 0){
-                    jsonObject.put("result",0);
-                    jsonObject.put("msg","文件夹已经存在！");
-                    return jsonObject;
-                }
-                fileService.createFolder(projectId, parentId, folderName);
+            //判断当前文件夹的名字是否在库中存在
+            int result = fileService.findFolderIsExist(folderName,projectId,parentId);
+            if(result > 0){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","文件夹已经存在！");
+                return jsonObject;
             }
-
+            fileService.createFolder(projectId, parentId, folderName);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "创建成功");
         } catch (Exception e) {
@@ -398,11 +384,6 @@ public class FileController extends BaseController {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if (StringUtils.isEmpty(parentId)) {
-                parentId = "0";
-            }
-
-            File fileById = fileService.findFileById(parentId);
             File f = fileService.uploadFile(projectId, parentId, file);
             jsonObject.put("result", 1);
             jsonObject.put("data", f);
@@ -431,9 +412,6 @@ public class FileController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
-            File fileById = fileService.findFileById(parentId);
-
             //文件为空则不执行
             if(files==null){
                 return jsonObject;
@@ -449,13 +427,12 @@ public class FileController extends BaseController {
                     // 写库
                     File myFile = new File();
                     // 用原本的文件名
-                    myFile.setFileName(fileName);
+                    myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
                     myFile.setExt(ext);
                     myFile.setProjectId(projectId);
                     myFile.setFileUrl(fileUrl);
                     // 得到上传文件的大小
                     myFile.setSize(size);
-                    myFile.setFileId(IdGen.uuid());
                     myFile.setParentId(parentId);
                     myFile.setCatalog(0);
                     myFile.setFileUids(ShiroAuthenticationManager.getUserId());
@@ -463,22 +440,17 @@ public class FileController extends BaseController {
                         myFile.setFileThumbnail(fileUrl);
                     }
 
-                    //如果是在公共文件夹里上传的文件 则把文件信息把存在公共文件表中
-                    if(fileById != null && publicName.equals(fileById.getFileName())){
-                        fileService.savePublicFile(myFile);
-                    } else{
-                        fileService.saveFile(myFile);
-                        FileVersion fileVersion = new FileVersion();
-                        fileVersion.setFileId(myFile.getFileId());
-                        fileVersion.setFileSize(size);
-                        fileVersion.setFileUrl(fileUrl);
-                        fileVersion.setIsMaster(1);
-                        Date time = Calendar.getInstance().getTime();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                        String format = simpleDateFormat.format(time);
-                        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-                        fileVersionService.saveFileVersion(fileVersion);
-                    }
+                    fileService.saveFile(myFile);
+                    FileVersion fileVersion = new FileVersion();
+                    fileVersion.setFileId(myFile.getFileId());
+                    fileVersion.setFileSize(size);
+                    fileVersion.setFileUrl(fileUrl);
+                    fileVersion.setIsMaster(1);
+                    Date time = Calendar.getInstance().getTime();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String format = simpleDateFormat.format(time);
+                    fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+                    fileVersionService.saveFileVersion(fileVersion);
                 }
             }
             jsonObject.put("result", 1);
@@ -521,7 +493,7 @@ public class FileController extends BaseController {
             // 写库
             File myFile = new File();
             // 用原本的文件名
-            myFile.setFileName(filename+ext);
+            myFile.setFileName(filename);
             myFile.setExt(ext);
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
@@ -531,22 +503,17 @@ public class FileController extends BaseController {
             myFile.setCatalog(0);
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             myFile.setFileThumbnail(array.getString("fileUrl"));
-            File fileById = fileService.findFileById(parentId);
-            if(fileById != null && publicName.equals(fileById.getFileName())){
-                fileService.savePublicFile(myFile);
-            } else {
-                fileService.saveFile(myFile);
-                FileVersion fileVersion = new FileVersion();
-                fileVersion.setFileId(myFile.getFileId());
-                fileVersion.setFileSize(size);
-                fileVersion.setFileUrl(fileUrl);
-                fileVersion.setIsMaster(1);
-                Date time = Calendar.getInstance().getTime();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                String format = simpleDateFormat.format(time);
-                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-                fileVersionService.saveFileVersion(fileVersion);
-            }
+            fileService.saveFile(myFile);
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(myFile.getFileId());
+            fileVersion.setFileSize(size);
+            fileVersion.setFileUrl(fileUrl);
+            fileVersion.setIsMaster(1);
+            Date time = Calendar.getInstance().getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String format = simpleDateFormat.format(time);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+            fileVersionService.saveFileVersion(fileVersion);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);
@@ -582,7 +549,7 @@ public class FileController extends BaseController {
             AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
 
             // 设置修改后的文件名
-            f.setFileName(originalFilename);
+            f.setFileName(originalFilename.substring(0,originalFilename.lastIndexOf(".")));
             f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase());
             f.setFileUrl(fileUrl);
             f.setSize(FileUtils.convertFileSize(file.getSize()));
@@ -680,8 +647,8 @@ public class FileController extends BaseController {
             pushData.put("file",fileService.findFileById(fileId));
             pushData.put("id",fileId);
             pushData.put("type","恢复了文件");
-            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
-            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(pushData)));
+//            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+//            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(pushData)));
             pushData.remove("file");
             pushData.put("type","恢复了信息");
             messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
@@ -1472,5 +1439,21 @@ public class FileController extends BaseController {
 
         return jsonObject;
     }
+
+    @PostMapping("/changeFileName")
+    @ResponseBody
+    public JSONObject changeFileName(String fileName,String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            file.setFileName(fileName);
+            fileService.updateFile(file);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
 }
