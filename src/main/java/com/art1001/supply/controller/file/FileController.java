@@ -412,9 +412,6 @@ public class FileController extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
-            File fileById = fileService.findFileById(parentId);
-
             //文件为空则不执行
             if(files==null){
                 return jsonObject;
@@ -430,7 +427,7 @@ public class FileController extends BaseController {
                     // 写库
                     File myFile = new File();
                     // 用原本的文件名
-                    myFile.setFileName(fileName);
+                    myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
                     myFile.setExt(ext);
                     myFile.setProjectId(projectId);
                     myFile.setFileUrl(fileUrl);
@@ -496,7 +493,7 @@ public class FileController extends BaseController {
             // 写库
             File myFile = new File();
             // 用原本的文件名
-            myFile.setFileName(filename+ext);
+            myFile.setFileName(filename);
             myFile.setExt(ext);
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
@@ -552,7 +549,7 @@ public class FileController extends BaseController {
             AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
 
             // 设置修改后的文件名
-            f.setFileName(originalFilename);
+            f.setFileName(originalFilename.substring(0,originalFilename.lastIndexOf(".")));
             f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase());
             f.setFileUrl(fileUrl);
             f.setSize(FileUtils.convertFileSize(file.getSize()));
@@ -650,8 +647,8 @@ public class FileController extends BaseController {
             pushData.put("file",fileService.findFileById(fileId));
             pushData.put("id",fileId);
             pushData.put("type","恢复了文件");
-            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
-            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(pushData)));
+//            messagingTemplate.convertAndSend("/topic/"+projectId,new ServerMessage(JSON.toJSONString(pushData)));
+//            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(pushData)));
             pushData.remove("file");
             pushData.put("type","恢复了信息");
             messagingTemplate.convertAndSend("/topic/"+projectId+"recycleBin",new ServerMessage(JSON.toJSONString(pushData)));
@@ -1442,5 +1439,21 @@ public class FileController extends BaseController {
 
         return jsonObject;
     }
+
+    @PostMapping("/changeFileName")
+    @ResponseBody
+    public JSONObject changeFileName(String fileName,String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            file.setFileName(fileName);
+            fileService.updateFile(file);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
 }

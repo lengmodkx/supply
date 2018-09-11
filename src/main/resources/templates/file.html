@@ -86,11 +86,10 @@
                                 <img class="folderFile" th:data-id="${file.fileId}+${file.ext}" th:src="@{/image/file_1.png}" th:if="${file.catalog eq 0} and ${!exts.get('flashs').contains(file.ext)} and ${!exts.get('medias').contains(file.ext)} and ${!exts.get('files').contains(file.ext)} and ${!exts.get('model').contains(file.ext)} and ${!exts.get('sensitive').contains(file.ext)} and ${!exts.get('images').contains(file.ext)} and ${exts.get('compress').contains(file.ext)}"/>
                                 <i class="layui-icon layui-icon-download-circle img-show-download" style="font-size: 20px; color: #ADADAD;" th:if="${file.catalog eq 0}"></i>
                                 <i class="iconfont icon-suo" th:style="'display:' + @{(${file.filePrivacy}==0? 'none' : 'block')} + ''"></i>
-                                <div class="img-show-operate" th:if="${file.catalog eq 0}">
-                                    <i class="layui-icon layui-icon-down" style="font-size: 12px; color: #ADADAD;" ></i>
-                                </div>
+                                <i class="layui-icon layui-icon-down img-show-operate" style="font-size: 12px; color: #ADADAD;" ></i>
                             </div>
-                            <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:data="${file.fileId}">图片222.zip</div>
+                            <div class="one-file-name" th:text="${#strings.length(file.fileName) gt 15 ? #strings.substring(file.fileName,0,10)+file.ext:file.fileName}" th:classappend="filename+${file.fileId}" th:data="${file.fileId}"></div>
+                            <input type="text" name="title" autocomplete="off" th:data="${file.fileId}" th:value="${file.fileName}" class="layui-input change-file-name" th:classappend="namechange+${file.fileId}" style="width: 164px;display: none;margin-top: 15px">
                         </li>
                     </ul>
                 </div>
@@ -106,6 +105,35 @@
     layui.use('element', function(){
         var element = layui.element;
     });
+
+    $('.one-file-name').click(function (e) {
+        e.stopPropagation();
+        $(this).css('display','none');
+        $('.namechange'+$(this).attr('data')).show();
+    });
+
+    $('.change-file-name').blur(function (e) {
+        e.stopPropagation();
+        $(this).hide();
+        $('.filename'+$(this).attr('data')).show();
+        $.post('/file/changeFileName',{"fileName":$(this).val(),"fileId":$(this).attr('data')},function (data) {
+            if(data.result===1){
+                window.location.reload();
+            }
+        });
+    });
+    $('.change-file-name').keyup(function(event){
+        if(event.keyCode ===13){
+            $(this).hide();
+            $('.filename'+$(this).attr('data')).show();
+            $.post('/file/changeFileName',{"fileName":$(this).val(),"fileId":$(this).attr('data')},function (data) {
+                if(data.result===1){
+                    window.location.reload();
+                }
+            });
+        }
+    });
+
 </script>
 
 <script th:src="@{/js/fileSockJs.js}" src="../static/js/fileSockJs.js"></script>

@@ -221,7 +221,6 @@ layui.use(['element','form','layer'], function() {
         }).catch(function (err) {
             console.log(err);
         });
-
     });
     /**
      * 确定上传模型文件
@@ -248,6 +247,7 @@ layui.use(['element','form','layer'], function() {
         }
     });
 });
+
 
 
 
