@@ -91,7 +91,7 @@ public class Schedule extends BaseEntity implements Serializable {
 	/**
 	 * 是否是全天
 	 */
-	private Integer isAllday;
+	private Integer privacyPattern;
 
 	/**
 	 * 标签的集合
