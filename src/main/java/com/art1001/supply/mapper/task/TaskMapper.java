@@ -525,4 +525,19 @@ public interface TaskMapper {
 	 * @param taskIds 任务id 的集合
 	 */
     void deleteManyTask(List<String> taskIds);
+
+	/**
+	 * 查询出该任务的项目id
+	 * @param taskId 任务id
+	 */
+	@Select("select project_id from prm_task where task_id = #{taskId}")
+	String findTaskProjectId(String taskId);
+
+	/**
+	 * 查询出该任务的菜单名称
+	 * @param taskId 任务id
+	 * @return
+	 */
+	@Select("select task_menu_id from prm_task where task_id = #{taskId}")
+    String findMenuNameByTaskId(String taskId);
 }

@@ -211,4 +211,10 @@ public interface RelationService {
 	 * @param relationId
 	 */
     void deleteRelationById(String relationId);
+
+	/**
+	 * 查询一个菜单的名称 和  该菜单所属项目的名称
+	 * @param menuId 菜单id
+	 */
+	TaskMenuVO findRelationNameAndProjectName(String menuId);
 }

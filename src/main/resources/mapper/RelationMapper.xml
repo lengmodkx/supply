@@ -503,4 +503,42 @@
 		)
 	</delete>
 
+	<!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
+	<select id="findRelationNameAndProjectName" resultType="com.art1001.supply.entity.task.TaskMenuVO">
+			SELECT
+		`GROUP`.group_name AS taskGroupName,
+		project.project_name AS projectName
+	FROM
+		(
+			SELECT
+				relation_name AS group_name
+			FROM
+				prm_relation
+			WHERE
+				relation_id = (
+					SELECT
+						parent_id
+					FROM
+						prm_relation
+					WHERE
+						relation_id = #{menuId}
+				)
+		) AS `group`,
+		(
+			SELECT
+				project_name
+			FROM
+				prm_project
+			WHERE
+				project_id = (
+					SELECT
+						project_id AS project_name
+					FROM
+						prm_relation
+					WHERE
+						relation_id = #{menuId}
+				)
+		) AS `project`
+	</select>
+
 </mapper>

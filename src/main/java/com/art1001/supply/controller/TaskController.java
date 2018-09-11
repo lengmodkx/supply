@@ -263,18 +263,10 @@ public class TaskController {
         try {
             //修改该任务的任务组编号
             Log taskLogVO = taskService.mobileTask(taskId,projectId,menuId);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("result", 1);
-                jsonObject.put("msg","任务移动成功！");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("result", 0);
-                jsonObject.put("msg","任务移动失败！");
-            }
+            jsonObject.put("result", 1);
+            jsonObject.put("msg","任务移动成功！");
         } catch (Exception e){
             log.error("当前任务移动失败!{}",e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg","系统异常,移动失败！");
             throw new AjaxException(e);
         }
         return jsonObject;
