@@ -331,7 +331,6 @@ public class ShareController extends BaseController {
                 jsonObject.put("msg","已经收藏");
             }else{
                 PublicCollect publicCollect = new PublicCollect();
-                publicCollect.setId(IdGen.uuid());
                 publicCollect.setPublicId(shareId);
                 publicCollect.setProjectId(projectId);
                 publicCollect.setMemberId(userEntity.getId());

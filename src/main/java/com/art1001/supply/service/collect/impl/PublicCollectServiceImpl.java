@@ -91,11 +91,12 @@ public class PublicCollectServiceImpl implements PublicCollectService {
 	/**
 	 * 保存collect数据
 	 *
-	 * @param taskCollect
+	 * @param publicCollect
 	 */
 	@Override
-	public int savePublicCollect(PublicCollect taskCollect){
-		return publicCollectMapper.savePublicCollect(taskCollect);
+	public int savePublicCollect(PublicCollect publicCollect){
+		publicCollect.setId(IdGen.uuid());
+		return publicCollectMapper.savePublicCollect(publicCollect);
 	}
 	/**
 	 * 获取所有collect数据

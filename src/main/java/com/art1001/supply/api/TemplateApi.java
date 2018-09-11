@@ -1,4 +1,4 @@
-package com.art1001.supply.controller;
+package com.art1001.supply.api;
 
 import com.art1001.supply.service.template.TemplateDataService;
 import com.art1001.supply.service.template.TemplateService;

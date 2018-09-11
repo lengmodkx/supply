@@ -653,11 +653,7 @@ public class FileController extends BaseController {
             response.setContentType("multipart/form-data");
             // 设置头信息
             // 设置fileName的编码
-            if(FileExt.extMap.get("model").contains(file.getExt())){
-                fileName = URLEncoder.encode(fileName+".zip", "UTF-8");
-            }else{
-                fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
-            }
+            fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             ServletOutputStream outputStream = response.getOutputStream();
             byte[] bytes = new byte[1024];

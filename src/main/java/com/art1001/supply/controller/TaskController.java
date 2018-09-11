@@ -1,14 +1,12 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.common.Push;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
-import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -31,7 +29,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +39,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,10 +58,6 @@ public class TaskController {
     /** 标签逻辑层接口 */
     @Resource
     private TagService tagService;
-
-    /** 文件逻辑层接口 */
-    @Resource
-    private FileService fileService;
 
     /** 用户逻辑层接口 */
     @Resource

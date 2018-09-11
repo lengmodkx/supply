@@ -783,7 +783,6 @@ public class TaskServiceImpl implements TaskService {
     public int collectTask(Task task) {
         PublicCollect publicCollect = new PublicCollect();
         //设置收藏的id
-        publicCollect.setId(IdGen.uuid());
         publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
         //设置收藏的项目的id
         publicCollect.setProjectId(task.getProjectId());
