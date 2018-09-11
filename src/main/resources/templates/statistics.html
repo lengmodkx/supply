@@ -5,13 +5,14 @@
     <title>统计</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" href="../static/css/common.css">
     <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.circliful.css}" href="../static/css/jquery.circliful.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.circliful.css}"
+          href="../static/css/jquery.circliful.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/statistics.css}" href="../static/css/statistics.css">
 </head>
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
-<div th:include="toper::toper (${project})"></div>
+<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
 <div class="statistics-wrap">
     <div class="title-style">
         <h3>总量概览</h3>
@@ -21,7 +22,9 @@
         <li th:each="overView:${overViewList}">
             <div class="li-header" th:text="${overView.name}"></div>
             <div class="li-content">
-                <div class="circle" data-dimension="120" th:data-text="${overView.count}" data-width="6" data-fontsize="20" th:data-percent="${overView.percentage}" data-bgcolor="#F3F9FF" data-fgcolor="#77C2F8"></div>
+                <div class="circle" data-dimension="120" th:data-text="${overView.count}" data-width="6"
+                     data-fontsize="20" th:data-percent="${overView.percentage}" data-bgcolor="#F3F9FF"
+                     data-fgcolor="#77C2F8"></div>
             </div>
         </li>
     </ul>
@@ -32,27 +35,19 @@
     <ul class="style-ul">
         <li>
             <div class="li-header">任务按完成情况分布</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="pie"></div>
         </li>
         <li>
             <div class="li-header">任务按任务分组分布</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="container"></div>
         </li>
         <li>
             <div class="li-header">任务按执行者分布</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="pie"></div>
         </li>
         <li>
             <div class="li-header">任务按优先级分布</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="pie"></div>
         </li>
     </ul>
     <div class="title-style">
@@ -62,46 +57,328 @@
     <ul class="style-ul">
         <li>
             <div class="li-header">期间完成的任务</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="ten"></div>
         </li>
         <li>
             <div class="li-header">期间未完成的任务</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="ten"></div>
         </li>
         <li>
             <div class="li-header">期间逾期的任务</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="ten"></div>
         </li>
         <li>
             <div class="li-header">期间更新截止时间的任务</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="ten"></div>
         </li>
         <li>
             <div class="li-header">期间高频参与的任务</div>
-            <div class="li-content">
-                <div class="circle" data-dimension="120" data-text="50%" data-width="6" data-fontsize="20" data-percent="50" data-bgcolor="#DBE5EB" data-fgcolor="#4A90E2"></div>
-            </div>
+            <div class="ten"></div>
         </li>
+    </ul>
+    <div class="title-style">
+        <h3>期间截至任务</h3>
+        <span>立即更新</span>
+    </div>
+    <ul class="style-ul">
+        <li>
+            <div class="li-header">期间截止任务完成情况</div>
+            <div class="pie"></div>
+        </li>
+        <li>
+            <div class="li-header">期间截止任务分成员完成情况</div>
+            <div class="ten"></div>
+        </li>
+        <li>
+            <div class="li-header">期间截止任务按截止时间分布</div>
+            <div class="ten"></div>
+        </li>
+        <div style="width: 272px;
+                    height: 200px;">
+        </div>
+    </ul>
+    <div class="title-style">
+        <h3>任务走势</h3>
+        <span>立即更新</span>
+    </div>
+    <ul class="style-ul">
+        <li>
+            <div class="li-header">项目进展走势</div>
+            <div class="line"></div>
+        </li>
+        <li>
+            <div class="li-header">每日完成任务量</div>
+            <div class="line"></div>
+        </li>
+        <li>
+            <div class="li-header">每日完成任务的平均完成天数</div>
+            <div class="line"></div>
+        </li>
+        <div style="width: 272px;
+                    height: 200px;">
+        </div>
+    </ul>
+    <div class="title-style">
+        <h3>通用敏捷迭代</h3>
+        <span>立即更新</span>
+    </div>
+    <ul class="style-ul">
+        <li>
+            <div class="li-header">任务燃尽图</div>
+            <div class="line"></div>
+        </li>
+        <li>
+            <div class="li-header">不同任务分组已完成任务量</div>
+            <div class="line"></div>
+        </li>
+        <div style="width: 272px;
+                    height: 200px;">
+        </div>
+        <div style="width: 272px;
+                    height: 200px;">
+        </div>
     </ul>
 </div>
 
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
 <script th:src="@{/js/jquery.circliful.min.js}" src="../static/js/jquery.circliful.min.js"></script>
+<script th:src="@{/js/highcharts.js}" src="../static/js/highcharts.js"></script>
 <script>
-        layui.use(['element','form'], function() {
-            var form = layui.form;
-        });
-        $('.circle').circliful();
+    layui.use(['element', 'form'], function () {
+        var form = layui.form;
+    });
+    $('.circle').circliful();
 
+    $(function () {
+        $('.container').highcharts({
+            chart: {
+                type: 'column',
+                zoomType: 'Y',
+                height: 146, width: 272
+            },
+            title: {
+                text: ''
+            },
+            style: {
+                color: '#FF00FF',      //字体颜色
+                "fontSize": "0px",   //字体大小
+                fontWeight: 'bold'
+            },
+            xAxis: {
+                categories: [''],
+                tickWidth: 0,    	//设置刻度标签宽度
+                lineColor: '#ffffff',//设置坐标颜色
+                lineWidth: 0,		//设置坐标宽度
+                labels: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: '',
+                gridLineWidth: 0,	//设置横向分区线宽度
+                lineColor: '#ffffff',//设置y轴颜色
+                labels: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                name: '小张',
+                data: [5, 3, 4, 7, 2],
+                stack: 'male' // stack 值相同的为同一组
+            }, {
+                name: '小潘',
+                data: [3, 4, 4, 2, 5],
+                stack: 'male'
+            }]
+        });
+        $(".ten").each(function () {
+            $(this).highcharts({
+                chart: {
+                    type: 'column',
+                    zoomType: 'Y',
+                    height: 146, width: 272
+                },
+                title: {
+                    text: ''
+                },
+                style: {
+                    color: '#FF00FF',      //字体颜色
+                    "fontSize": "0px",   //字体大小
+                    fontWeight: 'bold'
+                },
+                xAxis: {
+                    categories: [''],
+                    tickWidth: 0,    	//设置刻度标签宽度
+                    lineColor: '#ffffff',//设置坐标颜色
+                    lineWidth: 0,		//设置坐标宽度
+                    labels: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: '',
+                    gridLineWidth: 0,	//设置横向分区线宽度
+                    lineColor: '#ffffff',//设置y轴颜色
+                    labels: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'normal'
+                    }
+                },
+                series: [{
+                    name: '小张',
+                    data: [5, 3, 4, 7, 2]
+                }]
+            });
+        });
+
+        $(".pie").each(function () {
+            $(this).highcharts({
+                chart: {
+                    type: 'pie',
+                    height: 146, width: 272
+                },
+                title: {
+                    text: ''
+                },
+                subtitle: {
+                    text: ''
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    }
+                },
+                exporting: {
+                    enabled: false
+                },
+                plotOptions: {
+                    pie: {
+                        shadow: false,
+                        center: ['50%', '50%']
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Versions',
+                    data: [
+                        0.1, 0.2
+                    ],
+                    size: '80%',
+                    innerSize: '60%',
+                    dataLabels: {
+                        formatter: function () {
+                        }
+                    },
+                    id: 'versions'
+                }],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 400
+                        },
+                        chartOptions: {
+                            series: [{
+                                id: '',
+                                dataLabels: {
+                                    enabled: false
+                                }
+                            }]
+                        }
+                    }]
+                }
+            });
+        });
+
+
+        $(".line").each(function () {
+            $(this).highcharts({
+                chart: {
+                    type: 'line',
+                    zoomType: 'Y',
+                    height: 146, width: 274
+                },
+                title: {
+                    text: ''
+                },
+                style: {
+                    color: '#FF00FF',      //字体颜色
+                    "fontSize": "0px",   //字体大小
+                    fontWeight: 'bold'
+                },
+                xAxis: {
+                    categories: [''],
+                    tickWidth: 0,    	//设置刻度标签宽度
+                    lineColor: '#ffffff',//设置坐标颜色
+                    lineWidth: 0,		//设置坐标宽度
+                    labels: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: '',
+                    gridLineWidth: 0,	//设置横向分区线宽度
+                    lineColor: '#ffffff',//设置y轴颜色
+                    labels: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
+                series: [{
+                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                    marker:{ //线上数据点
+                        radius:0,
+                        lineWidth:0,
+                        lineColor:'#fba845',
+                        fillColor:'#fba845',
+                        states:{
+                            hover:{
+                                enabled:false
+                            }
+                        }
+                    }
+                }]
+            });
+        });
+
+    })
 </script>
 </body>
 </html>

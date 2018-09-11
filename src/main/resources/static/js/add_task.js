@@ -245,9 +245,7 @@ $('.ul-wrap').on('click','.no-tags',function () {
     });
 
     $('.tag-ok').click(function () {
-        console.log(tagName);
         if (tagName==='') {
-            console.log("xx");
             return false;
         }
         var color='';
@@ -361,7 +359,7 @@ function peopleConfirm(that,flag) {
             '            <input type="hidden" id="executorId" value="'+id+'"/>\n' +
             '            <span id = "showExecutor">'+userName+'</span>\n' +
             '            <i class="layui-icon layui-icon-close-fill remove-who-wrap" style="font-size: 16px; color: #1E9FFF;"></i></div>';
-        $('.no-renling').before(content);
+        $('.no-renling').parent().html(content);
         $('.no-renling').hide();
     }
 

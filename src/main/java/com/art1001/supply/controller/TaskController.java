@@ -251,18 +251,18 @@ public class TaskController {
 
     /**
      * 任务移动
-     * @param task 包含该任务的id
-     * @param newTaskMenuVO 要移动到的 项目id,名称 分组id,名称 菜单id,名称
-     * @param oldTaskMenuVO 移动之前的 项目id,名称 分组id,名称 菜单id,名称
+     * @param taskId 任务id
+     * @param projectId 项目id
+     * @param menuId 菜单id
      * @return
      */
     @PostMapping("mobileTask")
     @ResponseBody
-    public JSONObject mobileTask(Task task, @RequestParam TaskMenuVO oldTaskMenuVO, @RequestParam TaskMenuVO newTaskMenuVO){
+    public JSONObject mobileTask(@RequestParam String taskId, @RequestParam String projectId, @RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
-            Log taskLogVO = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
+            Log taskLogVO = taskService.mobileTask(taskId,projectId,menuId);
             if(taskLogVO.getResult() > 0){
                 jsonObject.put("result", 1);
                 jsonObject.put("msg","任务移动成功！");
@@ -847,15 +847,13 @@ public class TaskController {
      * @param taskId 任务的id
      * @param projectId 项目id
      * @param menuId 菜单id
-     * @param old_new 原任务接受新任务的更新提醒  是否勾选
-     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId, boolean old_new, boolean new_old){
+    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
-            String copyTaskId = taskService.copyTask(taskId,projectId,menuId,old_new,new_old);
+            String copyTaskId = taskService.copyTask(taskId,projectId,menuId);
             jsonObject.put("taskId",copyTaskId);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");
