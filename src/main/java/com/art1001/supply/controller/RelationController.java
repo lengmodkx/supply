@@ -497,7 +497,6 @@ public class RelationController {
 
             Project project = projectService.findProjectByProjectId(groupInfo.getProjectId());
             model.addAttribute("project",project);
-
             //加载该项目下所有分组的信息
             List<GroupVO> groups = relationService.loadGroupInfo(projectId);
             model.addAttribute("groups",groups);

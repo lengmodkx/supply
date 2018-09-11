@@ -154,7 +154,7 @@
 
         <!--具体子任务-->
         <div th:id="subTask">
-            <div class="child-task-list" th:each="subTask:${task.taskList}">
+            <div class="child-task-list" th:each="subTask:${task.taskList}" th:data-id = "${subTask.taskId}">
                 <input type="checkbox" name="subTask" title="" lay-skin="primary" lay-filter = "subTask" th:value="${subTask.taskId}" th:checked="${subTask.taskStatus == '完成'}">
                 <input type="hidden" th:value="${subTask.taskName}" th:id="${subTask.taskId}" />
                 <div class="child-task-con">

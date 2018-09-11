@@ -14,6 +14,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 
 /**
@@ -88,11 +89,12 @@ public interface TaskService {
 
 	/**
 	 * 移动任务
-	 * @param task 任务的信息
-	 * @param taskMenuVO 当前任务所在的 菜单,分组,项目 的信息
+	 * @param taskId 任务id
+	 * @param projectId 项目id
+	 * @param menuId 菜单id
 	 * @return
 	 */
-	Log mobileTask(Task task, TaskMenuVO taskMenuVO,TaskMenuVO newTaskMenuVO);
+	Log mobileTask(String taskId, String projectId, String menuId);
 
 	/**
 	 * 根据任务id数组,查找出多个任务
@@ -203,10 +205,8 @@ public interface TaskService {
 	 * @param taskId 当前任务信息
 	 * @param projectId 当前任务所在的项目id
 	 * @param menuId 复制到的位置的信息
-	 * @param old_new 原任务接受新任务的更新提醒  是否勾选
-	 * @param new_old 新任务接受原任务的更新提醒  是否勾选
 	 */
-	String copyTask(String taskId, String projectId, String menuId, boolean old_new, boolean new_old);
+	String copyTask(String taskId, String projectId, String menuId);
 
 	/**
 	 * 收藏任务
