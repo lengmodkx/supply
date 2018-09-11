@@ -63,11 +63,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileController extends BaseController {
 
-    /**
-     * 标注是不是模型文件夹
-     */
-    private final String publicName = "公共模型库";
-
     @Resource
     private RelationService relationService;
 
@@ -98,41 +93,23 @@ public class FileController extends BaseController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private PublicFileService publicFileService;
-
-
     /**
      * 文件列表
      *
-     * @param file projectId 项目id
+     * @param      projectId 项目id
      *             parentId  上级目录id
      *             isDel     删除标识 默认为0
      */
     @GetMapping("/list.html")
-    public String list(File file,String currentGroup, Model model) {
+    public String list(@RequestParam String projectId,
+                       @RequestParam(defaultValue = "0",required = false) String fileId,
+                       @RequestParam(defaultValue = "0",required = false) Integer fileDel,
+                       String currentGroup, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
-
-        File fileById = new File();
-        if(!StringUtils.isEmpty(file.getFileId())){
-            fileById = fileService.findFileById(file.getFileId());
-            model.addAttribute("fileName",fileById.getFileName());
-        }
         UserEntity userEntity = userService.findById(userId);
-        // 项目id
-        String projectId = file.getProjectId();
-        // 上级id
-        String parentId = file.getFileId();
-        if (StringUtils.isEmpty(file.getFileId())) {
-            parentId = "0";
-        }
-
-        // 删除标识
-        Integer fileDel = file.getFileDel();
-        //如果用户点击的 公共模型库 的文件夹 则去文件公共表查询数据
-        List<File> fileList = fileService.findChildFile(projectId, parentId, fileDel);
+        List<File> fileList = fileService.findChildFile(projectId, fileId, fileDel);
         model.addAttribute("fileList", fileList);
-        model.addAttribute("parentId", parentId);
+        model.addAttribute("parentId", fileId);
         model.addAttribute("projectId", projectId);
         model.addAttribute("currentGroup",currentGroup);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
@@ -669,53 +646,18 @@ public class FileController extends BaseController {
     @ResponseBody
     public void downloadFile(@RequestParam String fileId, boolean isPublic, HttpServletResponse response){
         try {
-
-            InputStream inputStream = null;
-            File file = null;
-            // 获取文件
-            if(isPublic){
-                file = publicFileService.findPublicFileById(fileId);
-            } else{
-                file = fileService.findFileById(fileId);
-            }
+            File file = fileService.findFileById(fileId);
             String fileName = file.getFileName();
-            String deleteUrl = "";
-            // 如果下载的是目录，则打包成zip
-//            if (file.getCatalog() == 1) {
-//                // 得到临时下载文件目录
-//                String tempPath = FileUtils.getTempPath();
-//                // 创建文件夹，加时间戳，区分
-//                String path = tempPath + "\\" + System.currentTimeMillis() + "\\" + fileName;
-//                java.io.File folder = new java.io.File(path);
-//                folder.mkdirs();
-//                // 设置查询条件
-//                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
-//                if (childFile.size() > 0) {
-//                    // 下载到临时文件
-//                    this.downloadZip(childFile, path,response);
-//                }
-//
-//                // 把临时文件打包成zip下载
-//                String downloadPath = path + ".zip";
-//                FileOutputStream fos1 = new FileOutputStream(new java.io.File(downloadPath));
-//                FileUtils.toZip(path, fos1, true);
-//
-//                // 开始下载
-//
-//                // 以流的形式下载文件。
-//                inputStream = new BufferedInputStream(new FileInputStream(downloadPath));
-//                fileName += ".zip";
-//                // 删除临时文件
-//                deleteUrl = downloadPath.substring(0, downloadPath.lastIndexOf("\\"));
-//            } else {
-//                // 文件  在oss上得到流
-//            }
-            inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
+            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
             // 设置响应类型
             response.setContentType("multipart/form-data");
             // 设置头信息
             // 设置fileName的编码
-            fileName = URLEncoder.encode(fileName, "UTF-8");
+            if(FileExt.extMap.get("model").contains(file.getExt())){
+                fileName = URLEncoder.encode(fileName+".zip", "UTF-8");
+            }else{
+                fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
+            }
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             ServletOutputStream outputStream = response.getOutputStream();
             byte[] bytes = new byte[1024];
@@ -726,10 +668,6 @@ public class FileController extends BaseController {
             }
             outputStream.close();
             inputStream.close();
-
-            if (file.getCatalog() == 1) {
-                FileUtils.delFolder(deleteUrl);
-            }
         }catch (Exception e){
             throw new SystemException(e);
         }
@@ -1403,8 +1341,6 @@ public class FileController extends BaseController {
             // 得到上传文件的大小
             myFile.setSize(size);
             myFile.setCatalog(0);
-            myFile.setParentId("0");
-            myFile.setFileLabel(1);
             myFile.setParentId(parentId);
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             fileService.saveFile(myFile);
@@ -1454,6 +1390,9 @@ public class FileController extends BaseController {
         }
         return jsonObject;
     }
+
+
+
 
 
 }
