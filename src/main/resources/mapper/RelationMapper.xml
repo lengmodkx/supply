@@ -47,6 +47,11 @@
 					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.taskMenu"/>
 	</resultMap>
 
+	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
+		<result property="projectName" column="projectName"></result>
+		<result property="taskMenuName" column="taskMenuName"></result>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 				relation_id,
 				relation_name,
@@ -504,9 +509,9 @@
 	</delete>
 
 	<!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
-	<select id="findRelationNameAndProjectName" resultType="com.art1001.supply.entity.task.TaskMenuVO">
+	<select id="findRelationNameAndProjectName" resultMap="BaseResultMap4">
 			SELECT
-		`GROUP`.group_name AS taskGroupName,
+		`GROUP`.group_name AS taskMenuName,
 		project.project_name AS projectName
 	FROM
 		(
