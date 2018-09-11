@@ -538,11 +538,6 @@ public class ScheduleController extends BaseController {
         try {
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
-            if(isAllday){
-                schedule.setIsAllday(1);
-            } else{
-                schedule.setIsAllday(0);
-            }
             Log log = scheduleService.updateSchedule(schedule);
             //包装推送数据
             PushType taskPushType = new PushType();

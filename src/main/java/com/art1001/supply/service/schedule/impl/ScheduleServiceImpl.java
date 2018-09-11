@@ -112,14 +112,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		if(!StringUtils.isEmpty(schedule.getAddress())){
 			content.append(ScheduleLogFunction.A.getName()).append(" ").append(ScheduleLogFunction.G.getName());
 		}
-		//更新日程全天模式
-		if(schedule.getIsAllday() != null) {
-			if (schedule.getIsAllday() == 0) {
-				content.append(ScheduleLogFunction.J.getName()).append(" ").append(ScheduleLogFunction.I.getName());
-			} else {
-				content.append(ScheduleLogFunction.J.getName()).append(" ").append(ScheduleLogFunction.H.getName());
-			}
-		}
+
 		schedule.setUpdateTime(System.currentTimeMillis());
 		Log log = new Log();
 		if(!StringUtils.isEmpty(content.toString())){
