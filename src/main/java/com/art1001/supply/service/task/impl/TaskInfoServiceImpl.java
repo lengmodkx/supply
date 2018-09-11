@@ -887,7 +887,6 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         nt.setMinimumFractionDigits(2);
         String format = nt.format(num);
         return format;
-
     }
 
     /**

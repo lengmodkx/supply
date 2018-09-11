@@ -139,6 +139,11 @@ $(function () {
     function movein(that) {
         that.find("i").css("opacity", "1");
         that.find(".img-show-operate").css("opacity", "1");
+        if (that.find(".img-show-download").is(":visible")){
+            that.css("cursor","crosshair")
+        }else {
+            that.css("cursor","not-allowed")
+        }
     }
 
     function moveout(that) {
