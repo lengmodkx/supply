@@ -1314,12 +1314,12 @@ public class TaskServiceImpl implements TaskService {
                 taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
             }
 
-
-            //设置百分比
+            //如果非任务总量,执行以下逻辑
             if (!StaticticsVO.TASKTOTALCOUNT.equals(names)){
-                //设置该组的达标数量
+                //设置百分比
                 NumberFormat numberFormat = NumberFormat.getInstance();
                 numberFormat.setMaximumFractionDigits(2);
+                //设置该组的达标数量
                 statictics.setCount(taskCount);
                 try {
                     statictics.setPercentage(Double.valueOf(numberFormat.format((double) taskCount / (double) total * 100)));
