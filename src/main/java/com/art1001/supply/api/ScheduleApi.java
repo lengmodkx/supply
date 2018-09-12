@@ -143,7 +143,7 @@ public class ScheduleApi {
      * @param endtime 日程结束结束
      * @return
      */
-    @PutMapping("/{scheduleId}/starttime")
+    @PutMapping("/{scheduleId}/endtime")
     public JSONObject updateScheduleEndtime(@PathVariable String scheduleId,
                                               @RequestParam String endtime){
         JSONObject object = new JSONObject();
@@ -379,6 +379,18 @@ public class ScheduleApi {
             scheduleService.updateSchedule(schedule);
             object.put("result",1);
             object.put("msg","更新成功");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+    
+    @GetMapping
+    public JSONObject schedules(){
+        JSONObject object = new JSONObject();
+        try{
+            object.put("result",1);
+            object.put("msg","");
         }catch(Exception e){
             throw new AjaxException(e);
         }

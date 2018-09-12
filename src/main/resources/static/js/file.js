@@ -267,7 +267,8 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
     id=id.concat(JSON.parse(sessionStorage.getItem("lujing")).id);
     console.log(JSON.parse(sessionStorage.getItem("lujing")))
     $.each(urls,function (i,item) {
-        var list ='<span><a href="javascript: void(0)" onclick="location.href=\'/file/list.html?projectId=\' + '+id[i]+'">'+item+' &gt; </a></span>'
+        var list ='<span><a href="javascript: void(0)"\n' +
+            '                         onclick="location.href=\'/file/list.html?projectId= '+id[i]+'\'">'+item+'&gt;</a></span>'
         $(".file-toper").append(list);
     });
 
