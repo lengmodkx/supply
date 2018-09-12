@@ -91,9 +91,9 @@ public interface ScheduleService {
 	/**
 	 * 添加或者移除参与者
 	 * @param scheduleId 日程的id
-	 * @param newJoin 新的参与者信息
+	 * @param memberIds 参与者信息
 	 */
-    void addAndRemoveScheduleMember(String scheduleId, String newJoin);
+    void updateMembers(String scheduleId, String memberIds);
 
 	/**
 	 * 更新日程的开始时间或者结束时间

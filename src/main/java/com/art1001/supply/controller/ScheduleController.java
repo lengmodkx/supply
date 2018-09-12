@@ -313,7 +313,7 @@ public class ScheduleController extends BaseController {
     public JSONObject addAndRemoveScheduleMember(String scheduleId, String addUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
-            scheduleService.addAndRemoveScheduleMember(scheduleId, addUserEntity);
+            scheduleService.updateMembers(scheduleId, addUserEntity);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,{}",e);

@@ -184,10 +184,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 	/**
 	 * 添加或者移除参与者
 	 * @param scheduleId 日程的id
-	 * @param addUserEntity 新的参与者信息
+	 * @param memberIds 参与者信息
 	 */
 	@Override
-	public void addAndRemoveScheduleMember(String scheduleId, String addUserEntity) {
+	public void updateMembers(String scheduleId, String memberIds) {
 		//查询出当前文件中的 参与者id
 		Schedule scheduleById = scheduleMapper.findScheduleById(scheduleId);
 
@@ -197,7 +197,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		//将数组转换成集合
 		List<String> oldJoin = Arrays.asList(scheduleById.getMemberIds().split(","));
-		List<String> newJoin = Arrays.asList(addUserEntity.split(","));
+		List<String> newJoin = Arrays.asList(memberIds.split(","));
 
 		//比较 oldJoin 和 newJoin 两个集合的差集  (移除)
 		List<String> reduce1 = oldJoin.stream().filter(item -> !newJoin.contains(item)).collect(Collectors.toList());
@@ -224,7 +224,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		} else{
 			Schedule schedule = new Schedule();
 			schedule.setScheduleId(scheduleId);
-			schedule.setMemberIds(addUserEntity);
+			schedule.setMemberIds(memberIds);
 			schedule.setUpdateTime(System.currentTimeMillis());
 			scheduleMapper.updateSchedule(schedule);
 			log = logService.saveLog(scheduleId,logContent.toString(),2);
