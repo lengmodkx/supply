@@ -71,7 +71,7 @@ public interface ShareService {
 	 * @param shareId 分享的id
 	 * @param addUserEntity 要添加的成员id
 	 */
-    void addAndRemoveShareMember(String shareId, String addUserEntity);
+    void updateMembers(String shareId, String addUserEntity);
 
 	/**
 	 * 清空分享的标签
