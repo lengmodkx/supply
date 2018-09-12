@@ -214,14 +214,78 @@ $(function () {
         });
     }
 
+    // 浏览器后退 事件
+    window.onload=function(){
+        addHistoryEntity();
+        detectBack();
+    }
+//新增一条浏览器浏览历史记录
+    function addHistoryEntity(){
+        if(history.pushState){ //现代浏览器
+            history.pushState('state1',null,'#foo');
+        }else{                 //ie9及以下
+            document.getElementById("goFoo").click();
+        }
+    }
+//监听浏览器回退按钮
+    function detectBack(){
+        if(history.pushState){ //现代浏览器
+            window.onpopstate=function(){
+                logout();
+            }
+        }
+        else{                  //ie9及以下
+            $(window).on("hashchange",function(){
+                if(location.hash=="#foo"){
+                    return;
+                }
+                logout();
+            });
+        }
+    }
+//回退前事件
+    function logout(){
+        urls.pop();
+        var lujing={"url":urls,"id":projectId};
+        sessionStorage.setItem("lujing",JSON.stringify(lujing));
+        console.log(sessionStorage.getItem('lujing'));
+        history.back();
+    }
+
+if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
+    var lujing={"url":'文件库',"id":projectId};
+    sessionStorage.setItem("lujing",JSON.stringify(lujing));
+}else if (JSON.parse(sessionStorage.getItem("lujing")).url==[]){
+
+    var lujing={"url":'文件库',"id":projectId};
+    sessionStorage.setItem("lujing",JSON.stringify(lujing));
+}
+    $(".file-toper").html("");
+    var urls = [];
+    var id= [];
+    urls=urls.concat(JSON.parse(sessionStorage.getItem("lujing")).url);
+    id=id.concat(JSON.parse(sessionStorage.getItem("lujing")).id);
+    console.log(JSON.parse(sessionStorage.getItem("lujing")))
+    $.each(urls,function (i,item) {
+        var list ='<span><a href="javascript: void(0)" onclick="location.href=\'/file/list.html?projectId=\' + '+id[i]+'">'+item+' &gt; </a></span>'
+        $(".file-toper").append(list);
+    });
+
+
+
     // 进入下级目录
     $('html').on('click','.one-file',function (e) {
+        var wjjName=$(this).siblings(".one-file-name").text();
         e.stopPropagation();
         var fileId = $(this).attr("data");
         var catalog = $(this).attr("data-id");
         if(catalog==="1"){
+            var lujing={"url":urls.concat(wjjName),"id":id.concat(projectId)};
+            sessionStorage.setItem("lujing",JSON.stringify(lujing));
             window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId+"&currentGroup="+groupId;
         }else{
+            var lujing={"url":urls.concat(wjjName),"id":id.concat(projectId)};
+            sessionStorage.setItem("lujing",JSON.stringify(lujing));
             $.post('/file/hasPermission',{"fileId":fileId},function (data) {
                 if(data.result===1&&data.hasPermission){
                     window.location.href = "/file/fileDetail.html?fileId="+fileId;
