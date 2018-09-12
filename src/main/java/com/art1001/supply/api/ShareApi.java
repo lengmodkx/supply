@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Todo;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.relation.GroupVO;
@@ -158,8 +159,8 @@ public class ShareApi {
      * @param memberIds 多个成员id的字符串
      * @return
      */
+    @Todo
     @PostMapping("/{shareId}/updateMembers")
-    @ResponseBody
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -181,6 +182,7 @@ public class ShareApi {
      * @param isPrivacy
      * @return
      */
+    @Todo
     @PostMapping
     public JSONObject saveShare(
             @RequestParam(value = "projectId") String projectId,
@@ -236,8 +238,8 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
+    @Todo
     @PutMapping("/{shareId}/moveToRecycleBin")
-    @ResponseBody
     public JSONObject moveToRecycleBin(@PathVariable(value = "shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -258,7 +260,6 @@ public class ShareApi {
      * @return
      */
     @PutMapping("/{shareId}/recoveryShare")
-    @ResponseBody
     public JSONObject recoveryShare(@PathVariable("shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -272,4 +273,64 @@ public class ShareApi {
         }
         return jsonObject;
     }
+
+    /**
+     * 复制分享
+     * @param shareId 分享id
+     * @param projectId 项目id
+     * @return
+     */
+    @PostMapping("/{shareId}/copy")
+    public JSONObject copyTask(@PathVariable(value = "shareId")String shareId,
+                               @RequestParam(value = "projectId")String projectId){
+        JSONObject object = new JSONObject();
+        try{
+            shareService.copyShare(shareId,projectId);
+            object.put("result",1);
+            object.put("msg","复制成功");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
+     * 移动分享
+     * @param shareId 分享id
+     * @param projectId 项目id
+     * @return
+     */
+    @PutMapping("/{shareId}/move")
+    public JSONObject move(@PathVariable(value = "shareId")String shareId,
+                            @RequestParam(value = "projectId")String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            shareService.moveShare(shareId,projectId);
+            jsonObject.put("result",1);
+        }catch(Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常!");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更换分享的隐私模式
+     * @param shareId 分享id
+     * @return
+     */
+    @Todo
+    @PutMapping("/{shareId}/privacy")
+    public JSONObject move(@PathVariable(value = "shareId")String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            shareService.updatePrivacy(shareId);
+            jsonObject.put("result",1);
+        }catch(Exception e){
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常!");
+        }
+        return jsonObject;
+    }
+
 }

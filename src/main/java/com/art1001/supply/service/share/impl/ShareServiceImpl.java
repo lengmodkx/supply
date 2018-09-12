@@ -279,4 +279,24 @@ public class ShareServiceImpl implements ShareService {
 	public String findUidsByShareId(String shareId) {
 		return shareMapper.findUidsByShareId(shareId);
 	}
+
+	/**
+	 * 复制分享
+	 * @param shareId 分享id
+	 * @param projectId 项目id
+	 */
+	@Override
+	public void copyShare(String shareId, String projectId) {
+
+	}
+
+	@Override
+	public void moveShare(String shareId, String projectId) {
+
+	}
+
+	@Override
+	public void updatePrivacy(String shareId) {
+
+	}
 }

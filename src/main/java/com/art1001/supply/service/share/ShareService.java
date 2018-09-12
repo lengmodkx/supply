@@ -109,4 +109,24 @@ public interface ShareService {
 	 * @param shareId 分享id
 	 */
     String findUidsByShareId(String shareId);
+
+	/**
+	 * 复制分享
+	 * @param shareId 分享id
+	 * @param projectId 项目id
+	 */
+	void copyShare(String shareId, String projectId);
+
+	/**
+	 * 移动分享
+	 * @param shareId 分享id
+	 * @param projectId 项目id
+	 */
+	void moveShare(String shareId, String projectId);
+
+	/**
+	 * 更换分享的隐私模式
+	 * @param shareId 分享id
+	 */
+	void updatePrivacy(String shareId);
 }
