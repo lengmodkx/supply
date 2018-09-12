@@ -47,6 +47,7 @@ import java.util.List;
 	 */
 	 void saveFile(File file);
 
+	 void saveFile(String files,String publicId,String projectId);
 	/**
 	 * 获取所有file数据
 	 */
@@ -229,4 +230,9 @@ import java.util.List;
 	 */
     int findFolderIsExist(String folderName, String projectId,String parentId);
 
+    void deleteFileByPublicId(String publicId);
+
+    List<File> findFileByPublicId(String publicId);
+
+	String findFileId();
 }

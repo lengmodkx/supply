@@ -7,15 +7,11 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						chat_id,
-				member_id,
-				content,
-				create_time,
-				file_url
+		chat_id,member_id,content,create_time,project_id
 	</sql>
 
 	<sql id="whereStatement">

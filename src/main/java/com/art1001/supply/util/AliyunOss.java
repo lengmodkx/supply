@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 @Slf4j
 public class AliyunOss {
@@ -347,4 +348,18 @@ public class AliyunOss {
         // 关闭Client。
         ossClient.shutdown();
     }
+
+    public void downloadzip(List<com.art1001.supply.entity.file.File> fileList, HttpServletResponse response){
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+
+
+
+    }
+
+
+
+
+
+
+
 }

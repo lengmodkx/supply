@@ -22,6 +22,7 @@
 		<result column="file_label" property="fileLabel" jdbcType="INTEGER" />
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
 		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
+		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -77,7 +78,8 @@
 				file_uids,
 				file_label,
 				file_thumbnail,
-				file_privacy
+				file_privacy,
+				public_id
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
@@ -98,6 +100,7 @@
 				f.file_label,
 				f.file_thumbnail,
 				f.file_privacy,
+				f.public_id,
 				tg.tag_id,
 				tg.tag_name,
 				tg.bg_color
@@ -509,8 +512,8 @@
 	</select>
 
 	<!-- 查询某个文件夹下的公开文件 -->
-	<select id="findPublicFile" resultMap="PublicMap">
-		select file_id,file_name,ext,file_url,project_id,catalog,size,parent_id,file_del,create_time,update_time,file_thumbnail,file_privacy from prm_public_file where parent_id = #{parentId}
+	<select id="findPublicFile" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from prm_file where parent_id = #{parentId}
 	</select>
 
 	<insert id="savePublicFile">

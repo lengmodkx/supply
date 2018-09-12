@@ -6,10 +6,7 @@ import java.util.Map;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 /**
  * filemapper接口
@@ -220,5 +217,12 @@ public interface FileMapper {
 	@Select("select count(0) from prm_file where project_id = #{projectId} and parent_id = #{parentId}  and file_name = #{folderName}")
     int findFolderIsExist(@Param("folderName") String folderName, @Param("projectId") String projectId, @Param("parentId") String parentId);
 
-	File findFile();
+	@Select("select file_id from prm_file where file_label=1")
+	String findFileId();
+
+	@Delete("delete from prm_file where public_id = #{publicId}")
+	void deleteFileByPublicId(String publicId);
+
+	@Select("select fileId,fileName,fileUrl, from prm_file where public_id = #{publicId}")
+	List<File> findFileByPublicId(String publicId);
 }

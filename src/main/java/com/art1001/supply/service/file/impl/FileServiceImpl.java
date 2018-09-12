@@ -1,6 +1,8 @@
 package com.art1001.supply.service.file.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
@@ -12,7 +14,6 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.file.FileVersion;
-import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
@@ -20,7 +21,6 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
-import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -66,9 +66,6 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private Base base;
-
-    @Resource
-    private PublicFileService publicFileService;
 
     /**
      * 查询分页file数据
@@ -194,6 +191,37 @@ public class FileServiceImpl implements FileService {
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         fileMapper.saveFile(file);
+    }
+
+    /**
+     * 保存文件--文件在前端直接传oss
+     * @param files
+     * @param chatId
+     * @param projectId
+     */
+    @Override
+    public void saveFile(String files,String chatId,String projectId){
+        JSONArray array = JSON.parseArray(files);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject jsonObject = array.getJSONObject(i);
+            String fileName = jsonObject.getString("fileName");
+            String fileUrl = jsonObject.getString("fileUrl");
+            String size = jsonObject.getString("size");
+            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+            // 写库
+            File myFile = new File();
+            // 用原本的文件名
+            myFile.setFileName(fileName);
+            myFile.setExt(ext);
+            myFile.setProjectId(projectId);
+            myFile.setFileUrl(fileUrl);
+            // 得到上传文件的大小
+            myFile.setSize(size);
+            myFile.setCatalog(0);
+            myFile.setMemberId(ShiroAuthenticationManager.getUserId());
+            myFile.setPublicId(chatId);
+            saveFile(myFile);
+        }
     }
 
     /**
@@ -593,6 +621,20 @@ public class FileServiceImpl implements FileService {
         return fileMapper.findFolderIsExist(folderName,projectId,parentId);
     }
 
+    @Override
+    public void deleteFileByPublicId(String publicId) {
+        fileMapper.deleteFileByPublicId(publicId);
+    }
+
+    @Override
+    public List<File> findFileByPublicId(String publicId) {
+        return fileMapper.findFileByPublicId(publicId);
+    }
+
+    @Override
+    public String findFileId() {
+        return fileMapper.findFileId();
+    }
 
 
 }

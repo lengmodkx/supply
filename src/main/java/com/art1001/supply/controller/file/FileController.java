@@ -107,7 +107,20 @@ public class FileController extends BaseController {
                        String currentGroup, Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = userService.findById(userId);
-        List<File> fileList = fileService.findChildFile(projectId, fileId, fileDel);
+
+        List<File> fileList = new ArrayList<>();
+        if("0".equals(fileId)){
+            fileList = fileService.findChildFile(projectId, fileId, fileDel);
+        }else{
+            File file = fileService.findFileById(fileId);
+            if("公共模型库".equals(file.getFileName())) {
+                String fileId1= fileService.findFileId();
+                fileList = fileService.findPublicFile(fileId1);
+            }else{
+                fileList = fileService.findPublicFile(file.getFileId());
+            }
+        }
+
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", fileId);
         model.addAttribute("projectId", projectId);

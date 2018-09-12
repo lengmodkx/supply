@@ -132,7 +132,7 @@ public class File extends BaseEntity implements Serializable {
     /**
      * 从(文件,任务,分享,日程) 评论区上传的文件 或者 项目群聊上传的文件时候 的项目id 或者 文件,任务,分享,日程 的id
      */
-    private String fileSourceId;
+    private String publicId;
 
     /**
      * 文件隐私模式 0所有成员可见，1参与者可见

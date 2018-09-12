@@ -37,8 +37,8 @@ public class Chat extends BaseEntity implements Serializable {
 
 
 	/**
-	 * 文件url
+	 * 项目Id
 	 */
-	private String fileUrl;
+	private String projectId;
 
 }

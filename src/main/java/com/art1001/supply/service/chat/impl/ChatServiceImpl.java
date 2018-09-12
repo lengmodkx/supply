@@ -10,6 +10,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.chat.Chat;
@@ -34,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
 	private TaskService taskService;
 
 	@Resource
-	ScheduleService scheduleService;
+	private ScheduleService scheduleService;
 	
 	/**
 	 * 查询分页数据
@@ -66,6 +67,7 @@ public class ChatServiceImpl implements ChatService {
 	@Override
 	public void deleteChatByChatId(String chatId){
 		chatMapper.deleteChatByChatId(chatId);
+		fileService.deleteFileByPublicId(chatId);
 	}
 
 	/**
@@ -84,6 +86,7 @@ public class ChatServiceImpl implements ChatService {
 	 */
 	@Override
 	public void saveChat(Chat chat){
+		chat.setChatId(IdGen.uuid());
 		chatMapper.saveChat(chat);
 	}
 	/**
