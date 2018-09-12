@@ -1,10 +1,13 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectService;
@@ -14,6 +17,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,16 +78,14 @@ public class ShareApi {
     @Resource
     private ProjectService projectService;
 
-
     /**
      * 加载分享页面
      * @param projectId 项目id
      * @param shareId 分享id (可选)
-     * @param currentGroup 当前分组id
      * @return
      */
     @GetMapping("/{projectId}")
-    public JSONObject share(@PathVariable String projectId, String shareId, @RequestParam("currentGroup")String currentGroup){
+    public JSONObject share(@PathVariable String projectId, String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
             List<Share> shareList = shareService.findByProjectId(projectId, 0);
@@ -100,17 +102,12 @@ public class ShareApi {
                 share.setIsCollect(publicCollectService.isCollItem(share.getId()));
             }
             jsonObject.put("shareList",shareList);
-            jsonObject.put("currentGroup",currentGroup);
 
             //查询出分享的关联信息
             for (Share s : shareList) {
                 BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
                 s.setBindingVo(bindingVo);
             }
-
-            //加载该项目下所有分组的信息
-            List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-            jsonObject.put("groups",groups);
 
             if(!StringUtils.isEmpty(shareId)){
                 jsonObject.put("shareId",shareId);
@@ -119,28 +116,6 @@ public class ShareApi {
             UserEntity userEntity = userService.findById(userId);
             jsonObject.put("user",userEntity);
             jsonObject.put("project",projectService.findProjectByProjectId(projectId));
-            jsonObject.put("result",1);
-        } catch (Exception e){
-            jsonObject.put("msg","系统异常");
-            jsonObject.put("result",0);
-        }
-
-        return jsonObject;
-    }
-
-    /**
-     * 添加分享
-     * @param projectId 项目id
-     * @param shareId 分享id (选填)
-     * @return
-     */
-    @PostMapping("/toAddShare")
-    public JSONObject toAddShare(@RequestParam String projectId,
-                             @RequestParam(required = false) String shareId) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("projectId", projectId);
-            jsonObject.put("share",shareService.findById(shareId));
             jsonObject.put("result",1);
         } catch (Exception e){
             jsonObject.put("msg","系统异常");
@@ -155,10 +130,10 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
-    @GetMapping("SearchPeople")
-    public String SearchPeople(
-            @RequestParam String projectId,
-            @RequestParam String shareId
+    @GetMapping("/{shareId}/searchPeople")
+    public JSONObject searchPeople(
+            @PathVariable String shareId,
+            @RequestParam String projectId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -174,29 +149,126 @@ public class ShareApi {
             jsonObject.put("msg","系统异常!");
             jsonObject.put("result",0);
         }
-        return "tk-share-people";
+        return jsonObject;
     }
 
     /**
-     * 添加项目成员
+     * 添加/移除 分享成员
      * @param shareId 分享id
-     * @param memberId 成员id
+     * @param memberIds 多个成员id的字符串
      * @return
      */
-    @PostMapping("/addShareMember")
+    @PostMapping("/{shareId}/updateMembers")
     @ResponseBody
-    public JSONObject addShareMember(
-            @RequestParam String shareId,
-            @RequestParam String memberId
-    ) {
+    public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
+            shareService.updateMembers(shareId,memberIds);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,操作失败!",e.getMessage());
+            jsonObject.put("msg","系统异常,操作失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 添加分享
+     * @param projectId
+     * @param title
+     * @param content
+     * @param isPrivacy
+     * @return
+     */
+    @PostMapping
+    public JSONObject saveShare(
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "title") String title,
+            @RequestParam(value = "content") String content,
+            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
+    ){
+        JSONObject jsonObject = new JSONObject();
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        try {
+            Share share = new Share();
+            share.setTitle(title);
+            share.setContent(content);
+            share.setProjectId(projectId);
+            share.setIsPrivacy(isPrivacy);
+            share.setMemberId(userEntity.getId());
+            share.setMemberImg(userEntity.getUserInfo().getImage());
+            share.setMemberName(userEntity.getUserName());
+            share.setUids(userEntity.getId());
+            shareService.saveShare(share);
             jsonObject.put("result", 1);
-            jsonObject.put("msg", "添加成功");
-        } catch (Exception e) {
-            log.error("添加参与者异常", e.getMessage());
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("保存分享异常", e.getMessage());
             jsonObject.put("result", 0);
-            jsonObject.put("msg", "添加失败");
+            jsonObject.put("msg", "保存失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 删除分享
+     * @param shareId 分享id
+     * @return
+     */
+    @DeleteMapping("/{shareId}")
+    public JSONObject shareDelate(@PathVariable("shareId") String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            shareService.deleteById(shareId);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            log.error("系统异常",e.getMessage());
+            e.printStackTrace();
+            jsonObject.put("msg","系统异常");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 将分享移入回收站
+     * @param shareId 分享id
+     * @return
+     */
+    @PutMapping("/{shareId}/moveToRecycleBin")
+    @ResponseBody
+    public JSONObject moveToRecycleBin(@PathVariable(value = "shareId") String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            shareService.moveToRecycleBin(shareId);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
+            log.error("系统异常,操作失败!",e.getMessage());
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 恢复分享
+     * @param shareId 分享id
+     * @return
+     */
+    @PutMapping("/{shareId}/recoveryShare")
+    @ResponseBody
+    public JSONObject recoveryShare(@PathVariable("shareId") String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            shareService.recoveryShare(shareId);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常,操作失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
         }
         return jsonObject;
     }
