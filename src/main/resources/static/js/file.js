@@ -146,7 +146,12 @@ $(function () {
         }
     }
 $(".one-file img").mousedown(function (e) {
-    e.preventDefault()
+    if ($(this).parents(".one-file").find(".p-download").is(":visible")) {
+        $(this).css("cursor","move")
+    }else {
+        e.preventDefault()
+    }
+
 });
     function moveout(that) {
         that.find("div").css("opacity", "0");
