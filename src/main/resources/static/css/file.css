@@ -51,6 +51,15 @@
     cursor: pointer;
     margin-right: 5px;
 }
+.file-toper .span-list{
+    height: 55px;
+    line-height: 60px;
+    cursor: pointer;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .file-toper span.now{
     color: #1589CF;
 }

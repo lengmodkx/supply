@@ -262,7 +262,7 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
     var lujing={"url":'文件库',"id":projectId};
     sessionStorage.setItem("lujing",JSON.stringify(lujing));
 }
-    $(".file-toper").html("");
+    $(".span-list").html("");
     var urls = [];
     var id= [];
     urls=urls.concat(JSON.parse(sessionStorage.getItem("lujing")).url);
@@ -271,7 +271,7 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
     $.each(urls,function (i,item) {
         var list ='<span><a href="javascript: void(0)"\n' +
             '                         onclick="location.href=\'/file/list.html?projectId= '+id[i]+'\'">'+item+'&gt;</a></span>'
-        $(".file-toper").append(list);
+        $(".span-list").append(list);
     });
 
 
