@@ -1291,12 +1291,12 @@ public class TaskServiceImpl implements TaskService {
 
             //查询出今日到期的任务
             if(StaticticsVO.MATURINGTODAY.equals(names)){
-                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出已逾期的任务
             if(StaticticsVO.BEOVERDUE.equals(names)){
-                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出待认领的任务
@@ -1306,35 +1306,36 @@ public class TaskServiceImpl implements TaskService {
 
             //查询出按时完成的任务
             if(StaticticsVO.FINISHONTIME.equals(names)){
-                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出逾期完成任务
             if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
-                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
             }
 
-            //设置该组的达标数量
-            statictics.setCount(taskCount);
-            NumberFormat numberFormat = NumberFormat.getInstance();
-            numberFormat.setMaximumFractionDigits(2);
-            //设置百分比
-            if (total!=0){
-                statictics.setPercentage(Double.valueOf(numberFormat.format((float)taskCount / (float)total * 100)));
+            //如果非任务总量,执行以下逻辑
+            if (!StaticticsVO.TASKTOTALCOUNT.equals(names)){
+                //设置百分比
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(2);
+                //设置该组的达标数量
+                statictics.setCount(taskCount);
+                try {
+                    statictics.setPercentage(Double.valueOf(numberFormat.format((double) taskCount / (double) total * 100)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                statictics.setCount(total);
+                statictics.setPercentage((double)100);
             }
             list.add(statictics);
         }
         return list;
     }
 
-    private String  numChange(double num){
-        //获取格式化对象
-        NumberFormat nt = NumberFormat.getPercentInstance();
-        //设置百分数精确度2即保留两位小数
-        nt.setMinimumFractionDigits(2);
-        String format = nt.format(num);
-        return format;
-    }
+
 
     /**
      * 设置移动任务的信息
