@@ -110,16 +110,19 @@
     float: left;
 }
 .one-file-name{
-    height: 46px;
-    width: 100%;
-    line-height: 46px;
+    width: 160px;
+    line-height: 30px;
     text-align: center;
     display: block;
+    white-space: normal;
+    word-break:break-all;
+    word-wrap:break-word;
 }
 .one-file-name input{
-    width: 100%;
+    width: 160px;
     height: 30px;
     text-align: center;
+    font-size: 12px;
 }
 .one-file{
     width: 164px;
@@ -152,12 +155,16 @@
     height: 64px;
     margin: auto;
 }
-.one-file:hover div{
-    opacity: 1;
-}
 .one-file:hover i{
     opacity: 1;
 }
+.p-download{
+    display: none;
+}
+.downloaded{
+    display: block;
+}
+
 .img-show-download{
     position: absolute;
     bottom: 20px;

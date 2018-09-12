@@ -52,6 +52,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * taskServiceImpl
@@ -337,42 +339,41 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 移动任务至 ( 项目、分组、菜单 )
-     * @param task 任务的信息
-     * @param oldTaskMenuVO 移动前该任务的位置信息
-     * @param newTaskMenuVO 将要移动该任务到的位置信息
+     * @param taskId 任务id
+     * @param projectId 项目id
+     * @param menuId 菜单id
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
-    public Log mobileTask(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO) {
-        task.setTaskMenuId(newTaskMenuVO.getTaskMenuId());
-        //更新新的任务信息
-        updateMoveTaskInfo(task,oldTaskMenuVO,newTaskMenuVO);
+    public Log mobileTask(String taskId, String projectId, String menuId) {
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setProjectId(projectId);
+        task.setTaskMenuId(menuId);
+        task.setUpdateTime(System.currentTimeMillis());
+        taskMapper.updateTask(task);
 
-        task = taskMapper.findTaskByTaskId(task.getTaskId());
+        //移动子任务
+        for(Task subTask : taskMapper.findSubLevelTask(taskId)){
+            subTask.setProjectId(projectId);
+            subTask.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateTask(subTask);
+        }
 
-        //循环移动子任务
-        for (Task t : task.getTaskList()) {
-            updateMoveTaskInfo(t,oldTaskMenuVO,newTaskMenuVO);
+        //生成日志信息
+        String oldMenuId = taskMapper.findMenuNameByTaskId(taskId);
+        TaskMenuVO oldTaskMenuVO = relationService.findRelationNameAndProjectName(menuId);
+        TaskMenuVO newTaskMenuVO = relationService.findRelationNameAndProjectName(oldMenuId);
+        String oldProjectId = taskMapper.findTaskProjectId(taskId);
+        StringBuilder content = new StringBuilder();
+        if(projectId.equals(oldProjectId)){
+            content.append(TaskLogFunction.X.getName()).append(newTaskMenuVO.getTaskMenuName());
+        } else{
+            content.append(TaskLogFunction.V.getName()).append(oldTaskMenuVO.getProjectName()).append("/").append(oldTaskMenuVO.getTaskMenuName()).append(TaskLogFunction.W.getName()).append(newTaskMenuVO.getProjectName()).append("/").append(newTaskMenuVO.getTaskMenuName());
         }
-        String content = "";
-        //如果项目id不为空,说明该任务要移至其他项目,所以项目id,分组id,菜单id,肯定都不为空
-        //或者如果分组id不为空说明该任务要移至其他分组,所以 分组id,菜单id,肯定不为空
-        if((newTaskMenuVO.getProjectId() != null && newTaskMenuVO.getProjectId() != "") || (newTaskMenuVO.getTaskGroupId() != null && newTaskMenuVO.getTaskGroupId() != "")){
-            //拼接任务操作日志内容的字符串
-            content = TaskLogFunction.V.getName() + " " + oldTaskMenuVO.getTaskGroupName() + "/" + oldTaskMenuVO.getTaskMenuName() +" "+  TaskLogFunction.W.getName() + " " + newTaskMenuVO.getTaskGroupName() + "/" + newTaskMenuVO.getTaskMenuName();
-            //保存日志信息
-            Log log = logService.saveLog(task.getTaskId(), content,1);
-            return log;
-        }
-        //如果任务的菜单信息不为空 说明该任务要移至其他的任务菜单
-        if(newTaskMenuVO.getTaskMenuId() != null && newTaskMenuVO.getTaskMenuId() != ""){
-            //拼接任务操作日志内容的字符串
-            content = TaskLogFunction.X.getName() + " " + newTaskMenuVO.getTaskMenuName();
-            //保存日志信息
-            Log log = logService.saveLog(task.getTaskId(), content,1);
-            return log;
-        }
-            return null;
+        Log log = logService.saveLog(taskId, content.toString(),1);
+        return log;
     }
 
     /**
@@ -712,6 +713,11 @@ public class TaskServiceImpl implements TaskService {
         logService.saveLog(task.getTaskId(),content.toString(),1);
         Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
         log.setResult(result);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type","子任务完成/重做");
+        jsonObject.put("taskId",task.getTaskId());
+        jsonObject.put("result",task.getTaskStatus());
+        messagingTemplate.convertAndSend("/topic/"+parentTask.getTaskId(),new ServerMessage(JSON.toJSONString(jsonObject)));
         return log;
     }
 
@@ -719,62 +725,53 @@ public class TaskServiceImpl implements TaskService {
      * 复制任务
      * @param taskId 当前任务信息
      * @param projectId 当前任务所在的项目id
-     * @param menuId 要复制到的位置信息
-     * @param old_new 原任务接受新任务的更新提醒  是否勾选
-     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      * @return
      */
+    @Transactional(propagation=Propagation.REQUIRED,rollbackFor=Exception.class)
     @Override
-    public String copyTask(String taskId, String projectId, String menuId, boolean old_new, boolean new_old) {
-        Task oldTask = taskMapper.findTaskByTaskId(taskId);
+    public String copyTask(String taskId, String projectId, String menuId) {
         Log log = new Log();
-        Task copyTask = new Task();
-        //把被复制的任务的id更改成新生成的任务的id
-        copyTask.setTaskId(IdGen.uuid());
-        copyTask.setTaskName(oldTask.getTaskName());
-        copyTask.setProjectId(projectId);
-        copyTask.setTaskMenuId(menuId);
-        copyTask.setPrivacyPattern(1);
-        copyTask.setFabulousCount(0);
-        copyTask.setIsDel(0);
-        copyTask.setParentId("0");
-        copyTask.setMemberId(ShiroAuthenticationManager.getUserId());
-        //更新新任务的创建时间
-        copyTask.setCreateTime(System.currentTimeMillis());
-        //设置新任务的更新时间
-        copyTask.setUpdateTime(System.currentTimeMillis());
+        List<Task> tasks = new ArrayList<Task>();
+        Task oldTask = taskMapper.findTaskByTaskId(taskId);
+        try {
+            //设置新的id
+            oldTask.setTaskId(IdGen.uuid());
+            //更新新任务的创建时间
+            oldTask.setCreateTime(System.currentTimeMillis());
+            //设置新任务的更新时间
+            oldTask.setUpdateTime(System.currentTimeMillis());
+            oldTask.setProjectId(projectId);
+            oldTask.setTaskMenuId(menuId);
+            tasks.add(oldTask);
+            //根据被复制任务的id 取出该任务所有的子任务
+            List<Task> subLevelTaskList = taskMapper.findSubLevelTask(taskId);
+            if(subLevelTaskList != null && subLevelTaskList.size() > 0) {
+                for (Task task : subLevelTaskList) {
+                    //设置新的子任务id
+                    task.setTaskId(IdGen.uuid());
+                    task.setProjectId(projectId);
+                    //设置新的子任务的父任务id
+                    task.setParentId(oldTask.getTaskId());
+                    //设置新子任务的更新时间
+                    task.setUpdateTime(System.currentTimeMillis());
+                    //设置新子任务的创建时间
+                    task.setCreateTime(System.currentTimeMillis());
+                    tasks.add(task);
+                }
+            }
 
-        setCopyTaskInfo(oldTask,copyTask,projectId,old_new,new_old);
-
+            //插入数据
+            for (Task task : tasks) {
+                taskMapper.saveTask(task);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","创建了任务");
-        jsonObject.put("task",taskMapper.findTaskByTaskId(copyTask.getTaskId()));
+        jsonObject.put("task",taskMapper.findTaskByTaskId(oldTask.getTaskId()));
         messagingTemplate.convertAndSend("/topic/"+ projectId, new ServerMessage(JSON.toJSONString(jsonObject, SerializerFeature.DisableCircularReferenceDetect)));
-        //根据被复制任务的id 取出该任务所有的子任务
-        List<Task> subLevelTaskList = taskMapper.findSubLevelTask(taskId);
-        if(subLevelTaskList != null && subLevelTaskList.size() > 0){
-            //把所有的子任务信息设置好后插入数据库
-            for (Task subLevelTask : subLevelTaskList) {
-                Task copySubleveTask = new Task();
-                try {
-                    copySubleveTask = Task.clone(subLevelTask);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                //设置新的子任务id
-                copySubleveTask.setTaskId(IdGen.uuid());
-                copySubleveTask.setProjectId(projectId);
-                //设置新的子任务的父任务id
-                copySubleveTask.setParentId(copyTask.getTaskId());
-                //设置新子任务的更新时间
-                copySubleveTask.setUpdateTime(System.currentTimeMillis());
-                //设置新子任务的创建时间
-                copySubleveTask.setCreateTime(System.currentTimeMillis());
-                copyTask.setParentId("0");
-                setCopyTaskInfo(subLevelTask,copySubleveTask,projectId,old_new,new_old);
-            }
-        }
-        return copyTask.getTaskId();
+        return oldTask.getTaskId();
     }
 
     /**
@@ -786,7 +783,6 @@ public class TaskServiceImpl implements TaskService {
     public int collectTask(Task task) {
         PublicCollect publicCollect = new PublicCollect();
         //设置收藏的id
-        publicCollect.setId(IdGen.uuid());
         publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
         //设置收藏的项目的id
         publicCollect.setProjectId(task.getProjectId());
@@ -1295,12 +1291,12 @@ public class TaskServiceImpl implements TaskService {
 
             //查询出今日到期的任务
             if(StaticticsVO.MATURINGTODAY.equals(names)){
-                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出已逾期的任务
             if(StaticticsVO.BEOVERDUE.equals(names)){
-                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出待认领的任务
@@ -1310,193 +1306,36 @@ public class TaskServiceImpl implements TaskService {
 
             //查询出按时完成的任务
             if(StaticticsVO.FINISHONTIME.equals(names)){
-                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis()/1000);
             }
 
             //查询出逾期完成任务
             if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
-                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis());
+                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
             }
 
-            //设置该组的达标数量
-            statictics.setCount(taskCount);
-            NumberFormat numberFormat = NumberFormat.getInstance();
-            numberFormat.setMaximumFractionDigits(2);
-            //设置百分比
-            statictics.setPercentage(Double.valueOf(numberFormat.format((float)taskCount / (float)total * 100)));
+            //如果非任务总量,执行以下逻辑
+            if (!StaticticsVO.TASKTOTALCOUNT.equals(names)){
+                //设置百分比
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(2);
+                //设置该组的达标数量
+                statictics.setCount(taskCount);
+                try {
+                    statictics.setPercentage(Double.valueOf(numberFormat.format((double) taskCount / (double) total * 100)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                statictics.setCount(total);
+                statictics.setPercentage((double)100);
+            }
             list.add(statictics);
         }
         return list;
     }
 
-    /**
-     * 此方法用来设置 复制的新任务的  成员 标签 关联
-      * @param oldTask 被复制的任务的信息
-      * @param copyTask 新的任务信息
-      * @param projectId 项目信息
-      */
-    public void setCopyTaskInfo(Task oldTask, Task copyTask, String projectId, boolean oldNew,boolean newOld){
-        //被复制的任务的标签信
-        List<Tag> tagList = oldTask.getTagList();
-        //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
-        if(!Objects.equals(oldTask.getProjectId(),projectId)){
-            List<ProjectMember> byProjectId = projectMemberService.findByProjectId(projectId);
 
-            //把每个成员的id 取出来 抽成集合 方便比较
-            List<String> members = byProjectId.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
-
-            //判断此任务的执行者 在不在新项目中
-            for (String executorId : members) {
-                if(executorId.equals(oldTask.getExecutor())){
-                    copyTask.setExecutor(oldTask.getExecutor());
-                    break;
-                } else{
-                    copyTask.setExecutor("");
-                }
-            }
-
-            //将原来的任务的所有成员id 转为集合 方便比较
-            List<String> oldTaskMembers = new ArrayList<String>();
-            oldTaskMembers = Arrays.asList(oldTask.getTaskUIds().split(","));
-
-            //取出任务成员 和 新项目成员的  交集
-            List<String> intersection = oldTaskMembers.stream().filter(item -> members.contains(item)).collect(Collectors.toList());
-
-            copyTask.setTaskUIds(Joiner.on(",").join(intersection));
-
-            //标签设置
-            if(tagList != null && tagList.size() > 0 ){
-                //复制到新项目里的所有标签
-                List<Tag> byProjectIdTag = tagService.findByProjectId(projectId);
-
-                List<Tag> newTagListAfter = new ArrayList<Tag>();
-                List<Long> newTagIds = new ArrayList<Long>();
-
-                if(byProjectIdTag != null && byProjectIdTag.size() > 0){
-                    boolean flag = false;
-                    for(int i = 0;i < tagList.size() ;i++) {
-                        for (Tag t : byProjectIdTag) {
-                            if (tagList.get(i).getTagName().equals(t.getTagName())) {
-                                newTagIds.add(t.getTagId());
-                                flag = true;
-                            }
-                        }
-                        if (!flag) {
-                            newTagListAfter.add(tagList.get(i));
-                        }
-                        flag = false;
-                    }
-                } else{
-                    newTagListAfter = tagList;
-                }
-                for (Tag t : newTagListAfter) {
-                    t.setTagId(null);
-                    //t.setTaskId(null);
-                    t.setMemberId(ShiroAuthenticationManager.getUserId());
-                    t.setProjectId(projectId);
-                    t.setCreateTime(System.currentTimeMillis());
-                    t.setUpdateTime(System.currentTimeMillis());
-                }
-                if(!newTagListAfter.isEmpty()){
-                    tagService.saveMany(newTagListAfter);
-                    for (Tag t : newTagListAfter) {
-                        newTagIds.add(t.getTagId());
-                    }
-                }
-                //用逗号将数组隔开
-                //copyTask.setTagId(Joiner.on(",").join(newTagIds));
-
-                //插入新的任务和标签的关系到库中
-                List<TagRelation> tagRelations = new ArrayList<TagRelation>();
-                for (Long tagId : newTagIds) {
-                    TagRelation tagRelation = new TagRelation();
-                    tagRelation.setId(IdGen.uuid());
-                    tagRelation.setTaskId(copyTask.getTaskId());
-                    tagRelation.setTagId(tagId);
-                    tagRelations.add(tagRelation);
-                }
-                tagRelationService.saveManyTagRelation(tagRelations);
-            }
-
-        } else{
-            //插入新的任务和标签的关系到库中
-            List<TagRelation> tagRelations = new ArrayList<TagRelation>();
-            for (Tag tag: tagList) {
-                TagRelation tagRelation = new TagRelation();
-                tagRelation.setId(IdGen.uuid());
-                tagRelation.setTaskId(copyTask.getTaskId());
-                tagRelation.setTagId(tag.getTagId());
-                tagRelations.add(tagRelation);
-            }
-            tagRelationService.saveManyTagRelation(tagRelations);
-            copyTask.setExecutor(oldTask.getExecutor());
-            copyTask.setTaskUIds(oldTask.getTaskUIds());
-        }
-
-        //保存到数据库
-        taskMapper.saveTask(copyTask);
-
-        //关联信息的设置
-        //被复制的任务的关联信息
-        List<Binding> bList = bindingService.findBindingInfoByPublic(oldTask.getTaskId());
-
-        //新的任务的关联信息  用于接受接任务的关联信息
-        List<Binding> newBindingList = new ArrayList<Binding>();
-
-        if(bList != null && bList.size() > 0){
-            for (Binding b : bList) {
-                Binding binding = new Binding();
-                binding.setId(IdGen.uuid());
-                binding.setPublicId(copyTask.getTaskId());
-                binding.setPublicType(b.getPublicType());
-                binding.setBindId(b.getBindId());
-                newBindingList.add(binding);
-            }
-            //保存新任务的关联信息
-            bindingService.saveMany(newBindingList);
-        }
-
-        //如果复制的任务规则为  原任务接受新任务的更新提醒 则把新加的任务关联被被复制的任务
-        if(oldNew){
-            //当前要添加的任务关联 必须不能是子任务
-            if(isparent.equals(copyTask.getParentId())){
-                Binding binding = new Binding();
-                binding.setId(IdGen.uuid());
-                binding.setBindId(copyTask.getTaskId());
-                binding.setPublicId(oldTask.getTaskId());
-                binding.setPublicType(BindingConstants.BINDING_TASK_NAME);
-                bindingService.saveBinding(binding);
-
-                //关联的要推送到任务界面
-                PushType taskPushType = new PushType("关联");
-                Map<String,Object> map = new HashMap<String,Object>();
-                List bInfo = new ArrayList();
-                bInfo.add(taskMapper.findTaskByTaskId(copyTask.getTaskId()));
-                map.put("bindingInfo",bInfo);
-                map.put("publicType",BindingConstants.BINDING_TASK_NAME);
-                taskPushType.setObject(map);
-                messagingTemplate.convertAndSend("/topic/"+oldTask.getTaskId(),new ServerMessage(JSON.toJSONString(taskPushType)));
-            }
-        }
-        if(newOld){
-            //当前要添加的任务关联 必须不能是子任务
-            if(isparent.equals(copyTask.getParentId())){
-                Binding binding = new Binding();
-                binding.setId(IdGen.uuid());
-                binding.setBindId(oldTask.getTaskId());
-                binding.setPublicId(copyTask.getTaskId());
-                binding.setPublicType(BindingConstants.BINDING_TASK_NAME);
-                bindingService.saveBinding(binding);
-            }
-        }
-
-        int result = 0;
-        StringBuilder content = new StringBuilder("");
-        //追加日志字符串
-        content.append(TaskLogFunction.R.getName()).append(" ").append(copyTask.getTaskName());
-        Log log = logService.saveLog(copyTask.getTaskId(), content.toString(),1);
-        log.setResult(result);
-    }
 
     /**
      * 设置移动任务的信息

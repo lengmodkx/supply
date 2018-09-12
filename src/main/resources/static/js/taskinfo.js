@@ -113,6 +113,11 @@ layui.use('form', function() {
                 getLog(data.taskLog);
             });
         } else{
+            if(taskStatus == '未完成'){
+                taskStatus = '完成';
+            } else if (taskStatus == '完成'){
+                taskStatus = "未完成";
+            }
             var url = "/task/resetAndCompleteSubLevelTask";
             var args = {"taskId":taskId,"taskName":taskName,"taskStatus":taskStatus};
             $.post(url,args,function (data) {
@@ -126,11 +131,6 @@ layui.use('form', function() {
                     $("#taskComplete").prop('checked',true);
                     form.render();
                     return false;
-                }
-                if(taskStatus == '未完成'){
-                    taskStatus = '完成';
-                } else if (taskStatus == '完成'){
-                    taskStatus = "未完成";
                 }
                 getLog(data.taskLog);
             },"json");
@@ -242,6 +242,8 @@ layui.use('form', function() {
         laydate.render({
             elem: '#beginTimes',
             type: 'datetime',
+            // max: $('#overTimes').val(),
+            // isInitValue: false,
             format: 'yyyy-MM-dd'
             ,done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
@@ -255,9 +257,6 @@ layui.use('form', function() {
                 } else{
                     var url = "/task/updateTaskStartAndEndTime";
                     $.post(url,args,function(data){
-                        if(data.result == 1){
-                            getLog(data.taskLog);
-                        }
                     },"json");
 
                 }
@@ -266,10 +265,13 @@ layui.use('form', function() {
                 //console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
             }
         });
+
         laydate.render({
             elem: '#overTimes', //指定元素
             type: 'datetime',
             format: 'yyyy-MM-dd',
+            // min: $('#beginTimes').val(),
+            // isInitValue: false,
             done: function(value, date, endDate){
                 var taskId = $('#taskId').val();
                 var endTime = new Date(value.toString()).getTime();
@@ -282,9 +284,6 @@ layui.use('form', function() {
                 } else{
                     var url = "/task/updateTaskStartAndEndTime";
                     $.post(url,args,function(data){
-                        if(data.result == 1) {
-                            getLog(data.taskLog);
-                        }
                     },"json");
                 }
                 console.log(value); //得到日期生成的值，如：2017-08-18

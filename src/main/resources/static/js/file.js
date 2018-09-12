@@ -301,11 +301,6 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
         e.stopPropagation();
         var fileId = $(this).parent().attr("data");
         var args = {"fileId":fileId};
-        if(fileName === '公共模型库'){
-            args = {"fileId":fileId,"isPublic":true};
-            location.href = "/file/downloadFile?fileId=" + fileId+"&isPublic="+true;
-            return false;
-        }
         $.post('/file/hasPermission',args,function (data) {
             if(data.result===1&&data.hasPermission){
                 location.href = "/file/downloadFile?fileId=" + fileId;

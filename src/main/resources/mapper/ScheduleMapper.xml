@@ -17,7 +17,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
-		<result column="is_allday" property="isAllday" jdbcType="INTEGER" />
+		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER" />
 		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
 		<result column="is_del" property="isDel" jdbcType="INTEGER" />
 		<!--关联项目-->
@@ -75,7 +75,7 @@
 				update_time,
 				member_id,
 				member_ids,
-				is_allday,
+				privacy_pattern,
 				schedule_calendar,
 				is_del
 	</sql>
@@ -94,7 +94,7 @@
 				s.update_time,
 				s.member_id,
 				s.member_ids,
-				s.is_allday,
+				s.privacy_pattern,
 				s.is_del,
 				s.schedule_calendar,
 				tg.tag_id,
@@ -207,8 +207,8 @@
 			<if test="memberIds != null and memberIds != ''">
 				member_ids,
 			</if>
-			<if test="isAllday != null and isAllday != ''">
-				is_allday,
+			<if test="privacyPattern != null and privacyPattern != ''">
+				privacy_pattern,
 			</if>
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				schedule_calendar,
@@ -259,8 +259,8 @@
 			<if test="memberIds != null and memberIds != ''">
 				#{memberIds},
 			</if>
-			<if test="isAllday != null and isAllday != ''">
-				#{isAllday},
+			<if test="privacyPattern != null and privacyPattern != ''">
+				#{privacyPattern},
 			</if>
 			<if test="scheduleCalendar != null and scheduleCalendar != ''">
 				#{scheduleCalendar},
@@ -315,8 +315,8 @@
 			<if test="memberIds != null and memberIds != ''">
 				member_ids = #{memberIds},
 			</if>
-			<if test="isAllday != null">
-				is_allday = #{isAllday},
+			<if test="privacyPattern != null">
+				privacy_pattern = #{privacyPattern},
 			</if>
 			<if test="scheduleCalendar != null">
 				schedule_calendar = #{scheduleCalendar},

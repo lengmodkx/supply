@@ -1,14 +1,12 @@
 package com.art1001.supply.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.common.Push;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
-import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -31,7 +29,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +39,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,10 +58,6 @@ public class TaskController {
     /** 标签逻辑层接口 */
     @Resource
     private TagService tagService;
-
-    /** 文件逻辑层接口 */
-    @Resource
-    private FileService fileService;
 
     /** 用户逻辑层接口 */
     @Resource
@@ -251,30 +241,22 @@ public class TaskController {
 
     /**
      * 任务移动
-     * @param task 包含该任务的id
-     * @param newTaskMenuVO 要移动到的 项目id,名称 分组id,名称 菜单id,名称
-     * @param oldTaskMenuVO 移动之前的 项目id,名称 分组id,名称 菜单id,名称
+     * @param taskId 任务id
+     * @param projectId 项目id
+     * @param menuId 菜单id
      * @return
      */
     @PostMapping("mobileTask")
     @ResponseBody
-    public JSONObject mobileTask(Task task, @RequestParam TaskMenuVO oldTaskMenuVO, @RequestParam TaskMenuVO newTaskMenuVO){
+    public JSONObject mobileTask(@RequestParam String taskId, @RequestParam String projectId, @RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
             //修改该任务的任务组编号
-            Log taskLogVO = taskService.mobileTask(task,oldTaskMenuVO,newTaskMenuVO);
-            if(taskLogVO.getResult() > 0){
-                jsonObject.put("result", 1);
-                jsonObject.put("msg","任务移动成功！");
-                jsonObject.put("taskLog",taskLogVO);
-            } else{
-                jsonObject.put("result", 0);
-                jsonObject.put("msg","任务移动失败！");
-            }
+            Log taskLogVO = taskService.mobileTask(taskId,projectId,menuId);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg","任务移动成功！");
         } catch (Exception e){
             log.error("当前任务移动失败!{}",e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg","系统异常,移动失败！");
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -847,15 +829,13 @@ public class TaskController {
      * @param taskId 任务的id
      * @param projectId 项目id
      * @param menuId 菜单id
-     * @param old_new 原任务接受新任务的更新提醒  是否勾选
-     * @param new_old 新任务接受原任务的更新提醒  是否勾选
      */
     @PostMapping("copyTask")
     @ResponseBody
-    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId, boolean old_new, boolean new_old){
+    public JSONObject copyTask(@RequestParam String taskId,@RequestParam String projectId,@RequestParam String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
-            String copyTaskId = taskService.copyTask(taskId,projectId,menuId,old_new,new_old);
+            String copyTaskId = taskService.copyTask(taskId,projectId,menuId);
             jsonObject.put("taskId",copyTaskId);
             jsonObject.put("msg","复制成功!");
             jsonObject.put("result","1");

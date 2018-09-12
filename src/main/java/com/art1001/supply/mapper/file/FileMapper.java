@@ -219,4 +219,6 @@ public interface FileMapper {
 	 */
 	@Select("select count(0) from prm_file where project_id = #{projectId} and parent_id = #{parentId}  and file_name = #{folderName}")
     int findFolderIsExist(@Param("folderName") String folderName, @Param("projectId") String projectId, @Param("parentId") String parentId);
+
+	File findFile();
 }

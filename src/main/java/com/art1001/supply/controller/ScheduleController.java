@@ -313,7 +313,7 @@ public class ScheduleController extends BaseController {
     public JSONObject addAndRemoveScheduleMember(String scheduleId, String addUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
-            scheduleService.addAndRemoveScheduleMember(scheduleId, addUserEntity);
+            scheduleService.updateMembers(scheduleId, addUserEntity);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,{}",e);
@@ -538,11 +538,6 @@ public class ScheduleController extends BaseController {
         try {
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
-            if(isAllday){
-                schedule.setIsAllday(1);
-            } else{
-                schedule.setIsAllday(0);
-            }
             Log log = scheduleService.updateSchedule(schedule);
             //包装推送数据
             PushType taskPushType = new PushType();

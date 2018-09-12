@@ -53,6 +53,17 @@ function subscribe() {
         if(taskLog.type === '移除标签'){
             $('#'+taskLog.object.tag).remove();
         }
+        if(taskLog.type === '子任务完成/重做'){
+            $('.child-task-list').each(function () {
+               if($(this).attr('data-id') === taskLog.taskId){
+                   if(taskLog.result === '完成'){
+                       $(this).find('.layui-form-checkbox').addClass('layui-form-checked');
+                   } else{
+                       $(this).find('.layui-form-checkbox').removeClass('layui-form-checked');
+                   }
+               }
+            });
+        }
         if(taskLog.type === '把任务移入了回收站'){
             $(".detele-box").show();
             $(".revise-task *").attr("disabled","true");

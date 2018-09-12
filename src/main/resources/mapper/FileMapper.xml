@@ -155,10 +155,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
-		where file_label=0
-		and project_id = #{projectId}
-		and parent_id = #{parentId}
-		and file_del = #{isDel}
+		where project_id = #{projectId} and parent_id = #{parentId} and file_del = #{isDel}
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">

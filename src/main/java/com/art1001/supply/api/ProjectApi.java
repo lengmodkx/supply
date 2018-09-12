@@ -1,4 +1,4 @@
-package com.art1001.supply.controller;
+package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * 项目
+ * @author 汪亚锋
  * [POST]   // 新增
  * [GET]    // 查询
  * [PATCH]  // 更新
