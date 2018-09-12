@@ -139,13 +139,15 @@ $(function () {
     function movein(that) {
         that.find("i").css("opacity", "1");
         that.find(".img-show-operate").css("opacity", "1");
-        if (that.find(".img-show-download").is(":visible")){
-            that.css("cursor","crosshair")
+        if (that.find(".p-download").is(":visible")){
+            that.css("cursor","move")
         }else {
-            that.css("cursor","not-allowed")
+            that.css("cursor","pointer")
         }
     }
-
+$(".one-file img").mousedown(function (e) {
+    e.preventDefault()
+});
     function moveout(that) {
         that.find("div").css("opacity", "0");
         that.find(".img-show-operate").css("opacity", "0");
