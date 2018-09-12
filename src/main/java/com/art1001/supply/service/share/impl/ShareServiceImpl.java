@@ -160,7 +160,7 @@ public class ShareServiceImpl implements ShareService {
 	 * @param addUserEntity 要添加的成员id
 	 */
 	@Override
-	public void addAndRemoveShareMember(String shareId, String addUserEntity) {
+	public void updateMembers(String shareId, String addUserEntity) {
 		//查询出当前文件中的 参与者id
         Share byId = shareMapper.findById(shareId);
 

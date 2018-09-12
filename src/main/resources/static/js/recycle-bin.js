@@ -252,9 +252,9 @@ $('.o-task-btn').click(function () {
 /**
  * 恢复分享的确定按钮
  */
-$('.o-task-btn').click(function () {
+$('.o-share-btn').click(function () {
     var url = "/share/recoveryShare";
-    var args = {"projectId":projectId,"taskId":oli,"menuId":$('select[name = "menu"]').val()};
+    var args = {"projectId":projectId,"shareId":oli};
     $.post(url,args,function (data) {
         if(data.result < 1){
             layer.msg("系统异常,操作失败!");
@@ -265,7 +265,7 @@ $('.o-task-btn').click(function () {
 });
 
 /**
- * 恢复分享的确定按钮
+ * 恢复分组的确定按钮
  */
 $('.o-group-btn').click(function () {
     var url = "/relation/recoveryRelation";

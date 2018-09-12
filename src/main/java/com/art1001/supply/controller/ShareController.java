@@ -200,105 +200,6 @@ public class ShareController extends BaseController {
         return jsonObject;
     }
 
-    @RequestMapping("/addTag")
-    @ResponseBody
-    public JSONObject addTag(
-            @RequestParam String shareId,
-            @RequestParam String tagId
-    ) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            Share share = shareService.findById(shareId);
-            if (StringUtils.isNotEmpty(share.getTagIds())) {
-                String[] tagIdArr = share.getTagIds().split(",");
-                if (CommonUtils.useList(tagIdArr, tagId)) { // 已经存在，移除
-                    StringBuilder tagIds = new StringBuilder();
-                    for (String tId : tagIdArr) {
-                        if (!tagId.equals(tId)) {
-                            tagIds.append(tId).append(",");
-                        }
-                    }
-                    if (StringUtils.isNotEmpty(tagIds)) {
-                        tagIds.deleteCharAt(tagIds.length() - 1);
-                    }
-                    shareService.deleteTag(shareId, tagIds.toString());
-                    jsonObject.put("result", 2);
-                    jsonObject.put("msg", "移除成功");
-                } else { // 不存在添加
-                    String tagIds = share.getTagIds();
-                    if (StringUtils.isNotEmpty(share.getTagIds())) {
-                        tagIds += "," + tagId;
-                    } else {
-                        tagIds = tagId;
-                    }
-
-                    shareService.deleteTag(shareId, tagIds);
-                    Tag tag = tagService.findById(Integer.valueOf(tagId));
-                    jsonObject.put("result", 1);
-                    jsonObject.put("data", tag);
-                    jsonObject.put("msg", "添加成功");
-                }
-            } else {
-                String tagIds = share.getTagIds();
-                if (StringUtils.isNotEmpty(share.getTagIds())) {
-                    tagIds += "," + tagId;
-                } else {
-                    tagIds = tagId;
-                }
-
-                shareService.deleteTag(shareId, tagIds);
-                Tag tag = tagService.findById(Integer.valueOf(tagId));
-                jsonObject.put("result", 1);
-                jsonObject.put("data", tag);
-                jsonObject.put("msg", "添加成功");
-            }
-
-
-        } catch (Exception e) {
-            log.error("添加标签异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "添加失败");
-        }
-        return jsonObject;
-    }
-
-
-    /**
-     * 移除分享的标签
-     *
-     * @param shareId 分享id
-     * @param tagId 标签id
-     */
-    @RequestMapping("/deleteTag")
-    @ResponseBody
-    public JSONObject deleteTag(
-            @RequestParam String shareId,
-            @RequestParam String tagId
-    ) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            Share share = shareService.findById(shareId);
-            String[] tagIdArr = share.getTagIds().split(",");
-            StringBuilder tagIds = new StringBuilder();
-            for (String tId : tagIdArr) {
-                if (!tagId.equals(tId)) {
-                    tagIds.append(tId).append(",");
-                }
-            }
-            if (StringUtils.isNotEmpty(tagIds)) {
-                tagIds.deleteCharAt(tagIds.length() - 1);
-            }
-
-            shareService.deleteTag(shareId, tagIds.toString());
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "移除成功");
-        } catch (Exception e) {
-            log.error("移除标签异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "移除失败");
-        }
-        return jsonObject;
-    }
 
     @PostMapping("shareByProjectId")
     @ResponseBody
@@ -312,36 +213,6 @@ public class ShareController extends BaseController {
             e.printStackTrace();
             jsonObject.put("result",0);
             log.error("系统异常,数据拉取失败!");
-        }
-        return jsonObject;
-    }
-
-
-    //收藏分享
-    @PostMapping("shareCollect")
-    @ResponseBody
-    public JSONObject shareCollect(String shareId,String projectId){
-        JSONObject jsonObject = new JSONObject();
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        try{
-
-            int judge = publicCollectService.judgeCollectPublic(userEntity.getId(), shareId, "分享");
-            if(judge==1){
-                jsonObject.put("result",1);
-                jsonObject.put("msg","已经收藏");
-            }else{
-                PublicCollect publicCollect = new PublicCollect();
-                publicCollect.setPublicId(shareId);
-                publicCollect.setProjectId(projectId);
-                publicCollect.setMemberId(userEntity.getId());
-                publicCollect.setCollectType("分享");
-                publicCollectService.savePublicCollect(publicCollect);
-                jsonObject.put("result",1);
-                jsonObject.put("msg","收藏成功");
-            }
-
-        }catch (Exception e){
-            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -447,13 +318,12 @@ public class ShareController extends BaseController {
         return jsonObject;
     }
 
-    @PostMapping("addAndRemoveShareMember")
+    @PostMapping("updateMembers")
     @ResponseBody
-    public JSONObject addAndRemoveShareMember(String shareId,String addUserEntity){
+    public JSONObject updateMembers(String shareId,String addUserEntity){
         JSONObject jsonObject = new JSONObject();
         try {
-            shareService.addAndRemoveShareMember(shareId,addUserEntity);
-            shareService.addAndRemoveShareMember(shareId,addUserEntity);
+            shareService.updateMembers(shareId,addUserEntity);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,操作失败!");
