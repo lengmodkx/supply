@@ -1,4 +1,4 @@
-package com.art1001.supply.controller;
+package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.partment.Partment;

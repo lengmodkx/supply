@@ -1,7 +1,4 @@
 package com.art1001.supply.api;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.file.File;
@@ -9,13 +6,14 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,7 +76,7 @@ public class GroupChatApi {
         try{
             chatService.deleteChatByChatId(chatId);
             object.put("result",1);
-            object.put("msg","");
+            object.put("msg","删除成功");
         }catch(Exception e){
             throw new AjaxException(e);
         }
@@ -86,15 +84,25 @@ public class GroupChatApi {
     }
 
     @GetMapping("/{chatId}")
-    public void downloadBatch(@PathVariable String chatId, HttpServletResponse response){
-
+    public void downloadBatch(@PathVariable String chatId, HttpServletResponse response, HttpServletRequest request){
         try{
             List<File> fileList = fileService.findFileByPublicId(chatId);
-
-
+            AliyunOss.downloadzip(fileList,response,request);
         }catch(Exception e){
             throw new AjaxException(e);
         }
     }
 
+    @GetMapping
+    public JSONObject chats(){
+        JSONObject object = new JSONObject();
+        try{
+            List<Chat> chatList = chatService.findChatAllList();
+            object.put("result",1);
+            object.put("data",chatList);
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 }
