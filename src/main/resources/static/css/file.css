@@ -59,6 +59,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    float: left;
 }
 .file-toper span.now{
     color: #1589CF;
