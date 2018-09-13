@@ -221,44 +221,60 @@ $(".one-file img").mousedown(function (e) {
         });
     }
 
-    // 浏览器后退 事件
-    window.onload=function(){
-        addHistoryEntity();
-        detectBack();
-    }
-//新增一条浏览器浏览历史记录
-    function addHistoryEntity(){
-        if(history.pushState){ //现代浏览器
-            history.pushState('state1',null,'#foo');
-        }else{                 //ie9及以下
-            document.getElementById("goFoo").click();
-        }
-    }
-//监听浏览器回退按钮
-    function detectBack(){
-        if(history.pushState){ //现代浏览器
-            window.onpopstate=function(){
-                logout();
-            }
-        }
-        else{                  //ie9及以下
-            $(window).on("hashchange",function(){
-                if(location.hash=="#foo"){
-                    return;
-                }
-                logout();
+//     // 浏览器后退 事件
+//     window.onload=function(){
+//         addHistoryEntity();
+//         detectBack();
+//     }
+// //新增一条浏览器浏览历史记录
+//     function addHistoryEntity(){
+//         if(history.pushState){ //现代浏览器
+//             history.pushState('state1',null,'#foo');
+//         }else{                 //ie9及以下
+//             document.getElementById("goFoo").click();
+//         }
+//     }
+// //监听浏览器回退按钮
+//     function detectBack(){
+//         if(history.pushState){ //现代浏览器
+//             window.onpopstate=function(){
+//                 logout();
+//             }
+//         }
+//         else{                  //ie9及以下
+//             $(window).on("hashchange",function(){
+//                 if(location.hash=="#foo"){
+//                     return;
+//                 }
+//                 logout();
+//             });
+//         }
+//     }
+// //回退前事件
+//     function logout(){
+//
+//     }
+
+    $(document).ready(function(e) {
+        var counter = 0;
+        if (window.history && window.history.pushState) {
+            $(window).on('popstate', function () {
+                window.history.pushState('forward', null, '#');
+                urls.pop();
+                var len=urls.length;
+                id.splice(len+1);
+                console.log(id);
+                console.log(urls)
+                var lujing={"url":urls,"id":id};
+                sessionStorage.setItem("lujing",JSON.stringify(lujing));
+                location.href=JSON.parse(sessionStorage.getItem('lujing')).id[len]
+
             });
         }
-    }
-//回退前事件
-    function logout(){
-        urls.pop();
-        id.pop();
-        var lujing={"url":urls,"id":id};
-        sessionStorage.setItem("lujing",JSON.stringify(lujing));
-        console.log(sessionStorage.getItem('lujing'));
-        history.back();
-    }
+
+        window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
+        window.history.forward(1);
+    });
 
 
 if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
@@ -281,9 +297,6 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
         $(".span-list").append(list);
 
         $(".span-list a").click(function () {
-            if ($(this).parent().index()==$(".span-list span").length +1) {
-                location.href=location.pathname+location.search
-            }
           var j=$(this).parent().index();
           var href=id[j];
           urls.splice(j+1);
@@ -301,18 +314,15 @@ if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
 
     // 进入下级目录
     $('html').on('click','.one-file',function (e) {
-        console.log(location.pathname+location.search);
         var wjjName=$(this).siblings(".one-file-name").text();
         e.stopPropagation();
         var fileId = $(this).attr("data");
         var catalog = $(this).attr("data-id");
         if(catalog==="1"){
-            var lujing={"url":urls.concat(wjjName),"id":id.concat(location.pathname+location.search)};
+            var lujing={"url":urls.concat(wjjName),"id":id};
             sessionStorage.setItem("lujing",JSON.stringify(lujing));
             window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId+"&currentGroup="+groupId;
         }else{
-            var lujing={"url":urls.concat(wjjName),"id":id.concat(location.pathname+location.search)};
-            sessionStorage.setItem("lujing",JSON.stringify(lujing));
             $.post('/file/hasPermission',{"fileId":fileId},function (data) {
                 if(data.result===1&&data.hasPermission){
                     window.location.href = "/file/fileDetail.html?fileId="+fileId;
