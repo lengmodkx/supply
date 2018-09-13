@@ -90,10 +90,10 @@ public class ShareController extends BaseController {
            }
             Collections.reverse(s.getLogs());
         }
-        //判断当前用户有没有收藏该任务
-        for (Share share : shareList) {
-            share.setIsCollect(publicCollectService.isCollItem(share.getId()));
-        }
+//        //判断当前用户有没有收藏该任务
+//        for (Share share : shareList) {
+//            share.setIsCollect(publicCollectService.isCollItem(share.getId()));
+//        }
         model.addAttribute("shareList",shareList);
         model.addAttribute("currentGroup",currentGroup);
 
@@ -342,7 +342,7 @@ public class ShareController extends BaseController {
     @RequestMapping("shareInfo.html")
     public String shareInfoById(String shareId, Model model){
         Share byId = shareService.findById(shareId);
-        byId.setIsCollect(publicCollectService.isCollItem(shareId));
+//        byId.setIsCollect(publicCollectService.isCollItem(shareId));
         byId.setBindingVo(bindingService.listBindingInfoByPublicId(shareId));
         model.addAttribute("share",byId);
         return "revisetShare";

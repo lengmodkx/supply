@@ -115,4 +115,6 @@ public interface ShareMapper {
      */
     @Select("select uids from prm_share where id = #{shareId}")
     String findUidsByShareId(String shareId);
+
+    Share findByIdAllInfo(String shareId, String userId);
 }

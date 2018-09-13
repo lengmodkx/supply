@@ -10,6 +10,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
@@ -18,6 +19,7 @@ import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
@@ -45,6 +47,9 @@ public class ShareServiceImpl implements ShareService {
 
 	@Resource
 	private Base base;
+
+	@Resource
+	private PublicCollectService publicCollectService;
 
     @Resource
     private SimpMessagingTemplate messagingTemplate;
@@ -298,5 +303,17 @@ public class ShareServiceImpl implements ShareService {
 	@Override
 	public void updatePrivacy(String shareId) {
 
+	}
+
+	/**
+	 * 根据id 查询出分享信息
+	 * @param shareId 分享id
+	 * @return
+	 */
+	@Override
+	public Share findByIdAllInfo(String shareId) {
+		Share byId = shareMapper.findById(shareId);
+		byId.setCollect(publicCollectService.judgeCollectPublic(ShiroAuthenticationManager.getUserId(), shareId, "分享"));
+		return byId;
 	}
 }

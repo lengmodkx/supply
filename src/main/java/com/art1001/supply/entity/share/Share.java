@@ -114,5 +114,7 @@ public class Share extends BaseEntity implements Serializable {
 	/**
 	 * 是否被登录用户收藏
 	 */
-	private Boolean isCollect;
+	private int collect;
+
+
 }

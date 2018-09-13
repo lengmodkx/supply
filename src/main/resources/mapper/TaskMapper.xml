@@ -681,7 +681,7 @@
 	<select id="findTaskByExecutor" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List2"/>,r.parent_id as task_group
-		from prm_task t left join prm_relation r on t.task_menu_id = r.relation_id where executor = #{uId} and task_status = '未完成'
+		from prm_task left join prm_relation r on prm_task.task_menu_id = r.relation_id where executor = #{uId} and task_status = '未完成'
 		<if test="orderType != null and orderType != ''">
 			<if test="orderType == '2'.toString()">
 				order by end_time asc

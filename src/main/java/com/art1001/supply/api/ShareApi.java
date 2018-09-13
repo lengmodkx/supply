@@ -1,14 +1,9 @@
 package com.art1001.supply.api;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
-import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.binding.BindingVo;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectService;
@@ -17,15 +12,9 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Delete;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -82,43 +71,16 @@ public class ShareApi {
     /**
      * 加载分享页面
      * @param projectId 项目id
-     * @param shareId 分享id (可选)
      * @return
      */
     @GetMapping("/{projectId}")
-    public JSONObject share(@PathVariable String projectId, String shareId){
+    public JSONObject share(@PathVariable String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<Share> shareList = shareService.findByProjectId(projectId, 0);
-            for (Share s : shareList) {
-                for (int i = 0;i < s.getJoinInfo().size();i++){
-                    if(s.getMemberId().equals(s.getJoinInfo().get(i).getId())){
-                        s.getJoinInfo().remove(s.getJoinInfo().get(i));
-                    }
-                }
-                Collections.reverse(s.getLogs());
-            }
-            //判断当前用户有没有收藏该任务
-            for (Share share : shareList) {
-                share.setIsCollect(publicCollectService.isCollItem(share.getId()));
-            }
-            jsonObject.put("shareList",shareList);
-
-            //查询出分享的关联信息
-            for (Share s : shareList) {
-                BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
-                s.setBindingVo(bindingVo);
-            }
-
-            if(!StringUtils.isEmpty(shareId)){
-                jsonObject.put("shareId",shareId);
-            }
-            String userId = ShiroAuthenticationManager.getUserId();
-            UserEntity userEntity = userService.findById(userId);
-            jsonObject.put("user",userEntity);
-            jsonObject.put("project",projectService.findProjectByProjectId(projectId));
-            jsonObject.put("result",1);
+            List<Share> shares = shareService.findByProjectId(projectId, 0);
+            jsonObject.put("data",shares);
         } catch (Exception e){
+            log.error("系统异常!",e.getMessage());
             jsonObject.put("msg","系统异常");
             jsonObject.put("result",0);
         }
@@ -126,28 +88,20 @@ public class ShareApi {
     }
 
     /**
-     * 加载成员数据
-     * @param projectId 项目id
+     * 获取一个分享的信息
      * @param shareId 分享id
      * @return
      */
-    @GetMapping("/{shareId}/searchPeople")
-    public JSONObject searchPeople(
-            @PathVariable String shareId,
-            @RequestParam String projectId
-    ) {
+    @GetMapping("/{shareId}/getshare")
+    public JSONObject getShare(@PathVariable(value = "shareId")String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
-            Share byId = shareService.findById(shareId);
-            List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
-            List<UserEntity> manyUserById = userService.findManyUserById(byId.getUids());
-            List<UserEntity> reduce1 = projectAllMember.stream().filter(item -> !manyUserById.contains(item)).collect(Collectors.toList());
-            jsonObject.put("projectMemberList", reduce1);
-            jsonObject.put("shareJoins",manyUserById);
-            jsonObject.put("shareId", shareId);
+            Share share = shareService.findByIdAllInfo(shareId);
+            jsonObject.put("data",share);
             jsonObject.put("result",1);
         } catch (Exception e){
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常,操作失败!",e.getMessage());
+            jsonObject.put("msg","系统异常,操作失败!");
             jsonObject.put("result",0);
         }
         return jsonObject;
@@ -160,7 +114,7 @@ public class ShareApi {
      * @return
      */
     @Todo
-    @PostMapping("/{shareId}/updateMembers")
+    @PutMapping("/{shareId}/update/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -176,10 +130,10 @@ public class ShareApi {
 
     /**
      * 添加分享
-     * @param projectId
-     * @param title
-     * @param content
-     * @param isPrivacy
+     * @param projectId 项目id
+     * @param title 分享标题
+     * @param content 分享内容
+     * @param isPrivacy 是否是隐私模式
      * @return
      */
     @Todo
@@ -239,8 +193,8 @@ public class ShareApi {
      * @return
      */
     @Todo
-    @PutMapping("/{shareId}/moveToRecycleBin")
-    public JSONObject moveToRecycleBin(@PathVariable(value = "shareId") String shareId){
+    @PutMapping("/{shareId}/recyclebin")
+    public JSONObject recyclebin(@PathVariable(value = "shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.moveToRecycleBin(shareId);
@@ -259,8 +213,8 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
-    @PutMapping("/{shareId}/recoveryShare")
-    public JSONObject recoveryShare(@PathVariable("shareId") String shareId){
+    @PutMapping("/{shareId}/recovery")
+    public JSONObject recovery(@PathVariable("shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.recoveryShare(shareId);
@@ -281,17 +235,19 @@ public class ShareApi {
      * @return
      */
     @PostMapping("/{shareId}/copy")
-    public JSONObject copyTask(@PathVariable(value = "shareId")String shareId,
+    public JSONObject copy(@PathVariable(value = "shareId")String shareId,
                                @RequestParam(value = "projectId")String projectId){
-        JSONObject object = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         try{
             shareService.copyShare(shareId,projectId);
-            object.put("result",1);
-            object.put("msg","复制成功");
+            jsonObject.put("result",1);
         }catch(Exception e){
-            throw new AjaxException(e);
+            e.printStackTrace();
+            log.error("系统异常,操作失败!");
+            jsonObject.put("result",0);
+            jsonObject.put("msg","系统异常,操作失败!");
         }
-        return object;
+        return jsonObject;
     }
 
     /**
@@ -308,6 +264,8 @@ public class ShareApi {
             shareService.moveShare(shareId,projectId);
             jsonObject.put("result",1);
         }catch(Exception e){
+            e.printStackTrace();
+            log.error("系统异常!",e.getMessage());
             jsonObject.put("result",0);
             jsonObject.put("msg","系统异常!");
         }
@@ -321,12 +279,14 @@ public class ShareApi {
      */
     @Todo
     @PutMapping("/{shareId}/privacy")
-    public JSONObject move(@PathVariable(value = "shareId")String shareId){
+    public JSONObject privacy(@PathVariable(value = "shareId")String shareId){
         JSONObject jsonObject = new JSONObject();
         try{
             shareService.updatePrivacy(shareId);
             jsonObject.put("result",1);
         }catch(Exception e){
+            e.printStackTrace();
+            log.error("系统异常!",e.getMessage());
             jsonObject.put("result",0);
             jsonObject.put("msg","系统异常!");
         }

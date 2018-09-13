@@ -49,6 +49,7 @@ public class TagController extends BaseController {
     private ScheduleService scheduleService;
     @Resource
     private ShareService shareService;
+
     /**
      * 标签初始化
      * @param projectId 项目id
@@ -72,7 +73,6 @@ public class TagController extends BaseController {
                 }
             }
         }
-
         model.addAttribute("tagList", tagList);
         model.addAttribute("projectId", projectId);
         model.addAttribute("publicId", publicId);
@@ -84,32 +84,12 @@ public class TagController extends BaseController {
     /**
      * 查询标签列表，根据项目
      */
-    @GetMapping("/tags/{projectId}")
+    @GetMapping("/{projectId}")
     @ResponseBody
     public JSONObject tags(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<Tag> tagList = tagService.findByProjectId(projectId);
-            for (Tag tag:tagList) {
-                List<TagRelation> tagRelationList = tagRelationService.findTagRelationByTagId(tag.getTagId());
-                for (TagRelation tagRelation:tagRelationList) {
-                    if(StringUtils.isNotEmpty(tagRelation.getTaskId())){
-                        tag.getTaskList().add(taskService.findTaskByTaskId(tagRelation.getTaskId()));
-                    }
-
-                    if(StringUtils.isNotEmpty(tagRelation.getFileId())){
-                        tag.getFileList().add(fileService.findFileById(tagRelation.getFileId()));
-                    }
-
-                    if(StringUtils.isNotEmpty(tagRelation.getScheduleId())){
-                        tag.getScheduleList().add(scheduleService.findScheduleById(tagRelation.getScheduleId()));
-                    }
-
-                    if(StringUtils.isNotEmpty(tagRelation.getShareId())){
-                        tag.getShareList().add(shareService.findById(tagRelation.getShareId()));
-                    }
-                }
-            }
+            List<Tag> tagList = tagService.findTagByProjectIdWithAllInfo(projectId);
             jsonObject.put("result", 1);
             jsonObject.put("tagList", tagList);
             jsonObject.put("projectId", projectId);

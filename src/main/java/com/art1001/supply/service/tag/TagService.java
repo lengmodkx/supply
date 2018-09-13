@@ -124,4 +124,12 @@ public interface TagService {
 	void recoveryTag(String tagId);
 
 
+	List<Tag> classification(List<Tag> tagList);
+
+	/**
+	 * 查询出项目下的所有标签
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Tag> findTagByProjectIdWithAllInfo(String projectId);
 }

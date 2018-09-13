@@ -60,7 +60,7 @@ public interface PublicCollectService {
 	public List<PublicCollect> findPublicCollectAllList();
 
 	/**
-	 * 查询当前用户有没有收藏任务
+	 * 查询当前用户有没有收藏该信息
 	 * @param memberId 当前登录用户id
 	 * @param publicId 任务/日程/文件/分享的id
 	 * @param collectType 收藏的类型 任务/日程/文件/分享

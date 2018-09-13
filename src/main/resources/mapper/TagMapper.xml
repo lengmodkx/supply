@@ -13,6 +13,43 @@
         <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
     </resultMap>
 
+    <!-- 映射标签 和标签绑定的任务,文件,分享,日程 信息 -->
+    <resultMap id="tagAllInfoMap" type="com.art1001.supply.entity.tag.Tag">
+        <id column="tag_id" property="tagId" jdbcType="BIGINT"/>
+        <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
+        <result column="bg_color" property="bgColor" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+
+        <!-- 映射任务信息 -->
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <result column="task_id" property="taskId"></result>
+            <result column="executor" property="executor"></result>
+            <result column="task_name" property="taskName"></result>
+        </collection>
+
+        <!-- 映射文件信息 -->
+        <collection property="fileList" ofType="com.art1001.supply.entity.file.File">
+            <result column="file_id" property="fileId"></result>
+            <result column="memberId" property="member_id"></result>
+            <result column="file_name" property="fileName"></result>
+        </collection>
+
+        <!-- 映射分享信息 -->
+        <collection property="shareList" ofType="com.art1001.supply.entity.share.Share">
+            <result column="id" property="id"></result>
+            <result column="memberId" property="member_id"></result>
+            <result column="title" property="title"></result>
+        </collection>
+
+        <!-- 映射日程信息 -->
+        <collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
+            <result column="schedule_id" property="scheduleId"></result>
+            <result column="memberId" property="member_id"></result>
+            <result column="schedule_name" property="scheduleName"></result>
+        </collection>
+    </resultMap>
+
     <sql id="Base_Column_List">
 		tag_id,
 		tag_name,
@@ -275,5 +312,76 @@
     <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
         from prm_tag where is_del = 1 and project_id = #{projectId}
+    </select>
+
+    <!-- 查询出项目下的所有标签 -->
+    <select id="findTagByProjectIdWithAllInfo" resultMap="tagAllInfoMap">
+        SELECT
+	*
+FROM
+	(
+		SELECT
+			t.tag_id,
+			t.bg_color,
+			t.tag_name,
+			task.task_id,
+			task.task_name,
+			task.executor
+		FROM
+			prm_tag AS t
+		LEFT JOIN prm_tag_relation tr ON t.tag_id = tr.tag_id
+		LEFT JOIN prm_task task ON tr.task_id = task.task_id
+		WHERE
+			t.project_id = #{projectId}
+		AND t.is_del = 0
+	) AS task,
+	(
+		SELECT
+			t.tag_id,
+			t.bg_color,
+			t.tag_name,
+			file.file_id,
+			file.file_name,
+			file.member_id
+		FROM
+			prm_tag AS t
+		LEFT JOIN prm_tag_relation tr ON t.tag_id = tr.tag_id
+		LEFT JOIN prm_file file ON tr.file_id = file.file_id
+		WHERE
+			t.project_id = #{projectId}
+		AND t.is_del = 0
+	) AS file,
+	(
+		SELECT
+			t.tag_id,
+			t.bg_color,
+			t.tag_name,
+			SHARE .id,
+			SHARE .title,
+			SHARE .member_id
+		FROM
+			prm_tag AS t
+		LEFT JOIN prm_tag_relation tr ON t.tag_id = tr.tag_id
+		LEFT JOIN prm_share SHARE ON tr.share_id = SHARE .id
+		WHERE
+			t.project_id = #{projectId}
+		AND t.is_del = 0
+	) AS SHARE,
+	(
+		SELECT
+			t.tag_id,
+			t.bg_color,
+			t.tag_name,
+			SCHEDULE .schedule_id,
+			SCHEDULE .schedule_name,
+			SCHEDULE .member_id
+		FROM
+			prm_tag AS t
+		LEFT JOIN prm_tag_relation tr ON t.tag_id = tr.tag_id
+		LEFT JOIN prm_schedule SCHEDULE ON tr.schedule_id = SCHEDULE .schedule_id
+		WHERE
+			t.project_id = #{projectId}
+		AND t.is_del = 0
+	) AS SCHEDULE
     </select>
 </mapper>

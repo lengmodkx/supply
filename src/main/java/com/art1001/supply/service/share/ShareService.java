@@ -129,4 +129,11 @@ public interface ShareService {
 	 * @param shareId 分享id
 	 */
 	void updatePrivacy(String shareId);
+
+	/**
+	 * 根据id 查询出分享信息 以及 所有关联信息
+	 * @param shareId 分享id
+	 * @return
+	 */
+	Share findByIdAllInfo(String shareId);
 }

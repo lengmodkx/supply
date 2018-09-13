@@ -13,6 +13,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
@@ -106,6 +107,11 @@ public class TagServiceImpl implements TagService {
      */
 	@Override
 	public Tag saveTag(Tag tag){
+		// 如果标签已经存在，则直接使用
+		int count = tagMapper.findCountByTagName(tag.getProjectId(), tag.getTagName());
+		if (count > 0) {
+			throw new ServiceException();
+		}
 		tag.setCreateTime(System.currentTimeMillis());
 		tag.setUpdateTime(System.currentTimeMillis());
 		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -246,5 +252,22 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public void recoveryTag(String tagId) {
 		tagMapper.recoveryTag(tagId);
+	}
+
+	@Override
+	public List<Tag> classification(List<Tag> tagList) {
+		return null;
+	}
+
+	/**
+	 * 查询出项目下的所有标签
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<Tag> findTagByProjectIdWithAllInfo(String projectId) {
+		//查询出项目下的所有标签
+		List<Tag> tagList = tagMapper.findTagByProjectIdWithAllInfo(projectId);
+		return tagList;
 	}
 }
