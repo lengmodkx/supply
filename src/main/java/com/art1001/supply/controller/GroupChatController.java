@@ -9,6 +9,7 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.relation.GroupVO;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -64,7 +65,8 @@ public class GroupChatController extends BaseController {
     private SimpMessagingTemplate messagingTemplate;
 
     @RequestMapping("/chat.html")
-    public String share(@RequestParam String projectId, String currentGroup,Model model) {
+    public String share(@RequestParam String projectId,Model model) {
+        Relation currentGroup = relationService.findDefaultRelation(projectId);
         List<Log> logs = logService.initAllLog(projectId);
         model.addAttribute("logs", logs);
         model.addAttribute("exts", FileExt.extMap.get("images"));

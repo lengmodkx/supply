@@ -7,6 +7,7 @@ import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.relation.GroupVO;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.PushType;
@@ -79,7 +80,7 @@ public class ShareController extends BaseController {
 
     //导航到分享界面
     @RequestMapping("/share.html")
-    public String share(@RequestParam String projectId,String shareId,String currentGroup, Model model){
+    public String share(@RequestParam String projectId,String shareId, Model model){
 
         List<Share> shareList = shareService.findByProjectId(projectId, 0);
         for (Share s : shareList) {
@@ -90,22 +91,14 @@ public class ShareController extends BaseController {
            }
             Collections.reverse(s.getLogs());
         }
-//        //判断当前用户有没有收藏该任务
-//        for (Share share : shareList) {
-//            share.setIsCollect(publicCollectService.isCollItem(share.getId()));
-//        }
         model.addAttribute("shareList",shareList);
-        model.addAttribute("currentGroup",currentGroup);
+        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
 
         //查询出分享的关联信息
         for (Share s : shareList) {
             BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
             s.setBindingVo(bindingVo);
         }
-
-        //加载该项目下所有分组的信息
-        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-        model.addAttribute("groups",groups);
 
         if(!StringUtils.isEmpty(shareId)){
             model.addAttribute("shareId",shareId);

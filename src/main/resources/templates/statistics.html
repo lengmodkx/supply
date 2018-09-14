@@ -12,7 +12,7 @@
 <body>
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
 
-<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
+<div th:include="toper::toper (${project},${currentGroup},${user})"></div>
 <div class="statistics-wrap">
     <div class="title-style">
         <h3>总量概览</h3>

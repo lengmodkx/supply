@@ -8,6 +8,7 @@ import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.GroupVO;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
@@ -76,17 +77,14 @@ public class ScheduleController extends BaseController {
 
 
     @RequestMapping("/schedule.html")
-    public String schedule(@RequestParam String projectId, String currentGroup, Model model){
+    public String schedule(@RequestParam String projectId,Model model){
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = userService.findById(userId);
-        model.addAttribute("currentGroup",currentGroup);
+        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,projectId));
 
-        //加载该项目下所有分组的信息
-        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-        model.addAttribute("groups",groups);
         return "scheduling";
     }
 

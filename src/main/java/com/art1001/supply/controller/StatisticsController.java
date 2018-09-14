@@ -2,6 +2,7 @@ package com.art1001.supply.controller;
 
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.relation.GroupVO;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsDTO;
 import com.art1001.supply.entity.user.UserEntity;
@@ -48,7 +49,7 @@ public class StatisticsController extends BaseController {
      * @return
      */
     @RequestMapping("statistics.html")
-    public String statistics(@RequestParam String projectId, @RequestParam String currentGroup,Model model){
+    public String statistics(@RequestParam String projectId,Model model){
         List<Statistics> overViewList = taskService.findTaskCountOverView(projectId);
         //查询饼图chart图表数据
         List<StringBuilder> pieChartsList = taskService.findPieChartOverView(projectId);
@@ -67,13 +68,10 @@ public class StatisticsController extends BaseController {
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("overViewList",overViewList);
-        model.addAttribute("currentGroup",currentGroup);
+        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
         model.addAttribute("pieChartsList",pieChartsList);
         model.addAttribute("histogramList",histogramList);
         model.addAttribute("doubleHistogramList",doubleHistogramList);
-        //加载该项目下所有分组的信息
-        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-        model.addAttribute("groups",groups);
         return "statistics";
     }
 

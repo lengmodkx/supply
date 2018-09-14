@@ -9,8 +9,6 @@
 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="catalog" property="catalog" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
@@ -66,8 +64,6 @@
 				file_url,
 				project_id,
 				member_id,
-				member_name,
-				member_img,
 			    `catalog`,
 				`size`,
 				parent_id,
@@ -88,8 +84,6 @@
 				f.file_url,
 				f.project_id,
 				f.member_id,
-				f.member_name,
-				f.member_img,
 			    f.`catalog`,
 				f.`size`,
 				f.parent_id,

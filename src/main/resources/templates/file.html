@@ -17,7 +17,7 @@
 <body>
 <header th:include="common/header::frag (${user.userInfo.image}, ${user.id})"></header>
 
-<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
+<div th:include="toper::toper (${project},${currentGroup},${user})"></div>
 
 <div class="content-wrap-wrap boxsizing">
     <input type="hidden" th:value="${projectId}" id="projectId">
@@ -26,7 +26,7 @@
         <div class="file-box boxsizing layui-form">
             <div class="file-toper" id="container">
                 <div class="span-list">
-                     <span><a th:href="javascript: void(0)" onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
+                     <span><a href="javascript:void(0)" onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
                 </div>
                 <div class="add-share" id="selectfiles"><img th:src="@{/image/upload.png}" th:if="${user.id=='58740e66e67e4f768ccebbea2da0bc60'}">上传</div>
                 <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" th:if="${user.id=='58740e66e67e4f768ccebbea2da0bc60'}">创建文件夹</div>

@@ -104,7 +104,7 @@ public class FileController extends BaseController {
     public String list(@RequestParam String projectId,
                        @RequestParam(defaultValue = "0",required = false) String fileId,
                        @RequestParam(defaultValue = "0",required = false) Integer fileDel,
-                       String currentGroup, Model model) {
+                       Model model) {
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = userService.findById(userId);
 
@@ -124,13 +124,8 @@ public class FileController extends BaseController {
         model.addAttribute("fileList", fileList);
         model.addAttribute("parentId", fileId);
         model.addAttribute("projectId", projectId);
-        model.addAttribute("currentGroup",currentGroup);
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
-
-        //加载该项目下所有任务分组的信息
-        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-        model.addAttribute("groups",groups);
-
+        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
         //获取文件的后缀名
         model.addAttribute("exts",FileExt.extMap);
         model.addAttribute("user",userEntity);

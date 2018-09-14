@@ -208,9 +208,9 @@ a:hover {
 
 .toper-nav>ul>li {
   float: left;
-  margin-right: 34px;
   height: 49px;
   font-size: 16px;
+  margin-left: 30px;
 }
 
 .head-left .logo {
