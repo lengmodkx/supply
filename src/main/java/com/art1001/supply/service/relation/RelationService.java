@@ -229,4 +229,6 @@ public interface RelationService {
 	 * @param relation 分组信息(名称,所在项目)
 	 */
 	void saveGroup(Relation relation);
+
+	Relation findDefaultRelation(String projectId);
 }

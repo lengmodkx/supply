@@ -65,19 +65,9 @@ public class Relation extends BaseEntity implements Serializable {
 	 */
 	private Integer order;
 
-	public Relation(){
+	/**
+	 * 默认分组
+	 */
+	private int defaultGroup;
 
-	}
-
-	public Relation(String relationId, String relationName, String parentId, Integer lable, Integer relationDel,Long createTime,Long endTime,Integer order) {
-		this.relationId = relationId;
-		this.relationName = relationName;
-		this.parentId = parentId;
-		this.projectId = projectId;
-		this.lable = lable;
-		this.relationDel = relationDel;
-		this.setCreateTime(createTime);
-		this.setEndTime(endTime);
-		this.order = order;
-	}
 }

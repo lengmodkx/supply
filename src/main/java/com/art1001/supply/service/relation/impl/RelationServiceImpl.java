@@ -149,6 +149,14 @@ public class RelationServiceImpl implements RelationService {
 	@Override
 	public void saveRelation(Relation relation){
         relation.setRelationId(IdGen.uuid());
+		relation.setRelationName("任务");
+		relation.setLable(0);
+		relation.setRelationDel(0);
+		relation.setOrder(0);
+		relation.setDefaultGroup(1);
+		relation.setCreator(ShiroAuthenticationManager.getUserId());
+		relation.setCreateTime(System.currentTimeMillis());
+		relation.setUpdateTime(System.currentTimeMillis());
 		relationMapper.saveRelation(relation);
 	}
 
@@ -516,6 +524,16 @@ public class RelationServiceImpl implements RelationService {
 		relation.setUpdateTime(System.currentTimeMillis());
 		relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0) + 1);
 		relationMapper.saveRelation(relation);
+	}
+
+	/**
+	 * 查询默认分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public Relation findDefaultRelation(String projectId) {
+		return relationMapper.findDefaultRelation(projectId);
 	}
 }
 

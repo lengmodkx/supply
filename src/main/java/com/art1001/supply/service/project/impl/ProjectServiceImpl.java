@@ -96,7 +96,13 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void saveProject(Project project){
 		project.setProjectId(IdGen.uuid());
+		project.setProjectCover("upload/project/bj.png");
+		project.setProjectDel(0);
+		project.setCreateTime(System.currentTimeMillis());
+		project.setIsPublic(0);
+		project.setProjectRemind(0);
 
+		project.setProjectStatus(0);
 		projectMapper.saveProject(project);
 	}
 	/**

@@ -72,6 +72,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		projectMember.setId(IdGen.uuid());
 		projectMember.setCreateTime(System.currentTimeMillis());
 		projectMember.setUpdateTime(System.currentTimeMillis());
+		projectMember.setMemberLabel(1);
 		projectMemberMapper.saveProjectMember(projectMember);
 	}
 	/**

@@ -201,4 +201,6 @@ public interface RelationMapper {
 	 * @return
 	 */
 	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
+
+	Relation findDefaultRelation(String projectId);
 }

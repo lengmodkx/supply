@@ -204,28 +204,15 @@ public class ProjectController extends BaseController {
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setProjectCover("upload/project/bj.png");
-            project.setProjectDel(0);
-            project.setCreateTime(System.currentTimeMillis());
-            project.setIsPublic(0);
-            project.setProjectRemind(0);
             project.setMemberId(userEntity.getId());
-            project.setProjectStatus(0);
             projectService.saveProject(project);
-
             //初始化项目功能菜单
             String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
             funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
             //初始化分组
             Relation relation = new Relation();
-            relation.setRelationName("任务");
             relation.setProjectId(project.getProjectId());
-            relation.setLable(0);
-            relation.setRelationDel(0);
-            relation.setCreator(ShiroAuthenticationManager.getUserId());
-            relation.setCreateTime(System.currentTimeMillis());
-            relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
 
             //初始化菜单
@@ -235,13 +222,6 @@ public class ProjectController extends BaseController {
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
             projectMember.setMemberId(userEntity.getId());
-            projectMember.setMemberName(userEntity.getUserName());
-            projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
-            projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
-            projectMember.setMemberImg(userEntity.getUserInfo().getImage());
-            projectMember.setCreateTime(System.currentTimeMillis());
-            projectMember.setUpdateTime(System.currentTimeMillis());
-            projectMember.setMemberLabel(1);
             projectMemberService.saveProjectMember(projectMember);
 
             //初始化项目文件夹
@@ -278,13 +258,7 @@ public class ProjectController extends BaseController {
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setProjectCover("upload/project/bj.png");
-            project.setProjectDel(0);
-            project.setCreateTime(System.currentTimeMillis());
-            project.setIsPublic(0);
-            project.setProjectRemind(0);
             project.setMemberId(userEntity.getId());
-            project.setProjectStatus(0);
             projectService.saveProject(project);
             //初始化项目功能菜单
             String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
@@ -292,13 +266,7 @@ public class ProjectController extends BaseController {
 
             //初始化分组
             Relation relation = new Relation();
-            relation.setRelationName("任务");
             relation.setProjectId(project.getProjectId());
-            relation.setLable(0);
-            relation.setRelationDel(0);
-            relation.setCreator(ShiroAuthenticationManager.getUserId());
-            relation.setCreateTime(System.currentTimeMillis());
-            relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
 
             List<TemplateData> menus = templateDataService.findByTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
@@ -315,13 +283,6 @@ public class ProjectController extends BaseController {
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
             projectMember.setMemberId(userEntity.getId());
-            projectMember.setMemberName(userEntity.getUserName());
-            projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
-            projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
-            projectMember.setMemberImg(userEntity.getUserInfo().getImage());
-            projectMember.setCreateTime(System.currentTimeMillis());
-            projectMember.setUpdateTime(System.currentTimeMillis());
-            projectMember.setMemberLabel(1);
             projectMemberService.saveProjectMember(projectMember);
             //初始化项目文件夹
             fileService.initProjectFolder(project);
@@ -500,27 +461,14 @@ public class ProjectController extends BaseController {
     @GetMapping("/task.html")
     public String mainpage(@RequestParam String projectId,Model model){
         try {
-            //查询项目任务分组
-            Relation relation = new Relation();
-            relation.setProjectId(projectId);
-            relation.setLable(0);
-            List<Relation> taskGroups = relationService.findRelationAllList(relation);
-
-            if(taskGroups != null && taskGroups.size() != 0){
-                //取第0个任务分组的菜单
-                Relation relation1 = new Relation();
-                relation1.setParentId(taskGroups.get(0).getRelationId());
-                relation1.setLable(1);
-                List<Relation> taskMenu = relationService.findRelationAllList(relation1);
-                model.addAttribute("taskMenus",taskMenu);
-                model.addAttribute("taskGroups",taskGroups);
-                model.addAttribute("currentGroup",taskGroups.get(0).getRelationId());
-            }
-
-
-            //加载该项目下所有分组的信息
-            List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-            model.addAttribute("groups",groups);
+            //查询项目默认分组
+            Relation relation = relationService.findDefaultRelation(projectId);
+            Relation relation1 = new Relation();
+            relation1.setParentId(relation.getRelationId());
+            relation1.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+            model.addAttribute("taskMenus",taskMenu);
+            model.addAttribute("currentGroup",relation);
 
             //获取当前登录用户的消息总数
             int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());

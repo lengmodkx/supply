@@ -16,7 +16,7 @@
 <body>
 <!--头部-->
 <header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
-<div th:include="toper::toper (${project},${groups},${currentGroup},${user})"></div>
+<div th:include="toper::toper (${project},${currentGroup},${user})"></div>
 
 <!--内容区域-->
 <div class="content-wrap-wrap boxsizing">

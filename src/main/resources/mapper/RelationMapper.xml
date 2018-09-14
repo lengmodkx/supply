@@ -13,10 +13,11 @@
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 		<result column="order" property="order" jdbcType="INTEGER" />
 		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="default_group" property="defaultGroup" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">
-		<id column="id" property="groupId" jdbcType="VARCHAR"></id>
+		<id column="id" property="groupId" jdbcType="VARCHAR"/>
 		<result column="NAME" property="groupName" jdbcType="VARCHAR" />
 		<result column="创建人" property="creator" jdbcType="VARCHAR" />
 		<result column="分组状态" property="isDel" jdbcType="INTEGER" />
@@ -48,8 +49,8 @@
 	</resultMap>
 
 	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
-		<result property="projectName" column="projectName"></result>
-		<result property="taskMenuName" column="taskMenuName"></result>
+		<result property="projectName" column="projectName"/>
+		<result property="taskMenuName" column="taskMenuName"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -62,7 +63,8 @@
 				lable,
 				relation_del,
 				`order`,
-				creator
+				creator,
+				default_group
 	</sql>
 
 	<sql id = "groupInfo">
@@ -117,12 +119,20 @@
 		</if>
 		order by `order` asc
 	</select>
-	
+
+
+	<select id="findDefaultRelation" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_relation
+		where default_group=1 and project_id = #{projectId}
+	</select>
+
 	<select id="findRelationByRelationId" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_relation c where relation_id = #{relationId}
+		from prm_relation where relation_id = #{relationId} and default_group=1
 
 	</select>
 	
@@ -166,6 +176,9 @@
 			<if test="creator != null ">
 				`creator`,
 			</if>
+			<if test="defaultGroup != null ">
+				default_group,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -199,6 +212,9 @@
 			</if>
 			<if test="creator != null ">
 				#{creator},
+			</if>
+			<if test="defaultGroup != null ">
+				#{defaultGroup},
 			</if>
 		</trim>
 
@@ -257,6 +273,9 @@
 			<if test="creator != null ">
 				`creator` = #{creator},
 			</if>
+			<if test="defaultGroup != null ">
+				default_group = #{defaultGroup},
+			</if>
 		</set>
 		WHERE relation_id = #{relationId}
 	</update>
@@ -270,14 +289,14 @@
 	<!-- 排序菜单内的任务  按照日期 -->
 	<select id="taskSort" resultMap="BaseResultMapVo">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		from prm_relation where relation_id = #{relationId}
 	</select>
 
 	<!-- 排序分组内的菜单 -->
 	<select id="menuSort" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"></include>
+		<include refid="Base_Column_List"/>
 		from prm_relation where parent_id = #{relationId}
 		order by create_time desc
 	</select>

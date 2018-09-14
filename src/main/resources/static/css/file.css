@@ -160,9 +160,15 @@
 .one-file:hover .layui-form-checkbox[lay-skin=primary]{
     opacity: 1;
 }
-.one-file>img{
+.common-size{
     width: 64px;
     height: 64px;
+    margin: auto;
+}
+
+.img-size{
+    width: 97px;
+    height: 97px;
     margin: auto;
 }
 .one-file:hover i{
@@ -177,7 +183,7 @@
 
 .img-show-download{
     position: absolute;
-    bottom: 20px;
+    bottom: 8px;
     left: 55px;
     opacity: 0;
 }
@@ -195,7 +201,7 @@
 }
 .img-show-operate{
     position: absolute;
-    bottom: 23px;
+    bottom: 11px;
     left: 85px;
     width: 15px;
     height: 15px;
