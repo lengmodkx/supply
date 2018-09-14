@@ -17,6 +17,8 @@ import java.util.Date;
 @Data
 public class UserEntity implements Serializable {
 
+	private static final long serialVersionUID = -6743567631108323096L;
+
 	public String id;
 
 	/*
@@ -78,6 +80,41 @@ public class UserEntity implements Serializable {
 	private String partmentId;
 	//企业员工账号是否被停用，0不是，1是
 	private Integer organizationLable;
+
+	/**
+	 * 用户头像
+	 */
+	private String image;
+
+	/**
+	 * 用户默认头像
+	 */
+	private String defaultImage;
+
+	/**
+	 * 用户职位
+	 */
+	private String job;
+
+	/**
+	 * 用户性别
+	 */
+	private int sex;
+
+	/**
+	 * 用户出生日期
+	 */
+	private Date birthday;
+
+	/**
+	 * 用户手机号
+	 */
+	private String telephone;
+
+	/**
+	 * 用户邮箱
+	 */
+	private String email;
 
 	public UserEntity() {
 
