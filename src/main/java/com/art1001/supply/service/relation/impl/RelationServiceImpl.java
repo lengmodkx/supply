@@ -535,5 +535,6 @@ public class RelationServiceImpl implements RelationService {
 	public Relation findDefaultRelation(String projectId) {
 		return relationMapper.findDefaultRelation(projectId);
 	}
+
 }
 
