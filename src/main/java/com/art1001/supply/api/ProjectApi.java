@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectAppsService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,8 @@ public class ProjectApi {
     @Resource
     private FileService fileService;
 
+    @Resource
+    private RoleService roleService;
     /**
      * 创建项目
      * @param projectName 项目名称
@@ -78,12 +82,14 @@ public class ProjectApi {
             relation.setUpdateTime(System.currentTimeMillis());
             relationService.saveRelation(relation);
             //往项目用户关联表插入数据
+            RoleEntity roleEntity = roleService.findByName("拥有者");
             ProjectMember projectMember = new ProjectMember();
             projectMember.setProjectId(project.getProjectId());
             projectMember.setMemberId(userId);
             projectMember.setCreateTime(System.currentTimeMillis());
             projectMember.setUpdateTime(System.currentTimeMillis());
             projectMember.setMemberLabel(1);
+            projectMember.setRId(roleEntity.getId());
             projectMemberService.saveProjectMember(projectMember);
             //初始化项目文件夹
             fileService.initProjectFolder(project);

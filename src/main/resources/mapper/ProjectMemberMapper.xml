@@ -8,11 +8,12 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="member_phone" property="memberPhone" jdbcType="INTEGER" />
-		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
+		<result column="collect" property="collect" jdbcType="INTEGER" />
+		<result column="is_receivemessage" property="IsReceiveMessage" jdbcType="INTEGER" />
+		<result column="r_id" property="rId" jdbcType="INTEGER" />
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
@@ -49,16 +50,7 @@
     </sql>
 
 	<sql id="Base_Column_List">
-						id,
-				project_id,
-				member_id,
-				member_name,
-				member_img,
-				member_phone,
-				member_email,
-				create_time,
-				update_time,
-				member_label
+		id,project_id,member_id,member_name,create_time,update_time,member_label,collect,is_receivemessage,r_id
 	</sql>
 
 	<sql id="whereStatement">
@@ -115,7 +107,7 @@
 	
 	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
 		delete from
-		prm_project_member where id = #{id}
+		prm_project_member where member_id = #{id}
 	</delete>
 	
 	<insert id="saveProjectMember" parameterType="com.art1001.supply.entity.project.ProjectMember">
@@ -152,6 +144,9 @@
 			</if>
 			<if test="memberLabel != null ">
 				member_label,
+			</if>
+			<if test="collect != null ">
+				collect,
 			</if>
 			<if test="IsReceiveMessage != null ">
 				is_receivemessage,
@@ -190,7 +185,9 @@
 			<if test="memberLabel != null ">
 				#{memberLabel},
 			</if>
-
+			<if test="collect != null ">
+				#{collect},
+			</if>
 			<if test="IsReceiveMessage != null ">
 				#{IsReceiveMessage},
 			</if>
@@ -229,6 +226,9 @@
 			</if>
 			<if test="memberLabel != null ">
 				member_label = #{memberLabel},
+			</if>
+			<if test="collect != null ">
+				collect = #{collect},
 			</if>
 			<if test="IsReceiveMessage != null ">
 				is_receivemessage = #{IsReceiveMessage},

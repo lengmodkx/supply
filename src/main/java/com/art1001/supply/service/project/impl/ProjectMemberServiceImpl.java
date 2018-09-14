@@ -70,6 +70,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 	@Override
 	public void saveProjectMember(ProjectMember projectMember){
 		projectMember.setId(IdGen.uuid());
+		projectMember.setCreateTime(System.currentTimeMillis());
+		projectMember.setUpdateTime(System.currentTimeMillis());
 		projectMemberMapper.saveProjectMember(projectMember);
 	}
 	/**

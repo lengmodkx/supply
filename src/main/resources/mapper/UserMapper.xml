@@ -543,13 +543,6 @@
 			u.u_creator_name,
 			u.u_create_time,
 			u.u_update_time,
-			r.r_id,
-			r.r_name,
-			r.r_key,
-			r.r_status,
-			r.r_description,
-			r.r_create_time,
-			r.r_update_time,
 			i.u_sex,
 			i.u_birthday,
 			i.u_image,
@@ -559,7 +552,7 @@
 			i.u_create_time,
 			i.u_job,
 			i.u_default_img
-		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
+		FROM tb_user u JOIN tb_user_info i on u.u_id = i.u_id
 		where u.u_account_name like CONCAT('%',#{keyword},'%')
 	</select>
 </mapper>
