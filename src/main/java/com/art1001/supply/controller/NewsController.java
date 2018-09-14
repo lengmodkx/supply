@@ -53,7 +53,6 @@ public class NewsController {
     public String userNewsList(Model model){
         //当前登录用户信息
         model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
-
         //获取该用户的消息信息
         List<UserNews> newsList = userNewsService.findAllUserNewsByUserId(ShiroAuthenticationManager.getUserId());
         model.addAttribute("newsList",newsList);
@@ -72,7 +71,7 @@ public class NewsController {
      */
     @RequestMapping("updateIsRead")
     @ResponseBody
-    public JSONObject updateIsRead(String id, String publicId, String publicType, int isread,Model model){
+    public JSONObject updateIsRead(String id, int isread,Model model){
         JSONObject jsonObject = new JSONObject();
         try {
             if(isread == 0){
