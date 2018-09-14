@@ -35,19 +35,19 @@
     <ul class="style-ul">
         <li>
             <div class="li-header">任务按完成情况分布</div>
-            <div class="pie"></div>
+            <div class="double-pie"></div>
         </li>
         <li>
             <div class="li-header">任务按任务分组分布</div>
-            <div class="container"></div>
+            <div class="double-histogram"></div>
         </li>
         <li>
             <div class="li-header">任务按执行者分布</div>
-            <div class="pie"></div>
+            <div class="double-pie"></div>
         </li>
         <li>
             <div class="li-header">任务按优先级分布</div>
-            <div class="pie"></div>
+            <div class="double-pie"></div>
         </li>
     </ul>
     <div class="title-style">
@@ -57,23 +57,23 @@
     <ul class="style-ul">
         <li>
             <div class="li-header">期间完成的任务</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
         <li>
             <div class="li-header">期间未完成的任务</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
         <li>
             <div class="li-header">期间逾期的任务</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
         <li>
             <div class="li-header">期间更新截止时间的任务</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
         <li>
             <div class="li-header">期间高频参与的任务</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
     </ul>
     <div class="title-style">
@@ -83,15 +83,15 @@
     <ul class="style-ul">
         <li>
             <div class="li-header">期间截止任务完成情况</div>
-            <div class="pie"></div>
+            <div class="double-pie"></div>
         </li>
         <li>
             <div class="li-header">期间截止任务分成员完成情况</div>
-            <div class="ten"></div>
+            <div class="double-histogram"></div>
         </li>
         <li>
             <div class="li-header">期间截止任务按截止时间分布</div>
-            <div class="ten"></div>
+            <div class="double-histogram"></div>
         </li>
         <div style="width: 272px;
                     height: 200px;">
@@ -129,7 +129,7 @@
         </li>
         <li>
             <div class="li-header">不同任务分组已完成任务量</div>
-            <div class="ten"></div>
+            <div class="histogram"></div>
         </li>
         <div style="width: 272px;
                     height: 200px;">
@@ -139,6 +139,9 @@
         </div>
     </ul>
 </div>
+<input  id="msg" type="hidden" th:value="${pieChartsList}" />
+<input  id="histogram" type="hidden" th:value="${histogramList}" />
+<input  id="double-histogram" type="hidden" th:value="${doubleHistogramList}" />
 
 <script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
 <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
@@ -149,65 +152,12 @@
         var form = layui.form;
     });
     $('.circle').circliful();
-
     $(function () {
-        $('.container').highcharts({
-            chart: {
-                type: 'column',
-                zoomType: 'Y',
-                height: 146, width: 272
-            },
-            title: {
-                text: ''
-            },
-            style: {
-                color: '#FF00FF',      //字体颜色
-                "fontSize": "0px",   //字体大小
-                fontWeight: 'bold'
-            },
-            xAxis: {
-                categories: [''],
-                tickWidth: 0,    	//设置刻度标签宽度
-                lineColor: '#ffffff',//设置坐标颜色
-                lineWidth: 0,		//设置坐标宽度
-                labels: {
-                    enabled: false
-                }
-            },
-            yAxis: {
-                title: '',
-                gridLineWidth: 0,	//设置横向分区线宽度
-                lineColor: '#ffffff',//设置y轴颜色
-                labels: {
-                    enabled: false
-                }
-            },
-            tooltip: {
-                enabled: false
-            },
-            legend: {
-                enabled: false
-            },
-            exporting: {
-                enabled: false
-            },
-            plotOptions: {
-                column: {
-                    stacking: 'normal'
-                }
-            },
-            series: [{
-                name: '小张',
-                data: [5, 3, 4, 7, 2],
-                stack: 'male' // stack 值相同的为同一组
-            }, {
-                name: '小潘',
-                data: [3, 4, 4, 2, 5],
-                stack: 'male'
-            }]
-        });
-        $(".ten").each(function () {
-            $(this).highcharts({
+//双容器柱状图
+           var hisDate=$("#double-histogram").val();
+        $(".double-histogram").each(function (index, item) {
+            console.log(JSON.parse(hisDate)[index])
+            $(item).highcharts({
                 chart: {
                     type: 'column',
                     zoomType: 'Y',
@@ -217,14 +167,12 @@
                     text: ''
                 },
                 style: {
-                    color: '#FF00FF',      //字体颜色
-                    "fontSize": "0px",   //字体大小
+                    fontSize: "0px",   //字体大小
                     fontWeight: 'bold'
                 },
                 xAxis: {
                     categories: [''],
                     tickWidth: 0,    	//设置刻度标签宽度
-                    lineColor: '#ffffff',//设置坐标颜色
                     lineWidth: 0,		//设置坐标宽度
                     labels: {
                         enabled: false
@@ -233,7 +181,6 @@
                 yAxis: {
                     title: '',
                     gridLineWidth: 0,	//设置横向分区线宽度
-                    lineColor: '#ffffff',//设置y轴颜色
                     labels: {
                         enabled: false
                     }
@@ -254,13 +201,71 @@
                 },
                 series: [{
                     name: '小张',
-                    data: [5, 3, 4]
+                    data: JSON.parse(hisDate)[index].finishd,
+                    stack: 'male' // stack 值相同的为同一组
+                }, {
+                    name: '小潘',
+                    data: JSON.parse(hisDate)[index].unfinished,
+                    stack: 'male'
+                }]
+            });
+        });
+// 单容器柱状图加载
+        var histogram=eval("(" + ($("#histogram").val()) + ")");
+        $(".histogram").each(function (index, item) {
+            $(item).highcharts({
+                chart: {
+                    type: 'column',
+                    zoomType: 'Y',
+                    height: 146, width: 272
+                },
+                title: {
+                    text: ''
+                },
+                style: {
+                    fontSize: "0px",   //字体大小
+                    fontWeight: 'bold'
+                },
+                xAxis: {
+                    categories: [''],
+                    tickWidth: 0,    	//设置刻度标签宽度
+                    lineWidth: 0,		//设置坐标宽度
+                    labels: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: '',
+                    gridLineWidth: 0,	//设置横向分区线宽度
+                    labels: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'normal'
+                    }
+                },
+                series: [{
+                    name: '小张',
+                    data: histogram[index]
                 }]
             });
         });
 
-        $(".pie").each(function () {
-            $(this).highcharts({
+// 双饼图数据加载
+        var pie=eval("(" + ($("#msg").val()) + ")");
+        $(".double-pie").each(function (index, item) {
+            $(item).highcharts({
                 chart: {
                     type: 'pie',
                     height: 146, width: 272
@@ -282,6 +287,7 @@
                 plotOptions: {
                     pie: {
                         shadow: false,
+                        borderWidth: 0,
                         center: ['50%', '50%']
                     }
                 },
@@ -290,9 +296,7 @@
                 },
                 series: [{
                     name: 'Versions',
-                    data: [
-                        0.1, 0.2
-                    ],
+                    data: pie[index],
                     size: '80%',
                     innerSize: '60%',
                     dataLabels: {
@@ -331,14 +335,12 @@
                     text: ''
                 },
                 style: {
-                    color: '#FF00FF',      //字体颜色
-                    "fontSize": "0px",   //字体大小
+                    fontSize: "0px",   //字体大小
                     fontWeight: 'bold'
                 },
                 xAxis: {
                     categories: [''],
-                    tickWidth: 0,    	//设置刻度标签宽度
-                    lineColor: '#ffffff',//设置坐标颜色
+                    tickWidth: 0,    	//设置刻度标签宽
                     lineWidth: 0,		//设置坐标宽度
                     labels: {
                         enabled: false
@@ -347,7 +349,6 @@
                 yAxis: {
                     title: '',
                     gridLineWidth: 0,	//设置横向分区线宽度
-                    lineColor: '#ffffff',//设置y轴颜色
                     labels: {
                         enabled: false
                     }
@@ -363,14 +364,12 @@
                 },
                 series: [{
                     data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-                    marker:{ //线上数据点
-                        radius:0,
-                        lineWidth:0,
-                        lineColor:'#fba845',
-                        fillColor:'#fba845',
-                        states:{
-                            hover:{
-                                enabled:false
+                    marker: { //线上数据点
+                        radius: 0,
+                        lineWidth: 0,
+                        states: {
+                            hover: {
+                                enabled: false
                             }
                         }
                     }

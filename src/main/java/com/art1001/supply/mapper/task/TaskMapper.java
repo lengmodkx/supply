@@ -1,16 +1,13 @@
 package com.art1001.supply.mapper.task;
 
-import java.util.LinkedList;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskCollect;
 import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.*;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.stereotype.Service;
 
 /**
  * taskmapper接口
@@ -540,4 +537,99 @@ public interface TaskMapper {
 	 */
 	@Select("select task_menu_id from prm_task where task_id = #{taskId}")
     String findMenuNameByTaskId(String taskId);
+
+	/**
+	 * 任务按执行者分布查询
+	 * @param projectId 项目id
+	 * @return list
+	 */
+	List<StatisticsResultVO> selectTaskByExecutor(String projectId);
+
+	/**
+	 * 任务按优先级分布查询
+	 * @param projectId 项目id
+	 * @return list
+	 */
+	List<StatisticsResultVO> selectTaskByPriority(String projectId);
+
+	/**
+	 * 查询期间截止任务完成情况已完成
+	 * @param projectId 项目id
+	 * @param currDate 当前日期
+	 * @return list
+	 */
+	@Select("SELECT COUNT(1) FROM prm_task pt WHERE pt.task_status='完成' AND project_id = #{projectId} AND FROM_UNIXTIME(pt.create_time,'%Y-%m-%d %T') BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') ")
+	int finishByTime(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+	/**
+	 * 查询期间截止任务完成情况未完成
+	 * @param projectId 项目id
+	 * @param currDate 当前日期
+	 * @return int
+	 */
+	@Select("SELECT COUNT(1) FROM prm_task pt WHERE pt.task_status='未完成' AND project_id = #{projectId} AND FROM_UNIXTIME(pt.create_time,'%Y-%m-%d %T') BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')")
+	int unfinishBytime(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+	/**
+	 * 查询期间完成的任务
+	 * @param projectId 项目id
+	 * @param currDate 当前日期
+	 * @return list
+	 */
+	List<StatisticsResultVO> selectTaskByFinishTime(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+    /**
+     * 查询期间未完成的任务
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return list
+     */
+    List<StatisticsResultVO> taskByUnfinishTime(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+    /**
+     * 查询期间逾期的任务
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return list
+     */
+    List<StatisticsResultVO> taskByOverdue(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+    /**
+     * 查询期间更新截止时间的任务
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return int
+     */
+    List<StatisticsResultVO> taskByEndTime(@Param("projectId")String projectId, @Param("currDate") Long currDate);
+
+    /**
+     * 查询期间高频参与的任务
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return list
+     */
+    List<StatisticsResultVO> taskByLogCount(@Param("projectId")String projectId, @Param("currDate")Long currDate );
+
+    /**
+     * 按任务分组分布查询
+     * @param projectId 项目id
+     * @return list
+     */
+    List<StatisticsResultVO> taskByTaskGroup(String projectId);
+
+    /**
+     * 期间截止任务分成员完成情况
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return list
+     */
+    List<StatisticsResultVO> taskByMember(@Param("projectId")String projectId, @Param("currDate")Long currDate );
+
+    /**
+     * 期间截止任务按截止时间分布
+     * @param projectId 项目id
+     * @param currDate 当前日期
+     * @return list
+     */
+    List<StatisticsResultVO> taskByEndTaskOfEndTime(@Param("projectId")String projectId, @Param("currDate")Long currDate );
 }

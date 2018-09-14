@@ -12,7 +12,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
@@ -20,8 +19,10 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
+import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.task.*;
@@ -1274,6 +1275,8 @@ public class TaskServiceImpl implements TaskService {
         int taskCount = 0;
         String[] overViewName = {"未完成","已完成","任务总量","今日到期","已逾期","待认领","按时完成","逾期完成"};
         List<Statistics> list = new ArrayList<Statistics>();
+        List<String> chartsList = new ArrayList<String>();
+
         for (String names : overViewName) {
 
             Statistics statictics = new Statistics();
@@ -1282,11 +1285,14 @@ public class TaskServiceImpl implements TaskService {
             //查询出未完成的任务数量
             if(StaticticsVO.HANGINTHEAIR.equals(names)){
                 taskCount = taskMapper.findHangInTheAirTaskCount(projectId);
+
+
             }
 
             //查询出已完成的任务
             if(StaticticsVO.COMPLETED.equals(names)){
                 taskCount = taskMapper.findCompletedTaskCount(projectId);
+
             }
 
             //查询出今日到期的任务
@@ -1331,11 +1337,118 @@ public class TaskServiceImpl implements TaskService {
                 statictics.setPercentage((double)100);
             }
             list.add(statictics);
+
         }
         return list;
     }
 
+    /**
+     * 查询chart饼图数据
+     * @param  projectId 项目id
+     * @return  list
+     */
+    @Override
+    public List<StringBuilder> findPieChartOverView(String projectId) {
+        List<StringBuilder> result=new ArrayList<>();
+        //按执行者分布
+        List<StatisticsResultVO> taskByExecutor=this.taskMapper.selectTaskByExecutor(projectId);
+        StringBuilder builderByExecutor=new StringBuilder();
+        result.add(taskStringJoint(taskByExecutor,builderByExecutor)) ;
+        //按优先级分布
+        List<StatisticsResultVO> taskByPriority=this.taskMapper.selectTaskByPriority(projectId);
+        StringBuilder builderByPriority=new StringBuilder();
+        result.add(taskStringJoint(taskByPriority,builderByPriority)) ;
+        StringBuilder builderByTime=new StringBuilder();
+        // 期间已完成项目任务数
+        int finishByTime=this.taskMapper.finishByTime(projectId,System.currentTimeMillis()/1000);
+        // 期间未完成项目任务数
+        int unfinishByTime=this.taskMapper.unfinishBytime(projectId,System.currentTimeMillis()/1000);
+        builderByTime.append("[").append(finishByTime).append(",").append(unfinishByTime).append("]");
+        result.add(builderByTime);
+        return result;
+    }
 
+    /**
+     * 查询统计页面柱状图数据
+     * @param  projectId 项目id
+     * @return  list
+     */
+    @Override
+    public List<StringBuilder> findHistogramOverView(String projectId) {
+        List<StringBuilder> result=new ArrayList<>();
+        long totalMillisSeconds=System.currentTimeMillis();
+        long totalSeconds=totalMillisSeconds/1000;
+        //期间完成的任务
+        List<StatisticsResultVO> taskByFinishTime=this.taskMapper.selectTaskByFinishTime(projectId,totalSeconds);
+        StringBuilder builderByFinishTime=new StringBuilder();
+        result.add(taskStringJoint(taskByFinishTime,builderByFinishTime)) ;
+        //期间未完成的任务
+        List<StatisticsResultVO> taskByUnfinishTime=this.taskMapper.taskByUnfinishTime(projectId,totalSeconds);
+        StringBuilder builderByUnfinishTime=new StringBuilder();
+        result.add(taskStringJoint(taskByUnfinishTime,builderByUnfinishTime)) ;
+        //期间逾期的任务
+        List<StatisticsResultVO> taskByOverdue=this.taskMapper.taskByOverdue(projectId,totalSeconds);
+        StringBuilder builderByOverdue=new StringBuilder();
+        result.add(taskStringJoint(taskByOverdue,builderByOverdue)) ;
+        //期间更新截止时间的任务
+        List<StatisticsResultVO> taskByEndTime=this.taskMapper.taskByEndTime(projectId,totalSeconds);
+        StringBuilder builderByEndTime=new StringBuilder();
+        result.add(taskStringJoint(taskByEndTime,builderByEndTime)) ;
+        //期间高频参与的任务
+        List<StatisticsResultVO> taskByLogCount=this.taskMapper.taskByLogCount(projectId,totalSeconds);
+        StringBuilder builderByLogCount=new StringBuilder();
+        result.add(taskStringJoint(taskByLogCount,builderByLogCount)) ;
+        //不同任务分组已完成数据量
+        return result;
+    }
+
+    @Override
+    public List findDoubleHistogramOverView(String projectId) {
+        List result=new ArrayList<>();
+        //按任务分组分布查询
+        List<StatisticsResultVO> taskByTaskGroup=this.taskMapper.taskByTaskGroup(projectId);
+        //期间截止任务分成员完成情况
+        List<StatisticsResultVO> taskByMember=this.taskMapper.taskByMember(projectId,System.currentTimeMillis()/1000);
+        //期间截止任务按截止时间分布
+        List<StatisticsResultVO> taskByEndTaskOfEndTime=this.taskMapper.taskByEndTaskOfEndTime(projectId,System.currentTimeMillis()/1000);
+        result.add( doubleHistogramData(taskByTaskGroup));
+        result.add( doubleHistogramData(taskByMember));
+        result.add( doubleHistogramData(taskByEndTaskOfEndTime));
+        return result;
+    }
+
+
+   //组装双容器柱状图需要的数据
+    private Object doubleHistogramData(List<StatisticsResultVO> taskType) {
+        ChartsVO chartsVO = new ChartsVO();
+        List finish = new ArrayList<>();
+        List unfinish = new ArrayList<>();
+        if (taskType != null && taskType.size() > 0) {
+            for (StatisticsResultVO svo : taskType) {
+                finish.add(svo.getFinishTaskNum());
+                unfinish.add(svo.getUnfinishTaskNum());
+            }
+            chartsVO.setFinishd(finish);
+            chartsVO.setUnfinished(unfinish);
+        }
+        return JSONObject.toJSON(chartsVO);
+    }
+    /**
+     *数据字符串拼接
+     */
+    private StringBuilder taskStringJoint(List<StatisticsResultVO> taskName,StringBuilder builder){
+        if (taskName!=null && taskName.size()>0){
+            builder.append("[");
+            for (StatisticsResultVO svo:taskName){
+                builder.append(svo.getTaskCountInt()).append(",");
+            }
+            builder.delete(builder.length()-1,builder.length());
+            builder.append("]");
+            return builder;
+        }else{
+            return null;
+        }
+    }
 
     /**
      * 设置移动任务的信息
@@ -1476,4 +1589,6 @@ public class TaskServiceImpl implements TaskService {
     public void deleteManyTask(List<String> taskIds) {
         taskMapper.deleteManyTask(taskIds);
     }
+
+
 }

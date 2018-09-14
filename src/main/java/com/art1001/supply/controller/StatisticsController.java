@@ -50,12 +50,27 @@ public class StatisticsController extends BaseController {
     @RequestMapping("statistics.html")
     public String statistics(@RequestParam String projectId, @RequestParam String currentGroup,Model model){
         List<Statistics> overViewList = taskService.findTaskCountOverView(projectId);
+        //查询饼图chart图表数据
+        List<StringBuilder> pieChartsList = taskService.findPieChartOverView(projectId);
+        StringBuilder builderByFinish=new StringBuilder();
+        //获取未完成和已完成的百分比数据
+        builderByFinish.append("[").append(overViewList.get(0).getPercentage()).append(",").append(overViewList.get(1).getPercentage()).append("]");
+        pieChartsList.add(0,builderByFinish);
+        //查询单容器柱状图数据
+        List<StringBuilder> histogramList = taskService.findHistogramOverView(projectId);
+        System.out.println("---------"+histogramList);
+        //查询双容器柱状图数据
+        List doubleHistogramList = taskService.findDoubleHistogramOverView(projectId);
+        System.out.println("========="+histogramList);
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = userService.findById(userId);
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("overViewList",overViewList);
         model.addAttribute("currentGroup",currentGroup);
+        model.addAttribute("pieChartsList",pieChartsList);
+        model.addAttribute("histogramList",histogramList);
+        model.addAttribute("doubleHistogramList",doubleHistogramList);
         //加载该项目下所有分组的信息
         List<GroupVO> groups = relationService.loadGroupInfo(projectId);
         model.addAttribute("groups",groups);

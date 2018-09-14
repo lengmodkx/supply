@@ -3,6 +3,7 @@ package com.art1001.supply.service.task;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
@@ -510,4 +511,25 @@ public interface TaskService {
 	 * @param taskIds 任务id 的集合
 	 */
 	void deleteManyTask(List<String> taskIds);
+
+	/**
+	 * 查询饼图数据
+	 * @param projectId 项目id
+	 * @return list
+	 */
+	List<StringBuilder> findPieChartOverView(String projectId);
+
+	/**
+	 * 查询柱状图数据
+	 * @param projectId 项目id
+	 * @return list
+	 */
+	List<StringBuilder> findHistogramOverView(String projectId);
+
+	/**
+	 * 查询双容器柱状图数据
+	 * @param projectId 项目id
+	 * @return list
+	 */
+	List findDoubleHistogramOverView(String projectId);
 }

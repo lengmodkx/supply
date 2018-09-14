@@ -108,6 +108,31 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
+	<!-- 统计页面数据 ResultMap -->
+	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
+		<result column="end_time" property="endTime" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="finish_time" property="finishTime" jdbcType="VARCHAR" />
+		<result column="task_case" property="taskCase" jdbcType="VARCHAR" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
+		<result column="list_view" property="listView" jdbcType="VARCHAR" />
+		<result column="overdue_num" property="overdueNum" jdbcType="VARCHAR" />
+		<result column="dynamic_num" property="dynamicNum" jdbcType="VARCHAR" />
+		<result column="change_type" property="changeType" jdbcType="VARCHAR" />
+		<result column="task_count" property="taskCountString" jdbcType="VARCHAR" />
+		<result column="task_count" property="taskCountInt" jdbcType="INTEGER" />
+		<result column="task_num" property="taskDayNum" jdbcType="VARCHAR" />
+		<result column="task_gross" property="taskDayGross" jdbcType="VARCHAR" />
+		<result column="task_unfinish" property="unfinishTaskNum" jdbcType="INTEGER" />
+		<result column="task_finish" property="finishTaskNum" jdbcType="INTEGER" />
+		<result column="task_precedence" property="taskPrecedence" jdbcType="VARCHAR" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="u_name" property="executor" jdbcType="VARCHAR" />
+		<result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
+		<result column="relation_name" property="listView" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.project_id,
@@ -935,5 +960,105 @@
 		</foreach>
 		)
 	</delete>
+
+	<!-- 按执行者分布查询 -->
+	<select id="selectTaskByExecutor" resultMap="BaseResultMap4">
+		SELECT  COUNT(1) AS task_count FROM prm_task pt where project_id = #{projectId} GROUP BY pt.executor
+	</select>
+
+	<!-- 按优先级分布查询 -->
+	<select id="selectTaskByPriority" resultMap="BaseResultMap4">
+		SELECT  COUNT(1) AS task_count  FROM prm_task pt where project_id = #{projectId} GROUP BY pt.priority;
+	</select>
+
+	<!-- 期间完成的任务 -->
+	<select id="selectTaskByFinishTime" resultMap="BaseResultMap4">
+		SELECT pt.executor,COUNT(1) AS task_count FROM prm_task pt
+	    WHERE pt.task_status='完成' AND  project_id = #{projectId}
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+		GROUP BY pt.executor
+	</select>
+
+	<!-- 期间未完成的任务 -->
+	<select id="taskByUnfinishTime" resultMap="BaseResultMap4">
+		SELECT pt.executor,COUNT(1) AS task_count FROM prm_task pt
+	    WHERE pt.task_status='未完成' AND  project_id = #{projectId}
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+		GROUP BY pt.executor
+	</select>
+
+	<!-- 期间逾期的任务 -->
+	<select id="taskByEndTime" resultMap="BaseResultMap4">
+		SELECT pt.executor,COUNT(1)  AS task_count FROM prm_task pt
+		WHERE (FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') > FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') AND pt.task_status='完成' )      -- 判断 在这期间 已完成 但是逾期的任务
+		OR
+		FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') >  FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') -- 判断 在这期间  还未完成  逾期的任务
+		AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+        AND  project_id = #{projectId}
+		GROUP BY pt.executor
+	</select>
+
+	<!-- 期间修改截止时间的任务 -->
+	<select id="taskByOverdue" resultMap="BaseResultMap4">
+		-- 判断是否有修改截止时间  按照状态为未完成 且修改时间不等于创建时间
+		SELECT  pt.executor,COUNT(1)  AS task_count
+		FROM prm_task pt
+		WHERE pt.task_status='未完成'  AND  project_id = #{projectId}
+		AND  <![CDATA[ FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') <> FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') ]]>
+	    GROUP BY pt.executor
+	</select>
+
+	<!-- 期间高频参与的任务 -->
+	<select id="taskByLogCount" resultMap="BaseResultMap4">
+		-- 根据 每条任务的动态数进行查询 并排序
+		SELECT  pt.executor,COUNT(ptl.task_id)  AS task_count
+		FROM prm_task pt
+		LEFT JOIN prm_task_log ptl ON pt.task_id=ptl.task_id
+		WHERE    project_id = #{projectId}
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+	    GROUP BY pt.executor
+	    ORDER BY COUNT(ptl.task_id) DESC
+	</select>
+
+	<!-- 按任务分组分布查询 -->
+	<select id="taskByTaskGroup" resultMap="BaseResultMap4">
+		SELECT
+		(SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id) AS task_group,
+		(SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成' AND pt1.project_id=pr.project_id) AS task_finish,
+		(SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成' AND pt1.project_id=pr.project_id) AS task_unfinish
+		FROM prm_task pt
+		LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
+		where  pt.project_id = #{value}
+		GROUP BY (SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id);
+	</select>
+
+	<!-- 期间截止任务分成员完成情况 -->
+	<select id="taskByMember" resultMap="BaseResultMap4">
+	   SELECT tu.u_name,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.executor=tu.u_id) AS task_finish,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.executor=tu.u_id)  AS task_unfinish
+	   FROM prm_task pt
+	   LEFT JOIN tb_user tu ON pt.executor=tu.u_id
+	   where project_id = #{projectId}
+	   AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+       BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+	   GROUP BY pt.executor;
+	</select>
+
+	<!-- 期间截止任务按截止时间分布 -->
+	<select id="taskByEndTaskOfEndTime" resultMap="BaseResultMap4">
+	   SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') as create_time,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.project_id=pt.project_id) AS task_finish,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.project_id=pt.project_id)  AS task_unfinish
+	   FROM prm_task pt
+	   where  project_id = #{projectId}
+	   AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+       BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+	   group by FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+	</select>
 
 </mapper>
