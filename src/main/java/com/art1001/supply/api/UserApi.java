@@ -56,7 +56,7 @@ public class UserApi {
      * @param password 密码
      * @param rememberMe 记住我
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
      public JSONObject login(@RequestParam String accountName,
                              @RequestParam String password,
                              @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
