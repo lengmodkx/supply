@@ -10,6 +10,7 @@ import com.art1001.supply.entity.template.TemplateData;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * relationmapper接口
@@ -140,8 +141,6 @@ public interface RelationMapper {
 	 */
 	Relation getRelationAndAllTaskInfo(String relationId);
 
-	int findMenuMaxOrder();
-
 	/**
 	 * 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息)
 	 * @param projectId 项目id
@@ -195,4 +194,11 @@ public interface RelationMapper {
 	 * @param menuId 菜单id
 	 */
 	TaskMenuVO findRelationNameAndProjectName(String menuId);
+
+	/**
+	 * 查询出该分组下最大的排序编号
+	 * @param publicId 分组id 或者 项目id
+	 * @return
+	 */
+	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
 }

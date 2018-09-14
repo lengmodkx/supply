@@ -23,6 +23,7 @@ import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -187,7 +188,7 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void addMenu(String parentId, Relation relation) {
-		relation.setOrder(relationMapper.findMenuMaxOrder()+1);
+		relation.setOrder(relationMapper.findMaxOrder(parentId,0)+1);
 		relation.setParentId(parentId);
 		relation.setLable(1);
 		relation.setRelationDel(0);
@@ -486,4 +487,35 @@ public class RelationServiceImpl implements RelationService {
 	public TaskMenuVO findRelationNameAndProjectName(String menuId) {
 		return relationMapper.findRelationNameAndProjectName(menuId);
 	}
+
+	/**
+	 * 添加任务菜单
+	 * @param relation 菜单信息 (名称,所在项目id,所在分组id)
+	 */
+	@Override
+	public void saveMenu(Relation relation) {
+		relation.setRelationId(IdGen.uuid());
+		relation.setCreator(ShiroAuthenticationManager.getUserId());
+		relation.setLable(1);
+		//设置菜单排序编号
+		relation.setOrder(relationMapper.findMaxOrder(relation.getParentId(),1) + 1);
+		relation.setCreateTime(System.currentTimeMillis());
+		relation.setUpdateTime(System.currentTimeMillis());
+		relationMapper.saveRelation(relation);
+	}
+
+	/**
+	 * 添加任务分组
+	 * @param relation 分组信息(名称,所在项目)
+	 */
+	@Override
+	public void saveGroup(Relation relation) {
+		relation.setRelationId(IdGen.uuid());
+		relation.setCreator(ShiroAuthenticationManager.getUserId());
+		relation.setCreateTime(System.currentTimeMillis());
+		relation.setUpdateTime(System.currentTimeMillis());
+		relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0) + 1);
+		relationMapper.saveRelation(relation);
+	}
 }
+

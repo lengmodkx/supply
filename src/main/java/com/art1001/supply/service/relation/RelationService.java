@@ -33,11 +33,11 @@ public interface RelationService {
 	public Relation findRelationByRelationId(String relationId);
 
 	/**
-	 * 通过relationId删除relation数据
+	 * 删除分组信息
 	 * 
-	 * @param relationId
+	 * @param groupId 分组id
 	 */
-	public void deleteGroup(String relationId);
+	public void deleteGroup(String groupId);
 
 	/**
 	 * 修改relation数据
@@ -217,4 +217,16 @@ public interface RelationService {
 	 * @param menuId 菜单id
 	 */
 	TaskMenuVO findRelationNameAndProjectName(String menuId);
+
+	/**
+	 * 添加任务菜单
+	 * @param relation 菜单信息 (名称,所在项目id,所在分组id)
+	 */
+	void saveMenu(Relation relation);
+
+	/**
+	 * 添加任务分组
+	 * @param relation 分组信息(名称,所在项目)
+	 */
+	void saveGroup(Relation relation);
 }

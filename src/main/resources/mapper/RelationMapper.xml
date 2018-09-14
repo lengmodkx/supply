@@ -546,4 +546,18 @@
 		) AS `project`
 	</select>
 
+	<!-- 查询出分组 或者 菜单的最大排序 -->
+	<select id="findMaxOrder" resultType="java.lang.Integer">
+		select IFNULL(MAX(`order`),0) from prm_relation
+		<where>
+			<if test="lable == 1">
+				parent_id = #{publicId} AND lable = 1
+			</if>
+			<if test="lable == 0">
+				project_id = #{publicId} AND lable = 0
+			</if>
+		</where>
+
+	</select>
+
 </mapper>

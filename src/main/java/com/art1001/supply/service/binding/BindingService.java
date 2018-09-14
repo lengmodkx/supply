@@ -96,4 +96,11 @@ public interface BindingService {
 	 * @param publicId
 	 */
 	void deleteManyByPublicId(List<String> publicId);
+
+
+	/**
+	 * 添加多条关联关系
+	 * @param binding
+	 */
+	void saveBindings(String publicId, List<String> binding ,String publicType);
 }
