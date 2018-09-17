@@ -136,10 +136,6 @@ public class UserApi {
         //设置添加用户的密码和加密盐
         userEntity.setPassword(user.getPassword());
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
-        //通过注册页面注册的用户统一设置为成员
-        RoleEntity roleEntity = roleService.findByName("成员");
-        userEntity.setRole(roleEntity);
-        userEntity.setDescription("成员");
         try {
             // 保存用户注册信息
             userService.insert(userEntity, userEntity.getPassword());

@@ -41,34 +41,27 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     }
 
     /**
-     * 重写用户插入，逻辑：
-     * 1、插入用户
-     * 2、插入用户和角色的对应关系
-     * 3、插入用户的个人资料信息
+     * 重写用户插入
      */
     @Override
     public int insert(UserEntity userEntity, String password) {
         try {
             // 生成用户id
             userEntity.setId(IdGen.uuid());
-            if (userMapper.insert(userEntity) == 1) {
-                if (userMapper.insertUserRole(userEntity) == 1) {
-                    userEntity.getUserInfo().setId(userEntity.getId());
-                    // 图片byte数组
-                    byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
-                    // oss上传
-                    String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-                    AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
-                    userEntity.getUserInfo().setImage(Constants.MEMBER_IMAGE_URL + fileName);
-                    userEntity.getUserInfo().setDefaultImg(Constants.MEMBER_IMAGE_URL + fileName);
-                    int cnt = userMapper.insertUserInfo(userEntity);
-                    //发送邮件
-//                    emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);
-                    return cnt;
-                } else {
-                    throw new ServiceException("更新用户: " + userEntity.getId() + " 的权限信息失败");
-                }
-            } else {
+            userEntity.getUserInfo().setId(userEntity.getId());
+            // 图片byte数组
+            byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
+            // oss上传
+            String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+            AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
+            userEntity.setImage(Constants.MEMBER_IMAGE_URL + fileName);
+            userEntity.setDefaultImage(Constants.MEMBER_IMAGE_URL + fileName);
+            //发送邮件
+            //emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);
+            int cnt = userMapper.insert(userEntity);
+            if(cnt == 1){
+                return cnt;
+            } else{
                 throw new ServiceException("新增用户: " + userEntity.getId() + " 失败");
             }
         } catch (Exception e) {

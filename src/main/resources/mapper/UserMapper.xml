@@ -9,6 +9,14 @@
 	<sql id="userAttributes">
 		u_id,
 		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
 		u_account_name,
 		u_password,
 		u_delete_status,
@@ -18,19 +26,6 @@
 		u_creator_name,
 		u_create_time,
 		u_update_time
-	</sql>
-
-	<sql id="userInfoAttributes">
-		u_id,
-		u_sex,
-		u_birthday,
-		u_telephone,
-		u_email,
-		u_image,
-		u_address,
-		u_create_time,
-		u_job,
-		u_default_img
 	</sql>
 
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
@@ -45,27 +40,14 @@
 		<result property="creatorName" column="u_creator_name"/>
 		<result property="createTime" column="u_create_time"/>
 		<result property="updateTime" column="u_update_time"/>
-		<association property="role" column="id" javaType="com.art1001.supply.entity.role.RoleEntity">
-			<id property="id" column="r_id"/>
-			<result property="name" column="r_name"/>
-			<result property="key" column="r_key"/>
-			<result property="status" column="r_status"/>
-			<result property="description" column="r_description"/>
-			<result property="createTime" column="r_create_time"/>
-			<result property="updateTime" column="r_update_time"/>
-		</association>
-		<association property="userInfo" column="id" javaType="com.art1001.supply.entity.user.UserInfoEntity">
-		<id property="id" column="u_id"/>
 		<result property="sex" column="u_sex"/>
 		<result property="birthday" column="u_birthday"/>
 		<result property="telephone" column="u_telephone"/>
 		<result property="email" column="u_email"/>
 		<result property="image" column="u_image"/>
 		<result property="address" column="u_address"/>
-		<result property="createTime" column="u_create_time"/>
 		<result property="job" column="u_job"/>
-		<result property="defaultImg" column="u_default_img"/>
-	</association>
+		<result property="defaultImage" column="u_default_img"/>
 	</resultMap>
 
 	<resultMap id="userInfo" type="com.art1001.supply.entity.user.UserInfoEntity">
@@ -130,68 +112,16 @@
 	</select>
 	
 	<select id="findByName" parameterType="String" resultMap="userMap">
-		SELECT u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time,
-		r.r_id,
-		r.r_name,
-		r.r_key,
-		r.r_status,
-		r.r_description,
-		r.r_create_time,
-		r.r_update_time,
-		i.u_sex,
-		i.u_birthday,
-		i.u_image,
-		i.u_telephone,
-		i.u_email,
-		i.u_address,
-		i.u_create_time,
-		i.u_job,
-		i.u_default_img
-		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id  JOIN tb_user_info i on u.u_id = i.u_id
-		where u.u_account_name = #{name}
+		SELECT <include refid="userAttributes"/>
+		from tb_user
+		where u_account_name = #{name}
 	</select>
 	
 	<select id="findById" parameterType="String" resultMap="userMap">
 		SELECT
-		u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time,
-		r.r_id,
-		r.r_name,
-		r.r_key,
-		r.r_status,
-		r.r_description,
-		r.r_create_time,
-		r.r_update_time,
-		i.u_sex,
-		i.u_birthday,
-		i.u_telephone,
-		i.u_email,
-		i.u_image,
-		i.u_address,
-		i.u_create_time,
-		i.u_job,
-		i.u_default_img
-		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
-		where u.u_id = #{id}
+		<include refid="userAttributes"/>
+		FROM tb_user
+		where u_id = #{id}
 		
 		<!-- 这种映射方式可以不用写resultMap,同时加双引号是为了mybatis可以识别映射
 			SELECT u.u_id id,
@@ -223,39 +153,144 @@
 	</select>
 
 	<insert id="insert" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="id">
-		insert ignore into tb_user (
-			u_id,
-			u_name,
-			u_account_name,
-			u_password,
-			u_description,
-			u_credentials_salt,
-			u_creator_name,
-			u_create_time
-			)   
-		values (
-			#{id},
-			#{userName},
-			#{accountName},
-			#{password},
-			#{description},
-			#{credentialsSalt},
-			#{creatorName},
-			#{createTime}
-			)  
+
+		insert into tb_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				u_id,
+			</if>
+			<if test="userName != null and userName != ''">
+				u_name,
+			</if>
+			<if test="sex != null ">
+				u_sex,
+			</if>
+			<if test="birthday != null ">
+				u_birthday,
+			</if>
+			<if test="image != null and image != ''">
+				u_image,
+			</if>
+			<if test="telephone != null and telephone != ''">
+				u_telephone,
+			</if>
+			<if test="email != null and email != ''">
+				u_email,
+			</if>
+			<if test="address != null and address != ''">
+				u_address,
+			</if>
+			<if test="job != null and job != ''">
+				u_job,
+			</if>
+			<if test="defaultImage != null and defaultImage != ''">
+				u_default_img,
+			</if>
+			<if test="accountName != null and accountName != ''">
+				u_account_name,
+			</if>
+			<if test="password != null and password != ''">
+				u_password,
+			</if>
+			<if test="deleteStatus != null ">
+				u_delete_status,
+			</if>
+			<if test="locked != null ">
+				u_locked,
+			</if>
+			<if test="description != null and description != ''">
+				u_description,
+			</if>
+			<if test="credentialsSalt != null and credentialsSalt != ''">
+				u_credentials_salt,
+			</if>
+			<if test="creatorName != null and creatorName != ''">
+				u_creator_name,
+			</if>
+			<if test="createTime != null ">
+				u_create_time,
+			</if>
+			<if test="updateTime != null ">
+				u_update_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="userName != null and userName != ''">
+				#{userName},
+			</if>
+			<if test="sex != null ">
+				#{sex},
+			</if>
+			<if test="birthday != null ">
+				#{birthday},
+			</if>
+			<if test="image != null and image != ''">
+				#{image},
+			</if>
+			<if test="telephone != null and telephone != ''">
+				#{telephone},
+			</if>
+			<if test="email != null and email != ''">
+				#{email},
+			</if>
+			<if test="address != null and address != ''">
+				#{address},
+			</if>
+			<if test="job != null and job != ''">
+				#{job},
+			</if>
+			<if test="defaultImage != null and defaultImage != ''">
+				#{defaultImage},
+			</if>
+			<if test="accountName != null and accountName != ''">
+				#{accountName},
+			</if>
+			<if test="password != null and password != ''">
+				#{password},
+			</if>
+			<if test="deleteStatus != null ">
+				#{deleteStatus},
+			</if>
+			<if test="locked != null ">
+				#{locked},
+			</if>
+			<if test="description != null and description != ''">
+				#{description},
+			</if>
+			<if test="credentialsSalt != null and credentialsSalt != ''">
+				#{credentialsSalt},
+			</if>
+			<if test="creatorName != null and creatorName != ''">
+				#{creatorName},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+
+		</trim>
+
 	</insert>
-	
+
 	<insert id="insertUserRole" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="role.id">
 		insert ignore into tb_role_user (
 			u_id,
 			r_id,
 			t_create_time
-			)   
+			)
 		values (
 			#{id},
 			#{role.id},
 			now()
-			)  
+			)
 	</insert>
 	
 	<update id="update" parameterType="com.art1001.supply.entity.user.UserEntity">
@@ -313,23 +348,23 @@
 	</delete>
 	
 	
-	<insert id="insertUserInfo" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="userInfo.id">
-		insert ignore into tb_user_info (
-			<include refid="userInfoAttributes"/>
-			)   
-		values (
-			#{userInfo.id},
-			#{userInfo.sex},
-			#{userInfo.birthday},
-			#{userInfo.telephone},
-			#{userInfo.email},
-			#{userInfo.image},
-			#{userInfo.address},
-			#{userInfo.createTime},
-			#{userInfo.job},
-			#{userInfo.defaultImg}
-			)
-	</insert>
+	<!--<insert id="insertUserInfo" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="userInfo.id">-->
+		<!--insert ignore into tb_user_info (-->
+			<!--<include refid="userInfoAttributes"/>-->
+			<!--)   -->
+		<!--values (-->
+			<!--#{userInfo.id},-->
+			<!--#{userInfo.sex},-->
+			<!--#{userInfo.birthday},-->
+			<!--#{userInfo.telephone},-->
+			<!--#{userInfo.email},-->
+			<!--#{userInfo.image},-->
+			<!--#{userInfo.address},-->
+			<!--#{userInfo.createTime},-->
+			<!--#{userInfo.job},-->
+			<!--#{userInfo.defaultImg}-->
+			<!--)-->
+	<!--</insert>-->
 	
 	
 	<update id="updateUserInfo" parameterType="com.art1001.supply.entity.user.UserEntity" flushCache="true">
@@ -428,13 +463,13 @@
 			i.u_address,
 			i.u_job,
 			i.u_default_img
-		from tb_user u left join tb_user_info i on u.u_id=i.u_id where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_label desc)
+		from tb_user u where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_label desc)
 	</select>
 
 	<!-- 根据用户id查用户信息 -->
 	<select id="findUserInfoById" resultMap="userMap">
 		SELECT
-		tb_user.u_id,
+		u_id,
 		u_name,
 		u_account_name,
 		u_password,
@@ -443,23 +478,20 @@
 		u_description,
 		u_credentials_salt,
 		u_creator_name,
-		tb_user.u_create_time,
+		u_create_time,
 		u_update_time,
-		tb_user_info.u_id u_id1,
 		u_sex,
 		u_birthday,
 		u_telephone,
 		u_email,
 		u_image,
 		u_address,
-		tb_user_info.u_create_time u_create_time1,
 		u_job,
 		u_default_img
 		FROM
-			tb_user,
-			tb_user_info
+			tb_user
 		WHERE
-			tb_user.u_id = tb_user_info.u_id and tb_user.u_id = #{id}
+			u_id = #{id}
 	</select>
 
 	<!-- 查询存在该任务中的成员信息 -->
@@ -495,11 +527,11 @@
 		tb_user where tb_user.u_id = (select member_id from prm_task_member where public_id = #{taskId} and type = '执行者')
 	</select>
 
-	<!-- 根据id 查询用户的注册信息 -->
-	<select id="findUserInfoByUserId" resultMap="userInfo">
-		select <include refid="userInfoAttributes"/>
-		from tb_user_info where u_id = #{uId}
-	</select>
+	<!--&lt;!&ndash; 根据id 查询用户的注册信息 &ndash;&gt;-->
+	<!--<select id="findUserInfoByUserId" resultMap="userInfo">-->
+		<!--select <include refid="userInfoAttributes"/>-->
+		<!--from tb_user_info where u_id = #{uId}-->
+	<!--</select>-->
 
 	<!-- 查询出某个任务的创建者信息 -->
 	<select id="findTaskCreate" resultMap="userMap">
@@ -532,27 +564,27 @@
 
 
 	<select id="findByKey" parameterType="String" resultMap="userMap">
-		SELECT u.u_id,
-			u.u_name,
-			u.u_account_name,
-			u.u_password,
-			u.u_delete_status,
-			u.u_locked,
-			u.u_description,
-			u.u_credentials_salt,
-			u.u_creator_name,
-			u.u_create_time,
-			u.u_update_time,
-			i.u_sex,
-			i.u_birthday,
-			i.u_image,
-			i.u_telephone,
-			i.u_email,
-			i.u_address,
-			i.u_create_time,
-			i.u_job,
-			i.u_default_img
-		FROM tb_user u JOIN tb_user_info i on u.u_id = i.u_id
-		where u.u_account_name like CONCAT('%',#{keyword},'%')
+		SELECT u_id,
+			u_name,
+			u_account_name,
+			u_password,
+			u_delete_status,
+			u_locked,
+			u_description,
+			u_credentials_salt,
+			u_creator_name,
+			u_create_time,
+			u_update_time,
+			u_sex,
+			u_birthday,
+			u_image,
+			u_telephone,
+			u_email,
+			u_address,
+			u_create_time,
+			u_job,
+			u_default_img
+		FROM tb_user
+		where u_account_name like CONCAT('%',#{keyword},'%')
 	</select>
 </mapper>
