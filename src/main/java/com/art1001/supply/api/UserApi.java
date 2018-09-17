@@ -1,10 +1,8 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.EmailUtil;
@@ -14,7 +12,6 @@ import com.art1001.supply.util.SendSmsUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -41,8 +38,6 @@ import java.util.Date;
 @Slf4j
 @RestController
 public class UserApi {
-    @Resource
-    private RoleService roleService;
 
     @Resource
     private UserService userService;

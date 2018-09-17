@@ -7,7 +7,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import lombok.Data;
 
 /**
- * projectEntity
+ * @author 汪亚锋
  */
 @Data
 public class OrganizationMember extends BaseEntity implements Serializable {
