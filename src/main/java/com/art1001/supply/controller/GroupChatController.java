@@ -73,9 +73,6 @@ public class GroupChatController extends BaseController {
         model.addAttribute("user", ShiroAuthenticationManager.getUserEntity());
         model.addAttribute("project", projectService.findProjectByProjectId(projectId));
         model.addAttribute("currentGroup",currentGroup);
-        //加载该项目下所有分组的信息
-        List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-        model.addAttribute("groups",groups);
         return "chat";
     }
 

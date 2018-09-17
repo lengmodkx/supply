@@ -197,7 +197,7 @@ public interface RelationService {
 	 * @param projectId 项目Id
 	 * @return
 	 */
-	List<GroupVO> loadGroupInfo(String projectId);
+	List<Relation> loadGroupInfo(String projectId);
 
 	/**
 	 * 查询出某个项目下 回收站中的所有任务分组
@@ -231,4 +231,7 @@ public interface RelationService {
 	void saveGroup(Relation relation);
 
 	Relation findDefaultRelation(String projectId);
+
+	void updateDefaultGroup(String projectId);
+
 }

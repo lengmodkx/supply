@@ -71,6 +71,11 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	private int IsReceiveMessage;
 
 	/**
+	 * 是否收藏该项目
+	 */
+	private int collect;
+
+	/**
 	 * 项目成员的角色,默认成员
 	 */
 	private long rId;

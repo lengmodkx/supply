@@ -399,104 +399,10 @@
 	</select>
 
 	<!-- 加载所有分组信息 -->
-	<select id="loadGroupInfo" resultMap="groupInfo" parameterType="java.lang.String">
-		SELECT
-		<include refid="groupInfo"/>
-		FROM
-		(
-		SELECT
-		count(task_name) AS 未完成,
-		r.parent_id AS pid,
-		t.project_id
-		FROM
-		prm_task t
-		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
-		WHERE
-		r.project_id = #{projectId}
-		AND t.task_status = '未完成'
-		GROUP BY
-		r.parent_id
-		) AS a
-		LEFT JOIN (
-		SELECT
-		count(t.task_name) AS 完成,
-		r.parent_id AS pid
-		FROM
-		prm_task t
-		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
-		WHERE
-		r.project_id = #{projectId}
-		AND t.task_status = '完成'
-		GROUP BY
-		r.parent_id
-		) AS b ON a.pid = b.pid
-		RIGHT JOIN (
-		SELECT
-		relation_name AS NAME,
-		relation_id AS id,
-		creator AS 创建人,
-		relation_del AS 分组状态
-		FROM
-		prm_relation
-		WHERE
-		project_id = #{projectId}
-		AND parent_id = '0'
-		AND relation_del = 0
-		) AS c ON c.id = a.pid
-		LEFT JOIN (
-		SELECT
-		count(task_name) AS 已逾期,
-		r.parent_id AS pid,
-		t.project_id
-		FROM
-		prm_task t
-		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
-		WHERE
-		r.project_id = #{projectId}
-		AND t.end_time / 1000 &lt; (
-		SELECT
-		unix_timestamp(now())
-		)
-		GROUP BY
-		r.parent_id
-		) AS d ON c.id = d.pid
-		LEFT JOIN (
-		SELECT
-		count(task_name) AS 近期的任务,
-		r.parent_id AS pid,
-		t.project_id
-		FROM
-		prm_task t
-		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
-		WHERE
-		r.project_id = #{projectId}
-		AND t.task_status = '未完成'
-		AND (
-		t.end_time / 1000 &gt; (
-		SELECT
-		unix_timestamp(now())
-		)
-		OR t.end_time IS NULL
-		)
-		GROUP BY
-		r.parent_id
-		) AS e ON c.id = e.pid
-		LEFT JOIN (
-		SELECT
-		count(0) AS 分组内任务总数,
-		r.parent_id pid
-		FROM
-		prm_task AS t
-		LEFT JOIN prm_relation AS r ON t.task_menu_id = r.relation_id
-		GROUP BY
-		r.parent_id
-		) AS f ON f.pid = c.id
+	<select id="loadGroupInfo" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select relation_id,relation_name,creator from prm_relation where project_id = #{projectId} and relation_del = 0 and lable = 0 order by `order`
 	</select>
 
-	<!--  -->
-	<!--<select id="loadGroupInfo" resultMap="groupInfo" parameterType="java.lang.String">-->
-
-	<!--</select>-->
 
 	<!-- 查询出项目下回收站中的所有任务分组 -->
 	<select id="findRecycleBin" resultMap="BaseResultMap3">
@@ -578,5 +484,4 @@
 		</where>
 
 	</select>
-
 </mapper>

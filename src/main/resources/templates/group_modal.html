@@ -1,29 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html >
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/common_header :: common_header(~{::title},~{::link})">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}" >
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" >
+    <link rel="stylesheet" th:href="@{/css/commonhead.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/revisetask.css}" href="../static/css/revisetask.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_754098_mis29bx1b1i.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/group.css}">
 </head>
 <body>
 <!--分组下拉框-->
-<div style="display: none" class="task-select-box">
+<div class="task-select-box">
     <div style="overflow-y: visible">
         <div class="task-select-box-header-input boxsizing">
             <input class="boxsizing" type="text" placeholder="搜索分组">
         </div>
         <ul class="fenzu-ul sortable" id="sortable">
-            <li class="boxsizing" th:each="group:${groups}" th:data-id = "${group.groupId}" th:isDel="${group.isDel}">
+            <li class="boxsizing" th:each="group:${groups}" th:data-id = "${group.relationId}" th:isDel="${group.relationDel}">
                 <div class="tasklist-container">
                     <h4>
-                        <span class="gname" th:style="'color:' + (${currentGroup == group.groupId} ? '#3DA8F6' : '#383838') + ''" th:text="${group.groupName}"></span>
-                        <span th:text="${group.complete + '/' + group.taskTotal}">23/55</span>
+                        <span class="gname" th:style="'color:' + (${currentGroup.relationId == group.relationId} ? '#3DA8F6' : '#383838') + ''" th:text="${group.relationName}"></span>
+                        <!--<span th:text="${group.complete + '/' + group.taskTotal}">23/55</span>-->
                     </h4>
-                    <div class="tasklist-strip-wrap" th:if="${group.taskTotal != 0}">
-                        <div th:title="${'已完成  ' + group.complete}" th:style="'width:' + @{${#numbers.formatDecimal(group.complete *100 /group.taskTotal, 0, 2)}}+ '%'"></div>
-                        <div th:title="${'近期任务  ' + group.recent}" th:style="'width:' + @{${#numbers.formatDecimal(group.recent *100 /group.taskTotal, 0, 2)}} + '%'"></div>
-                        <div th:title="${'已逾期  ' + group.overdue}" th:style="'width:' + @{${#numbers.formatDecimal(group.overdue *100 /group.taskTotal, 0, 2)}} + '%'"></div>
-                        <div th:style="'display:' + @{(${sitrue} ? 'none' : 'inline-block')} + ''"></div>
-                    </div>
+                    <!--<div class="tasklist-strip-wrap" th:if="${group.taskTotal != 0}">-->
+                        <!--<div th:title="${'已完成  ' + group.complete}" th:style="'width:' + @{${#numbers.formatDecimal(group.complete *100 /group.taskTotal, 0, 2)}}+ '%'"></div>-->
+                        <!--<div th:title="${'近期任务  ' + group.recent}" th:style="'width:' + @{${#numbers.formatDecimal(group.recent *100 /group.taskTotal, 0, 2)}} + '%'"></div>-->
+                        <!--<div th:title="${'已逾期  ' + group.overdue}" th:style="'width:' + @{${#numbers.formatDecimal(group.overdue *100 /group.taskTotal, 0, 2)}} + '%'"></div>-->
+                        <!--<div th:style="'display:' + @{(${sitrue} ? 'none' : 'inline-block')} + ''"></div>-->
+                    <!--</div>-->
                     <div class="xialakuang" >
                         <i class="iconfont icon-arrow-circle-o-down"></i>
                         <div class="fzcd-box" style="display: none">
@@ -69,7 +76,7 @@
                             </div>
                             <div class="fzcd-box-e" style="display: none">
                                 <div class="center-box boxsizing" style="padding: 10px">
-                                    <input class="boxsizing update-name" th:id="${group.groupId}+'name'" type="text" placeholder="请输入分组名称">
+                                    <input class="boxsizing update-name" th:id="${group.relationId}+'name'" type="text" placeholder="请输入分组名称">
                                     <div style="margin-top: 10px;width: 100%" class="save-btn save-group-name">保存</div>
                                 </div>
                             </div>
@@ -158,4 +165,112 @@
 
 </div>
 </body>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/jquery-2.2.4.min.js}" src="../static/js/jquery-2.2.4.min.js"></script>
+<script th:inline="javascript">
+
+    var projectId = [[${projectId}]];
+
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        /**
+         * 点击创建分组按钮
+         */
+        $(".create-btn").click(function () {
+            var groupName = $('.groupname').val();
+            if(groupName === null || groupName === ''){
+                layer.msg("名字不能为空!");
+            } else{
+                var args = {"relationName":groupName,"projectId":projectId};
+                var url = "/relation/addRelation";
+                $.post(url,args,function (data) {
+                    if(data.result === 1){
+                        //当你在iframe页面关闭自身时
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                        parent.location.href = '/project/task.html?projectId='+projectId;
+                    }
+                });
+            }
+        });
+    });
+
+    /**
+     * 选择一个分组的时候
+     */
+    $(".fenzu-ul li").click(function () {
+        $(this).find('h4').css('color','#3DA8F5');
+        var id = $(this).attr('data-id');
+        //当你在iframe页面关闭自身时
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+        parent.location.href = '/project/task.html?groupId='+id+'&projectId='+projectId;
+    });
+
+    /**
+     * 保存分组名称
+     */
+    $('.save-group-name').click(function (e) {
+        var id = $(this).parents('li').attr('data-id');
+        var name = $('#'+id+'name').val();
+        if(name !== '' && name !== null){
+            var args = {"relationName":name,"relationId":id};
+            var url = "/relation/updateRelation";
+            $.post(url,args,function(data){
+                if(data.result === 1){
+                    $('.fenzu-ul li').each(function () {
+                        if($(this).attr('data-id') === id){
+                            $(this).find('.gname').html(name);
+                        }
+                    });
+                    $('.fzcd-box-e').hide();
+                }
+            });
+        }
+        e.stopPropagation();
+    });
+
+    /**
+     * 点击移入回收站
+     */
+    $('.recycle-bin').click(function (e) {
+        $(".recycle").show();
+        e.stopPropagation();
+    });
+
+    $('.groupname').focus(function (e) {
+        e.stopPropagation();
+    });
+
+    /**
+     * 点击回收站确定
+     */
+    $('.move-recycle').click(function (e) {
+        var url = "/relation/moveRecycleBin";
+        var that = $(this).parents('li.boxsizing');
+        var id = that.attr('data-id');
+        var firstId = that.siblings('li');
+        // console.log()
+        // console.log(firstId.attr("data-id"))
+
+        var args = {"relationId":id,"relationDel":that.attr('isDel')};
+        $.post(url,args,function (data) {
+            if(data.result == 1){
+                $(".renwu-menu").slideUp();
+                that.remove();
+                location.href = '/relation/changeGroup?groupId='+ firstId.eq(0).attr("data-id") +'&projectId='+projectId;
+                // parent.layer.msg('任务分组: '+ $('.gname').html() + ' 已经移入回收站', {
+                //     offset:'lb',
+                //     icon:1,
+                //     time: 4000 //2秒关闭（如果不配置，默认是3秒）
+                // });
+            } else{
+                layer.msg("系统异常!");
+            }
+        });
+        e.stopPropagation();
+        return false
+    });
+</script>
 </html>
