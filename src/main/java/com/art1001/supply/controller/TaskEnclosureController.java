@@ -155,7 +155,7 @@ public class TaskEnclosureController {
 
     @GetMapping("/selectFile.html")
     public String selectFile(@RequestParam String projectId,@RequestParam String taskId,Model model){
-        List<File> fileList = fileService.findChildFile(projectId, "0", 0);
+        List<File> fileList = fileService.findChildFile(projectId, "0");
         model.addAttribute("fileList",fileList);
         model.addAttribute("projectId",projectId);
         model.addAttribute("taskId",taskId);

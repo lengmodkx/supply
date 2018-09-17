@@ -63,10 +63,9 @@ public interface FileMapper {
 	 *
 	 * @param projectId 关联项目id
 	 * @param parentId 父级id，顶级目录为 0
-	 * @param isDel 删除标识
 	 * @return List<File>
 	 */
-	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId, @Param("isDel") Integer isDel);
+	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId);
 
 	/**
 	 * 查新该目录下的名称是否存在
@@ -225,4 +224,10 @@ public interface FileMapper {
 
 	@Select("select fileId,fileName,fileUrl, from prm_file where public_id = #{publicId}")
 	List<File> findFileByPublicId(String publicId);
+
+	/**
+	 * 插入多条文件信息
+	 * @param fileList 文件信息集合
+	 */
+    void saveFileBatch(List<File> fileList);
 }

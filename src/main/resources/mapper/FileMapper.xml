@@ -152,7 +152,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
-		where project_id = #{projectId} and parent_id = #{parentId} and file_del = #{isDel}
+		where project_id = #{projectId} and parent_id = #{parentId}
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -567,6 +567,62 @@
 				#{fileThumbnail},
 			</if>
 		</trim>
+	</insert>
+
+	<!-- 插入多条文件信息 -->
+	<insert id="saveFileBatch">
+		insert into prm_public_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				file_id,
+				file_name,
+				ext,
+				file_url,
+				project_id,
+				catalog,
+				size,
+				parent_id,
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="fileId != null and fileId != ''">
+				#{fileId},
+			</if>
+			<if test="fileName != null and fileName != ''">
+				#{fileName},
+			</if>
+			<if test="ext != null and ext != ''">
+				#{ext},
+			</if>
+			<if test="fileUrl != null and fileUrl != ''">
+				#{fileUrl},
+			</if>
+			<if test="projectId != null and projectId != ''">
+				#{projectId},
+			</if>
+			<if test="catalog != null ">
+				#{catalog},
+			</if>
+			<if test="size != null and size != ''">
+				#{size},
+			</if>
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
+			</if>
+			<if test="fileDel != null and fileDel != ''">
+				#{fileDel},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+			<if test="fileThumbnail != null ">
+				#{fileThumbnail},
+			</if>
+		</trim>
+
 	</insert>
 	
 </mapper>

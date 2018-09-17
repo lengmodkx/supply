@@ -81,10 +81,9 @@ import java.util.List;
      *
      * @param projectId 关联项目id
      * @param parentId 父级id，顶级目录为 0
-	 * @param isDel 删除标识
      * @return List<File>
      */
-	List<File> findChildFile(String projectId, String parentId, Integer isDel);
+	List<File> findChildFile(String projectId, String parentId);
 
 	/**
 	 * 移动文件
@@ -235,4 +234,18 @@ import java.util.List;
     List<File> findFileByPublicId(String publicId);
 
 	String findFileId();
+
+	/**
+	 * 加载出该项目的所有文件数据
+	 * @param projectId 项目id
+	 * @param fileId 文件id
+	 * @return
+	 */
+	List<File> findProjectFile(String projectId, String fileId);
+
+	/**
+	 * 插入多条文件信息
+	 * @param files 文件id
+	 */
+	void saveFileBatch(String projectId, String files, String parnentId);
 }

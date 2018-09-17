@@ -25,8 +25,10 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +68,11 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private Base base;
+
+    /**
+     * 公共模型库 常量定义信息
+     */
+    private final static String PUBLIC_FILE_NAME = "公共模型库";
 
     /**
      * 查询分页file数据
@@ -273,6 +280,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public File createFolder(String projectId, String parentId, String fileName) {
+        //判断当前文件夹的名字是否在库中存在
+        int result = fileService.findFolderIsExist(fileName,projectId,parentId);
+        if(result > 0){
+            throw new ServiceException();
+        }
         // 存库
         File file = new File();
         file.setFileId(IdGen.uuid());
@@ -289,9 +301,15 @@ public class FileServiceImpl implements FileService {
         return file;
     }
 
+    /**
+     * 查询出该文件夹下的所有子文件夹及文件
+     * @param projectId 关联项目id
+     * @param parentId 父级id，顶级目录为 0
+     * @return
+     */
     @Override
-    public List<File> findChildFile(String projectId, String parentId, Integer isDel) {
-        return fileMapper.findChildFile(projectId, parentId, isDel);
+    public List<File> findChildFile(String projectId, String parentId) {
+        return fileMapper.findChildFile(projectId, parentId);
     }
 
     /**
@@ -636,5 +654,71 @@ public class FileServiceImpl implements FileService {
         return fileMapper.findFileId();
     }
 
+    /**
+     * 加载出该项目的所有文件数据
+     * @param projectId 项目id
+     * @param fileId 文件id
+     * @return
+     */
+    @Override
+    public List<File> findProjectFile(String projectId, String fileId) {
+        List<File> fileList = new ArrayList<File>();
+        if("0".equals(fileId)){
+            fileList = fileService.findChildFile(projectId, fileId);
+        } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
+            //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
+            fileList = fileService.findPublicFile(fileService.findFileId());
+        } else{
+            fileList = fileService.findPublicFile(fileId);
+        }
+        return fileList;
+    }
 
+    /**
+     * 插入多条文件信息
+     * @param files 文件id
+     */
+    @Override
+    public void saveFileBatch(String projectId, String files, String parentId) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        List<File> fileList = new ArrayList<File>();
+        if(StringUtils.isNotEmpty(files)){
+            JSONArray array = JSON.parseArray(files);
+            for (int i=0;i<array.size();i++) {
+                JSONObject object = array.getJSONObject(i);
+                String fileName = object.getString("fileName");
+                String fileUrl = object.getString("fileUrl");
+                String size = object.getString("size");
+                String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+                // 写库
+                File myFile = new File();
+                // 用原本的文件名
+                myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
+                myFile.setExt(ext);
+                myFile.setProjectId(projectId);
+                myFile.setFileUrl(fileUrl);
+                // 得到上传文件的大小
+                myFile.setSize(size);
+                myFile.setParentId(parentId);
+                myFile.setCatalog(0);
+                myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                if(FileExt.extMap.get("images").contains(ext)){
+                    myFile.setFileThumbnail(fileUrl);
+                }
+                fileList.add(myFile);
+
+                FileVersion fileVersion = new FileVersion();
+                fileVersion.setFileId(myFile.getFileId());
+                fileVersion.setFileSize(size);
+                fileVersion.setFileUrl(fileUrl);
+                fileVersion.setIsMaster(1);
+                Date time = Calendar.getInstance().getTime();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String format = simpleDateFormat.format(time);
+                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+                fileVersionService.saveFileVersion(fileVersion);
+            }
+            fileMapper.saveFileBatch(fileList);
+        }
+    }
 }

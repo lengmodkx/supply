@@ -241,7 +241,7 @@ if ($("#have-executor").val()){
             if (member != null && member.length > 0) {
                 for (var i = 0; i < member.length; i++) {
                     content += "<div class=\'one-people\'>";
-                    content += "<img src='"+IMAGE_SERVER+ member[i].userInfo.image +"'>";
+                    content += "<img src='"+IMAGE_SERVER+ member[i].image +"'>";
                     content += "<span data-id = '"+ member[i].id +"'>" + member[i].userName + "</span>";
                     content += "<i class=\'layui-icon layui-icon-ok\' style=\'font-size: 16px; color: #D1D1D1;\'></i>";
                     content += "</div>";

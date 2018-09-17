@@ -110,7 +110,7 @@ public class FileController extends BaseController {
 
         List<File> fileList = new ArrayList<>();
         if("0".equals(fileId)){
-            fileList = fileService.findChildFile(projectId, fileId, fileDel);
+            fileList = fileService.findChildFile(projectId, fileId);
         }else{
             File file = fileService.findFileById(fileId);
             if("公共模型库".equals(file.getFileName())) {
@@ -350,35 +350,6 @@ public class FileController extends BaseController {
         }
 
 
-        return jsonObject;
-    }
-
-    /**
-     * 上传文件
-     *
-     * @param projectId 项目id
-     * @param parentId  上级目录id
-     * @param file      文件
-     */
-    @PostMapping("/upadFile")
-    @ResponseBody
-    public JSONObject uploadFile(
-            @RequestParam String projectId,
-            @RequestParam(required = false, defaultValue = "0") String parentId,
-            MultipartFile file
-    ) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            File f = fileService.uploadFile(projectId, parentId, file);
-            jsonObject.put("result", 1);
-            jsonObject.put("data", f);
-            jsonObject.put("msg", "上传成功");
-
-        } catch (Exception e) {
-            log.error("上传文件异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "上传失败");
-        }
         return jsonObject;
     }
 
@@ -812,7 +783,7 @@ public class FileController extends BaseController {
                 String fId = file.getFileId();
                 String projectId = file.getProjectId();
                 fileService.saveFile(file);
-                List<File> childFile = fileService.findChildFile(projectId, fId, 0);
+                List<File> childFile = fileService.findChildFile(projectId, fId);
                 if (childFile.size() > 0) {
                     Map<String, List<File>> map = new HashMap<>();
                     map.put(file.getFileId(), childFile);
@@ -1061,7 +1032,7 @@ public class FileController extends BaseController {
 
         if (fileUrl.size() > 0) {
             for (File file : fileUrl) {
-                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId(), 0);
+                List<File> childFile = fileService.findChildFile(file.getProjectId(), file.getFileId());
                 this.downloadZip(childFile, path + "\\" + file.getFileName(),response);
             }
         }
@@ -1086,7 +1057,7 @@ public class FileController extends BaseController {
                     // 存库
                     fileService.saveFile(file);
                     // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(projectId, fId, 0);
+                    List<File> childFile = fileService.findChildFile(projectId, fId);
                     fileMap.put(file.getFileId(), childFile);
                 } else { //文件
                     this.copyFileSave(file, parentId);
@@ -1170,7 +1141,7 @@ public class FileController extends BaseController {
     public JSONObject projectList(String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.findChildFile(projectId,"0",0));
+            jsonObject.put("data",fileService.findChildFile(projectId,"0"));
             jsonObject.put("projectId", projectId);
             jsonObject.put("result",1);
         }catch (Exception e){
@@ -1187,7 +1158,7 @@ public class FileController extends BaseController {
     public JSONObject findChildFile(String projectId,String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.findChildFile(projectId,fileId,0));
+            jsonObject.put("data",fileService.findChildFile(projectId,fileId));
             jsonObject.put("result",1);
         } catch (Exception e){
             jsonObject.put("result",0);
@@ -1306,7 +1277,7 @@ public class FileController extends BaseController {
     public JSONObject childFile(@RequestParam String projectId,@RequestParam String parentId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<File> fileList = fileService.findChildFile(projectId, parentId, 0);
+            List<File> fileList = fileService.findChildFile(projectId, parentId);
             if(fileList.size()==0){
                 jsonObject.put("result",0);
             }else{
