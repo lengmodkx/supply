@@ -212,6 +212,7 @@ public class ProjectController extends BaseController {
 
             //初始化分组
             Relation relation = new Relation();
+            relation.setRelationName("任务");
             relation.setProjectId(project.getProjectId());
             relationService.saveRelation(relation);
 
@@ -267,6 +268,7 @@ public class ProjectController extends BaseController {
             //初始化分组
             Relation relation = new Relation();
             relation.setProjectId(project.getProjectId());
+            relation.setRelationName("任务");
             relationService.saveRelation(relation);
 
             List<TemplateData> menus = templateDataService.findByTemplateId("879fd7e79b9d11e8a601c85b76c405c2");
@@ -459,8 +461,17 @@ public class ProjectController extends BaseController {
 
     //任务界面初始化
     @GetMapping("/task.html")
-    public String mainpage(@RequestParam String projectId,Model model){
+    public String mainpage(@RequestParam String projectId, String groupId,Model model){
         try {
+
+            if(StringUtils.isNotEmpty(groupId)){
+                relationService.updateDefaultGroup(projectId);
+                Relation group = new Relation();
+                group.setDefaultGroup(1);
+                group.setRelationId(groupId);
+                relationService.updateRelation(group);
+            }
+
             //查询项目默认分组
             Relation relation = relationService.findDefaultRelation(projectId);
             Relation relation1 = new Relation();

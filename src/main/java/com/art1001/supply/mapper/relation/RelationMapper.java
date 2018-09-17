@@ -7,10 +7,7 @@ import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 /**
  * relationmapper接口
@@ -153,7 +150,7 @@ public interface RelationMapper {
 	 * @param projectId 项目Id
 	 * @return
 	 */
-    List<GroupVO> loadGroupInfo(String projectId);
+    List<Relation> loadGroupInfo(String projectId);
 
 	/**
 	 * 查询出某个项目下 回收站中的所有任务分组
@@ -203,4 +200,11 @@ public interface RelationMapper {
 	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
 
 	Relation findDefaultRelation(String projectId);
+
+	/**
+	 * 取消当前项目下的默认分组
+	 * @param projectId 项目id
+	 */
+	@Update("update prm_relation AS a,(select relation_id from prm_relation where project_id = #{projectId} and default_group = 1 and lable = 0) AS b set default_group = 0 where a.relation_id = b.relation_id")
+    void updateDefaultGroup(String projectId);
 }

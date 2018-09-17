@@ -148,8 +148,8 @@ public class RelationServiceImpl implements RelationService {
 	 */
 	@Override
 	public void saveRelation(Relation relation){
+		relationMapper.updateDefaultGroup(relation.getProjectId());
         relation.setRelationId(IdGen.uuid());
-		relation.setRelationName("任务");
 		relation.setLable(0);
 		relation.setRelationDel(0);
 		relation.setOrder(0);
@@ -157,8 +157,11 @@ public class RelationServiceImpl implements RelationService {
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
 		relation.setCreateTime(System.currentTimeMillis());
 		relation.setUpdateTime(System.currentTimeMillis());
+        relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0)+1);
 		relationMapper.saveRelation(relation);
 	}
+
+
 
 	@Override
 	public void saveRelationBatch(List<String> relationList, String projectId, String parentId) {
@@ -464,7 +467,7 @@ public class RelationServiceImpl implements RelationService {
 	 * @return
 	 */
 	@Override
-	public List<GroupVO> loadGroupInfo(String projectId) {
+	public List<Relation> loadGroupInfo(String projectId) {
 		return relationMapper.loadGroupInfo(projectId);
 	}
 
@@ -536,5 +539,9 @@ public class RelationServiceImpl implements RelationService {
 		return relationMapper.findDefaultRelation(projectId);
 	}
 
+	@Override
+	public void updateDefaultGroup(String projectId) {
+		relationMapper.updateDefaultGroup(projectId);
+	}
 }
 

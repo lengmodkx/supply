@@ -11,53 +11,28 @@ $(function () {
     //     e.stopPropagation()
     // });
 
-    /**
-     * 选择一个分组的时候
-     */
-    $(".fenzu-ul li").click(function () {
-        $(this).find('h4').css('color','#3DA8F5');
-        var id = $(this).attr('data-id');
-        location.href = '/relation/changeGroup?groupId='+id+'&projectId='+projectId;
-    });
-
-
     $(".groups-down-select").click(function () {
         var top=$(this).offset().top+40+'px';
         var left=$(this).offset().left-150+'px';
         layui.use('layer', function(){
             var layer = layui.layer;
             layer.open({
-                type:1,
+                type:2,
                 title:false,
                 btn:0,
-                area:['304px','400px'],
+                area:['304px','337px'],
                 offset: [top,left],
+                fixed: true,
+                shadeClose: true,
                 closeBtn: 0,
-                shade: [0.1, '#fff'],
-                shadeClose:true,
-                content: $(".task-select-box"),
+                shade: ['0.1','#fff'],
+                anim: 1,  //动画 0-6
+                content: '/relation/loadGroupInfo?projectId='+projectId,
                 success:function () {
                     $(".layui-layer-shade").css("z-index",1)
                 }
             });
         });
-    });
-
-
-
-
-    /**
-     * 点击创建分组按钮
-     */
-    $(".create-btn").click(function () {
-       var groupName = $('.groupname').val();
-       var args = {"relationName":groupName,"projectId":projectId};
-       var url = "/relation/addRelation";
-       $.post(url,args,function (data) {
-           if(data.result === 1){
-               location.href = '/relation/changeGroup?groupId='+data.groupId+'&projectId='+projectId;
-           }
-       });
     });
 
     $(".icon-arrow-circle-o-down").click(function (e) {
@@ -118,70 +93,7 @@ $(function () {
 $(".xialakuang").click(function (e) {
     e.stopPropagation()
 })
-    /**
-     * 点击移入回收站
-     */
-    $('.recycle-bin').click(function (e) {
-        $(".recycle").show();
-        e.stopPropagation();
-    });
 
-    $('.groupname').focus(function (e) {
-        e.stopPropagation();
-    });
-
-    /**
-     * 保存分组名称
-     */
-    $('.save-group-name').click(function (e) {
-        var id = $(this).parents('li').attr('data-id');
-        var name = $('#'+id+'name').val();
-        if(name !== '' && name !== null){
-            var args = {"relationName":name,"relationId":id};
-            var url = "/relation/updateRelation";
-            $.post(url,args,function(data){
-               if(data.result === 1){
-                   $('.fenzu-ul li').each(function () {
-                      if($(this).attr('data-id') === id){
-                          $(this).find('.gname').html(name);
-                      }
-                   });
-                   $('.fzcd-box-e').hide();
-               }
-            });
-        }
-        e.stopPropagation();
-    });
-
-    /**
-     * 点击回收站确定
-     */
-    $('.move-recycle').click(function (e) {
-        var url = "/relation/moveRecycleBin";
-        var that = $(this).parents('li.boxsizing');
-        var id = that.attr('data-id');
-        var firstId = that.siblings('li');
-        // console.log()
-        // console.log(firstId.attr("data-id"))
-
-        var args = {"relationId":id,"relationDel":that.attr('isDel')};
-        $.post(url,args,function (data) {
-            if(data.result == 1){
-                $(".renwu-menu").slideUp();
-                that.remove();
-                location.href = '/relation/changeGroup?groupId='+ firstId.eq(0).attr("data-id") +'&projectId='+projectId;
-                // parent.layer.msg('任务分组: '+ $('.gname').html() + ' 已经移入回收站', {
-                //     offset:'lb',
-                //     icon:1,
-                //     time: 4000 //2秒关闭（如果不配置，默认是3秒）
-                // });
-            } else{
-                layer.msg("系统异常!");
-            }
-        });
-        e.stopPropagation();
-        return false
-    });
 
 
 

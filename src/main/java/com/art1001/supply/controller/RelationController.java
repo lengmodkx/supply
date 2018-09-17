@@ -458,56 +458,24 @@ public class RelationController {
     /**
      * 加载项目下所有分组信息
      * @param projectId 项目id
-     * @param currentGroupId 当前分组的id
      * @return
      */
-    @PostMapping("/loadGroupInfo")
-    @ResponseBody
-    public JSONObject loadGroupInfo(@RequestParam String projectId, @RequestParam String currentGroupId, Model model){
-        JSONObject jsonObject = new JSONObject();
+    @GetMapping("/loadGroupInfo")
+    public String loadGroupInfo(@RequestParam String projectId, Model model){
         try {
-            List<GroupVO> groupos = relationService.loadGroupInfo(projectId);
-            jsonObject.put("groups",groupos);
-            jsonObject.put("groupId",currentGroupId);
-            jsonObject.put("result",1);
+            List<Relation> groups = relationService.loadGroupInfo(projectId);
+            Relation defaultRelation = relationService.findDefaultRelation(projectId);
+            model.addAttribute("currentGroup",defaultRelation);
+            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+            model.addAttribute("groups",groups);
+            model.addAttribute("result",1);
+            model.addAttribute("projectId",projectId);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败!");
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,数据拉取失败!");
+            model.addAttribute("result",0);
+            model.addAttribute("msg","系统异常,数据拉取失败!");
         }
-        return jsonObject;
+        return "group_modal";
     }
 
-    /**
-     * 用户选择分组完成后 切换任务列表以及任务信息
-     * @param groupId 分组的名称
-     * @return
-     */
-    @RequestMapping("changeGroup")
-    public String changeGroup(@RequestParam String groupId, @RequestParam String projectId, Model model){
-        try {
-            Relation groupInfo = relationService.findRelationByRelationId(groupId);
-
-            Relation relation1 = new Relation();
-            relation1.setParentId(groupInfo.getRelationId());
-            relation1.setLable(1);
-            //获取当前分组下的所有菜单 和 菜单下的任务信息
-            List<Relation> menu = relationService.findRelationAllList(relation1);
-            model.addAttribute("taskMenus",menu);
-
-            Project project = projectService.findProjectByProjectId(groupInfo.getProjectId());
-            model.addAttribute("project",project);
-            //加载该项目下所有分组的信息
-            List<GroupVO> groups = relationService.loadGroupInfo(projectId);
-            model.addAttribute("groups",groups);
-
-            model.addAttribute("currentGroup",groupId);
-
-            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
-        } catch (Exception e){
-            log.error("系统异常,切换失败!");
-            throw new SystemException(e);
-        }
-        return "mainpage";
-    }
 }
