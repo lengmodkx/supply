@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -59,16 +60,22 @@ public class OrganizationServiceImpl implements OrganizationService {
 	 */
 	@Override
 	public void updateOrganization(Organization organization){
+		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.updateOrganization(organization);
 	}
 	/**
 	 * 保存organization数据
 	 * 
-	 * @param organization
+	 * @param organization 企业信息
 	 */
 	@Override
 	public void saveOrganization(Organization organization){
+		String userId = ShiroAuthenticationManager.getUserId();
 		organization.setOrganizationId(IdGen.uuid());
+		organization.setOrganizationImgae("");
+		organization.setOrganizationMember(userId);
+		organization.setCreateTime(System.currentTimeMillis());
+		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.saveOrganization(organization);
 	}
 	/**

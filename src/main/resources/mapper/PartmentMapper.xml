@@ -50,11 +50,15 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_partment
+		where 1=1
+		<if test="organizationId!=null and organizationId!=''">
+			and organization_id = #{organizationId}
+		</if>
 		<if test="orderBy == 0">
-			order by partment_id desc
+			order by partment_order desc
 		</if>
 		<if test="orderBy == 1">
-			order by partment_id asc
+			order by partment_order asc
 		</if>
 	</select>
 	
@@ -62,10 +66,15 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_partment c where partment_id = #{partmentId}
+		from prm_partment where partment_id = #{partmentId}
 
 	</select>
-	
+
+	<select id="findMaxOrder" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select MAX(partment_order) from prm_partment where organization_id = #{orgId}
+	</select>
+
+
 	<delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
 		delete from
 		prm_partment where partment_id = #{partmentId}

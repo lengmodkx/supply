@@ -16,6 +16,8 @@
 		<result column="organization_lable" property="organizationLable" jdbcType="INTEGER" />
 		<result column="partment_lable" property="partmentLable" jdbcType="INTEGER" />
 		<result column="member_lock" property="memberLock" jdbcType="INTEGER" />
+		<association property="userEntity" column="executor" javaType="com.art1001.supply.entity.user.UserEntity"
+					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -37,10 +39,6 @@
 	<sql id="whereStatement">
 		<where>
 			1 = 1
-			<if test="condition.organizationId != null and condition.organizationId != ''">
-				AND organization_id = #{condition.organizationId}
-			</if>
-
 			<if test="condition.partmentId != null and condition.partmentId != ''">
 				AND partment_id != #{condition.partmentId}
 			</if>
@@ -55,9 +53,18 @@
 	<select id="findOrganizationMemberPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
-		select * from prm_organization_member
-		<include refid="whereStatement" />
+		select * from prm_organization_member where 1=1
+		<if test="condition.createTime != null">
+			and #{condition.createTime} between create_time and DATE_SUB(create_time,INTERVAL -7 day)
+		</if>
 
+		<if test="condition.partmentId != null and condition.partmentId != ''">
+			AND partment_id != #{condition.partmentId}
+		</if>
+
+		<if test="condition.memberLock != null and condition.memberLock != ''">
+			AND member_lock != #{condition.memberLock}
+		</if>
 	</select>
 	
 	<select id="findOrganizationMemberAllList" resultMap="BaseResultMap"

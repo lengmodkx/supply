@@ -19,7 +19,7 @@ public class PartmentServiceImpl implements PartmentService {
 	/** partmentMapper接口*/
 	@Resource
 	private PartmentMapper partmentMapper;
-	
+
 	/**
 	 * 查询分页partment数据
 	 * 
@@ -69,6 +69,10 @@ public class PartmentServiceImpl implements PartmentService {
 	@Override
 	public void savePartment(Partment partment){
 		partment.setPartmentId(IdGen.uuid());
+		int maxOrder = partmentMapper.findMaxOrder(partment.getOrganizationId());
+		partment.setPartmentOrder(maxOrder+1);
+		partment.setUpdateTime(System.currentTimeMillis());
+		partment.setCreateTime(System.currentTimeMillis());
 		partmentMapper.savePartment(partment);
 	}
 	/**
@@ -77,8 +81,8 @@ public class PartmentServiceImpl implements PartmentService {
 	 * @return
 	 */
 	@Override
-	public List<Partment> findPartmentAllList(){
-		return partmentMapper.findPartmentAllList();
+	public List<Partment> findPartmentAllList(Partment partment){
+		return partmentMapper.findPartmentAllList(partment);
 	}
 	
 }

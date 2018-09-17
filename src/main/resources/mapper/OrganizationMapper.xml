@@ -11,17 +11,22 @@
 		<result column="organization_member" property="organizationMember" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="contact" property="contact" jdbcType="VARCHAR" />
+		<result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						organization_id,
+				organization_id,
 				organization_name,
 				organization_imgae,
 				organization_des,
 				is_public,
 				organization_member,
 				create_time,
-				update_time
+				update_time,
+				contact,
+				contact_phone
 	</sql>
 
 	<sql id="whereStatement">
@@ -102,6 +107,12 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="contact != null and contact != ''">
+				contact,
+			</if>
+			<if test="contactPhone != null and contactPhone != ''">
+				contact_phone,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -129,6 +140,12 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="contact != null and contact != ''">
+				#{contact},
+			</if>
+			<if test="contactPhone != null and contactPhone != ''">
+				#{contactPhone},
 			</if>
 		</trim>
 
@@ -161,6 +178,12 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="contact != null and contact != ''">
+				contact = #{contact},
+			</if>
+			<if test="contactPhone != null and contactPhone != ''">
+				contact_phone = #{contactPhone},
 			</if>
 		</set>
 

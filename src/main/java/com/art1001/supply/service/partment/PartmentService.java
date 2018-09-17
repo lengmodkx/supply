@@ -16,7 +16,7 @@ public interface PartmentService {
 	 * @param pager 分页对象
 	 * @return
 	 */
-	public List<Partment> findPartmentPagerList(Pager pager);
+	List<Partment> findPartmentPagerList(Pager pager);
 
 	/**
 	 * 通过partmentId获取单条partment数据
@@ -24,34 +24,34 @@ public interface PartmentService {
 	 * @param partmentId
 	 * @return
 	 */
-	public Partment findPartmentByPartmentId(String partmentId);
+	Partment findPartmentByPartmentId(String partmentId);
 
 	/**
 	 * 通过partmentId删除partment数据
 	 * 
 	 * @param partmentId
 	 */
-	public void deletePartmentByPartmentId(String partmentId);
+	void deletePartmentByPartmentId(String partmentId);
 
 	/**
 	 * 修改partment数据
 	 * 
 	 * @param partment
 	 */
-	public void updatePartment(Partment partment);
+	void updatePartment(Partment partment);
 
 	/**
 	 * 保存partment数据
 	 * 
 	 * @param partment
 	 */
-	public void savePartment(Partment partment);
+	void savePartment(Partment partment);
 
 	/**
 	 * 获取所有partment数据
 	 * 
 	 * @return
 	 */
-	public List<Partment> findPartmentAllList();
+	List<Partment> findPartmentAllList(Partment partment);
 	
 }

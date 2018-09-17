@@ -3,11 +3,13 @@ package com.art1001.supply.entity.organization;
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * organizationEntity
  */
 @Data
+@ToString
 public class Organization extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -47,4 +49,14 @@ public class Organization extends BaseEntity implements Serializable {
 	 * 企业拥有着
 	 */
 	private String organizationMember;
+
+	/**
+	 * 企业联系人
+	 */
+	private String contact;
+
+	/**
+	 * 企业联系人手机号
+	 */
+	private String contactPhone;
 }

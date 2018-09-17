@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.partment.Partment;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * partmentmapper接口
@@ -53,6 +54,8 @@ public interface PartmentMapper {
 	 * 
 	 * @return
 	 */
-	List<Partment> findPartmentAllList();
+	List<Partment> findPartmentAllList(Partment partment);
+
+	int findMaxOrder(String orgId);
 
 }
