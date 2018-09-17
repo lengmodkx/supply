@@ -22,49 +22,57 @@
 
 </body>
 <script>
-    var client = new OSS.Wrapper({
-        region: "oss-cn-beijing",
-        accessKeyId:'LTAIP4MyTAbONGJx',
-        accessKeySecret: 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW',
-        bucket: "art1001-bim-5d"
-    });
+    // var client = new OSS.Wrapper({
+    //     region: "oss-cn-beijing",
+    //     accessKeyId:'LTAIP4MyTAbONGJx',
+    //     accessKeySecret: 'coCyCStZwTPbfu93a3Ax0WiVg3D4EW',
+    //     bucket: "art1001-bim-5d"
+    // });
+    //
+    // var zip = new JSZip();
+    // function change() {
+    //     var f = document.getElementById("file").files[0];
+    //
+    //     zip.file(f.name, f, {type: 'blob'});
+    //     zip.generateAsync({
+    //         type: 'blob',
+    //         compression: 'DEFLATE', //  force a compression for this file
+    //         compressionOptions: { //  使用压缩等级，1-9级，1级压缩比最低，9级压缩比最高
+    //             level: 6
+    //         }
+    //     }).then(function(data) {  //promise对象中的数据只能在then方法中取到
+    //         var file = new File([data],"test/test.zip");
+    //         console.log(file);
+    //         client.multipartUpload(file.name, file,{
+    //             progress: progress
+    //         }).then(function (result) {
+    //             console.log(result);
+    //             console.log(result.name);
+    //         }).catch(function (err) {
+    //             console.log(err);
+    //         });
+    //     });
+    // }
+    //
+    // var progress = function (p) {
+    //     return function (done) {
+    //         var percent = Math.floor(p * 100) + '%';
+    //         layui.use('element', function(){
+    //             var element = layui.element;
+    //             element.progress('demo',percent);
+    //         });
+    //         done();
+    //     }
+    // };
 
-    var zip = new JSZip();
-    function change() {
-        var f = document.getElementById("file").files[0];
+    var array = ["a","b","c","d","e","f"];
+    var array2 = ["1","2","3","4","5","6"]
+    //array.splice(1,array.length-1);
 
-        zip.file(f.name, f, {type: 'blob'});
-        zip.generateAsync({
-            type: 'blob',
-            compression: 'DEFLATE', //  force a compression for this file
-            compressionOptions: { //  使用压缩等级，1-9级，1级压缩比最低，9级压缩比最高
-                level: 6
-            }
-        }).then(function(data) {  //promise对象中的数据只能在then方法中取到
-            var file = new File([data],"test/test.zip");
-            console.log(file);
-            client.multipartUpload(file.name, file,{
-                progress: progress
-            }).then(function (result) {
-                console.log(result);
-                console.log(result.name);
-            }).catch(function (err) {
-                console.log(err);
-            });
-        });
-    }
-
-    var progress = function (p) {
-        return function (done) {
-            var percent = Math.floor(p * 100) + '%';
-            layui.use('element', function(){
-                var element = layui.element;
-                element.progress('demo',percent);
-            });
-            done();
-        }
-    };
-
+    console.log(array.pop())
+    console.log(array[array.length-1])
+    array2.splice(array.length,1);
+    console.log(array2)
 </script>
 </html>
 

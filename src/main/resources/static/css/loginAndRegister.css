@@ -1,22 +1,63 @@
 html,body{
-    background-color: #FEFCFC;
+    background-image: url("/image/background.jpg");
 }
 .login-box{
-    width: 340px;
-    margin: 0 auto;
-    margin-top: 1%;
+    width: 400px;
+    height: 400px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin:-200px 0 0 -200px;
+    background-color: rgba(255,255,255,0.2);
 }
+
+.register-box{
+    width: 400px;
+    height: 500px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin:-250px 0 0 -200px;
+    background-color: rgba(255,255,255,0.2);
+}
+.forget-box{
+    width: 400px;
+    height: 450px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin:-225px 0 0 -200px;
+    background-color: rgba(255,255,255,0.2);
+}
+
+
 .login-box h1{
     width: 100%;
     height: 50px;
     text-align: center;
     font-size: 32px;
+    margin-top: 55px;
+}
+.register-box h1{
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    font-size: 32px;
+    margin-top: 55px;
+}
+.forget-box h1{
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    font-size: 32px;
+    margin-top: 55px;
 }
 .user-name-box,.pwd-box,.phone-num-box{
-    width: 100%;
+    width: 90%;
     height: 38px;
     position: relative;
     margin-top: 30px;
+    margin-left: 5%;
 }
 .user-name-box span,.pwd-box span,.phone-num-box span,.pic-code-box span,.sms-code-box span{
     position: absolute;
@@ -43,10 +84,34 @@ html,body{
     height: 30px;
 }
 .cant-login{
-    width: 100%;
+    width: 90%;
     height: 45px;
     margin-top: 30px;
+    margin-left: 5%;
 }
+.layui-btn-fluid{
+    width: 90%;
+    margin-left: 5%;
+}
+.layui-input{
+ background-color: rgba(255,255,255,0.2);
+
+}
+
+.layui-input::-webkit-input-placeholder { /* WebKit browsers */
+    color: #999;
+}
+.layui-input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #999;
+}
+.layui-input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #999;
+}
+.layui-input:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: #999;
+}
+
+
 .no-register{
     float: left;
     font-size: 12px;
@@ -57,7 +122,6 @@ html,body{
 }
 .forget-pwd{
     float: right;
-    color: #D8D7D7;
     font-size: 12px;
 }
 #loginBtn,#registerBtn{
@@ -245,10 +309,11 @@ html,body{
 }
 /*注册*/
 .pic-code-box,.sms-code-box{
-    width: 100%;
+    width: 90%;
     height: 38px;
     position: relative;
     margin-top: 30px;
+    margin-left: 5%;
 }
 .pic-code-box input,.sms-code-box input{
     width: 60%;

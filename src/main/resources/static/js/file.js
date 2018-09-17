@@ -95,8 +95,8 @@ $(function () {
         // 缩略图模式创建
         $(".new-file-wrap input").keypress(function (e) {
             var folderName = $(".new-file-wrap input").val();
-            if (e.which == 13) {
-                if (folderName == '') {
+            if (e.which === 13) {
+                if (folderName === '') {
                     $(".new-file").hide();
                     $(".new-file-wrap").hide();
                     return false
@@ -221,107 +221,69 @@ $(".one-file img").mousedown(function (e) {
         });
     }
 
-//     // 浏览器后退 事件
-//     window.onload=function(){
-//         addHistoryEntity();
-//         detectBack();
-//     }
-// //新增一条浏览器浏览历史记录
-//     function addHistoryEntity(){
-//         if(history.pushState){ //现代浏览器
-//             history.pushState('state1',null,'#foo');
-//         }else{                 //ie9及以下
-//             document.getElementById("goFoo").click();
-//         }
-//     }
-// //监听浏览器回退按钮
-//     function detectBack(){
-//         if(history.pushState){ //现代浏览器
-//             window.onpopstate=function(){
-//                 logout();
-//             }
-//         }
-//         else{                  //ie9及以下
-//             $(window).on("hashchange",function(){
-//                 if(location.hash=="#foo"){
-//                     return;
-//                 }
-//                 logout();
-//             });
-//         }
-//     }
-// //回退前事件
-//     function logout(){
-//
-//     }
-
     $(document).ready(function(e) {
-        var counter = 0;
         if (window.history && window.history.pushState) {
             $(window).on('popstate', function () {
-                window.history.pushState('forward', null, '#');
-                urls.pop();
-                var len=urls.length;
-                id.splice(len+1);
-                console.log(id);
-                console.log(urls)
+                window.history.pushState('forward', null, '');
+                id.pop();
+                var len = id.length;
+                urls.splice(len,1);
                 var lujing={"url":urls,"id":id};
                 sessionStorage.setItem("lujing",JSON.stringify(lujing));
-                location.href=JSON.parse(sessionStorage.getItem('lujing')).id[len]
+                if(id.length===0){
+                    window.location.href = "/project/project.html";
+                }else{
+                    window.location.href = id[id.length-1];
+                }
 
             });
         }
 
-        window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
-        window.history.forward(1);
+        window.history.pushState('forward', null, ''); //在IE中必须得有这两行
+        //window.history.forward(1);
     });
 
+    var storage = JSON.parse(sessionStorage.getItem("lujing"));
+    if (storage==null || "" || undefined||JSON.stringify(storage.url)==="[]") {
+        var lujing={"url":'文件库',"id":location.pathname+location.search};
+        sessionStorage.setItem("lujing",JSON.stringify(lujing));
+    }
 
-if (JSON.parse(sessionStorage.getItem("lujing"))==null || "" || undefined) {
-    var lujing={"url":'文件库',"id":location.pathname+location.search};
-    sessionStorage.setItem("lujing",JSON.stringify(lujing));
-}else if (JSON.parse(sessionStorage.getItem("lujing")).url==[]){
-
-    var lujing={"url":'文件库',"id":location.pathname+location.search};
-    sessionStorage.setItem("lujing",JSON.stringify(lujing));
-}
     $(".span-list").html("");
     var urls = [];
     var id= [];
     urls=urls.concat(JSON.parse(sessionStorage.getItem("lujing")).url);
-    id=id.concat(JSON.parse(sessionStorage.getItem("lujing")).id,location.pathname+location.search);
+    id=id.concat(JSON.parse(sessionStorage.getItem("lujing")).id);
     console.log(JSON.parse(sessionStorage.getItem("lujing")))
-    $.each(urls,function (i,item) {
-        var list ='<span><a href="javascript: void(0)"\n' +
-            '                        onclick="location.href=\' '+id[i+1]+' \'"  >'+item+'&gt;</a></span>'
+    $.each(urls,function (index,item) {
+        var list ='<span><a href="javascript: void(0)" data="'+id[index]+'">'+item+'>'+'</a></span>';
         $(".span-list").append(list);
-
-        $(".span-list a").click(function () {
-          var j=$(this).parent().index();
-          var href=id[j];
-          urls.splice(j+1);
-          id.splice(j+1);
-            var lujing={"url":urls,"id":id};
-            sessionStorage.setItem("lujing",JSON.stringify(lujing));
-        })
-
-        // $("html").on("click",".span-list a",function () {
-        //
-        // });
     });
+
+    $(".span-list a").click(function () {
+        var index=$(this).parent().index()+1;
+        var data = $(this).attr('data');
+        urls.splice(index,urls.length-index);
+        id.splice(index,id.length-index);
+        var lujing={"url":urls,"id":id};
+        sessionStorage.setItem("lujing",JSON.stringify(lujing));
+        window.location.href = data;
+    })
 
 
 
     // 进入下级目录
     $('html').on('click','.one-file',function (e) {
-        var wjjName=$(this).siblings(".one-file-name").text();
         e.stopPropagation();
+        var wjjName=$(this).siblings(".one-file-name").text();
         var fileId = $(this).attr("data");
         var catalog = $(this).attr("data-id");
         if(catalog==="1"){
-            var lujing={"url":urls.concat(wjjName),"id":id};
+            var path = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
+            var lujing={"url":urls.concat(wjjName),"id":id.concat(path)};
             sessionStorage.setItem("lujing",JSON.stringify(lujing));
-            window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId+"&currentGroup="+groupId;
+            console.log(JSON.stringify(lujing))
+            window.location.href = "/file/list.html?projectId=" + projectId + "&fileId=" + fileId;
         }else{
             $.post('/file/hasPermission',{"fileId":fileId},function (data) {
                 if(data.result===1&&data.hasPermission){

@@ -119,6 +119,23 @@
     margin: 5px 17px 12px 0;
     float: left;
 }
+
+.create-file-name{
+    width: 164px;
+    line-height: 30px;
+    text-align: center;
+    display: block;
+    white-space: normal;
+    word-break:break-all;
+    word-wrap:break-word;
+}
+.create-file-name input{
+    width: 164px;
+    height: 30px;
+    text-align: center;
+    font-size: 12px;
+}
+
 .one-file-name{
     width: 160px;
     line-height: 30px;

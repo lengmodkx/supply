@@ -211,12 +211,6 @@
 			<if test="memberId != null and memberId != ''">
 				and member_id = #{memberId}
 			</if>
-			<if test="memberName != null and memberName != ''">
-				and member_name = #{memberName}
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				and member_img = #{memberImg}
-			</if>
 			<if test="catalog != null ">
 				and catalog = #{catalog}
 			</if>
@@ -312,12 +306,6 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="memberName != null and memberName != ''">
-			member_name,
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-			member_img,
-			</if>
 			<if test="catalog != null ">
 			catalog,
 			</if>
@@ -372,12 +360,6 @@
 			</if>
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				#{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				#{memberImg},
 			</if>
 			<if test="catalog != null ">
 				#{catalog},
@@ -434,12 +416,6 @@
 			</if>
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				member_name = #{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				member_img = #{memberImg},
 			</if>
 			<if test="catalog != null ">
 				catalog = #{catalog},

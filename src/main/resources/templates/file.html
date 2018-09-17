@@ -26,7 +26,7 @@
         <div class="file-box boxsizing layui-form">
             <div class="file-toper" id="container">
                 <div class="span-list">
-                     <span><a href="javascript:void(0)" onclick="location.href='/file/list.html?projectId=' + projectId">文件库</a></span>
+
                 </div>
                 <div class="add-share" id="selectfiles"><img th:src="@{/image/upload.png}" th:if="${user.id=='58740e66e67e4f768ccebbea2da0bc60'}">上传</div>
                 <div class="add-share" id="createFolder"><img th:src="@{/image/add.png}" th:if="${user.id=='58740e66e67e4f768ccebbea2da0bc60'}">创建文件夹</div>
@@ -64,9 +64,9 @@
                     <ul class="img-show clearfix" id="fileListUl">
                         <li class="boxsizing new-file-wrap" style="display: none">
                             <div class="one-file">
-                                <img src="../static/image/nofile.png" th:src="@{/image/nofile.png}">
+                                <img th:src="@{/image/nofile.png}" class="common-size">
                             </div>
-                            <div class="one-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
+                            <div class="create-file-name"><input class="boxsizing" type="text" placeholder="按 Enter 新建文件夹"/></div>
                         </li>
                         <li class="boxsizing one-file-wrap" th:each="file:${fileList}" th:data-id = "${file.fileId}">
                             <div class="one-file boxsizing fileList" th:data="${file.fileId}" th:data-id="${file.catalog}">
