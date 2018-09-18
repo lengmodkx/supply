@@ -18,17 +18,6 @@ public class TagRelationServiceImpl implements TagRelationService {
 	/** Mapper接口*/
 	@Resource
 	private TagRelationMapper tagRelationMapper;
-	
-	/**
-	 * 查询分页数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	@Override
-	public List<TagRelation> findTagRelationPagerList(Pager pager){
-		return tagRelationMapper.findTagRelationPagerList(pager);
-	}
 
 	/**
 	 * 通过id获取单条数据
@@ -68,15 +57,6 @@ public class TagRelationServiceImpl implements TagRelationService {
 	@Override
 	public void saveTagRelation(TagRelation tagRelation){
 		tagRelationMapper.saveTagRelation(tagRelation);
-	}
-	/**
-	 * 获取所有数据
-	 * 
-	 * @return
-	 */
-	@Override
-	public List<TagRelation> findTagRelationAllList(){
-		return tagRelationMapper.findTagRelationAllList();
 	}
 
 	@Override

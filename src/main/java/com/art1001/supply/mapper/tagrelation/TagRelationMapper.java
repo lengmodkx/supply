@@ -12,15 +12,6 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface TagRelationMapper {
-
-	/**
-	 * 查询分页数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	List<TagRelation> findTagRelationPagerList(Pager pager);
-
 	/**
 	 * 通过id获取单条数据
 	 * 
@@ -49,13 +40,6 @@ public interface TagRelationMapper {
 	 * @param tagRelation
 	 */
 	void saveTagRelation(TagRelation tagRelation);
-
-	/**
-	 * 获取所有数据
-	 * 
-	 * @return
-	 */
-	List<TagRelation> findTagRelationAllList();
 
 
 	void deleteTagRelationByPublicId(TagRelation tagRelation);

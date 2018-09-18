@@ -116,7 +116,12 @@
         select
         tg.tag_id,
         tg.tag_name,
-        tg.bg_color
+        tg.bg_color,
+        tg.member_id,
+        tg.project_id,
+        tg.is_del,
+        tg.create_time,
+        tg.update_time
         from prm_tag tg left join prm_tag_relation tr on tg.tag_id = tr.tag_id
         where is_del=0
         <if test="publicType =='任务'">

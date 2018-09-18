@@ -13,15 +13,15 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.tag.TagService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -63,13 +63,11 @@ public class TagApi {
             //根据publicId 和 publicType查询出tag
             if(StringUtils.isNotEmpty(publicId)&&StringUtils.isNotEmpty(publicType)){
                 List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
-                for (Tag aTagList : tagList) {
-                    for (Tag aTagListTemp : tagListTemp) {
-                        if (aTagList.getTagId().equals(aTagListTemp.getTagId())) {
-                            aTagList.setFlag(true);
-                        }
+                tagList.forEach(item-> tagListTemp.forEach(item2 -> {
+                    if (item.getTagId().equals(item2.getTagId())) {
+                        item.setFlag(true);
                     }
-                }
+                }));
             }
             jsonObject.put("tagList", tagList);
             jsonObject.put("projectId", projectId);

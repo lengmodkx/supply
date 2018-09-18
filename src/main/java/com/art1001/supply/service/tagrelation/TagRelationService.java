@@ -10,14 +10,6 @@ import com.art1001.supply.entity.tagrelation.TagRelation;
 public interface TagRelationService {
 
 	/**
-	 * 查询分页数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	public List<TagRelation> findTagRelationPagerList(Pager pager);
-
-	/**
 	 * 通过id获取单条数据
 	 * 
 	 * @param id
@@ -45,13 +37,6 @@ public interface TagRelationService {
 	 * @param tagRelation
 	 */
 	public void saveTagRelation(TagRelation tagRelation);
-
-	/**
-	 * 获取所有数据
-	 * 
-	 * @return
-	 */
-	public List<TagRelation> findTagRelationAllList();
 
 	List<TagRelation> findTagRelationByTagId(long tagId);
 
