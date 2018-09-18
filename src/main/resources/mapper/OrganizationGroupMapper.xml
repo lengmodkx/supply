@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.organization.OrganizationGroupMapper">
+	
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.OrganizationGroup">
+		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
+		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
+		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="member_ids" property="memberIds" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+						group_id,
+				group_name,
+				organization_id,
+				owner,
+				member_ids,
+				create_time,
+				update_time
+	</sql>
+
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findOrganizationGroupPagerList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.base.Pager">
+		
+		select * from prm_organization_group
+		<include refid="whereStatement" />
+		
+		<if test="orderBy == 0">
+			order by group_id desc
+		</if>
+		<if test="orderBy == 1">
+			order by group_id asc
+		</if>
+		
+	</select>
+	
+	<select id="findOrganizationGroupAllList" resultMap="BaseResultMap"
+		parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
+		SELECT
+		<include refid="Base_Column_List" />
+		from prm_organization_group
+		<if test="orderBy == 0">
+			order by group_id desc
+		</if>
+		<if test="orderBy == 1">
+			order by group_id asc
+		</if>
+	</select>
+	
+	<select id="findOrganizationGroupByGroupId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from prm_organization_group c where group_id = #{groupId}
+
+	</select>
+	
+	<delete id="deleteOrganizationGroupByGroupId" parameterType="java.lang.String">
+		delete from
+		prm_organization_group where group_id = #{groupId}
+	</delete>
+	
+	<insert id="saveOrganizationGroup" parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
+
+		insert into prm_organization_group
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="groupId != null and groupId != ''">
+			group_id,
+			</if>
+			<if test="groupName != null and groupName != ''">
+			group_name,
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+			organization_id,
+			</if>
+			<if test="owner != null and owner != ''">
+			owner,
+			</if>
+			<if test="memberIds != null and memberIds != ''">
+			member_ids,
+			</if>
+			<if test="createTime != null ">
+			create_time,
+			</if>
+			<if test="updateTime != null ">
+			update_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="groupId != null and groupId != ''">
+				#{groupId},
+			</if>
+			<if test="groupName != null and groupName != ''">
+				#{groupName},
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+				#{organizationId},
+			</if>
+			<if test="owner != null and owner != ''">
+				#{owner},
+			</if>
+			<if test="memberIds != null and memberIds != ''">
+				#{memberIds},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="updateTime != null ">
+				#{updateTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateOrganizationGroup" parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
+
+		update prm_organization_group
+		<set>
+			<if test="groupId != null and groupId != ''">
+				group_id = #{groupId},
+			</if>
+			<if test="groupName != null and groupName != ''">
+				group_name = #{groupName},
+			</if>
+			<if test="organizationId != null and organizationId != ''">
+				organization_id = #{organizationId},
+			</if>
+			<if test="owner != null and owner != ''">
+				owner = #{owner},
+			</if>
+			<if test="memberIds != null and memberIds != ''">
+				member_ids = #{memberIds},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null ">
+				update_time = #{updateTime},
+			</if>
+		</set>
+
+		WHERE group_id = #{groupId}
+
+	</update>
+	
+</mapper>

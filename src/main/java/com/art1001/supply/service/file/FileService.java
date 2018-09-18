@@ -248,4 +248,11 @@ import java.util.List;
 	 * @param files 文件id
 	 */
 	void saveFileBatch(String projectId, String files, String parnentId);
+
+	/**
+	 * 更新文件版本信息
+	 * @param file 文件对象
+	 * @param fileId 更新的文件id
+	 */
+	String updateVersion(MultipartFile file, String fileId);
 }

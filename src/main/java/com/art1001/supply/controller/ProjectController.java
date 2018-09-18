@@ -117,6 +117,7 @@ public class ProjectController extends BaseController {
             response.setHeader("Pragma","no-cache");
             return "project";
         }catch (Exception e){
+            e.printStackTrace();
             throw  new SystemException(e);
         }
     }

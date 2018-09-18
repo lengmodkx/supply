@@ -571,58 +571,59 @@
 
 	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
-		insert into prm_public_file
+		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 				file_id,
 				file_name,
 				ext,
 				file_url,
 				project_id,
-				catalog,
-				size,
+				`catalog`,
+				`size`,
 				parent_id,
+				member_id,
+				file_uids,
+				create_time
 		</trim>
+		VALUES
+		<foreach collection="list" separator="," item="file" >
+			(
+				<if test="file.fileId != null and file.fileId != ''">
+					#{file.fileId},
+				</if>
+				<if test="file.fileName != null and file.fileName != ''">
+					#{file.fileName},
+				</if>
+				<if test="file.ext != null and file.ext != ''">
+					#{file.ext},
+				</if>
+				<if test="file.fileUrl != null and file.fileUrl != ''">
+					#{file.fileUrl},
+				</if>
+				<if test="file.projectId != null and file.projectId != ''">
+					#{file.projectId},
+				</if>
+				<if test="file.catalog != null ">
+					#{file.catalog},
+				</if>
+				<if test="file.size != null and file.size != ''">
+					#{file.size},
+				</if>
+				<if test="file.parentId != null and file.parentId != ''">
+					#{file.parentId},
+				</if>
+				<if test="file.memberId != null ">
+					#{file.memberId},
+				</if>
+				<if test="file.fileUids != null ">
+					#{file.fileUids},
+				</if>
+				<if test="file.createTime != null ">
+					#{file.createTime}
+				</if>
 
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-
-			<if test="fileId != null and fileId != ''">
-				#{fileId},
-			</if>
-			<if test="fileName != null and fileName != ''">
-				#{fileName},
-			</if>
-			<if test="ext != null and ext != ''">
-				#{ext},
-			</if>
-			<if test="fileUrl != null and fileUrl != ''">
-				#{fileUrl},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				#{projectId},
-			</if>
-			<if test="catalog != null ">
-				#{catalog},
-			</if>
-			<if test="size != null and size != ''">
-				#{size},
-			</if>
-			<if test="parentId != null and parentId != ''">
-				#{parentId},
-			</if>
-			<if test="fileDel != null and fileDel != ''">
-				#{fileDel},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="fileThumbnail != null ">
-				#{fileThumbnail},
-			</if>
-		</trim>
-
+			)
+		</foreach>
 	</insert>
 	
 </mapper>

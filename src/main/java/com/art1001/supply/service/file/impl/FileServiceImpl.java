@@ -28,6 +28,7 @@ import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
+import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -173,8 +175,6 @@ public class FileServiceImpl implements FileService {
         // 修改操作用户
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
         // 修改跟新时间
         file.setUpdateTime(System.currentTimeMillis());
         fileMapper.updateFile(file);
@@ -701,12 +701,14 @@ public class FileServiceImpl implements FileService {
                 myFile.setSize(size);
                 myFile.setParentId(parentId);
                 myFile.setCatalog(0);
+                myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+                myFile.setCreateTime(System.currentTimeMillis());
+                myFile.setFileId(IdGen.uuid());
                 if(FileExt.extMap.get("images").contains(ext)){
                     myFile.setFileThumbnail(fileUrl);
                 }
                 fileList.add(myFile);
-
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
                 fileVersion.setFileSize(size);
@@ -719,6 +721,53 @@ public class FileServiceImpl implements FileService {
                 fileVersionService.saveFileVersion(fileVersion);
             }
             fileMapper.saveFileBatch(fileList);
+        }
+    }
+
+    /**
+     * 更新文件版本信息
+     * @param file 文件对象
+     * @param fileId 更新的文件id
+     */
+    @Override
+    public String updateVersion(MultipartFile file, String fileId) {
+        try {
+            // 得到文件名
+            String originalFilename = file.getOriginalFilename();
+            // 得到原来的文件
+            File f = fileService.findFileById(fileId);
+            // 设置文件url
+            // 获取要创建文件的上级目录实体
+            String parentUrl = fileService.findProjectUrl(f.getProjectId());
+            // 重置文件名
+            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+            // 设置文件url
+            String fileUrl = parentUrl + fileName;
+            // 上传oss，相同的objectName会覆盖
+            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+
+            // 设置修改后的文件名
+            f.setFileName(originalFilename.substring(0,originalFilename.lastIndexOf(".")));
+            f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase());
+            f.setFileUrl(fileUrl);
+            f.setSize(FileUtils.convertFileSize(file.getSize()));
+
+            // 更新数据库
+            fileService.updateFile(f);
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            // 修改文件版本
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(f.getFileId());
+            fileVersion.setFileUrl(fileUrl);
+            fileVersion.setFileSize(FileUtils.convertFileSize(file.getSize()));
+            Date time = Calendar.getInstance().getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String format = simpleDateFormat.format(time);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+            fileVersionService.saveFileVersion(fileVersion);
+            return fileUrl;
+        } catch (IOException e){
+            throw new ServiceException(e);
         }
     }
 }

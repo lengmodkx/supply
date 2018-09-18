@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
@@ -18,11 +19,14 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
+import com.art1001.supply.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator;
 
 import javax.annotation.Resource;
@@ -210,18 +214,124 @@ public class FileApi {
             @RequestParam(value = "parentId",defaultValue = "0") String parentId
     ) {
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", 0);
         try {
             //文件为空则不执行
-            if(files==null){
+            if(files == null){
+                jsonObject.put("msg", "上传失败");
                 return jsonObject;
             }
             fileService.saveFileBatch(projectId,files,parentId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);
-            jsonObject.put("result", 0);
+            jsonObject.put("code",500);
             jsonObject.put("msg", "上传失败");
         }
         return jsonObject;
     }
+
+    /**
+     * 上传文件
+     *
+     * @param projectId 项目id
+     */
+    @PostMapping("/uploadModel")
+    public JSONObject uploadModel(
+            @RequestParam String projectId,
+            @RequestParam(value = "fileCommon") String fileCommon
+            ,@RequestParam(value = "fileModel") String fileModel
+            ,@RequestParam(value = "parentId",defaultValue = "0",required = false) String parentId
+            ,@RequestParam(value = "filename") String filename
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            JSONObject array = JSON.parseObject(fileCommon);
+            JSONObject object = JSON.parseObject(fileModel);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            File modelFile = new File();
+            // 用原本的文件名
+            modelFile.setFileName(filename);
+            modelFile.setSize(size);
+            modelFile.setFileUrl(fileUrl);
+            modelFile.setFileName(fileName);
+            modelFile.setProjectId(projectId);
+            modelFile.setFileThumbnail(array.getString("fileUrl"));
+            fileService.saveFile(modelFile);
+
+            //版本历史更新
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(modelFile.getFileId());
+            fileVersion.setFileSize(size);
+            fileVersion.setFileUrl(fileUrl);
+            fileVersion.setIsMaster(1);
+            Date time = Calendar.getInstance().getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String format = simpleDateFormat.format(time);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+            fileVersionService.saveFileVersion(fileVersion);
+            jsonObject.put("result",1);
+            jsonObject.put("code",201);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("上传文件异常, {}", e);
+            jsonObject.put("msg", "上传失败");
+            jsonObject.put("code",500);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更新文件
+     */
+    @PostMapping("/{fileId}/version")
+    public JSONObject updateUploadFile(
+            @PathVariable(value = "fileId") String fileId,
+            MultipartFile file
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String url = fileService.updateVersion(file,fileId);
+            // 设置返回数据
+            jsonObject.put("result", 1);
+            jsonObject.put("data", url);
+        } catch (ServiceException e){
+            jsonObject.put("result", 0);
+            jsonObject.put("data", "更新文件时,发生错误!");
+            jsonObject.put("code","");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("result", 0);
+            jsonObject.put("data", "更新失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 删除
+     *
+     * @param fileId 文件id
+     */
+    @DeleteMapping("/{fileId}")
+    public JSONObject deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        try {
+            fileService.deleteFileById(fileId);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("删除文件异常, {}", e);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "删除成功");
+        }
+        return jsonObject;
+    }
+
 }
