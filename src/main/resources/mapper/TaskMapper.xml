@@ -12,7 +12,6 @@
 		<result column="remind" property="remind" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
 		<result column="priority" property="priority" jdbcType="VARCHAR" />
-		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
@@ -70,7 +69,6 @@
 		<result column="remind" property="remind" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
 		<result column="priority" property="priority" jdbcType="VARCHAR" />
-		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
