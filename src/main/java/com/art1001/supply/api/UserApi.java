@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -214,34 +215,31 @@ public class UserApi {
     @PutMapping("/forget")
     public JSONObject forget(@RequestParam String accountName,@RequestParam String password,
                              @RequestParam String code,HttpServletRequest request){
-        String  kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
         JSONObject jsonObject = new JSONObject();
+        try {
+            String  kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
+            if(!kaptcha.equalsIgnoreCase(code)){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","手机验证码输入错误！");
+                return jsonObject;
+            }
 
-        if(!kaptcha.equalsIgnoreCase(code)){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","手机验证码输入错误！");
-            return jsonObject;
-        }
-
-        UserEntity userEntity = userService.findByName(accountName);
-        if(userEntity==null){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","用户不存在，请检查");
-            return jsonObject;
-        }
-        //加密用户输入的密码，得到密码和加密盐，保存到数据库
-        UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
-        //设置添加用户的密码和加密盐
-        userEntity.setPassword(user.getPassword());
-        userEntity.setCredentialsSalt(user.getCredentialsSalt());
-        int cnt = userService.updatePassword(userEntity, password);
-
-        if (cnt > 0) {
+            UserEntity userEntity = userService.findByName(accountName);
+            if(userEntity==null){
+                jsonObject.put("result",0);
+                jsonObject.put("msg","用户不存在，请检查");
+                return jsonObject;
+            }
+            //加密用户输入的密码，得到密码和加密盐，保存到数据库
+            UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
+            //设置添加用户的密码和加密盐
+            userEntity.setPassword(user.getPassword());
+            userEntity.setCredentialsSalt(user.getCredentialsSalt());
+            userService.updatePassword(userEntity, password);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "密码修改成功,请重新登录");
-        } else {
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "密码修改失败");
+        }catch (Exception e){
+            throw new AjaxException(e);
         }
 
         return jsonObject;
@@ -251,12 +249,10 @@ public class UserApi {
      * 用户退出
      * @return	视图信息
      */
-    @GetMapping(value = "/logout.html")
-    public String logout() {
+    @GetMapping(value = "/logout")
+    public void logout() {
         //这里执行退出系统之前需要清理数据的操作
-
         // 注销登录
         ShiroAuthenticationManager.logout();
-        return "redirect:/login.html";
     }
 }
