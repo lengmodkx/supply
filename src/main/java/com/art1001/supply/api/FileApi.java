@@ -3,25 +3,31 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
@@ -30,8 +36,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -61,6 +76,12 @@ public class FileApi {
      */
     @Resource
     private FileVersionService fileVersionService;
+
+    /**
+     * 项目逻辑层接口
+     */
+    @Resource
+    private ProjectService projectService;
 
     /**
      * 关联信息的逻辑层接口
@@ -103,7 +124,7 @@ public class FileApi {
             jsonObject.put("parentId", fileId);
             jsonObject.put("projectId", projectId);
             jsonObject.put("currentGroup",relationService.findDefaultRelation(projectId));
-            jsonObject.put("code",200);
+            jsonObject.put("status",200);
             jsonObject.put("result",1);
             //获取文件的后缀名
             jsonObject.put("exts",FileExt.extMap);
@@ -127,7 +148,7 @@ public class FileApi {
             File file = fileService.findFileById(fileId);
             if(file == null){
                 jsonObject.put("msg","文件不存在!");
-                jsonObject.put("code",404);
+                jsonObject.put("status",404);
                 return jsonObject;
             }
             List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
@@ -144,11 +165,11 @@ public class FileApi {
             //查询出该文件的所有参与者信息
             jsonObject.put("joins",userService.findManyUserById(fileService.findJoinId(file.getFileId())));
             jsonObject.put("result",1);
-            jsonObject.put("code",200);
+            jsonObject.put("status",200);
         } catch (Exception e){
             log.error("系统异常,{}",e.getMessage());
             jsonObject.put("msg","系统异常!");
-            jsonObject.put("code",500);
+            jsonObject.put("status",500);
         }
         return jsonObject;
     }
@@ -156,19 +177,19 @@ public class FileApi {
     /**
      * 获取子目录
      */
-    @GetMapping("/childFolder/{folderId}")
+    @GetMapping("{folderId}/child_folder")
     public JSONObject getChildFolder(@PathVariable(value = "folderId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<File> fileList = fileService.findChildFolder(fileId);
             jsonObject.put("result", 1);
             jsonObject.put("data", fileList);
-            jsonObject.put("code",200);
+            jsonObject.put("status",200);
         } catch (Exception e) {
             log.error("获取子目录失败， {}", e);
             jsonObject.put("result", 0);
             jsonObject.put("msg", "获取失败");
-            jsonObject.put("code",500);
+            jsonObject.put("status",500);
         }
         return jsonObject;
     }
@@ -179,7 +200,7 @@ public class FileApi {
      * @param parentId   上一级目录id  默认为0
      * @param folderName 文件夹名称
      */
-    @PostMapping("/createFolder")
+    @PostMapping("/create_folder")
     public JSONObject createFolder(
             @RequestParam String projectId,
             @RequestParam(required = false, defaultValue = "0") String parentId,
@@ -190,11 +211,11 @@ public class FileApi {
         try {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
-            jsonObject.put("code",201);
+            jsonObject.put("status",201);
         } catch (ServiceException e){
             log.error("文件夹已存在!");
             jsonObject.put("msg", "文件夹已存在!");
-            jsonObject.put("code",409);
+            jsonObject.put("status",409);
         } catch (Exception e) {
             log.error("创建文件夹异常, {}", e);
             jsonObject.put("msg", "创建失败");
@@ -225,7 +246,7 @@ public class FileApi {
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("上传文件异常, {}", e);
-            jsonObject.put("code",500);
+            jsonObject.put("status",500);
             jsonObject.put("msg", "上传失败");
         }
         return jsonObject;
@@ -236,7 +257,7 @@ public class FileApi {
      *
      * @param projectId 项目id
      */
-    @PostMapping("/uploadModel")
+    @PostMapping("/upload_model")
     public JSONObject uploadModel(
             @RequestParam String projectId,
             @RequestParam(value = "fileCommon") String fileCommon
@@ -275,12 +296,12 @@ public class FileApi {
             fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
             fileVersionService.saveFileVersion(fileVersion);
             jsonObject.put("result",1);
-            jsonObject.put("code",201);
+            jsonObject.put("status",201);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("上传文件异常, {}", e);
             jsonObject.put("msg", "上传失败");
-            jsonObject.put("code",500);
+            jsonObject.put("status",500);
         }
         return jsonObject;
     }
@@ -333,5 +354,401 @@ public class FileApi {
         }
         return jsonObject;
     }
+
+    /**
+     * 恢复
+     *
+     * @param fileId 文件id
+     */
+    @PatchMapping("/{fileId}/recovery")
+    public JSONObject recoveryFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.recoveryFile(fileId);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("删除文件异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("status", "500");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 下载
+     * @param fileId 文件id
+     * @param isPublic 下载的是不是模型文件
+     */
+    @GetMapping("/{fileId}/download")
+    public void downloadFile(@PathVariable(value = "fileId") String fileId,
+                             @RequestParam(value = "isPublic",defaultValue = "false") boolean isPublic,
+                             HttpServletResponse response){
+        try {
+            File file = fileService.findFileById(fileId);
+            String fileName = file.getFileName();
+            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
+            // 设置响应类型
+            response.setContentType("multipart/form-data");
+            // 设置头信息
+            // 设置fileName的编码
+            fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            ServletOutputStream outputStream = response.getOutputStream();
+            byte[] bytes = new byte[1024];
+            int n;
+            assert inputStream != null;
+            while ((n = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, n);
+            }
+            outputStream.close();
+            inputStream.close();
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+    }
+
+    /**
+     * 复制文件
+     * @param fileIds 文件id数组
+     * @return
+     */
+    @GetMapping("/copy_move_file")
+    public JSONObject copyFilePage(@RequestParam String[] fileIds) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        try {
+            List<File> selectFileList = fileService.findByIds(fileIds);
+            String projectId = selectFileList.get(0).getProjectId();
+            // 文件数量
+            AtomicInteger fileNum = new AtomicInteger();
+            // 文件夹数量
+            AtomicInteger folderNum = new AtomicInteger();
+            selectFileList.forEach(file -> {
+                if (file.getCatalog() == 1) {
+                    folderNum.addAndGet(1);
+                } else {
+                    fileNum.addAndGet(1);
+                }
+            });
+            // 获取所有参与的项目
+            List<Project> projectList = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0);
+
+            // 获取项目顶级的文件夹
+            File file = new File();
+            file.setProjectId(projectId);
+            file.setParentId("0");
+            file.setCatalog(1);
+            List<File> fileList = fileService.findFileList(file);
+
+            jsonObject.put("fileMsg", fileNum + "个文件");
+            jsonObject.put("folderMsg", folderNum + "文件夹");
+            jsonObject.put("projectList", projectList);
+            jsonObject.put("fileList", fileList);
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常:",e);
+            jsonObject.put("status",500);
+            jsonObject.put("msg","系统异常!");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移动文件
+     *
+     * @param fileIds  文件id数组
+     * @param folderId 目标文件夹id
+     */
+    @PatchMapping("/m_move")
+    public JSONObject moveFile(
+            @RequestParam String[] fileIds,
+            @RequestParam(defaultValue = "0") String folderId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        try {
+            fileService.moveFile(fileIds, folderId);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("移动文件异常, {}", e);
+            jsonObject.put("status",500);
+            jsonObject.put("msg", "移动失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param fileIds  多个文件id
+     * @param folderId 目标文件夹id
+     */
+    @PostMapping("/copy")
+    public JSONObject copyFile(
+            @RequestParam(value = "fileIds") String[] fileIds,
+            @RequestParam(value = "folderId",required = false,defaultValue = "0") String folderId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        try {
+            for (String fileId : fileIds) {
+                // 获取源文件
+                File file = fileService.findFileById(fileId);
+                //文件夹处理
+                if (file.getCatalog() == 1) {
+                    file.setParentId(folderId);
+                    String fId = file.getFileId();
+                    String projectId = file.getProjectId();
+                    fileService.saveFile(file);
+                    List<File> childFile = fileService.findChildFile(projectId, fId);
+                    if (childFile.size() > 0) {
+                        Map<String, List<File>> map = new HashMap<>(10);
+                        map.put(file.getFileId(), childFile);
+                        this.copyFolder(map);
+                    }
+
+                } else {
+                    this.copyFileSave(file, folderId);
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            log.error("系统异常, {}", e);
+            jsonObject.put("status",500);
+            jsonObject.put("msg", "移动失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 复制文件夹
+     */
+    private void copyFolder(Map<String, List<File>> map) {
+        Map<String, List<File>> fileMap = new HashMap<>(10);
+        for (Map.Entry<String, List<File>> entry : map.entrySet()) {
+            // 得到键，即parentId
+            String parentId = entry.getKey();
+            // 得到值，即FileList
+            List<File> fileList = entry.getValue();
+            for (File file : fileList) {
+                // 文件夹
+                if (file.getCatalog() == 1) {
+                    // 设置父级id
+                    file.setParentId(parentId);
+                    String fId = file.getFileId();
+                    String projectId = file.getProjectId();
+                    // 存库
+                    fileService.saveFile(file);
+                    // 得到此文件夹下一层的子集
+                    List<File> childFile = fileService.findChildFile(projectId, fId);
+                    fileMap.put(file.getFileId(), childFile);
+                } else { //文件
+                    this.copyFileSave(file, parentId);
+                }
+            }
+
+            if (fileMap.size() > 0) {
+                this.copyFolder(fileMap);
+            }
+        }
+    }
+
+    /**
+     * 复制文件保存
+     */
+    private void copyFileSave(File file, String parentId) {
+        // 得到源文件objectName
+        String fileUrl = file.getFileUrl();
+        // 源文件名
+        String fileName = file.getFileName();
+        // 得到后缀名
+        String ext = fileName.substring(fileName.lastIndexOf("."), fileName.length() - 1);
+        // 设置现在文件名
+        String newFileName = System.currentTimeMillis() + "." + ext;
+        // 设置现在文件objectName
+        String newFileUrl = fileUrl.substring(0, fileUrl.lastIndexOf("/"));
+
+        // 在oss上复制
+        AliyunOss.copyFile(fileUrl, newFileName);
+
+        // 设置文件名
+        file.setFileName(newFileName);
+        // 设置url
+        file.setFileUrl(newFileUrl);
+        // 设置父级id
+        file.setParentId(parentId);
+
+        file.setFileUrl(fileUrl);
+        fileService.saveFile(file);
+    }
+
+    /**
+     * 回收站
+     *
+     * @param fileIds ids
+     * @param projectId 项目id
+     */
+    @PatchMapping("/m_recycle")
+    public JSONObject moveToRecycleBin(
+            @RequestParam(value = "fileIds") String[] fileIds,
+            @RequestParam(value = "projectId") String projectId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.moveToRecycleBin(fileIds);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("移入回收站异常, {}", e);
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "移入回收站失败");
+        }
+        return jsonObject;
+    }
+
+    @GetMapping(value = "/pdfStreamHandeler")
+    public void pdfStreamHandeler(@RequestParam(value = "fileId") String fileId, HttpServletResponse response) {
+        try {
+            File file = fileService.findFileById(fileId);
+            ServletOutputStream sos = response.getOutputStream();
+            URL url = new URL(Constants.OSS_URL + file.getFileUrl());
+
+            HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
+
+            httpUrl.connect();
+            //获取网络输入流
+            BufferedInputStream bis = new BufferedInputStream(httpUrl.getInputStream());
+            int b;
+            while ((b = bis.read()) != -1) {
+                sos.write(b);
+            }
+            sos.close();
+            bis.close();
+        } catch (Exception e) {
+            log.error("关闭文件IOException!");
+            throw new SystemException(e);
+        }
+    }
+
+    /**
+     * 异步获取文件列表
+     *
+     * @param projectId projectId 项目id
+     */
+    @GetMapping("/{projectId}")
+    public JSONObject projectList(@PathVariable(value = "projectId") String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",fileService.findChildFile(projectId,"0"));
+            jsonObject.put("projectId", projectId);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取该文件夹下的 所有文件和子文件夹
+     */
+    @GetMapping("/{fileId}/child")
+    public JSONObject findChildFile(@RequestParam(value = "projectId") String projectId, @PathVariable(value = "fileId") String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",fileService.findChildFile(projectId,fileId));
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            jsonObject.put("result",0);
+            log.error("系统异常,文件拉取失败,{}",e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询出该文件的参与者 和 项目成员
+     * @param fileId 文件id
+     * @param  projectId 该项目的id
+     * @return
+     */
+    @GetMapping("/join_info")
+    public JSONObject findProjectMember(@RequestParam(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //查询出该文件的所有参与者id
+            String uids = fileService.findJoinId(fileId);
+            List<UserEntity> joinInfo = userService.findManyUserById(uids);
+            List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
+            //比较项目全部成员集合 和 文件参与者集合的差集
+            List<UserEntity> reduce1 = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());
+            jsonObject.put("joinInfo",joinInfo);
+            jsonObject.put("projectMember",reduce1);
+        } catch (Exception e){
+            e.printStackTrace();
+            jsonObject.put("result",0);
+            jsonObject.put("msg","数据拉取失败!");
+            log.error("系统异常,数据拉取失败!");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 添加或者移除文件的参与者
+     * @param fileId 文件id
+     * @param newJoin 新的参与者id 数组
+     * @return
+     */
+    @PatchMapping("/{fileId}/add_remove_join")
+    public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "newJoin") String newJoin){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.addAndRemoveFileJoin(fileId, newJoin);
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 查询我参与的文件
+     * @return
+     */
+    @GetMapping("my_join")
+    public JSONObject findJoinFile(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<File> listFile = fileService.findJoinFile();
+            jsonObject.put("data",listFile);
+        } catch (Exception e){
+            log.error("系统异常,数据拉取失败,{}",e);
+            jsonObject.put("msg","系统异常,数据拉取失败!");
+            jsonObject.put("result",0);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 修改文件名称
+     * @param fileName 文件名称
+     * @param fileId 文件id
+     * @return
+     */
+    @PatchMapping("/{fileId}/name")
+    public JSONObject changeFileName(@RequestParam(value = "fileName") String fileName, @PathVariable(value = "fileId") String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = fileService.findFileById(fileId);
+            file.setFileName(fileName);
+            fileService.updateFile(file);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
 }
