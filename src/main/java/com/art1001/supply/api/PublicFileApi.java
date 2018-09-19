@@ -5,6 +5,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.util.CommonUtils;
@@ -53,8 +54,8 @@ public class PublicFileApi {
             jsonObject.put("data", publicFile);
             jsonObject.put("result",1);
         } catch (Exception e) {
-            log.error("系统异常!",e);
-            throw new AjaxException(e);
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -71,8 +72,8 @@ public class PublicFileApi {
             jsonObject.put("result", 1);
             jsonObject.put("data", publicFolder);
         } catch (Exception e) {
-            log.error("系统异常!",e);
-            throw new AjaxException(e);
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -87,7 +88,7 @@ public class PublicFileApi {
             publicFileService.savePublicFile(file);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("系统异常!",e);
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -110,7 +111,7 @@ public class PublicFileApi {
             jsonObject.put("data", files);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("系统异常!",e);
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -133,7 +134,7 @@ public class PublicFileApi {
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
         } catch (Exception e){
-            log.error("系统异常!",e);
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;

@@ -29,7 +29,7 @@ public class OrganizationApi {
      * @param contactPhone 企业联系人联系方式
      * @return
      */
-    @PostMapping("")
+    @PostMapping
     public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
                               @RequestParam(value = "orgDes") String orgDes,
                               @RequestParam(value = "contact") String contact,
@@ -43,8 +43,8 @@ public class OrganizationApi {
             organization.setContactPhone(contactPhone);
             organizationService.saveOrganization(organization);
             jsonObject.put("result",1);
-            jsonObject.put("msg","保存成功");
         }catch (Exception e){
+            log.error("企业添加失败:",e);
             throw new AjaxException(e);
         }
 
@@ -63,11 +63,10 @@ public class OrganizationApi {
         try {
             organizationService.deleteOrganizationByOrganizationId(orgId);
             jsonObject.put("result",1);
-            jsonObject.put("msg","删除成功");
         }catch (Exception e){
-            throw  new AjaxException(e);
+            log.error("企业删除失败:",e);
+            throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -99,11 +98,10 @@ public class OrganizationApi {
             organization.setOrganizationMember(memberId);
             organizationService.updateOrganization(organization);
             jsonObject.put("result",1);
-            jsonObject.put("msg","更新成功");
         }catch (Exception e){
+            log.error("企业信息更新失败:",e);
             throw  new AjaxException(e);
         }
-
         return jsonObject;
     }
 

@@ -1,15 +1,23 @@
 package com.art1001.supply.api;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.OSSException;
+import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +42,8 @@ public class GroupChatApi {
     private FileService fileService;
     @Resource
     private ChatService chatService;
+    @Resource
+    private LogService logService;
 
     /**
      * 发消息
@@ -53,42 +63,54 @@ public class GroupChatApi {
                 object.put("result",0);
                 return object;
             }
-
             Chat chat = new Chat();
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
             chat.setContent(content);
             chat.setProjectId(projectId);
-            chatService.saveChat(chat);
-            if (StringUtils.isNotEmpty(files)) {
-                fileService.saveFile(files,chat.getChatId(),projectId);
-            }
+            chatService.saveChat(chat,files);
+
             object.put("result",1);
             object.put("msg","保存成功");
         }catch(Exception e){
+            log.error("系统异常,群聊消息发送失败:",e);
             throw new AjaxException(e);
         }
         return object;
     }
 
-    @DeleteMapping("/{chatId}")
-    public JSONObject withdrawMessage(@PathVariable String chatId){
-        JSONObject object = new JSONObject();
-        try{
-            chatService.deleteChatByChatId(chatId);
-            object.put("result",1);
-            object.put("msg","删除成功");
-        }catch(Exception e){
+    /**
+     * 撤回消息
+     *
+     * @param id 消息id
+     * @return
+     */
+    @PatchMapping("/{id}/withdraw")
+    public JSONObject withdrawMessage(@PathVariable(value = "id") String id, @RequestParam(value = "projectId") String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            logService.withdrawMessage(id);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("系统异常,撤回失败:", e);
             throw new AjaxException(e);
         }
-        return object;
+        return jsonObject;
     }
 
+    /**
+     * 下载当前消息中的附件
+     * @param chatId 消息id
+     */
     @GetMapping("/{chatId}")
-    public void downloadBatch(@PathVariable String chatId, HttpServletResponse response, HttpServletRequest request){
+    public void downloadBatch(@PathVariable(value = "chatId") String chatId, HttpServletResponse response, HttpServletRequest request){
         try{
             List<File> fileList = fileService.findFileByPublicId(chatId);
             AliyunOss.downloadzip(fileList,response,request);
-        }catch(Exception e){
+        } catch (OSSException e){
+            log.error("文件不存在!",e);
+            throw new AjaxException(e);
+        } catch(Exception e){
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
     }
@@ -98,9 +120,15 @@ public class GroupChatApi {
         JSONObject object = new JSONObject();
         try{
             List<Chat> chatList = chatService.findChatAllList();
+            if(CommonUtils.listIsEmpty(chatList)){
+                object.put("data","无数据");
+                object.put("result",1);
+                return object;
+            }
             object.put("result",1);
             object.put("data",chatList);
         }catch(Exception e){
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return object;

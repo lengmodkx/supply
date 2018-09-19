@@ -11,10 +11,13 @@ import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -74,9 +77,8 @@ public class TagApi {
             jsonObject.put("publicId", publicId);
             jsonObject.put("publicType",publicType);
         } catch (Exception e){
-            log.error("系统异常",e.getMessage());
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常,标签初始化失败:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -93,9 +95,8 @@ public class TagApi {
             jsonObject.put("tagList", tagList);
             jsonObject.put("projectId", projectId);
         } catch (Exception e) {
-            log.error("获取标签异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "没有数据");
+            log.error("获取标签异常:", e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -112,9 +113,8 @@ public class TagApi {
             jsonObject.put("data", JSON.toJSON(map));
             jsonObject.put("msg", "获取成功");
         } catch (Exception e) {
-            log.error("查询标签关联项异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "没有数据");
+            log.error("查询标签关联项异常:", e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -129,7 +129,7 @@ public class TagApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Tag> tagList = tagService.findByIds(ids);
-            if (tagList.size() > 0) {
+            if (!CommonUtils.listIsEmpty(tagList)) {
                 jsonObject.put("result", 1);
                 jsonObject.put("data", JSON.toJSON(tagList));
             } else {
@@ -138,12 +138,9 @@ public class TagApi {
                 jsonObject.put("msg", "无数据");
             }
         } catch (Exception e) {
-            log.error("查询标签异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("data", null);
-            jsonObject.put("msg", "无数据");
+            log.error("查询标签异常:", e);
+            throw new SystemException(e);
         }
-
         return jsonObject;
     }
 
@@ -166,10 +163,8 @@ public class TagApi {
             jsonObject.put("result",0);
             jsonObject.put("msg","该标签已存在!");
         } catch (Exception e) {
-            log.error("添加标签异常", e.getMessage());
-            jsonObject.put("result", 0);
-            jsonObject.put("data", null);
-            jsonObject.put("msg", "添加失败");
+            log.error("添加标签异常:", e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -184,9 +179,8 @@ public class TagApi {
             tagService.deleteTagByTagId(tagId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("删除标签异常, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "删除失败");
+            log.error("删除标签异常:", e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -205,10 +199,8 @@ public class TagApi {
             tagService.removeTag(publicId,publicType,tagId);
             jsonObject.put("result",1);
         } catch (Exception e){
-            e.printStackTrace();
-            log.error("系统异常,{}",e);
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常,标签移除失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -246,9 +238,8 @@ public class TagApi {
             }
             tagService.addItemTag(tag.getTagId(),publicId,publicType);
         } catch (Exception e){
-            log.error("系统异常,{}",e);
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常,添加标签失败:",e);
+
         }
         return jsonObject;
     }
@@ -274,7 +265,7 @@ public class TagApi {
             jsonObject.put("result",1);
             jsonObject.put("data",tag);
         }catch (Exception e){
-            log.error("系统异常,{}",e);
+            log.error("系统异常,更新失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -295,7 +286,7 @@ public class TagApi {
             tagService.updateTag(tag);
             jsonObject.put("result",1);
         }catch (Exception e){
-            log.error("系统异常,{}",e);
+            log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;

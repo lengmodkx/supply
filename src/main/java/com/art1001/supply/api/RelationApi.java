@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.relation.RelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class RelationApi {
             jsonObject.put("menuId",relation.getRelationId());
             jsonObject.put("result",1);
         }catch (Exception e){
-            log.error("添加关系异常",e);
+            log.error("添加关系异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -63,7 +64,7 @@ public class RelationApi {
             jsonObject.put("groupId",relation.getRelationId());
             jsonObject.put("result",1);
         }catch (Exception e){
-            log.error("添加关系异常",e);
+            log.error("添加关系异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -81,7 +82,7 @@ public class RelationApi {
             relationService.deleteRelationById(menuId);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,{}",e);
+            log.error("系统异常,菜单删除失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -99,7 +100,7 @@ public class RelationApi {
             relationService.deleteGroup(groupId);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,{}",e);
+            log.error("系统异常,分组删除失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -111,8 +112,7 @@ public class RelationApi {
      * @param menuName 菜单名称
      * @return
      */
-    @PutMapping("/{menuId}/menu")
-    @ResponseBody
+    @PatchMapping("/{menuId}/menu")
     public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -123,7 +123,7 @@ public class RelationApi {
             relationService.editMenu(relation);
             jsonObject.put("result","1");
         } catch (Exception e){
-            log.error("系统异常,菜单编辑失败!",e);
+            log.error("系统异常,菜单编辑失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -135,14 +135,14 @@ public class RelationApi {
      * @param groupDel 分组状态
      * @return
      */
-    @PutMapping("/{groupId}/recyclebin")
+    @PatchMapping("/{groupId}/recyclebin")
     public JSONObject moveRecycleBin(@PathVariable(value = "groupId") String relationId, @RequestParam(value = "groupDel") String groupDel){
         JSONObject jsonObject = new JSONObject();
         try {
             relationService.moveRecycleBin(relationId,groupDel);
             jsonObject.put("result","1");
         } catch (Exception e){
-            log.error("系统异常,移动失败",e);
+            log.error("系统异常,移动失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -161,8 +161,8 @@ public class RelationApi {
             jsonObject.put("data",groupList);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常{}",e);
-            throw new AjaxException(e);
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }

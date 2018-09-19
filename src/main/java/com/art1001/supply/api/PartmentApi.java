@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +37,10 @@ public class PartmentApi {
             partment.setPartmentLogo(partmentLogo);
             partmentService.savePartment(partment);
             jsonObject.put("result",1);
-            jsonObject.put("msg","创建成功");
         }catch (Exception e){
+            log.error("系统异常,部门创建失败:",e);
             throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -55,12 +55,10 @@ public class PartmentApi {
         try {
             partmentService.deletePartmentByPartmentId(partmentId);
             jsonObject.put("result",1);
-            jsonObject.put("msg","删除成功");
-
         }catch (Exception e){
+            log.error("系统异常,部门删除失败:",e);
             throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -77,7 +75,6 @@ public class PartmentApi {
                                      @RequestParam(value = "partmentLogo",required = false) String partmentLogo){
         JSONObject jsonObject = new JSONObject();
         try {
-
             Partment partment = new Partment();
             partment.setOrganizationId(orgId);
             partment.setPartmentName(partmentName);
@@ -86,12 +83,10 @@ public class PartmentApi {
             partment.setCreateTime(System.currentTimeMillis());
             partmentService.updatePartment(partment);
             jsonObject.put("result",1);
-            jsonObject.put("msg","更新成功");
-
         }catch (Exception e){
+            log.error("系统异常,部门信息更新失败:",e);
             throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -102,7 +97,6 @@ public class PartmentApi {
      */
     @GetMapping("/{orgId}")
     public JSONObject allParment(@PathVariable String orgId){
-
         JSONObject jsonObject = new JSONObject();
         try {
             Partment partment = new Partment();
@@ -110,10 +104,9 @@ public class PartmentApi {
             partment.setOrderBy(1);
             jsonObject.put("result",1);
             jsonObject.put("data",partmentService.findPartmentAllList(partment));
-            jsonObject.put("msg","更新成功");
-
         }catch (Exception e){
-            throw new AjaxException(e);
+            log.error("系统异常,信息获取失败:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }

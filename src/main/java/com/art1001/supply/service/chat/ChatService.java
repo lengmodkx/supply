@@ -42,9 +42,10 @@ public interface ChatService {
 	/**
 	 * 保存数据
 	 * 
-	 * @param chat
+	 * @param chat 消息内容
+	 * @param files 文件的内容 (json格式)
 	 */
-	public void saveChat(Chat chat);
+	public void saveChat(Chat chat,String files);
 
 	/**
 	 * 获取所有数据

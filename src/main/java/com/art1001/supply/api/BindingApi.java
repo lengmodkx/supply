@@ -14,6 +14,7 @@ import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -63,7 +64,7 @@ public class BindingApi {
             bindingService.saveBindings(publicId,bindList,publicType);
             jsonObject.put("result",1);
         }catch (Exception e){
-            log.error("系统异常,{}",e);
+            log.error("系统异常,绑定失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -81,9 +82,7 @@ public class BindingApi {
             bindingService.deleteBindingById(publicId,bindingId);
             jsonObject.put("result",1);
         }catch (Exception e){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,关联删除失败,请重试.");
-            log.error("系统异常,取消失败,{}",e);
+            log.error("系统异常,关联关系删除失败:",e);
         }
         return jsonObject;
     }
@@ -117,7 +116,8 @@ public class BindingApi {
             jsonObject.put("projectId",projectId);
 
         } catch (Exception e){
-            log.error("系统异常,e",e.getMessage());
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }

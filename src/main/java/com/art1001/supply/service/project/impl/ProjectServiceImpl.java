@@ -1,6 +1,7 @@
 package com.art1001.supply.service.project.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 
@@ -8,16 +9,25 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectAppsService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * projectServiceImpl
@@ -46,7 +56,16 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Resource
 	private RelationService relationService;
-	
+
+	@Resource
+	private ProjectAppsService appsService;
+
+	@Resource
+	private RoleService roleService;
+
+	@Resource
+	private ProjectMemberService projectMemberService;
+
 	/**
 	 * 查询分页project数据
 	 * 
@@ -88,11 +107,21 @@ public class ProjectServiceImpl implements ProjectService {
 	public void updateProject(Project project){
 		projectMapper.updateProject(project);
 	}
+
+	/**
+	 * 获取所有project数据
+	 *
+	 * @return
+	 */
+	@Override
+	public List<Project> findProjectAllList(){
+		return projectMapper.findProjectAllList();
+	}
 	/**
 	 * 保存project数据
-	 * 
-	 * @param project
+	 * @param project 项目信息
 	 */
+	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
 	public void saveProject(Project project){
 		project.setProjectId(IdGen.uuid());
@@ -101,18 +130,37 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setCreateTime(System.currentTimeMillis());
 		project.setIsPublic(0);
 		project.setProjectRemind(0);
-
 		project.setProjectStatus(0);
 		projectMapper.saveProject(project);
-	}
-	/**
-	 * 获取所有project数据
-	 * 
-	 * @return
-	 */
-	@Override
-	public List<Project> findProjectAllList(){
-		return projectMapper.findProjectAllList();
+		//初始化项目功能菜单
+		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+		appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
+
+		//初始化分组
+		Relation relation = new Relation();
+		relation.setRelationName("任务");
+		relation.setProjectId(project.getProjectId());
+		relation.setCreator(ShiroAuthenticationManager.getUserId());
+		relation.setCreateTime(System.currentTimeMillis());
+		relation.setUpdateTime(System.currentTimeMillis());
+		relationService.saveRelation(relation);
+
+		//初始化菜单
+		String[] menus  = new String[]{"待处理","进行中","已完成"};
+		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
+
+		//往项目用户关联表插入数据
+		RoleEntity roleEntity = roleService.findByName("拥有者");
+		ProjectMember projectMember = new ProjectMember();
+		projectMember.setProjectId(project.getProjectId());
+		projectMember.setMemberId(ShiroAuthenticationManager.getUserId());
+		projectMember.setCreateTime(System.currentTimeMillis());
+		projectMember.setUpdateTime(System.currentTimeMillis());
+		projectMember.setMemberLabel(1);
+		projectMember.setRId(roleEntity.getId());
+		projectMemberService.saveProjectMember(projectMember);
+		//初始化项目文件夹
+		fileService.initProjectFolder(project);
 	}
 
 	/**

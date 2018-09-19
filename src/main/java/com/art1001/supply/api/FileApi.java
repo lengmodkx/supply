@@ -25,6 +25,7 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
 import io.netty.handler.codec.json.JsonObjectDecoder;
@@ -129,7 +130,7 @@ public class FileApi {
             //获取文件的后缀名
             jsonObject.put("exts",FileExt.extMap);
         } catch (Exception e){
-            log.error("系统异常,{}",e.getMessage());
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -145,7 +146,7 @@ public class FileApi {
             File file = fileService.findFileById(fileId);
             if(file == null){
                 jsonObject.put("msg","文件不存在!");
-                jsonObject.put("status",404);
+                jsonObject.put("result",1);
                 return jsonObject;
             }
             List<FileVersion> fileVersionList = fileVersionService.findByFileId(fileId);
@@ -162,9 +163,8 @@ public class FileApi {
             //查询出该文件的所有参与者信息
             jsonObject.put("joins",userService.findManyUserById(fileService.findJoinId(file.getFileId())));
             jsonObject.put("result",1);
-            jsonObject.put("status",200);
         } catch (Exception e){
-            log.error("系统异常,{}",e.getMessage());
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -178,11 +178,15 @@ public class FileApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<File> fileList = fileService.findChildFolder(fileId);
+            if(CommonUtils.listIsEmpty(fileList)){
+                jsonObject.put("result", 1);
+                jsonObject.put("msg","无数据");
+                return jsonObject;
+            }
             jsonObject.put("result", 1);
             jsonObject.put("data", fileList);
-            jsonObject.put("status",200);
         } catch (Exception e) {
-            log.error("获取子目录失败， {}", e);
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -206,11 +210,10 @@ public class FileApi {
             jsonObject.put("result",1);
             jsonObject.put("status",201);
         } catch (ServiceException e){
-            log.error("文件夹已存在!");
-            jsonObject.put("msg", "文件夹已存在!");
-            jsonObject.put("status",409);
+            log.error("文件夹已存在!",e);
+            throw new AjaxException(e);
         } catch (Exception e) {
-            log.error("创建文件夹异常, {}", e);
+            log.error("创建文件夹失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -237,7 +240,7 @@ public class FileApi {
             fileService.saveFileBatch(projectId,files,parentId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("上传文件异常, {}", e);
+            log.error("上传文件异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -286,16 +289,18 @@ public class FileApi {
             fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
             fileVersionService.saveFileVersion(fileVersion);
             jsonObject.put("result",1);
-            jsonObject.put("status",201);
         } catch (Exception e) {
-            log.error("上传文件异常, {}", e);
+            log.error("上传文件异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
     }
 
     /**
-     * 更新文件
+     * 更新文件版本
+     * @param fileId 文件id
+     * @param file 文件对象
+     * @return
      */
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
@@ -306,24 +311,23 @@ public class FileApi {
         try {
             String url = fileService.updateVersion(file,fileId);
             // 设置返回数据
-            jsonObject.put("result", 1);
             jsonObject.put("data", url);
+            jsonObject.put("result", 1);
         } catch (ServiceException e){
-            jsonObject.put("result", 0);
-            jsonObject.put("data", "更新文件时,发生错误!");
-            jsonObject.put("code","");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            log.error("文件版本更新失败:",e);
+            throw new AjaxException(e);
+        } catch (Exception e) {
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
     }
 
     /**
-     * 删除
-     *
+     * 删除文件
      * @param fileId 文件id
+     * @param projectId
+     * @return
      */
     @DeleteMapping("/{fileId}")
     public JSONObject deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
@@ -333,16 +337,17 @@ public class FileApi {
             jsonObject.put("result", 1);
             jsonObject.put("msg", "删除成功");
         } catch (Exception e) {
-            log.error("删除文件异常, {}", e);
+            log.error("删除文件异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
     }
 
     /**
-     * 恢复
-     *
+     * 从回收站中恢复文件
      * @param fileId 文件id
+     * @param projectId 项目id
+     * @return
      */
     @PatchMapping("/{fileId}/recovery")
     public JSONObject recoveryFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
@@ -351,7 +356,7 @@ public class FileApi {
             fileService.recoveryFile(fileId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("删除文件异常, {}", e);
+            log.error("文件恢复失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -385,14 +390,17 @@ public class FileApi {
             }
             outputStream.close();
             inputStream.close();
-        }catch (Exception e){
-            log.error("系统异常!",e);
+        } catch (NullPointerException e){
+            log.error("系统异常,文件不存在:",e);
+            throw new SystemException(e);
+        } catch (Exception e){
+            log.error("系统异常:",e);
             throw new SystemException(e);
         }
     }
 
     /**
-     * 复制文件
+     * 复制和移动文件时 获取弹框数据
      * @param fileIds 文件id数组
      * @return
      */
@@ -450,7 +458,7 @@ public class FileApi {
             fileService.moveFile(fileIds, folderId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("移动文件异常, {}", e);
+            log.error("移动文件异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -484,13 +492,12 @@ public class FileApi {
                         map.put(file.getFileId(), childFile);
                         this.copyFolder(map);
                     }
-
                 } else {
                     this.copyFileSave(file, folderId);
                 }
             }
         } catch (Exception e){
-            log.error("系统异常, {}", e);
+            log.error("系统异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -559,8 +566,7 @@ public class FileApi {
     }
 
     /**
-     * 回收站
-     *
+     * 将文件回收站
      * @param fileIds ids
      * @param projectId 项目id
      */
@@ -574,7 +580,7 @@ public class FileApi {
             fileService.moveToRecycleBin(fileIds);
             jsonObject.put("result", 1);
         } catch (Exception e) {
-            log.error("移入回收站异常, {}", e);
+            log.error("移入回收站异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -618,7 +624,7 @@ public class FileApi {
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("系统异常!",e);
-            throw new AjaxException(e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -633,8 +639,8 @@ public class FileApi {
             jsonObject.put("data",fileService.findChildFile(projectId,fileId));
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,文件拉取失败,{}",e);
-            throw new AjaxException(e);
+            log.error("系统异常!",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -658,8 +664,8 @@ public class FileApi {
             jsonObject.put("joinInfo",joinInfo);
             jsonObject.put("projectMember",reduce1);
         } catch (Exception e){
-            log.error("系统异常,数据拉取失败!");
-            throw new AjaxException(e);
+            log.error("系统异常!",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -677,7 +683,7 @@ public class FileApi {
             fileService.addAndRemoveFileJoin(fileId, newJoin);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,数据拉取失败,{}",e);
+            log.error("系统异常,数据拉取失败:{}",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -692,10 +698,15 @@ public class FileApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<File> listFile = fileService.findJoinFile();
+            if(CommonUtils.listIsEmpty(listFile)){
+                jsonObject.put("result",1);
+                jsonObject.put("data","无数据");
+                return jsonObject;
+            }
             jsonObject.put("data",listFile);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败,{}",e);
-            throw new AjaxException(e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -715,6 +726,7 @@ public class FileApi {
             fileService.updateFile(file);
             jsonObject.put("result",1);
         }catch (Exception e){
+            log.error("系统异常,文件名称更新失败:",e);
             throw new AjaxException(e);
         }
         return jsonObject;

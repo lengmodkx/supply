@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.project.ProjectService;
@@ -11,7 +13,9 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -78,11 +82,16 @@ public class ShareApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Share> shares = shareService.findByProjectId(projectId, 0);
+            if(CommonUtils.listIsEmpty(shares)){
+                jsonObject.put("data","无数据");
+                jsonObject.put("result",1);
+                return jsonObject;
+            }
             jsonObject.put("data",shares);
+            jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常!",e.getMessage());
-            jsonObject.put("msg","系统异常");
-            jsonObject.put("result",0);
+            log.error("系统异常,分享数据加载失败:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -100,9 +109,8 @@ public class ShareApi {
             jsonObject.put("data",share);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,操作失败!",e.getMessage());
-            jsonObject.put("msg","系统异常,操作失败!");
-            jsonObject.put("result",0);
+            log.error("系统异常,分享信息获取失败:",e.getMessage());
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -114,16 +122,15 @@ public class ShareApi {
      * @return
      */
     @Todo
-    @PutMapping("/{shareId}/update/members")
+    @PatchMapping("/{shareId}/update/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.updateMembers(shareId,memberIds);
             jsonObject.put("result",1);
         } catch (Exception e){
-            log.error("系统异常,操作失败!",e.getMessage());
-            jsonObject.put("msg","系统异常,操作失败!");
-            jsonObject.put("result",0);
+            log.error("系统异常,成员更新失败:",e.getMessage());
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -159,10 +166,8 @@ public class ShareApi {
             shareService.saveShare(share);
             jsonObject.put("result", 1);
         } catch (Exception e){
-            e.printStackTrace();
-            log.error("保存分享异常", e.getMessage());
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "保存失败");
+            log.error("保存分享异常:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -179,10 +184,8 @@ public class ShareApi {
             shareService.deleteById(shareId);
             jsonObject.put("result",1);
         }catch (Exception e){
-            log.error("系统异常",e.getMessage());
-            e.printStackTrace();
-            jsonObject.put("msg","系统异常");
-            jsonObject.put("result",0);
+            log.error("分享删除失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -200,10 +203,8 @@ public class ShareApi {
             shareService.moveToRecycleBin(shareId);
             jsonObject.put("result",1);
         } catch (Exception e){
-            e.printStackTrace();
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,操作失败!");
-            log.error("系统异常,操作失败!",e.getMessage());
+            log.error("系统异常,移入回收站失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -220,10 +221,8 @@ public class ShareApi {
             shareService.recoveryShare(shareId);
             jsonObject.put("result",1);
         } catch (Exception e){
-            e.printStackTrace();
-            log.error("系统异常,操作失败!");
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,操作失败!");
+            log.error("系统异常,恢复失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
@@ -242,10 +241,7 @@ public class ShareApi {
             shareService.copyShare(shareId,projectId);
             jsonObject.put("result",1);
         }catch(Exception e){
-            e.printStackTrace();
-            log.error("系统异常,操作失败!");
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常,操作失败!");
+            log.error("系统异常,复制失败:",e);
         }
         return jsonObject;
     }
@@ -264,10 +260,7 @@ public class ShareApi {
             shareService.moveShare(shareId,projectId);
             jsonObject.put("result",1);
         }catch(Exception e){
-            e.printStackTrace();
-            log.error("系统异常!",e.getMessage());
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常,移动失败:",e);
         }
         return jsonObject;
     }
@@ -285,10 +278,8 @@ public class ShareApi {
             shareService.updatePrivacy(shareId);
             jsonObject.put("result",1);
         }catch(Exception e){
-            e.printStackTrace();
-            log.error("系统异常!",e.getMessage());
-            jsonObject.put("result",0);
-            jsonObject.put("msg","系统异常!");
+            log.error("系统异常:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }

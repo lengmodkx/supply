@@ -6,6 +6,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectAppsService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -70,34 +71,11 @@ public class ProjectApi {
             project.setCreateTime(System.currentTimeMillis());
             project.setMemberId(userId);
             projectService.saveProject(project);
-            //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
-            appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
-            //初始化分组
-            Relation relation = new Relation();
-            relation.setRelationName("任务");
-            relation.setProjectId(project.getProjectId());
-            relation.setCreator(userId);
-            relation.setCreateTime(System.currentTimeMillis());
-            relation.setUpdateTime(System.currentTimeMillis());
-            relationService.saveRelation(relation);
-            //往项目用户关联表插入数据
-            RoleEntity roleEntity = roleService.findByName("拥有者");
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setProjectId(project.getProjectId());
-            projectMember.setMemberId(userId);
-            projectMember.setCreateTime(System.currentTimeMillis());
-            projectMember.setUpdateTime(System.currentTimeMillis());
-            projectMember.setMemberLabel(1);
-            projectMember.setRId(roleEntity.getId());
-            projectMemberService.saveProjectMember(projectMember);
-            //初始化项目文件夹
-            fileService.initProjectFolder(project);
             //写资源表
             object.put("result",1);
-            object.put("msg","项目创建成功");
             object.put("projectId",project.getProjectId());
         }catch (Exception e){
+            log.error("系统异常,项目创建失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -135,9 +113,8 @@ public class ProjectApi {
             project.setProjectStatus(projectStatus);
             projectService.updateProject(project);
             object.put("result",1);
-            object.put("msg","保存成功");
         }catch (Exception e){
-            log.error("保存失败",e);
+            log.error("保存失败:",e);
             throw new AjaxException(e);
         }
 
@@ -172,7 +149,8 @@ public class ProjectApi {
             object.put("projectCollect",projectCollect);
             object.put("projectDel",projectDel);
         }catch (Exception e){
-            throw new AjaxException(e);
+            log.error("系统异常,信息获取失败:",e);
+            throw new SystemException(e);
         }
         return object;
     }
@@ -184,14 +162,14 @@ public class ProjectApi {
      */
     @GetMapping("/{projectId}")
     public JSONObject projectDetail(@PathVariable String projectId){
-
         JSONObject object = new JSONObject();
         try{
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result",1);
             object.put("project",project);
         }catch (Exception e){
-            throw new AjaxException(e);
+            log.error("系统异常,信息获取失败:",e);
+            throw new SystemException(e);
         }
         return object;
     }
@@ -209,6 +187,7 @@ public class ProjectApi {
             object.put("result",1);
             object.put("msg","删除成功");
         }catch (Exception e){
+            log.error("系统异常,项目删除失败:",e);
             throw new AjaxException(e);
         }
         return object;

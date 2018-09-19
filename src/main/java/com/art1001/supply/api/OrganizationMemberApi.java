@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.OrganizationMember;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +49,7 @@ public class OrganizationMemberApi {
      * @param memberId 成员id
      * @return
      */
-    @PostMapping("")
+    @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,
                                 @RequestParam(value = "memberId") String memberId){
@@ -76,7 +78,6 @@ public class OrganizationMemberApi {
                     jsonObject.put("msg","邀请失败，该成员已被停用");
                 }
             }
-
         }catch (Exception e){
             throw  new AjaxException(e);
         }
@@ -119,14 +120,18 @@ public class OrganizationMemberApi {
 
             pager.setCondition(organizationMember);
             List<OrganizationMember> memberList = organizationMemberService.findOrganizationMemberPagerList(pager);
+            if(CommonUtils.listIsEmpty(memberList)){
+                jsonObject.put("data","无数据");
+                jsonObject.put("result",1);
+                return jsonObject;
+            }
             jsonObject.put("result",1);
-            jsonObject.put("msg","获取成功");
             jsonObject.put("data",memberList);
 
         }catch (Exception e){
-            throw new AjaxException(e);
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
-
         return jsonObject;
     }
 }

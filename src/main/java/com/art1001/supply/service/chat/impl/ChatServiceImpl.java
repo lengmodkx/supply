@@ -11,9 +11,12 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.chat.Chat;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * ServiceImpl
@@ -72,20 +75,24 @@ public class ChatServiceImpl implements ChatService {
 
 	/**
 	 * 修改数据
-	 * 
 	 * @param chat
 	 */
 	@Override
 	public void updateChat(Chat chat){
 		chatMapper.updateChat(chat);
 	}
+
 	/**
 	 * 保存数据
-	 * 
-	 * @param chat
+	 * @param files 文件内容(json格式)
+	 * @param chat 消息内容
 	 */
+	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
-	public void saveChat(Chat chat){
+	public void saveChat(Chat chat, String files){
+		if (StringUtils.isNotEmpty(files)) {
+			fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
+		}
 		chat.setChatId(IdGen.uuid());
 		chatMapper.saveChat(chat);
 	}

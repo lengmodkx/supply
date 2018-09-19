@@ -52,6 +52,7 @@ public class MemberInvitationApi {
             object.put("result",1);
             object.put("data",userEntityList);
         }catch(Exception e){
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -74,8 +75,8 @@ public class MemberInvitationApi {
             member.setRId(roleEntity.getId());
             projectMemberService.saveProjectMember(member);
             object.put("result",1);
-            object.put("msg","添加成功");
         }catch(Exception e){
+            log.error("系统异常,成员添加失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -92,8 +93,8 @@ public class MemberInvitationApi {
         try{
             projectMemberService.deleteProjectMemberById(memberId);
             object.put("result",1);
-            object.put("msg","移除成功");
         }catch(Exception e){
+            log.error("系统异常,成员移除失败:",e);
             throw new AjaxException(e);
         }
         return object;

@@ -138,9 +138,7 @@ public class UserApi {
             jsonObject.put("result", 1);
             jsonObject.put("msg", "注册成功");
         } catch (Exception e) {
-            log.error("注册失败, {}", e);
-            jsonObject.put("result", 0);
-            jsonObject.put("msg", "注册失败");
+            log.error("注册失败:", e);
         }
 
         return jsonObject;
@@ -239,12 +237,12 @@ public class UserApi {
             jsonObject.put("result", 1);
             jsonObject.put("msg", "密码修改成功,请重新登录");
         }catch (Exception e){
+            log.error("系统异常,密码修改失败:",e);
             throw new AjaxException(e);
         }
 
         return jsonObject;
     }
-
     /**
      * 用户退出
      * @return	视图信息

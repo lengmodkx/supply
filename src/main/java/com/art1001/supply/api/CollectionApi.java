@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class CollectionApi {
             object.put("result",1);
             object.put("msg","收藏成功");
         }catch(Exception e){
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -65,6 +67,7 @@ public class CollectionApi {
             object.put("result",1);
             object.put("msg","取消收藏成功");
         }catch(Exception e){
+            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -84,7 +87,8 @@ public class CollectionApi {
             object.put("result",1);
             object.put("msg","获取成功");
         }catch(Exception e){
-            throw new AjaxException(e);
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return object;
     }

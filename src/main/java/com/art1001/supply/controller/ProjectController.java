@@ -200,39 +200,16 @@ public class ProjectController extends BaseController {
         }
 
         try {
-
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            String userId = ShiroAuthenticationManager.getUserId();
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setMemberId(userEntity.getId());
+            project.setProjectCover("upload/project/bj.png");
+            project.setCreateTime(System.currentTimeMillis());
+            project.setMemberId(userId);
             projectService.saveProject(project);
-            //初始化项目功能菜单
-            String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
-            funcService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
-
-            //初始化分组
-            Relation relation = new Relation();
-            relation.setRelationName("任务");
-            relation.setProjectId(project.getProjectId());
-            relationService.saveRelation(relation);
-
-            //初始化菜单
-            String[] menus  = new String[]{"待处理","进行中","已完成"};
-            relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
-            //往项目用户关联表插入数据
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setProjectId(project.getProjectId());
-            projectMember.setMemberId(userEntity.getId());
-            projectMemberService.saveProjectMember(projectMember);
-
-            //初始化项目文件夹
-            fileService.initProjectFolder(project);
-
             //写资源表
-
             jsonObject.put("result",1);
-            jsonObject.put("msg","项目创建成功");
             jsonObject.put("projectId",project.getProjectId());
         }catch (Exception e){
             throw new AjaxException(e);

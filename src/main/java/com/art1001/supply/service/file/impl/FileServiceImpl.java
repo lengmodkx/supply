@@ -32,6 +32,7 @@ import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,6 +104,7 @@ public class FileServiceImpl implements FileService {
      * 通过id删除file数据
      * @param id 文件id
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public void deleteFileById(String id) {
         //删除和该文件相关的所有信息
@@ -441,6 +443,7 @@ public class FileServiceImpl implements FileService {
      * @param newJoinId 新的参与者id
      * @return 影响行数
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public void addAndRemoveFileJoin(String fileId, String newJoinId) {
         //查询出当前文件中的 参与者id
@@ -544,6 +547,7 @@ public class FileServiceImpl implements FileService {
      * 恢复文件
      * @param fileId 文件的id
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public void recoveryFile(String fileId) {
         fileMapper.recoveryFile(fileId);
@@ -729,6 +733,7 @@ public class FileServiceImpl implements FileService {
      * @param file 文件对象
      * @param fileId 更新的文件id
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public String updateVersion(MultipartFile file, String fileId) {
         try {
@@ -754,20 +759,28 @@ public class FileServiceImpl implements FileService {
 
             // 更新数据库
             fileService.updateFile(f);
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             // 修改文件版本
-            FileVersion fileVersion = new FileVersion();
-            fileVersion.setFileId(f.getFileId());
-            fileVersion.setFileUrl(fileUrl);
-            fileVersion.setFileSize(FileUtils.convertFileSize(file.getSize()));
-            Date time = Calendar.getInstance().getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String format = simpleDateFormat.format(time);
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-            fileVersionService.saveFileVersion(fileVersion);
+            fileVersionService.saveFileVersion(setFileVersion(f));
             return fileUrl;
         } catch (IOException e){
             throw new ServiceException(e);
         }
+    }
+
+    /**
+     * 封装文件版本信息
+     * @param f 文件信息
+     * @return 文件版本实体
+     */
+    public FileVersion setFileVersion(File f){
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(f.getFileId());
+        fileVersion.setFileUrl(f.getFileUrl());
+        fileVersion.setFileSize(f.getSize());
+        Date time = Calendar.getInstance().getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String format = simpleDateFormat.format(time);
+        fileVersion.setInfo(ShiroAuthenticationManager.getUserEntity().getUserName() + " 上传于 " + format);
+        return fileVersion;
     }
 }

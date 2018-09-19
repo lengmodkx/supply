@@ -87,7 +87,7 @@ public class TaskApi {
             }
             taskService.saveTask(task);
         }catch (Exception e){
-            log.error("创建任务:{}",e);
+            log.error("创建任失败:",e);
             throw new AjaxException(e);
         }
 
@@ -105,6 +105,7 @@ public class TaskApi {
         try{
             taskService.deleteTask(taskId);
         }catch(Exception e){
+            log.error("系统异常,删除失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -128,6 +129,7 @@ public class TaskApi {
             object.put("result",1);
             object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -153,6 +155,7 @@ public class TaskApi {
             object.put("result",1);
             object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,任务名称更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -175,8 +178,8 @@ public class TaskApi {
             task.setExecutor(executor);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,执行者更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -199,15 +202,15 @@ public class TaskApi {
             task.setStartTime(DateUtils.strToLong(startTime));
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,开始时间更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
     }
 
     /**
-     * 更新任务开始时间
+     * 更新任务结束时间
      * @param taskId 任务id
      * @param endTime 任务结束时间
      * @return JSONObject
@@ -223,8 +226,8 @@ public class TaskApi {
             task.setEndTime(DateUtils.strToLong(endTime));
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,结束时间更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -247,8 +250,8 @@ public class TaskApi {
             task.setRepeat(repeat);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,重复性更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -271,8 +274,8 @@ public class TaskApi {
             task.setRemind(remind);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,提醒模式更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -295,8 +298,8 @@ public class TaskApi {
             task.setRemarks(remarks);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,备注更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -319,8 +322,8 @@ public class TaskApi {
             task.setPriority(priority);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,优先级更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -343,8 +346,8 @@ public class TaskApi {
             task.setTagId(tagIds);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,标签更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -375,8 +378,8 @@ public class TaskApi {
             }
             taskService.saveTask(task);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
+            log.error("系统异常,子任务添加失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -399,8 +402,8 @@ public class TaskApi {
             task.setTaskUIds(taskUids);
             taskService.saveTask(task);
             object.put("result",1);
-            object.put("msg","复制成功");
         }catch(Exception e){
+            log.error("系统异常,任务参与者更新:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -421,8 +424,8 @@ public class TaskApi {
         try{
             taskService.copyTask(taskId,projectId,muneId);
             object.put("result",1);
-            object.put("msg","复制成功");
         }catch(Exception e){
+            log.error("系统异常,任务复制失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -443,8 +446,8 @@ public class TaskApi {
         try{
             taskService.mobileTask(taskId,projectId,muneId);
             object.put("result",1);
-            object.put("msg","移动成功");
         }catch(Exception e){
+            log.error("系统异常,任务移动失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -464,8 +467,8 @@ public class TaskApi {
             task.setIsDel(1);
             taskService.updateTask(task);
             object.put("result",1);
-            object.put("msg","移除成功");
         }catch(Exception e){
+            log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
         }
         return object;
@@ -486,11 +489,9 @@ public class TaskApi {
             taskService.updateTask(task);
             object.put("result",1);
         }catch(Exception e){
+            log.error("系统异常,隐私模式更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
     }
-
-
-
 }

@@ -2,9 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserNews;
+import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,14 +39,17 @@ public class NewsApi {
 
             //获取该用户的消息信息
             List<UserNews> newsList = userNewsService.findAllUserNewsByUserId(ShiroAuthenticationManager.getUserId());
-            ShiroAuthenticationManager.getUserEntity();
+            if(CommonUtils.listIsEmpty(newsList)){
+                jsonObject.put("data","无数据");
+                jsonObject.put("result",1);
+                return jsonObject;
+            }
             jsonObject.put("newsList",newsList);
             //获取当前登录用户的消息总数
             jsonObject.put("newsCount",getNewsCount());
         } catch (Exception e){
-            jsonObject.put("msg","系统异常,操作失败!");
-            jsonObject.put("result",0);
-            log.error("系统异常,操作失败!");
+            log.error("系统异常:",e);
+            throw new SystemException(e);
         }
         return jsonObject;
     }
@@ -53,7 +60,7 @@ public class NewsApi {
      * @param isread 点击的消息是否是已读的
      * @return
      */
-    @PutMapping("/{id}/read")
+    @PatchMapping("/{id}/read")
     public JSONObject updateIsRead(@PathVariable(value = "id") String id,
                                    @RequestParam(value = "isRead") int isread){
         JSONObject jsonObject = new JSONObject();
@@ -65,10 +72,8 @@ public class NewsApi {
             //获取当前登录用户的消息总数
             jsonObject.put("newsCount",getNewsCount());
         } catch (Exception e){
-            e.printStackTrace();
-            log.error("系统异常,操作失败,{}",e);
-            jsonObject.put("msg","系统异常,操作失败!");
-            jsonObject.put("result",0);
+            log.error("系统异常,操作失败:",e);
+            throw  new AjaxException(e);
         }
         return jsonObject;
     }
@@ -87,9 +92,8 @@ public class NewsApi {
             //获取当前登录用户的消息总数
             jsonObject.put("data",getNewsCount());
         } catch (Exception e){
-            jsonObject.put("msg","系统异常,操作失败!");
-            jsonObject.put("result",0);
-            log.error("系统异常,操作失败,{}",e);
+            log.error("系统异常,操作失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
