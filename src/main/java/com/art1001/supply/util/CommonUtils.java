@@ -1,6 +1,8 @@
 package com.art1001.supply.util;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class CommonUtils {
 
@@ -16,6 +18,10 @@ public class CommonUtils {
     public static void main(String[] args) {
         String[] strings = {"1", "2"};
         System.out.println(useList(strings, "1"));
+    }
+
+    public static boolean listIsEmpty(Collection collection){
+        return collection == null || collection.isEmpty();
     }
 
 }
