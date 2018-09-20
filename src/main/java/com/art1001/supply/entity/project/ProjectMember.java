@@ -4,13 +4,16 @@ import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * projectMemberEntity
  */
 @Data
-public class ProjectMember extends BaseEntity implements Serializable {
+@ToString
+public class ProjectMember extends Model<ProjectMember> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -79,4 +82,18 @@ public class ProjectMember extends BaseEntity implements Serializable {
 	 * 项目成员的角色,默认成员
 	 */
 	private long rId;
+
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

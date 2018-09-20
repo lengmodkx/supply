@@ -1,7 +1,7 @@
 package com.art1001.supply.entity.organization;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
@@ -10,7 +10,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class Organization extends BaseEntity implements Serializable {
+public class Organization extends Model<Organization> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,7 @@ public class Organization extends BaseEntity implements Serializable {
 	/**
 	 * 企业头像
 	 */
-	private String organizationImgae;
+	private String organizationImage;
 
 
 	/**
@@ -59,4 +59,18 @@ public class Organization extends BaseEntity implements Serializable {
 	 * 企业联系人手机号
 	 */
 	private String contactPhone;
+
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.organizationId;
+	}
 }

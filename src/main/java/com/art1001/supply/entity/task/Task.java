@@ -1,22 +1,18 @@
 package com.art1001.supply.entity.task;
-
-import com.alibaba.fastjson.annotation.JSONField;
-import com.art1001.supply.entity.base.BaseEntity;
-
 import java.io.*;
 import java.util.List;
 
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * taskEntity
  */
 @Data
-public class Task extends BaseEntity implements Serializable {
+public class Task extends Model<Task> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -232,4 +228,8 @@ public class Task extends BaseEntity implements Serializable {
 		// 这两个基于内存的流只要垃圾回收器清理对象就能够释放资源，这一点不同于对外部资源（如文件流）的释放
 	}
 
+	@Override
+	protected Serializable pkVal() {
+		return this.taskId;
+	}
 }

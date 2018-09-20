@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.share;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +9,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
@@ -18,7 +18,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class Share extends BaseEntity implements Serializable {
+public class Share extends Model<Share> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -116,5 +116,8 @@ public class Share extends BaseEntity implements Serializable {
 	 */
 	private int collect;
 
-
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

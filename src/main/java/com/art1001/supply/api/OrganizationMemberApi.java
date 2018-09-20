@@ -2,7 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.project.OrganizationMember;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.OrganizationMemberService;

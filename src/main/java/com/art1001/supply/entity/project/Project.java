@@ -1,20 +1,18 @@
 package com.art1001.supply.entity.project;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * projectEntity
- */
+
 @Data
 @ToString
-public class Project extends BaseEntity implements Serializable {
+public class Project extends Model<Project> {
 
     private static final long serialVersionUID = 1L;
 
@@ -72,21 +70,43 @@ public class Project extends BaseEntity implements Serializable {
      */
     private Integer projectRemind;
 
+    /**
+     * 项目插件
+     */
     private List<ProjectFunc> funcList;
 
     /**
      * 项目下的所有任务
      */
     private List<Task> taskList;
-
+    /**
+     * 项目成员
+     */
     private List<ProjectMember> projectMemberList;
-
+    /**
+     * 项目日志
+     */
     private List<Log> logList;
 
+    /**项目是否被收藏 0否，1是*/
     private int collect;
-
-    private int memberber_label;
+    /**
+     * 项目成员标识
+     */
+    private int memberberLabel;
 
     private int label=0;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 修改时间
+     */
+    private Long updateTime;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.projectId;
+    }
 }

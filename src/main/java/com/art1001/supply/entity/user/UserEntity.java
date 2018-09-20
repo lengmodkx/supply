@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.user;
-
-import com.art1001.supply.entity.role.RoleEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import java.util.Date;
  *
  */
 @Data
-public class UserEntity implements Serializable {
+public class UserEntity extends Model<UserEntity> {
 
 	private static final long serialVersionUID = -6743567631108323096L;
 
@@ -67,14 +66,7 @@ public class UserEntity implements Serializable {
 	 * 更新时间
 	 */
 	private Date updateTime;
-	/*
-	 * 所属角色
-	 */
-	private RoleEntity role;
-	/*
-	 * 个人资料信息
-	 */
-	private UserInfoEntity userInfo = new UserInfoEntity();
+
 	/*
 	 * 前端列表页使用
 	 */
@@ -126,6 +118,11 @@ public class UserEntity implements Serializable {
 
 	}
 
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
+
 	public UserEntity(UserEntity userEntity) {
 		this.id = userEntity.getId();
 		this.accountName = userEntity.getAccountName();
@@ -137,19 +134,8 @@ public class UserEntity implements Serializable {
 		this.creatorName = userEntity.getCreatorName();
 		this.createTime = userEntity.getCreateTime();
 		this.updateTime = userEntity.getUpdateTime();
-		this.role = userEntity.getRole();
-		this.userInfo = userEntity.getUserInfo();
 		this.roleName = userEntity.getRoleName();
 		this.organizationId = userEntity.getOrganizationId();
 		this.partmentId = userEntity.getPartmentId();
 	}
-
-
-	public void setRole(RoleEntity role) {
-		this.role = role;
-		// 设置角色名称,dtgrid使用
-		this.roleName = role.getName();
-	}
-
-
 }

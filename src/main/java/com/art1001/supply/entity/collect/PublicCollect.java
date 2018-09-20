@@ -1,14 +1,15 @@
 package com.art1001.supply.entity.collect;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * collectEntity
  */
 @Data
-public class PublicCollect extends BaseEntity implements Serializable {
+public class PublicCollect extends Model<PublicCollect> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -39,4 +40,16 @@ public class PublicCollect extends BaseEntity implements Serializable {
 	 * 收藏类型  任务，日程 文件 分享
 	 */
 	private String collectType;
+
+	/** 创建时间
+	 *
+	 */
+	private Long createTime;
+	/** 修改时间*/
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

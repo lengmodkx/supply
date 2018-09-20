@@ -1,14 +1,14 @@
 package com.art1001.supply.entity.task;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * Entity
  */
 @Data
-public class TaskFile extends BaseEntity implements Serializable {
+public class TaskFile extends Model<TaskFile> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -53,4 +53,8 @@ public class TaskFile extends BaseEntity implements Serializable {
 	 */
 	private String fileThumbnail;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

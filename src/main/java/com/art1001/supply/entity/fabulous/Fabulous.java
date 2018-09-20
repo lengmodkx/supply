@@ -1,14 +1,14 @@
 package com.art1001.supply.entity.fabulous;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * 得赞Entity
  */
 @Data
-public class Fabulous extends BaseEntity implements Serializable {
+public class Fabulous extends Model<Fabulous> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -30,4 +30,8 @@ public class Fabulous extends BaseEntity implements Serializable {
 	 */
 	private String publicId;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.fabulousId;
+	}
 }

@@ -1,14 +1,16 @@
 package com.art1001.supply.entity.binding;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * Entity
  */
 @Data
-public class Binding extends BaseEntity implements Serializable {
+@ToString
+public class Binding extends Model<Binding> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -32,21 +34,9 @@ public class Binding extends BaseEntity implements Serializable {
 
 
 	/**
-	 * public_type
+	 * 任务，日程，文件，分享
 	 */
 	private String publicType;
-
-
-	/**
-	 * 创建时间
-	 */
-	private Long createTime;
-
-	/**
-	 * 更新时间
-	 */
-	private Long updateTime;
-
 
 	/**
 	 * 关联目标的头像(任务执行者头像,文件头像,日程执行者等)
@@ -102,5 +92,9 @@ public class Binding extends BaseEntity implements Serializable {
 	 */
 	private String taskStatus;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 
 }

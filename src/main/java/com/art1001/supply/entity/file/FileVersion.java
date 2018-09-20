@@ -1,14 +1,17 @@
 package com.art1001.supply.entity.file;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * fileEntity
  */
 @Data
-public class FileVersion extends BaseEntity implements Serializable {
+@ToString
+public class FileVersion extends Model<FileVersion> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -20,7 +23,7 @@ public class FileVersion extends BaseEntity implements Serializable {
 
 
 	/**
-	 * file_id
+	 * 文件id
 	 */
 	private String fileId;
 
@@ -48,4 +51,15 @@ public class FileVersion extends BaseEntity implements Serializable {
 	 */
 	private Integer isMaster;
 
+	/** 创建时间
+	 *
+	 */
+	private Long createTime;
+	/** 修改时间*/
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

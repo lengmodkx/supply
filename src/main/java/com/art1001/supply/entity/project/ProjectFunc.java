@@ -2,13 +2,17 @@ package com.art1001.supply.entity.project;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * projectEntity
  */
 @Data
-public class ProjectFunc extends BaseEntity implements Serializable {
+@ToString
+public class ProjectFunc extends Model<ProjectFunc> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -42,4 +46,8 @@ public class ProjectFunc extends BaseEntity implements Serializable {
 	 */
 	private Integer isOpen;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.funcId;
+	}
 }

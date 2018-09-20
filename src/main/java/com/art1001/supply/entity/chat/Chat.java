@@ -2,13 +2,17 @@ package com.art1001.supply.entity.chat;
 
 import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * Entity
  */
 @Data
-public class Chat extends BaseEntity implements Serializable {
+@ToString
+public class Chat extends Model<Chat> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -34,11 +38,15 @@ public class Chat extends BaseEntity implements Serializable {
 	/**
 	 * 聊天发送时间
 	 */
-
+	private long createTime;
 
 	/**
 	 * 项目Id
 	 */
 	private String projectId;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.chatId;
+	}
 }

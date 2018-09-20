@@ -2,9 +2,6 @@ package com.art1001.supply.service.log.impl;
 
 import java.util.List;
 import javax.annotation.Resource;
-
-import com.art1001.supply.entity.task.TaskLog;
-import com.art1001.supply.entity.task.TaskLogVO;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;

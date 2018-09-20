@@ -1,8 +1,7 @@
 package com.art1001.supply.mapper.tagrelation;
 
 import java.util.List;
-import com.art1001.supply.entity.tagrelation.TagRelation;
-import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.tag.TagRelation;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

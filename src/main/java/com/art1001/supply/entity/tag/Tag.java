@@ -1,22 +1,21 @@
 package com.art1001.supply.entity.tag;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * tagEntity
  */
 @Data
-public class Tag extends BaseEntity implements Serializable {
+public class Tag extends Model<Tag> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -70,4 +69,17 @@ public class Tag extends BaseEntity implements Serializable {
 	private boolean flag;
 
 
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.tagId;
+	}
 }

@@ -1,8 +1,8 @@
 package com.art1001.supply.entity.log;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
@@ -17,7 +17,7 @@ import java.util.List;
  **/
 @Data
 @ToString
-public class Log extends BaseEntity implements Serializable {
+public class Log extends Model<Log> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -80,4 +80,9 @@ public class Log extends BaseEntity implements Serializable {
 	 * (0.正常 1.撤回)
 	 */
 	private int logIsWithdraw;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

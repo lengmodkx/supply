@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.role;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
@@ -20,7 +21,7 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Alias("roleEntity")
-public class RoleEntity implements Serializable {
+public class RoleEntity extends Model<RoleEntity> {
 
 	/**
 	 *
@@ -57,13 +58,13 @@ public class RoleEntity implements Serializable {
 	 * 角色下所有用户列表结合
 	 */
 	private List<UserEntity> userList;
+	/**
+	 * 企业id
+	 */
+	private String orgId;
 
 	@Override
-	public String toString() {
-		return "RoleEntity [id=" + id + ", name=" + name + ", key=" + key + ", status="
-				+ status + ", description=" + description + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", userList="
-				+ userList + "]";
+	protected Serializable pkVal() {
+		return this.id;
 	}
-
 }

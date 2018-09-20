@@ -1,16 +1,16 @@
-package com.art1001.supply.entity.project;
+package com.art1001.supply.entity.organization;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * @author 汪亚锋
  */
 @Data
-public class OrganizationMember extends BaseEntity implements Serializable {
+public class OrganizationMember extends Model<OrganizationMember> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -54,6 +54,22 @@ public class OrganizationMember extends BaseEntity implements Serializable {
 	 * 企业用户是否被停用 0停用，1启用
 	 */
 	private Integer memberLock;
-
+	/**
+	 * 用户实体
+	 */
 	private UserEntity userEntity;
+
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

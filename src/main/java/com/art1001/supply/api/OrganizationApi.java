@@ -94,7 +94,7 @@ public class OrganizationApi {
             organization.setOrganizationName(orgName);
             organization.setOrganizationDes(orgDes);
             organization.setIsPublic(isPublic);
-            organization.setOrganizationImgae(orgImg);
+            organization.setOrganizationImage(orgImg);
             organization.setOrganizationMember(memberId);
             organizationService.updateOrganization(organization);
             jsonObject.put("result",1);

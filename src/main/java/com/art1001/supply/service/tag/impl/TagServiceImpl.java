@@ -3,15 +3,9 @@ package com.art1001.supply.service.tag.impl;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.schedule.Schedule;
-import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.tagrelation.TagRelation;
-import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
@@ -20,15 +14,11 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
-import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * tagServiceImpl

@@ -24,7 +24,7 @@ import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.tagrelation.TagRelation;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;

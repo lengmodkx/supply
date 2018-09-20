@@ -2,7 +2,7 @@ package com.art1001.supply.mapper.project;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.project.OrganizationMember;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

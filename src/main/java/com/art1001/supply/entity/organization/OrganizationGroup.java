@@ -1,14 +1,14 @@
 package com.art1001.supply.entity.organization;
-
-import com.art1001.supply.entity.base.BaseEntity;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 组织群组Entity
  */
 @Data
-public class OrganizationGroup extends BaseEntity implements Serializable {
+public class OrganizationGroup extends Model<OrganizationGroup> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -42,14 +42,17 @@ public class OrganizationGroup extends BaseEntity implements Serializable {
 	 */
 	private String memberIds;
 
-
 	/**
 	 * 创建时间
 	 */
-
-
+	private Long createTime;
 	/**
-	 * 更新时间
+	 * 修改时间
 	 */
+	private Long updateTime;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.groupId;
+	}
 }

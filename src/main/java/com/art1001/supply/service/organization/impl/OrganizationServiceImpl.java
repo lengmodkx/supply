@@ -20,7 +20,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	/** organizationMapper接口*/
 	@Resource
 	private OrganizationMapper organizationMapper;
-	
+
 	/**
 	 * 查询分页organization数据
 	 * 
@@ -72,7 +72,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public void saveOrganization(Organization organization){
 		String userId = ShiroAuthenticationManager.getUserId();
 		organization.setOrganizationId(IdGen.uuid());
-		organization.setOrganizationImgae("");
+		organization.setOrganizationImage("");
 		organization.setOrganizationMember(userId);
 		organization.setCreateTime(System.currentTimeMillis());
 		organization.setUpdateTime(System.currentTimeMillis());

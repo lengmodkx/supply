@@ -24,32 +24,9 @@
 		<result property="description" column="r_description"/>
 		<result property="createTime" column="r_create_time"/>
 		<result property="updateTime" column="r_update_time"/>
-		<collection property="userList" column="id" ofType="com.art1001.supply.entity.user.UserEntity">
-			<id property="id" column="u_id"/>
-			<result property="userName" column="u_name" />
-			<result property="accountName" column="u_account_name"/>
-			<result property="password" column="u_password"/>
-			<result property="deleteStatus" column="u_delete_status"/>
-			<result property="locked" column="u_locked"/>
-			<result property="description" column="u_description"/>
-			<result property="credentialsSalt" column="u_credentials_salt"/>
-			<result property="creatorName" column="u_creator_name"/>
-			<result property="createTime" column="u_create_time"/>
-			<result property="updateTime" column="u_update_time"/>
-		</collection>
 	</resultMap>
 	
 	<select id="queryListByPage" parameterType="map" resultMap="roleMap" flushCache="true" useCache="true">
-		<!-- 
-			偏移offset较小的时候，直接使用limit较优；
-			偏移offset较大的时候，使用下面子查询的方式较优；
-			具体可以根据业务情况选择 
-		-->
-		<!-- 
-		select <include refid="userAttributes" /> from tb_user Where u_id >=(
-		select u_id from tb_user order by u_id limit ${start},1
-		) limit ${pageNumber}
-		 -->
 		SELECT 
 		r.r_id,
 		r.r_name,
@@ -58,18 +35,8 @@
 		r.r_description,
 		r.r_create_time,
 		r.r_update_time,
-		u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time
-		FROM tb_role r LEFT JOIN tb_role_user ru ON r.r_id = ru.r_id LEFT JOIN tb_user u ON ru.u_id = u.u_id
+		r.organization_id
+		FROM tb_role r
 		<where>
 			<if test="name != null and name != ''">
 				r.r_name=#{name}
@@ -86,19 +53,8 @@
 		r.r_status,
 		r.r_description,
 		r.r_create_time,
-		r.r_update_time,
-		u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time
-		FROM tb_role r LEFT JOIN tb_role_user ru ON r.r_id = ru.r_id LEFT JOIN tb_user u ON ru.u_id = u.u_id
+		r.r_update_time
+		FROM tb_role r
 		where r.r_name = #{name}
 	</select>
 	
@@ -128,19 +84,8 @@
 		r.r_status,
 		r.r_description,
 		r.r_create_time,
-		r.r_update_time,
-		u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time
-		FROM tb_role r LEFT JOIN tb_role_user ru ON r.r_id = ru.r_id LEFT JOIN tb_user u ON ru.u_id = u.u_id
+		r.r_update_time
+		FROM tb_role r
 		where r.r_id = #{id}
 	</select>
 	

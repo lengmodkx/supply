@@ -1,16 +1,17 @@
 package com.art1001.supply.entity.collect;
-
-import com.art1001.supply.entity.base.BaseEntity;
-import java.io.Serializable;
-
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * collectEntity
  */
 @Data
-public class ProjectCollect extends BaseEntity implements Serializable {
+@ToString
+public class ProjectCollect extends Model<ProjectCollect> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -33,16 +34,13 @@ public class ProjectCollect extends BaseEntity implements Serializable {
 	private String projectId;
 
 	/**
-	 * 用户头像
+	 * 创建时间
 	 */
-	private String memberImg;
-
-
+	private Long createTime;
 	/**
-	 * 用户名
+	 * 修改时间
 	 */
-	private String memberName;
-
+	private Long updateTime;
 
 	/**
 	 * 是否收藏，0不收藏，1收藏
@@ -51,4 +49,9 @@ public class ProjectCollect extends BaseEntity implements Serializable {
 
 
 	private Project project;
+
+	@Override
+	protected Serializable pkVal() {
+		return this.id;
+	}
 }

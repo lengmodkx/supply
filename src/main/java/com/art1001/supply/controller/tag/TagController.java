@@ -7,7 +7,6 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.tagrelation.TagRelation;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;

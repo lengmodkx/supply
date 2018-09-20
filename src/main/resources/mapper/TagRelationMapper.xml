@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.tagrelation.TagRelationMapper">
 	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.tagrelation.TagRelation">
+	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.tag.TagRelation">
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="tag_id" property="tagId" jdbcType="BIGINT" />
 		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
@@ -42,7 +42,7 @@
 	</delete>
 
 
-	<delete id="deleteTagRelationByPublicId" parameterType="com.art1001.supply.entity.tagrelation.TagRelation">
+	<delete id="deleteTagRelationByPublicId" parameterType="com.art1001.supply.entity.tag.TagRelation">
 		delete from
 			prm_tag_relation where tag_id = #{tagId}
 			<if test="taskId != null and taskId != ''">
@@ -61,7 +61,7 @@
 	</delete>
 
 
-	<insert id="saveTagRelation" parameterType="com.art1001.supply.entity.tagrelation.TagRelation">
+	<insert id="saveTagRelation" parameterType="com.art1001.supply.entity.tag.TagRelation">
 
 		insert into prm_tag_relation
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -110,7 +110,7 @@
 
 	</insert>
 	
-	<update id="updateTagRelation" parameterType="com.art1001.supply.entity.tagrelation.TagRelation">
+	<update id="updateTagRelation" parameterType="com.art1001.supply.entity.tag.TagRelation">
 
 		update prm_tag_relation
 		<set>

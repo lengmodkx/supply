@@ -1,7 +1,5 @@
 package com.art1001.supply.entity.file;
 
-import com.art1001.supply.entity.base.BaseEntity;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -10,13 +8,16 @@ import java.util.List;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * fileEntity
  */
 @Data
-public class File extends BaseEntity implements Serializable {
+@ToString
+public class File extends Model<File> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,19 +55,6 @@ public class File extends BaseEntity implements Serializable {
      */
     private String memberId;
 
-
-    /**
-     * 用户名
-     */
-    private String memberName;
-
-
-    /**
-     * member_img
-     */
-    private String memberImg;
-
-
     /**
      * 是否目录  1：目录  0：文件
      */
@@ -83,7 +71,6 @@ public class File extends BaseEntity implements Serializable {
      * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
     private String parentId = "0";
-
 
     /**
      * 是否删除
@@ -125,10 +112,27 @@ public class File extends BaseEntity implements Serializable {
      */
     private String fileThumbnail;
 
+    /**
+     * 文件全路径
+     */
     private String fileUrlTemp;
 
+    /**
+     * 文件标识
+     */
     private int fileLabel;
 
+    /**
+     * 文件层级
+     */
+
+    private int level;
+    /** 创建时间
+     *
+     */
+    private Long createTime;
+    /** 修改时间*/
+    private Long updateTime;
     /**
      * 从(文件,任务,分享,日程) 评论区上传的文件 或者 项目群聊上传的文件时候 的项目id 或者 文件,任务,分享,日程 的id
      */
@@ -149,4 +153,8 @@ public class File extends BaseEntity implements Serializable {
     }
 
 
+    @Override
+    protected Serializable pkVal() {
+        return this.fileId;
+    }
 }

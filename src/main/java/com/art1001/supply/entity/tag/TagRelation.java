@@ -1,14 +1,15 @@
-package com.art1001.supply.entity.tagrelation;
+package com.art1001.supply.entity.tag;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * Entity
  */
 @Data
-public class TagRelation extends BaseEntity implements Serializable {
+public class TagRelation extends Model<TagRelation> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -48,4 +49,8 @@ public class TagRelation extends BaseEntity implements Serializable {
 	 */
 	private String shareId;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 }

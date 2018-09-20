@@ -1,17 +1,17 @@
 package com.art1001.supply.entity.relation;
 
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.List;
 
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * relationEntity
  */
 @Data
-public class Relation extends BaseEntity implements Serializable {
+public class Relation extends Model<Relation> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -69,5 +69,17 @@ public class Relation extends BaseEntity implements Serializable {
 	 * 默认分组
 	 */
 	private int defaultGroup;
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.relationId;
+	}
 }

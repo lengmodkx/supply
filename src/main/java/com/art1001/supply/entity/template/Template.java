@@ -1,14 +1,14 @@
 package com.art1001.supply.entity.template;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * Entity
  */
 @Data
-public class Template extends BaseEntity implements Serializable {
+public class Template extends Model<Template> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -42,4 +42,8 @@ public class Template extends BaseEntity implements Serializable {
 	 */
 	private String templateTitle;
 
+	@Override
+	protected Serializable pkVal() {
+		return this.templateId;
+	}
 }

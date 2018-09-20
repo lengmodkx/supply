@@ -1,14 +1,14 @@
 package com.art1001.supply.entity.user;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
  * Entity
  */
 @Data
-public class UserNews extends BaseEntity implements Serializable {
+public class UserNews extends Model<UserNews> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -108,5 +108,10 @@ public class UserNews extends BaseEntity implements Serializable {
 	}
 
 	public UserNews() {
+	}
+
+	@Override
+	protected Serializable pkVal() {
+		return this.newsId;
 	}
 }

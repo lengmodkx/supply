@@ -1,20 +1,18 @@
 package com.art1001.supply.entity.schedule;
-
-import com.art1001.supply.entity.base.BaseEntity;
 import java.io.Serializable;
 import java.util.List;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * scheduleEntity
  */
 @Data
-public class Schedule extends BaseEntity implements Serializable {
+public class Schedule extends Model<Schedule> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -113,5 +111,18 @@ public class Schedule extends BaseEntity implements Serializable {
 	 */
 	private int isDel;
 
+	/**
+	 * 创建时间
+	 */
+	private Long createTime;
+	/**
+	 * 修改时间
+	 */
+	private Long updateTime;
 
+
+	@Override
+	protected Serializable pkVal() {
+		return this.scheduleId;
+	}
 }

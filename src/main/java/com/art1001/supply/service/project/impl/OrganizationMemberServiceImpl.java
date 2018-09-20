@@ -3,7 +3,7 @@ package com.art1001.supply.service.project.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
-import com.art1001.supply.entity.project.OrganizationMember;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.util.IdGen;

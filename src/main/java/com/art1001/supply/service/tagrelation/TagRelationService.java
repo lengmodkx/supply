@@ -1,8 +1,8 @@
 package com.art1001.supply.service.tagrelation;
 
 import java.util.List;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.tagrelation.TagRelation;
+
+import com.art1001.supply.entity.tag.TagRelation;
 
 /**
  * Service接口

@@ -6,8 +6,7 @@ import javax.annotation.Resource;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.tagrelation.TagRelation;
+import com.art1001.supply.entity.tag.TagRelation;
 
 /**
  * ServiceImpl
