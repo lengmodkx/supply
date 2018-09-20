@@ -7,29 +7,22 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.base.PublicVO;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
-import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
-import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -231,22 +224,6 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 			schedule.setUpdateTime(System.currentTimeMillis());
 			scheduleMapper.updateSchedule(schedule);
 			log = logService.saveLog(scheduleId,logContent.toString(),2);
-
-			//推送信息
-			FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());
-			Map<String,Object> map = new HashMap<String,Object>();
-			List<UserEntity> adduser = new ArrayList<UserEntity>();
-			map.put("log",log);
-			for (String id : reduce2) {
-				adduser.add(userService.findById(id));
-			}
-			map.put("reduce2",reduce2);
-			map.put("reduce1",reduce1);
-			map.put("adduser",adduser);
-			map.put("scheduleId",scheduleId);
-			filePushType.setObject(map);
-			//推送至文件的详情界面
-			messagingTemplate.convertAndSend("/topic/"+scheduleId,new ServerMessage(JSON.toJSONString(filePushType)));
 		}
 	}
 

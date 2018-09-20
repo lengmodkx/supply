@@ -2,14 +2,12 @@ package com.art1001.supply.mapper.user;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Map;
@@ -112,13 +110,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	UserEntity findUserInfoById(String id);
 
 	/**
-	 * 查询该用户的详细信息
-	 * @param uId 用户id
-	 * @return
-	 */
-	UserInfoEntity findUserInfoByUserId(String uId);
-
-	/**
 	 * 查询出任务的创建者信息
 	 * @param taskId 任务id
 	 * @return
@@ -149,4 +140,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	 */
 	@Select("select u_name from tb_user where u_id = #{uId}")
     String findUserNameById(String uId);
+
+	UserEntity findByName(String username);
 }

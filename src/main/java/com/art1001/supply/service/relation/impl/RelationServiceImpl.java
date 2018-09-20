@@ -6,10 +6,8 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.binding.BindingService;
@@ -251,30 +249,21 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 * 3.给任务成员关系表更新新的执行者信息
 	 * 4.判断  如果新的执行者  已经在任务成员关系表以参与者的身份出现 则不给新的执行者在表中添加 参与者的数据
 	 * @param relationId 列表id
-	 * @param userInfoEntity 新的执行者的id
+	 * @param userId 新的执行者的id
 	 */
 	@Override
-	public void setMenuAllTaskExecutor(String relationId,UserInfoEntity userInfoEntity,String uName) {
+	public void setMenuAllTaskExecutor(String relationId,String userId,String uName) {
 		//获取菜单下所有的任务信息
 		List<Task> tasks = taskService.simpleTaskMenu(relationId);
 		if(tasks != null && tasks.size() > 0){
 			for (Task task: tasks) {
 				//给任务设置新的执行者
-				task.setExecutor(userInfoEntity.getId());
+				task.setExecutor(userId);
 				//设置更新时间
 				task.setUpdateTime(System.currentTimeMillis());
 				//更新任务信息
 				taskMapper.updateTask(task);
-				//添加任务成员关系
-				TaskMember taskMember = new TaskMember();
-				taskMember.setId(IdGen.uuid());
-				taskMember.setMemberId(userInfoEntity.getId());
-				taskMember.setCurrentTaskId(task.getTaskId());
-				taskMember.setMemberName(uName);
-				taskMember.setMemberImg(userInfoEntity.getImage());
-				taskMember.setType("执行者");
-				taskMember.setCreateTime(System.currentTimeMillis());
-				taskMember.setUpdateTime(System.currentTimeMillis());
+
 			}
 		}
 	}

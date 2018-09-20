@@ -3,7 +3,6 @@ package com.art1001.supply.service.project;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

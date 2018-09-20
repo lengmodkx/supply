@@ -1,6 +1,5 @@
 package com.art1001.supply.base;
 
-import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;

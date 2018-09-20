@@ -53,6 +53,7 @@ public class Partment extends Model<Partment> {
 	 */
 	private Long updateTime;
 
+	private Integer orderBy;
 	@Override
 	protected Serializable pkVal() {
 		return this.partmentId;

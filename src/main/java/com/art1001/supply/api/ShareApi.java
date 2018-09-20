@@ -160,8 +160,6 @@ public class ShareApi {
             share.setProjectId(projectId);
             share.setIsPrivacy(isPrivacy);
             share.setMemberId(userEntity.getId());
-            share.setMemberImg(userEntity.getUserInfo().getImage());
-            share.setMemberName(userEntity.getUserName());
             share.setUids(userEntity.getId());
             shareService.saveShare(share);
             jsonObject.put("result", 1);

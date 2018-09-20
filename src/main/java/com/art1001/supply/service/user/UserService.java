@@ -1,10 +1,6 @@
 package com.art1001.supply.service.user;
-
-
-
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;

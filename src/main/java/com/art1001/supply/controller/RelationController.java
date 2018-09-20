@@ -6,16 +6,11 @@ import com.art1001.supply.dtgrid.model.Column;
 import com.art1001.supply.dtgrid.model.Pager;
 import com.art1001.supply.dtgrid.util.ExportUtils;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.task.PushType;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -47,10 +42,6 @@ public class RelationController {
 
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
-
-    @Resource
-    private ProjectService projectService;
-
 
     /**
      * 添加分组/分组下的菜单
@@ -315,15 +306,15 @@ public class RelationController {
     /**
      * 更新一个菜单下所有的任务执行者
      * @param relationId 菜单id
-     * @param userInfoEntity 用户信息
+     * @param userId 用户信息
      * @param uName 用户名字
      */
     @PostMapping("setMenuAllTaskExecutor")
     @ResponseBody
-    public void setMenuAllTaskExecutor(String relationId,UserInfoEntity userInfoEntity,String uName){
+    public void setMenuAllTaskExecutor(String relationId,String userId,String uName){
         JSONObject jsonObject = new JSONObject();
         try {
-            relationService.setMenuAllTaskExecutor(relationId,userInfoEntity,uName);
+            relationService.setMenuAllTaskExecutor(relationId,userId,uName);
             jsonObject.put("msg","更新成功!");
             jsonObject.put("result","1");
         } catch (Exception e){

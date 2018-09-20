@@ -5,7 +5,6 @@ import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.shiro.filter.ShiroUtils;
 import com.art1001.supply.shiro.util.MyByteSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,26 +49,14 @@ public class MyDBRealm extends AuthorizingRealm {
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			//根据用户ID查询角色（role），放入到Authorization里。
 			// 单角色用户情况
-			info.addRole(user.getRole().getKey());
+			//info.addRole(user.getRole().getKey());
 			// 多角色用户情况
 			// info.setRoles(user.getRolesName());
 			// 用户的角色对应的所有权限
 			for (ResourceEntity resourceEntity : resourceList) {
 				info.addStringPermission(resourceEntity.getSourceKey().trim());
-				if(StringUtils.isNotBlank(resourceEntity.getSourceUrl().trim()))
-				{
+				if(StringUtils.isNotBlank(resourceEntity.getSourceUrl().trim())) {
 					info.addStringPermission(resourceEntity.getSourceUrl().trim());
-					//可以正则匹配,也可以根据规则匹配，针对/*/add.html或/*/edit.html进行扩展，追加表单页面的权限/*/addUI.html或/*/editUI.html，这里暂不使用这种方式，而是改为手动添加资源的方式，比较灵活
-					/*
-					if(resourceEntity.getSourceUrl().endsWith("/add.html"))
-					{
-						info.addStringPermission(resourceEntity.getSourceUrl().replace("/add.html", "/addUI.html"));
-					}
-					if(resourceEntity.getSourceUrl().endsWith("/edit.html"))
-					{
-						info.addStringPermission(resourceEntity.getSourceUrl().replace("/edit.html", "/editUI.html"));
-					}
-					*/
 				}
 			}
 			//或者直接查询出所有权限set集合

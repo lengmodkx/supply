@@ -4,10 +4,12 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
@@ -17,6 +19,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -24,7 +27,7 @@ import com.art1001.supply.entity.base.Pager;
  * tagServiceImpl
  */
 @Service
-public class TagServiceImpl implements TagService {
+public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagService {
 
 	/** tagMapper接口*/
 	@Resource

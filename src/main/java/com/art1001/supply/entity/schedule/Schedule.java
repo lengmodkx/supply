@@ -119,7 +119,15 @@ public class Schedule extends Model<Schedule> {
 	 * 修改时间
 	 */
 	private Long updateTime;
+	/**
+	 * 日程开始时间
+	 */
+	private long startTime;
 
+	/**
+	 * 日程结束时间
+	 */
+	private long endTime;
 
 	@Override
 	protected Serializable pkVal() {

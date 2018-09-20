@@ -5,14 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,29 +87,6 @@ public class UserController {
             jsonObject.put("result", 0);
             jsonObject.put("data", null);
             jsonObject.put("msg", "上传失败");
-        }
-        return jsonObject;
-    }
-
-    /**
-     * 修改个人信息
-     */
-    @PostMapping("/updateUserInfo")
-    public JSONObject updateUserInfo(UserInfoEntity userInfoEntity) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            //获取当前session中的用户
-            String userId = ShiroAuthenticationManager.getUserEntity().getId();
-            UserEntity userEntity = userService.findById(userId);
-            // 设置用户信息
-            userEntity.setUserInfo(userInfoEntity);
-            userService.update(userEntity);
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "更新成功");
-        } catch (Exception e) {
-            log.error("修改信息失败, {}", e);
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "更新成功");
         }
         return jsonObject;
     }

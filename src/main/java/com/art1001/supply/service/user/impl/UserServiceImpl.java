@@ -3,23 +3,15 @@ package com.art1001.supply.service.user.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.elasticsearch.index.mapper.Uid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
-import java.sql.Wrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +53,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         try {
             // 生成用户id
             userEntity.setId(IdGen.uuid());
-            userEntity.getUserInfo().setId(userEntity.getId());
             // 图片byte数组
             byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
             // oss上传

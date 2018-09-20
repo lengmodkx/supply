@@ -406,7 +406,7 @@ public class PublicController {
         try {
             //先删除阿里云上项目的图片然后再上传
             UserEntity userEntity = userService.findById(userId);
-            AliyunOss.deleteFile(userEntity.getUserInfo().getImage());
+            AliyunOss.deleteFile(userEntity.getImage());
             String filename = System.currentTimeMillis()+".jpg";
 
             base64url = base64url.substring(22);
@@ -414,7 +414,7 @@ public class PublicController {
             InputStream input = new ByteArrayInputStream(bytes);
             AliyunOss.uploadInputStream(Constants.MEMBER_IMAGE_URL + filename,input);
 
-            userEntity.getUserInfo().setImage(Constants.MEMBER_IMAGE_URL + filename);
+            userEntity.setImage(Constants.MEMBER_IMAGE_URL + filename);
             userService.update(userEntity);
 
             jsonObject.put("result", 1);
@@ -441,22 +441,22 @@ public class PublicController {
             userEntity.setUserName(userName);
 
             if(StringUtils.isNotEmpty(email)){
-                userEntity.getUserInfo().setEmail(email);
+                userEntity.setEmail(email);
             }
 
             if(StringUtils.isNotEmpty(job)){
-                userEntity.getUserInfo().setJob(job);
+                userEntity.setJob(job);
             }
 
             if(StringUtils.isNotEmpty(telephone)){
-                userEntity.getUserInfo().setTelephone(telephone);
+                userEntity.setTelephone(telephone);
             }
 
             if(StringUtils.isNotEmpty(birthday)){
-                userEntity.getUserInfo().setBirthday(DateUtils.toDate(birthday+" 00:00:00",""));
+                userEntity.setBirthday(DateUtils.toDate(birthday+" 00:00:00",""));
             }
             if (StringUtils.isNotEmpty(address)){
-                userEntity.getUserInfo().setAddress(address);
+                userEntity.setAddress(address);
             }
 
             userService.update(userEntity);
@@ -477,11 +477,11 @@ public class PublicController {
         JSONObject jsonObject = new JSONObject();
         try{
             UserEntity userEntity = userService.findById(userId);
-            userEntity.getUserInfo().setImage(userEntity.getUserInfo().getDefaultImg());
+            userEntity.setImage(userEntity.getDefaultImage());
             userService.update(userEntity);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "更新成功");
-            jsonObject.put("url",userEntity.getUserInfo().getDefaultImg());
+            jsonObject.put("url",userEntity.getDefaultImage());
         }catch (Exception e){
             throw  new AjaxException(e);
         }

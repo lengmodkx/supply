@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
@@ -132,15 +134,9 @@ public abstract class BaseController {
                 jsonObject.put("result",0);
                 jsonObject.put("msg","请选择成员");
             }else{
-
-                UserEntity userEntity = userService.findById(memberId);
                 ProjectMember projectMember = new ProjectMember();
                 projectMember.setProjectId(projectId);
                 projectMember.setMemberId(memberId);
-                projectMember.setMemberName(userEntity.getUserName());
-                projectMember.setMemberPhone(userEntity.getUserInfo().getTelephone());
-                projectMember.setMemberEmail(userEntity.getUserInfo().getEmail());
-                projectMember.setMemberImg(userEntity.getUserInfo().getImage());
                 projectMember.setCreateTime(System.currentTimeMillis());
                 projectMember.setUpdateTime(System.currentTimeMillis());
                 projectMember.setMemberLabel(0);

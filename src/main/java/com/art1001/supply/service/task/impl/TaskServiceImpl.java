@@ -70,14 +70,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	@Resource
     private UserMapper userMapper;
 
-	/** taskMemberService 接口*/
-	@Resource
-    private TaskMemberService taskMemberService;
-
-	/** TaskLogService接口 */
-	@Resource
-    private TaskLogService taskLogService;
-
 	/** FablousMapper接口*/
 	@Resource
     private FabulousMapper fabulousMapper;
@@ -253,7 +245,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         int result = taskMapper.moveToRecycleBin(taskId,System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
-        TaskLogVO taskLogVO = new TaskLogVO();
         //任务状态为0 日志打印内容为 xxx把任务移入了回收站
         Log log = logService.saveLog(taskId,TaskLogFunction.P.getName(),1);
         log.setResult(result);
@@ -1019,10 +1010,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public Map<String, List> findTaskRelation(String taskId) {
         Map<String, List> map = new HashMap<String,List>();
-        List<Task> taskRelationTask = taskMemberService.findTaskRelationTask(taskId);
-        List<File> taskRelationFile = taskMemberService.taskRelationFile(taskId);
-        map.put("relationTask",taskRelationTask);
-        map.put("relationFile",taskRelationFile);
         return map;
     }
 

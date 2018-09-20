@@ -4,18 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSON;
 import com.art1001.supply.base.Base;
-import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.collect.PublicCollect;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.task.TaskMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
@@ -26,7 +19,6 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.share.Share;
 
@@ -52,9 +44,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Resource
 	private PublicCollectService publicCollectService;
 
-    @Resource
-    private SimpMessagingTemplate messagingTemplate;
-	
 	/**
 	 * 查询分页share数据
 	 */
@@ -98,11 +87,7 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Override
 	public Share updateShare(Share share){
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
         share.setMemberId(userEntity.getId());
-        share.setMemberName(userEntity.getUserName());
-        share.setMemberImg(userEntity.getUserInfo().getImage());
-
         share.setUpdateTime(System.currentTimeMillis());
 		shareMapper.updateShare(share);
 		return share;
@@ -115,12 +100,8 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Override
 	public Share saveShare(Share share){
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
 	    share.setId(IdGen.uuid());
         share.setMemberId(userEntity.getId());
-        share.setMemberName(userEntity.getUserName());
-        share.setMemberImg(userEntity.getUserInfo().getImage());
-
         share.setCreateTime(System.currentTimeMillis());
         share.setUpdateTime(System.currentTimeMillis());
 
@@ -208,24 +189,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 		    share.setUpdateTime(System.currentTimeMillis());
 		    shareMapper.updateShare(share);
 			log = logService.saveLog(shareId,logContent.toString(),4);
-
-			//推送信息
-			FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());
-			Map<String,Object> map = new HashMap<String,Object>();
-			List<UserEntity> adduser = new ArrayList<UserEntity>();
-			map.put("log",log);
-			for (String id : reduce2) {
-				adduser.add(userService.findById(id));
-			}
-			map.put("reduce2",reduce2);
-            map.put("reduce1",reduce1);
-			map.put("adduser",adduser);
-			map.put("shareId",shareId);
-			filePushType.setObject(map);
-			//推送至分享的详情界面
-			messagingTemplate.convertAndSend("/topic/"+byId.getProjectId(),new ServerMessage(JSON.toJSONString(filePushType)));
-			//推送至分享的详情界面
-			messagingTemplate.convertAndSend("/topic/"+shareId,new ServerMessage(JSON.toJSONString(filePushType)));
 		}
 	}
 

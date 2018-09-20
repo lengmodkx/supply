@@ -12,7 +12,6 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
@@ -29,7 +28,6 @@ import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -66,9 +64,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Resource
     private LogService logService;
-
-    @Resource
-    private SimpMessagingTemplate messagingTemplate;
 
     @Resource
     private Base base;
@@ -344,7 +339,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             File file = fileMapper.findFileById(fileId);
 
             // 修改oss上的路径，成功后改库
-            if (file.getCatalog()) { // 文件夹
+            if (file.getCatalog()==1) { // 文件夹
                 ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
 
                 assert listing != null;
@@ -486,21 +481,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setUpdateTime(System.currentTimeMillis());
             fileService.updateFile(file);
             log = logService.saveLog(fileId,logContent.toString(),2);
-
-            //推送信息
-            FilePushType filePushType = new FilePushType(TaskLogFunction.A19.getName());
-            Map<String,Object> map = new HashMap<String,Object>();
-            List<UserEntity> adduser = new ArrayList<UserEntity>();
-            map.put("log",log);
-            for (String id : reduce2) {
-                adduser.add(userService.findById(id));
-            }
-            map.put("reduce2",reduce2);
-            map.put("reduce1",reduce1);
-            map.put("adduser",adduser);
-            filePushType.setObject(map);
-            //推送至文件的详情界面
-            messagingTemplate.convertAndSend("/topic/"+fileId,new ServerMessage(JSON.toJSONString(filePushType)));
         }
     }
 

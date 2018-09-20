@@ -78,6 +78,7 @@ public class Tag extends Model<Tag> {
 	 */
 	private Long updateTime;
 
+	private Integer isDel;
 	@Override
 	protected Serializable pkVal() {
 		return this.tagId;

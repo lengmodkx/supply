@@ -3,12 +3,9 @@ package com.art1001.supply.service.relation;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
-import com.art1001.supply.entity.user.UserInfoEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 
@@ -108,9 +105,9 @@ public interface RelationService extends IService<Relation> {
 	/**
 	 * 设置菜单下的所有任务的执行者
 	 * @param relationId 列表id
-	 * @param userInfoEntity 新的执行者的信息
+	 * @param userId 新的执行者的id
 	 */
-    void setMenuAllTaskExecutor(String relationId,UserInfoEntity userInfoEntity,String uName);
+    void setMenuAllTaskExecutor(String relationId,String userId,String uName);
 
 	/**
 	 * 设置此菜单下的所有的任务的截止时间

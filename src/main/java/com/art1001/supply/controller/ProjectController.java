@@ -9,7 +9,6 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
@@ -366,7 +365,6 @@ public class ProjectController extends BaseController {
                 ProjectCollect projectCollect = new ProjectCollect();
                 projectCollect.setProjectId(projectId);
                 projectCollect.setMemberId(userEntity.getId());
-                projectCollect.setMemberImg(userEntity.getUserInfo().getImage());
                 projectCollect.setCreateTime(System.currentTimeMillis());
                 projectCollectService.saveProjectCollect(projectCollect);
                 jsonObject.put("result",1);
