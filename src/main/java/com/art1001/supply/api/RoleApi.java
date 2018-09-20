@@ -50,7 +50,7 @@ public class RoleApi {
             roleEntity.setDescription(roleDes);
             roleEntity.setKey(roleKey);
             roleEntity.setOrgId(orgId);
-            roleService.insert(roleEntity);
+            roleService.save(roleEntity);
             object.put("result",1);
             object.put("msg","插入失败");
         }catch(Exception e){

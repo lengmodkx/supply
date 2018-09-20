@@ -53,12 +53,5 @@ public interface ResourceMapper extends BaseMapper<ResourceEntity> {
 	 * @return
 	 */
     public List<ResourceEntity> queryTreeGridListByPage(Map<String, Object> parameter);
-    
-    /**
-	 * 根据父id查询资源
-	 * @param parameter 参数中必须包含roleId,其他参数可参考mapping文件
-	 * @return
-	 */
-    public List<ResourceEntity> queryListByParentId(Map<String, Object> parameter);
-    
+
 }
