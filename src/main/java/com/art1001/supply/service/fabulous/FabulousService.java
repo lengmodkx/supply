@@ -3,11 +3,12 @@ package com.art1001.supply.service.fabulous;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.fabulous.Fabulous;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 得赞Service接口
  */
-public interface FabulousService {
+public interface FabulousService extends IService<Fabulous> {
 
 	/**
 	 * 查询分页得赞数据

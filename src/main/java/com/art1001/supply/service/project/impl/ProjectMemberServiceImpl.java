@@ -6,6 +6,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,7 +16,7 @@ import java.util.List;
  * projectMemberServiceImpl
  */
 @Service
-public class ProjectMemberServiceImpl implements ProjectMemberService {
+public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,ProjectMember> implements ProjectMemberService {
 
 	/** projectMemberMapper接口*/
 	@Resource

@@ -3,13 +3,14 @@ package com.art1001.supply.mapper.chat;
 import java.util.List;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * mapper接口
  */
 @Mapper
-public interface ChatMapper {
+public interface ChatMapper extends BaseMapper<Chat> {
 
 	/**
 	 * 查询分页数据

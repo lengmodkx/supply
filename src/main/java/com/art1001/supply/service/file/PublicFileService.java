@@ -5,11 +5,12 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.entity.file.PublicFile;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 公共文件库Service接口
  */
-public interface PublicFileService {
+public interface PublicFileService extends IService<PublicFileService> {
 
 	/**
 	 * 查询分页公共文件库数据

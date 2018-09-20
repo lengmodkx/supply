@@ -3,6 +3,8 @@ package com.art1001.supply.mapper.binding;
 import java.util.List;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * bindingmapper接口
  */
 @Mapper
-public interface BindingMapper {
+public interface BindingMapper extends BaseMapper<Binding> {
 
 	/**
 	 * 查询分页binding数据

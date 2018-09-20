@@ -5,11 +5,12 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * shareService接口
  */
-public interface ShareService {
+public interface ShareService extends IService<Share> {
 
 	/**
 	 * 查询项目的分享

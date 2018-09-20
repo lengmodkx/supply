@@ -28,6 +28,7 @@ import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.sf.ehcache.transaction.xa.EhcacheXAException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
  * fileServiceImpl
  */
 @Service
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements FileService {
 
     /**
      * fileMapper接口
@@ -151,10 +152,10 @@ public class FileServiceImpl implements FileService {
         // 得到上传文件的大小
         long contentLength = multipartFile.getSize();
         file.setSize(FileUtils.convertFileSize(contentLength));
-        file.setCatalog(0);
-        file.setParentId(parentId);
-        file.setFileUids(ShiroAuthenticationManager.getUserId());
-        file.setFileLabel(0);
+//        file.setCatalog(0);
+//        file.setParentId(parentId);
+//        file.setFileUids(ShiroAuthenticationManager.getUserId());
+//        file.setFileLabel(0);
         fileService.saveFile(file);
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -194,8 +195,6 @@ public class FileServiceImpl implements FileService {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 设置操作用户信息
         file.setMemberId(userEntity.getId());
-        file.setMemberName(userEntity.getUserName());
-        file.setMemberImg(userEntity.getUserInfo().getImage());
         // 设置时间
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
@@ -226,7 +225,7 @@ public class FileServiceImpl implements FileService {
             myFile.setFileUrl(fileUrl);
             // 得到上传文件的大小
             myFile.setSize(size);
-            myFile.setCatalog(0);
+            //myFile.setCatalog(0);
             myFile.setMemberId(ShiroAuthenticationManager.getUserId());
             myFile.setPublicId(chatId);
             saveFile(myFile);
@@ -259,7 +258,7 @@ public class FileServiceImpl implements FileService {
         projectFile.setProjectId(project.getProjectId());
         projectFile.setFileUrl(folderName);
         projectFile.setParentId("1");
-        projectFile.setCatalog(1);
+//        projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
         String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
@@ -270,7 +269,7 @@ public class FileServiceImpl implements FileService {
             // 项目id
             file.setProjectId(project.getProjectId());
             // 设置是否目录
-            file.setCatalog(1);
+//            file.setCatalog(1);
             fileService.saveFile(file);
         }
     }
@@ -298,7 +297,7 @@ public class FileServiceImpl implements FileService {
         file.setProjectId(projectId);
 
         // 设置目录
-        file.setCatalog(1);
+//        file.setCatalog(1);
         fileService.saveFile(file);
         return file;
     }
@@ -345,7 +344,7 @@ public class FileServiceImpl implements FileService {
             File file = fileMapper.findFileById(fileId);
 
             // 修改oss上的路径，成功后改库
-            if (file.getCatalog() == 1) { // 文件夹
+            if (file.getCatalog()) { // 文件夹
                 ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
 
                 assert listing != null;
@@ -600,10 +599,10 @@ public class FileServiceImpl implements FileService {
         // 得到上传文件的大小
         long contentLength = multipartFile.getSize();
         file.setSize(FileUtils.convertFileSize(contentLength));
-        file.setCatalog(0);
+        //file.setCatalog(0);
         file.setParentId(parentId);
         file.setFileUids(ShiroAuthenticationManager.getUserId());
-        file.setFileLabel(0);
+        //file.setFileLabel(0);
         fileService.savePublicFile(file);
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -704,7 +703,7 @@ public class FileServiceImpl implements FileService {
                 // 得到上传文件的大小
                 myFile.setSize(size);
                 myFile.setParentId(parentId);
-                myFile.setCatalog(0);
+               // myFile.setCatalog(0);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());

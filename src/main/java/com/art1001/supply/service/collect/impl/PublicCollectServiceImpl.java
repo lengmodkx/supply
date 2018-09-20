@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.mapper.collect.PublicCollectMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
@@ -16,6 +18,7 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -23,7 +26,7 @@ import com.art1001.supply.entity.base.Pager;
  * collectServiceImpl 收藏任务，日程，文件，分享的service实现
  */
 @Service
-public class PublicCollectServiceImpl implements PublicCollectService {
+public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, PublicCollect> implements PublicCollectService {
 
 	/** collectMapper接口*/
 	@Resource

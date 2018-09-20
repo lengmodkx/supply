@@ -6,22 +6,21 @@ import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.management.relation.Role;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class RoleServiceImpl extends AbstractService<RoleEntity, Long> implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper,RoleEntity> implements RoleService {
+
 
 	@Resource
 	private RoleMapper roleMapper;
-
-	protected RoleServiceImpl(RoleMapper roleMapper) {
-		super(roleMapper);
-	}
 
 	@Override
 	public boolean addRolePermBatch(int id, List<Integer> ids) {
@@ -92,4 +91,33 @@ public class RoleServiceImpl extends AbstractService<RoleEntity, Long> implement
 		}
 	}
 
+	@Override
+	public List<RoleEntity> queryListByPage(Map<String, Object> parameter) {
+		return null;
+	}
+
+	@Override
+	public RoleEntity findByName(String name) {
+		return null;
+	}
+
+	@Override
+	public int insert(RoleEntity roleEntity) {
+		return 0;
+	}
+
+	@Override
+	public RoleEntity findById(Long roleId) {
+		return null;
+	}
+
+	@Override
+	public int update(RoleEntity roleEntity) {
+		return 0;
+	}
+
+	@Override
+	public int deleteBatchById(List<Long> roleIds) {
+		return 0;
+	}
 }

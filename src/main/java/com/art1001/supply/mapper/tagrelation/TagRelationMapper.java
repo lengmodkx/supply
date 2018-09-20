@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.tagrelation;
 
 import java.util.List;
 import com.art1001.supply.entity.tag.TagRelation;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
  * mapper接口
  */
 @Mapper
-public interface TagRelationMapper {
+public interface TagRelationMapper extends BaseMapper<TagRelation> {
 	/**
 	 * 通过id获取单条数据
 	 * 

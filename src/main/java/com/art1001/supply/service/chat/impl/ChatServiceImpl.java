@@ -3,7 +3,9 @@ package com.art1001.supply.service.chat.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.mapper.chat.ChatMapper;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
@@ -11,6 +13,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -22,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  * ServiceImpl
  */
 @Service
-public class ChatServiceImpl implements ChatService {
+public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements ChatService {
 
 	/** Mapper接口*/
 	@Resource

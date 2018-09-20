@@ -7,13 +7,14 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.template.TemplateData;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
 /**
  * taskmapper接口
  */
 @Mapper
-public interface TaskMapper {
+public interface TaskMapper extends BaseMapper<Task> {
 
 	/**
 	 * 根据任务id数组查找多个任务

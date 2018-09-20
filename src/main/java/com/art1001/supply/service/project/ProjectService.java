@@ -4,12 +4,13 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * projectService接口
  */
-public interface ProjectService {
+public interface ProjectService extends IService<Project> {
 
 	/**
 	 * 查询分页project数据

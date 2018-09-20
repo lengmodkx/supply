@@ -6,6 +6,7 @@ import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.log.Log;
@@ -14,7 +15,7 @@ import com.art1001.supply.entity.log.Log;
  * ServiceImpl
  */
 @Service
-public class LogServiceImpl implements LogService {
+public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogService {
 
 	/** Mapper接口*/
 	@Resource

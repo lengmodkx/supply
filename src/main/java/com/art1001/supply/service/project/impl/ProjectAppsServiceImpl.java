@@ -6,13 +6,14 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.mapper.project.ProjectFuncMapper;
 import com.art1001.supply.service.project.ProjectAppsService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
  * projectServiceImpl
  */
 @Service
-public class ProjectAppsServiceImpl implements ProjectAppsService {
+public class ProjectAppsServiceImpl extends ServiceImpl<ProjectFuncMapper,ProjectFunc> implements ProjectAppsService {
 
 	/** projectMapper接口*/
 	@Resource

@@ -7,11 +7,12 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserInfoEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
 
-public interface UserService {
+public interface UserService extends IService<UserEntity> {
 
 	public List<UserEntity> queryListByPage(Map<String, Object> parameter);
 

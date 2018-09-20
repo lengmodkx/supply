@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.tag.TagRelation;
 
@@ -12,7 +13,7 @@ import com.art1001.supply.entity.tag.TagRelation;
  * ServiceImpl
  */
 @Service
-public class TagRelationServiceImpl implements TagRelationService {
+public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRelation> implements TagRelationService {
 
 	/** Mapper接口*/
 	@Resource

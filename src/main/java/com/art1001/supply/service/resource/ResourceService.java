@@ -1,11 +1,12 @@
 package com.art1001.supply.service.resource;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
 
-public interface ResourceService {
+public interface ResourceService extends IService<ResourceEntity> {
 
 	/**
 	 * 自定义方法

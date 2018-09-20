@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.task;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.TaskLog;
 import com.art1001.supply.entity.task.TaskLogVO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * 111mapper接口
  */
 @Mapper
-public interface TaskLogMapper {
+public interface TaskLogMapper extends BaseMapper<TaskLog> {
 
 	/**
 	 * 查询分页taskLog数据

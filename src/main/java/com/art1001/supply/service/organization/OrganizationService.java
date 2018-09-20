@@ -3,12 +3,13 @@ package com.art1001.supply.service.organization;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * organizationService接口
  */
-public interface OrganizationService {
+public interface OrganizationService extends IService<Organization> {
 
 	/**
 	 * 查询分页organization数据

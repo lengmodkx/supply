@@ -3,12 +3,13 @@ package com.art1001.supply.mapper.user;
 import java.util.List;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
 /**
  * mapper接口
  */
-public interface UserNewsMapper {
+public interface UserNewsMapper extends BaseMapper<UserNews> {
 
 	/**
 	 * 查询分页数据

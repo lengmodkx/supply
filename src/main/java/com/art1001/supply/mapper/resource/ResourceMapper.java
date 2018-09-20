@@ -1,7 +1,7 @@
 package com.art1001.supply.mapper.resource;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
-import com.art1001.supply.mapper.base.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Mapper
 @Repository
-public interface ResourceMapper extends BaseMapper<ResourceEntity, Long> {
+public interface ResourceMapper extends BaseMapper<ResourceEntity> {
 	
 	/**
 	 * 自定义方法

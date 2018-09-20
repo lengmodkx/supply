@@ -25,6 +25,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  * projectServiceImpl
  */
 @Service
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> implements ProjectService {
 
 	/** projectMapper接口*/
 	@Resource

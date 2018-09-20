@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.collect;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Select;
  * collectmapper接口
  */
 @Mapper
-public interface PublicCollectMapper {
+public interface PublicCollectMapper extends BaseMapper<PublicCollect> {
 
 	/**
 	 * 查询分页collect数据

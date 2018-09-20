@@ -4,10 +4,13 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.organization.OrganizationGroup;
+import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -15,7 +18,7 @@ import com.art1001.supply.entity.base.Pager;
  * organizationServiceImpl
  */
 @Service
-public class OrganizationServiceImpl implements OrganizationService {
+public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Organization> implements OrganizationService {
 
 	/** organizationMapper接口*/
 	@Resource

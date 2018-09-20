@@ -5,19 +5,22 @@ import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.LoginInfoMapper;
 import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.user.LoginInfoService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
-public class LoginInfoServiceImpl extends AbstractService<LoginInfoEntity, Long> implements LoginInfoService {
-
+public class LoginInfoServiceImpl extends ServiceImpl<LoginInfoMapper,LoginInfoEntity> implements LoginInfoService {
 	@Resource
 	private LoginInfoMapper loginInfoMapper;
 
-	protected LoginInfoServiceImpl(BaseMapper<LoginInfoEntity, Long> baseMapper) {
-		super(baseMapper);
+	@Override
+	public List<LoginInfoEntity> queryListByPage(Map<String, Object> parameter) {
+		return null;
 	}
 
 	@Override

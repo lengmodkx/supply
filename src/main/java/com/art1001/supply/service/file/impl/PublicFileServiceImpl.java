@@ -6,12 +6,10 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.PublicFile;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.file.PublicFileMapper;
 import com.art1001.supply.service.file.PublicFileService;
 import com.art1001.supply.util.IdGen;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.file.PublicFile;
 
 /**
  * 公共文件库ServiceImpl

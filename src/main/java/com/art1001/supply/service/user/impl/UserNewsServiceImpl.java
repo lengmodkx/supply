@@ -13,6 +13,7 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -22,7 +23,7 @@ import com.art1001.supply.entity.user.UserNews;
  * ServiceImpl
  */
 @Service
-public class UserNewsServiceImpl implements UserNewsService {
+public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> implements UserNewsService {
 
 	/** Mapper接口*/
 	@Resource

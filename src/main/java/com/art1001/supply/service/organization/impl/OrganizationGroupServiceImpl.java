@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.service.organization.OrganizationGroupService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationGroup;
@@ -13,7 +14,7 @@ import com.art1001.supply.entity.organization.OrganizationGroup;
  * 组织群组ServiceImpl
  */
 @Service
-public class OrganizationGroupServiceImpl implements OrganizationGroupService {
+public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupMapper,OrganizationGroup> implements OrganizationGroupService {
 
 	/** 组织群组Mapper接口*/
 	@Resource

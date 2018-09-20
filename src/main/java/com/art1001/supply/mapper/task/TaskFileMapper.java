@@ -2,13 +2,14 @@ package com.art1001.supply.mapper.task;
 
 import java.util.List;
 import com.art1001.supply.entity.task.TaskFile;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * mapper接口
  */
 @Mapper
-public interface TaskFileMapper {
+public interface TaskFileMapper extends BaseMapper<TaskFile> {
 
     /**
      * 查询任务关联的文件

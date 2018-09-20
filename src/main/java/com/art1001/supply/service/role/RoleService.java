@@ -2,11 +2,13 @@ package com.art1001.supply.service.role;
 
 
 import com.art1001.supply.entity.role.RoleEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.management.relation.Role;
 import java.util.List;
 import java.util.Map;
 
-public interface RoleService {
+public interface RoleService extends IService<RoleEntity> {
 
 	 List<RoleEntity> queryListByPage(Map<String, Object> parameter);
 

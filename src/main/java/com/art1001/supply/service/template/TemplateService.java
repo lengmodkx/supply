@@ -3,11 +3,12 @@ package com.art1001.supply.service.template;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.template.Template;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * Service接口
  */
-public interface TemplateService {
+public interface TemplateService extends IService<Template> {
 
 	/**
 	 * 查询分页数据

@@ -7,6 +7,7 @@ import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.mapper.file.FileVersionMapper;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -14,7 +15,7 @@ import com.art1001.supply.entity.base.Pager;
  * fileServiceImpl
  */
 @Service
-public class FileVersionServiceImpl implements FileVersionService {
+public class FileVersionServiceImpl extends ServiceImpl<FileVersionMapper,FileVersion> implements FileVersionService {
 
 	/** fileMapper接口*/
 	@Resource

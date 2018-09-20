@@ -6,12 +6,13 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * scheduleService接口
  */
-public interface ScheduleService {
+public interface ScheduleService extends IService<Schedule> {
 
 	/**
 	 * 查询分页schedule数据

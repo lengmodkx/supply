@@ -224,30 +224,30 @@ public abstract class BaseController {
 
     @GetMapping("/projectTag.html")
     public String  projectTag(String projectId,Model model){
-//        List<Tag> tagList = tagService.findByProjectId(projectId);
-//        for (Tag tag:tagList) {
-//            List<TagRelation> tagRelationList = tagRelationService.findTagRelationByTagId(tag.getTagId());
-//            for (TagRelation tagRelation:tagRelationList) {
-//                if(StringUtils.isNotEmpty(tagRelation.getTaskId())){
-//                    tag.getTaskList().add(taskService.findTaskByTaskId(tagRelation.getTaskId()));
-//                }
-//
-//                if(StringUtils.isNotEmpty(tagRelation.getFileId())){
-//                    tag.getFileList().add(fileService.findFileById(tagRelation.getFileId()));
-//                }
-//
-//                if(StringUtils.isNotEmpty(tagRelation.getScheduleId())){
-//                    tag.getScheduleList().add(scheduleService.findScheduleById(tagRelation.getScheduleId()));
-//                }
-//
-//                if(StringUtils.isNotEmpty(tagRelation.getShareId())){
-//                    tag.getShareList().add(shareService.findById(tagRelation.getShareId()));
-//                }
-//            }
-//
-//        }
-//
-//        model.addAttribute("tagList",tagList);
+        List<Tag> tagList = tagService.findByProjectId(projectId);
+        for (Tag tag:tagList) {
+            List<TagRelation> tagRelationList = tagRelationService.findTagRelationByTagId(tag.getTagId());
+            for (TagRelation tagRelation:tagRelationList) {
+                if(StringUtils.isNotEmpty(tagRelation.getTaskId())){
+                    tag.getTaskList().add(taskService.findTaskByTaskId(tagRelation.getTaskId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getFileId())){
+                    tag.getFileList().add(fileService.findFileById(tagRelation.getFileId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getScheduleId())){
+                    tag.getScheduleList().add(scheduleService.findScheduleById(tagRelation.getScheduleId()));
+                }
+
+                if(StringUtils.isNotEmpty(tagRelation.getShareId())){
+                    tag.getShareList().add(shareService.findById(tagRelation.getShareId()));
+                }
+            }
+
+        }
+
+        model.addAttribute("tagList",tagList);
         model.addAttribute("projectId",projectId);
         return "tk-look-tag";
     }

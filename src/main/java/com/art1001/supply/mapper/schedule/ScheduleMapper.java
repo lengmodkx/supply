@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -14,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
  * schedulemapper接口
  */
 @Mapper
-public interface ScheduleMapper {
+public interface ScheduleMapper extends BaseMapper<Schedule> {
 
 	/**
 	 * 查询分页schedule数据

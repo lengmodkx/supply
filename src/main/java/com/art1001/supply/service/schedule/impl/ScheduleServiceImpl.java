@@ -12,12 +12,14 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.FilePushType;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -25,6 +27,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,7 +38,7 @@ import com.art1001.supply.entity.base.Pager;
  * scheduleServiceImpl
  */
 @Service
-public class ScheduleServiceImpl implements ScheduleService {
+public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> implements ScheduleService {
 
 	/** scheduleMapper接口*/
 	@Resource

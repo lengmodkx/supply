@@ -2,7 +2,9 @@ package com.art1001.supply.mapper.task;
 
 import com.art1001.supply.entity.statistics.StatisticsDTO;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.elasticsearch.tasks.TaskInfo;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
  * @author lujing
  * @date 2018-09-08 14:02
  */
-public interface TaskInfoMapper {
+public interface TaskInfoMapper extends BaseMapper<TaskInfo> {
 
     /**
      * 查询总任务数

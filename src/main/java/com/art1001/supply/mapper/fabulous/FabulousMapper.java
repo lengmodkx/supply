@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.fabulous;
 import java.util.List;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
  * 得赞mapper接口
  */
 @Mapper
-public interface FabulousMapper {
+public interface FabulousMapper extends BaseMapper<Fabulous> {
 
 	/**
 	 * 查询分页得赞数据

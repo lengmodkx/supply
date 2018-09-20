@@ -3,8 +3,11 @@ package com.art1001.supply.service.fabulous.impl;
 import java.util.List;
 import javax.annotation.Resource;
 
+import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
 import com.art1001.supply.service.fabulous.FabulousService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.fabulous.Fabulous;
@@ -13,7 +16,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
  * 得赞ServiceImpl
  */
 @Service
-public class FabulousServiceImpl implements FabulousService {
+public class FabulousServiceImpl extends ServiceImpl<FabulousMapper,Fabulous> implements FabulousService {
 
 	/** 得赞Mapper接口*/
 	@Resource

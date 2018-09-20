@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.log;
 import java.util.List;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -11,7 +12,7 @@ import org.apache.ibatis.annotations.Update;
  * mapper接口
  */
 @Mapper
-public interface LogMapper {
+public interface LogMapper extends BaseMapper<Log> {
 
 	/**
 	 * 查询分页数据

@@ -3,12 +3,13 @@ package com.art1001.supply.service.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.ProjectFunc;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * projectService接口
  */
-public interface ProjectAppsService {
+public interface ProjectAppsService extends IService<ProjectFunc> {
 
 	/**
 	 * 修改project数据

@@ -3,12 +3,13 @@ package com.art1001.supply.service.partment;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.partment.Partment;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * partmentService接口
  */
-public interface PartmentService {
+public interface PartmentService extends IService<Partment> {
 
 	/**
 	 * 查询分页partment数据

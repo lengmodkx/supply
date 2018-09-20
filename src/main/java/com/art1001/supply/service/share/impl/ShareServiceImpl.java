@@ -25,6 +25,7 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.share.Share;
@@ -33,7 +34,7 @@ import com.art1001.supply.entity.share.Share;
  * shareServiceImpl
  */
 @Service
-public class ShareServiceImpl implements ShareService {
+public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements ShareService {
 
 	/** shareMapper接口*/
 	@Resource

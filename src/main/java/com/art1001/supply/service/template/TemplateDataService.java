@@ -2,12 +2,14 @@ package com.art1001.supply.service.template;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.template.Template;
 import com.art1001.supply.entity.template.TemplateData;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 模板Service接口
  */
-public interface TemplateDataService {
+public interface TemplateDataService extends IService<TemplateData> {
 
 	/**
 	 * 查询分页模板数据

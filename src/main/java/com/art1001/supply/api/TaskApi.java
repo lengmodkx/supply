@@ -464,7 +464,7 @@ public class TaskApi {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setIsDel(1);
+            task.setTaskDel(1);
             taskService.updateTask(task);
             object.put("result",1);
         }catch(Exception e){

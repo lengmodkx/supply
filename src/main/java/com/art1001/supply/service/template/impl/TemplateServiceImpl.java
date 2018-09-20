@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.mapper.template.TemplateMapper;
 import com.art1001.supply.service.template.TemplateService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.template.Template;
@@ -13,7 +14,7 @@ import com.art1001.supply.entity.template.Template;
  * ServiceImpl
  */
 @Service
-public class TemplateServiceImpl implements TemplateService {
+public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> implements TemplateService {
 
 	/** Mapper接口*/
 	@Resource

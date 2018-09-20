@@ -9,12 +9,13 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserInfoEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * relationService接口
  */
-public interface RelationService {
+public interface RelationService extends IService<Relation> {
 
 	/**
 	 * 查询分页relation数据

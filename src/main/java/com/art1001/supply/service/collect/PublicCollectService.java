@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.entity.share.Share;
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * collectService接口
  */
-public interface PublicCollectService {
+public interface PublicCollectService extends IService<PublicCollect> {
 
 	/**
 	 * 查询分页collect数据

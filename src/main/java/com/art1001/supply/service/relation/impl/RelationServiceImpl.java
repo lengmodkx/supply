@@ -4,7 +4,6 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMember;
@@ -19,12 +18,12 @@ import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
-import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * relationServiceImpl
  */
 @Service
-public class RelationServiceImpl implements RelationService {
+public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> implements RelationService {
 
 	/** relationMapper接口*/
 	@Resource
@@ -47,10 +46,6 @@ public class RelationServiceImpl implements RelationService {
 	/**taskMapper 接口 */
 	@Resource
 	private TaskMapper taskMapper;
-
-	@Resource
-	/**taskMember 接口  */
-	private TaskMemberService taskMemberService;
 
 	@Resource
 	/**userService接口  */
@@ -270,8 +265,6 @@ public class RelationServiceImpl implements RelationService {
 				task.setUpdateTime(System.currentTimeMillis());
 				//更新任务信息
 				taskMapper.updateTask(task);
-				//删除此任务原来的执行者和任务的关联信息
-				taskMemberService.removeExecutor(task.getTaskId());
 				//添加任务成员关系
 				TaskMember taskMember = new TaskMember();
 				taskMember.setId(IdGen.uuid());
@@ -282,16 +275,6 @@ public class RelationServiceImpl implements RelationService {
 				taskMember.setType("执行者");
 				taskMember.setCreateTime(System.currentTimeMillis());
 				taskMember.setUpdateTime(System.currentTimeMillis());
-				//把执行者和任务的关联信息添加到库中
-				taskMemberService.saveTaskMember(taskMember);
-				//查询新的任务执行者之前是不是此任务的参与者
-				int isTaskMember = taskMemberService.findTaskMemberExecutorIsMember(userInfoEntity.getId(), task.getTaskId());
-				//如果新的任务执行者以前已经是该任务的参与者  就不在添加该执行者的参与者信息
-				if(isTaskMember == 0){
-					taskMember.setId(IdGen.uuid());
-					taskMember.setType("参与者");
-					taskMemberService.saveTaskMember(taskMember);
-				}
 			}
 		}
 	}

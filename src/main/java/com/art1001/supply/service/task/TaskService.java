@@ -15,13 +15,14 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 
 /**
  * taskService接口
  */
-public interface TaskService {
+public interface TaskService extends IService<Task> {
 
 	/**
 	 * 查询分页task数据

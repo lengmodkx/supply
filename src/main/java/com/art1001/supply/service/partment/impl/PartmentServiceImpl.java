@@ -7,6 +7,7 @@ import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 
@@ -14,7 +15,7 @@ import com.art1001.supply.entity.base.Pager;
  * partmentServiceImpl
  */
 @Service
-public class PartmentServiceImpl implements PartmentService {
+public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> implements PartmentService {
 
 	/** partmentMapper接口*/
 	@Resource

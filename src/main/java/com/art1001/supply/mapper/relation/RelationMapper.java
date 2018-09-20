@@ -7,13 +7,14 @@ import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
 /**
  * relationmapper接口
  */
 @Mapper
-public interface RelationMapper {
+public interface RelationMapper extends BaseMapper<Relation> {
 
 	/**
 	 * 查询分页relation数据

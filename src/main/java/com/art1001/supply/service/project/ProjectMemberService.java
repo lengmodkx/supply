@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.user.UserInfoEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * projectMemberService接口
  */
-public interface ProjectMemberService {
+public interface ProjectMemberService extends IService<ProjectMember> {
 
 	/**
 	 * 查询分页projectMember数据

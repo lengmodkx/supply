@@ -6,13 +6,14 @@ import java.util.Map;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 
 /**
  * tagService接口
  */
-public interface TagService {
+public interface TagService extends IService<Tag> {
 
 	/**
 	 * 查询分页tag数据

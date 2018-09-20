@@ -13,17 +13,19 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.elasticsearch.index.mapper.Uid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Wrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserServiceImpl extends AbstractService<UserEntity, String> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {
 
     @Resource
     private UserMapper userMapper;
@@ -36,8 +38,19 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     private TaskService taskService;
 
 
-    protected UserServiceImpl(UserMapper userMapper) {
-        super(userMapper);
+    @Override
+    public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
+        return null;
+    }
+
+    @Override
+    public UserEntity findByName(String accountName) {
+        return null;
+    }
+
+    @Override
+    public UserEntity findById(String id) {
+        return null;
     }
 
     /**
@@ -79,20 +92,21 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
     @Override
     public int update(UserEntity userEntity) {
         try {
-            if (userMapper.update(userEntity) == 1) {
-                if (userMapper.updateUserRole(userEntity) == 1) {
-                    int result = userMapper.updateUserInfo(userEntity);
-                    ShiroAuthenticationManager.clearUserAuthByUserId(userEntity.getId());
-                    return result;
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
+//            if (userMapper.update(userEntity,) == 1) {
+//                if (userMapper.updateUserRole(userEntity) == 1) {
+//                    int result = userMapper.updateUserInfo(userEntity);
+//                    ShiroAuthenticationManager.clearUserAuthByUserId(userEntity.getId());
+//                    return result;
+//                } else {
+//                    return 0;
+//                }
+//            } else {
+//                return 0;
+//            }
         } catch (Exception e) {
             throw new ServiceException(e);
         }
+        return 0;
     }
 
     /**
@@ -105,20 +119,20 @@ public class UserServiceImpl extends AbstractService<UserEntity, String> impleme
         try {
             int result = userMapper.deleteBatchUserRole(userIds);
             if (result == userIds.size()) {
-                return userMapper.deleteBatchById(userIds);
             } else {
                 return 0;
             }
         } catch (Exception e) {
             throw new ServiceException(e);
         }
+        return 0;
     }
 
     @Override
     public int updateOnly(UserEntity userEntity) throws ServiceException {
         try {
-            int cnt = userMapper.update(userEntity);
-            return cnt;
+            //int cnt = userMapper.update(userEntity,userEntity);
+            return 0;
         } catch (Exception e) {
             throw new ServiceException(e);
         }

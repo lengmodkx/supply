@@ -21,6 +21,7 @@
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
 		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
+		<result column="level" property="level" jdbcType="INTEGER"/>
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -75,7 +76,8 @@
 				file_label,
 				file_thumbnail,
 				file_privacy,
-				public_id
+				public_id,
+				`level`
 	</sql>
 	<sql id="Base_Column_List2">
 				f.file_id,
@@ -95,6 +97,7 @@
 				f.file_thumbnail,
 				f.file_privacy,
 				f.public_id,
+				f.level,
 				tg.tag_id,
 				tg.tag_name,
 				tg.bg_color
@@ -339,6 +342,9 @@
 			<if test="filePrivacy != null ">
 				file_privacy,
 			</if>
+			<if test="level != null ">
+				`level`,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -394,6 +400,9 @@
 			<if test="filePrivacy != null ">
 				#{filePrivacy},
 			</if>
+			<if test="level != null ">
+				#{level},
+			</if>
 		</trim>
 
 	</insert>
@@ -446,6 +455,9 @@
 			</if>
 			<if test="filePrivacy != null ">
 				file_privacy = #{filePrivacy},
+			</if>
+			<if test="level != null ">
+				`level` = #{level},
 			</if>
 		</set>
 
@@ -526,6 +538,9 @@
 			<if test="fileThumbnail != null ">
 				file_thumbnail,
 			</if>
+			<if test="level != null ">
+				`level`,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -566,6 +581,9 @@
 			<if test="fileThumbnail != null ">
 				#{fileThumbnail},
 			</if>
+			<if test="level != null ">
+				#{level},
+			</if>
 		</trim>
 	</insert>
 
@@ -583,6 +601,7 @@
 				parent_id,
 				member_id,
 				file_uids,
+				`level`,
 				create_time
 		</trim>
 		VALUES
@@ -621,9 +640,10 @@
 				<if test="file.createTime != null ">
 					#{file.createTime}
 				</if>
-
+				<if test="file.level != null ">
+					#{file.level}
+				</if>
 			)
 		</foreach>
 	</insert>
-	
 </mapper>

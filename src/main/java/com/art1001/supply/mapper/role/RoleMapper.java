@@ -1,8 +1,7 @@
 package com.art1001.supply.mapper.role;
 
-
-import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.role.RoleEntity;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface RoleMapper extends BaseMapper<RoleEntity, Long> {
+public interface RoleMapper extends BaseMapper<RoleEntity> {
 	
 	/**
 	 * 查询该角色是否有权限信息

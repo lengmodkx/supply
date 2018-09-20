@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.partment;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.partment.Partment;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -10,7 +11,7 @@ import org.apache.ibatis.annotations.Select;
  * partmentmapper接口
  */
 @Mapper
-public interface PartmentMapper {
+public interface PartmentMapper extends BaseMapper<Partment> {
 
 	/**
 	 * 查询分页partment数据

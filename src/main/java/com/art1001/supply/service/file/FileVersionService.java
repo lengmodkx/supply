@@ -3,12 +3,13 @@ package com.art1001.supply.service.file;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.file.FileVersion;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * fileService接口
  */
-public interface FileVersionService {
+public interface FileVersionService extends IService<FileVersion> {
 
 	/**
 	 * 查询分页file数据

@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Select;
  * projectMembermapper接口
  */
 @Mapper
-public interface ProjectMemberMapper {
+public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 
 	/**
 	 * 查询分页projectMember数据

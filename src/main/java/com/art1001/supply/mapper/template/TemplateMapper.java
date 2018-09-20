@@ -3,13 +3,14 @@ package com.art1001.supply.mapper.template;
 import java.util.List;
 import com.art1001.supply.entity.template.Template;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * mapper接口
  */
 @Mapper
-public interface TemplateMapper {
+public interface TemplateMapper extends BaseMapper<Template> {
 
 	/**
 	 * 查询分页数据

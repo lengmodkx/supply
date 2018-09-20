@@ -40,13 +40,12 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
-import com.art1001.supply.service.task.TaskLogService;
-import com.art1001.supply.service.task.TaskMemberService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
  * taskServiceImpl
  */
 @Service
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
     private String isparent = "0";
     /** taskMapper接口*/

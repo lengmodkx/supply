@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
  * projectmapper接口
  */
 @Mapper
-public interface ProjectMapper {
+public interface ProjectMapper extends BaseMapper<Project> {
 
 	/**
 	 * 查询分页project数据

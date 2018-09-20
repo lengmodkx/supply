@@ -6,6 +6,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.base.Pager;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,7 +17,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
  * sharemapper接口
  */
 @Mapper
-public interface ShareMapper {
+public interface ShareMapper extends BaseMapper<Share> {
 
     /**
      * 查询项目的分享

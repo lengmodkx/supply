@@ -4,11 +4,12 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingVo;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * bindingService接口
  */
-public interface BindingService {
+public interface BindingService extends IService<Binding> {
 
 	/**
 	 * 查询分页binding数据

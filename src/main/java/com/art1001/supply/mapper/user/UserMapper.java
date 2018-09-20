@@ -3,8 +3,8 @@ package com.art1001.supply.mapper.user;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserInfoEntity;
-import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Mapper
 @Repository
-public interface UserMapper extends BaseMapper<UserEntity, String> {
+public interface UserMapper extends BaseMapper<UserEntity> {
 	
 	/**
 	 * 添加用户和角色对应关系

@@ -3,11 +3,12 @@ package com.art1001.supply.service.chat;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.chat.Chat;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * Service接口
  */
-public interface ChatService {
+public interface ChatService extends IService<Chat> {
 
 	/**
 	 * 查询分页数据

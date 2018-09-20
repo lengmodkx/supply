@@ -5,6 +5,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.mapper.task.TaskInfoMapper;
 import com.art1001.supply.service.task.TaskInfoService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

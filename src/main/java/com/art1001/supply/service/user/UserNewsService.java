@@ -3,11 +3,12 @@ package com.art1001.supply.service.user;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.user.UserNews;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * Service接口
  */
-public interface UserNewsService {
+public interface UserNewsService extends IService<UserNews> {
 
 	/**
 	 * 查询分页数据

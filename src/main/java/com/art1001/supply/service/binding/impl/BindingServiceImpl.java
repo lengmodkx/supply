@@ -19,6 +19,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
@@ -27,7 +28,7 @@ import com.art1001.supply.entity.binding.Binding;
  * bindingServiceImpl
  */
 @Service
-public class BindingServiceImpl implements BindingService {
+public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> implements BindingService {
 
 	/** bindingMapper接口*/
 	@Resource

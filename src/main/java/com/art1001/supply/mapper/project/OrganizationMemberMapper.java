@@ -3,13 +3,14 @@ package com.art1001.supply.mapper.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * projectmapper接口
  */
 @Mapper
-public interface OrganizationMemberMapper {
+public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember> {
 
 	/**
 	 * 查询分页project数据

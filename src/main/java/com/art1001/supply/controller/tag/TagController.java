@@ -62,7 +62,7 @@ public class TagController extends BaseController {
         //查询出项目的所有标签
         List<Tag> tagList = tagService.findByProjectId(projectId);
         //根据publicId 和 publicType查询出tag
-        if(StringUtils.isNotEmpty(publicId)&&StringUtils.isNotEmpty(publicType)){
+        if(StringUtils.isNotEmpty(publicId) && StringUtils.isNotEmpty(publicType)){
             List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
             for (Tag aTagList : tagList) {
                 for (Tag aTagListTemp : tagListTemp) {

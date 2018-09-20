@@ -6,13 +6,14 @@ import java.util.Map;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
 /**
  * filemapper接口
  */
 @Mapper
-public interface FileMapper {
+public interface FileMapper extends BaseMapper<File> {
 
 	/**
 	 * 查询分页file数据
