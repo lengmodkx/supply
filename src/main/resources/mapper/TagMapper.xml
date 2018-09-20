@@ -23,30 +23,30 @@
 
         <!-- 映射任务信息 -->
         <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-            <result column="task_id" property="taskId"></result>
-            <result column="executor" property="executor"></result>
-            <result column="task_name" property="taskName"></result>
+            <result column="task_id" property="taskId"/>
+            <result column="executor" property="executor"/>
+            <result column="task_name" property="taskName"/>
         </collection>
 
         <!-- 映射文件信息 -->
         <collection property="fileList" ofType="com.art1001.supply.entity.file.File">
-            <result column="file_id" property="fileId"></result>
-            <result column="memberId" property="member_id"></result>
-            <result column="file_name" property="fileName"></result>
+            <result column="file_id" property="fileId"/>
+            <result column="memberId" property="memberId"/>
+            <result column="file_name" property="fileName"/>
         </collection>
 
         <!-- 映射分享信息 -->
         <collection property="shareList" ofType="com.art1001.supply.entity.share.Share">
-            <result column="id" property="id"></result>
-            <result column="memberId" property="member_id"></result>
-            <result column="title" property="title"></result>
+            <result column="id" property="id"/>
+            <result column="memberId" property="memberId"/>
+            <result column="title" property="title"/>
         </collection>
 
         <!-- 映射日程信息 -->
         <collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
-            <result column="schedule_id" property="scheduleId"></result>
-            <result column="memberId" property="member_id"></result>
-            <result column="schedule_name" property="scheduleName"></result>
+            <result column="schedule_id" property="scheduleId"/>
+            <result column="memberId" property="memberId"/>
+            <result column="schedule_name" property="scheduleName"/>
         </collection>
     </resultMap>
 

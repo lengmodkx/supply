@@ -81,7 +81,7 @@ public class ProjectMember extends Model<ProjectMember> {
 	/**
 	 * 项目成员的角色,默认成员
 	 */
-	private long rId;
+	private Integer rId;
 
 	/**
 	 * 创建时间

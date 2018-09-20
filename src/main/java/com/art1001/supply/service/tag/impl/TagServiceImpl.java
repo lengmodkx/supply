@@ -4,12 +4,10 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;

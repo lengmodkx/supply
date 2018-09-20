@@ -1,7 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.role.RoleEntity;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.role.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 角色api
@@ -45,14 +43,17 @@ public class RoleApi {
         JSONObject object = new JSONObject();
         try{
 
-            RoleEntity roleEntity = new RoleEntity();
-            roleEntity.setName(roleName);
-            roleEntity.setDescription(roleDes);
-            roleEntity.setKey(roleKey);
-            roleEntity.setOrgId(orgId);
-            roleService.save(roleEntity);
+            Role role = new Role();
+            role.setName(roleName);
+            role.setDescription(roleDes);
+            role.setKey(roleKey);
+            role.setOrganizationId(orgId);
+            role.setStatus(0);
+            role.setCreateTime(new Date());
+            role.setUpdateTime(new Date());
+            roleService.save(role);
             object.put("result",1);
-            object.put("msg","插入失败");
+            object.put("msg","插入成功");
         }catch(Exception e){
             log.error("插入失败，{}",e);
             throw new AjaxException(e);
@@ -69,7 +70,7 @@ public class RoleApi {
     public JSONObject deleteRole(@PathVariable(value = "roleId")Long roleId){
         JSONObject object = new JSONObject();
         try{
-            roleService.deleteRoleById(roleId);
+//            roleService.deleteRoleById(roleId);
             object.put("result",1);
             object.put("msg","删除成功");
         }catch(Exception e){
@@ -94,12 +95,12 @@ public class RoleApi {
                                  @RequestParam(value = "roleKey")String roleKey){
         JSONObject object = new JSONObject();
         try{
-            RoleEntity roleEntity = new RoleEntity();
-            roleEntity.setName(roleName);
-            roleEntity.setDescription(roleDes);
-            roleEntity.setKey(roleKey);
-            roleEntity.setId(roleId);
-            roleService.update(roleEntity);
+//            RoleEntity roleEntity = new RoleEntity();
+//            roleEntity.setName(roleName);
+//            roleEntity.setDescription(roleDes);
+//            roleEntity.setKey(roleKey);
+//            roleEntity.setId(roleId);
+//            roleService.update(roleEntity);
             object.put("result",1);
             object.put("msg","更新成功");
         }catch(Exception e){
@@ -117,8 +118,8 @@ public class RoleApi {
     public JSONObject roleList(){
         JSONObject object = new JSONObject();
         try{
-            Map<String,Object> map = new HashMap<>();
-            roleService.queryListByPage(map);
+//            Map<String,Object> map = new HashMap<>();
+//            roleService.queryListByPage(map);
             object.put("result",1);
             object.put("msg","查询成功");
         }catch(Exception e){

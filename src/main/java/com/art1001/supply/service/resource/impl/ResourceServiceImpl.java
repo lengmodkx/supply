@@ -1,12 +1,8 @@
 package com.art1001.supply.service.resource.impl;
 
-import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.project.ProjectFuncMapper;
 import com.art1001.supply.mapper.resource.ResourceMapper;
-import com.art1001.supply.entity.role.RoleEntity;
-import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -71,12 +67,12 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		try
 		{
 			//1、添加资源
-			resourceMapper.insert(resourceEntity);
-			//2、超级管理员直接赋予该权限
-			RoleEntity role = roleService.findByName("超级管理员");
-			roleService.addRolePerm(role.getId(), resourceEntity.getId());
-			//清空所有用户权限,重新加载权限
-			ShiroAuthenticationManager.clearAllUserAuth();
+//			resourceMapper.insert(resourceEntity);
+//			//2、超级管理员直接赋予该权限
+//			RoleEntity role = roleService.findByName("超级管理员");
+//			roleService.addRolePerm(role.getId(), resourceEntity.getId());
+//			//清空所有用户权限,重新加载权限
+//			ShiroAuthenticationManager.clearAllUserAuth();
 			return true;
 		}catch(Exception e)
 		{

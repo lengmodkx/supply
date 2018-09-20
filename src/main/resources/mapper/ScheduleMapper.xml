@@ -112,19 +112,19 @@
 	
 	<select id="findSchedulePagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
-		
+
 		select * from prm_schedule
 		<include refid="whereStatement" />
-		
+
 		<if test="orderBy == 0">
 			order by schedule_id desc
 		</if>
 		<if test="orderBy == 1">
 			order by schedule_id asc
 		</if>
-		
+
 	</select>
-	
+
 	<select id="findScheduleAllList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.schedule.Schedule">
 		SELECT
@@ -137,7 +137,7 @@
 			order by schedule_id asc
 		</if>
 	</select>
-	
+
 	<select id="findScheduleById" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
@@ -145,7 +145,7 @@
 		from prm_schedule s left join prm_tag_relation tr on s.schedule_id = tr.schedule_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		where s.schedule_id = #{id}
 	</select>
-	
+
 	<select id="findByIds" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -155,12 +155,12 @@
 			#{id}
 		</foreach>
 	</select>
-	
+
 	<delete id="deleteScheduleById" parameterType="java.lang.String">
 		delete from
 		prm_schedule where schedule_id = #{id}
 	</delete>
-	
+
 	<insert id="saveSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
 		insert into prm_schedule
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -268,7 +268,7 @@
 		</trim>
 
 	</insert>
-	
+
 	<update id="updateSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
 
 		update prm_schedule

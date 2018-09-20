@@ -1,11 +1,10 @@
 package com.art1001.supply.entity.role;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import org.apache.ibatis.type.Alias;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -19,16 +18,15 @@ import java.util.List;
  *
  */
 @Data
-@Accessors(chain = true)
-@Alias("roleEntity")
-public class RoleEntity extends Model<RoleEntity> {
+public class Role extends Model<Role> {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Long id;
+	@TableId(value = "r_id",type = IdType.AUTO)
+	private Integer id;
 
 	/*
 	 * 角色名
@@ -61,7 +59,7 @@ public class RoleEntity extends Model<RoleEntity> {
 	/**
 	 * 企业id
 	 */
-	private String orgId;
+	private String organizationId;
 
 	@Override
 	protected Serializable pkVal() {

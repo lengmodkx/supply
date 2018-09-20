@@ -2,9 +2,6 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.role.RoleEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
@@ -18,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
 
 /**

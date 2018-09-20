@@ -1,8 +1,6 @@
 package com.art1001.supply;
 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages ="com.art1001.supply")
 @ServletComponentScan
 @SpringBootApplication
+@MapperScan("com.art1001.supply.mapper")
 public class SupplyApplication  extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

@@ -11,7 +11,7 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.role.RoleEntity;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectAppsService;
@@ -25,6 +25,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -151,7 +152,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
 
 		//往项目用户关联表插入数据
-		RoleEntity roleEntity = roleService.findByName("拥有者");
+		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","拥有者"));
 		ProjectMember projectMember = new ProjectMember();
 		projectMember.setProjectId(project.getProjectId());
 		projectMember.setMemberId(ShiroAuthenticationManager.getUserId());

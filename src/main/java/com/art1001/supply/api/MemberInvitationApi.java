@@ -2,14 +2,14 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.role.RoleEntity;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -68,7 +68,7 @@ public class MemberInvitationApi {
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
         try{
-            RoleEntity roleEntity = roleService.findByName("成员");
+            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","成员"));
             ProjectMember member = new ProjectMember();
             member.setProjectId(projectId);
             member.setMemberId(memberId);
@@ -105,7 +105,7 @@ public class MemberInvitationApi {
     public JSONObject upadteMemberRole(@PathVariable(value = "memberId") String memberId,@RequestParam(value = "projectId") String projectId){
         JSONObject object = new JSONObject();
         try{
-            RoleEntity roleEntity = roleService.findByName("成员");
+            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","成员"));
 
             object.put("result",1);
             object.put("msg","更新成功");
