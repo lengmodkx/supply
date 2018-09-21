@@ -1,4 +1,4 @@
-package com.art1001.supply.mapper;
+package com.art1001.supply.mapper.role;
 
 import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
