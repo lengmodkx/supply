@@ -1,17 +1,16 @@
 package com.art1001.supply.entity.resource;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import org.apache.ibatis.type.Alias;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- * 
+ *
  * @ClassName: ResourceEntity
  * @Description: 资源信息(权限)
  * @author gaogang
@@ -19,85 +18,67 @@ import java.util.List;
  *
  */
 @Data
-@Accessors(chain = true)
-@Alias("resourceEntity")
+@TableName(value = "tb_resource")
 public class ResourceEntity extends Model<ResourceEntity> {
 
-	public Long id;
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * 资源id
+	 */
+	@TableId(value = "s_id",type = IdType.AUTO)
+	public Integer id;
 	/*
 	 * 父节点ID
 	 */
+	@TableField(value = "s_parent_id")
 	private Integer parentId;
 	/*
 	 * 权限名称
 	 */
+	@TableField(value = "s_name")
 	private String name;
 	/*
 	 * 资源标识key
 	 */
+	@TableField(value = "s_source_key")
 	private String sourceKey;
 	/*
 	 * 类型：0：菜单；1：按钮
 	 */
+	@TableField(value = "s_type")
 	private Integer type;
 	/*
 	 * 菜单URL
 	 */
+	@TableField(value = "s_source_url")
 	private String sourceUrl;
 	/*
 	 * 菜单的展开层级(暂不用)
 	 */
+	@TableField(value = "s_level")
 	private Integer level;
-	/*
-	 * 菜单的图标
-	 */
-	private String icon;
+
 	/*
 	 * 是否隐藏
 	 */
+	@TableField(value = "s_is_hide")
 	private Integer isHide;
 	/*
 	 * 资源描述
 	 */
+	@TableField(value = "s_description")
 	private String description;
 	/*
 	 * 资源创建时间
 	 */
+	@TableField(value = "s_create_time")
 	private Date createTime;
+
 	/*
 	 * 资源更新时间
 	 */
+	@TableField(value = "s_update_time")
 	private Date updateTime;
-	/*
-	 * 节点是否展开
-	 */
-	private boolean isExpanded;
-	/*
-	 * 是否叶子节点
-	 */
-	private boolean isLeaf;
-	/*
-	 * 是否加载完成
-	 */
-	private boolean loaded = true;
-	/*
-	 * 父节点名称
-	 */
-	private String parentName;
-	/*
-	 * 是否被选中
-	 */
-	private boolean selected;
-	/*
-	 * 叶子节点集合
-	 */
-	private List<ResourceEntity> children = new ArrayList<ResourceEntity>();
-
 
 	@Override
 	protected Serializable pkVal() {

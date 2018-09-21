@@ -1,16 +1,13 @@
 package com.art1001.supply.entity.role;
 
-import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
 
 /**
- * 
+ *
  * @ClassName: RoleEntity
  * @Description: 角色信息
  * @author wangyafeng
@@ -18,44 +15,41 @@ import java.util.List;
  *
  */
 @Data
+@TableName(value = "tb_role")
 public class Role extends Model<Role> {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 角色id
+	 */
 	@TableId(value = "r_id",type = IdType.AUTO)
 	private Integer id;
 
 	/*
 	 * 角色名
 	 */
-	private String name;
+	private String roleName;
 	/*
 	 * 角色key
 	 */
-	private String key;
+	private String roleKey;
 	/*
 	 * 角色状态
 	 */
-	private Integer status;
+	private Integer roleStatus;
 	/*
 	 * 角色描述信息
 	 */
-	private String description;
+	private String roleDes;
 	/*
 	 * 角色创建时间
 	 */
-	private Date createTime;
+	private Timestamp createTime;
 	/*
 	 * 角色更新时间
 	 */
-	private Date updateTime;
-	/*
-	 * 角色下所有用户列表结合
-	 */
-	private List<UserEntity> userList;
+	private Timestamp updateTime;
 	/**
 	 * 企业id
 	 */
