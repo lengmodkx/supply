@@ -1,12 +1,9 @@
 package com.art1001.supply.service.user.impl;
 
 import com.art1001.supply.entity.user.LoginInfoEntity;
-import com.art1001.supply.mapper.base.BaseMapper;
 import com.art1001.supply.mapper.user.LoginInfoMapper;
-import com.art1001.supply.service.base.impl.AbstractService;
 import com.art1001.supply.service.user.LoginInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

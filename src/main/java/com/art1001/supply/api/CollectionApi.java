@@ -40,10 +40,13 @@ public class CollectionApi {
         JSONObject object = new JSONObject();
         try{
             PublicCollect collect = new PublicCollect();
-            collect.setPublicId(publicId);
             collect.setProjectId(projectId);
+            collect.setPublicId(publicId);
             collect.setCollectType(collectType);
-            collectService.savePublicCollect(collect);
+            collect.setCreateTime(System.currentTimeMillis());
+            collect.setUpdateTime(System.currentTimeMillis());
+            collect.setMemberId(ShiroAuthenticationManager.getUserId());
+            collectService.save(collect);
             object.put("result",1);
             object.put("msg","收藏成功");
         }catch(Exception e){
