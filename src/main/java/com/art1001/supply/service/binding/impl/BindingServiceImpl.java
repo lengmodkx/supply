@@ -20,9 +20,12 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * bindingServiceImpl
@@ -190,40 +193,30 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		bindingMapper.deleteManyByPublicId(publicId);
 	}
 
-
+	/**
+	 * 保存关联信息
+	 * @param publicId 信息id
+	 * @param bindList 选择绑定的信息的id集合
+	 * @param publicType 绑定信息的类型
+	 */
+	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
 	public void saveBindings(String publicId, List<String> bindList, String publicType) {
-		for(int i = 0;i < bindList.size();i++){
-			//判断是不是和自己关联
-			if(Objects.equals(publicId,bindList.get(i))){
-				bindList.remove(i);
-			}
-		}
-
-		//查询记录表中有没有存在该条关联记录
-		String[] record = bindingMapper.getBindingRecord(publicId,bindList.toArray(new String[bindList.size()]));
-		//如果大于0 说明一定有关联信息重复
-		for(int i = 0;i < record.length;i++){
-			for(int j = 0;j < bindList.size();j++){
-				if(Objects.equals(record[i],bindList.get(j))){
-					bindList.remove(j);
-				}
-			}
-		}
-
+		bindList.remove(publicId);
+		bindingMapper.deleteBatch(publicId,bindList);
+		List<Binding> binds = new ArrayList<Binding>();
 		for (int i = 0;i < bindList.size();i++){
-			if(bindList.get(i) != null){
-				Binding binding = new Binding();
-				//设置该条绑定关系的id
-				binding.setId(IdGen.uuid());
-				//设置 谁绑定 的id
-				binding.setPublicId(publicId);
-				//设置被绑定的 信息的id
-				binding.setBindId(bindList.get(i));
-				//设置绑定的类型
-				binding.setPublicType(publicType);
-				bindingMapper.saveBinding(binding);
-			}
+			Binding binding = new Binding();
+			//设置该条绑定关系的id
+			binding.setId(IdGen.uuid());
+			//设置 谁绑定 的id
+			binding.setPublicId(publicId);
+			//设置被绑定的 信息的id
+			binding.setBindId(bindList.get(i));
+			//设置绑定的类型
+			binding.setPublicType(publicType);
+			binds.add(binding);
 		}
+		bindingMapper.insertBatch(binds);
 	}
 }

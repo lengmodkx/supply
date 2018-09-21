@@ -107,4 +107,17 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	 * @param publicId 记录关联的 publicId (哪个信息关联的其他信息)
 	 */
     void deleteManyByPublicId(List<String> publicId);
+
+	/**
+	 * 删除多条
+	 * @param publicId 信息id
+	 * @param bindList 绑定信息id
+	 */
+	void deleteBatch(@Param("publicId") String publicId, @Param("binds") List<String> bindList);
+
+	/**
+	 * 批量插入
+	 * @param binds 绑定信息
+	 */
+	void insertBatch(List<Binding> binds);
 }

@@ -1,5 +1,6 @@
 package com.art1001.supply.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,9 +16,15 @@ public class CommonUtils {
         return Arrays.asList(arr).contains(targetValue);
     }
 
-    public static void main(String[] args) {
-        String[] strings = {"1", "2"};
-        System.out.println(useList(strings, "1"));
+    /**
+     * 移除数组的某个元素
+     * @param arr 数组
+     * @param targetValue 被移除的元素
+     */
+    public static void removeValue(String[] arr, String targetValue) {
+        List<String> strings = new ArrayList<String>();
+        strings = Arrays.asList(arr);
+        strings.remove(targetValue);
     }
 
     public static boolean listIsEmpty(Collection collection){
