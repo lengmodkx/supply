@@ -1,17 +1,14 @@
 package com.art1001.supply.service.resource.impl;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.service.resource.ResourceService;
-import com.art1001.supply.service.role.RoleService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEntity> implements ResourceService {
@@ -19,99 +16,22 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 	@Resource
 	private ResourceMapper resourceMapper;
 
-	@Resource
-	private RoleService roleService;
-
 	@Override
-	public List<ResourceEntity> findResourcesByUserId(String userId) {
-		return resourceMapper.findResourcesByUserId(userId);
-	}
-
-	@Override
-	public List<ResourceEntity> queryResourceList(Map<String, Object> parameter) {
-		return resourceMapper.queryResourceList(parameter);
-	}
-
-	@Override
-	public List<ResourceEntity> findResourcesMenuByUserId(int userId) {
-		return resourceMapper.findResourcesMenuByUserId(userId);
-	}
-
-	@Override
-	public boolean deleteRoleAndResource(List<Long> resourceIds) {
-		try
-		{
-			resourceIds.forEach(resourceId -> {
-				resourceMapper.deleteRolePerm(resourceId);
-			});
-			//resourceMapper.deleteBatchById(resourceIds);
-			//清空所有用户权限,重新加载权限
-			ShiroAuthenticationManager.clearAllUserAuth();
-			return true;
-		}catch(Exception e)
-		{
-			throw new ServiceException(e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.webside.resource.service.ResourceService#queryTreeGridListByPage(java.util.Map)
-	 */
-	@Override
-	public List<ResourceEntity> queryTreeGridListByPage(Map<String, Object> parameter) {
-		return resourceMapper.queryTreeGridListByPage(parameter);
-	}
-
-	@Override
-	public boolean insertRoleAndResource(ResourceEntity resourceEntity) {
-		try
-		{
-			//1、添加资源
-//			resourceMapper.insert(resourceEntity);
-//			//2、超级管理员直接赋予该权限
-//			RoleEntity role = roleService.findByName("超级管理员");
-//			roleService.addRolePerm(role.getId(), resourceEntity.getId());
-//			//清空所有用户权限,重新加载权限
-//			ShiroAuthenticationManager.clearAllUserAuth();
-			return true;
-		}catch(Exception e)
-		{
-			throw new ServiceException(e);
+	public int deleteResource(Integer resourceId){
+		ResourceEntity resourceEntity = resourceMapper.selectById(resourceId);
+		int count = resourceMapper.selectCount(new QueryWrapper<>(resourceEntity).eq("s_parent_id",resourceEntity.getId()));
+		if(count>0){
+			return 0;
+		}else{
+			return resourceMapper.deleteById(resourceId);
 		}
 	}
 
 	@Override
-	public List<ResourceEntity> queryListByPage(Map<String, Object> parameter) {
-		return null;
+	public Page<ResourceEntity> selectListPage(long current, long size, ResourceEntity resourceEntity) {
+		Page<ResourceEntity> resourceEntityPage = new Page<>(current,size);
+		QueryWrapper<ResourceEntity> queryWrapper = new QueryWrapper<>(resourceEntity);
+		return (Page<ResourceEntity>) page(resourceEntityPage, queryWrapper);
 	}
 
-	@Override
-	public ResourceEntity findByName(String name) {
-		return null;
-	}
-
-	@Override
-	public ResourceEntity findById(Long id) {
-		return null;
-	}
-
-	@Override
-	public int update(ResourceEntity resourceEntity) {
-		return 0;
-	}
-
-	@Override
-	public int deleteBatchById(List<Long> resourceIds) {
-		return 0;
-	}
-
-	@Override
-	public int insert(ResourceEntity resourceEntity) {
-		return 0;
-	}
-
-	@Override
-	public int count(Map<String, Object> parameter) {
-		return 0;
-	}
 }
