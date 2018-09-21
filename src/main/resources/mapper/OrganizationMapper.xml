@@ -5,7 +5,7 @@
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.Organization">
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
-		<result column="organization_imgae" property="organizationImgae" jdbcType="VARCHAR" />
+		<result column="organization_imgae" property="organizationImage" jdbcType="VARCHAR" />
 		<result column="organization_des" property="organizationDes" jdbcType="VARCHAR" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="organization_member" property="organizationMember" jdbcType="VARCHAR" />
@@ -89,8 +89,8 @@
 			<if test="organizationName != null and organizationName != ''">
 			organization_name,
 			</if>
-			<if test="organizationImgae != null and organizationImgae != ''">
-			organization_imgae,
+			<if test="organizationImage != null and organizationImage != ''">
+			organization_image,
 			</if>
 			<if test="organizationDes != null and organizationDes != ''">
 			organization_des,
@@ -123,8 +123,8 @@
 			<if test="organizationName != null and organizationName != ''">
 				#{organizationName},
 			</if>
-			<if test="organizationImgae != null and organizationImgae != ''">
-				#{organizationImgae},
+			<if test="organizationImage != null and organizationImage != ''">
+				#{organizationImage},
 			</if>
 			<if test="organizationDes != null and organizationDes != ''">
 				#{organizationDes},
@@ -161,8 +161,8 @@
 			<if test="organizationName != null and organizationName != ''">
 				organization_name = #{organizationName},
 			</if>
-			<if test="organizationImgae != null and organizationImgae != ''">
-				organization_imgae = #{organizationImgae},
+			<if test="organizationImage != null and organizationImage != ''">
+				organization_image = #{organizationImage},
 			</if>
 			<if test="organizationDes != null and organizationDes != ''">
 				organization_des = #{organizationDes},

@@ -6,10 +6,10 @@
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.role.Role">
 		<id column="r_id" property="id" />
-		<result column="r_name" property="name" />
-		<result column="r_key" property="key" />
-		<result column="r_status" property="status" />
-		<result column="r_description" property="description" />
+		<result column="r_name" property="roleName" />
+		<result column="r_key" property="roleKey" />
+		<result column="r_status" property="roleStatus" />
+		<result column="r_description" property="roleDes" />
 		<result column="r_create_time" property="createTime" />
 		<result column="r_update_time" property="updateTime" />
 		<result column="organization_id" property="organizationId" />

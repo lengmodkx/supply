@@ -5,7 +5,7 @@
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.fabulous.Fabulous">
 		<result column="fabulous_id" property="fabulousId" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="task_id" property="taskId" jdbcType="VARCHAR" />
+		<result column="task_id" property="publicId" jdbcType="VARCHAR" />
 	</resultMap>
     
 	<sql id="Base_Column_List">

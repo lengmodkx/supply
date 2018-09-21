@@ -39,16 +39,16 @@ public interface PublicCollectMapper extends BaseMapper<PublicCollect> {
 	/**
 	 * 修改collect数据
 	 * 
-	 * @param PublicCollect
+	 * @param publicCollect
 	 */
-	int updatePublicCollect(PublicCollect PublicCollect);
+	int updatePublicCollect(PublicCollect publicCollect);
 
 	/**
 	 * 保存collect数据
 	 *
-     * @param PublicCollect
+     * @param publicCollect
      */
-	int savePublicCollect(PublicCollect PublicCollect);
+	int savePublicCollect(PublicCollect publicCollect);
 
 	/**
 	 * 获取所有collect数据

@@ -32,15 +32,10 @@
 		<result property="type" column="s_type"/>
 		<result property="sourceUrl" column="s_source_url"/>
 		<result property="level" column="s_level"/>
-		<result property="icon" column="s_icon"/>
 		<result property="isHide" column="s_is_hide"/>
 		<result property="description" column="s_description"/>
 		<result property="createTime" column="s_create_time"/>
 		<result property="updateTime" column="s_update_time"/>
-		<result property="parentName" column="s_parentName"/>
-		<result property="isExpanded" column="s_isExpanded"/>
-		<result property="isLeaf" column="s_isLeaf"/>
-		<result property="selected" column="s_selected"/>
 	</resultMap>
 	
 	<select id="findResourcesByUserId" parameterType="String" resultMap="resourceMap" flushCache="true" useCache="true">
@@ -62,7 +57,6 @@
 			t1.s_type,
 			t1.s_source_url,
 			t1.s_level,
-			t1.s_icon,
 			t1.s_is_hide,
 			t1.s_description,
 			t1.s_create_time,
@@ -80,7 +74,6 @@
 			t1.s_type,
 			t1.s_source_url,
 			t1.s_level,
-			t1.s_icon,
 			t1.s_is_hide,
 			t1.s_description,
 			t1.s_create_time,
@@ -122,7 +115,6 @@
 			t1.s_type,
 			t1.s_source_url,
 			t1.s_level,
-			t1.s_icon,
 			t1.s_is_hide,
 			t1.s_description,
 			t1.s_create_time,
@@ -156,7 +148,6 @@
 			t1.s_type,
 			t1.s_source_url,
 			t1.s_level,
-			t1.s_icon,
 			t1.s_is_hide,
 			t1.s_description,
 			t1.s_create_time,
@@ -183,7 +174,6 @@
 			s_source_key,
 			s_type,
 			s_source_url,
-			s_icon,
 			s_is_hide,
 			s_description,
 			s_create_time
@@ -212,7 +202,6 @@
 			t1.s_type,
 			t1.s_source_url,
 			t1.s_level,
-			t1.s_icon,
 			t1.s_is_hide,
 			t1.s_description,
 			t1.s_create_time,
@@ -231,7 +220,6 @@
 		s_source_key = #{sourceKey},
 		s_type = ${type},
 		s_source_url = #{sourceUrl},
-		s_icon = #{icon},
 		s_is_hide = ${isHide},
 		s_description = #{description}
 		where s_id = ${id}

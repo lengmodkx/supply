@@ -238,20 +238,6 @@
 		</foreach>
 	</select>
 
-	<select id="findByFileIds" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_file
-		where 1=1
-		<if test="fileIds!=null and fileIds!=''">
-			and file_id in <foreach collection="fileIds.split(',')" open="(" separator="," close=")" item="id">
-			#{id}
-		</foreach>
-		</if>
-		<if test="fileIds==null and fileIds==''">
-			and file_id in('')
-		</if>
-	</select>
 
 	<select id="findProjectUrl" parameterType="java.lang.String" resultType="java.lang.String">
 		select file_url from prm_file where parent_id = '1' and file_label=0 and project_id = #{projectId}

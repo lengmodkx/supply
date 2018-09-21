@@ -60,14 +60,6 @@
 
 	</select>
 
-	<select id="findBindingCount" resultType="java.lang.Integer" parameterType="java.lang.String">
-
-		select
-		count(0)
-		from prm_binding c where public_id = #{publicId}
-
-	</select>
-	
 	<insert id="saveBinding" parameterType="com.art1001.supply.entity.binding.Binding">
 
 		insert into prm_binding
@@ -245,5 +237,8 @@
 				#{publicId}
 			</foreach>
 		)
+	</delete>
+	<delete id="deleteBindingById">
+		delete from prm_binding where public_id = #{id} and bind_id = #{bindingId}
 	</delete>
 </mapper>

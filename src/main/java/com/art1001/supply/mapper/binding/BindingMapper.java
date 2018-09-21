@@ -36,7 +36,7 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	 * 
 	 * @param id
 	 */
-	@Delete("delete from prm_binding where public_id = #{id} and bind_id = #{bindingId}")
+
 	void deleteBindingById(@Param("id") String id,@Param("bindingId") String bindingId);
 
 	/**

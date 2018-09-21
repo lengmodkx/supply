@@ -8,8 +8,6 @@
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="collect_status" property="collectStatus" jdbcType="INTEGER" />
 	</resultMap>
 	<resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
