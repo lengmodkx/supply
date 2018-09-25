@@ -3,21 +3,17 @@ package com.art1001.supply.service.task;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskBindingInfo;
-import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 
 /**
@@ -539,5 +535,5 @@ public interface TaskService extends IService<Task> {
 	 * 查询出需要被关联的任务信息
 	 * @param idList 任务id集合
 	 */
-    List<TaskBindingInfo> findBindingInfo(List<String> idList);
+    List<TaskApiBean> findBindingInfo(List<String> idList);
 }

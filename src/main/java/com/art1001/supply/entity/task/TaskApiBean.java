@@ -4,12 +4,12 @@ import lombok.Data;
 
 /**
  * @author heshaohua
- * @Title: TaskBindingInfo
+ * @Title: TaskApiBean
  * @Description: TODO
  * @date 2018/9/25 10:45
  **/
 @Data
-public class TaskBindingInfo {
+public class TaskApiBean {
 
     /**
      * 任务id
@@ -39,5 +39,5 @@ public class TaskBindingInfo {
     /**
      * 执行者头像
      */
-    private String uImage;
+    private String userImage;
 }

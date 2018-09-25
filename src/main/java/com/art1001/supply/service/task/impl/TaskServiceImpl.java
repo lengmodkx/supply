@@ -15,7 +15,6 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
-import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -1582,8 +1581,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param idList 任务id集合
      */
     @Override
-    public List<TaskBindingInfo> findBindingInfo(List<String> idList) {
-       return taskMapper.selectBindingInfo(idList);
+    public List<TaskApiBean> findBindingInfo(List<String> idList) {
+       return taskMapper.findTaskApiBean(idList);
     }
 }
 

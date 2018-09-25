@@ -50,8 +50,15 @@ public class PublicCollect extends Model<PublicCollect> {
 	 *
 	 */
 	private Long createTime;
-	/** 修改时间*/
+	/**
+	 * 修改时间
+	 */
 	private Long updateTime;
+
+	/**
+	 * 收藏内容
+	 */
+	private String collectContent;
 
 	@Override
 	protected Serializable pkVal() {

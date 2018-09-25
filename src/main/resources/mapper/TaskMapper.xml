@@ -107,10 +107,10 @@
 	</resultMap>
 
 	<!-- 关联信息 -->
-	<resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskBindingInfo">
+	<resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskApiBean">
 		<id column="task_id" property="taskId" />
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="u_image" property="uImage" jdbcType="VARCHAR"/>
+		<result column="u_image" property="userImage" jdbcType="VARCHAR"/>
 		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
 		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
@@ -1070,7 +1070,7 @@
 	</select>
 
 	<!-- 查询出需要被关联的任务信息 -->
-	<select id="selectBindingInfo" resultMap="bindingInfo">
+	<select id="findTaskApiBean" resultMap="bindingInfo">
 		select a.*,b.relation_name as group_name from (SELECT
 			task_id,
 			task_name,
