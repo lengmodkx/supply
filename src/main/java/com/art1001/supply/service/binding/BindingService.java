@@ -101,7 +101,7 @@ public interface BindingService extends IService<Binding> {
 
 	/**
 	 * 添加多条关联关系
-	 * @param binding
+	 *
 	 */
-	void saveBindings(String publicId, List<String> binding ,String publicType);
+	void saveBindBatch(String publicId, String bindId ,String publicType);
 }

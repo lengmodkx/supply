@@ -19,6 +19,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -196,27 +197,30 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	/**
 	 * 保存关联信息
 	 * @param publicId 信息id
-	 * @param bindList 选择绑定的信息的id集合
+	 * @param bindId 选择绑定的信息的id集合
 	 * @param publicType 绑定信息的类型
 	 */
-	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
-	public void saveBindings(String publicId, List<String> bindList, String publicType) {
-		bindList.remove(publicId);
-		bindingMapper.deleteBatch(publicId,bindList);
-		List<Binding> binds = new ArrayList<Binding>();
-		for (int i = 0;i < bindList.size();i++){
+	public void saveBindBatch(String publicId, String bindId, String publicType) {
+		//移除自己
+		List<String> idList = Arrays.asList(bindId.split(","));
+		idList.remove(publicId);
+		bindingMapper.delete(new QueryWrapper<Binding>().eq("publicId",publicId).in("bindId",idList));
+
+		List<Binding> binds = new ArrayList<>();
+		for (int i = 0;i < idList.size();i++){
 			Binding binding = new Binding();
 			//设置该条绑定关系的id
 			binding.setId(IdGen.uuid());
 			//设置 谁绑定 的id
 			binding.setPublicId(publicId);
 			//设置被绑定的 信息的id
-			binding.setBindId(bindList.get(i));
+			binding.setBindId(idList.get(i));
 			//设置绑定的类型
 			binding.setPublicType(publicType);
+
 			binds.add(binding);
 		}
-		bindingMapper.insertBatch(binds);
+		saveBatch(binds);
 	}
 }

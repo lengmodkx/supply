@@ -61,8 +61,8 @@ public class CollectionApi {
      * @param publicId 任务/文件/日程/分享的id
      * @return
      */
-    @DeleteMapping
-    public JSONObject deleteCollection(@RequestParam String publicId){
+    @DeleteMapping("/{publicId}")
+    public JSONObject deleteCollection(@PathVariable String publicId){
         JSONObject object = new JSONObject();
         try{
             String userId = ShiroAuthenticationManager.getUserId();

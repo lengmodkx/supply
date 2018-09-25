@@ -42,11 +42,13 @@ public class BindingApi {
      * @return
      */
     @PostMapping
-    public JSONObject saveBinding(@RequestParam String publicId, @RequestParam String bindId[], @RequestParam String publicType, String projectId){
+    public JSONObject saveBinding(@RequestParam String publicId,
+                                  @RequestParam String bindId,
+                                  @RequestParam String publicType,
+                                  @RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<String> bindList = new ArrayList<String>(Arrays.asList(bindId));
-            bindingService.saveBindings(publicId,bindList,publicType);
+            bindingService.saveBindBatch(publicId,bindId,publicType);
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("系统异常,绑定失败:",e);
