@@ -228,15 +228,14 @@
 	<insert id="insertBatch">
 		insert into prm_binding
 		(
-			id,
 			public_id,
 			bind_id,
 			public_type
 		)
 		VALUES
-		<foreach collection="list" separator="," item="bind">
+		<foreach collection="bindList" separator="," item="bind">
 			(
-				#{bind.id},#{bind.publicId},#{bind.bindId},#{bind.publicType}
+			  	#{publicId},#{bind},#{publicType}
 			)
 		</foreach>
 	</insert>

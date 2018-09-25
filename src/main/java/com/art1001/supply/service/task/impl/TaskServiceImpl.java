@@ -63,15 +63,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     private String isparent = "0";
     /** taskMapper接口*/
-	@Resource
-	private TaskMapper taskMapper;
+    @Resource
+    private TaskMapper taskMapper;
 
-	/** userMapper接口 */
-	@Resource
+    /** userMapper接口 */
+    @Resource
     private UserMapper userMapper;
 
-	/** FablousMapper接口*/
-	@Resource
+    /** FablousMapper接口*/
+    @Resource
     private FabulousMapper fabulousMapper;
 
 	/** TaskCollectService接口  */
@@ -1567,6 +1567,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskMapper.findUidsByTaskId(taskId);
     }
 
+
     /**
      * 永久删除多个任务
      * @param taskIds 任务id 的集合
@@ -1576,5 +1577,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         taskMapper.deleteManyTask(taskIds);
     }
 
-
+    /**
+     * 查询出需要被关联的任务信息
+     * @param idList 任务id集合
+     */
+    @Override
+    public List<TaskBindingInfo> findBindingInfo(List<String> idList) {
+       return taskMapper.selectBindingInfo(idList);
+    }
 }
+

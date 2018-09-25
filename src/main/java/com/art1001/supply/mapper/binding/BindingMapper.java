@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 /**
  * bindingmapper接口
@@ -116,8 +117,10 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	void deleteBatch(@Param("publicId") String publicId, @Param("binds") List<String> bindList);
 
 	/**
-	 * 批量插入
-	 * @param binds 绑定信息
+	 * 插入批处理
+	 * @param bindList 关联信息的id 集合
+	 * @param publicId 当前要绑定其他信息的信息id
+	 * @param publicType 绑定的信息类型
 	 */
-	void insertBatch(List<Binding> binds);
+	void insertBatch(@Param("bindList") List<String> bindList, @Param("publicId") String publicId, @Param("publicType") String publicType);
 }

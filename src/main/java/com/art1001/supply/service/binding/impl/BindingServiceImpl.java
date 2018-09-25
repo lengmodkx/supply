@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Resource;
-
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
@@ -21,8 +20,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
@@ -201,13 +198,29 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	 * @param bindId 选择绑定的信息的id集合
 	 * @param publicType 绑定信息的类型
 	 */
+	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
 	public void saveBindBatch(String publicId, String bindId, String publicType) {
 		//移除自己
-		List<String> idList = Arrays.asList(bindId.split(","));
+        List<String> idList = new ArrayList<String>();
+        idList = Arrays.asList(bindId.split(","));
 		idList.remove(publicId);
+		//批量删除 重复关联的关联项
 		bindingMapper.delete(new QueryWrapper<Binding>().eq("publicId",publicId).in("bindId",idList));
 
+		List items = new ArrayList();
+		if(publicType.equals(BindingConstants.BINDING_TASK_NAME)){
+            taskService.findBindingInfo(idList);
+        }
+        if(publicType.equals(BindingConstants.BINDING_SHARE_NAME)){
+            items = shareService.list(new QueryWrapper<Share>().in("id",idList).notIn("id",publicId));
+        }
+        if(publicType.equals(BindingConstants.BINDING_FILE_NAME)){
+            items = fileService.list(new QueryWrapper<File>().in("file_id",idList).notIn("file_id",publicId));
+        }
+        if(publicType.equals(BindingConstants.BINDING_SCHEDULE_NAME)){
+            items = scheduleService.list(new QueryWrapper<Schedule>().in("schedule_id",idList).notIn("schedule_id",publicId));
+        }
 		List<Binding> binds = new ArrayList<>();
 		for (int i = 0;i < idList.size();i++){
 			Binding binding = new Binding();
@@ -219,11 +232,6 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 			binding.setBindId(idList.get(i));
 			//设置绑定的类型
 			binding.setPublicType(publicType);
-
-
-
-
-
 			binds.add(binding);
 		}
 		saveBatch(binds);

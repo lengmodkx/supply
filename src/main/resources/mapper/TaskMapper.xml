@@ -106,6 +106,16 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
+	<!-- 关联信息 -->
+	<resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskBindingInfo">
+		<id column="task_id" property="taskId" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="u_image" property="uImage" jdbcType="VARCHAR"/>
+		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+	</resultMap>
+
 	<!-- 统计页面数据 ResultMap -->
 	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
 		<result column="end_time" property="endTime" jdbcType="VARCHAR" />
@@ -1058,5 +1068,53 @@
        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
 	   group by FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
 	</select>
+
+	<!-- 查询出需要被关联的任务信息 -->
+	<select id="selectBindingInfo" resultMap="bindingInfo">
+		select a.*,b.relation_name as group_name from (SELECT
+			task_id,
+			task_name,
+			u_image,
+			project_name,
+			relation_name AS menu_name,
+			r.parent_id as parent_id
+		FROM
+		prm_task t
+		LEFT JOIN tb_user u ON t.executor = u.u_id
+		LEFT JOIN prm_project p ON t.project_id = p.project_id
+		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+		WHERE task_id in
+	  		(
+				<foreach collection="list" separator="," item="taskId">
+					#{taskId}
+				</foreach>
+  			)
+		) as a
+		LEFT JOIN (SELECT relation_id,relation_name from prm_relation) as b ON a.parent_id = b.relation_id
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </mapper>

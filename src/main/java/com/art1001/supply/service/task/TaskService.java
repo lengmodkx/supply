@@ -12,6 +12,7 @@ import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskBindingInfo;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
@@ -533,4 +534,10 @@ public interface TaskService extends IService<Task> {
 	 * @return list
 	 */
 	List findDoubleHistogramOverView(String projectId);
+
+	/**
+	 * 查询出需要被关联的任务信息
+	 * @param idList 任务id集合
+	 */
+    List<TaskBindingInfo> findBindingInfo(List<String> idList);
 }

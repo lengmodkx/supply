@@ -6,6 +6,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskBindingInfo;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
@@ -633,4 +634,10 @@ public interface TaskMapper extends BaseMapper<Task> {
      * @return list
      */
     List<StatisticsResultVO> taskByEndTaskOfEndTime(@Param("projectId")String projectId, @Param("currDate")Long currDate );
+
+	/**
+	 * 查询出需要被关联的任务信息
+	 * @param idList 任务id集合
+	 */
+	List<TaskBindingInfo> selectBindingInfo(List<String> idList);
 }
