@@ -91,8 +91,7 @@ public class ProjectController extends BaseController {
     public String home(Model model, HttpServletResponse response){
 
         try {
-            String userId = ShiroAuthenticationManager.getUserId();
-            UserEntity userEntity = userService.findById(userId);
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             //我创建的任务
             List<Project> projects = projectService.findProjectByMemberId(userEntity.getId(),0);
             model.addAttribute("projects",projects);

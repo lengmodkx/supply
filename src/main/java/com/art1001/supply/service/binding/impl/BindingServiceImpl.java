@@ -203,7 +203,6 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	 * @param bindId 选择绑定的信息的id集合
 	 * @param publicType 绑定信息的类型
 	 */
-	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
 	public void saveBindBatch(String publicId, String bindId, String publicType) {
 		//移除自己
@@ -211,7 +210,7 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
         idList = Arrays.asList(bindId.split(","));
 		idList.remove(publicId);
 		//批量删除 重复关联的关联项
-		bindingMapper.delete(new QueryWrapper<Binding>().eq("publicId",publicId).in("bindId",idList));
+		bindingMapper.delete(new QueryWrapper<Binding>().eq("public_id",publicId).in("bind_id",idList));
 
 		List<Binding> binds = new ArrayList<>();
 		for (int i = 0;i < idList.size();i++){

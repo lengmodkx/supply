@@ -1,4 +1,6 @@
 package com.art1001.supply.entity.user;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
@@ -14,6 +16,7 @@ import java.util.Date;
  *
  */
 @Data
+@TableName("tb_user")
 public class UserEntity extends Model<UserEntity> {
 
 	private static final long serialVersionUID = -6743567631108323096L;

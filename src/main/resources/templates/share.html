@@ -20,7 +20,7 @@
 
 </head>
 <body>
-<header th:include="common/header::frag (${user.userInfo.image},${user.id})"></header>
+<header th:include="common/header::frag (${user.image},${user.id})"></header>
 <div th:include="toper::toper (${project},${currentGroup},${user})"></div>
 
 <div class="share-wrap" style="margin-top: 100px">

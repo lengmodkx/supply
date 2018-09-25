@@ -44,8 +44,7 @@ public class BindingApi {
     @PostMapping
     public JSONObject saveBinding(@RequestParam String publicId,
                                   @RequestParam String bindId,
-                                  @RequestParam String publicType,
-                                  @RequestParam String projectId){
+                                  @RequestParam String publicType){
         JSONObject jsonObject = new JSONObject();
         try {
             bindingService.saveBindBatch(publicId,bindId,publicType);
