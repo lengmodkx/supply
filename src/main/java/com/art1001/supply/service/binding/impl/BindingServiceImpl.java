@@ -213,28 +213,28 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		bindingMapper.delete(new QueryWrapper<Binding>().eq("public_id",publicId).in("bind_id",idList));
 
 		List<Binding> binds = new ArrayList<>();
-		for (int i = 0;i < idList.size();i++){
+		idList.forEach(id->{
 			Binding binding = new Binding();
 			//设置 谁绑定 的id
 			binding.setPublicId(publicId);
 			//设置被绑定的 信息的id
-			binding.setBindId(idList.get(i));
+			binding.setBindId(id);
 			//设置绑定的类型
 			binding.setPublicType(publicType);
-            if(publicType.equals(Constants.TASK)){
-                binding.setBindContent(JSON.toJSONString(taskService.findTaskApiBean(idList.get(i))));
-            }
-            if(publicType.equals(Constants.SHARE)){
-                binding.setBindContent(JSON.toJSONString(shareService.findShareApiBean(idList.get(i))));
-            }
-            if(publicType.equals(Constants.FILE)){
-               	binding.setBindContent(JSON.toJSONString(fileService.findFileApiBean(idList.get(i))));
-            }
-            if(publicType.equals(Constants.SCHEDULE)){
-            	binding.setBindContent(JSON.toJSONString(scheduleService.findScheduleApiBean(idList.get(i))));
-            }
+			if(publicType.equals(Constants.TASK)){
+				binding.setBindContent(JSON.toJSONString(taskService.findTaskApiBean(id)));
+			}
+			if(publicType.equals(Constants.SHARE)){
+				binding.setBindContent(JSON.toJSONString(shareService.findShareApiBean(id)));
+			}
+			if(publicType.equals(Constants.FILE)){
+				binding.setBindContent(JSON.toJSONString(fileService.findFileApiBean(id)));
+			}
+			if(publicType.equals(Constants.SCHEDULE)){
+				binding.setBindContent(JSON.toJSONString(scheduleService.findScheduleApiBean(id)));
+			}
 			binds.add(binding);
-		}
+		});
 		saveBatch(binds);
 	}
 }
