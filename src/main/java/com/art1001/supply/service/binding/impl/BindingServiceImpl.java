@@ -21,6 +21,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -218,6 +219,10 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 			binding.setBindId(idList.get(i));
 			//设置绑定的类型
 			binding.setPublicType(publicType);
+
+
+
+
 
 			binds.add(binding);
 		}
