@@ -11,6 +11,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -121,8 +122,8 @@ public class ProjectApi {
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
-    @GetMapping
-    public JSONObject projects(){
+    @GetMapping("/{orgId}")
+    public JSONObject projects(@PathVariable(value = "orgId",required = false)String orgId){
         JSONObject object = new JSONObject();
         try{
 
@@ -150,6 +151,25 @@ public class ProjectApi {
         }
         return object;
     }
+
+    /**
+     * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
+     * @return
+     */
+    @GetMapping("/{orgId}")
+    public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
+        JSONObject object = new JSONObject();
+        try{
+            List<Project> projectList = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId));
+            object.put("result",1);
+            object.put("data",projectList);
+        }catch (Exception e){
+            log.error("系统异常,信息获取失败:",e);
+            throw new SystemException(e);
+        }
+        return object;
+    }
+
 
     /**
      * 获取项目详情

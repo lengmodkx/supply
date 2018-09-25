@@ -263,7 +263,7 @@
 	</update>
 
 
-	<!-- 查询我创建的所有项目 -->
+	<!-- 查询我创建的所有项目/我删除的全部项目 -->
 	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
 		SELECT
 		<include refid="Base_Column_List" />
@@ -272,14 +272,16 @@
 	</select>
 
 
-	<!--查询我参与的项目-->
+	<!--查询我参与的个人项目/企业项目-->
 	<select id="findProjectByUserId" resultMap="BaseResultMap1">
 		  select p.project_id,
 			  p.project_name,
 			  p.project_cover,
 			  p.project_des
 		  from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		  where p.project_del=0 and pm.member_id = #{userId} and pm.collect=#{collect} order by pm.create_time asc
+		  where p.project_del=0 and pm.member_id = #{userId} and pm.collect=#{collect}
+				and p.organization_id=#{orgId}
+				 order by pm.create_time asc
 	</select>
 
 	<!-- 查询出该用户执行的任务信息和所在项目信息 -->

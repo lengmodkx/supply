@@ -9,6 +9,7 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -57,15 +58,14 @@ public class BindingApi {
     }
 
     /**
-     * @param publicId 当前绑定信息的id
-     * @param bindingId 选择要移除的关联信息的id
+     * @param bindId 关联关系id
      * @return
      */
     @DeleteMapping
-    public JSONObject deleteBinding(@RequestParam(value = "publicId") String publicId, @RequestParam(value = "bindingId") String bindingId){
+    public JSONObject deleteBinding(@RequestParam(value = "bindId") String bindId){
         JSONObject jsonObject = new JSONObject();
         try {
-            bindingService.deleteBindingById(publicId,bindingId);
+            bindingService.removeById(bindId);
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("系统异常,关联关系删除失败:",e);
@@ -82,25 +82,28 @@ public class BindingApi {
      */
     @GetMapping
     public JSONObject bindingInfo(@RequestParam(value = "taskId",required = false) String taskId,
-                           @RequestParam(value = "fileId",required = false) String fileId,
-                           @RequestParam(value = "shareId",required = false) String shareId,
-                           @RequestParam(value = "scheduleId",required = false) String scheduleId,
-                              @RequestParam(value = "projectId") String projectId){
+                                  @RequestParam(value = "fileId",required = false) String fileId,
+                                  @RequestParam(value = "shareId",required = false) String shareId,
+                                  @RequestParam(value = "scheduleId",required = false) String scheduleId,
+                                  @RequestParam(value = "orgId",required = false) String orgId,
+                                  @RequestParam(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //获取当前用户参与的所有项目
-            List<Project> projectList = projectService.listProjectByUid(ShiroAuthenticationManager.getUserId());
-            if(!projectList.isEmpty()){
-                List<Relation> allGroupInfoByProjectId = relationService.findAllGroupInfoByProjectId(projectList.get(0).getProjectId());
-                jsonObject.put("groups",allGroupInfoByProjectId);
-            }
-            jsonObject.put("projectList",projectList);
-            jsonObject.put("id",taskId);
-            jsonObject.put("id",scheduleId);
-            jsonObject.put("id",shareId);
-            jsonObject.put("id",fileId);
-            jsonObject.put("projectId",projectId);
+            String userId = ShiroAuthenticationManager.getUserId();
+            List<Project> projectCollect = projectService.findProjectByUserId(userId,1);
 
+            List<Project> projectJoin = projectService.findProjectByUserId(userId,0);
+
+            List<Project> projectOrg = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId));
+
+            List<Relation> relationList = relationService.list(new QueryWrapper<Relation>().eq("parent_id","0").eq("projectId",projectId));
+
+            jsonObject.put("projectCollect",projectCollect);
+            jsonObject.put("projectOrg",projectOrg);
+            jsonObject.put("projectJoin",projectJoin);
+            jsonObject.put("relationList",relationList);
+            jsonObject.put("projectId",projectId);
         } catch (Exception e){
             log.error("系统异常:",e);
             throw new SystemException(e);
