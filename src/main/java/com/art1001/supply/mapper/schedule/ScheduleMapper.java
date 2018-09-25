@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -166,4 +167,11 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 */
 	@Select("select member_ids from prm_schedule where schedule_id = #{scheduleId}")
     String findUidsByScheduleId(String scheduleId);
+
+	/**
+	 * 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称)
+	 * @param id 日程id
+	 * @return
+	 */
+    ScheduleApiBean selectScheduleApiBean(String id);
 }

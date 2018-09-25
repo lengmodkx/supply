@@ -6,6 +6,7 @@ import java.util.Map;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
@@ -231,4 +232,11 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @param fileList 文件信息集合
 	 */
     void saveFileBatch(List<File> fileList);
+
+	/**
+	 * 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url)
+	 * @param id 文件id
+	 * @return
+	 */
+    FileApiBean selectFileApiBean(String id);
 }

@@ -39,6 +39,15 @@
         <result column="title" property="name" jdbcType="VARCHAR" />
         <result column="update_time" property="updateTime" jdbcType="BIGINT" />
     </resultMap>
+
+    <!-- 用于关联、收藏的数据 -->
+    <resultMap id="ShareApiBean" type="com.art1001.supply.entity.share.ShareApiBean">
+        <id column="id" property="shareId" />
+        <result column="title" property="shareName" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="u_image" property="userImage" jdbcType="VARCHAR"/>
+    </resultMap>
     
 	<sql id="Base_Column_List">
 		id,
@@ -253,6 +262,12 @@
     <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
         select id,title,update_time
         from prm_share where is_del = 1 and project_id = #{projectId}
+    </select>
+
+    <!-- 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容) -->
+    <select id="selectShareApiBean" resultMap="ShareApiBean">
+        SELECT id,`title`,`content`,u_image,project_name FROM prm_share s LEFT JOIN tb_user u on s.member_id = u.u_id LEFT JOIN prm_project p ON s.project_id = p.project_id
+        where id = #{id}
     </select>
 
 </mapper>

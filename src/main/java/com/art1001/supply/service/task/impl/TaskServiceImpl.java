@@ -1578,11 +1578,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出需要被关联的任务信息
-     * @param idList 任务id集合
+     * @param id 任务id集合
      */
     @Override
-    public List<TaskApiBean> findBindingInfo(List<String> idList) {
-       return taskMapper.findTaskApiBean(idList);
+    public TaskApiBean findTaskApiBean(String id) {
+       return taskMapper.findTaskApiBean(id);
     }
 }
 

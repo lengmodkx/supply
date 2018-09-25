@@ -43,6 +43,15 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
+	<!-- 用于关联、收藏的数据 -->
+	<resultMap id="FileApiBean" type="com.art1001.supply.entity.file.FileApiBean">
+		<id column="file_id" property="fileId"/>
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="ext" property="ext" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<resultMap id="PublicMap" type="com.art1001.supply.entity.file.File">
 		<id column="file_id" property="fileId"/>
 		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
@@ -484,7 +493,22 @@
 		select <include refid="Base_Column_List"/> from prm_file where parent_id = #{parentId}
 	</select>
 
-	<insert id="savePublicFile">
+	<!-- 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url) -->
+    <select id="selectFileApiBean" resultMap="FileApiBean">
+		SELECT
+			file_id,
+			ext,
+			file_name,
+			file_url,
+			project_name
+		FROM
+		prm_file f
+		LEFT JOIN prm_project p ON f.project_id = p.project_id
+		WHERE
+		f.file_id = #{id}
+	</select>
+
+    <insert id="savePublicFile">
 		insert into prm_public_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 

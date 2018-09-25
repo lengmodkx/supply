@@ -11,6 +11,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.entity.user.UserEntity;
@@ -351,5 +352,15 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 	@Override
 	public String findUidsByScheduleId(String scheduleId) {
 		return scheduleMapper.findUidsByScheduleId(scheduleId);
+	}
+
+	/**
+	 * 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称)
+	 * @param id 日程id
+	 * @return
+	 */
+	@Override
+	public ScheduleApiBean findScheduleApiBean(String id) {
+		return scheduleMapper.selectScheduleApiBean(id);
 	}
 }

@@ -46,6 +46,15 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
+	<!-- 用于关联、收藏的数据 -->
+	<resultMap id="ScheduleApiBean" type="com.art1001.supply.entity.schedule.ScheduleApiBean">
+		<id column="schedule_id" property="scheduleId"/>
+		<result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
+		<result column="start_time" property="startTime" jdbcType="BIGINT" />
+		<result column="end_time" property="endTime" jdbcType="BIGINT" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id property="date" column="date" />
 		<result property="proejctId" column="project_id" />
@@ -436,6 +445,19 @@
 	<select id="findRecycleBin" resultMap="BaseResultMap2" parameterType="java.lang.String">
 		select schedule_id,schedule_name,update_time
 		from prm_schedule where is_del = 1 and project_id = #{projectId}
+	</select>
+
+	<!-- 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称) -->
+    <select id="selectScheduleApiBean" resultMap="ScheduleApiBean">
+		SELECT
+			schedule_id,
+			schedule_name,
+			s.start_time,
+			s.end_time,
+			project_name
+		FROM
+		prm_schedule s
+		LEFT JOIN prm_project p ON s.project_id = p.project_id WHERE schedule_id = #{id}
 	</select>
 
 </mapper>

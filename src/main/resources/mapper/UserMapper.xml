@@ -261,14 +261,14 @@
 		where u_id = #{id}
 	</update>
 	
-	<delete id="deleteBatchById" parameterType="list">
-		<![CDATA[  
-       delete from tb_user where u_id in  
-    	]]>  
-	    <foreach collection="list" item = "id" open="(" separator="," close=")">
-	    #{id}
-	    </foreach>  
-	</delete>
+	<!--<delete id="deleteBatchById" parameterType="list">-->
+		<!--<![CDATA[  -->
+       <!--delete from tb_user where u_id in  -->
+    	<!--]]>  -->
+	    <!--<foreach collection="list" item = "id" open="(" separator="," close=")">-->
+	    <!--#{id}-->
+	    <!--</foreach>  -->
+	<!--</delete>-->
 	
 	<delete id="deleteBatchUserRole" parameterType="list">
 		<![CDATA[  
@@ -325,18 +325,10 @@
 			u.u_creator_name,
 			u.u_create_time,
 			u.u_update_time,
-			i.u_sex,
-			i.u_birthday,
-			i.u_telephone,
-			i.u_email,
-			i.u_image,
-			i.u_address,
-			i.u_job,
-		    i.u_default_img
+			u.u_image
 		FROM
-			tb_user u,tb_user_info i
+			tb_user u
 		WHERE
-			u.u_id = i.u_id
 			<if test="memberIds != null and memberIds != ''">
 				and u.u_id in (
 				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">

@@ -637,7 +637,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 
 	/**
 	 * 查询出需要被关联的任务信息
-	 * @param idList 任务id集合
+	 * @param id 任务id集合
 	 */
-	List<TaskApiBean> findTaskApiBean(List<String> idList);
+	TaskApiBean findTaskApiBean(String id);
 }

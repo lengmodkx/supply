@@ -48,7 +48,7 @@ public class Binding extends Model<Binding> {
 	/**
 	 * 绑定的内容
 	 */
-	private JSONObject bindContent;
+	private String bindContent;
 
 	@Override
 	protected Serializable pkVal() {

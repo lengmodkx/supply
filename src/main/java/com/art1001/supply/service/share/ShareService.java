@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -137,4 +138,11 @@ public interface ShareService extends IService<Share> {
 	 * @return
 	 */
 	Share findByIdAllInfo(String shareId);
+
+	/**
+	 * 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容)
+	 * @param id 分享id
+	 * @return
+	 */
+	ShareApiBean findShareApiBean(String id);
 }

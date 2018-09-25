@@ -9,6 +9,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
@@ -279,5 +280,15 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 		Share byId = shareMapper.findById(shareId);
 		byId.setCollect(publicCollectService.judgeCollectPublic(ShiroAuthenticationManager.getUserId(), shareId, "分享"));
 		return byId;
+	}
+
+	/**
+	 * 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容)
+	 * @param id 分享id
+	 * @return
+	 */
+	@Override
+	public ShareApiBean findShareApiBean(String id) {
+		return shareMapper.selectShareApiBean(id);
 	}
 }

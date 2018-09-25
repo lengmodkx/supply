@@ -3,6 +3,7 @@ package com.art1001.supply.service.file;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -256,4 +257,11 @@ import java.util.List;
 	 * @param fileId 更新的文件id
 	 */
 	String updateVersion(MultipartFile file, String fileId);
+
+	/**
+	 * 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url)
+	 * @param id 文件id
+	 * @return
+	 */
+	FileApiBean findFileApiBean(String id);
 }

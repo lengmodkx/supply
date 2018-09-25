@@ -112,7 +112,7 @@
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
 		<result column="u_image" property="userImage" jdbcType="VARCHAR"/>
 		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
-		<result column="relation_name" property="menuName" jdbcType="VARCHAR"/>
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
 		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
 	</resultMap>
 
@@ -1082,8 +1082,8 @@
 			t.task_name,
 			u.u_image,
 			p.project_name,
-			r.relation_name,
-			r1.relation_name,
+			r.relation_name as menu_name,
+			r1.relation_name as group_name
 		FROM
 			prm_task t
 			LEFT JOIN tb_user u ON t.executor = u.u_id

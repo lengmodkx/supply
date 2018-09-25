@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Resource;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
@@ -20,6 +24,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mchange.v1.identicator.IdList;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
@@ -208,30 +213,27 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		//批量删除 重复关联的关联项
 		bindingMapper.delete(new QueryWrapper<Binding>().eq("publicId",publicId).in("bindId",idList));
 
-		List items = new ArrayList();
-		if(publicType.equals(BindingConstants.BINDING_TASK_NAME)){
-            taskService.findBindingInfo(idList);
-        }
-        if(publicType.equals(BindingConstants.BINDING_SHARE_NAME)){
-            items = shareService.list(new QueryWrapper<Share>().in("id",idList).notIn("id",publicId));
-        }
-        if(publicType.equals(BindingConstants.BINDING_FILE_NAME)){
-            items = fileService.list(new QueryWrapper<File>().in("file_id",idList).notIn("file_id",publicId));
-        }
-        if(publicType.equals(BindingConstants.BINDING_SCHEDULE_NAME)){
-            items = scheduleService.list(new QueryWrapper<Schedule>().in("schedule_id",idList).notIn("schedule_id",publicId));
-        }
 		List<Binding> binds = new ArrayList<>();
 		for (int i = 0;i < idList.size();i++){
 			Binding binding = new Binding();
-			//设置该条绑定关系的id
-			binding.setId(IdGen.uuid());
 			//设置 谁绑定 的id
 			binding.setPublicId(publicId);
 			//设置被绑定的 信息的id
 			binding.setBindId(idList.get(i));
 			//设置绑定的类型
 			binding.setPublicType(publicType);
+            if(publicType.equals(Constants.TASK)){
+                binding.setBindContent(JSON.toJSONString(taskService.findTaskApiBean(idList.get(i))));
+            }
+            if(publicType.equals(Constants.SHARE)){
+                binding.setBindContent(JSON.toJSONString(shareService.findShareApiBean(idList.get(i))));
+            }
+            if(publicType.equals(Constants.FILE)){
+               	binding.setBindContent(JSON.toJSONString(fileService.findFileApiBean(idList.get(i))));
+            }
+            if(publicType.equals(Constants.SCHEDULE)){
+            	binding.setBindContent(JSON.toJSONString(scheduleService.findScheduleApiBean(idList.get(i))));
+            }
 			binds.add(binding);
 		}
 		saveBatch(binds);

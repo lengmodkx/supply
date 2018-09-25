@@ -12,6 +12,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
@@ -761,5 +762,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         String format = simpleDateFormat.format(time);
         fileVersion.setInfo(ShiroAuthenticationManager.getUserEntity().getUserName() + " 上传于 " + format);
         return fileVersion;
+    }
+
+    /**
+     * 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url)
+     * @param id 文件id
+     * @return
+     */
+    @Override
+    public FileApiBean findFileApiBean(String id) {
+        return fileMapper.selectFileApiBean(id);
     }
 }

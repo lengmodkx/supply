@@ -18,4 +18,9 @@ public class Constants {
 
     public static final String EXECUTOR = "执行者";
     public static final String PARTICIPANT = "参与者";
+
+
+    public static final String TAG_NAME = "标签";
+    public static final String TASK_GROUP = "任务分组";
+    public static final String FOLDER = "文件夹";
 }

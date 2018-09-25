@@ -152,7 +152,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
 
 		//往项目用户关联表插入数据
-		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","拥有者"));
+		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role","拥有者"));
 		ProjectMember projectMember = new ProjectMember();
 		projectMember.setProjectId(project.getProjectId());
 		projectMember.setMemberId(ShiroAuthenticationManager.getUserId());

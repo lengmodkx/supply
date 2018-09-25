@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -163,4 +164,11 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return
 	 */
     String findUidsByScheduleId(String scheduleId);
+
+	/**
+	 * 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称)
+	 * @param id 日程id
+	 * @return
+	 */
+	ScheduleApiBean findScheduleApiBean(String id);
 }

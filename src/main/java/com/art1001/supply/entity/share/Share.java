@@ -116,6 +116,12 @@ public class Share extends Model<Share> {
 	 */
 	private int collect;
 
+	/**
+	 * 是否被删除
+	 * @return
+	 */
+	private int isDel;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;
