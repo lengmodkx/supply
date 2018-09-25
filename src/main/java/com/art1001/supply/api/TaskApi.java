@@ -53,17 +53,22 @@ public class TaskApi {
                                  @RequestParam(value = "repeat",required = false)String repeat,
                                  @RequestParam(value = "remind",required = false)String remind,
                                  @RequestParam(value = "priority",required = false)String priority,
-                                 @RequestParam(value = "tagIds",required = false)String tagIds){
+                                 @RequestParam(value = "tagIds",required = false)String tagIds,
+                                 @RequestParam(value = "taskMenuId",required = false)String taskMenuId,
+                                 @RequestParam(value = "taskGroupId",required = false)String taskGroupId){
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
             task.setTaskName(taskName);
             task.setTaskUIds(taskUIds);
+            task.setTaskMenuId(taskMenuId);
+            task.setTaskGroupId(taskGroupId);
             task.setPrivacyPattern(privacyPattern);
-            if(StringUtils.isNotEmpty(executor)){
-                task.setExecutor(executor);
-            }
-
+            task.setExecutor(executor);
+            task.setRepeat(repeat);
+            task.setRemind(remind);
+            task.setPriority(priority);
+            task.setTagId(tagIds);
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
@@ -72,19 +77,6 @@ public class TaskApi {
                 task.setStartTime(DateUtils.strToLong(endTime));
             }
 
-            if(StringUtils.isNotEmpty(repeat)){
-                task.setRepeat(repeat);
-            }
-
-            if(StringUtils.isNotEmpty(remind)){
-                task.setRemind(remind);
-            }
-            if(StringUtils.isNotEmpty(priority)){
-                task.setPriority(priority);
-            }
-            if(StringUtils.isNotEmpty(tagIds)){
-                task.setTagId(tagIds);
-            }
             taskService.saveTask(task);
         }catch (Exception e){
             log.error("创建任失败:",e);

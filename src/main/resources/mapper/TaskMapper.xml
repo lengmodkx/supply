@@ -112,7 +112,7 @@
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
 		<result column="u_image" property="userImage" jdbcType="VARCHAR"/>
 		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
-		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+		<result column="relation_name" property="menuName" jdbcType="VARCHAR"/>
 		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
 	</resultMap>
 
@@ -350,6 +350,9 @@
 			<if test="taskMenuId != null and taskMenuId != ''">
 			task_menu_id,
 			</if>
+			<if test="taskGroupId != null and taskGroupId != ''">
+				task_group_id,
+			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 			task_status,
 			</if>
@@ -441,6 +444,9 @@
 			</if>
 			<if test="taskMenuId != null and taskMenuId != ''">
 				#{taskMenuId},
+			</if>
+			<if test="taskGroupId != null and taskGroupId != ''">
+				#{taskGroupId},
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
 				#{taskStatus},
@@ -1071,26 +1077,20 @@
 
 	<!-- 查询出需要被关联的任务信息 -->
 	<select id="findTaskApiBean" resultMap="bindingInfo">
-		select a.*,b.relation_name as group_name from (SELECT
-			task_id,
-			task_name,
-			u_image,
-			project_name,
-			relation_name AS menu_name,
-			r.parent_id as parent_id
+		SELECT
+			t.task_id,
+			t.task_name,
+			u.u_image,
+			p.project_name,
+			r.relation_name,
+			r1.relation_name,
 		FROM
-		prm_task t
-		LEFT JOIN tb_user u ON t.executor = u.u_id
-		LEFT JOIN prm_project p ON t.project_id = p.project_id
-		LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
-		WHERE task_id in
-	  		(
-				<foreach collection="list" separator="," item="taskId">
-					#{taskId}
-				</foreach>
-  			)
-		) as a
-		LEFT JOIN (SELECT relation_id,relation_name from prm_relation) as b ON a.parent_id = b.relation_id
+			prm_task t
+			LEFT JOIN tb_user u ON t.executor = u.u_id
+			LEFT JOIN prm_project p ON t.project_id = p.project_id
+			LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
+			LEFT JOIN prm_relation r1 ON t.task_group_id = r1.relation_id
+		WHERE task_id = #{taskId}
 	</select>
 
 
