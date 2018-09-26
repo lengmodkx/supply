@@ -258,25 +258,29 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <!--<configuration>-->
-                    <!--<fork>true</fork>-->
-                <!--</configuration>-->
-            </plugin>
 
             <plugin>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>azure-webapp-maven-plugin</artifactId>
-                <!-- Check latest version on Maven Central -->
-                <version>1.1.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
                 <configuration>
-                    <resourceGroup>supply</resourceGroup>
-                    <appName>${project.artifactId}</appName>
-                    <region>chinanorth</region>
-                    <javaVersion>1.8</javaVersion>
-                    <deploymentType>war</deploymentType>
+                    <timestampFormat>yyyyMMddHHmmss</timestampFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>${project.artifactId}_${timestamp}</warName>
+                    <packagingExcludes>src/main/resources/**</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

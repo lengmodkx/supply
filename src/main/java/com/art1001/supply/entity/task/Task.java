@@ -1,12 +1,12 @@
 package com.art1001.supply.entity.task;
-import java.io.*;
-import java.util.List;
-
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * taskEntity
@@ -214,19 +214,6 @@ public class Task extends Model<Task> {
 	 * 任务附件
 	 */
 	private List<TaskFile> taskFileList;
-
-	public static <T> T clone(T obj) throws Exception {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(bout);
-		oos.writeObject(obj);
-
-		ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-		ObjectInputStream ois = new ObjectInputStream(bin);
-		return (T) ois.readObject();
-
-		// 说明：调用ByteArrayInputStream或ByteArrayOutputStream对象的close方法没有任何意义
-		// 这两个基于内存的流只要垃圾回收器清理对象就能够释放资源，这一点不同于对外部资源（如文件流）的释放
-	}
 
 	@Override
 	protected Serializable pkVal() {
