@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.project;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -106,4 +107,5 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @return
 	 */
 	List<Project> findProjectByUserId(@Param("userId") String userId, @Param("collect") int collect);
+
 }

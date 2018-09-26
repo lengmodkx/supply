@@ -209,7 +209,7 @@ public class ProjectController extends BaseController {
             //写资源表
             jsonObject.put("result",1);
             jsonObject.put("projectId",project.getProjectId());
-        }catch (Exception e){
+        } catch (Exception e){
             throw new AjaxException(e);
         }
 

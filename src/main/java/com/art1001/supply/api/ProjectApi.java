@@ -156,7 +156,7 @@ public class ProjectApi {
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
-    @GetMapping("/{orgId}")
+    @GetMapping("/{orgId}/project_info")
     public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
         JSONObject object = new JSONObject();
         try{
@@ -176,7 +176,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
-    @GetMapping("/{projectId}")
+    @GetMapping("/{projectId}/details")
     public JSONObject projectDetail(@PathVariable String projectId){
         JSONObject object = new JSONObject();
         try{

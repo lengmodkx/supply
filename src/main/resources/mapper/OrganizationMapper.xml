@@ -13,8 +13,16 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="contact" property="contact" jdbcType="VARCHAR" />
 		<result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
-
 	</resultMap>
+
+	<resultMap id="joinOrgInfo" type="com.art1001.supply.entity.organization.Organization">
+		<id column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+		<result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
+		<collection property="joinProjects" ofType="com.art1001.supply.entity.project.Project">
+			<id column="project_id" property="projectId"/>
+			<result column="project_name" property="projectName"/>
+		</collection>
+ 	</resultMap>
     
 	<sql id="Base_Column_List">
 				organization_id,
@@ -190,5 +198,17 @@
 		WHERE organization_id = #{organizationId}
 
 	</update>
+
+	<!-- 查询出 参与的所有企业 以及 项目 -->
+	<select id="selectJoinOrgProject" resultMap="joinOrgInfo">
+		SELECT
+			org.organization_id,organization_name,p.project_id,p.project_name
+		FROM
+			prm_organization org
+		INNER JOIN prm_organization_member orgm ON org.organization_id = orgm.organization_id
+		LEFT JOIN prm_project p ON org.organization_id = p.organization_id
+		WHERE
+			orgm.member_id = #{id}
+	</select>
 	
 </mapper>

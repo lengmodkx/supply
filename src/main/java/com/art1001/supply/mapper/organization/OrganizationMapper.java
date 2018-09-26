@@ -56,4 +56,11 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
 	 */
 	List<Organization> findOrganizationAllList();
 
+	/**
+	 * 查询出 参与的所有企业 以及 项目
+	 * @param userId
+	 * @return
+	 */
+	List<Organization> selectJoinOrgProject(String userId);
+
 }

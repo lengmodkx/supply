@@ -90,5 +90,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	public List<Organization> findOrganizationAllList(){
 		return organizationMapper.findOrganizationAllList();
 	}
-	
+
+	/**
+	 * 获取用户参与的所有企业 以及 企业项目
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public List<Organization> findJoinOrgProject(String userId) {
+		return organizationMapper.selectJoinOrgProject(userId);
+	}
 }

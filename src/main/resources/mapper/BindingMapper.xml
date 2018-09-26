@@ -178,6 +178,31 @@
 		WHERE id = #{id}
 	</update>
 
+	<!-- 更新json数据 -->
+	<update id="updateJson">
+		update prm_binding SET bind_content =json_set(
+		<if test="userImage != null and userImage != ''">
+			bind_content,'$.userImage',#{userImage}
+		</if>
+
+		<if test="userImage != null and userImage != ''">
+			bind_content,'$.userImage',#{userImage}
+		</if>
+		<if test="type == '任务'">
+			bind_content,'$.taskName',#{name}
+		</if>
+		<if test="type == '文件'">
+			bind_content,'$.fileName',#{name}
+		</if>
+		<if test="type == '日程'">
+			bind_content,'$.scheduleName',#{name}
+		</if>
+		<if test="type == '分享'">
+			bind_content,'$.share',#{name}
+		</if>
+		  ) WHERE bind_id = #{id};
+	</update>
+
 
 	<select id="findBindingList" resultMap="BaseResultMap" parameterType="java.lang.String">
 		SELECT

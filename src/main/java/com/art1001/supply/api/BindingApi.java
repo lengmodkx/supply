@@ -1,11 +1,13 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -34,6 +36,9 @@ public class BindingApi {
 
     @Resource
     private RelationService relationService;
+
+    @Resource
+    private OrganizationService organizationService;
 
     /**
      * 任务,日程，文件，分享与任务,日程，文件，分享的绑定关系
@@ -89,13 +94,12 @@ public class BindingApi {
                                   @RequestParam(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            //获取当前用户参与的所有项目
             String userId = ShiroAuthenticationManager.getUserId();
             List<Project> projectCollect = projectService.findProjectByUserId(userId,1);
 
             List<Project> projectJoin = projectService.findProjectByUserId(userId,0);
 
-            List<Project> projectOrg = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId));
+            List<Organization> projectOrg = organizationService.findJoinOrgProject(userId);
 
             List<Relation> relationList = relationService.list(new QueryWrapper<Relation>().eq("parent_id","0").eq("projectId",projectId));
 

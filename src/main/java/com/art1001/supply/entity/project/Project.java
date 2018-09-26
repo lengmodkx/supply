@@ -105,6 +105,12 @@ public class Project extends Model<Project> {
      */
     private Long updateTime;
 
+    /**
+     * 企业id
+     * @return
+     */
+    private String organizationId;
+
     @Override
     protected Serializable pkVal() {
         return this.projectId;

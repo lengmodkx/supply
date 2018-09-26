@@ -3,6 +3,7 @@ package com.art1001.supply.service.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -110,4 +111,5 @@ public interface ProjectService extends IService<Project> {
 	 * @param type 选项卡的类型
 	 */
 	List<RecycleBinVO> recycleBinInfo(String projectId, String type);
+
 }
