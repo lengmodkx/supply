@@ -150,7 +150,67 @@
 
 	</update>
 
-	<!-- 判断当前用户有没有收藏该项目 -->
+	<!-- 更新收藏表的 json 数据信息 -->
+    <update id="updateJson">
+		update prm_public_collect SET collect_content =json_set(
+		collect_content,
+		<trim suffixOverrides=",">
+			<if test="type == '任务'">
+
+				<if test="obj.userImage != null and obj.userImage != ''">
+					'$.userImage',#{obj.userImage},
+				</if>
+
+				<if test="obj.remarks != null and obj.remarks != ''">
+					'$.remarks',#{obj.remarks},
+				</if>
+
+				<if test="obj.taskName != null and obj.taskName != ''">
+					'$.taskName',#{obj.taskName},
+				</if>
+
+				<if test="obj.menuName != null and obj.menuName != ''">
+					'$.menuName',#{obj.menuName},
+				</if>
+
+				<if test="obj.groupName != null and obj.groupName != ''">
+					'$.groupName',#{obj.groupName},
+				</if>
+
+				<if test="obj.projectName != null and obj.projectName != ''">
+					'$.projectName',#{obj.projectName},
+				</if>
+
+			</if>
+			<if test="type == '文件'">
+				<if test="obj.fileName != null and obj.fileName != ''">
+					'$.fileName',#{obj.fileName},
+				</if>
+				<if test="obj.projectName != null and obj.projectName != ''">
+					'$.projectName',#{obj.projectName},
+				</if>
+			</if>
+			<if test="type == '日程'">
+				<if test="obj.scheduleName != null and obj.scheduleName != ''">
+					'$.scheduleName',#{obj.scheduleName},
+				</if>
+				<if test="obj.projectName != null and obj.projectName != ''">
+					'$.projectName',#{obj.projectName},
+				</if>
+			</if>
+			<if test="type == '分享'">
+				<if test="obj.shareName != null and obj.shareName != ''">
+					'$.shareName',#{obj.shareName},
+				</if>
+				<if test="obj.projectName != null and obj.projectName != ''">
+					'$.projectName',#{obj.projectName},
+				</if>
+			</if>
+		</trim>
+		) WHERE public_id = #{id};
+	</update>
+
+    <!-- 判断当前用户有没有收藏该项目 -->
 	<select id="judgeCollectPublic" resultType="java.lang.Integer">
 		select count(0) from prm_public_collect where public_id = #{publicId} and member_id = #{memberId} and collect_type = #{collectType}
 	</select>

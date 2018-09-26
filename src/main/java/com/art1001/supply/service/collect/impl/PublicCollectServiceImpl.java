@@ -244,4 +244,15 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	public void deleteManyCollectByItemId(List<String> publicId) {
 		publicCollectMapper.deleteManyCollectByItemId(publicId);
 	}
+
+	/**
+	 * 更新收藏表的 json 数据信息
+	 * @param id 信息id
+	 * @param obj 要更新的字段信息
+	 * @param type 要更新的信息类型
+	 */
+	@Override
+	public void updateJson(String id, Object obj, String type) {
+		publicCollectMapper.updateJson(id,obj,type);
+	}
 }

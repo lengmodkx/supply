@@ -78,14 +78,14 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 		log.setLogType(0);
 		//是(1.任务,2.文件,3.日程,4.分享) 哪个的日志
 		log.setLogFlag(logFlag);
-		log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + content);
+		log.setContent("何少华" + " " + content);
 		//哪个用户操作产生的日志
-		log.setMemberId(ShiroAuthenticationManager.getUserId());
+		log.setMemberId("0ea056a169424185993ff8c6fa832dd5");
 		//对哪个信息的操作
 		log.setPublicId(publicId);
 		//创建时间
 		log.setCreateTime(System.currentTimeMillis());
-		logMapper.saveLog(log);
+		logMapper.insert(log);
 		Log returnLog = logMapper.findLogById(log.getId());
 		return returnLog;
 	}
