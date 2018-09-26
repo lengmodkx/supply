@@ -40,4 +40,9 @@ public class TaskApiBean {
      * 执行者头像
      */
     private String userImage;
+
+    /**
+     * 任务备注
+     */
+    private String remarks;
 }

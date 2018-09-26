@@ -48,9 +48,11 @@
 					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.taskMenu"/>
 	</resultMap>
 
+	<!-- 菜单、分组、项目 名称 映射 -->
 	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
-		<result property="projectName" column="projectName"/>
-		<result property="taskMenuName" column="taskMenuName"/>
+		<result property="projectName" column="project_name"/>
+		<result property="taskMenuName" column="menu_name"/>
+		<result property="taskGroupName" column="group_name"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -435,40 +437,16 @@
 
 	<!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
 	<select id="findRelationNameAndProjectName" resultMap="BaseResultMap4">
-			SELECT
-		`GROUP`.group_name AS taskMenuName,
-		project.project_name AS projectName
-	FROM
-		(
-			SELECT
-				relation_name AS group_name
-			FROM
-				prm_relation
-			WHERE
-				relation_id = (
-					SELECT
-						parent_id
-					FROM
-						prm_relation
-					WHERE
-						relation_id = #{menuId}
-				)
-		) AS `group`,
-		(
-			SELECT
-				project_name
-			FROM
-				prm_project
-			WHERE
-				project_id = (
-					SELECT
-						project_id AS project_name
-					FROM
-						prm_relation
-					WHERE
-						relation_id = #{menuId}
-				)
-		) AS `project`
+		SELECT
+			r.relation_name as menu_name,
+			project_name,
+			r2.relation_name as group_name
+		FROM
+		prm_relation r
+		LEFT JOIN prm_project p ON r.project_id = p.project_id
+		LEFT JOIN prm_relation r2 ON r.parent_id = r2.relation_id
+		WHERE
+			r.relation_id = #{menuId}
 	</select>
 
 	<!-- 查询出分组 或者 菜单的最大排序 -->

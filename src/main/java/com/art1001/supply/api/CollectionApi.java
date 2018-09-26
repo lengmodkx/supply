@@ -1,11 +1,19 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +36,18 @@ public class CollectionApi {
     @Resource
     private PublicCollectService collectService;
 
+    @Resource
+    private TaskService taskService;
+
+    @Resource
+    private FileService fileService;
+
+    @Resource
+    ScheduleService scheduleService;
+
+    @Resource
+    ShareService shareService;
+
     /**
      * 收藏
      * @param projectId 项目id
@@ -46,6 +66,18 @@ public class CollectionApi {
             collect.setCreateTime(System.currentTimeMillis());
             collect.setUpdateTime(System.currentTimeMillis());
             collect.setMemberId(ShiroAuthenticationManager.getUserId());
+            if(Constants.TASK.equals(collectType)){
+                collect.setCollectContent(JSON.toJSONString(taskService.findTaskApiBean(publicId)));
+            }
+            if(Constants.SCHEDULE.equals(collectType)){
+                collect.setCollectContent(JSON.toJSONString(scheduleService.findScheduleApiBean(publicId)));
+            }
+            if(Constants.SHARE.equals(collectType)){
+                collect.setCollectContent(JSON.toJSONString(shareService.findShareApiBean(publicId)));
+            }
+            if(Constants.FILE.equals(collectType)){
+                collect.setCollectContent(JSON.toJSONString(fileService.findFileApiBean(publicId)));
+            }
             collectService.save(collect);
             object.put("result",1);
             object.put("msg","收藏成功");

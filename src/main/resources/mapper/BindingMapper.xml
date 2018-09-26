@@ -189,6 +189,10 @@
 					'$.userImage',#{obj.userImage},
 				</if>
 
+				<if test="obj.remarks != null and obj.remarks != ''">
+					'$.remarks',#{obj.remarks},
+				</if>
+
 				<if test="obj.taskName != null and obj.taskName != ''">
 					'$.taskName',#{obj.taskName},
 				</if>

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.base.Base;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -32,6 +33,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
 import com.art1001.supply.mapper.task.*;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.apiBean.ApiBeanService;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
@@ -113,6 +115,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Resource
     private TagRelationService tagRelationService;
 
+    /** 用户更新json信息的接口 */
+    @Resource
+    private ApiBeanService apiBeanService;
+
     /** 公共封装的方法 */
     @Resource
     private Base base;
@@ -145,6 +151,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	 * @param task 任务信息
 	 */
 	@Override
+    @Transactional(rollbackFor = Exception.class)
 	public Log updateTask(Task task){
 	    String content = "";
 	    Log log = new Log();
@@ -174,6 +181,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //更新任务的名称
         if(StringUtils.isNotEmpty(task.getTaskName())){
             log = logService.saveLog(task.getTaskId(),TaskLogFunction.A18.getName() + " " + task.getTaskName(),1);
+            TaskApiBean taskBean = new TaskApiBean();
+            taskBean.setTaskName(task.getTaskName());
+            apiBeanService.updateJSON(task.getTaskId(),taskBean,Constants.TASK);
         }
         int result = taskMapper.updateTask(task);
         log.setResult(result);
@@ -334,7 +344,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param menuId 菜单id
      * @return
      */
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Log mobileTask(String taskId, String projectId, String menuId) {
         Task task = new Task();
@@ -359,8 +369,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         StringBuilder content = new StringBuilder();
         if(projectId.equals(oldProjectId)){
             content.append(TaskLogFunction.X.getName()).append(newTaskMenuVO.getTaskMenuName());
+            //更新 关联、收藏表的 json数据
+            TaskApiBean taskBean = new TaskApiBean();
+            taskBean.setGroupName(oldTaskMenuVO.getTaskGroupName());
+            taskBean.setMenuName(oldTaskMenuVO.getTaskMenuName());
+            apiBeanService.updateJSON(taskId,taskBean,Constants.TASK);
         } else{
             content.append(TaskLogFunction.V.getName()).append(oldTaskMenuVO.getProjectName()).append("/").append(oldTaskMenuVO.getTaskMenuName()).append(TaskLogFunction.W.getName()).append(newTaskMenuVO.getProjectName()).append("/").append(newTaskMenuVO.getTaskMenuName());
+            //更新 关联、收藏表的 json数据
+            TaskApiBean taskBean = new TaskApiBean();
+            taskBean.setProjectName(newTaskMenuVO.getProjectName());
+            taskBean.setGroupName(newTaskMenuVO.getTaskGroupName());
+            taskBean.setMenuName(newTaskMenuVO.getTaskMenuName());
+            apiBeanService.updateJSON(taskId,taskBean,Constants.TASK);
         }
         Log log = logService.saveLog(taskId, content.toString(),1);
         return log;

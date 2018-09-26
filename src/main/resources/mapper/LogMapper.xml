@@ -15,7 +15,7 @@
 		<result column="file_ids" property="fileIds" jdbcType="CLOB" />
 		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
-		<collection property="fileList" javaType="java.util.ArrayList" column="{fileIds=file_ids}" select="com.art1001.supply.mapper.file.FileMapper.findByFileIds"/>
+		<!--<collection property="fileList" javaType="java.util.ArrayList" column="{fileIds=file_ids}" select="com.art1001.supply.mapper.file.FileMapper.findByFileIds"/>-->
 	</resultMap>
     
 	<sql id="Base_Column_List">

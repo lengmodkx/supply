@@ -2,6 +2,8 @@ package com.art1001.supply.entity.log;
 
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
@@ -17,6 +19,7 @@ import java.util.List;
  **/
 @Data
 @ToString
+@TableName("prm_log")
 public class Log extends Model<Log> {
 	
 	private static final long serialVersionUID = 1L;
@@ -65,6 +68,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 返回的结果集
 	 */
+	@TableField(exist = false)
 	private int result;
 
 	private String fileIds;
@@ -73,6 +77,7 @@ public class Log extends Model<Log> {
 	 */
 	private UserEntity userEntity;
 
+	@TableField(exist = false)
 	private List<File> fileList;
 
 	/**

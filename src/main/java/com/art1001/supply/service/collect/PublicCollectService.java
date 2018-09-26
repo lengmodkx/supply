@@ -125,4 +125,12 @@ public interface PublicCollectService extends IService<PublicCollect> {
 	 * 删除关于多个此项的所有收藏记录
 	 */
 	void deleteManyCollectByItemId(List<String> publicId);
+
+	/**
+	 * 更新收藏表的 json 数据信息
+	 * @param id 信息id
+	 * @param obj 要更新的字段信息
+	 * @param type 要更新的信息类型
+	 */
+    void updateJson(String id, Object obj, String type);
 }

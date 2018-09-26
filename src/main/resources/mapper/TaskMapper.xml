@@ -114,6 +114,7 @@
 		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
 		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<!-- 统计页面数据 ResultMap -->
@@ -1080,6 +1081,7 @@
 		SELECT
 			t.task_id,
 			t.task_name,
+			t.remarks,
 			u.u_image,
 			p.project_name,
 			r.relation_name as menu_name,
@@ -1092,29 +1094,4 @@
 			LEFT JOIN prm_relation r1 ON t.task_group_id = r1.relation_id
 		WHERE task_id = #{taskId}
 	</select>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </mapper>
