@@ -90,10 +90,11 @@ public class Project extends Model<Project> {
 
     /**项目是否被收藏 0否，1是*/
     private int collect;
+
     /**
-     * 项目成员标识
+     * 项目成员标识 1用于者，0成员
      */
-    private int memberberLabel;
+    private int memberLabel;
 
     private int label=0;
     /**
@@ -107,9 +108,9 @@ public class Project extends Model<Project> {
 
     /**
      * 企业id
-     * @return
      */
     private String organizationId;
+
 
     @Override
     protected Serializable pkVal() {

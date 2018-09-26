@@ -35,20 +35,6 @@ public class ProjectApi {
     @Resource
     private ProjectService projectService;
 
-    @Resource
-    private ProjectAppsService appsService;
-
-    @Resource
-    private RelationService relationService;
-
-    @Resource
-    private ProjectMemberService projectMemberService;
-
-    @Resource
-    private FileService fileService;
-
-    @Resource
-    private RoleService roleService;
     /**
      * 创建项目
      * @param projectName 项目名称
@@ -122,29 +108,14 @@ public class ProjectApi {
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
-    @GetMapping("/{orgId}")
-    public JSONObject projects(@PathVariable(value = "orgId",required = false)String orgId){
+    @GetMapping()
+    public JSONObject projects(){
         JSONObject object = new JSONObject();
         try{
-
             String userId = ShiroAuthenticationManager.getUserId();
-            //我创建的项目
-            List<Project> projectCreate = projectService.findProjectByMemberId(userId,0);
-
-            //我参与的项目
-            List<Project> projectJoin = projectService.findProjectByUserId(userId,0);
-
-            //我收藏的项目
-            List<Project> projectCollect = projectService.findProjectByUserId(userId,1);
-
-            //项目回收站
-            List<Project> projectDel = projectService.findProjectByMemberId(userId,1);
-
+            List<Project> projectList = projectService.findProjectByUserId(userId);
             object.put("result",1);
-            object.put("projectCreate",projectCreate);
-            object.put("projectJoin",projectJoin);
-            object.put("projectCollect",projectCollect);
-            object.put("projectDel",projectDel);
+            object.put("data",projectList);
         }catch (Exception e){
             log.error("系统异常,信息获取失败:",e);
             throw new SystemException(e);
@@ -153,14 +124,15 @@ public class ProjectApi {
     }
 
     /**
-     * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
+     * 获取 我参与的企业项目，我收藏的企业项目
      * @return
      */
-    @GetMapping("/{orgId}/project_info")
+    @GetMapping("/{orgId}")
     public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
         JSONObject object = new JSONObject();
         try{
-            List<Project> projectList = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId));
+            String userId = ShiroAuthenticationManager.getUserId();
+            List<Project> projectList = projectService.findOrgProject(userId,orgId);
             object.put("result",1);
             object.put("data",projectList);
         }catch (Exception e){

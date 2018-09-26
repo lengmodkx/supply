@@ -52,6 +52,9 @@
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
 		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
 		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
+		<result column="collect" property="collect" jdbcType="INTEGER" />
+		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
+		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -272,16 +275,17 @@
 	</select>
 
 
-	<!--查询我参与的个人项目/企业项目-->
+	<!--查询我的个人项目/企业项目-->
 	<select id="findProjectByUserId" resultMap="BaseResultMap1">
-		  select p.project_id,
-			  p.project_name,
-			  p.project_cover,
-			  p.project_des
-		  from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		  where p.project_del=0 and pm.member_id = #{userId} and pm.collect=#{collect}
-				and p.organization_id=#{orgId}
-				 order by pm.create_time asc
+		select p.project_id,
+			p.project_name,
+			p.project_cover,
+			p.project_des,
+			pm.collect as collect,
+			p.project_del,
+			pm.member_label as member_label
+		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
+		where pm.member_id = #{userId} order by pm.create_time asc
 	</select>
 
 	<!-- 查询出该用户执行的任务信息和所在项目信息 -->
@@ -317,6 +321,16 @@
 	<select id="listProjectByUserCollect" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_project where project_id in (select prm_project_collect.project_id from prm_project_collect where prm_project_collect.member_id = #{uId})
+	</select>
+	<select id="findOrgProject" resultMap="BaseResultMap1">
+		select p.project_id,
+			p.project_name,
+			p.project_cover,
+			p.project_des,
+			pm.collect as collect,
+			p.project_del
+		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
+		where pm.member_id = #{userId} and p.organization_id = #{orgId} order by pm.create_time asc
 	</select>
 
 

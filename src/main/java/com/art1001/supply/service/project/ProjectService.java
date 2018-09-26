@@ -3,10 +3,8 @@ package com.art1001.supply.service.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 
 /**
  * projectService接口
@@ -98,11 +96,11 @@ public interface ProjectService extends IService<Project> {
 
 
 	/**
-	 *  根据用户id查询我参与的项目
+	 *  根据用户id查询我的项目
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<Project> findProjectByUserId(String userId,int collect);
+	List<Project> findProjectByUserId(String userId);
 
 
 	/**
@@ -112,4 +110,10 @@ public interface ProjectService extends IService<Project> {
 	 */
 	List<RecycleBinVO> recycleBinInfo(String projectId, String type);
 
+	/**
+	 * 查询我参与的企业项目
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<Project> findOrgProject(String userId,String orgId);
 }

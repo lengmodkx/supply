@@ -1,11 +1,9 @@
 package com.art1001.supply.api;
-import com.alibaba.fastjson.JSON;
+
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSException;
-import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
@@ -15,9 +13,7 @@ import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
