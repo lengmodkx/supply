@@ -233,8 +233,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	 * @return
 	 */
 	@Override
-	public List<Project> findProjectByUserId(String userId,int collect) {
-		return projectMapper.findProjectByUserId(userId,collect);
+	public List<Project> findProjectByUserId(String userId) {
+		return projectMapper.findProjectByUserId(userId);
 	}
 
 	/**
@@ -268,5 +268,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			recycleBin = fileService.findRecycleBin(projectId,type);
 		}
 		return recycleBin;
+	}
+
+	@Override
+	public List<Project> findOrgProject(String userId,String orgId) {
+		return projectMapper.findOrgProject(userId,orgId);
 	}
 }

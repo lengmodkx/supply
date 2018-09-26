@@ -95,17 +95,14 @@ public class BindingApi {
         JSONObject jsonObject = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-            List<Project> projectCollect = projectService.findProjectByUserId(userId,1);
-
-            List<Project> projectJoin = projectService.findProjectByUserId(userId,0);
+            List<Project> projectList = projectService.findProjectByUserId(userId);
 
             List<Organization> projectOrg = organizationService.findJoinOrgProject(userId);
 
             List<Relation> relationList = relationService.list(new QueryWrapper<Relation>().eq("parent_id","0").eq("projectId",projectId));
 
-            jsonObject.put("projectCollect",projectCollect);
+            jsonObject.put("projectList",projectList);
             jsonObject.put("projectOrg",projectOrg);
-            jsonObject.put("projectJoin",projectJoin);
             jsonObject.put("relationList",relationList);
             jsonObject.put("projectId",projectId);
         } catch (Exception e){

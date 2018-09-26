@@ -106,6 +106,12 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<Project> findProjectByUserId(@Param("userId") String userId, @Param("collect") int collect);
+	List<Project> findProjectByUserId(@Param("userId") String userId);
 
+	/**
+	 * 查询我参与的企业项目
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<Project> findOrgProject(@Param("userId") String userId,@Param("orgId") String orgId);
 }
