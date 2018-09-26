@@ -11,8 +11,6 @@ public interface ApiBean {
     /**
      * 更新json数据内容
      * @param id 要更新的内容id
-     * @param userImage 用户头像更新
-     * @param name 信息名称更新
      */
-    void updateJSON(String id, String userImage, String name, String type);
+    void updateJSON(String id, Object obj, String type);
 }

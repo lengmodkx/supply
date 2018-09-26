@@ -241,11 +241,9 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	/**
 	 * 更新关联信息的json 数据
 	 * @param id 更新的数据id
-	 * @param userImage 用户头像
-	 * @param name 信息名称
 	 */
 	@Override
-	public void updateJson(String id, String userImage, String name, String type) {
-		bindingMapper.updateJson(id,userImage,name,type);
+	public void updateJson(String id, Object obj, String type) {
+		bindingMapper.updateJson(id,obj,type);
 	}
 }

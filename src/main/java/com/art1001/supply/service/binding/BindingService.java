@@ -108,8 +108,6 @@ public interface BindingService extends IService<Binding> {
 	/**
 	 * 更新关联信息的json 数据
 	 * @param id 更新的数据id
-	 * @param userImage 用户头像
-	 * @param name 信息名称
 	 */
-    void updateJson(String id,String userImage, String name,String type);
+    void updateJson(String id, Object obj, String type);
 }

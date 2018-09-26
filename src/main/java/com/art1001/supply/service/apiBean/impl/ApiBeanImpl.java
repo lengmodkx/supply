@@ -24,8 +24,8 @@ public class ApiBeanImpl implements ApiBean {
      * 更新表字段的json数据
      */
     @Override
-    public void updateJSON(String id, String userImage, String name, String type) {
-        bindingService.updateJson(id,userImage,name,type);
+    public void updateJSON(String id, Object obj, String type) {
+        bindingService.updateJson(id,obj,type);
     }
 
 }

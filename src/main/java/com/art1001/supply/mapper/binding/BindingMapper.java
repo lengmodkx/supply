@@ -127,8 +127,6 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	/**
 	 * 更新关联信息的json 数据
 	 * @param id 更新的数据id
-	 * @param userImage 用户头像
-	 * @param name 信息名称
 	 */
-    void updateJson(@Param("id") String id, @Param("userImage") String userImage, @Param("name") String name, @Param("type") String type);
+    void updateJson(@Param("id") String id, @Param("obj") Object object, @Param("type") String type);
  }
