@@ -36,7 +36,7 @@
 		<result property="createTime" column="s_create_time"/>
 		<result property="updateTime" column="s_update_time"/>
 	</resultMap>
-	
+
 	<select id="findResourcesByUserId" parameterType="String" resultMap="resourceMap" flushCache="true" useCache="true">
 		SELECT s.* FROM tb_resource s, tb_resources_role sr, tb_role r, tb_role_user ru
 		WHERE s.s_id = sr.s_id AND sr.r_id = r.r_id AND r.r_id = ru.r_id AND ru.u_id=${userId}
@@ -235,7 +235,14 @@
 	<select id="count" parameterType="map" resultType="int" useCache="false">
 		SELECT count(*) FROM tb_resources_role t where t.s_id = ${id}
 	</select>
-	
+
+	<!-- 根据角色id 查询出该角色的所有资源 -->
+	<select id="selectByRoleId" resultType="java.lang.Integer">
+		select
+		res.s_id
+		 from tb_resource res RIGHT JOIN tb_resources_role rl on res.s_id = rl.s_id where rl.r_id = '15'
+	</select>
+
 	<delete id="deleteRolePerm" parameterType="Long">
 		delete from tb_resources_role where s_id = ${id}
 	</delete>

@@ -1,9 +1,10 @@
 package com.art1001.supply.service.resource;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
-import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 public interface ResourceService extends IService<ResourceEntity> {
 	int deleteResource(Integer resourceId);
@@ -16,4 +17,11 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 * @return
 	 */
 	Page<ResourceEntity> selectListPage(long current, long size, ResourceEntity resourceEntity);
+
+	/**
+	 * 查询出该角色的所有资源id
+	 * @param roleId 角色id
+	 */
+    List<Integer> listByRoleId(String roleId);
+
 }

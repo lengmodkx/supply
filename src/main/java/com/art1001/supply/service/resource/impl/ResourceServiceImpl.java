@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEntity> implements ResourceService {
@@ -34,4 +35,12 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		return (Page<ResourceEntity>) page(resourceEntityPage, queryWrapper);
 	}
 
+	/**
+	 * 查询出该角色的所有资源id
+	 * @param roleId 角色id
+	 */
+	@Override
+	public List<Integer> listByRoleId(String roleId) {
+		return resourceMapper.selectByRoleId(roleId);
+	}
 }

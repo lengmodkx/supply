@@ -54,4 +54,11 @@ public interface ResourceMapper extends BaseMapper<ResourceEntity> {
 	 */
     public List<ResourceEntity> queryTreeGridListByPage(Map<String, Object> parameter);
 
+	/**
+	 * 查询出该角色的资源信息
+	 * @param roleId 角色id
+	 * @return
+	 */
+	List<Integer> selectByRoleId(String roleId);
+
 }

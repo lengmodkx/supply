@@ -1,7 +1,10 @@
 package com.art1001.supply.service.role;
 
+import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.ResourcesRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ResourcesRoleService extends IService<ResourcesRole> {
 
+    /**
+     * 处理编辑角色权限数据
+     * @param roleId 角色id
+     * @return
+     */
+    List<ResourceEntity> showRoleResources(String roleId);
 }

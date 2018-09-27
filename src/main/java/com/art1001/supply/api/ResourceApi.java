@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * 资源api
@@ -46,8 +47,8 @@ public class ResourceApi {
             resourceEntity.setParentId(parentId);
             resourceEntity.setType(resourceType);
             resourceEntity.setLevel(resourceLevel);
-            resourceEntity.setCreateTime(new Date());
-            resourceEntity.setUpdateTime(new Date());
+            resourceEntity.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
+            resourceEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             resourceService.save(resourceEntity);
             object.put("result",1);
             object.put("msg","插入成功");
@@ -102,7 +103,7 @@ public class ResourceApi {
             resourceEntity.setParentId(parentId);
             resourceEntity.setType(resourceType);
             resourceEntity.setLevel(resourceLevel);
-            resourceEntity.setUpdateTime(new Date());
+            resourceEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             resourceService.updateById(resourceEntity);
             object.put("result",1);
             object.put("msg","");
