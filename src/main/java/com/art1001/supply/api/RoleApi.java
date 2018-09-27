@@ -150,18 +150,4 @@ public class RoleApi {
         return object;
     }
 
-
-    @PostMapping("/{roleId}")
-    public JSONObject addResourceRole(@PathVariable Integer roleId,@RequestParam Integer resourceId){
-        JSONObject object = new JSONObject();
-        try{
-            object.put("result",1);
-            object.put("msg","");
-        }catch(Exception e){
-            throw new AjaxException(e);
-        }
-        return object;
-    }
-
-
 }

@@ -125,7 +125,7 @@ public class ResourceApi {
             object.put("data",roleList);
             object.put("result",1);
             object.put("msg","");
-        }catch(Exception e){
+        } catch(Exception e){
             throw new AjaxException(e);
         }
         return object;

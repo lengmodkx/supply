@@ -30,7 +30,7 @@ public class OrganizationApi {
      * @return
      */
     @PostMapping
-    public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
+        public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
                               @RequestParam(value = "orgDes") String orgDes,
                               @RequestParam(value = "contact") String contact,
                               @RequestParam(value = "contactPhone") String contactPhone){
