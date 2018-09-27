@@ -15,9 +15,11 @@ public class Constants {
     public static final String FILE = "文件";
     public static final String SHARE = "分享";
     public static final String SCHEDULE  = "日程";
+    public static final String GROUP_CHAT = "群聊";
 
     public static final String EXECUTOR = "执行者";
     public static final String PARTICIPANT = "参与者";
+
 
 
     public static final String TAG_NAME = "标签";

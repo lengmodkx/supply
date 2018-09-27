@@ -1,9 +1,5 @@
 package com.art1001.supply.entity.project;
 
-import com.art1001.supply.entity.base.BaseEntity;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,16 +8,9 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class ProjectFunc extends Model<ProjectFunc> {
+public class ProjectFunc {
 	
 	private static final long serialVersionUID = 1L;
-
-
-	/**
-	 * p_id
-	 */
-	private Integer funcId;
-
 
 	/**
 	 * p_name
@@ -30,24 +19,13 @@ public class ProjectFunc extends Model<ProjectFunc> {
 
 
 	/**
-	 * p_order
-	 */
-	private Integer funcOrder;
-
-
-	/**
-	 * project_id
-	 */
-	private String projectId;
-
-
-	/**
 	 * is_open
 	 */
-	private Integer isOpen;
+	private boolean flag;
 
-	@Override
-	protected Serializable pkVal() {
-		return this.funcId;
-	}
+	/**
+	 * 后缀
+	 */
+	private String suffix;
+
 }

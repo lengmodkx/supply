@@ -1,15 +1,12 @@
 package com.art1001.supply.service.project.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Resource;
-
+import com.alibaba.fastjson.JSON;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.Role;
@@ -31,6 +28,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * projectServiceImpl
@@ -134,11 +136,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		project.setIsPublic(0);
 		project.setProjectRemind(0);
 		project.setProjectStatus(0);
-		projectMapper.saveProject(project);
-		//初始化项目功能菜单
-		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
-		appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
-
 		//初始化分组
 		Relation relation = new Relation();
 		relation.setRelationName("任务");
@@ -148,12 +145,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relation.setUpdateTime(System.currentTimeMillis());
 		relationService.saveRelation(relation);
 
+		//初始化项目功能菜单
+		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+		String jsonfun = projectFunc(funcs, project.getProjectId(), relation.getRelationId());
+		project.setFunc(jsonfun);
+		projectMapper.saveProject(project);
+		//appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
+
+
 		//初始化菜单
 		String[] menus  = new String[]{"待处理","进行中","已完成"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
 
 		//往项目用户关联表插入数据
-		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role","拥有者"));
+		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","拥有者"));
 		ProjectMember projectMember = new ProjectMember();
 		projectMember.setProjectId(project.getProjectId());
 		projectMember.setMemberId(ShiroAuthenticationManager.getUserId());
@@ -273,5 +278,36 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Override
 	public List<Project> findOrgProject(String userId,String orgId) {
 		return projectMapper.findOrgProject(userId,orgId);
+	}
+
+	/**
+	 * 生成项目插件数据
+	 * @param funcs 插件名称数组
+	 * @return
+	 */
+	public String projectFunc(String[] funcs, String projectId, String groupId){
+		List<ProjectFunc> funs = new ArrayList<ProjectFunc>();
+		Arrays.stream(funcs).forEach(item -> {
+			ProjectFunc pf = new ProjectFunc();
+			pf.setFuncName(item);
+			pf.setFlag(true);
+			if(item.equals(Constants.TASK)){
+				pf.setSuffix("task/group/"+groupId);
+			}
+			if(item.equals(Constants.FILE)){
+				pf.setSuffix("file/"+projectId);
+			}
+			if(item.equals(Constants.SHARE)){
+				pf.setSuffix("share");
+			}
+			if(item.equals(Constants.SCHEDULE)){
+				pf.setSuffix("schedule");
+			}
+			if(item.equals(Constants.GROUP_CHAT)){
+				pf.setSuffix("groupchat");
+			}
+			funs.add(pf);
+		});
+		return JSON.toJSONString(funs);
 	}
 }

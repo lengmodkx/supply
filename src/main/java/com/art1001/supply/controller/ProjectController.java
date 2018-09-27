@@ -7,7 +7,6 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
@@ -36,6 +35,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -412,26 +412,8 @@ public class ProjectController extends BaseController {
         return jsonObject;
     }
 
-    //项目功能菜单更新
-    @PostMapping("/updateFunc")
-    @ResponseBody
-    public JSONObject updateFunc(@RequestParam Integer[] funcIds){
-        JSONObject jsonObject = new JSONObject();
-        try {
-
-            for (int i=0;i<funcIds.length;i++){
-                ProjectFunc projectFunc = new ProjectFunc();
-                projectFunc.setFuncOrder(i);
-                projectFunc.setFuncId(funcIds[i]);
-                funcService.updateProjectFunc(projectFunc);
-            }
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "更新成功");
-        }catch (Exception e){
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
+//
+//
 
 
     //任务界面初始化

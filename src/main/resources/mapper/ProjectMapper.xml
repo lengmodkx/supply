@@ -16,8 +16,8 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
-		<collection property="funcList" column="project_id" javaType="ArrayList"
-					 select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>
+		<!--<collection property="funcList" column="project_id" javaType="ArrayList"-->
+					 <!--select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>-->
 
 		<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"
 					 select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>
@@ -70,7 +70,8 @@
 		create_time,
 		update_time,
 		is_public,
-		project_remind
+		project_remind,
+		func
 	</sql>
 
 	<sql id="whereStatement">
@@ -166,6 +167,9 @@
 			<if test="projectRemind != null ">
 				project_remind,
 			</if>
+			<if test="func != null ">
+				func,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -210,6 +214,10 @@
 
 			<if test="projectRemind != null ">
 				#{projectRemind},
+			</if>
+
+			<if test="func != null ">
+				#{func},
 			</if>
 		</trim>
 

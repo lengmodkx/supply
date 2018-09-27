@@ -190,10 +190,10 @@ public class FileApi {
      * @param parentId   上一级目录id  默认为0
      * @param folderName 文件夹名称
      */
-    @PostMapping("/create_folder")
+    @PostMapping("/{parentId}/create_folder")
     public JSONObject createFolder(
             @RequestParam String projectId,
-            @RequestParam(required = false, defaultValue = "0") String parentId,
+            @PathVariable(required = false) String parentId,
             @RequestParam String folderName
     ) {
         JSONObject jsonObject = new JSONObject();
@@ -216,11 +216,11 @@ public class FileApi {
      *
      * @param projectId 项目id
      */
-    @PostMapping("/upload")
+    @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
             @RequestParam(value = "projectId") String projectId,
             @RequestParam(value = "files",required = false) String files,
-            @RequestParam(value = "parentId",defaultValue = "0") String parentId
+            @PathVariable(value = "parentId") String parentId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -243,12 +243,12 @@ public class FileApi {
      *
      * @param projectId 项目id
      */
-    @PostMapping("/upload_model")
+    @PostMapping("/{parentId}/model")
     public JSONObject uploadModel(
             @RequestParam String projectId,
             @RequestParam(value = "fileCommon") String fileCommon
             ,@RequestParam(value = "fileModel") String fileModel
-            ,@RequestParam(value = "parentId",defaultValue = "0",required = false) String parentId
+            ,@PathVariable(value = "parentId",required = false) String parentId
             ,@RequestParam(value = "filename") String filename
     ) {
         JSONObject jsonObject = new JSONObject();
@@ -264,6 +264,7 @@ public class FileApi {
             modelFile.setFileName(filename);
             modelFile.setSize(size);
             modelFile.setFileUrl(fileUrl);
+            modelFile.setParentId(parentId);
             modelFile.setFileName(fileName);
             modelFile.setProjectId(projectId);
             modelFile.setFileThumbnail(array.getString("fileUrl"));
@@ -396,8 +397,8 @@ public class FileApi {
      * @param fileIds 文件id数组
      * @return
      */
-    @GetMapping("/copy_move_file")
-    public JSONObject copyFilePage(@RequestParam String[] fileIds) {
+    @GetMapping("/{fileIds}/copy_move_file")
+    public JSONObject copyFilePage(@PathVariable String[] fileIds) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<File> selectFileList = fileService.findByIds(fileIds);
@@ -440,10 +441,10 @@ public class FileApi {
      * @param fileIds  文件id数组
      * @param folderId 目标文件夹id
      */
-    @PatchMapping("/m_move")
+    @PatchMapping("/{folderId}/m_move")
     public JSONObject moveFile(
-            @RequestParam String[] fileIds,
-            @RequestParam(defaultValue = "0") String folderId
+            @PathVariable String folderId,
+            @RequestParam String[] fileIds
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
