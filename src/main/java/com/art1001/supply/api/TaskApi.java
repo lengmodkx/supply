@@ -32,7 +32,7 @@ public class TaskApi {
     /**
      * 创建任务
      * @param taskName 任务名称
-     * @param taskUIds 任务参与者
+     * @param memberIds 任务参与者
      * @param privacyPattern 任务隐私模式
      * @param executor 任务执行者
      * @param startTime 任务开始时间
@@ -45,7 +45,7 @@ public class TaskApi {
      */
     @PostMapping
     public JSONObject createTask(@RequestParam("taskName") String taskName,
-                                 @RequestParam("taskUIds") String taskUIds,
+                                 @RequestParam("memberIds") String memberIds,
                                  @RequestParam("privacyPattern") Integer privacyPattern,
                                  @RequestParam(value = "executor",required = false) String executor,
                                  @RequestParam(value = "startTime",required = false) String startTime,
@@ -60,7 +60,7 @@ public class TaskApi {
         try {
             Task task = new Task();
             task.setTaskName(taskName);
-            task.setTaskUIds(taskUIds);
+            task.setTaskUIds(memberIds);
             task.setTaskMenuId(taskMenuId);
             task.setTaskGroupId(taskGroupId);
             task.setPrivacyPattern(privacyPattern);
