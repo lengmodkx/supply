@@ -113,8 +113,8 @@ public class ProjectApi {
      * @param groupId 分组id
      * @return
      */
-    @GetMapping("/{projectId}/tasks/group/{group}")
-    public JSONObject tasks(@PathVariable("projectId") String projectId, @PathVariable("group") String groupId){
+    @GetMapping("/{projectId}/tasks/group/{groupId}")
+    public JSONObject tasks(@PathVariable("projectId") String projectId, @PathVariable("groupId") String groupId){
         JSONObject jsonObject = new JSONObject();
         try {
 
