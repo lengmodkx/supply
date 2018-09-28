@@ -341,6 +341,11 @@
 		where pm.member_id = #{userId} and p.organization_id = #{orgId} order by pm.create_time asc
 	</select>
 
+	<!-- 查询出当前项目的默认分组 -->
+    <select id="selectDefaultGroup" resultType="java.lang.String">
+		select relation_id from prm_relation where project_id = #{projectId} and lable = 0 order by create_time limit 0,1
+	</select>
+
 
 </mapper>
 

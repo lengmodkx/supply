@@ -137,6 +137,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		project.setIsPublic(0);
 		project.setProjectRemind(0);
 		project.setProjectStatus(0);
+
 		//初始化分组
 		Relation relation = new Relation();
 		relation.setRelationName("任务");
@@ -155,7 +156,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		project.setFunc(jsonfun);
 		projectMapper.saveProject(project);
 
-
 		//初始化菜单
 		String[] menus  = new String[]{"待处理","进行中","已完成"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
@@ -168,6 +168,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setCreateTime(System.currentTimeMillis());
 		projectMember.setUpdateTime(System.currentTimeMillis());
 		projectMember.setMemberLabel(1);
+		projectMember.setDefaultGroup(relation.getRelationId());
 		projectMember.setRId(roleEntity.getId());
 		projectMemberService.saveProjectMember(projectMember);
 	}
@@ -312,5 +313,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			funs.add(pf);
 		});
 		return JSON.toJSONString(funs);
+	}
+
+	/**
+	 * 查询出该项目的默认分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public String findDefaultGroup(String projectId) {
+		return projectMapper.selectDefaultGroup(projectId);
 	}
 }

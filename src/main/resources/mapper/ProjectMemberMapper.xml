@@ -150,6 +150,9 @@
 			<if test="IsReceiveMessage != null ">
 				is_receivemessage,
 			</if>
+			<if test="defaultGroup!= null ">
+				default_group,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -189,6 +192,9 @@
 			</if>
 			<if test="IsReceiveMessage != null ">
 				#{IsReceiveMessage},
+			</if>
+			<if test="defaultGroup != null ">
+				#{defaultGroup},
 			</if>
 
 		</trim>

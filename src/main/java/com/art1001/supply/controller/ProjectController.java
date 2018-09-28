@@ -422,7 +422,7 @@ public class ProjectController extends BaseController {
         try {
 
             if(StringUtils.isNotEmpty(groupId)){
-                relationService.updateDefaultGroup(projectId);
+                relationService.cancelDefaultGroup(projectId);
                 Relation group = new Relation();
                 group.setDefaultGroup(1);
                 group.setRelationId(groupId);

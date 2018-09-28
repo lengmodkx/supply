@@ -166,5 +166,5 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 * @param projectId 项目id
 	 */
 	@Update("update prm_relation AS a,(select relation_id from prm_relation where project_id = #{projectId} and default_group = 1 and lable = 0) AS b set default_group = 0 where a.relation_id = b.relation_id")
-    void updateDefaultGroup(String projectId);
+    void cancelDefaultGroup(String projectId);
 }

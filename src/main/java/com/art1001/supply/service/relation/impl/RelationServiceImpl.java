@@ -112,7 +112,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public void saveRelation(Relation relation){
-		relationMapper.updateDefaultGroup(relation.getProjectId());
+		relationMapper.cancelDefaultGroup(relation.getProjectId());
         relation.setRelationId(IdGen.uuid());
 		relation.setLable(0);
 		relation.setRelationDel(0);
@@ -474,8 +474,8 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	}
 
 	@Override
-	public void updateDefaultGroup(String projectId) {
-		relationMapper.updateDefaultGroup(projectId);
+	public void cancelDefaultGroup(String projectId) {
+		relationMapper.cancelDefaultGroup(projectId);
 	}
 }
 
