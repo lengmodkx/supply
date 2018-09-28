@@ -1,13 +1,14 @@
 package com.art1001.supply.service.tagrelation;
 
-import java.util.List;
-
 import com.art1001.supply.entity.tag.TagRelation;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * Service接口
  */
-public interface TagRelationService {
+public interface TagRelationService extends IService<TagRelation> {
 
 	/**
 	 * 通过id获取单条数据

@@ -1,43 +1,21 @@
 package com.art1001.supply.mapper.relation;
 
-import java.util.List;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * relationmapper接口
  */
 @Mapper
 public interface RelationMapper extends BaseMapper<Relation> {
-
-	/**
-	 * 查询分页relation数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	List<Relation> findRelationPagerList(Pager pager);
-
-	/**
-	 * 通过relationId获取单条relation数据
-	 * 
-	 * @param relationId
-	 * @return
-	 */
-	Relation findRelationByRelationId(String relationId);
-
-	/**
-	 * 通过relationId删除relation数据
-	 * 
-	 * @param relationId
-	 */
-	void deleteGroup(String relationId);
 
 	/**
 	 * 修改relation数据
@@ -90,12 +68,6 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 * @param relationId
 	 */
 	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel,@Param("updateTime")Long updateTime);
-
-	/**
-	 *
-	 * @param relationId
-	 */
-    void setMenuAllTaskExecutor(String relationId);
 
 	/**
 	 * 根据任务id查询出该任务的菜单信息
@@ -173,19 +145,6 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 * @return
 	 */
 	List<String> findTaskIdByMenus(List<String> menuIds);
-
-	/**
-	 * 删除多个 relation
-	 * @param menuIds relationId 集合
-	 */
-    void deleteManyRelation(List<String> menuIds);
-
-	/**
-	 * 删除一条relation
-	 * @param relationId
-	 */
-	@Delete("delete from prm_relation where relation_id = #{relationId}")
-    void deleteRelationById(String relationId);
 
 	/**
 	 * 查询一个菜单的名称 和  该菜单所属项目的名称

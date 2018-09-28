@@ -1,8 +1,5 @@
 package com.art1001.supply.service.relation.impl;
 
-import java.util.*;
-import javax.annotation.Resource;
-
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
@@ -18,14 +15,15 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * relationServiceImpl
@@ -46,10 +44,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	private TaskMapper taskMapper;
 
 	@Resource
-	/**userService接口  */
-	private UserService userService;
-
-	@Resource
 	private LogService logService;
 
 	@Resource
@@ -66,28 +60,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	@Resource
 	private UserNewsService userNewsService;
-
-	/**
-	 * 查询分页relation数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	@Override
-	public List<Relation> findRelationPagerList(Pager pager){
-		return relationMapper.findRelationPagerList(pager);
-	}
-
-	/**
-	 * 通过relationId获取单条relation数据
-	 * 
-	 * @param relationId
-	 * @return
-	 */
-	@Override 
-	public Relation findRelationByRelationId(String relationId){
-		return relationMapper.findRelationByRelationId(relationId);
-	}
 
 	/**
 	 * 删除分组
@@ -120,9 +92,8 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			taskService.deleteManyTask(taskIds);
 		}
 
-		relationMapper.deleteManyRelation(menuIds);
-
-		relationMapper.deleteRelationById(relationId);
+		relationMapper.deleteBatchIds(menuIds);
+		relationMapper.deleteById(relationId);
 	}
 
 	/**
@@ -451,15 +422,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	@Override
 	public List<RecycleBinVO> findRecycleBin(String projectId) {
 		return relationMapper.findRecycleBin(projectId);
-	}
-
-	/**
-	 * 删除一条relation
-	 * @param relationId
-	 */
-	@Override
-	public void deleteRelationById(String relationId) {
-		relationMapper.deleteRelationById(relationId);
 	}
 
 	/**

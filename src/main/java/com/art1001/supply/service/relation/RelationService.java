@@ -1,12 +1,12 @@
 package com.art1001.supply.service.relation;
 
-import java.util.List;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 
 /**
@@ -15,27 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface RelationService extends IService<Relation> {
 
 	/**
-	 * 查询分页relation数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	public List<Relation> findRelationPagerList(Pager pager);
-
-	/**
-	 * 通过relationId获取单条relation数据
-	 * 
-	 * @param relationId
-	 * @return
-	 */
-	public Relation findRelationByRelationId(String relationId);
-
-	/**
 	 * 删除分组信息
 	 * 
 	 * @param groupId 分组id
 	 */
-	public void deleteGroup(String groupId);
+	void deleteGroup(String groupId);
 
 	/**
 	 * 修改relation数据
@@ -203,12 +187,6 @@ public interface RelationService extends IService<Relation> {
 	 * @return
 	 */
 	List<RecycleBinVO> findRecycleBin(String projectId);
-
-	/**
-	 * 删除一条relation
-	 * @param relationId
-	 */
-    void deleteRelationById(String relationId);
 
 	/**
 	 * 查询一个菜单的名称 和  该菜单所属项目的名称

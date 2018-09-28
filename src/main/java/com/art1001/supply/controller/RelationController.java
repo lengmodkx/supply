@@ -110,7 +110,7 @@ public class RelationController {
                 jsonObject.put("result",1);
                 jsonObject.put("msg","删除成功");
             }else {
-                relationService.deleteRelationById(relationId);
+                relationService.removeById(relationId);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","删除成功");
             }

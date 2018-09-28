@@ -25,13 +25,13 @@ public class RelationApi {
     private RelationService relationService;
 
     /**
-     * 添加分组/分组下的菜单
+     * 添加菜单
      * @return
      */
-    @PostMapping("/menu")
+    @PostMapping("/{groupId}/menu")
     public JSONObject addMenu(@RequestParam(value = "menuName") String menuName,
                               @RequestParam(value = "projectId") String projectId,
-                              @RequestParam(value = "groupId") String groupId){
+                              @PathVariable(value = "groupId") String groupId){
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();
@@ -49,7 +49,7 @@ public class RelationApi {
     }
 
     /**
-     * 添加分组/分组下的菜单
+     * 添加分组
      * @return
      */
     @PostMapping("/group")
@@ -79,7 +79,7 @@ public class RelationApi {
     public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
-            relationService.deleteRelationById(menuId);
+            relationService.removeById(menuId);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,菜单删除失败:",e);

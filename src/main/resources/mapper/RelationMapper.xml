@@ -88,22 +88,7 @@
 			</if>
 		</where>
 	</sql>
-	
-	<select id="findRelationPagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-		
-		select * from prm_relation
-		<include refid="whereStatement" />
-		
-		<if test="orderBy == 0">
-			order by relation_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by relation_id asc
-		</if>
-		
-	</select>
-	
+
 	<select id="findRelationAllList" resultMap="BaseResultMapVo"
 		parameterType="com.art1001.supply.entity.relation.Relation">
 		SELECT
@@ -130,19 +115,6 @@
 		where default_group=1 and project_id = #{projectId}
 	</select>
 
-	<select id="findRelationByRelationId" resultMap="BaseResultMap" parameterType="java.lang.String">
-
-		select
-		<include refid="Base_Column_List" />
-		from prm_relation where relation_id = #{relationId} and default_group=1
-
-	</select>
-	
-	<delete id="deleteRelationByRelationId" parameterType="java.lang.String">
-		delete from
-		prm_relation where relation_id = #{relationId}
-	</delete>
-	
 	<insert id="saveRelation" parameterType="com.art1001.supply.entity.relation.Relation">
 
 		insert into prm_relation
@@ -368,10 +340,6 @@
 	<select id="findMenuTaskMaxOrder" resultType="java.lang.Integer">
 		select IFNULL(max(`order`),0) from prm_task where prm_task.task_menu_id = #{taskMenuId}
 	</select>
-
-	<select id="findMenuMaxOrder" resultType="java.lang.Integer">
-		select IFNULL(max(`order`),0) from prm_relation where parent_id != 0
-	</select>
 	<!-- 查询出某个项目下的某个分组信息 -->
 	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
 		select
@@ -425,15 +393,6 @@
 		</foreach>
 		)
 	</select>
-
-	<!-- 删除多个relation -->
-	<delete id="deleteManyRelation">
-		delete from prm_relation where relation_id in (
-		<foreach collection="list" item="relationId" separator=",">
-			#{relationId}
-		</foreach>
-		)
-	</delete>
 
 	<!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
 	<select id="findRelationNameAndProjectName" resultMap="BaseResultMap4">
