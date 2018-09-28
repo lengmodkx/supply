@@ -172,7 +172,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
-    @GetMapping("/{projectId}/details")
+    @GetMapping("/{projectId}")
     public JSONObject projectDetail(@PathVariable String projectId){
         JSONObject object = new JSONObject();
         try{
