@@ -4,12 +4,10 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
-import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -55,10 +53,12 @@ import java.util.List;
 	 */
 	 List<File> findFileAllList();
 
-    /**
-     * 项目创建后初始化文件目录
-     */
-	void initProjectFolder(Project project);
+	/**
+	 * 项目创建后初始化文件目录
+	 * @param project 项目信息
+	 * @return 项目根文件夹的id
+	 */
+	String initProjectFolder(Project project);
 
 
     /**

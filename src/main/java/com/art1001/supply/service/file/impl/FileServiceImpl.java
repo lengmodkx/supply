@@ -7,7 +7,6 @@ import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.base.Base;
-import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -24,13 +23,9 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.FileExt;
-import com.art1001.supply.util.FileUtils;
-import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -242,19 +237,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * 初始化创建项目文件夹
      */
     @Override
-    @Transactional
-    public void initProjectFolder(Project project) {
-        // 在OSS上创建根目录，此目录的名字用时间戳，库中不存此项，此文件夹用来归类。此目的用来辨别相同文件名的不同内容
-        String folderName = System.currentTimeMillis() + "/";
-        // 在oss中为每个项目创建一个目录
-        AliyunOss.createFolder(folderName);
+    @Transactional(rollbackFor = Exception.class)
+    public String initProjectFolder(Project project) {
         File projectFile = new File();
         projectFile.setFileId(IdGen.uuid());
         projectFile.setFileName(project.getProjectName());
         projectFile.setProjectId(project.getProjectId());
-        projectFile.setFileUrl(folderName);
+        projectFile.setFileUrl(DateUtils.getDateStr("yyyy-MM-dd hh:mm:ss"));
         projectFile.setParentId("1");
-//        projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
         String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
@@ -264,10 +254,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setFileName(childFolderName);
             // 项目id
             file.setProjectId(project.getProjectId());
+            file.setParentId(projectFile.getFileId());
+            file.setLevel(2);
             // 设置是否目录
-//            file.setCatalog(1);
             fileService.saveFile(file);
         }
+        return projectFile.getFileId();
     }
 
     @Override

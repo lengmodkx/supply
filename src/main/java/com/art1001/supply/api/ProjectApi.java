@@ -2,16 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.project.ProjectAppsService;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
-import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +31,12 @@ public class ProjectApi {
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private RelationService relationService;
+
+    @Resource
+    private UserNewsService userNewsService;
 
     /**
      * 创建项目
@@ -105,6 +108,47 @@ public class ProjectApi {
     }
 
     /**
+     * 项目详情初始化数据
+     * @param projectId 项目id
+     * @param groupId 分组id
+     * @return
+     */
+    @GetMapping("/{projectId}/tasks/group/{group}")
+    public JSONObject tasks(@PathVariable("projectId") String projectId, @PathVariable("group") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            //修改默认分组
+            relationService.updateDefaultGroup(projectId);
+            Relation group = new Relation();
+            group.setDefaultGroup(1);
+            group.setRelationId(groupId);
+            relationService.updateRelation(group);
+
+
+            //查询项目默认分组
+            Relation relation = relationService.findDefaultRelation(projectId);
+            Relation relation1 = new Relation();
+            relation1.setParentId(relation.getRelationId());
+            relation1.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+            jsonObject.put("taskMenus",taskMenu);
+            jsonObject.put("currentGroup",relation);
+
+            //获取当前登录用户的消息总数
+            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
+            jsonObject.put("newsCount",userNewsCount);
+
+            Project project = projectService.findProjectByProjectId(projectId);
+            jsonObject.put("project",project);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new SystemException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
@@ -122,26 +166,6 @@ public class ProjectApi {
         }
         return object;
     }
-
-    /**
-     * 获取 我参与的企业项目，我收藏的企业项目
-     * @return
-     */
-    @GetMapping("/{orgId}")
-    public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
-        JSONObject object = new JSONObject();
-        try{
-            String userId = ShiroAuthenticationManager.getUserId();
-            List<Project> projectList = projectService.findOrgProject(userId,orgId);
-            object.put("result",1);
-            object.put("data",projectList);
-        }catch (Exception e){
-            log.error("系统异常,信息获取失败:",e);
-            throw new SystemException(e);
-        }
-        return object;
-    }
-
 
     /**
      * 获取项目详情

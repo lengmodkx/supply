@@ -3,12 +3,17 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 组织成员管理控制器
@@ -20,6 +25,9 @@ public class OrganizationApi {
 
     @Resource
     private OrganizationService organizationService;
+
+    @Resource
+    private ProjectService projectService;
 
     /**
      * 新增企业
@@ -68,6 +76,25 @@ public class OrganizationApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 获取 我参与的企业项目，我收藏的企业项目
+     * @return
+     */
+    @GetMapping("/{orgId}")
+    public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
+        JSONObject object = new JSONObject();
+        try{
+            String userId = ShiroAuthenticationManager.getUserId();
+            List<Project> projectList = projectService.findOrgProject(userId,orgId);
+            object.put("result",1);
+            object.put("data",projectList);
+        }catch (Exception e){
+            log.error("系统异常,信息获取失败:",e);
+            throw new SystemException(e);
+        }
+        return object;
     }
 
     /**

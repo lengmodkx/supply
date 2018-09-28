@@ -122,6 +122,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	public List<Project> findProjectAllList(){
 		return projectMapper.findProjectAllList();
 	}
+
 	/**
 	 * 保存project数据
 	 * @param project 项目信息
@@ -145,12 +146,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relation.setUpdateTime(System.currentTimeMillis());
 		relationService.saveRelation(relation);
 
+		//初始化项目文件夹
+		String projectFolderId = fileService.initProjectFolder(project);
+
 		//初始化项目功能菜单
 		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
-		String jsonfun = projectFunc(funcs, project.getProjectId(), relation.getRelationId());
+		String jsonfun = projectFunc(funcs,projectFolderId,relation.getRelationId());
 		project.setFunc(jsonfun);
 		projectMapper.saveProject(project);
-		//appsService.saveProjectFunc(Arrays.asList(funcs),project.getProjectId());
 
 
 		//初始化菜单
@@ -167,8 +170,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setMemberLabel(1);
 		projectMember.setRId(roleEntity.getId());
 		projectMemberService.saveProjectMember(projectMember);
-		//初始化项目文件夹
-		fileService.initProjectFolder(project);
 	}
 
 	/**
@@ -283,19 +284,21 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	/**
 	 * 生成项目插件数据
 	 * @param funcs 插件名称数组
+	 * @param projectFolderId 该项目根文件夹的id
+	 * @param groupId 当前默认分组id
 	 * @return
 	 */
-	public String projectFunc(String[] funcs, String projectId, String groupId){
+	private String projectFunc(String[] funcs, String projectFolderId,String groupId){
 		List<ProjectFunc> funs = new ArrayList<ProjectFunc>();
 		Arrays.stream(funcs).forEach(item -> {
 			ProjectFunc pf = new ProjectFunc();
 			pf.setFuncName(item);
 			pf.setFlag(true);
 			if(item.equals(Constants.TASK)){
-				pf.setSuffix("task/group/"+groupId);
+				pf.setSuffix("tasks/group/"+groupId);
 			}
 			if(item.equals(Constants.FILE)){
-				pf.setSuffix("file/"+projectId);
+				pf.setSuffix("file/"+projectFolderId);
 			}
 			if(item.equals(Constants.SHARE)){
 				pf.setSuffix("share");
