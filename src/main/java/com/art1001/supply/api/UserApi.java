@@ -147,7 +147,7 @@ public class UserApi {
     /**
      * 获取图形验证码
      */
-    @GetMapping("/captcha.html")
+    @GetMapping("/captcha")
     public void getImageCode(HttpServletRequest request,HttpServletResponse response) {
         ServletOutputStream out = null;
         try {
@@ -178,6 +178,13 @@ public class UserApi {
         }
     }
 
+    /**
+     * 获取验证码
+     * @param accountName 用户名
+     * @param captcha 图形验证码
+     * @param request
+     * @return
+     */
     @GetMapping("/code")
     public JSONObject code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
         String kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
@@ -210,8 +217,17 @@ public class UserApi {
         return jsonObject;
     }
 
+    /**
+     * 忘记密码
+     * @param accountName 用户名
+     * @param password 密码
+     * @param code 验证码
+     * @param request
+     * @return
+     */
     @PutMapping("/forget")
-    public JSONObject forget(@RequestParam String accountName,@RequestParam String password,
+    public JSONObject forget(@RequestParam String accountName,
+                             @RequestParam String password,
                              @RequestParam String code,HttpServletRequest request){
         JSONObject jsonObject = new JSONObject();
         try {
