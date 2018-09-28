@@ -1,10 +1,11 @@
 package com.art1001.supply.service.project;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * projectService接口
@@ -116,4 +117,11 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
 	List<Project> findOrgProject(String userId,String orgId);
+
+	/**
+	 * 查询出该项目的默认分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+    String findDefaultGroup(String projectId);
 }

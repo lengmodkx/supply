@@ -7,7 +7,6 @@ import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -159,12 +158,5 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 */
 	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
 
-	Relation findDefaultRelation(String projectId);
 
-	/**
-	 * 取消当前项目下的默认分组
-	 * @param projectId 项目id
-	 */
-	@Update("update prm_relation AS a,(select relation_id from prm_relation where project_id = #{projectId} and default_group = 1 and lable = 0) AS b set default_group = 0 where a.relation_id = b.relation_id")
-    void updateDefaultGroup(String projectId);
 }

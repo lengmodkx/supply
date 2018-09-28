@@ -1,12 +1,12 @@
 package com.art1001.supply.mapper.project;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * projectmapper接口
@@ -114,4 +114,11 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @return
 	 */
 	List<Project> findOrgProject(@Param("userId") String userId,@Param("orgId") String orgId);
+
+	/**
+	 * 查询出当前项目的默认分组
+	 * @param projectId 项目id
+	 * @return
+	 */
+    String selectDefaultGroup(String projectId);
 }

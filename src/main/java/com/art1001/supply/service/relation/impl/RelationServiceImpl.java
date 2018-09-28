@@ -1,6 +1,7 @@
 package com.art1001.supply.service.relation.impl;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
@@ -11,12 +12,14 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -60,6 +63,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	@Resource
 	private UserNewsService userNewsService;
+
+	@Resource
+	private ProjectMemberService projectMemberService;
 
 	/**
 	 * 删除分组
@@ -112,16 +118,17 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public void saveRelation(Relation relation){
-		relationMapper.updateDefaultGroup(relation.getProjectId());
         relation.setRelationId(IdGen.uuid());
 		relation.setLable(0);
 		relation.setRelationDel(0);
 		relation.setOrder(0);
-		relation.setDefaultGroup(1);
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
 		relation.setCreateTime(System.currentTimeMillis());
 		relation.setUpdateTime(System.currentTimeMillis());
         relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0)+1);
+		ProjectMember projectMember = new ProjectMember();
+		projectMember.setDefaultGroup(relation.getRelationId());
+		projectMemberService.update(projectMember,new QueryWrapper<ProjectMember>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("project_id",relation.getProjectId()));
 		relationMapper.saveRelation(relation);
 	}
 
@@ -463,19 +470,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		relationMapper.saveRelation(relation);
 	}
 
-	/**
-	 * 查询默认分组
-	 * @param projectId 项目id
-	 * @return
-	 */
-	@Override
-	public Relation findDefaultRelation(String projectId) {
-		return relationMapper.findDefaultRelation(projectId);
-	}
 
-	@Override
-	public void updateDefaultGroup(String projectId) {
-		relationMapper.updateDefaultGroup(projectId);
-	}
 }
 

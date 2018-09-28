@@ -6,6 +6,7 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,6 +39,9 @@ public class MemberInvitationApi {
     @Resource
     private RoleService roleService;
 
+    @Resource
+    private ProjectService projectService;
+
 
     /**
      * 通过用户账户查询用户
@@ -68,8 +72,11 @@ public class MemberInvitationApi {
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
         try{
-            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","成员"));
+            //查询出当前项目的默认分组
+            String groupId = projectService.findDefaultGroup(projectId);
+            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","成员"));
             ProjectMember member = new ProjectMember();
+            member.setDefaultGroup(groupId);
             member.setProjectId(projectId);
             member.setMemberId(memberId);
             member.setRId(roleEntity.getId());

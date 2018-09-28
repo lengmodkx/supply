@@ -205,9 +205,4 @@ public interface RelationService extends IService<Relation> {
 	 * @param relation 分组信息(名称,所在项目)
 	 */
 	void saveGroup(Relation relation);
-
-	Relation findDefaultRelation(String projectId);
-
-	void updateDefaultGroup(String projectId);
-
 }
