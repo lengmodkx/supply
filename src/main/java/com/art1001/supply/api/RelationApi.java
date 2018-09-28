@@ -52,9 +52,10 @@ public class RelationApi {
      * 添加分组
      * @return
      */
-    @PostMapping("/group")
-    public JSONObject addMenu(@RequestParam(value = "groupName") String menuName,
-                              @RequestParam(value = "projectId") String projectId){
+    @PostMapping("/{projectId}/group")
+    public JSONObject addMenu(
+            @PathVariable(value = "projectId") String projectId,
+            @RequestParam(value = "groupName") String menuName){
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();

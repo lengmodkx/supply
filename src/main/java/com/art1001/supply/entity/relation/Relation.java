@@ -1,11 +1,11 @@
 package com.art1001.supply.entity.relation;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * relationEntity
@@ -65,10 +65,6 @@ public class Relation extends Model<Relation> {
 	 */
 	private Integer order;
 
-	/**
-	 * 默认分组
-	 */
-	private int defaultGroup;
 	/**
 	 * 创建时间
 	 */

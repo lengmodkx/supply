@@ -205,13 +205,4 @@ public interface RelationService extends IService<Relation> {
 	 * @param relation 分组信息(名称,所在项目)
 	 */
 	void saveGroup(Relation relation);
-
-	Relation findDefaultRelation(String projectId);
-
-	/**
-	 * 取消当前项目的默认分组
-	 * @param projectId
-	 */
-	void cancelDefaultGroup(String projectId);
-
 }

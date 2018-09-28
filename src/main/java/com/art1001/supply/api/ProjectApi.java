@@ -141,6 +141,7 @@ public class ProjectApi {
 
             Project project = projectService.findProjectByProjectId(projectId);
             jsonObject.put("project",project);
+            jsonObject.put("result",1);
         }catch (Exception e){
             e.printStackTrace();
             throw new SystemException(e);
