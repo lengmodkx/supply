@@ -6,6 +6,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -105,5 +106,16 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Override
 	public int findMemberIsExist(String projectId, String id) {
 		return projectMemberMapper.findMemberIsExist(projectId,id);
+	}
+
+	/**
+	 * 根据用户查询出 用户在该项目中的默认分组id
+	 * @param projectId 项目id
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Override
+	public String findDefaultGroup(String projectId, String userId) {
+		return projectMemberMapper.selectOne(new QueryWrapper<ProjectMember>().select("default_group").eq("project_id",projectId).eq("member_id",userId)).getDefaultGroup();
 	}
 }

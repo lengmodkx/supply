@@ -88,7 +88,7 @@ public class ShareController extends BaseController {
             Collections.reverse(s.getLogs());
         }
         model.addAttribute("shareList",shareList);
-        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
+        model.addAttribute("currentGroup",projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
 
         //查询出分享的关联信息
         for (Share s : shareList) {

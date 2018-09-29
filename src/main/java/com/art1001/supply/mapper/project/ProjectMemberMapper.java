@@ -1,6 +1,5 @@
 package com.art1001.supply.mapper.project;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -8,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * projectMembermapper接口
@@ -74,4 +75,5 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 */
 	@Select("select count(0) from prm_project_member where project_id = #{projectId} and member_id = #{id}")
 	int findMemberIsExist(@Param("projectId") String projectId, @Param("id") String id);
+
 }

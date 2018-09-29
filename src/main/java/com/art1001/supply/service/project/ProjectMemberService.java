@@ -71,4 +71,12 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @return
 	 */
     int findMemberIsExist(String projectId, String id);
+
+	/**
+	 * 根据用户查询出 用户在该项目中的默认分组id
+	 * @param projectId 项目id
+	 * @param userId 用户id
+	 * @return
+	 */
+	String findDefaultGroup(String projectId, String userId);
 }

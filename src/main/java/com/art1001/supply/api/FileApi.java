@@ -16,6 +16,7 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserService;
@@ -100,6 +101,12 @@ public class FileApi {
     @Resource
     private UserService userService;
 
+    /**
+     * 项目成员 逻辑层接口
+     */
+    @Resource
+    private ProjectMemberService projectMemberService;
+
 
     /**
      * 加载项目下文件列表数据
@@ -107,8 +114,8 @@ public class FileApi {
      * @param fileId 文件id
      * @return
      */
-    @GetMapping
-    public JSONObject fileList(@RequestParam(value = "projectId") String projectId,
+    @GetMapping("/{projectId}")
+    public JSONObject fileList(@PathVariable(value = "projectId") String projectId,
                            @RequestParam(value = "fileId",required = false,defaultValue = "0") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -116,7 +123,7 @@ public class FileApi {
             jsonObject.put("data", fileList);
             jsonObject.put("parentId", fileId);
             jsonObject.put("projectId", projectId);
-            jsonObject.put("currentGroup",relationService.findDefaultRelation(projectId));
+            jsonObject.put("currentGroup", projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
             jsonObject.put("status",200);
             jsonObject.put("result",1);
             //获取文件的后缀名
@@ -131,7 +138,7 @@ public class FileApi {
     /**
      * 打开文件详情
      */
-    @GetMapping("/{fileId}")
+    @GetMapping("/{fileId}/details")
     public JSONObject openDownloadFile(@PathVariable(value = "fileId") String fileId, Model model) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -239,7 +246,7 @@ public class FileApi {
     }
 
     /**
-     * 上传文件
+     * 上传模型文件
      *
      * @param projectId 项目id
      */
@@ -604,25 +611,6 @@ public class FileApi {
     }
 
     /**
-     * 异步获取文件列表
-     *
-     * @param projectId projectId 项目id
-     */
-    @GetMapping("/{projectId}")
-    public JSONObject projectList(@PathVariable(value = "projectId") String projectId) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("data",fileService.findChildFile(projectId,"0"));
-            jsonObject.put("projectId", projectId);
-            jsonObject.put("result",1);
-        }catch (Exception e){
-            log.error("系统异常!",e);
-            throw new SystemException(e);
-        }
-        return jsonObject;
-    }
-
-    /**
      * 获取该文件夹下的 所有文件和子文件夹
      */
     @GetMapping("/{fileId}/child")
@@ -686,7 +674,7 @@ public class FileApi {
      * 查询我参与的文件
      * @return
      */
-    @GetMapping("my_join")
+    @GetMapping("/my_join")
     public JSONObject findJoinFile(){
         JSONObject jsonObject = new JSONObject();
         try {

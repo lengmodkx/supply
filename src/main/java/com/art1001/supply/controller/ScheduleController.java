@@ -7,8 +7,6 @@ import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.relation.GroupVO;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
@@ -80,7 +78,7 @@ public class ScheduleController extends BaseController {
     public String schedule(@RequestParam String projectId,Model model){
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
+        model.addAttribute("currentGroup",projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("scheduleVo",scheduleService.findScheduleGroupByCreateTime(null,projectId));

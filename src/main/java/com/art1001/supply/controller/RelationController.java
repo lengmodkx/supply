@@ -455,8 +455,8 @@ public class RelationController {
     public String loadGroupInfo(@RequestParam String projectId, Model model){
         try {
             List<Relation> groups = relationService.loadGroupInfo(projectId);
-            Relation defaultRelation = relationService.findDefaultRelation(projectId);
-            model.addAttribute("currentGroup",defaultRelation);
+            //Relation defaultRelation = relationService.findDefaultRelation(projectId);
+            //model.addAttribute("currentGroup",defaultRelation);
             model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
             model.addAttribute("groups",groups);
             model.addAttribute("result",1);

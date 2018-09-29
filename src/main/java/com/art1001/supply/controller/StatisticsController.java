@@ -1,11 +1,10 @@
 package com.art1001.supply.controller;
 
 import com.art1001.supply.controller.base.BaseController;
-import com.art1001.supply.entity.relation.GroupVO;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsDTO;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskInfoService;
@@ -43,6 +42,10 @@ public class StatisticsController extends BaseController {
 
     @Resource
     private RelationService relationService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
+
     /**
      * 加载任务统计页面的信息
      * @param projectId 项目id
@@ -68,7 +71,7 @@ public class StatisticsController extends BaseController {
         model.addAttribute("user",userEntity);
         model.addAttribute("project",projectService.findProjectByProjectId(projectId));
         model.addAttribute("overViewList",overViewList);
-        model.addAttribute("currentGroup",relationService.findDefaultRelation(projectId));
+        model.addAttribute("currentGroup",projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
         model.addAttribute("pieChartsList",pieChartsList);
         model.addAttribute("histogramList",histogramList);
         model.addAttribute("doubleHistogramList",doubleHistogramList);
