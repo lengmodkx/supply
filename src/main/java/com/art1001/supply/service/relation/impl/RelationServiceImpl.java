@@ -314,16 +314,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	}
 
 	/**
-	 * 根据任务id 查询该任务的菜单信息.
-	 * @param taskId 任务id
-	 * @return
-	 */
-	@Override
-	public Relation findMenuInfoByTaskId(String taskId) {
-		return relationMapper.findMenuInfoByTaskId(taskId);
-	}
-
-	/**
 	 * 根据菜单id 查询出该菜单所在的 分组信息以及项目信息
 	 * @param relationId 菜单id
 	 * @return

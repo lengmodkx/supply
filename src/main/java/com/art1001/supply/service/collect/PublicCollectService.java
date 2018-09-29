@@ -1,13 +1,11 @@
 package com.art1001.supply.service.collect;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
-import com.art1001.supply.entity.share.Share;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 /**
@@ -59,15 +57,6 @@ public interface PublicCollectService extends IService<PublicCollect> {
 	 * @return
 	 */
 	public List<PublicCollect> findPublicCollectAllList();
-
-	/**
-	 * 查询当前用户有没有收藏该信息
-	 * @param memberId 当前登录用户id
-	 * @param publicId 任务/日程/文件/分享的id
-	 * @param collectType 收藏的类型 任务/日程/文件/分享
-	 * @return
-	 */
-	int judgeCollectPublic(@Param("memberId") String memberId, @Param("publicId") String publicId, @Param("collectType") String collectType);
 
 	/**
 	 * 数据: 根据用户id查询该用户的收藏

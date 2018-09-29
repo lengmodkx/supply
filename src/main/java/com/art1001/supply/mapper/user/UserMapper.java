@@ -52,9 +52,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	public int updateUserInfo(UserEntity userEntity);
 
 	/**
-	 * 分页查询用户列表
+	 * 查询一个用户信息
+	 * @param userId 用户id
+	 * @return
 	 */
-    List<UserEntity> findListPager(Pager pager);
+	UserEntity findById(String userId);
 
 	int findCount();
 

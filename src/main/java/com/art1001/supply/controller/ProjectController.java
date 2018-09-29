@@ -411,32 +411,32 @@ public class ProjectController extends BaseController {
         }
         return jsonObject;
     }
-//
-//    //任务界面初始化
-//    @GetMapping("/task.html")
-//    public String mainpage(@RequestParam String projectId, String groupId,Model model){
-//        try {
-//
-//            Relation relation1 = new Relation();
-//            relation1.setParentId(relation.getRelationId());
-//            relation1.setLable(1);
-//            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
-//            model.addAttribute("taskMenus",taskMenu);
-//            model.addAttribute("currentGroup",relation);
-//
-//            //获取当前登录用户的消息总数
-//            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
-//            model.addAttribute("newsCount",userNewsCount);
-//
-//            Project project = projectService.findProjectByProjectId(projectId);
-//            model.addAttribute("project",project);
-//            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            throw new SystemException(e);
-//        }
-//        return "mainpage";
-//    }
+
+    //任务界面初始化
+    @GetMapping("/task.html")
+    public String mainpage(@RequestParam String projectId, String groupId,Model model){
+        try {
+
+            Relation relation1 = new Relation();
+            relation1.setParentId(projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
+            relation1.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
+            model.addAttribute("taskMenus",taskMenu);
+            model.addAttribute("currentGroup",relation1);
+
+            //获取当前登录用户的消息总数
+            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
+            model.addAttribute("newsCount",userNewsCount);
+
+            Project project = projectService.findProjectByProjectId(projectId);
+            model.addAttribute("project",project);
+            model.addAttribute("user",ShiroAuthenticationManager.getUserEntity());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new SystemException(e);
+        }
+        return "mainpage";
+    }
 
 
     @GetMapping("/addtask.html")

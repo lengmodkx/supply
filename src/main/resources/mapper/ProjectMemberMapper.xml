@@ -12,7 +12,7 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
 		<result column="collect" property="collect" jdbcType="INTEGER" />
-		<result column="is_receivemessage" property="IsReceiveMessage" jdbcType="INTEGER" />
+		<result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER" />
 		<result column="r_id" property="rId" jdbcType="INTEGER" />
 	</resultMap>
 
@@ -147,7 +147,7 @@
 			<if test="collect != null ">
 				collect,
 			</if>
-			<if test="IsReceiveMessage != null ">
+			<if test="isReceiveMessage != null ">
 				is_receivemessage,
 			</if>
 			<if test="defaultGroup!= null ">
@@ -190,8 +190,8 @@
 			<if test="collect != null ">
 				#{collect},
 			</if>
-			<if test="IsReceiveMessage != null ">
-				#{IsReceiveMessage},
+			<if test="isReceiveMessage != null ">
+				#{isReceiveMessage},
 			</if>
 			<if test="defaultGroup != null ">
 				#{defaultGroup},
@@ -235,8 +235,8 @@
 			<if test="collect != null ">
 				collect = #{collect},
 			</if>
-			<if test="IsReceiveMessage != null ">
-				is_receivemessage = #{IsReceiveMessage},
+			<if test="isReceiveMessage != null ">
+				is_receivemessage = #{isReceiveMessage},
 			</if>
 		</set>
 

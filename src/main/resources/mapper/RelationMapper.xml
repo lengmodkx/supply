@@ -64,20 +64,7 @@
 				lable,
 				relation_del,
 				`order`,
-				creator,
-				default_group
-	</sql>
-
-	<sql id = "groupInfo">
-		a.未完成,
-		b.完成,
-		c.`NAME`,
-		c.id,
-		c.创建人,
-		c.`分组状态`,
-		d.`已逾期`,
-		e.`近期的任务`,
-		f.`分组内任务总数`
+				creator
 	</sql>
 
 	<sql id="whereStatement">
@@ -104,14 +91,6 @@
 			and parent_id = #{parentId}
 		</if>
 		order by `order` asc
-	</select>
-
-
-	<select id="findDefaultRelation" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_relation
-		where default_group=1 and project_id = #{projectId}
 	</select>
 
 	<insert id="saveRelation" parameterType="com.art1001.supply.entity.relation.Relation">
@@ -149,9 +128,6 @@
 			<if test="creator != null ">
 				`creator`,
 			</if>
-			<if test="defaultGroup != null ">
-				default_group,
-			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -185,9 +161,6 @@
 			</if>
 			<if test="creator != null ">
 				#{creator},
-			</if>
-			<if test="defaultGroup != null ">
-				#{defaultGroup},
 			</if>
 		</trim>
 
@@ -294,25 +267,6 @@
 			relation_id = #{relationId}
 		</where>
 	</update>
-
-	<!-- 查询出该任务的所属菜单信息 -->
-	<select id="findMenuInfoByTaskId" resultMap="BaseResultMap">
-		SELECT
-			prm_relation.relation_id ,
-			prm_relation.relation_name,
-			prm_relation.parent_id
-		FROM
-			prm_relation
-		WHERE
-			prm_relation.relation_id = (
-				SELECT
-					prm_task.task_menu_id
-				FROM
-					prm_task
-				WHERE
-					prm_task.task_id = #{taskId}
-			)
-	</select>
 
 	<!-- 根据菜单id 查询出 任务 项目等信息 -->
 	<select id="findProjectAndGroupInfoByMenuId" resultMap="MenuVOMap">

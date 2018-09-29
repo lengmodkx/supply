@@ -13,7 +13,6 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
@@ -620,23 +619,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
-     * 判断当前用户有没有给该任务点赞
-     * @param taskId 任务id信息
-     * @return
-     */
-    @Override
-    public boolean judgeFabulous(String taskId) {
-        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
-        int result = fabulousMapper.judgeFabulous(taskId,memberId);
-        //如果已经给该任务点赞 返回 false 否则返回true
-        if(result > 0){
-            return false;
-        } else{
-            return true;
-        }
-    }
-
-    /**
      * 用户取消赞
      * @param task 当前任务信息
      * @return
@@ -800,22 +782,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         publicCollect.setUpdateTime(System.currentTimeMillis());
         //保存至数据库
         return publicCollectService.savePublicCollect(publicCollect);
-    }
-
-    /**
-     * 判断当前用户有没有收藏当前任务
-     * @param task 当前用户的信息
-     * @return
-     */
-    @Override
-    public boolean judgeCollectTask(Task task) {
-        //如果收藏了任务返回false 否则返回true
-        int result = publicCollectService.judgeCollectPublic(ShiroAuthenticationManager.getUserId(),task.getTaskId(),BindingConstants.BINDING_TASK_NAME);
-        if(result > 0){
-            return false;
-        } else{
-            return true;
-        }
     }
 
     /**
@@ -1085,16 +1051,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<Task> findTaskByUserIdAndByTreeDay(String userId) {
         return taskMapper.findTaskByUserIdAndByTreeDay(userId);
-    }
-
-    /**
-     * 根据任务的菜单信息 查询出任务分组信息
-     * @param menuParent 根据任务的菜单信息 查询出任务分组信息
-     * @return 任务的实体
-     */
-    @Override
-    public Relation findTaskGroupInfoByTaskMenuId(String menuParent) {
-        return taskMapper.findTaskGroupInfoByTaskMenuId(menuParent);
     }
 
     /**

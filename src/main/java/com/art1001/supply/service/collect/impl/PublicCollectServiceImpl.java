@@ -1,15 +1,9 @@
 package com.art1001.supply.service.collect.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Resource;
-
-import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.collect.PublicCollectVO;
-import com.art1001.supply.entity.schedule.Schedule;
-import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.mapper.collect.PublicCollectMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
@@ -20,7 +14,10 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * collectServiceImpl 收藏任务，日程，文件，分享的service实现
@@ -109,18 +106,6 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	@Override
 	public List<PublicCollect> findPublicCollectAllList(){
 		return publicCollectMapper.findPublicCollectAllList();
-	}
-
-	/**
-	 * 判断当前用户有没有
-	 * @param memberId 当前登录用户id
-	 * @param publicId 任务/日程/文件/分享的id
-	 * @param collectType 收藏的类型 任务/日程/文件/分享
-	 * @return
-	 */
-	@Override
-	public int judgeCollectPublic(String memberId, String publicId, String collectType) {
-		return publicCollectMapper.judgeCollectPublic(memberId,publicId,collectType);
 	}
 
 	/**

@@ -54,23 +54,6 @@
 		select count(0) from tb_user
 	</select>
 	
-	<select id="queryListByPage" parameterType="map" resultMap="userMap" flushCache="true" useCache="true">
-		SELECT u.u_id,
-		u.u_name,
-		u.u_account_name,
-		u.u_password,
-		u.u_delete_status,
-		u.u_locked,
-		u.u_description,
-		u.u_credentials_salt,
-		u.u_creator_name,
-		u.u_create_time,
-		u.u_update_time
-		FROM tb_user u
-		order by u_id DESC
-		limit #{start}, #{pageSize}
-	</select>
-	
 	<select id="findByName" parameterType="String" resultMap="userMap">
 		SELECT <include refid="userAttributes"/>
 		from tb_user
@@ -328,7 +311,7 @@
 			u.u_image
 		FROM
 			tb_user u
-		WHERE
+		<where>
 			<if test="memberIds != null and memberIds != ''">
 				and u.u_id in (
 				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
@@ -340,9 +323,10 @@
 					#{id}
 				</foreach>)
 			</if>
-		<if test="memberIds == null and memberIds == ''">
-			and u.u_id in ('')
-		</if>
+			<if test="memberIds == null and memberIds == ''">
+				and u.u_id in ('')
+			</if>
+		</where>
 	</select>
 
 	<!-- 查询指定项目下所有的成员信息 -->

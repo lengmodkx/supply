@@ -1,14 +1,12 @@
 package com.art1001.supply.service.share.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -19,9 +17,14 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.share.Share;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * shareServiceImpl
@@ -278,7 +281,7 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Override
 	public Share findByIdAllInfo(String shareId) {
 		Share byId = shareMapper.findById(shareId);
-		byId.setCollect(publicCollectService.judgeCollectPublic(ShiroAuthenticationManager.getUserId(), shareId, "分享"));
+		byId.setCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("public_id",shareId)));
 		return byId;
 	}
 

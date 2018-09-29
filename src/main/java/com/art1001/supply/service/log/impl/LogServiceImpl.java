@@ -1,15 +1,16 @@
 package com.art1001.supply.service.log.impl;
 
-import java.util.List;
-import javax.annotation.Resource;
+import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.log.Log;
+
+import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * ServiceImpl
@@ -118,7 +119,9 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	 */
 	@Override
 	public List<Log> initLog(String publicId) {
-		return logMapper.initLog(publicId);
+		List<Log> logs = logMapper.initLog(publicId);
+		Collections.reverse(logs);
+		return logs;
 	}
 
 	/**

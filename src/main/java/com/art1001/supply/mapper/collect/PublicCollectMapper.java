@@ -58,14 +58,6 @@ public interface PublicCollectMapper extends BaseMapper<PublicCollect> {
 	List<PublicCollect> findPublicCollectAllList();
 
 	/**
-	 * 判断当前用户有没有收藏该任务
-	 * @param memberId
-	 * @param publicId 收藏的
-	 * @return
-	 */
-	int judgeCollectPublic(@Param("memberId") String memberId,@Param("publicId") String publicId,@Param("collectType") String collectType);
-
-	/**
 	 * 收藏mapper层
 	 * 数据: 根据收藏id 删除一条记录
 	 * @param publicCollectId 收藏记录的id

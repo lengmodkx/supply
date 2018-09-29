@@ -470,14 +470,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 	int findOverdueCompletion(@Param("projectId")String projectId, @Param("currDate") Long currDate);
 
 	/**
-	 * 根据菜单的parent 查询出该菜单的分组id
-	 * @param menuParent 菜单的分组id
-	 * @return
-	 */
-	@Select("select relation_id relationId,relation_name relationName from prm_relation where relation_id = #{menuParent}")
-    Relation findTaskGroupInfoByTaskMenuId(String menuParent);
-
-	/**
 	 * 查询出在回收站中的任务
 	 * @param projectId 项目id
 	 * @return 该项目下所有在回收站的任务集合

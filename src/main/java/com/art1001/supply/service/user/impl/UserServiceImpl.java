@@ -142,11 +142,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public List<UserEntity> findListPager(Pager pager) {
-        return userMapper.findListPager(pager);
-    }
-
-    @Override
     public int findCount() {
         return userMapper.findCount();
     }

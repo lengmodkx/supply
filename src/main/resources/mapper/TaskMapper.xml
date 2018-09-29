@@ -152,7 +152,6 @@
 		prm_task.remind,
 		prm_task.remarks,
 		prm_task.priority,
-		prm_task.tag_id,
 		prm_task.`level`,
 		prm_task.parent_id,
 		prm_task.member_id,
@@ -291,9 +290,9 @@
 	</delete>
 
 	<insert id="saveTaskBatch">
-		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, tag_id, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
+		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
 		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
-		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
+		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
 		</foreach>
 	</insert>
 

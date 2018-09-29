@@ -3,7 +3,6 @@ package com.art1001.supply.service.task;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
@@ -163,13 +162,6 @@ public interface TaskService extends IService<Task> {
     int clickFabulous(Task task);
 
 	/**
-	 * 判断用户有没有该任务点赞
-	 * @param taskId 任务id
-	 * @return
-	 */
-	boolean judgeFabulous(String taskId);
-
-	/**
 	 * 用户取消对当前任务的赞
 	 * @param task 当前任务信息
 	 * @return
@@ -206,13 +198,6 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	int collectTask(Task task);
-
-	/**
-	 * 判断当前登录用户有没有收藏该任务
-	 * @param task 当前用户的信息
-	 * @return
-	 */
-	boolean judgeCollectTask(Task task);
 
 	/**
 	 * 取消收藏的任务
@@ -455,13 +440,6 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
     List<Statistics> findTaskCountOverView(String projectId);
-
-	/**
-	 * 根据任务的菜单信息 查询出任务分组信息
-	 * @param menuParent 任务菜单所属的分组id
-	 * @return 任务的实体
-	 */
-	Relation findTaskGroupInfoByTaskMenuId(String menuParent);
 
 	/**
 	 * 查询出在回收站中的任务

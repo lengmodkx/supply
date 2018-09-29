@@ -2,12 +2,18 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
-import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.fabulous.Fabulous;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.fabulous.FabulousService;
+import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -38,37 +44,76 @@ public class TaskApi {
     private TaskService taskService;
 
     @Resource
-    private ProjectMemberService projectMemberService;
+    private ProjectService projectService;
+
+    @Resource
+    private PublicCollectService publicCollectService;
 
     @Resource
     private RelationService relationService;
+
+    @Resource
+    private BindingService bindingService;
+
+    @Resource
+    private LogService logService;
+
+    @Resource
+    private FabulousService fabulousService;
+
     /**
-     * 项目详情初始化数据
-     * @param projectId 项目id
-     * @param groupId 分组id
-     * @return JSONObject
+     * 任务页面初始化
+     * @return
      */
-    @GetMapping("")
-    public JSONObject tasks(@RequestParam("projectId") String projectId,
-                            @RequestParam("groupId") String groupId){
+    @GetMapping("/{taskId}")
+    public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setDefaultGroup(groupId);
-            projectMemberService.update(projectMember,new QueryWrapper<ProjectMember>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("project_id",projectId));
+            //查询出此条任务的具体信息
+            Task taskInfo = taskService.findTaskByTaskId(taskId);
+            jsonObject.put("task",taskInfo);
 
-            //根据当前用户的默认分组查询出分组信息
-            Relation relation = new Relation();
-            relation.setParentId(groupId);
-            relation.setLable(1);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation);
-            jsonObject.put("data",taskMenu);
+            //当前项目Id
+            jsonObject.put("projectId",taskInfo.getProjectId());
+
+            //判断当前用户有没有对该任务点赞
+            int count = fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId));
+            jsonObject.put("isFabulous",count);
+
+            //查询出当前的项目信息详情
+            jsonObject.put("projectInfo",projectService.findProjectByProjectId(taskInfo.getProjectId()));
+
+            //判断当前用户有没有收藏该任务
+            int collectCount = publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId()));
+            jsonObject.put("collectCount",collectCount);
+
+            //查询出该任务所在的菜单信息
+            Relation menuRelation = relationService.getOne(new QueryWrapper<Relation>().select("relation_id","relation_name","parent_id").eq("relation_id", taskInfo.getTaskMenuId()));
+            jsonObject.put("menu",menuRelation);
+
+            //根据该任务的菜单查询出任务的分组信息
+            Relation taskGroup = relationService.getOne(new QueryWrapper<Relation>().select("relation_id","relation_name").eq("relation_id",menuRelation.getParentId()));
+            jsonObject.put("taskGroup",taskGroup);
+
+            //查询出任务的关联信息
+            List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
+            jsonObject.put("bindings",bindings);
+
+            //查询出我参与的所有项目信息
+            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0);
+            jsonObject.put("projectByMemberId",projectByMemberId);
+
+            //查询出该任务的日志信息
+            jsonObject.put("taskLogs",logService.initLog(taskId));
+
             jsonObject.put("result",1);
-        }catch (Exception e){
-            throw new SystemException(e);
+        } catch (Exception e){
+            log.error("系统异常,任务数据拉取失败:",e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
+
     /**
      * 创建任务
      * @param taskName 任务名称
