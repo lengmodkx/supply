@@ -18,7 +18,6 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
@@ -58,12 +57,6 @@ public class FileApi {
      */
     @Resource
     private FileService fileService;
-
-    /**
-     * 分组/菜单 逻辑层接口
-     */
-    @Resource
-    private RelationService relationService;
 
     /**
      * 文件版本的逻辑层接口

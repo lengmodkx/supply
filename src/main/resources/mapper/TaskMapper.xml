@@ -644,12 +644,6 @@
 			task_id = #{taskId}
 		</where>
 	</update>
-
-	<!-- 判断当前菜单有没有任务 -->
-	<select id="findTaskByMenuId" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select count(task_id) from prm_task where task_menu_id = #{taskMenuId}
-	</select>
-
 	<!-- 根据任务id数组查找出任务 -->
 	<select id="findManyTask" resultMap="BaseResultMap">
 		select
@@ -678,21 +672,6 @@
 			and task_status = #{taskStatus}
 		</if>
 	</select>
-	<!-- 更改当前任务的隐私模式 -->
-	<update id="SettingUpPrivacyPatterns">
-		update prm_task
-		<set>
-			<if test="privacyPattern == 0">
-				privacy_pattern = 1
-			</if>
-			<if test="privacyPattern == 1">
-				privacy_pattern = 0
-			</if>
-		</set>
-		<where>
-			task_id = #{taskId}
-		</where>
-	</update>
 
 	<!-- 根据任务状态查询多个任务信息 -->
 	<select id="findTaskByStatus" resultMap="BaseResultMap">
@@ -710,7 +689,7 @@
 	</select>
 
 	<!-- 查询当前菜单下的全部任务信息 -->
-	<select id="taskMenu" resultMap="BaseResultMap2">
+	<select id="findTaskByMenuId" resultMap="BaseResultMap2">
 		select
 		<include refid="Base_Column_List3"/>
 		from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
@@ -864,19 +843,6 @@
 		select
 		<include refid="Base_Column_List"/>
 		from prm_task where member_id = #{memberId}
-	</select>
-
-	<!-- 查询某个用户的执行的所有任务 并且排序 -->
-	<select id="findTaskByExecutorIdAndTime" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List2"/>,
-		,prm_project.project_name
-		from prm_task inner join prm_project on prm_task.project_id = prm_project.project_id where prm_task.executor = #{uId}
-		<if test="orderType == 2">
-			order by end_time
-		</if>
-		<if test="and orderType == 3">
-			order by create_time desc
-		</if>
 	</select>
 
 	<!-- 查询出某个用户执行的所有完成的任务 -->

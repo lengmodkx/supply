@@ -1,17 +1,12 @@
 package com.art1001.supply.service.task.impl;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -25,13 +20,16 @@ import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
-import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskApiBean;
+import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.TaskStatusConstant;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
-import com.art1001.supply.mapper.task.*;
+import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.apiBean.ApiBeanService;
 import com.art1001.supply.service.binding.BindingService;
@@ -52,9 +50,14 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * taskServiceImpl
@@ -325,16 +328,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Log log = logService.saveLog(task.getTaskId(), content,1);
         log.setResult(result);
         return log;
-    }
-
-    /**
-     * 判断当前菜单有没有任务
-     * @param taskMenuId 菜单id
-     * @return
-     */
-    @Override
-    public int findTaskByMenuId(String taskMenuId) {
-        return taskMapper.findTaskByMenuId(taskMenuId);
     }
 
     /**
@@ -838,16 +831,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
-     * 更改当前任务的隐私模式
-     * @param task 任务的实体信息
-     * @return
-     */
-    @Override
-    public int settingUpPrivacyPatterns(Task task) {
-        return taskMapper.settingUpPrivacyPatterns(task);
-    }
-
-    /**
      * 查询该项目下的所有成员信息
      * @param projectId 当前项目的id
      * @param executor 当前任务的执行者信息
@@ -888,8 +871,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return
      */
     @Override
-    public List<Task> taskMenu(String menuId) {
-        return taskMapper.taskMenu(menuId);
+    public List<Task> findTaskByMenuId(String menuId) {
+        return taskMapper.findTaskByMenuId(menuId);
     }
 
     /**

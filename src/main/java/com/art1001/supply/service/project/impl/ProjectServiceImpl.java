@@ -1,7 +1,6 @@
 package com.art1001.supply.service.project.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -12,7 +11,6 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.project.ProjectAppsService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -61,9 +59,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Resource
 	private RelationService relationService;
-
-	@Resource
-	private ProjectAppsService appsService;
 
 	@Resource
 	private RoleService roleService;
@@ -132,11 +127,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	public void saveProject(Project project){
 		project.setProjectId(IdGen.uuid());
 		project.setProjectCover("upload/project/bj.png");
-		project.setProjectDel(0);
 		project.setCreateTime(System.currentTimeMillis());
-		project.setIsPublic(0);
-		project.setProjectRemind(0);
-		project.setProjectStatus(0);
 
 		//初始化分组
 		Relation relation = new Relation();
@@ -148,11 +139,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relationService.saveRelation(relation);
 
 		//初始化项目文件夹
-		String projectFolderId = fileService.initProjectFolder(project);
+		fileService.initProjectFolder(project);
 
 		//初始化项目功能菜单
 		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
-		String jsonfun = projectFunc(funcs,projectFolderId,relation.getRelationId());
+		String jsonfun = projectFunc(funcs);
 		project.setFunc(jsonfun);
 		projectMapper.saveProject(project);
 
@@ -285,31 +276,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	/**
 	 * 生成项目插件数据
 	 * @param funcs 插件名称数组
-	 * @param projectFolderId 该项目根文件夹的id
-	 * @param groupId 当前默认分组id
 	 * @return
 	 */
-	private String projectFunc(String[] funcs, String projectFolderId,String groupId){
-		List<ProjectFunc> funs = new ArrayList<ProjectFunc>();
+	private String projectFunc(String[] funcs){
+		List<ProjectFunc> funs = new ArrayList<>();
 		Arrays.stream(funcs).forEach(item -> {
 			ProjectFunc pf = new ProjectFunc();
 			pf.setFuncName(item);
 			pf.setFlag(true);
-			if(item.equals(Constants.TASK)){
-				pf.setSuffix("tasks/group/"+groupId);
-			}
-			if(item.equals(Constants.FILE)){
-				pf.setSuffix("file/"+projectFolderId);
-			}
-			if(item.equals(Constants.SHARE)){
-				pf.setSuffix("share");
-			}
-			if(item.equals(Constants.SCHEDULE)){
-				pf.setSuffix("schedule");
-			}
-			if(item.equals(Constants.GROUP_CHAT)){
-				pf.setSuffix("groupchat");
-			}
 			funs.add(pf);
 		});
 		return JSON.toJSONString(funs);

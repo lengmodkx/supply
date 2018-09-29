@@ -88,13 +88,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 	int changeTaskStatus(@Param("taskId") String taskId, @Param("taskStatus") String taskStatus, @Param("updateTime") long updateTime);
 
 	/**
-	 * 判断当前菜单有没有任务
-	 * @param taskMenuId 菜单id
-	 * @return
-	 */
-    int findTaskByMenuId(String taskMenuId);
-
-	/**
 	 * 根据任务id查找出该任务的所有标签
 	 * @param taskId 任务id
 	 * @return
@@ -125,13 +118,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 	List<Task> findSubLevelTask(String taskId);
 
 	/**
-	 * 更改当前任务的隐私模式
-	 * @param task
-	 * @return
-	 */
-    int settingUpPrivacyPatterns(Task task);
-
-	/**
 	 * 根据任务的状态查询多条任务信息
 	 * @param status
 	 * @return
@@ -149,7 +135,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param menuId
 	 * @return
 	 */
-    List<Task> taskMenu(@Param("menuId") String menuId);
+    List<Task> findTaskByMenuId(@Param("menuId") String menuId);
 
 	/**
 	 * 查询某个人执行的所有任务

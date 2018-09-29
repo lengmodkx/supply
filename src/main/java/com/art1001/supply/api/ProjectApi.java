@@ -2,8 +2,6 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -11,7 +9,6 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,8 +56,6 @@ public class ProjectApi {
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setProjectCover("upload/project/bj.png");
-            project.setCreateTime(System.currentTimeMillis());
             project.setMemberId(userId);
             projectService.saveProject(project);
             //写资源表
@@ -111,42 +106,6 @@ public class ProjectApi {
         }
 
         return object;
-    }
-
-    /**
-     * 项目详情初始化数据
-     * @param projectId 项目id
-     * @param groupId 分组id
-     * @return
-     */
-    @GetMapping("/{projectId}/tasks/group/{groupId}")
-    public JSONObject tasks(@PathVariable("projectId") String projectId, @PathVariable("groupId") String groupId){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setDefaultGroup(groupId);
-            projectMemberService.update(projectMember,new QueryWrapper<ProjectMember>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("project_id",projectId));
-
-            //根据当前用户的默认分组查询出分组信息
-            Relation relation1 = new Relation();
-            relation1.setParentId(groupId);
-            relation1.setLable(1);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation1);
-            jsonObject.put("taskMenus",taskMenu);
-            jsonObject.put("currentGroup",groupId);
-
-            //获取当前登录用户的消息总数
-            int userNewsCount = userNewsService.findUserNewsCount(ShiroAuthenticationManager.getUserId());
-            jsonObject.put("newsCount",userNewsCount);
-
-            Project project = projectService.findProjectByProjectId(projectId);
-            jsonObject.put("project",project);
-            jsonObject.put("result",1);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new SystemException(e);
-        }
-        return jsonObject;
     }
 
     /**

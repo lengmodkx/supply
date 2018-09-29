@@ -12,14 +12,16 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.task.PushType;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskMenuVO;
+import com.art1001.supply.entity.task.TaskStatusConstant;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
-import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -596,8 +598,8 @@ public class TaskController {
     public JSONObject findTaskByMenuId(@RequestParam String taskMenuId){
         JSONObject jsonObject = new JSONObject();
         try{
-            int result = taskService.findTaskByMenuId(taskMenuId);
-            jsonObject.put("result",result);
+            List<Task> result = taskService.findTaskByMenuId(taskMenuId);
+            jsonObject.put("result",result.isEmpty()?0:1);
         } catch (Exception e){
             log.error("查询失败! 当前菜单id:,{},{}",taskMenuId,e);
             throw new AjaxException(e);
@@ -885,25 +887,6 @@ public class TaskController {
     }
 
     /**
-     * 修改任务的隐私模式
-     * @param task 任务的实体信息
-     */
-    @PostMapping("settingUpPrivacyPatterns")
-    @ResponseBody
-    public JSONObject settingUpPrivacyPatterns(Task task){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            taskService.settingUpPrivacyPatterns(task);
-            jsonObject.put("msg","修改成功!");
-            jsonObject.put("result",1);
-        } catch (Exception e){
-            log.error("更改隐私模式失败! 当前任务id,{},{}",task.getTaskId(),e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
-    }
-
-    /**
      * 查询出已经是该任务的参与者的信息和非参与者的信息
      * @return
      */
@@ -1098,7 +1081,7 @@ public class TaskController {
                 jsonObject.put("msg","请选择菜单!");
                 return jsonObject;
             }
-            List<Task> taskList = taskService.taskMenu(menuId);
+            List<Task> taskList = taskService.findTaskByMemberId(menuId);
             if(taskList.size() > 0){
                 jsonObject.put("data",taskList);
                 jsonObject.put("result","1");

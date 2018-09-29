@@ -119,9 +119,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	@Override
 	public void saveRelation(Relation relation){
         relation.setRelationId(IdGen.uuid());
-		relation.setLable(0);
-		relation.setRelationDel(0);
-		relation.setOrder(0);
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
 		relation.setCreateTime(System.currentTimeMillis());
 		relation.setUpdateTime(System.currentTimeMillis());

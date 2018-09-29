@@ -1,8 +1,5 @@
 package com.art1001.supply.service.task;
 
-import java.util.List;
-import java.util.Map;
-
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
@@ -14,6 +11,9 @@ import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -78,13 +78,6 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	Log updateTaskStartAndEndTime(Task task);
-
-	/**
-	 * 根据菜单id 查询该菜单下有没有任务
-	 * @param taskMenuId 菜单id
-	 * @return
-	 */
-	int findTaskByMenuId(String taskMenuId);
 
 	/**
 	 * 移动任务
@@ -229,13 +222,6 @@ public interface TaskService extends IService<Task> {
 	int cancelCollectTask(Task task);
 
 	/**
-	 * 更改当前任务的隐私模式
-	 * @param task 任务的实体信息
-	 * @return
-	 */
-	int settingUpPrivacyPatterns(Task task);
-
-	/**
 	 * 查询当前项目下的所有成员信息
 	 * @param projectId 项目id
 	 * @param executor 任务的执行者id
@@ -256,7 +242,7 @@ public interface TaskService extends IService<Task> {
 	 * @param menuId 菜单id
 	 * @return
 	 */
-	List<Task> taskMenu(String menuId);
+	List<Task> findTaskByMenuId(String menuId);
 
 	/**
 	 * 查询菜单下的任务信息 不包括 执行者信息

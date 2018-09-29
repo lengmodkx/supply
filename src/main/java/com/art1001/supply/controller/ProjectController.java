@@ -463,7 +463,7 @@ public class ProjectController extends BaseController {
         model.addAttribute("menuId",menuId);
         model.addAttribute("menuName",menuName);
         model.addAttribute("projectId",projectId);
-        List<Task> taskList = taskService.taskMenu(menuId);
+        List<Task> taskList = taskService.findTaskByMemberId(menuId);
         model.addAttribute("taskList",taskList);
         return "tk-menu-list";
     }

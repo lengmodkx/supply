@@ -2,15 +2,23 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 任务增删改查，复制，移动
@@ -29,6 +37,38 @@ public class TaskApi {
     @Resource
     private TaskService taskService;
 
+    @Resource
+    private ProjectMemberService projectMemberService;
+
+    @Resource
+    private RelationService relationService;
+    /**
+     * 项目详情初始化数据
+     * @param projectId 项目id
+     * @param groupId 分组id
+     * @return JSONObject
+     */
+    @GetMapping("")
+    public JSONObject tasks(@RequestParam("projectId") String projectId,
+                            @RequestParam("groupId") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setDefaultGroup(groupId);
+            projectMemberService.update(projectMember,new QueryWrapper<ProjectMember>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("project_id",projectId));
+
+            //根据当前用户的默认分组查询出分组信息
+            Relation relation = new Relation();
+            relation.setParentId(groupId);
+            relation.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            jsonObject.put("data",taskMenu);
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+        return jsonObject;
+    }
     /**
      * 创建任务
      * @param taskName 任务名称
