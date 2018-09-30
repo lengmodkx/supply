@@ -69,13 +69,6 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	void moveRecycleBin(@Param("relationId") String relationId,@Param("relationDel") String relationDel,@Param("updateTime")Long updateTime);
 
 	/**
-	 * 根据任务id查询出该任务的菜单信息
-	 * @param taskId
-	 * @return
-	 */
-	Relation findMenuInfoByTaskId(String taskId);
-
-	/**
 	 * 根据菜单id 查询出 菜单说在的分组信息 和 项目信息
 	 * @param relationId 菜单id
 	 * @return

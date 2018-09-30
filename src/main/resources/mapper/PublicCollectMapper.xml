@@ -210,11 +210,6 @@
 		) WHERE public_id = #{id};
 	</update>
 
-    <!-- 判断当前用户有没有收藏该项目 -->
-	<select id="judgeCollectPublic" resultType="java.lang.Integer">
-		select count(0) from prm_public_collect where public_id = #{publicId} and member_id = #{memberId} and collect_type = #{collectType}
-	</select>
-
 	<!-- 查询当前用户收藏的所有任务 -->
 	<select id="listMyCollect" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />

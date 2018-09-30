@@ -3,7 +3,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
@@ -90,11 +89,11 @@ public class ShareController extends BaseController {
         model.addAttribute("shareList",shareList);
         model.addAttribute("currentGroup",projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
 
-        //查询出分享的关联信息
-        for (Share s : shareList) {
-            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
-            s.setBindingVo(bindingVo);
-        }
+//        //查询出分享的关联信息
+//        for (Share s : shareList) {
+//            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(s.getId());
+//            s.setBindingVo(bindingVo);
+//        }
 
         if(!StringUtils.isEmpty(shareId)){
             model.addAttribute("shareId",shareId);
@@ -329,7 +328,7 @@ public class ShareController extends BaseController {
     public String shareInfoById(String shareId, Model model){
         Share byId = shareService.findById(shareId);
 //        byId.setIsCollect(publicCollectService.isCollItem(shareId));
-        byId.setBindingVo(bindingService.listBindingInfoByPublicId(shareId));
+        //byId.setBindingVo(bindingService.listBindingInfoByPublicId(shareId));
         model.addAttribute("share",byId);
         return "revisetShare";
     }

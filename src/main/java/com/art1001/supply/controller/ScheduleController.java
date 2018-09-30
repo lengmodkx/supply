@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.controller.base.BaseController;
 import com.art1001.supply.entity.ServerMessage;
-import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -27,6 +27,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -134,8 +135,8 @@ public class ScheduleController extends BaseController {
         model.addAttribute("endTimeTemp",format.format(schedule.getEndTime()));
         model.addAttribute("schedule",schedule);
         //查询出日程的关联信息
-        BindingVo bindingVo = bindingService.listBindingInfoByPublicId(id);
-        model.addAttribute("bindingVo",bindingVo);
+        List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", id));
+        model.addAttribute("bindings",bindings);
         return "tk-edit-schedule";
     }
 

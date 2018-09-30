@@ -1,12 +1,13 @@
 package com.art1001.supply.mapper.fabulous;
 
-import java.util.List;
-import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.fabulous.Fabulous;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 得赞mapper接口
@@ -57,14 +58,6 @@ public interface FabulousMapper extends BaseMapper<Fabulous> {
 	 * @return
 	 */
 	int addFabulous(Fabulous fabulous);
-
-	/**
-	 * 判断当前用户有没有给当前任务点赞
-	 * @param publicId 当前任务id
-	 * @param memberId 当前登录用户id
-	 * @return
-	 */
-	int judgeFabulous(@Param("publicId") String publicId, @Param("memberId") String memberId);
 
 	/**
 	 * 用户取消对当前的赞

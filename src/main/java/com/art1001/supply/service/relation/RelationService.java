@@ -121,13 +121,6 @@ public interface RelationService extends IService<Relation> {
 	void menuAllTaskToRecycleBin(String relationId);
 
 	/**
-	 * 根据任务id 查询该任务的菜单信息.
-	 * @param taskId 任务id
-	 * @return
-	 */
-    Relation findMenuInfoByTaskId(String taskId);
-
-	/**
 	 * 根据菜单id 查询出该菜单所在的 分组信息以及项目信息
 	 * @param relationId 菜单id
 	 * @return

@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
@@ -23,6 +24,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileExt;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -149,7 +151,7 @@ public class FileApi {
             Collections.reverse(logs);
             jsonObject.put("logs",logs);
             //查询出任务的关联信息
-            jsonObject.put("bindings",bindingService.listBindingInfoByPublicId(file.getFileId()));
+            jsonObject.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", fileId)));
             //查询该文件有没有被当前用户收藏
             jsonObject.put("isCollect",publicCollectService.isCollItem(file.getFileId()));
             //查询出该文件的所有参与者信息

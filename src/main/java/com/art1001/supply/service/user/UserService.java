@@ -1,8 +1,7 @@
 package com.art1001.supply.service.user;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -25,11 +24,6 @@ public interface UserService extends IService<UserEntity> {
 	public int updatePassword(UserEntity userEntity, String password) throws ServiceException;
     
     public int deleteBatchById(List<String> userIds);
-
-	/**
-	 * 分页查询用户
-	 */
-	List<UserEntity> findListPager(Pager pager);
 
 	/**
 	 * 获取总条数

@@ -111,45 +111,6 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	}
 
 	/**
-	 * 功能: 查询出该目标关联的所有信息
-	 * 数据处理:
-	 * @param  publicId 目标id
-	 * @return 返回关联数据
-	 */
-	@Override
-	public BindingVo listBindingInfoByPublicId(String publicId) {
-		List<Binding> list = bindingMapper.listBindingInfoByPublicId(publicId);
-		BindingVo binding = new BindingVo();
-		List<Task> taskList = new ArrayList<>();
-		List<Share> shareList = new ArrayList<>();
-		List<File> fileList = new ArrayList<>();
-		List<Schedule> scheduleList = new ArrayList<>();
-		for (Binding b : list) {
-			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_TASK_NAME)){
-				taskList.add(taskService.findTaskByTaskId(b.getBindId()));
-				binding.setTaskList(taskList);
-				binding.setPublicType(BindingConstants.BINDING_TASK_NAME);
-			}
-			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_FILE_NAME)){
-				fileList.add(fileService.findFileById(b.getBindId()));
-				binding.setFileList(fileList);
-				binding.setPublicType(BindingConstants.BINDING_FILE_NAME);
-			}
-			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_SCHEDULE_NAME)){
-				scheduleList.add(scheduleService.findScheduleById(b.getBindId()));
-				binding.setScheduleList(scheduleList);
-				binding.setPublicType(BindingConstants.BINDING_SCHEDULE_NAME);
-			}
-			if(Objects.equals(b.getPublicType(),BindingConstants.BINDING_SHARE_NAME)){
-				shareList.add(shareService.findById(b.getBindId()));
-				binding.setShareList(shareList);
-				binding.setPublicType(BindingConstants.BINDING_SHARE_NAME);
-			}
-		}
-		return binding;
-	}
-
-	/**
 	 * 实现方法  查询库中存不存在此条关联记录
 	 * @param publicId 关联的信息id
 	 * @param bindId 被关联的信息id

@@ -6,15 +6,12 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.common.Push;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.PushType;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.task.TaskStatusConstant;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -42,7 +39,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -918,63 +918,63 @@ public class TaskController {
     @GetMapping("initTask.html")
     public String initTask(Task task,Model model){
         try {
-            //获取当前用户信息
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            model.addAttribute("user",userEntity);
-            //查询出此条任务的具体信息
-            Task taskById = taskService.findTaskByTaskId(task.getTaskId());
-            model.addAttribute("task",taskById);
-            model.addAttribute("taskId",task.getTaskId());
-            //当前项目Id
-            model.addAttribute("projectId",taskById.getProjectId());
-            //判断当前用户有没有对该任务点赞
-            boolean isFabulous = taskService.judgeFabulous(task.getTaskId());
-            model.addAttribute("isFabulous",isFabulous);
-
-            //查询出当前的项目信息详情
-            model.addAttribute("projectInfo",projectService.findProjectByProjectId(task.getProjectId()));
-
-            //判断当前用户有没有收藏该任务
-            boolean isCollect = taskService.judgeCollectTask(task);
-            model.addAttribute("isCollect",isCollect);
-
-            //查询出该任务所在的菜单信息
-            Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
-            model.addAttribute("menuRelation",menuRelation);
-
-            //查询出当前项目下所有的菜单信息
-            List<Relation> menusByProjectId = relationService.findMenusByProjectId(taskById.getProjectId());
-            model.addAttribute("menus",menusByProjectId);
-
-            if(menuRelation != null){
-                //根据该任务的菜单查询出任务的分组信息
-                Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
-                model.addAttribute("taskGroup",taskGroup);
-            }
-
-            //查询出任务的关联信息
-            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
-            model.addAttribute("bindingVo",bindingVo);
-
-            if(taskById.getParentId() == null){
-                //根据菜单信息查询出该任务的所在的分组 和 项目信息
-                TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
-                model.addAttribute("menuRelation",menuRelation);
-                model.addAttribute("taskMenuVo",taskMenuVO);
-            }
-
-            //查询出我参与的所有项目信息
-            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0);
-            model.addAttribute("projectByMemberId",projectByMemberId);
-
-            //查询出该任务的日志信息
-            List<Log> logList = logService.initLog(task.getTaskId());
-            Collections.reverse(logList);
-            model.addAttribute("taskLogs",logList);
-            //返回数据
-            model.addAttribute("data",taskById);
-            model.addAttribute("isFabulous",isFabulous);
-            model.addAttribute("isCollect",isCollect);
+//            //获取当前用户信息
+//            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+//            model.addAttribute("user",userEntity);
+//            //查询出此条任务的具体信息
+//            Task taskById = taskService.findTaskByTaskId(task.getTaskId());
+//            model.addAttribute("task",taskById);
+//            model.addAttribute("taskId",task.getTaskId());
+//            //当前项目Id
+//            model.addAttribute("projectId",taskById.getProjectId());
+//            //判断当前用户有没有对该任务点赞
+//            boolean isFabulous = taskService.judgeFabulous(task.getTaskId());
+//            model.addAttribute("isFabulous",isFabulous);
+//
+//            //查询出当前的项目信息详情
+//            model.addAttribute("projectInfo",projectService.findProjectByProjectId(task.getProjectId()));
+//
+//            //判断当前用户有没有收藏该任务
+//            boolean isCollect = taskService.judgeCollectTask(task);
+//            model.addAttribute("isCollect",isCollect);
+//
+//            //查询出该任务所在的菜单信息
+//            Relation menuRelation = relationService.findMenuInfoByTaskId(task.getTaskId());
+//            model.addAttribute("menuRelation",menuRelation);
+//
+//            //查询出当前项目下所有的菜单信息
+//            List<Relation> menusByProjectId = relationService.findMenusByProjectId(taskById.getProjectId());
+//            model.addAttribute("menus",menusByProjectId);
+//
+//            if(menuRelation != null){
+//                //根据该任务的菜单查询出任务的分组信息
+//                Relation taskGroup = taskService.findTaskGroupInfoByTaskMenuId(menuRelation.getParentId());
+//                model.addAttribute("taskGroup",taskGroup);
+//            }
+//
+//            //查询出任务的关联信息
+//            BindingVo bindingVo = bindingService.listBindingInfoByPublicId(task.getTaskId());
+//            model.addAttribute("bindingVo",bindingVo);
+//
+//            if(taskById.getParentId() == null){
+//                //根据菜单信息查询出该任务的所在的分组 和 项目信息
+//                TaskMenuVO taskMenuVO = relationService.findProjectAndGroupInfoByMenuId(menuRelation.getRelationId());
+//                model.addAttribute("menuRelation",menuRelation);
+//                model.addAttribute("taskMenuVo",taskMenuVO);
+//            }
+//
+//            //查询出我参与的所有项目信息
+//            List<Project> projectByMemberId = projectService.findProjectByMemberId(ShiroAuthenticationManager.getUserId(),0);
+//            model.addAttribute("projectByMemberId",projectByMemberId);
+//
+//            //查询出该任务的日志信息
+//            List<Log> logList = logService.initLog(task.getTaskId());
+//            Collections.reverse(logList);
+//            model.addAttribute("taskLogs",logList);
+//            //返回数据
+//            model.addAttribute("data",taskById);
+//            model.addAttribute("isFabulous",isFabulous);
+//            model.addAttribute("isCollect",isCollect);
         } catch (Exception e){
             log.error("系统异常,获取数据失败! 当前任务id ,{},{}",task.getTaskId(),e);
             throw new SystemException(e);

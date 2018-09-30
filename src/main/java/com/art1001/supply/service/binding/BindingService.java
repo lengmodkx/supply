@@ -1,10 +1,10 @@
 package com.art1001.supply.service.binding;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
-import com.art1001.supply.entity.binding.BindingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * bindingService接口
@@ -55,15 +55,6 @@ public interface BindingService extends IService<Binding> {
 	 * @return
 	 */
 	public List<Binding> findBindingAllList();
-
-	/**
-	 * 查询该目标的关联
-	 * 数据: 查询出目标的关联的所有数据
-	 * 功能: 页面上看到任务 或者 日程 详情页的关联信息
-	 * @param  publicId 目标id
-	 * @return 返回关联的集合
-	 */
-	BindingVo listBindingInfoByPublicId(String publicId);
 
 	/**
 	 * 查询要关联的信息  在库中存不存在

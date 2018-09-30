@@ -116,6 +116,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	 */
 	@Override
 	public String findDefaultGroup(String projectId, String userId) {
-		return projectMemberMapper.selectOne(new QueryWrapper<ProjectMember>().select("default_group").eq("project_id",projectId).eq("member_id",userId)).getDefaultGroup();
+		return projectMemberMapper.selectOne(new QueryWrapper<ProjectMember>().select("default_group").eq("project_id",projectId).eq("member_id",userId).ne("default_group","0")).getDefaultGroup();
 	}
 }
