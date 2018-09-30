@@ -2,6 +2,7 @@ package com.art1001.supply.entity.task;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class Task extends Model<Task> {
 	/**
 	 * task_id
 	 */
+	@TableId("task_id")
 	private String taskId;
 
 

@@ -1,14 +1,14 @@
 package com.art1001.supply.mapper.file;
 
-import java.util.List;
-import java.util.Map;
-
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * filemapper接口
@@ -140,8 +140,6 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return 项目的所有文件信息
 	 */
     List<File> findFileByProjectId(String projectId);
-
-    int chat(String fileId, String content);
 
 	/**
 	 * 返回该文件的所有参与者id

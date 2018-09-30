@@ -255,6 +255,9 @@ public class FileApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
+            //查询出当前文件夹的level
+            int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
+
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             JSONObject array = JSON.parseObject(fileCommon);
             JSONObject object = JSON.parseObject(fileModel);
@@ -264,6 +267,7 @@ public class FileApi {
             File modelFile = new File();
             // 用原本的文件名
             modelFile.setFileName(filename);
+            modelFile.setLevel(parentLevel+1);
             modelFile.setSize(size);
             modelFile.setFileUrl(fileUrl);
             modelFile.setParentId(parentId);

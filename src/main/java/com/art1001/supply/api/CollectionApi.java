@@ -117,6 +117,7 @@ public class CollectionApi {
         try{
             String userId = ShiroAuthenticationManager.getUserId();
             collectService.listMyCollect(userId,collectType);
+            //collectService.listByIds();
             object.put("result",1);
             object.put("msg","获取成功");
         }catch(Exception e){

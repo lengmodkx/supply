@@ -164,7 +164,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
-		where project_id = #{projectId} and parent_id = #{parentId}
+		where project_id = #{projectId} and parent_id = #{parentId} and public_lable = 0
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -235,6 +235,9 @@
 			<if test="fileUids != null">
 				and file_uids = #{fileUids}
 			</if>
+			<if test="publicLable">
+				and public_lable = #{publicLable}
+			</if>
 	</select>
 
 	<select id="findByIds" resultMap="BaseResultMap">
@@ -245,6 +248,7 @@
 		<foreach collection="array" open="(" separator="," close=")" item="id">
 			#{id}
 		</foreach>
+		and public_lable = 0
 	</select>
 
 
@@ -257,7 +261,7 @@
 		<include refid="Base_Column_List" />
 		FROM
 		prm_file
-		where catalog = 1 and  parent_id = #{fileId}
+		where catalog = 1 and  parent_id = #{fileId} and public_lable = 0
 	</select>
 
 	<update id="moveFile" parameterType="java.util.Map">
