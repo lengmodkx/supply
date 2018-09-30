@@ -141,8 +141,6 @@ public interface FileMapper extends BaseMapper<File> {
 	 */
     List<File> findFileByProjectId(String projectId);
 
-    int chat(String fileId, String content);
-
 	/**
 	 * 返回该文件的所有参与者id
 	 * @param fileId 文件id
