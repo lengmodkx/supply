@@ -26,7 +26,6 @@ import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FileExt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -111,7 +110,7 @@ public class FileApi {
      */
     @GetMapping("/{projectId}")
     public JSONObject fileList(@PathVariable(value = "projectId") String projectId,
-                           @RequestParam(value = "fileId",required = false,defaultValue = "0") String fileId) {
+                               @RequestParam(value = "fileId",required = false,defaultValue = "0") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<File> fileList = fileService.findProjectFile(projectId, fileId);
@@ -119,7 +118,6 @@ public class FileApi {
             jsonObject.put("parentId", fileId);
             jsonObject.put("projectId", projectId);
             jsonObject.put("currentGroup", projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
-            jsonObject.put("status",200);
             jsonObject.put("result",1);
             //获取文件的后缀名
             jsonObject.put("exts",FileExt.extMap);
@@ -134,7 +132,7 @@ public class FileApi {
      * 打开文件详情
      */
     @GetMapping("/{fileId}/details")
-    public JSONObject openDownloadFile(@PathVariable(value = "fileId") String fileId, Model model) {
+    public JSONObject openDownloadFile(@PathVariable(value = "fileId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = fileService.findFileById(fileId);
@@ -155,7 +153,7 @@ public class FileApi {
             //查询该文件有没有被当前用户收藏
             jsonObject.put("isCollect",publicCollectService.isCollItem(file.getFileId()));
             //查询出该文件的所有参与者信息
-            jsonObject.put("joins",userService.findManyUserById(fileService.findJoinId(file.getFileId())));
+            jsonObject.put("joins",userService.findManyUserById(file.getFileUids()));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常:",e);
@@ -202,7 +200,6 @@ public class FileApi {
         try {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
-            jsonObject.put("status",201);
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);

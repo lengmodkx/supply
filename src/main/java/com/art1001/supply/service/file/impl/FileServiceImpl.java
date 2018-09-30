@@ -246,6 +246,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setProjectId(project.getProjectId());
         projectFile.setFileUrl(DateUtils.getDateStr("yyyy-MM-dd hh:mm:ss"));
         projectFile.setParentId("1");
+        projectFile.setCatalog(1);
         fileService.saveFile(projectFile);
         // 初始化项目
         String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
@@ -257,6 +258,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setProjectId(project.getProjectId());
             file.setParentId(projectFile.getFileId());
             file.setLevel(2);
+            file.setCatalog(1);
             // 设置是否目录
             fileService.saveFile(file);
         }
