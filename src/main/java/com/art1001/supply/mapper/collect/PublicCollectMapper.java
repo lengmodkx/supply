@@ -1,6 +1,5 @@
 package com.art1001.supply.mapper.collect;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -8,6 +7,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * collectmapper接口
@@ -65,15 +66,6 @@ public interface PublicCollectMapper extends BaseMapper<PublicCollect> {
 	 */
 	@Delete("delete from prm_public_collect where id = #{publicCollectId}")
     int cancelCollect(String publicCollectId);
-
-	/**
-	 * 收藏mapper层
-	 * 数据: 查询出某个用户收藏的所用任务
-	 * @param memberId 用户id
-	 * @param type 要查询的类型
-	 * @return 返回收藏集合
-	 */
-    List<PublicCollect> findMyCollect(@Param("memberId") String memberId,@Param("type") String type);
 
 	/**
 	 * 判断一下该用户是否收藏 当前信息

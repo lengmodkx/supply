@@ -15,8 +15,8 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -122,7 +122,7 @@ public class ShareApi {
      * @return
      */
     @Todo
-    @PatchMapping("/{shareId}/update/members")
+    @PutMapping("/{shareId}/update/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {

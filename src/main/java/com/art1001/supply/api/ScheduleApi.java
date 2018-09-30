@@ -97,7 +97,7 @@ public class ScheduleApi {
      * @param scheduleName 日程名称
      * @return
      */
-    @PatchMapping("/{scheduleId}/schedule_name")
+    @PutMapping("/{scheduleId}/schedule_name")
     public JSONObject updateScheduleName(@PathVariable String scheduleId,
                                          @RequestParam String scheduleName){
         JSONObject object = new JSONObject();
@@ -120,7 +120,7 @@ public class ScheduleApi {
      * @param startTime 日程开始时间
      * @return
      */
-    @PatchMapping("/{scheduleId}/starttime")
+    @PutMapping("/{scheduleId}/starttime")
     public JSONObject updateScheduleStartTime(@PathVariable String scheduleId,
                                          @RequestParam String startTime){
         JSONObject object = new JSONObject();

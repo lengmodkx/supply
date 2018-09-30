@@ -345,7 +345,7 @@ public class FileApi {
      * @param projectId 项目id
      * @return
      */
-    @PatchMapping("/{fileId}/recovery")
+    @PutMapping("/{fileId}/recovery")
     public JSONObject recoveryFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -444,7 +444,7 @@ public class FileApi {
      * @param fileIds  文件id数组
      * @param folderId 目标文件夹id
      */
-    @PatchMapping("/{folderId}/m_move")
+    @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
             @RequestParam String[] fileIds
@@ -566,7 +566,7 @@ public class FileApi {
      * @param fileIds ids
      * @param projectId 项目id
      */
-    @PatchMapping("/m_recycle")
+    @PutMapping("/m_recycle")
     public JSONObject moveToRecycleBin(
             @RequestParam(value = "fileIds") String[] fileIds,
             @RequestParam(value = "projectId") String projectId
@@ -653,7 +653,7 @@ public class FileApi {
      * @param newJoin 新的参与者id 数组
      * @return
      */
-    @PatchMapping("/{fileId}/add_remove_join")
+    @PutMapping("/{fileId}/add_remove_join")
     public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "newJoin") String newJoin){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -694,7 +694,7 @@ public class FileApi {
      * @param fileId 文件id
      * @return
      */
-    @PatchMapping("/{fileId}/name")
+    @PutMapping("/{fileId}/name")
     public JSONObject changeFileName(@RequestParam(value = "fileName") String fileName, @PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
