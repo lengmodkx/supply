@@ -5,13 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("collections")
+    @RequestMapping("collections")
 public class CollectionApi {
 
     @Resource
@@ -109,20 +111,20 @@ public class CollectionApi {
     /**
      * 全部收藏
      * @param collectType 收藏类型
+     * @param size 每页数量
+     * @param currPage 当前页
      * @return
      */
     @GetMapping
-    public JSONObject collections(@RequestParam(required = false) String collectType){
+    public JSONObject collections(@RequestParam("currPage") long currPage, @RequestParam("size") long size, @RequestParam(required = false) String collectType){
         JSONObject object = new JSONObject();
         try{
-            String userId = ShiroAuthenticationManager.getUserId();
-            collectService.listMyCollect(userId,collectType);
-            //collectService.listByIds();
+            IPage<PublicCollect> page = collectService.page(new Page<PublicCollect>().setSize(size).setCurrent(currPage), new QueryWrapper<PublicCollect>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("collect_type", collectType));
+            object.put("data",page);
             object.put("result",1);
-            object.put("msg","获取成功");
         }catch(Exception e){
-            log.error("系统异常:",e);
-            throw new SystemException(e);
+            log.error("系统异常,收藏数据获取失败:",e);
+            throw new AjaxException(e);
         }
         return object;
     }

@@ -76,15 +76,6 @@ public interface PublicCollectMapper extends BaseMapper<PublicCollect> {
     List<PublicCollect> findMyCollect(@Param("memberId") String memberId,@Param("type") String type);
 
 	/**
-	 * 查询收藏数据的接口
-	 * 数据: 根据收藏类型  查询数据
-	 * @param memberId 当前用户id
-	 * @param type 收藏的类型 (任务,文件,日程,分享)
-	 * @return 收藏实体信息的集合
-	 */
-	List<PublicCollect> listMyCollect(@Param("memberId") String memberId, @Param("type") String type);
-
-	/**
 	 * 判断一下该用户是否收藏 当前信息
 	 *
 	 * @param uId 当前登录用户id

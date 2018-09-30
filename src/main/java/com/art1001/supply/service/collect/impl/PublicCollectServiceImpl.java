@@ -135,43 +135,6 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	}
 
 	/**
-	 * 重写接口 查询收藏数据的方法
-	 * 数据: 1.根据前台传过来的收藏类型查询数据 2.根据出的收藏数据id 去查询对应的收藏信息(任务,日程,文件,分享)
-	 * 功能: 在页面个上根据用户点击的收藏类型 查询出想对应的收藏数据
-	 * @param memberId 当前用户id
-	 * @param type 收藏的类型 (任务,文件,日程,分享)
-	 * @return 收藏实体信息的集合
-	 */
-	@Override
-	public List<PublicCollectVO> listMyCollect(String memberId, String type) {
-	    //查出收藏信息的id集合
-        List<PublicCollect> publicCollects = publicCollectMapper.listMyCollect(memberId, type);
-        List<PublicCollectVO> publicCollectVOs = new ArrayList<PublicCollectVO>();
-        for (PublicCollect p : publicCollects) {
-            PublicCollectVO publicCollectVO = new PublicCollectVO();
-            publicCollectVO.setId(p.getId());
-            if(BindingConstants.BINDING_TASK_NAME.equals(p.getCollectType())){
-                publicCollectVO.setTask(taskService.findTaskByTaskId(p.getPublicId()));
-                publicCollectVO.setCollectType(p.getCollectType());
-            }
-            if(BindingConstants.BINDING_FILE_NAME.equals(p.getCollectType())){
-                publicCollectVO.setFile(fileService.findFileById(p.getPublicId()));
-                publicCollectVO.setCollectType(p.getCollectType());
-            }
-            if(BindingConstants.BINDING_SHARE_NAME.equals(p.getCollectType())){
-                publicCollectVO.setShare(shareService.findById(p.getPublicId()));
-                publicCollectVO.setCollectType(p.getCollectType());
-            }
-            if(BindingConstants.BINDING_SCHEDULE_NAME.equals(p.getCollectType())){
-                publicCollectVO.setSchedule(scheduleService.findScheduleById(p.getPublicId()));
-                publicCollectVO.setCollectType(p.getCollectType());
-            }
-            publicCollectVOs.add(publicCollectVO);
-        }
-        return publicCollectVOs;
-	}
-
-	/**
 	 * 收藏项 (文件,日程,分享)
 	 * @param publicId 项id
 	 * @param publicType 项的类型 (文件,日程,分享)
