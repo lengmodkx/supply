@@ -3,7 +3,6 @@ package com.art1001.supply.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.art1001.supply.common.Push;
 import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.log.Log;
@@ -232,7 +231,7 @@ public class TaskController {
                 taskPushType.setObject(jsonObject);
 
                 //新的消息推送方式
-                Push.pushMessage(taskId,jsonObject);
+                messagingTemplate.convertAndSend("/topic/"+taskId, new ServerMessage(JSON.toJSONString(jsonObject)));
             }
         } catch (Exception e){
             log.error("系统异常,成员添加失败! 当前任务id: ,{},{}",taskId,e);

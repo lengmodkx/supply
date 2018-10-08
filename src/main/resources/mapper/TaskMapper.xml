@@ -329,9 +329,6 @@
 			<if test="priority != null and priority != ''">
 			priority,
 			</if>
-			<if test="tagId != null and tagId != ''">
-			tag_id,
-			</if>
 			<if test="level != null ">
 			`level`,
 			</if>
@@ -424,9 +421,6 @@
 			<if test="priority != null and priority != ''">
 				#{priority},
 			</if>
-			<if test="tagId != null and tagId != ''">
-				#{tagId},
-			</if>
 			<if test="level != null ">
 				#{level},
 			</if>
@@ -518,9 +512,6 @@
 			</if>
 			<if test="priority != null and priority != ''">
 				`priority` = #{priority},
-			</if>
-			<if test="tagId != null and tagId != ''">
-				tag_id = #{tagId},
 			</if>
 			<if test="level != null ">
 				`level` = #{level},

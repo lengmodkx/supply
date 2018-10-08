@@ -213,19 +213,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
-        //保存任务和标签的关联关系
-        if(StringUtils.isNotEmpty(task.getTagId())){
-            List<String> tagList = Arrays.asList(task.getTagId().split(","));
-            tagList.forEach(tagId->{
-                TagRelation tagRelation = new TagRelation();
-                tagRelation.setTagId(Long.valueOf(tagId));
-                tagRelation.setTaskId(task.getTaskId());
-                tagRelation.setId(IdGen.uuid());
-                tagRelationService.saveTagRelation(tagRelation);
-            });
-        }
-        //拿到TaskLog对象并且保存
-        logService.saveLog(task.getTaskId(), TaskLogFunction.R.getName() + task.getTaskName(),1);
     }
 
     @Override
@@ -435,7 +422,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setTaskId(taskId);
         //设置最后更新时间
         task.setUpdateTime(System.currentTimeMillis());
-        task.setTagId(newTaskTag.toString());
         //更新到数据库
         int result = taskMapper.updateTask(task);
         Log log = new Log();
@@ -458,16 +444,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public void removeTaskTag(String tagId, String taskId) {
-        Task task = taskMapper.findTaskByTaskId(taskId);
-        String tagIds = task.getTagId();
-        List<String> tagIdTemp = Arrays.stream(tagIds.split(",")).filter(tagId1->!tagId1.equals(tagId)).collect(Collectors.toList());
-        if(tagIdTemp.size()==0){
-            taskMapper.clearTaskTag(taskId);
-        }else{
-            task.setTagId(StringUtils.join(tagIdTemp,",")+",");
-            task.setUpdateTime(System.currentTimeMillis());
-            taskMapper.updateTask(task);
-        }
+
     }
 
     /**

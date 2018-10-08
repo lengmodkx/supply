@@ -7,6 +7,7 @@ import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.util.MyByteSource;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -81,7 +82,7 @@ public class MyDBRealm extends AuthorizingRealm {
 		SimpleAuthenticationInfo authenticationInfo = null;
 		String username = (String)token.getPrincipal();
 
-		UserEntity userEntity = userMapper.findByName(username);
+		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
 		if (userEntity != null) {
 			if (userEntity.getLocked() == 1) {
 				throw new LockedAccountException(); // 帐号被锁定

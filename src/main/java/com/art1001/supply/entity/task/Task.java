@@ -69,12 +69,6 @@ public class Task extends Model<Task> {
 	 */
 	private String priority;
 
-
-	/**
-	 * 多个tag_id
-	 */
-	private String tagId;
-
 	private List<Tag> tagList;
 	/**
 	 * 任务的层级

@@ -1,30 +1,42 @@
 package com.art1001.supply.config;
 
+import com.art1001.supply.service.log.LogService;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.stereotype.Component;
+import org.aspectj.lang.annotation.*;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
+
+@Configuration
 @Aspect
-@Component
 public class AspectConfig {
 
-    @Pointcut("execution(public * com.art1001.supply.controller.*.*(..)) && @annotation(com.art1001.supply.annotation.Todo)")
+    /** 日志逻辑层接口 */
+    @Resource
+    private LogService logService;
+
+
+    @Pointcut("execution(public * com.art1001.supply.api.*.*(..)) && @annotation(com.art1001.supply.annotation.Todo)")
     public void todo(){}
 
+    @Before("todo()")
+    public void before(){
+        System.out.println("方法执行之钱");
+    }
 
-    @After("todo()")
-    public void doAfter(JoinPoint joinPoint){
-        System.out.println("方法执行之后");
-        for (int i = 0; i < joinPoint.getArgs().length; i++) {
-            System.out.println(joinPoint.getArgs()[i]);
-        }
-        System.out.println(joinPoint.getSignature().getName());
-
+    @AfterReturning(returning = "result", pointcut = "todo()")
+    public void doAfter(Object result){
 
 
     }
+
+
+    @After("todo()")
+    public void after(JoinPoint jp){
+
+    }
+
+
 
 
 }

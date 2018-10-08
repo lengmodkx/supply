@@ -46,6 +46,7 @@ public class ShiroConfig {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(600);
         config.setMaxIdle(300);
+        config.setMaxWaitMillis(1000);
         config.setTimeBetweenEvictionRunsMillis(30000);
         config.setMinEvictableIdleTimeMillis(30000);
         config.setSoftMinEvictableIdleTimeMillis(30000);
