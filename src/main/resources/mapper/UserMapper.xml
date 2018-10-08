@@ -407,12 +407,6 @@
 		tb_user where tb_user.u_id = (select member_id from prm_task_member where public_id = #{taskId} and type = '执行者')
 	</select>
 
-	<!--&lt;!&ndash; 根据id 查询用户的注册信息 &ndash;&gt;-->
-	<!--<select id="findUserInfoByUserId" resultMap="userInfo">-->
-		<!--select <include refid="userInfoAttributes"/>-->
-		<!--from tb_user_info where u_id = #{uId}-->
-	<!--</select>-->
-
 	<!-- 查询出某个任务的创建者信息 -->
 	<select id="findTaskCreate" resultMap="userMap">
 		  select

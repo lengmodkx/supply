@@ -113,7 +113,7 @@ public class RelationApi {
      * @param menuName 菜单名称
      * @return
      */
-    @PatchMapping("/{menuId}/menu")
+    @PutMapping("/{menuId}/menu")
     public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -136,7 +136,7 @@ public class RelationApi {
      * @param groupDel 分组状态
      * @return
      */
-    @PatchMapping("/{groupId}/recyclebin")
+    @PutMapping("/{groupId}/recyclebin")
     public JSONObject moveRecycleBin(@PathVariable(value = "groupId") String relationId, @RequestParam(value = "groupDel") String groupDel){
         JSONObject jsonObject = new JSONObject();
         try {

@@ -8,7 +8,6 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -60,7 +59,7 @@ public class NewsApi {
      * @param isread 点击的消息是否是已读的
      * @return
      */
-    @PatchMapping("/{id}/read")
+    @PutMapping("/{id}/read")
     public JSONObject updateIsRead(@PathVariable(value = "id") String id,
                                    @RequestParam(value = "isRead") int isread){
         JSONObject jsonObject = new JSONObject();

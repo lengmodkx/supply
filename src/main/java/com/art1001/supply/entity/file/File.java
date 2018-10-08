@@ -1,22 +1,25 @@
 package com.art1001.supply.entity.file;
 
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import lombok.Data;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.ToString;
 
 /**
  * fileEntity
  */
 @Data
 @ToString
+@TableName("prm_file")
 public class File extends Model<File> {
 
     private static final long serialVersionUID = 1L;
@@ -80,6 +83,7 @@ public class File extends Model<File> {
     /**
      * 该文件的附属项目的实体信息
      */
+    @TableField(exist = false)
     private Project project;
 
     /**
@@ -90,16 +94,19 @@ public class File extends Model<File> {
     /**
      * 文件创建者信息
      */
+    @TableField(exist = false)
     private UserEntity userEntity;
 
     /**
      * 标签的集合
      */
+    @TableField(exist = false)
     private List<Tag> tagList;
 
     /**
      * 文件参与者信息
      */
+    @TableField(exist = false)
     private List<UserEntity> joinInfo;
 
     /**
@@ -125,7 +132,7 @@ public class File extends Model<File> {
     /**
      * 文件层级
      */
-
+    @TableField("level")
     private int level;
     /** 创建时间
      *

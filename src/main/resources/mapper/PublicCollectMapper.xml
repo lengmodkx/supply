@@ -210,16 +210,6 @@
 		) WHERE public_id = #{id};
 	</update>
 
-	<!-- 查询当前用户收藏的所有任务 -->
-	<select id="listMyCollect" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List" />
-		from prm_public_collect where member_id = #{memberId}
-		<if test="type != null and type != ''">
-			and collect_type = #{type}
-		</if>
-		order by create_time desc
-	</select>
-
 	<!-- 删除多个任务的收藏记录 -->
 	<delete id="deleteManyCollectByItemId">
 		delete from prm_public_collect where public_id in

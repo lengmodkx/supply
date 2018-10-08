@@ -29,7 +29,9 @@ public class Role extends Model<Role> {
 	/*
 	 * 角色名
 	 */
+	@TableField("role_name")
 	private String roleName;
+
 	/*
 	 * 角色key
 	 */

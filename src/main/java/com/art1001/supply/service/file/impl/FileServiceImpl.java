@@ -24,6 +24,7 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -660,6 +661,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public void saveFileBatch(String projectId, String files, String parentId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         List<File> fileList = new ArrayList<File>();
+
+        //查询出当前文件夹的level
+        int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
         if(StringUtils.isNotEmpty(files)){
             JSONArray array = JSON.parseArray(files);
             for (int i=0;i<array.size();i++) {
@@ -678,6 +682,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 // 得到上传文件的大小
                 myFile.setSize(size);
                 myFile.setParentId(parentId);
+
+                //文件的层级
+                myFile.setLevel(parentLevel+1);
                // myFile.setCatalog(0);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
