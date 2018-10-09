@@ -1,5 +1,7 @@
 package com.art1001.supply.config;
 
+import com.alibaba.druid.filter.Filter;
+import com.alibaba.druid.filter.logging.Slf4jLogFilter;
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +10,8 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 阿里巴巴数据源配置
@@ -97,7 +101,21 @@ public class DruidDBConfig {
             e.printStackTrace();
         }
         datasource.setConnectionProperties(connectionProperties);
-
+        List<Filter> list= new ArrayList<Filter>(){{add(logFilter());}};
+        datasource.setProxyFilters(list);
         return datasource;
+    }
+
+    @Bean
+    public Slf4jLogFilter logFilter(){
+        Slf4jLogFilter filter = new Slf4jLogFilter();
+        filter.setResultSetLogEnabled(false);
+        filter.setConnectionLogEnabled(false);
+        filter.setStatementParameterClearLogEnable(false);
+        filter.setStatementCreateAfterLogEnabled(false);
+        filter.setStatementCloseAfterLogEnabled(false);
+        filter.setStatementParameterSetLogEnabled(false);
+        filter.setStatementPrepareAfterLogEnabled(false);
+        return  filter;
     }
 }

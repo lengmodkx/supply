@@ -33,8 +33,7 @@
 	</appender>
 
 	<!-- debug -->
-	<appender name="DEBUGAPPENDER"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<appender name="DEBUGAPPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>${FILE_DIR}/${FILE_NAME}_debug.log</File>
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -53,6 +52,22 @@
 			<onMatch>ACCEPT</onMatch>
 			<onMismatch>DENY</onMismatch>
 		</filter>
+	</appender>
+
+	<appender name="DruidFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${FILE_DIR}/${FILE_NAME}_druid.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名 -->
+			<FileNamePattern>${FILE_DIR}/${FILE_NAME}_druid.%d{yyyyMMdd}.%i.log</FileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<!--日志文件保留天数 -->
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger{0} - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
 	</appender>
 
 	<!-- 异步输出,这里可以根据具体需求再调整，或者不用异步输出 -->
@@ -84,7 +99,11 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="INFOAPPENDER" />
 	</logger>
-	
+
+	<logger name="druid" level="DEBUG">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="DruidFILE" />
+	</logger>
 	<!-- 所有的日志级别：OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL ，建议只使用四个级别，优先级从高到低分别是 ERROR、WARN、INFO、DEBUG-->
 
 </configuration>

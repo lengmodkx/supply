@@ -1,22 +1,15 @@
 package com.art1001.supply.service.collect.impl;
 
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
-import com.art1001.supply.entity.collect.PublicCollectVO;
 import com.art1001.supply.mapper.collect.PublicCollectMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
-import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.schedule.ScheduleService;
-import com.art1001.supply.service.share.ShareService;
-import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,22 +21,6 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	/** collectMapper接口*/
 	@Resource
 	private PublicCollectMapper publicCollectMapper;
-
-	/** 任务的逻辑层接口 */
-	@Resource
-    private TaskService taskService;
-
-	/** 文件的逻辑层接口 */
-	@Resource
-    private FileService fileService;
-
-	/** 分享的逻辑层接口 */
-	@Resource
-    private ShareService shareService;
-
-	/** 日程的逻辑层接口 */
-    @Resource
-    private ScheduleService scheduleService;
 
 	/**
 	 * 查询分页collect数据
@@ -106,19 +83,6 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	@Override
 	public List<PublicCollect> findPublicCollectAllList(){
 		return publicCollectMapper.findPublicCollectAllList();
-	}
-
-	/**
-	 * 重写接口方法
-	 * 数据: 根据收藏类型查询该用户的所有收藏
-	 * 功能: 查看我的收藏
-	 * 逻辑处理:
-	 * @param memberId 用户id
-	 * @return 返回收藏实体类集合信息
-	 */
-	@Override
-	public List<PublicCollect> findMyCollect(String memberId,String type) {
-		return publicCollectMapper.findMyCollect(memberId,type);
 	}
 
 	/**

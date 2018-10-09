@@ -58,15 +58,6 @@ public interface PublicCollectService extends IService<PublicCollect> {
 	public List<PublicCollect> findPublicCollectAllList();
 
 	/**
-	 * 数据: 根据用户id查询该用户的收藏
-	 * 功能: 实现查询我的收藏功能
-	 * @param memberId 用户id
-	 * @param type 需要查询的收藏的类型(任务,分享,日程,文件)
-	 * @return 收藏实体集合
-	 */
-	List<PublicCollect> findMyCollect(String memberId,String type);
-
-	/**
 	 * 数据: 删除该条收藏记录
 	 * 功能: 用户对当前任务取消收藏
 	 * @param publicCollectId 该条收藏记录id
