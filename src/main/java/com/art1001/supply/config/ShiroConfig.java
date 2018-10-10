@@ -1,7 +1,7 @@
 package com.art1001.supply.config;
 
-import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.listener.ShiroSessionListener;
+import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.shiro.LimitRetryCredentialsMatcher;
 import com.art1001.supply.shiro.MyDBRealm;
 import com.art1001.supply.shiro.cache.CustomShiroCacheManager;
@@ -28,8 +28,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -42,19 +40,7 @@ public class ShiroConfig {
 
     @Bean("redisManager")
     public RedisManager redisManager(){
-        RedisManager redisManager = new RedisManager();
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(600);
-        config.setMaxIdle(300);
-        config.setMaxWaitMillis(1000);
-        config.setTimeBetweenEvictionRunsMillis(30000);
-        config.setMinEvictableIdleTimeMillis(30000);
-        config.setSoftMinEvictableIdleTimeMillis(30000);
-        config.setTestOnBorrow(true);
-//        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
-        JedisPool jedisPool = new JedisPool(config, "localhost");
-        redisManager.setJedisPool(jedisPool);
-        return redisManager;
+        return new RedisManager();
     }
 
 
@@ -167,6 +153,7 @@ public class ShiroConfig {
         filtersMap.put("perm",new PermissionFilter());
         filtersMap.put("roleFilter",new RoleFilter());
         filtersMap.put("baseUrl",new URLFilter());
+        filtersMap.put("jwt", new JwtFilter());
 //        SslFilter sslFilter = new SslFilter();
 //        sslFilter.setPort(8443);
 //        filtersMap.put("ssl",sslFilter);

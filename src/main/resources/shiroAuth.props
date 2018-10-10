@@ -1,14 +1,13 @@
 /resources/static/**=anon
-/logout.html=anon
-/register.html=anon
-/captcha.html=anon
-/login.html=anon
+/logout=anon
+/register=anon
+/captcha=anon
+/login=anon
 #/denied.jsp=anon
 #/view/error/**=anon
 #/openapi/**=anon
 #/signin.html=anon
 
-/project/project.html=login,remember
 #/user/**=kickout,kickoutAuth,login,perm,remember,baseUrl
 #/role/**=kickout,kickoutAuth,login,perm,remember,baseUrl
 #/logInfo/**=kickout,kickoutAuth,login,perm,remember,baseUrl
@@ -19,4 +18,4 @@
 #/druid/**=login,remember,roles[administrator]
 #/sirona/**=login,remember,roles[administrator]
 #/**=baseUrl
-#/**=ssl,login,remember,perm,baseUrl
+/**=jwt

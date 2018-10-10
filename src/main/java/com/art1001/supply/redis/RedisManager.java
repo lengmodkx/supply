@@ -2,8 +2,6 @@ package com.art1001.supply.redis;
 
 import com.art1001.supply.util.SerializeUtil;
 import org.apache.shiro.session.Session;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -18,15 +16,18 @@ import java.util.*;
 
 public class RedisManager {
 
-	private JedisPool jedisPool;
-
-
 	private JedisPool getJedisPool() {
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(600);
+		config.setMaxIdle(300);
+		config.setMaxWaitMillis(1000);
+		config.setTimeBetweenEvictionRunsMillis(30000);
+		config.setMinEvictableIdleTimeMillis(30000);
+		config.setSoftMinEvictableIdleTimeMillis(30000);
+		config.setTestOnBorrow(true);
+//        JedisPool jedisPool = new JedisPool(config, "supply.redis.cache.chinacloudapi.cn",6379,10000,"fcupAgxfZTjWbeZ9ZJHM1Vv6e24+72keQswYpvDwikQ=");
+		JedisPool jedisPool = new JedisPool(config, "localhost");
 		return jedisPool;
-	}
-
-	public void setJedisPool(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
 	}
 
 	public Jedis getJedis() throws JedisConnectionException {

@@ -27,8 +27,7 @@ public class LoginFilter extends AccessControlFilter {
 	 * .servlet.ServletRequest, javax.servlet.ServletResponse, java.lang.Object)
 	 */
 	@Override
-	protected boolean isAccessAllowed(ServletRequest request,
-                                      ServletResponse response, Object mappedValue) throws Exception {
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 		
 		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
 
@@ -53,16 +52,14 @@ public class LoginFilter extends AccessControlFilter {
 	 * servlet.ServletRequest, javax.servlet.ServletResponse)
 	 */
 	@Override
-	protected boolean onAccessDenied(ServletRequest request,
-			ServletResponse response) throws Exception {
+	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
 		if (ShiroUtils.isAjax(request)) {// ajax请求
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("status", "403");
 			result.put("message", "用户未登陆,请重新登录!");
 			result.put("url", ShiroUtils.LOGIN_URL);
 			ShiroUtils.writeJson(response, result);
-		}else
-		{
+		}else {
 			// 保存Request和Response 到登录后的链接
 			saveRequestAndRedirectToLogin(request, response);
 		}

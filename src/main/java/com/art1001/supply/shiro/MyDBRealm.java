@@ -2,11 +2,11 @@ package com.art1001.supply.shiro;
 
 
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -43,7 +43,8 @@ public class MyDBRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-		UserEntity user = ShiroAuthenticationManager.getUserEntity();
+		String username = JwtUtil.getUsername(principalCollection.toString());
+		UserEntity user = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
 		if (user != null) {
 			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getId());
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
@@ -78,11 +79,18 @@ public class MyDBRealm extends AuthorizingRealm {
 	 * </br>CredentialsMatcher使用盐加密传入的明文密码和此处的密文密码进行匹配。
 	 */
 	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		SimpleAuthenticationInfo authenticationInfo = null;
-		String username = (String)token.getPrincipal();
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+		SimpleAuthenticationInfo authenticationInfo;
+		String username;
+		if(auth instanceof UsernamePasswordToken){
+			username = ((UsernamePasswordToken) auth).getUsername();
+		}else {
+			String token = (String) auth.getCredentials();
+			username = JwtUtil.getUsername(token);
+		}
 
 		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
+
 		if (userEntity != null) {
 			if (userEntity.getLocked() == 1) {
 				throw new LockedAccountException(); // 帐号被锁定
@@ -91,15 +99,9 @@ public class MyDBRealm extends AuthorizingRealm {
 			// 当用户执行登录时,在方法处理上要实现subject.login(token);
 			// 然后会自动进入这个类进行认证
 			// 交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得shiro自带的不好可以自定义实现
-            authenticationInfo = new SimpleAuthenticationInfo(
-					userEntity, // 用户对象
-            		userEntity.getPassword(), // 密码
-					//ByteSource.Util.bytes(username + userEntity.getCredentialsSalt()),// salt=username+salt
+            authenticationInfo = new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码
             		new MyByteSource(username + userEntity.getCredentialsSalt()),
-					this.getName() // realm name
-			);
-            //设置session属性
-            ShiroAuthenticationManager.setSessionAttribute(userEntity.getId(), userEntity);
+					this.getName());
             return authenticationInfo;
 		} else {
 			throw new UnknownAccountException();// 没找到帐号

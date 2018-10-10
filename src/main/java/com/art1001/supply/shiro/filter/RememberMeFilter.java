@@ -12,8 +12,7 @@ import javax.servlet.ServletResponse;
 public class RememberMeFilter extends FormAuthenticationFilter {
 	
 	@Override
-	protected boolean onLoginSuccess(AuthenticationToken token,
-                                     Subject subject, ServletRequest request, ServletResponse response)
+	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
 		// 获取session看看是不是空的
 		if(null == ShiroAuthenticationManager.getSessionAttribute(ShiroUtils.USERSESSION))

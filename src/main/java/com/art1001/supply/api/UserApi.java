@@ -3,13 +3,11 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.EmailUtil;
-import com.art1001.supply.util.NumberUtils;
-import com.art1001.supply.util.RegexUtils;
-import com.art1001.supply.util.SendSmsUtils;
+import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,8 @@ public class UserApi {
     @Resource
     private Producer captchaProducer;
 
+    @Resource
+    private RedisManager redisManager;
     /**
      * 用户登陆
      * @param accountName 账户名称
@@ -58,15 +58,19 @@ public class UserApi {
                              @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
          JSONObject object = new JSONObject();
          try {
-            Subject subject = SecurityUtils.getSubject();
-            UsernamePasswordToken token = new UsernamePasswordToken(accountName, password, rememberMe);
-            subject.login(token);
-            if (subject.isAuthenticated()) {
-                object.put("result", 1);
-                object.put("msg", "登陆成功");
+             Subject subject = SecurityUtils.getSubject();
+             UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
+             subject.login(token);
+             if(subject.isAuthenticated()) {
+                 String refreshToken = IdGen.uuid();
+                 redisManager.setex("refreshToken",refreshToken,7*24*60*60);
+                 object.put("result", 1);
+                 object.put("msg", "登陆成功");
+                 object.put("refreshToken",refreshToken);
+                 object.put("accessToken",JwtUtil.sign(accountName,refreshToken));
             } else {
-                object.put("result", 0);
-                object.put("msg", "账号或密码错误");
+                 object.put("result", 0);
+                 object.put("msg", "账号或密码错误");
             }
          } catch (UnknownAccountException e) {
             // 账户不存在
@@ -88,11 +92,6 @@ public class UserApi {
             log.error("您连续输错密码5次,帐号将被锁定10分钟!, {}", e);
             object.put("result", 0);
             object.put("msg", "您连续输错密码5次,帐号将被锁定10分钟!");
-         } catch (ExpiredCredentialsException e) {
-            // 账户凭证过期！
-            log.error("账户凭证过期！, {}", e);
-            object.put("result", 0);
-            object.put("msg", "账户凭证过期！");
          } catch (AuthenticationException e) {
             // 账户验证失败！
             log.error("账户验证失败！, {}", e);
@@ -165,7 +164,7 @@ public class UserApi {
             out.flush();
         }catch(IOException e)
         {
-            throw new SystemException(e);
+            throw new AjaxException(e);
         } finally {
             try {
                 if(null != out)
@@ -202,7 +201,7 @@ public class UserApi {
                 EmailUtil emailUtil = new EmailUtil();
                 emailUtil.send126Mail("","",String.valueOf(valid));
             }catch (Exception e){
-                throw new SystemException(e);
+                throw new AjaxException(e);
             }
         }
 
