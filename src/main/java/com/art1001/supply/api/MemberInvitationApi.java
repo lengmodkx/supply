@@ -9,6 +9,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -122,6 +123,17 @@ public class MemberInvitationApi {
         return object;
     }
 
-
-
+    @PutMapping("/{groupId}/group")
+    public JSONObject updateMemberGroup(@PathVariable(value = "groupId")String groupId,@RequestParam(value = "projectId") String projectId){
+        JSONObject object = new JSONObject();
+        try{
+            String userId = ShiroAuthenticationManager.getUserId();
+            projectMemberService.updateDefaultGroup(projectId,userId,groupId);
+            object.put("result",1);
+            object.put("msg","更新成功");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 }

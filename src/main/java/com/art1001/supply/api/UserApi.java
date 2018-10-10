@@ -138,6 +138,7 @@ public class UserApi {
             jsonObject.put("msg", "注册成功");
         } catch (Exception e) {
             log.error("注册失败:", e);
+            throw new AjaxException(e);
         }
 
         return jsonObject;

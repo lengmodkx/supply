@@ -7,6 +7,7 @@ import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -117,5 +118,13 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Override
 	public String findDefaultGroup(String projectId, String userId) {
 		return projectMemberMapper.selectOne(new QueryWrapper<ProjectMember>().select("default_group").eq("project_id",projectId).eq("member_id",userId).ne("default_group","0")).getDefaultGroup();
+	}
+
+	@Override
+	public void updateDefaultGroup(String projectId, String userId, String groupId) {
+		ProjectMember projectMember = new ProjectMember();
+		projectMember.setProjectId(projectId);
+		projectMember.setMemberId(userId);
+		update(projectMember,new UpdateWrapper<ProjectMember>().set("default_group",groupId));
 	}
 }

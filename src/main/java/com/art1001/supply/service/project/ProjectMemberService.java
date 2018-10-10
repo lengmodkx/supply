@@ -79,4 +79,12 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @return
 	 */
 	String findDefaultGroup(String projectId, String userId);
+
+	/**
+	 * 更新用户默认分组
+	 * @param projectId
+	 * @param userId
+	 * @param groupId
+	 */
+	void updateDefaultGroup(String projectId, String userId,String groupId);
 }
