@@ -48,7 +48,8 @@ public class ProjectApi {
             projectService.saveProject(project);
             //写资源表
             object.put("result",1);
-            object.put("projectId",project.getProjectId());
+            object.put("data",project.getProjectId());
+            object.put("msg","更新成功");
         }catch (Exception e){
             log.error("系统异常,项目创建失败:",e);
             throw new AjaxException(e);
@@ -88,6 +89,7 @@ public class ProjectApi {
             project.setProjectStatus(projectStatus);
             projectService.updateProject(project);
             object.put("result",1);
+            object.put("msg","更新成功");
         }catch (Exception e){
             log.error("保存失败:",e);
             throw new AjaxException(e);
@@ -100,7 +102,7 @@ public class ProjectApi {
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
-    @GetMapping()
+    @GetMapping
     public JSONObject projects(){
         JSONObject object = new JSONObject();
         try{
@@ -108,6 +110,7 @@ public class ProjectApi {
             List<Project> projectList = projectService.findProjectByUserId(userId);
             object.put("result",1);
             object.put("data",projectList);
+            object.put("msg","获取成功");
         }catch (Exception e){
             log.error("系统异常,信息获取失败:",e);
             throw new SystemException(e);
@@ -126,7 +129,8 @@ public class ProjectApi {
         try{
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result",1);
-            object.put("project",project);
+            object.put("data",project);
+            object.put("msg","获取成功");
         }catch (Exception e){
             log.error("系统异常,信息获取失败:",e);
             throw new SystemException(e);
@@ -143,7 +147,7 @@ public class ProjectApi {
     public JSONObject deleteProject(@PathVariable String projectId){
         JSONObject object = new JSONObject();
         try{
-            projectService.deleteProjectByProjectId(projectId);
+            projectService.removeById(projectId);
             object.put("result",1);
             object.put("msg","删除成功");
         }catch (Exception e){

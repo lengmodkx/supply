@@ -291,6 +291,7 @@
 			p.project_des,
 			pm.collect as collect,
 			p.project_del,
+			p.project_status,
 			pm.member_label as member_label
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
 		where pm.member_id = #{userId} order by pm.create_time asc
