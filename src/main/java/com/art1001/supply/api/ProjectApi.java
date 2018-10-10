@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.relation.RelationService;
-import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +28,6 @@ public class ProjectApi {
 
     @Resource
     private ProjectService projectService;
-
-    @Resource
-    private RelationService relationService;
-
-    @Resource
-    private UserNewsService userNewsService;
-
-    @Resource
-    private ProjectMemberService projectMemberService;
 
     /**
      * 创建项目
