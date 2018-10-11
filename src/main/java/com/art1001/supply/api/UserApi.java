@@ -108,15 +108,19 @@ public class UserApi {
 
     /**
      * 用户注册
-     *
-     * @param captcha 图形验证码
-     * @param userEntity 用户实体
+     * @param captcha 推行验证码
+     * @param accountName 用户名
+     * @param password 密码
+     * @param userName 昵称
+     * @return
      */
     @PostMapping("/register")
-    public JSONObject register(@RequestParam String captcha, UserEntity userEntity, HttpServletRequest request) {
+    public JSONObject register(@RequestParam String captcha,
+                               @RequestParam String accountName,
+                               @RequestParam String password,
+                               @RequestParam String userName) {
         JSONObject jsonObject = new JSONObject();
-        String kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
-
+        String kaptcha = redisManager.get("captcha");
         if(!captcha.equalsIgnoreCase(kaptcha)){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
@@ -124,16 +128,18 @@ public class UserApi {
         }
 
         //设置创建者姓名
-        userEntity.setCreatorName(userEntity.getAccountName());
+        UserEntity userEntity = new UserEntity();
+        userEntity.setCreatorName(accountName);
+        userEntity.setUserName(userName);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
-        UserEntity user = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
+        UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
         //设置添加用户的密码和加密盐
         userEntity.setPassword(user.getPassword());
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
         try {
             // 保存用户注册信息
-            userService.insert(userEntity, userEntity.getPassword());
+            userService.insert(userEntity, password);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "注册成功");
         } catch (Exception e) {
@@ -148,7 +154,7 @@ public class UserApi {
      * 获取图形验证码
      */
     @GetMapping("/captcha")
-    public void getImageCode(HttpServletRequest request,HttpServletResponse response) {
+    public void getImageCode(HttpServletResponse response) {
         ServletOutputStream out = null;
         try {
             response.setDateHeader("Expires", 0);
@@ -158,7 +164,7 @@ public class UserApi {
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
-            ShiroAuthenticationManager.setSessionAttribute(request.getSession().getId(), capText);
+            redisManager.set("captcha",capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
