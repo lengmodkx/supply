@@ -19,10 +19,12 @@ public class CaptchaConfig {
         properties.setProperty("kaptcha.image.height", "38");
         properties.setProperty("kaptcha.session.key", "code");
         properties.setProperty("kaptcha.textproducer.char.length", "4");
-        properties.setProperty("kaptcha.textproducer.font.size", "38");
-        properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        properties.setProperty("kaptcha.textproducer.font.size", "30");
+        properties.setProperty("kaptcha.textproducer.font.names", "Arial");
         properties.setProperty("kaptcha.background.clear.from", "254,252,252");
         properties.setProperty("kaptcha.background.clear.to", "254,252,252");
+        properties.put("kaptcha.noise.impl","com.google.code.kaptcha.impl.NoNoise");
+        properties.put("kaptcha.textproducer.char.space", "8");
         Config config=new Config(properties);
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
