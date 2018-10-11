@@ -120,7 +120,7 @@ public class UserApi {
                                @RequestParam String password,
                                @RequestParam String userName) {
         JSONObject jsonObject = new JSONObject();
-        String kaptcha = redisManager.get("captcha");
+        String kaptcha = redisManager.get("captcha",String.class);
         if(!captcha.equalsIgnoreCase(kaptcha)){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
