@@ -100,7 +100,6 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	 * 删除关联信息
 	 * @param publicId 记录关联的 publicId (哪个信息关联的其他信息)
 	 */
-	@Delete("delete from prm_binding where public_id = #{publicId} or bind_id = #{publicId}")
     void deleteByPublicId(String publicId);
 
 	/**

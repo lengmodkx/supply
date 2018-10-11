@@ -80,12 +80,10 @@ import java.util.List;
 
     /**
      * 查询当前文件目录下的文件夹及文件
-     *
-     * @param projectId 关联项目id
      * @param parentId 父级id，顶级目录为 0
      * @return List<File>
      */
-	List<File> findChildFile(String projectId, String parentId);
+	List<File> findChildFile(String parentId);
 
 	/**
 	 * 移动文件
@@ -264,4 +262,11 @@ import java.util.List;
 	 * @return
 	 */
 	FileApiBean findFileApiBean(String id);
+
+	/**
+	 * 查询出项目下的根文件夹的id
+	 * @param projectId 项目id
+	 * @return
+	 */
+	String findParentId(String projectId);
 }

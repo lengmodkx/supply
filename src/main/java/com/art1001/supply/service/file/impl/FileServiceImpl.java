@@ -257,7 +257,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             // 项目id
             file.setProjectId(project.getProjectId());
             file.setParentId(projectFile.getFileId());
-            file.setLevel(2);
+            file.setLevel(1);
             file.setCatalog(1);
             // 设置是否目录
             fileService.saveFile(file);
@@ -275,7 +275,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         //判断当前文件夹的名字是否在库中存在
         int result = fileService.findFolderIsExist(fileName,projectId,parentId);
         if(result > 0){
-            throw new ServiceException();
+            throw new ServiceException("文件夹已存在!");
         }
         // 存库
         File file = new File();
@@ -295,13 +295,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出该文件夹下的所有子文件夹及文件
-     * @param projectId 关联项目id
      * @param parentId 父级id，顶级目录为 0
      * @return
      */
     @Override
-    public List<File> findChildFile(String projectId, String parentId) {
-        return fileMapper.findChildFile(projectId, parentId);
+    public List<File> findChildFile(String parentId) {
+        return fileMapper.findChildFile(parentId);
     }
 
     /**
@@ -643,7 +642,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> findProjectFile(String projectId, String fileId) {
         List<File> fileList = new ArrayList<File>();
         if("0".equals(fileId)){
-            fileList = fileService.findChildFile(projectId, fileId);
+            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId));
         } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
             //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
             fileList = fileService.findPublicFile(fileService.findFileId());
@@ -657,6 +656,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * 插入多条文件信息
      * @param files 文件id
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveFileBatch(String projectId, String files, String parentId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -679,6 +679,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setExt(ext);
                 myFile.setProjectId(projectId);
                 myFile.setFileUrl(fileUrl);
+                myFile.setCatalog(1);
                 // 得到上传文件的大小
                 myFile.setSize(size);
                 myFile.setParentId(parentId);
@@ -773,5 +774,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public FileApiBean findFileApiBean(String id) {
         return fileMapper.selectFileApiBean(id);
+    }
+
+    /**
+     * 查询出项目下的根文件夹的id
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public String findParentId(String projectId) {
+        return fileMapper.selectParentId(projectId);
     }
 }

@@ -120,12 +120,14 @@ public class RoleApi {
      */
     @GetMapping("/{current}/{size}")
     public JSONObject roleList(@RequestParam(value = "roleName",required = false)String roleName,
+                               @RequestParam(value = "orgId")String orgId,
                                @PathVariable(value = "current")Long current,
                                @PathVariable(value = "size")Long size){
         JSONObject object = new JSONObject();
         try{
             Role role = new Role();
             role.setRoleName(roleName);
+            role.setOrganizationId(orgId);
             Page<Role> roleList = roleService.selectListPage(current, size, role);
             object.put("data",roleList);
             object.put("result",1);

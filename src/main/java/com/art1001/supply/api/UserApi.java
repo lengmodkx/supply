@@ -63,7 +63,7 @@ public class UserApi {
              subject.login(token);
              if(subject.isAuthenticated()) {
                  String refreshToken = IdGen.uuid();
-                 redisManager.setex("refreshToken",refreshToken,7*24*60*60);
+                 redisManager.setex(accountName,refreshToken,7*24*60*60);
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
                  object.put("refreshToken",refreshToken);
@@ -146,7 +146,6 @@ public class UserApi {
             log.error("注册失败:", e);
             throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 

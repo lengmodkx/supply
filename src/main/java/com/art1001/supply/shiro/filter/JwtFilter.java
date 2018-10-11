@@ -33,7 +33,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             }
             //检查refreshToken是否存在在缓存中
             RedisManager redisManager = new RedisManager();
-            if (!redisManager.exists("refreshToken")){
+            String userName = JwtUtil.getUsername(token);
+            if (!redisManager.exists(userName)){
                 JSONObject object = new JSONObject();
                 object.put("result","0");
                 object.put("msg","refreshToken is invalid");
@@ -42,7 +43,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             }
 
             //校验token是否正确
-            byte[] value = redisManager.getValueByKey(0,"refreshToken".getBytes());
+            byte[] value = redisManager.getValueByKey(0,userName.getBytes());
             String refreshToken = (String) SerializeUtil.deserialize(value);
             if(!JwtUtil.verify(token,refreshToken)){
                 JSONObject object = new JSONObject();

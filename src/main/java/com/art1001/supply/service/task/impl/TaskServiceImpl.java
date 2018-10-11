@@ -722,7 +722,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                     tasks.add(task);
                 }
             }
-
             //插入数据
             for (Task task : tasks) {
                 taskMapper.saveTask(task);

@@ -160,11 +160,12 @@
 		SELECT COUNT(0) FROM prm_file WHERE parent_id = #{parentId} AND file_name = #{fileName}
 	</select>
 
+	<!-- 查询子文件 -->
 	<select id="findChildFile" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from prm_file
-		where project_id = #{projectId} and parent_id = #{parentId} and public_lable = 0
+		where parent_id = #{parentId} and public_lable = 0
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -512,7 +513,12 @@
 		f.file_id = #{id}
 	</select>
 
-    <insert id="savePublicFile">
+	<!--  查询出该项目的最上级文件夹的id -->
+	<select id="selectParentId" resultType="java.lang.String">
+		select file_id from prm_file where project_id = #{projectId} and `level` = 0
+	</select>
+
+	<insert id="savePublicFile">
 		insert into prm_public_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
@@ -615,48 +621,51 @@
 				parent_id,
 				member_id,
 				file_uids,
-				`level`,
-				create_time
+				create_time,
+				`level`
 		</trim>
 		VALUES
+
 		<foreach collection="list" separator="," item="file" >
 			(
-				<if test="file.fileId != null and file.fileId != ''">
-					#{file.fileId},
-				</if>
-				<if test="file.fileName != null and file.fileName != ''">
-					#{file.fileName},
-				</if>
-				<if test="file.ext != null and file.ext != ''">
-					#{file.ext},
-				</if>
-				<if test="file.fileUrl != null and file.fileUrl != ''">
-					#{file.fileUrl},
-				</if>
-				<if test="file.projectId != null and file.projectId != ''">
-					#{file.projectId},
-				</if>
-				<if test="file.catalog != null ">
-					#{file.catalog},
-				</if>
-				<if test="file.size != null and file.size != ''">
-					#{file.size},
-				</if>
-				<if test="file.parentId != null and file.parentId != ''">
-					#{file.parentId},
-				</if>
-				<if test="file.memberId != null ">
-					#{file.memberId},
-				</if>
-				<if test="file.fileUids != null ">
-					#{file.fileUids},
-				</if>
-				<if test="file.createTime != null ">
-					#{file.createTime}
-				</if>
-				<if test="file.level != null ">
-					#{file.level}
-				</if>
+				<trim suffixOverrides=",">
+					<if test="file.fileId != null and file.fileId != ''">
+						#{file.fileId},
+					</if>
+					<if test="file.fileName != null and file.fileName != ''">
+						#{file.fileName},
+					</if>
+					<if test="file.ext != null and file.ext != ''">
+						#{file.ext},
+					</if>
+					<if test="file.fileUrl != null and file.fileUrl != ''">
+						#{file.fileUrl},
+					</if>
+					<if test="file.projectId != null and file.projectId != ''">
+						#{file.projectId},
+					</if>
+					<if test="file.catalog != null ">
+						#{file.catalog},
+					</if>
+					<if test="file.size != null and file.size != ''">
+						#{file.size},
+					</if>
+					<if test="file.parentId != null and file.parentId != ''">
+						#{file.parentId},
+					</if>
+					<if test="file.memberId != null ">
+						#{file.memberId},
+					</if>
+					<if test="file.fileUids != null ">
+						#{file.fileUids},
+					</if>
+					<if test="file.createTime != null ">
+						#{file.createTime},
+					</if>
+					<if test="file.level != null ">
+						#{file.level}
+					</if>
+				</trim>
 			)
 		</foreach>
 	</insert>
