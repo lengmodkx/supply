@@ -33,10 +33,10 @@ public class ResourceApi {
 
     @PostMapping
     public JSONObject addResource(@RequestParam(value = "resourceType") Integer resourceType,
-                                  @RequestParam(value = "parentId",defaultValue = "0") Integer parentId,
+                                  @RequestParam(value = "parentId",defaultValue = "0",required = false) Integer parentId,
                                   @RequestParam(value = "resourceName") String resourceName,
                                   @RequestParam(value = "resourceKey") String resourceKey,
-                                  @RequestParam(value = "resourceUrl") String resourceUrl,
+                                  @RequestParam(value = "resourceUrl",required = false) String resourceUrl,
                                   @RequestParam(value = "resourceDes") String resourceDes){
         JSONObject object = new JSONObject();
         try{
@@ -47,7 +47,7 @@ public class ResourceApi {
             resourceEntity.setDescription(resourceDes);
             resourceEntity.setParentId(parentId);
             resourceEntity.setType(resourceType);
-            if(parentId!=0){
+            if(parentId != 0){
                 resourceEntity.setLevel(2);
             }else{
                 resourceEntity.setLevel(1);
@@ -138,14 +138,33 @@ public class ResourceApi {
         return object;
     }
 
+    /**
+     * 获取所有资源菜单
+     * @param param
+     * @return
+     */
     @GetMapping("/get_resource_menu")
     public JSONObject getResourceMenu(@RequestParam(value = "param") String param){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ResourceEntity> resourceList = resourceService.list(new QueryWrapper<ResourceEntity>().eq("s_parent_id", "0"));
+            List<ResourceEntity> resourceList = resourceService.list(new QueryWrapper<ResourceEntity>().select("s_id as id", "s_name as name", "s_source_key as sourceKey", "s_description as description", "s_type as type","s_parent_id as parentId").eq("s_parent_id", "0"));
             jsonObject.put("data",resourceList);
             jsonObject.put("result",1);
             jsonObject.put("msg","资源菜单信息获取成功!");
+        } catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    @GetMapping
+    public JSONObject getResources(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<ResourceEntity> resources = resourceService.allList();
+            jsonObject.put("data",resources);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","数据获取成功!");
         } catch (Exception e){
             throw new AjaxException(e);
         }

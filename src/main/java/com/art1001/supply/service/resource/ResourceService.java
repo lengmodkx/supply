@@ -24,4 +24,9 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 */
     List<Integer> listByRoleId(String roleId);
 
+	/**
+	 * 查询出所有资源 (包括子资源)
+	 * @return
+	 */
+	List<ResourceEntity> allList();
 }

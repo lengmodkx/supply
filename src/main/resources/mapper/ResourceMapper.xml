@@ -23,6 +23,31 @@
 		s_update_time
 	</sql>
 
+	<sql id="resourceAttributes2">
+		r1.s_id,
+		r1.s_parent_id,
+		r1.s_name,
+		r1.s_source_key,
+		r1.s_type,
+		r1.s_source_url,
+		r1.s_level,
+		r1.s_is_hide,
+		r1.s_description,
+		r1.s_create_time,
+		r1.s_update_time,
+		r2.s_id as r2_id,
+		r2.s_parent_id,
+		r2.s_name,
+		r2.s_source_key,
+		r2.s_type,
+		r2.s_source_url,
+		r2.s_level,
+		r2.s_is_hide,
+		r2.s_description,
+		r2.s_create_time,
+		r2.s_update_time
+	</sql>
+
 	<resultMap id="resourceMap" type="com.art1001.supply.entity.resource.ResourceEntity">
 		<id property="id" column="s_id"/>
 		<result property="parentId" column="s_parent_id"/>
@@ -35,6 +60,18 @@
 		<result property="description" column="s_description"/>
 		<result property="createTime" column="s_create_time"/>
 		<result property="updateTime" column="s_update_time"/>
+	</resultMap>
+
+	<!-- 映射子资源 -->
+	<resultMap id="resourceAllMap" type="com.art1001.supply.entity.resource.ResourceEntity">
+		<id property="id" column="r_id"/>
+		<result property="parentId" column="parent_id"/>
+		<result property="name" column="sname"/>
+		<collection property="subResource" ofType="com.art1001.supply.entity.resource.ResourceEntity">
+			<id column="s_id" property="id"/>
+			<result property="parentId" column="s_parent_id(1)"/>
+			<result property="name" column="s_name"/>
+		</collection>
 	</resultMap>
 
 	<select id="findResourcesByUserId" parameterType="String" resultMap="resourceMap" flushCache="true" useCache="true">
@@ -115,7 +152,20 @@
 		 from tb_resource res RIGHT JOIN tb_resources_role rl on res.s_id = rl.s_id where rl.r_id = '15'
 	</select>
 
-	<delete id="deleteRolePerm" parameterType="Long">
+	<!-- 查询出所有资源 (包括子资源) -->
+    <select id="allList" resultMap="resourceAllMap">
+		SELECT
+		parent.r_id,
+		parent.parent_id,
+		parent.sname,
+		tr.s_name,
+		tr.s_id
+		FROM
+		( SELECT r.s_id AS r_id, s_parent_id AS parent_id, s_name AS sname FROM tb_resource AS r WHERE s_parent_id = '0' ) AS parent
+		LEFT JOIN tb_resource tr ON parent.r_id = tr.s_parent_id
+	</select>
+
+    <delete id="deleteRolePerm" parameterType="Long">
 		delete from tb_resources_role where s_id = ${id}
 	</delete>
 	

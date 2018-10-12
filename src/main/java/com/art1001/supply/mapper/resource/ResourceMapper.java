@@ -61,4 +61,9 @@ public interface ResourceMapper extends BaseMapper<ResourceEntity> {
 	 */
 	List<Integer> selectByRoleId(String roleId);
 
+	/**
+	 * 查询出所有资源 (包括子资源)
+	 * @return
+	 */
+    List<ResourceEntity> allList();
 }
