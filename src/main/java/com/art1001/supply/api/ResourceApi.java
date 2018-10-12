@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.resource.ResourceService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 资源api
@@ -134,6 +136,20 @@ public class ResourceApi {
             throw new AjaxException(e);
         }
         return object;
+    }
+
+    @GetMapping("/get_resource_menu")
+    public JSONObject getResourceMenu(@RequestParam(value = "param") String param){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<ResourceEntity> resourceList = resourceService.list(new QueryWrapper<ResourceEntity>().eq("s_parent_id", "0"));
+            jsonObject.put("data",resourceList);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","资源菜单信息获取成功!");
+        } catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 
 }

@@ -42,10 +42,12 @@ public class ProjectApi {
      *
      * @param projectName 项目名称
      * @param projectDes  项目描述
+     * @param orgId 企业id
      * @return
      */
     @PostMapping
-    public JSONObject createProject(@RequestParam(value = "projectName") String projectName,
+    public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
+                                    @RequestParam(value = "projectName") String projectName,
                                     @RequestParam(value = "projectDes") String projectDes) {
         JSONObject object = new JSONObject();
         try {
@@ -58,7 +60,7 @@ public class ProjectApi {
             //写资源表
             object.put("result", 1);
             object.put("data", project.getProjectId());
-            object.put("msg", "更新成功");
+            object.put("msg", "创建成功");
         } catch (Exception e) {
             log.error("系统异常,项目创建失败:", e);
             throw new AjaxException(e);
