@@ -31,12 +31,11 @@ public class ResourceApi {
 
     @PostMapping
     public JSONObject addResource(@RequestParam(value = "resourceType") Integer resourceType,
-                                  @RequestParam(value = "parentId") Integer parentId,
+                                  @RequestParam(value = "parentId",defaultValue = "0") Integer parentId,
                                   @RequestParam(value = "resourceName") String resourceName,
                                   @RequestParam(value = "resourceKey") String resourceKey,
                                   @RequestParam(value = "resourceUrl") String resourceUrl,
-                                  @RequestParam(value = "resourceDes") String resourceDes,
-                                  @RequestParam(value = "resourceLevel") Integer resourceLevel){
+                                  @RequestParam(value = "resourceDes") String resourceDes){
         JSONObject object = new JSONObject();
         try{
             ResourceEntity resourceEntity = new ResourceEntity();
@@ -46,7 +45,12 @@ public class ResourceApi {
             resourceEntity.setDescription(resourceDes);
             resourceEntity.setParentId(parentId);
             resourceEntity.setType(resourceType);
-            resourceEntity.setLevel(resourceLevel);
+            if(parentId!=0){
+                resourceEntity.setLevel(2);
+            }else{
+                resourceEntity.setLevel(1);
+            }
+
             resourceEntity.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
             resourceEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             resourceService.save(resourceEntity);
