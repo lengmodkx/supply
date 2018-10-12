@@ -3,6 +3,7 @@
 /register=anon
 /captcha=anon
 /login=anon
+/resources/**=anon
 #/denied.jsp=anon
 #/view/error/**=anon
 #/openapi/**=anon
