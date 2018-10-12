@@ -4,24 +4,20 @@
 package com.art1001.supply.shiro.service.impl;
 
 import com.art1001.supply.shiro.service.ChainDefinitionService;
-import jodd.props.Props;
-import jodd.props.PropsEntry;
-import org.apache.commons.io.FileUtils;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
 
 import javax.annotation.Resource;
-import java.io.*;
-import java.net.URISyntaxException;
-import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @ClassName ShiroManagerImpl
@@ -92,17 +88,12 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 	public Map<String, String> initChainDefinitionsMap() {
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();
 		try {
-			InputStream stream = getClass().getClassLoader().getResourceAsStream("shiroAuth.props");
-			File targetFile = new File("shiroAuth.props");
-			FileUtils.copyInputStreamToFile(stream, targetFile);
-
-			Props props = new Props();
-			props.load(targetFile, "UTF-8");
-			Iterator<PropsEntry> baseAuth = props.entries().iterator();
-			while(baseAuth.hasNext()){
-				PropsEntry pe = baseAuth.next();
-				chainMap.put(pe.getKey(), pe.getValue());
-			}
+			Properties properties = new Properties();
+			InputStream stream = getClass().getClassLoader().getResourceAsStream("shiroauth.properties");
+			properties.load(stream);
+			properties.stringPropertyNames().forEach(keyName->{
+				chainMap.put(keyName, properties.getProperty(keyName));
+			});
 		} catch (FileNotFoundException e) {
 			logger.error("获取文件shiro默认权限配置文件路径", e);
 		} catch (IOException e) {

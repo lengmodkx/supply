@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Configuration
 public class ShiroConfig {
 
@@ -142,8 +141,6 @@ public class ShiroConfig {
         //shiro的核心安全接口
         filter.setSecurityManager(securityManager());
         filter.setLoginUrl("/");
-        filter.setSuccessUrl("/project/project.html");
-        filter.setUnauthorizedUrl("/denied.html");
         Map<String,Filter> filtersMap = new HashMap<>();
         KickoutSessionFilter kickoutSessionFilter = new KickoutSessionFilter();
         filtersMap.put("kickout",kickoutSessionFilter);

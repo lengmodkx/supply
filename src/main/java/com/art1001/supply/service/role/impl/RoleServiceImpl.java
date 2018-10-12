@@ -15,7 +15,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	@Override
 	public Page<Role> selectListPage(long current, long size, Role role){
 		Page<Role> rolePage = new Page<>(current,size);
-		QueryWrapper<Role> queryWrapper = new QueryWrapper<>(role);
+		QueryWrapper<Role> queryWrapper = new QueryWrapper<Role>().eq("roleName",role.getRoleName()).eq("organization_id",role.getOrganizationId()).or(true).eq("organization_id","0");
 		return (Page<Role>) page(rolePage, queryWrapper);
 	}
 }
