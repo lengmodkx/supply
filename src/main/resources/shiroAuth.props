@@ -19,4 +19,4 @@
 #/druid/**=login,remember,roles[administrator]
 #/sirona/**=login,remember,roles[administrator]
 #/**=baseUrl
-/**=jwt
+#/**=jwt
