@@ -107,48 +107,6 @@
 			</if>
 		</where>
 	</select>
-	
-	<insert id="insert" parameterType="com.art1001.supply.entity.resource.ResourceEntity" useGeneratedKeys="true" keyProperty="id">
-		insert ignore into tb_resource (
-		<if test="parentId neq null">
-			s_parent_id,
-		</if>
-			s_name,
-			s_source_key,
-			s_type,
-			s_source_url,
-			s_is_hide,
-			s_description,
-			s_create_time
-			)   
-		values (
-		<if test="parentId neq null">
-			${parentId},
-		</if>
-			#{name},
-			#{sourceKey},
-			${type},
-			#{sourceUrl},
-			#{isHide},
-			#{description},
-			#{createTime}
-			)  
-	</insert>
-	
-	<update id="update" parameterType="com.art1001.supply.entity.resource.ResourceEntity" flushCache="true">
-		update tb_resource set
-		<choose>
-			<when test="parentId eq null">s_parent_id = null,</when>
-			<otherwise>s_parent_id = ${parentId},</otherwise>
-		</choose>
-		s_name = #{name},
-		s_source_key = #{sourceKey},
-		s_type = ${type},
-		s_source_url = #{sourceUrl},
-		s_is_hide = ${isHide},
-		s_description = #{description}
-		where s_id = ${id}
-	</update>
 
 	<!-- 根据角色id 查询出该角色的所有资源 -->
 	<select id="selectByRoleId" resultType="java.lang.Integer">
