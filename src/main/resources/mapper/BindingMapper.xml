@@ -328,4 +328,9 @@
 		)
 	</delete>
 
+	<!-- 删除关联信息 -->
+    <delete id="deleteByPublicId">
+		delete from prm_binding where public_id = #{publicId} or bind_id = #{publicId}
+	</delete>
+
 </mapper>

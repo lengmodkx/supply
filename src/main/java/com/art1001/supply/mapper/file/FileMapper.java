@@ -62,12 +62,10 @@ public interface FileMapper extends BaseMapper<File> {
 
 	/**
 	 * 查询当前文件目录下的文件夹及文件
-	 *
-	 * @param projectId 关联项目id
 	 * @param parentId 父级id，顶级目录为 0
 	 * @return List<File>
 	 */
-	List<File> findChildFile(@Param("projectId") String projectId, @Param("parentId") String parentId);
+	List<File> findChildFile(@Param("parentId") String parentId);
 
 	/**
 	 * 查新该目录下的名称是否存在
@@ -237,4 +235,11 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return
 	 */
     FileApiBean selectFileApiBean(String id);
+
+	/**
+	 * 查询出该项目的最上级文件夹的id
+	 * @param projectId 项目id
+	 * @return
+	 */
+	String selectParentId(String projectId);
 }

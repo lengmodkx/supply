@@ -130,6 +130,11 @@ public class File extends Model<File> {
     private int fileLabel;
 
     /**
+     * 是否是其他信息上传的文件(0.普通文件 1.其他文件)
+     */
+    private int publicLable;
+
+    /**
      * 文件层级
      */
     @TableField("level")

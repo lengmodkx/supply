@@ -4,8 +4,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -76,11 +75,12 @@ public class GlobalDefaultExceptionHandler {
 	 * @throws IOException	异常信息
 	 */
 	@ExceptionHandler(AjaxException.class)
+	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
 		logger.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台，用于页面的提示
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msg","操作失败");
+		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);
 		return jsonObject;
 	}

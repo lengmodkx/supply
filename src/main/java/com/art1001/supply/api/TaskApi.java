@@ -139,6 +139,7 @@ public class TaskApi {
     public JSONObject addTask(@RequestParam("taskName") String taskName,
                               @RequestParam("memberIds") String memberIds,
                               @RequestParam("privacyPattern") Integer privacyPattern,
+                              @RequestParam("projectId") String projectId,
                               @RequestParam(value = "executor",required = false) String executor,
                               @RequestParam(value = "startTime",required = false) String startTime,
                               @RequestParam(value = "endTime",required = false)String endTime,
@@ -154,6 +155,7 @@ public class TaskApi {
             task.setTaskName(taskName);
             task.setTaskUIds(memberIds);
             task.setTaskMenuId(taskMenuId);
+            task.setProjectId(projectId);
             task.setTaskGroupId(taskGroupId);
             task.setPrivacyPattern(privacyPattern);
             task.setExecutor(executor);
@@ -197,6 +199,8 @@ public class TaskApi {
         JSONObject object = new JSONObject();
         try{
             taskService.deleteTask(taskId);
+            object.put("result",1);
+            object.put("msg","删除成功!");
         }catch(Exception e){
             log.error("系统异常,删除失败:",e);
             throw new AjaxException(e);
@@ -423,50 +427,27 @@ public class TaskApi {
     }
 
     /**
-     * 更新任务标签
-     * @param taskId 任务id
-     * @param tagIds 任务标签
-     * @return JSONObject
-     */
-    @Todo
-    @PutMapping("/{taskId}/tags")
-    public JSONObject upadteTaskTags(@PathVariable(value = "taskId")String taskId,
-                                         @RequestParam(value = "tagIds")String tagIds){
-        JSONObject object = new JSONObject();
-        try{
-            Task task = new Task();
-            task.setTaskId(taskId);
-            taskService.updateTask(task);
-            object.put("result",1);
-        }catch(Exception e){
-            log.error("系统异常,标签更新失败:",e);
-            throw new AjaxException(e);
-        }
-        return object;
-    }
-
-    /**
      * 新增子任务
      * @param taskId 父任务id
      * @param taskName 子任务名称
      * @param executor 子任务的执行者
-     * @param endTime 子任务的结束时间
+     * @param startTime 子任务的结束时间
      * @return JSONObject
      */
     @Todo
-    @PutMapping("/{taskId}/addchild")
+    @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
                                    @RequestParam(value = "taskName")String taskName,
-                                   @RequestParam(value = "executor")String executor,
-                                   @RequestParam(value = "endTime",required = false)String endTime){
+                                   @RequestParam(value = "executor",required = false)String executor,
+                                   @RequestParam(value = "startTime",required = false)String startTime){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
             task.setExecutor(executor);
-            if(StringUtils.isNotEmpty(endTime)){
-                task.setEndTime(DateUtils.strToLong(endTime));
+            if(StringUtils.isNotEmpty(startTime)){
+                task.setStartTime(DateUtils.strToLong(startTime));
             }
             taskService.saveTask(task);
             object.put("result",1);
@@ -505,16 +486,16 @@ public class TaskApi {
      * 复制任务
      * @param taskId 任务id
      * @param projectId 项目id
-     * @param muneId 菜单id
+     * @param menuId 菜单id
      * @return
      */
     @PutMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
-                               @RequestParam(value = "muneId")String muneId){
+                               @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            taskService.copyTask(taskId,projectId,muneId);
+            taskService.copyTask(taskId,projectId,menuId);
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,任务复制失败:",e);
@@ -527,16 +508,16 @@ public class TaskApi {
      * 移动任务
      * @param taskId 任务id
      * @param projectId 项目id
-     * @param muneId 菜单id
+     * @param menuId 菜单id
      * @return
      */
     @PutMapping("/{taskId}/move")
     public JSONObject moveTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
-                               @RequestParam(value = "muneId")String muneId){
+                               @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            taskService.mobileTask(taskId,projectId,muneId);
+            taskService.mobileTask(taskId,projectId,menuId);
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);

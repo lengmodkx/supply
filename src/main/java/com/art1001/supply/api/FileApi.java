@@ -115,14 +115,11 @@ public class FileApi {
         try {
             List<File> fileList = fileService.findProjectFile(projectId, fileId);
             jsonObject.put("data", fileList);
-            jsonObject.put("parentId", fileId);
-            jsonObject.put("projectId", projectId);
-            jsonObject.put("currentGroup", projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
+            jsonObject.put("parentId",fileService.findParentId(projectId));
             jsonObject.put("result",1);
             //获取文件的后缀名
             jsonObject.put("exts",FileExt.extMap);
         } catch (Exception e){
-            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -193,7 +190,7 @@ public class FileApi {
     @PostMapping("/{parentId}/create_folder")
     public JSONObject createFolder(
             @RequestParam String projectId,
-            @PathVariable(required = false) String parentId,
+            @PathVariable String parentId,
             @RequestParam String folderName
     ) {
         JSONObject jsonObject = new JSONObject();
@@ -218,16 +215,11 @@ public class FileApi {
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
             @RequestParam(value = "projectId") String projectId,
-            @RequestParam(value = "files",required = false) String files,
+            @RequestParam(value = "files") String files,
             @PathVariable(value = "parentId") String parentId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            //文件为空则不执行
-            if(files == null){
-                jsonObject.put("msg", "上传失败");
-                return jsonObject;
-            }
             fileService.saveFileBatch(projectId,files,parentId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
@@ -244,7 +236,7 @@ public class FileApi {
      */
     @PostMapping("/{parentId}/model")
     public JSONObject uploadModel(
-            @RequestParam String projectId,
+            @RequestParam(value = "projectId") String projectId,
             @RequestParam(value = "fileCommon") String fileCommon
             ,@RequestParam(value = "fileModel") String fileModel
             ,@PathVariable(value = "parentId",required = false) String parentId
@@ -469,7 +461,7 @@ public class FileApi {
     @PostMapping("/copy")
     public JSONObject copyFile(
             @RequestParam(value = "fileIds") String[] fileIds,
-            @RequestParam(value = "folderId",required = false,defaultValue = "0") String folderId
+            @RequestParam(value = "folderId") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -480,9 +472,8 @@ public class FileApi {
                 if (file.getCatalog() == 1) {
                     file.setParentId(folderId);
                     String fId = file.getFileId();
-                    String projectId = file.getProjectId();
                     fileService.saveFile(file);
-                    List<File> childFile = fileService.findChildFile(projectId, fId);
+                    List<File> childFile = fileService.findChildFile(fId);
                     if (childFile.size() > 0) {
                         Map<String, List<File>> map = new HashMap<>(10);
                         map.put(file.getFileId(), childFile);
@@ -519,7 +510,7 @@ public class FileApi {
                     // 存库
                     fileService.saveFile(file);
                     // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(projectId, fId);
+                    List<File> childFile = fileService.findChildFile(fId);
                     fileMap.put(file.getFileId(), childFile);
                 } else { //文件
                     this.copyFileSave(file, parentId);
@@ -562,13 +553,13 @@ public class FileApi {
     }
 
     /**
-     * 将文件回收站
+     * 将文件移至回收站
      * @param fileIds ids
      * @param projectId 项目id
      */
-    @PutMapping("/m_recycle")
+    @PutMapping("/{fileIds}/m_recycle")
     public JSONObject moveToRecycleBin(
-            @RequestParam(value = "fileIds") String[] fileIds,
+            @PathVariable(value = "fileIds") String[] fileIds,
             @RequestParam(value = "projectId") String projectId
     ) {
         JSONObject jsonObject = new JSONObject();
@@ -613,7 +604,7 @@ public class FileApi {
     public JSONObject findChildFile(@RequestParam(value = "projectId") String projectId, @PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.findChildFile(projectId,fileId));
+            jsonObject.put("data",fileService.findChildFile(fileId));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常!",e);
@@ -628,13 +619,13 @@ public class FileApi {
      * @param  projectId 该项目的id
      * @return
      */
-    @GetMapping("/join_info")
-    public JSONObject findProjectMember(@RequestParam(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId){
+    @GetMapping("/{fileId}/join_info")
+    public JSONObject findProjectMember(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             //查询出该文件的所有参与者id
             String uids = fileService.findJoinId(fileId);
-            List<UserEntity> joinInfo = userService.findManyUserById(uids);
+            List<UserEntity> joinInfo = userService.list(new QueryWrapper<UserEntity>().in("u_id",uids.split(",")));
             List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
             //比较项目全部成员集合 和 文件参与者集合的差集
             List<UserEntity> reduce1 = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());
@@ -708,6 +699,4 @@ public class FileApi {
         }
         return jsonObject;
     }
-
-
 }

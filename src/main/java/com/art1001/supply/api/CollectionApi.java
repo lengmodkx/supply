@@ -103,7 +103,7 @@ public class CollectionApi {
             object.put("msg","取消收藏成功");
         }catch(Exception e){
             log.error("系统异常:",e);
-            throw new AjaxException(e);
+            throw new AjaxException();
         }
         return object;
     }
