@@ -103,6 +103,12 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	@TableField(exist = false)
 	private boolean isHave;
 
+	/**
+	 * 用户判断角色是否拥有该权限的id
+	 */
+	@TableField(exist = false)
+	private Integer rsId;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

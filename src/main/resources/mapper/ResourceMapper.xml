@@ -65,12 +65,12 @@
 	<!-- 映射子资源 -->
 	<resultMap id="resourceAllMap" type="com.art1001.supply.entity.resource.ResourceEntity">
 		<id property="id" column="r_id"/>
-		<result property="parentId" column="parent_id"/>
 		<result property="name" column="sname"/>
 		<collection property="subResource" ofType="com.art1001.supply.entity.resource.ResourceEntity">
 			<id column="s_id" property="id"/>
-			<result property="parentId" column="s_parent_id(1)"/>
+			<result property="parentId" column="s_parent_id"/>
 			<result property="name" column="s_name"/>
+			<result property="rsId" column="rs_id"/>
 		</collection>
 	</resultMap>
 
@@ -155,14 +155,25 @@
 	<!-- 查询出所有资源 (包括子资源) -->
     <select id="allList" resultMap="resourceAllMap">
 		SELECT
-		parent.r_id,
-		parent.parent_id,
-		parent.sname,
-		tr.s_name,
-		tr.s_id
+			parent.r_id,
+			parent.sname,
+			tr.s_name,
+			tr.s_id,
+			tr.s_parent_id,
+			b.b_s_id as rs_id
 		FROM
-		( SELECT r.s_id AS r_id, s_parent_id AS parent_id, s_name AS sname FROM tb_resource AS r WHERE s_parent_id = '0' ) AS parent
+			( SELECT r.s_id AS r_id, s_parent_id AS parent_id, s_name AS sname FROM tb_resource AS r WHERE s_parent_id = '0' ) AS parent
 		LEFT JOIN tb_resource tr ON parent.r_id = tr.s_parent_id
+		LEFT JOIN (
+		SELECT
+			r.s_id AS b_s_id,
+			s.s_name
+		FROM
+			tb_resources_role r
+			LEFT JOIN tb_resource s ON r.s_id = s.s_id
+		WHERE
+			r.r_id = #{roleId}
+			) AS b ON b.b_s_id = tr.s_id
 	</select>
 
     <delete id="deleteRolePerm" parameterType="Long">

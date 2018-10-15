@@ -157,11 +157,20 @@ public class ResourceApi {
         return jsonObject;
     }
 
-    @GetMapping
-    public JSONObject getResources(){
+    @GetMapping("/{roleId}")
+    public JSONObject getResources(@PathVariable String roleId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ResourceEntity> resources = resourceService.allList();
+            List<ResourceEntity> resources = resourceService.allList(roleId);
+            resources.forEach(item -> {
+                item.getSubResource().forEach(subItem -> {
+                    if(subItem.getRsId() == null){
+                        subItem.setHave(false);
+                    } else{
+                        subItem.setHave(true);
+                    }
+                });
+            });
             jsonObject.put("data",resources);
             jsonObject.put("result",1);
             jsonObject.put("msg","数据获取成功!");

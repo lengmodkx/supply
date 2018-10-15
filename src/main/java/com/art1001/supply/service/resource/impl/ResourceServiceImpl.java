@@ -46,10 +46,11 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 
 	/**
 	 * 查询出所有资源 (包括子资源)
+	 * @param roleId 角色id
 	 * @return
 	 */
 	@Override
-	public List<ResourceEntity> allList() {
-		return resourceMapper.allList();
+	public List<ResourceEntity> allList(String roleId) {
+		return resourceMapper.allList(roleId);
 	}
 }
