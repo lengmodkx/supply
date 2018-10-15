@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -209,8 +208,8 @@ public class ProjectApi {
     public JSONObject collectProject(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_id",projectId).eq("member_id",userEntity.getId()));
+            String userId = ShiroAuthenticationManager.getUserId();
+            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_id",projectId).eq("member_id",userId));
             //如果等于0，说明收藏表不存在项目的收藏，此时插入
             if(projectMember.getCollect()==0){
                 projectMember.setCollect(1);
@@ -224,9 +223,11 @@ public class ProjectApi {
                 jsonObject.put("result",1);
                 jsonObject.put("msg","取消收藏成功");
             }
+            jsonObject.put("data",projectService.findProjectByUserId(userId));
         }catch (Exception e){
             throw new AjaxException(e);
         }
+
         return jsonObject;
     }
 
@@ -235,10 +236,11 @@ public class ProjectApi {
      * @param projectId 项目id
      * @param status 要操作的 标识
      */
-    @PutMapping("/{projectId}/{status}/file")
-    public JSONObject updateStatus(@PathVariable String projectId,@PathVariable Integer status){
+    @PutMapping("/{projectId}/status")
+    public JSONObject updateStatus(@PathVariable String projectId,@RequestParam Integer status){
         JSONObject object = new JSONObject();
         try{
+            String userId = ShiroAuthenticationManager.getUserId();
             Project project = new Project();
             project.setProjectId(projectId);
             project.setProjectStatus(status);
@@ -249,6 +251,7 @@ public class ProjectApi {
             } else{
                 object.put("msg","取消项目归档成功!");
             }
+            object.put("data",projectService.findProjectByUserId(userId));
         }catch(Exception e){
             throw new AjaxException(e);
         }
