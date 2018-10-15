@@ -1,10 +1,13 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -37,6 +40,10 @@ public class ProjectApi {
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private ProjectCollectService projectCollectService;
+
     /**
      * 创建项目
      *
@@ -195,5 +202,36 @@ public class ProjectApi {
             throw new AjaxException(e);
         }
       return object;
+    }
+
+    /**
+     * 项目收藏/取消收藏
+     * @param projectId
+     */
+    @PostMapping("/collectProject")
+    public JSONObject collectProject(@RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            int collect = projectCollectService.findCollectByProjectId(projectId,userEntity.getId());
+            //如果等于0，说明收藏表不存在项目的收藏，此时插入
+            if(collect==0){
+                ProjectCollect projectCollect = new ProjectCollect();
+                projectCollect.setProjectId(projectId);
+                projectCollect.setMemberId(userEntity.getId());
+                projectCollect.setCreateTime(System.currentTimeMillis());
+                projectCollectService.saveProjectCollect(projectCollect);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","收藏成功");
+            }else{
+                //收藏表存在该项目，则取消收藏，删除收藏表的项目
+                projectCollectService.deleteCollectByProjectId(projectId);
+                jsonObject.put("result",1);
+                jsonObject.put("msg","取消收藏成功");
+            }
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 }

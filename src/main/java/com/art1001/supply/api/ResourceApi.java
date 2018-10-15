@@ -157,6 +157,11 @@ public class ResourceApi {
         return jsonObject;
     }
 
+    /**
+     * 获取所有资源  (标识该角色已经拥有的资源)
+     * @param roleId 角色id
+     * @return
+     */
     @GetMapping("/{roleId}")
     public JSONObject getResources(@PathVariable String roleId){
         JSONObject jsonObject = new JSONObject();
@@ -179,5 +184,4 @@ public class ResourceApi {
         }
         return jsonObject;
     }
-
 }
