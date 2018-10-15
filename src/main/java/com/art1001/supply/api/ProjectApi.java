@@ -203,10 +203,10 @@ public class ProjectApi {
 
     /**
      * 项目收藏/取消收藏
-     * @param projectId
+     * @param projectId 项目id
      */
-    @PostMapping("/collectProject")
-    public JSONObject collectProject(@RequestParam String projectId){
+    @PutMapping("/{projectId}/collect")
+    public JSONObject collectProject(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -231,10 +231,12 @@ public class ProjectApi {
     }
 
     /**
-     * 项目归档
+     * 项目归档/取消归档
+     * @param projectId 项目id
+     * @param status 要操作的 标识
      */
-    @PostMapping("/{projectId}/status")
-    public JSONObject updateStatus(@PathVariable String projectId,@RequestParam Integer status){
+    @PutMapping("/{projectId}/{status}/file")
+    public JSONObject updateStatus(@PathVariable String projectId,@PathVariable Integer status){
         JSONObject object = new JSONObject();
         try{
             Project project = new Project();
@@ -242,7 +244,11 @@ public class ProjectApi {
             project.setProjectStatus(status);
             projectService.updateById(project);
             object.put("result",1);
-            object.put("msg","");
+            if(status == 1){
+                object.put("msg","项目已归档");
+            } else{
+                object.put("msg","取消项目归档成功!");
+            }
         }catch(Exception e){
             throw new AjaxException(e);
         }
