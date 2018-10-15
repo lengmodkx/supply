@@ -1,17 +1,17 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.collect.ProjectCollect;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.collect.ProjectCollectService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,9 +40,6 @@ public class ProjectApi {
 
     @Resource
     private ProjectMemberService projectMemberService;
-
-    @Resource
-    private ProjectCollectService projectCollectService;
 
     /**
      * 创建项目
@@ -213,19 +210,17 @@ public class ProjectApi {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            int collect = projectCollectService.findCollectByProjectId(projectId,userEntity.getId());
+            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_id",projectId).eq("member_id",userEntity.getId()));
             //如果等于0，说明收藏表不存在项目的收藏，此时插入
-            if(collect==0){
-                ProjectCollect projectCollect = new ProjectCollect();
-                projectCollect.setProjectId(projectId);
-                projectCollect.setMemberId(userEntity.getId());
-                projectCollect.setCreateTime(System.currentTimeMillis());
-                projectCollectService.saveProjectCollect(projectCollect);
+            if(projectMember.getCollect()==0){
+                projectMember.setCollect(1);
+                projectMemberService.updateById(projectMember);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","收藏成功");
             }else{
                 //收藏表存在该项目，则取消收藏，删除收藏表的项目
-                projectCollectService.deleteCollectByProjectId(projectId);
+                projectMember.setCollect(0);
+                projectMemberService.updateById(projectMember);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","取消收藏成功");
             }
@@ -233,5 +228,24 @@ public class ProjectApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 项目归档
+     */
+    @PostMapping("/{projectId}/status")
+    public JSONObject updateStatus(@PathVariable String projectId,@RequestParam Integer status){
+        JSONObject object = new JSONObject();
+        try{
+            Project project = new Project();
+            project.setProjectId(projectId);
+            project.setProjectStatus(status);
+            projectService.updateById(project);
+            object.put("result",1);
+            object.put("msg","");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
     }
 }
