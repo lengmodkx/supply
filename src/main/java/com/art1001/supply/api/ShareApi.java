@@ -13,7 +13,6 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,16 +76,11 @@ public class ShareApi {
      * @param projectId 项目id
      * @return
      */
-    @GetMapping("/{projectId}")
-    public JSONObject share(@PathVariable String projectId){
+    @GetMapping
+    public JSONObject share(@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             List<Share> shares = shareService.findByProjectId(projectId, 0);
-            if(CommonUtils.listIsEmpty(shares)){
-                jsonObject.put("data","无数据");
-                jsonObject.put("result",1);
-                return jsonObject;
-            }
             jsonObject.put("data",shares);
             jsonObject.put("result",1);
         } catch (Exception e){
