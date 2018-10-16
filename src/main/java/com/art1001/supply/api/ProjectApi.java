@@ -237,23 +237,24 @@ public class ProjectApi {
      * @param status 要操作的 标识
      */
     @PutMapping("/{projectId}/status")
-    public JSONObject updateStatus(@PathVariable String projectId,@RequestParam Integer status){
+    public JSONObject updateStatus(@PathVariable String projectId,@RequestParam(value = "status") Integer status){
         JSONObject object = new JSONObject();
         try{
             String userId = ShiroAuthenticationManager.getUserId();
             Project project = new Project();
             project.setProjectId(projectId);
-            project.setProjectStatus(status);
+            if(status == 1){
+                project.setProjectStatus(0);
+                object.put("msg","取消项目归档成功!");
+            } else{
+                project.setProjectStatus(1);
+                object.put("msg","项目已归档");
+            }
             projectService.updateById(project);
             object.put("result",1);
-            if(status == 1){
-                object.put("msg","项目已归档");
-            } else{
-                object.put("msg","取消项目归档成功!");
-            }
             object.put("data",projectService.findProjectByUserId(userId));
         }catch(Exception e){
-            throw new AjaxException(e);
+            throw new AjaxException("项目归档操作异常!",e);
         }
         return object;
     }

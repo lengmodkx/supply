@@ -13,8 +13,10 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -81,6 +83,7 @@ public class ShareApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Share> shares = shareService.findByProjectId(projectId, 0);
+
             jsonObject.put("data",shares);
             jsonObject.put("result",1);
         } catch (Exception e){
@@ -95,7 +98,7 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
-    @GetMapping("/{shareId}/getshare")
+    @GetMapping("/{shareId}")
     public JSONObject getShare(@PathVariable(value = "shareId")String shareId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -253,6 +256,34 @@ public class ShareApi {
             jsonObject.put("result",1);
         }catch(Exception e){
             log.error("系统异常,移动失败:",e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 从分享页面上传 图片
+     * @param file 文件对象
+     * @return
+     */
+    @PostMapping("/{projectId}/upload")
+    public JSONObject uploadImage(@PathVariable(value = "projectId") String projectId, MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            // 得到文件名
+            String originalFilename = file.getOriginalFilename();
+            // 重置文件名
+            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+            //设置url
+            String parentUrl = projectId.concat("/upload_share/");
+            // 设置文件url
+            String fileUrl = parentUrl + fileName;
+            // 上传oss，相同的objectName会覆盖
+            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+            jsonObject.put("file_path",fileUrl);
+            jsonObject.put("success",1);
+            jsonObject.put("msg","文件上传成功!");
+        } catch (Exception e){
+            throw new AjaxException("文件上传失败!",e);
         }
         return jsonObject;
     }

@@ -1,9 +1,5 @@
 package com.art1001.supply.entity.share;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
@@ -12,6 +8,11 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * shareEntity
@@ -116,7 +117,14 @@ public class Share extends Model<Share> {
 	 */
 	private int collect;
 
-	/**
+	private String createTimeStr;
+
+    public String getCreateTimeStr() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月-dd日");
+        return format.format(createTime);
+    }
+
+    /**
 	 * 是否被删除
 	 * @return
 	 */
