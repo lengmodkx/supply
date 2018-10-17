@@ -210,7 +210,7 @@
 
 	<!-- 初始一个信息下的所有 日志信息 和聊天信息 -->
 	<select id="initAllLog" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"></include>
+		select <include refid="Base_Column_List"/>
 		from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
 	</select>
 

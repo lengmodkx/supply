@@ -40,20 +40,6 @@ public interface FileMapper extends BaseMapper<File> {
 	void deleteFileById(String id);
 
 	/**
-	 * 修改file数据
-	 * 
-	 * @param file
-	 */
-	void updateFile(File file);
-
-	/**
-	 * 保存file数据
-	 * 
-	 * @param file
-	 */
-	void saveFile(File file);
-
-	/**
 	 * 获取所有file数据
 	 * 
 	 * @return

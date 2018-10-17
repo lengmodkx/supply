@@ -1,6 +1,5 @@
 package com.art1001.supply.service.file;
 
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
@@ -17,11 +16,6 @@ import java.util.List;
  public interface FileService extends IService<File> {
 
 	/**
-	 * 查询分页file数据
-	 */
-	 List<File> findFilePagerList(Pager pager);
-
-	/**
 	 * 通过id获取单条file数据
 	 */
 	 File findFileById(String id);
@@ -31,28 +25,10 @@ import java.util.List;
 	 */
 	 void deleteFileById(String id);
 
-	/**
-	 * 修改file数据
-	 *
-	 * @param projectId 项目id
-	 * @param parentId  上级目录id
-	 * @param multipartFile 文件
-	 */
-	 File uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception;
-
-	 void updateFile(File file);
-
-	/**
-	 * 保存file数据
-	 */
-	 void saveFile(File file);
 
 	 void saveFile(String files,String publicId,String projectId);
-	/**
-	 * 获取所有file数据
-	 */
-	 List<File> findFileAllList();
 
+	File uploadFile(String projectId, String parentId, MultipartFile multipartFile)throws Exception;
 	/**
 	 * 项目创建后初始化文件目录
 	 * @param project 项目信息
@@ -60,14 +36,6 @@ import java.util.List;
 	 */
 	String initProjectFolder(Project project);
 
-
-    /**
-     * 查新该目录下的名称是否存在
-     *
-     * @param parentId 父级id
-     * @param fileName 目录名称
-     */
-    int findByParentIdAndFileName(String parentId, String fileName);
 
     /**
      * 创建目录
@@ -92,14 +60,6 @@ import java.util.List;
 	 * @param folderId 目标目录id
 	 */
     void moveFile(String[] fileIds, String folderId);
-
-	/**
-	 * 复制文件
-	 *
-	 * @param fileIds 源文件id数组
-	 * @param folderId 目标目录id
-	 */
-	void copyFile(String[] fileIds, String folderId);
 
     /**
      * 获取上级文件路径
@@ -131,20 +91,6 @@ import java.util.List;
 	 */
 	List<File> findChildFolder(String fileId);
 
-	List<File> findTopLevel(String projectId);
-
-	/**
-	 * 更新tagId
-	 */
-    void updateTagId(String fileId, String tagIds);
-
-	/**
-	 * 根据项目id 查询出项目下的所有文件
-	 * @param projectId 项目的id
-	 * @return 文件信息集合
-	 */
-	List<File> findFileByProjectId(String projectId);
-
 	/**
 	 * 查询出该文件的所有参与者id
 	 * @param fileId 文件id
@@ -159,12 +105,6 @@ import java.util.List;
 	 * @return 影响行数
 	 */
 	void addAndRemoveFileJoin(String fileId, String newJoin);
-
-	/**
-	 * 清空文件的标签
-	 * @param fileId 文件的id
-	 */
-	void fileClearTag(String fileId);
 
 	/**
 	 * 根据文件id 查询出文件名
@@ -200,25 +140,10 @@ import java.util.List;
 	List<File> findPublicFile(String parentId);
 
 	/**
-	 * 上传文件到公开的文件库
-	 * @param projectId 项目Id
-	 * @param parentId
-	 * @param file 文件 信息
-	 */
-    File uploadPublicFile(String projectId, String parentId, MultipartFile file);
-
-	/**
 	 * 保存文件信息到公开文件表
 	 * @param file 文件信息
 	 */
 	void savePublicFile(File file);
-
-	/**
-	 * 根据文件id 查询出该文件的 ids
-	 * @param fileId 文件id
-	 * @return
-	 */
-    String findUidsByFileId(String fileId);
 
 	/**
 	 * 判断文件夹的名字 是否存在
@@ -229,7 +154,6 @@ import java.util.List;
 	 */
     int findFolderIsExist(String folderName, String projectId,String parentId);
 
-    void deleteFileByPublicId(String publicId);
 
     List<File> findFileByPublicId(String publicId);
 

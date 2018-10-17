@@ -17,7 +17,6 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -94,13 +93,6 @@ public class FileApi {
      */
     @Resource
     private UserService userService;
-
-    /**
-     * 项目成员 逻辑层接口
-     */
-    @Resource
-    private ProjectMemberService projectMemberService;
-
 
     /**
      * 加载项目下文件列表数据
@@ -263,7 +255,7 @@ public class FileApi {
             modelFile.setFileName(fileName);
             modelFile.setProjectId(projectId);
             modelFile.setFileThumbnail(array.getString("fileUrl"));
-            fileService.saveFile(modelFile);
+            fileService.save(modelFile);
 
             //版本历史更新
             FileVersion fileVersion = new FileVersion();
@@ -472,7 +464,7 @@ public class FileApi {
                 if (file.getCatalog() == 1) {
                     file.setParentId(folderId);
                     String fId = file.getFileId();
-                    fileService.saveFile(file);
+                    fileService.save(file);
                     List<File> childFile = fileService.findChildFile(fId);
                     if (childFile.size() > 0) {
                         Map<String, List<File>> map = new HashMap<>(10);
@@ -508,7 +500,7 @@ public class FileApi {
                     String fId = file.getFileId();
                     String projectId = file.getProjectId();
                     // 存库
-                    fileService.saveFile(file);
+                    fileService.save(file);
                     // 得到此文件夹下一层的子集
                     List<File> childFile = fileService.findChildFile(fId);
                     fileMap.put(file.getFileId(), childFile);
@@ -549,7 +541,7 @@ public class FileApi {
         file.setParentId(parentId);
 
         file.setFileUrl(fileUrl);
-        fileService.saveFile(file);
+        fileService.save(file);
     }
 
     /**
@@ -689,9 +681,10 @@ public class FileApi {
     public JSONObject changeFileName(@RequestParam(value = "fileName") String fileName, @PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            File file = fileService.findFileById(fileId);
+            File file = new File();
+            file.setFileId(fileId);
             file.setFileName(fileName);
-            fileService.updateFile(file);
+            fileService.updateById(file);
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("系统异常,文件名称更新失败:",e);

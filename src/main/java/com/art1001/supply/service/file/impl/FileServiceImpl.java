@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
-import com.aliyun.oss.model.OSSObjectSummary;
-import com.aliyun.oss.model.ObjectListing;
 import com.art1001.supply.base.Base;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
@@ -69,17 +66,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * 公共模型库 常量定义信息
      */
     private final static String PUBLIC_FILE_NAME = "公共模型库";
-
-    /**
-     * 查询分页file数据
-     *
-     * @param pager 分页对象
-     * @return
-     */
-    @Override
-    public List<File> findFilePagerList(Pager pager) {
-        return fileMapper.findFilePagerList(pager);
-    }
 
     /**
      * 通过id获取单条file数据
@@ -148,7 +134,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 //        file.setParentId(parentId);
 //        file.setFileUids(ShiroAuthenticationManager.getUserId());
 //        file.setFileLabel(0);
-        fileService.saveFile(file);
+        save(file);
 
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 修改文件版本
@@ -165,40 +151,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     }
 
-    @Override
-    public void updateFile(File file) {
-        // 修改操作用户
-        file.setMemberId(ShiroAuthenticationManager.getUserId());
-        // 修改跟新时间
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.updateFile(file);
-    }
-
-    /**
-     * 保存file数据
-     *
-     * @param file
-     */
-    @Override
-    public void saveFile(File file) {
-        file.setFileId(IdGen.uuid());
-        // 获取操作用户
-        // 设置操作用户信息
-        file.setMemberId(ShiroAuthenticationManager.getUserId());
-        // 设置时间
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        fileMapper.saveFile(file);
-    }
-
     /**
      * 保存文件--文件在前端直接传oss
      * @param files
-     * @param chatId
+     * @param publicId
      * @param projectId
      */
     @Override
-    public void saveFile(String files,String chatId,String projectId){
+    public void saveFile(String files,String publicId,String projectId){
         JSONArray array = JSON.parseArray(files);
         for (int i = 0; i < array.size(); i++) {
             JSONObject jsonObject = array.getJSONObject(i);
@@ -217,19 +177,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             myFile.setSize(size);
             //myFile.setCatalog(0);
             myFile.setMemberId(ShiroAuthenticationManager.getUserId());
-            myFile.setPublicId(chatId);
-            saveFile(myFile);
+            myFile.setPublicId(publicId);
+            // 设置操作用户信息
+            myFile.setMemberId(ShiroAuthenticationManager.getUserId());
+            // 设置时间
+            myFile.setCreateTime(System.currentTimeMillis());
+            myFile.setUpdateTime(System.currentTimeMillis());
+            save(myFile);
         }
-    }
-
-    /**
-     * 获取所有file数据
-     *
-     * @return
-     */
-    @Override
-    public List<File> findFileAllList() {
-        return fileMapper.findFileAllList();
     }
 
     /**
@@ -245,7 +200,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setFileUrl(DateUtils.getDateStr("yyyy-MM-dd hh:mm:ss"));
         projectFile.setParentId("1");
         projectFile.setCatalog(1);
-        fileService.saveFile(projectFile);
+        save(projectFile);
         // 初始化项目
         String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
         for (String childFolderName : childFolderNameArr) {
@@ -258,14 +213,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setLevel(1);
             file.setCatalog(1);
             // 设置是否目录
-            fileService.saveFile(file);
+            save(file);
         }
         return projectFile.getFileId();
-    }
-
-    @Override
-    public int findByParentIdAndFileName(String parentId, String fileName) {
-        return fileMapper.findByParentIdAndFileName(parentId, fileName);
     }
 
     @Override
@@ -287,7 +237,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         // 设置目录
 //        file.setCatalog(1);
-        fileService.saveFile(file);
+        save(file);
         return file;
     }
 
@@ -314,55 +264,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         map.put("fileIds", fileIds);
         map.put("folderId", folderId);
         fileMapper.moveFile(map);
-    }
-
-    /**
-     * 复制文件
-     *
-     * @param fileIds   源文件id数组
-     * @param folderId 目标目录id
-     */
-    @Override
-    public void copyFile(String[] fileIds, String folderId) {
-        // 获取目录信息
-        File folder = fileMapper.findFileById(folderId);
-        String destinationFolderName = folder.getFileUrl();
-        for (String fileId : fileIds) {
-            // 获取源文件
-            File file = fileMapper.findFileById(fileId);
-
-            // 修改oss上的路径，成功后改库
-            if (file.getCatalog()==1) { // 文件夹
-                ObjectListing listing = AliyunOss.fileList(file.getFileUrl());
-
-                assert listing != null;
-                // 得到所有的文件夹，
-                for (String commonPrefix : listing.getCommonPrefixes()) {
-                    // 得到文件名
-                    String destinationObjectName = destinationFolderName + commonPrefix;
-                    // 移动oss上的文件夹
-                    AliyunOss.createFolder(destinationObjectName);
-                }
-                // 得到所有的文件
-                for (OSSObjectSummary ossObjectSummary : listing.getObjectSummaries()) {
-                    // 得到文件名
-                    String destinationObjectName = destinationFolderName + ossObjectSummary.getKey();
-                    // 移动oss上的文件夹
-                    AliyunOss.moveFile(ossObjectSummary.getKey(), destinationObjectName);
-                    // 修改库中路径
-                    file.setFileUrl(destinationFolderName);
-                    // 设置文件上级id
-                    file.setParentId(folderId);
-                    fileService.saveFile(file);
-                }
-            } else { // 文件
-                AliyunOss.moveFile(file.getFileUrl(), folder.getFileUrl());
-                // 设置源文件父级id， url
-                file.setParentId(folder.getFileId());
-                file.setFileUrl(folder.getFileUrl() + file.getFileName());
-                fileService.saveFile(file);
-            }
-        }
     }
 
     /**
@@ -394,25 +295,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return fileMapper.findChildFolder(fileId);
     }
 
-    @Override
-    public List<File> findTopLevel(String projectId) {
-        return fileMapper.findByProjectIdAndParentId(projectId, "0");
-    }
-
-    @Override
-    public void updateTagId(String fileId, String tagIds) {
-        fileMapper.updateTagId(fileId, tagIds);
-    }
-
-    /**
-     * 功能:根据项目id 查询出项目下的所有文件数据
-     * @param projectId 项目的id
-     * @return 返回该项目下的所有文件数据
-     */
-    @Override
-    public List<File> findFileByProjectId(String projectId) {
-        return fileMapper.findFileByProjectId(projectId);
-    }
 
     /**
      * 查询出该文件的所有参与者id
@@ -472,20 +354,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setFileId(fileId);
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
-            fileService.updateFile(file);
+            updateById(file);
             logService.saveLog(fileId,logContent.toString(),2);
         }
     }
-
-    /**
-     * 清空文件的标签
-     * @param fileId 文件的id
-     */
-    @Override
-    public void fileClearTag(String fileId) {
-        fileMapper.fileClearTag(fileId);
-    }
-
     /**
      * 根据文件id 查询出文件名
      * @param publicId 文件id
@@ -537,53 +409,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     /**
-     * 上传文件到公开的文件库
-     * @param projectId 项目Id
-     * @param parentId
-     * @param multipartFile
-     */
-    @Override
-    public File uploadPublicFile(String projectId, String parentId, MultipartFile multipartFile) {
-        // 得到文件名
-        String originalFilename = multipartFile.getOriginalFilename();
-        // 获取要创建文件的上级目录实体
-        String parentUrl = fileService.findProjectUrl(projectId);
-        // 重置文件名
-        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        // 设置文件url
-        String fileUrl = parentUrl + fileName;
-        // 上传oss
-        try {
-            AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
-        } catch (Exception e){
-            throw new ServiceException(e);
-        }
-        // 获取后缀名
-        String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-
-        // 写库
-        File file = new File();
-        // 用原本的文件名
-        file.setFileName(originalFilename);
-        file.setExt(ext);
-        file.setProjectId(projectId);
-        file.setFileUrl(fileUrl);
-
-        // 得到上传文件的大小
-        long contentLength = multipartFile.getSize();
-        file.setSize(FileUtils.convertFileSize(contentLength));
-        //file.setCatalog(0);
-        file.setParentId(parentId);
-        file.setFileUids(ShiroAuthenticationManager.getUserId());
-        //file.setFileLabel(0);
-        fileService.savePublicFile(file);
-
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-
-        return file;
-    }
-
-    /**
      * 保存文件信息到公开文件表
      * @param file 文件信息
      */
@@ -591,16 +416,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public void savePublicFile(File file) {
         file.setFileId(IdGen.uuid());
         fileMapper.savePublicFile(file);
-    }
-
-    /**
-     * 根据文件id 查询出该文件的 ids
-     * @param fileId 文件id
-     * @return
-     */
-    @Override
-    public String findUidsByFileId(String fileId) {
-        return fileMapper.findUidsByFileId(fileId);
     }
 
     /**
@@ -613,11 +428,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public int findFolderIsExist(String folderName, String projectId,String parentId) {
         return fileMapper.findFolderIsExist(folderName,projectId,parentId);
-    }
-
-    @Override
-    public void deleteFileByPublicId(String publicId) {
-        fileMapper.deleteFileByPublicId(publicId);
     }
 
     @Override
@@ -638,7 +448,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public List<File> findProjectFile(String projectId, String fileId) {
-        List<File> fileList = new ArrayList<File>();
+        List<File> fileList = new ArrayList<>();
         if("0".equals(fileId)){
             fileList = fileService.findChildFile(fileMapper.selectParentId(projectId));
         } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
@@ -738,7 +548,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             f.setSize(FileUtils.convertFileSize(file.getSize()));
 
             // 更新数据库
-            fileService.updateFile(f);
+            updateById(f);
             // 修改文件版本
             fileVersionService.saveFileVersion(setFileVersion(f));
             return fileUrl;

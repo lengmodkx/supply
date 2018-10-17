@@ -266,7 +266,7 @@
 
     <!-- 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容) -->
     <select id="selectShareApiBean" resultMap="ShareApiBean">
-        SELECT id,`title`,`content`,u_image,project_name FROM prm_share s LEFT JOIN tb_user u on s.member_id = u.u_id LEFT JOIN prm_project p ON s.project_id = p.project_id
+        SELECT id,`title`,`content`,u.image,project_name FROM prm_share s LEFT JOIN tb_user u on s.member_id = u.user_id LEFT JOIN prm_project p ON s.project_id = p.project_id
         where id = #{id}
     </select>
 
