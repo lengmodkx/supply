@@ -13,7 +13,7 @@
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
 		<result column="collect" property="collect" jdbcType="INTEGER" />
 		<result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER" />
-		<result column="r_id" property="rId" jdbcType="INTEGER" />
+		<result column="role_id" property="roleId" jdbcType="INTEGER" />
 	</resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
@@ -60,189 +60,14 @@
 			</if>
 		</where>
 	</sql>
-	
-	<select id="findProjectMemberPagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-		
-		select * from prm_project_member
-		<include refid="whereStatement" />
-		
-		<if test="orderBy == 0">
-			order by id desc
-		</if>
-		<if test="orderBy == 1">
-			order by id asc
-		</if>
-		
-	</select>
-	
-	<select id="findProjectMemberAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.project.ProjectMember">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_project_member
-		where 1=1
-		<if test="projectId != null and projectId != ''">
-			and project_id = #{projectId}
-		</if>
-		order by member_label desc
-	</select>
-	
-	<select id="findProjectMemberById" resultMap="BaseResultMap" parameterType="java.lang.String">
-
-		select
-		<include refid="Base_Column_List" />
-		from prm_project_member c where id = #{id}
-
-	</select>
 
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
-		LEFT JOIN tb_user u on p.member_id = u.u_id
+		SELECT p.id,p.project_id,p.member_id,p.member_label, u.user_name as member_name,u.image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.user_id
 		where
 			project_id = #{projectId} order by p.member_label desc
 	</select>
-	
-	<delete id="deleteProjectMemberById" parameterType="java.lang.String">
-		delete from
-		prm_project_member where member_id = #{id}
-	</delete>
-	
-	<insert id="saveProjectMember" parameterType="com.art1001.supply.entity.project.ProjectMember">
-
-		insert into prm_project_member
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-
-			<if test="id != null and id != ''">
-			id,
-			</if>
-			<if test="projectId != null and projectId != ''">
-			project_id,
-			</if>
-			<if test="memberId != null and memberId != ''">
-			member_id,
-			</if>
-			<if test="memberName != null and memberName != ''">
-			member_name,
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-			member_img,
-			</if>
-			<if test="memberPhone != null ">
-				member_phone,
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-			member_email,
-			</if>
-			<if test="createTime != null ">
-			create_time,
-			</if>
-			<if test="updateTime != null ">
-			update_time,
-			</if>
-			<if test="memberLabel != null ">
-				member_label,
-			</if>
-			<if test="collect != null ">
-				collect,
-			</if>
-			<if test="isReceiveMessage != null ">
-				is_receivemessage,
-			</if>
-			<if test="defaultGroup!= null ">
-				default_group,
-			</if>
-		</trim>
-
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-
-			<if test="id != null and id != ''">
-				#{id},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				#{projectId},
-			</if>
-			<if test="memberId != null and memberId != ''">
-				#{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				#{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				#{memberImg},
-			</if>
-			<if test="memberPhone != null ">
-				#{memberPhone},
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-				#{memberEmail},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="memberLabel != null ">
-				#{memberLabel},
-			</if>
-			<if test="collect != null ">
-				#{collect},
-			</if>
-			<if test="isReceiveMessage != null ">
-				#{isReceiveMessage},
-			</if>
-			<if test="defaultGroup != null ">
-				#{defaultGroup},
-			</if>
-
-		</trim>
-
-	</insert>
-	
-	<update id="updateProjectMember" parameterType="com.art1001.supply.entity.project.ProjectMember">
-
-		update prm_project_member
-		<set>
-			<if test="projectId != null and projectId != ''">
-				project_id = #{projectId},
-			</if>
-			<if test="memberId != null and memberId != ''">
-				member_id = #{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				member_name = #{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				member_img = #{memberImg},
-			</if>
-			<if test="memberPhone != null ">
-				member_phone = #{memberPhone},
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-				member_email = #{memberEmail},
-			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
-			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
-			</if>
-			<if test="memberLabel != null ">
-				member_label = #{memberLabel},
-			</if>
-			<if test="collect != null ">
-				collect = #{collect},
-			</if>
-			<if test="isReceiveMessage != null ">
-				is_receivemessage = #{isReceiveMessage},
-			</if>
-		</set>
-
-		WHERE id = #{id}
-
-	</update>
 
 	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
 

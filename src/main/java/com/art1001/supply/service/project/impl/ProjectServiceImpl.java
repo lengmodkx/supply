@@ -160,8 +160,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setUpdateTime(System.currentTimeMillis());
 		projectMember.setMemberLabel(1);
 		projectMember.setDefaultGroup(relation.getRelationId());
-		projectMember.setRId(roleEntity.getRoleId());
-		projectMemberService.saveProjectMember(projectMember);
+		projectMember.setRoleId(roleEntity.getRoleId());
+		projectMemberService.save(projectMember);
 	}
 
 	/**

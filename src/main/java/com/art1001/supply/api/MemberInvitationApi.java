@@ -80,8 +80,11 @@ public class MemberInvitationApi {
             member.setDefaultGroup(groupId);
             member.setProjectId(projectId);
             member.setMemberId(memberId);
-            member.setRId(roleEntity.getRoleId());
-            projectMemberService.saveProjectMember(member);
+            member.setRoleId(roleEntity.getRoleId());
+            member.setCreateTime(System.currentTimeMillis());
+            member.setUpdateTime(System.currentTimeMillis());
+            member.setMemberLabel(1);
+            projectMemberService.save(member);
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,成员添加失败:",e);
@@ -99,7 +102,7 @@ public class MemberInvitationApi {
     public JSONObject deleteMember(@PathVariable(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
         try{
-            projectMemberService.deleteProjectMemberById(memberId);
+            projectMemberService.remove(new QueryWrapper<ProjectMember>().eq("member_id",memberId));
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,成员移除失败:",e);
