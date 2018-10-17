@@ -1,12 +1,7 @@
 package com.art1001.supply.service.schedule.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-
-import com.alibaba.fastjson.JSON;
 import com.art1001.supply.base.Base;
-import com.art1001.supply.entity.ServerMessage;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.log.Log;
@@ -26,7 +21,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * scheduleServiceImpl
@@ -201,8 +200,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 		if(reduce1 != null && reduce1.size() > 0){
 			logContent.append(TaskLogFunction.B.getName()).append(" ");
 			for (String uId : reduce1) {
-				String userName = userService.findUserNameById(uId);
-				logContent.append(userName).append(" ");
+				UserEntity userEntity = userService.findById(uId);
+				logContent.append(userEntity.getUserName()).append(" ");
 			}
 		}
 		//比较 newJoin  和 oldJoin 两个集合的差集  (添加)
@@ -210,8 +209,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 		if(reduce2 != null && reduce2.size() > 0){
 			logContent.append(TaskLogFunction.C.getName()).append(" ");
 			for (String uId : reduce2) {
-				String userName = userService.findUserNameById(uId);
-				logContent.append(userName).append(" ");
+				UserEntity userEntity = userService.findById(uId);
+				logContent.append(userEntity.getUserName()).append(" ");
 			}
 		}
 

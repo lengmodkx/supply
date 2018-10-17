@@ -1,9 +1,9 @@
 package com.art1001.supply.service.user.impl;
 
-import java.util.List;
-import javax.annotation.Resource;
-
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.mapper.user.UserNewsMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -16,8 +16,9 @@ import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.user.UserNews;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * ServiceImpl
@@ -184,8 +185,8 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 
 		for(int i = 0;i < users.length;i++){
 			if(isChat == 0){
-				String uname = userService.findUserNameById(users[i]);
-				content += " " + uname;
+				UserEntity userEntity = userService.findById(users[i]);
+				content += " " + userEntity.getUserName();
 			}
 			//如果本次循环的id  是当前操作的用户id 则跳过
 			if(users[i].equals(ShiroAuthenticationManager.getUserId())){

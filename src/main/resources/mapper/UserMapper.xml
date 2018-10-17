@@ -65,122 +65,12 @@
 		where user_id = #{id}
 	</select>
 
-	<insert id="insertUserRole" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="role.id">
-		insert ignore into tb_role_user (
-			u_id,
-			r_id,
-			t_create_time
-			)
-		values (
-			#{id},
-			#{role.id},
-			now()
-			)
-	</insert>
-	
-	<update id="update" parameterType="com.art1001.supply.entity.user.UserEntity">
-		update tb_user
-		<set>
-			<if test="userName != null and userName != ''">
-				u_name = #{userName},
-			</if>
-			<if test="password != null and password != ''">
-				u_password = #{password},
-			</if>
-			<if test="credentialsSalt != null and credentialsSalt != ''">
-				u_credentials_salt = #{credentialsSalt},
-			</if>
-			<if test="description != null and description != ''">
-				u_description = #{description},
-			</if>
-			<if test="creatorName != null and creatorName != ''">
-				u_creator_name = #{creatorName},
-			</if>
-			<if test="deleteStatus != null">
-				u_delete_status = #{deleteStatus},
-			</if>
-			<if test="locked != null">
-				u_locked = #{locked},
-			</if>
-		</set>
-
-		where u_id = #{id}
-
-	</update>
-	
-	<update id="updateUserRole" parameterType="com.art1001.supply.entity.user.UserEntity" flushCache="true">
-		update tb_role_user
-		set r_id = #{role.id}
-		where u_id = #{id}
-	</update>
-	
-	<!--<delete id="deleteBatchById" parameterType="list">-->
-		<!--<![CDATA[  -->
-       <!--delete from tb_user where u_id in  -->
-    	<!--]]>  -->
-	    <!--<foreach collection="list" item = "id" open="(" separator="," close=")">-->
-	    <!--#{id}-->
-	    <!--</foreach>  -->
-	<!--</delete>-->
-	
-	<delete id="deleteBatchUserRole" parameterType="list">
-		<![CDATA[  
-       delete from tb_role_user where u_id in  
-    	]]>  
-	    <foreach collection="list" item = "id" open="(" separator="," close=")">
-	    #{id}
-	    </foreach>  
-	</delete>
-
-	<update id="updateUserInfo" parameterType="com.art1001.supply.entity.user.UserEntity" flushCache="true">
-		update tb_user_info
-		<set>
-			<if test="userInfo.sex != null and userInfo.sex != ''">
-				u_sex = #{userInfo.sex},
-			</if>
-			<if test="userInfo.birthday != null and userInfo.birthday != ''">
-				u_birthday = #{userInfo.birthday},
-			</if>
-			<if test="userInfo.telephone != null and userInfo.telephone != ''">
-				u_telephone = #{userInfo.telephone},
-			</if>
-			<if test="userInfo.email != null and userInfo.email != ''">
-				u_email = #{userInfo.email},
-			</if>
-
-			<if test="userInfo.image != null and userInfo.image != ''">
-				u_image = #{userInfo.image},
-			</if>
-			<if test="userInfo.address != null and userInfo.address != ''">
-				u_address = #{userInfo.address},
-			</if>
-			<if test="userInfo.job != null and userInfo.job != ''">
-				u_job = #{userInfo.job}
-			</if>
-			<if test="userInfo.defaultImg != null and userInfo.defaultImg != ''">
-				u_default_img = #{userInfo.defaultImg}
-			</if>
-		</set>
-		where u_id = #{userInfo.id}
-	</update>
-
 	<!-- 查询指定id的人员信息 -->
 	<select id="findManyUserById" resultMap="userMap">
 		SELECT
-			u.u_id,
-			u.u_name,
-			u.u_account_name,
-			u.u_password,
-			u.u_delete_status,
-			u.u_locked,
-			u.u_description,
-			u.u_credentials_salt,
-			u.u_creator_name,
-			u.u_create_time,
-			u.u_update_time,
-			u.u_image
+		<include refid="userAttributes"/>
 		FROM
-			tb_user u
+			tb_user
 		<where>
 			<if test="memberIds != null and memberIds != ''">
 				and u.u_id in (
@@ -202,103 +92,32 @@
 	<!-- 查询指定项目下所有的成员信息 -->
 	<select id="findProjectAllMember" resultMap="userMap">
 		select
-			u.u_id,
-			u.u_name,
-			u.u_account_name,
-			u.u_password,
-			u.u_delete_status,
-			u.u_locked,
-			u.u_description,
-			u.u_credentials_salt,
-			u.u_creator_name,
-			u.u_create_time,
-			u.u_update_time
-		from tb_user u where u.u_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_label desc)
+		<include refid="userAttributes"/>
+		from tb_user u where u.user_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_label desc)
 	</select>
 
 	<!-- 根据用户id查用户信息 -->
 	<select id="findUserInfoById" resultMap="userMap">
 		SELECT
-		u_id,
-		u_name,
-		u_account_name,
-		u_password,
-		u_delete_status,
-		u_locked,
-		u_description,
-		u_credentials_salt,
-		u_creator_name,
-		u_create_time,
-		u_update_time,
-		u_sex,
-		u_birthday,
-		u_telephone,
-		u_email,
-		u_image,
-		u_address,
-		u_job,
-		u_default_img
+		<include refid="userAttributes"/>
 		FROM
 			tb_user
 		WHERE
-			u_id = #{id}
-	</select>
-
-	<!-- 查询存在该任务中的成员信息 -->
-	<select id="findUserByExistTask" resultMap="userMap">
-		select <include refid="userAttributes" />
-		from tb_user where u_id in
-		(select member_id from prm_task_member where public_id = #{taskId} and `type` != '创建者' and member_id in
-		 (select member_id from prm_project_member where project_id =  #{projectId}))
-	</select>
-
-	<!-- 查询不存在该任务中的成员信息 -->
-	<select id="findUserByNotExistTask" resultMap="userMap">
-		select <include refid="userAttributes" />
-		from tb_user where u_id in
-		(select member_id from prm_project_member where prm_project_member.project_id =  #{projectId} and member_id not in (
-			select member_id from prm_task_member where prm_task_member.public_id = #{taskId}
-		))
-
-	</select>
-
-	<!-- 查询任务下的所有参与者的基本信息  不保括执行者 -->
-	<select id="findTaskMemberInfo" resultMap="userMap">
-		select
-		<include refid="userAttributes"/>
-		from tb_user where u_id in (select member_id from prm_task_member where public_id = #{taskId}  and type = #{status})
-	</select>
-
-	<!-- 根据任务id 查询 执行者信息 -->
-	<select id="findExecutorByTask" resultMap="userMap">
-		select
-		<include refid="userAttributes"/>
-		from
-		tb_user where tb_user.u_id = (select member_id from prm_task_member where public_id = #{taskId} and type = '执行者')
-	</select>
-
-	<!-- 查询出某个任务的创建者信息 -->
-	<select id="findTaskCreate" resultMap="userMap">
-		  select
-		  <include refid="userAttributes"/>
-		  from tb_user where u_id =
-		  (
-			select prm_task_member.member_id from prm_task_member where `type` = '创建者' and  public_id = #{taskId}
-		  )
+			user_id = #{id}
 	</select>
 
 	<!-- 根据用户id查询出用户信息 -->
 	<select id="findUserById" resultMap="userMap">
 		select
 		<include refid="userAttributes"/>
-		from tb_user where u_id = #{uId}
+		from tb_user where user_id = #{uId}
 	</select>
 
 	<!-- 根据用户的id反向选择用户 -->
 	<select id="reverseFindUser" resultMap="userMap">
 		select
 		<include refid="userAttributes"/>
-		from tb_user where u_id in (
+		from tb_user where user_id in (
 		select member_id from prm_project_member where project_id = #{projectId} and member_id not in
 		<foreach collection="uId" separator="," open="(" close=")" item="mId">
 			#{mId}
@@ -307,28 +126,9 @@
 	</select>
 
 
-	<select id="findByKey" parameterType="String" resultMap="userMap">
-		SELECT u_id,
-			u_name,
-			u_account_name,
-			u_password,
-			u_delete_status,
-			u_locked,
-			u_description,
-			u_credentials_salt,
-			u_creator_name,
-			u_create_time,
-			u_update_time,
-			u_sex,
-			u_birthday,
-			u_image,
-			u_telephone,
-			u_email,
-			u_address,
-			u_create_time,
-			u_job,
-			u_default_img
+	<select id="findByKey" parameterType="java.lang.String" resultMap="userMap">
+		SELECT <include refid="userAttributes"/>
 		FROM tb_user
-		where u_account_name like CONCAT('%',#{keyword},'%')
+		where account_name like CONCAT('%',#{keyword},'%')
 	</select>
 </mapper>

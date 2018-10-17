@@ -449,8 +449,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         if(reduce1 != null && reduce1.size() > 0){
             logContent.append(TaskLogFunction.B.getName()).append(" ");
             for (String uId : reduce1) {
-                String userName = userService.findUserNameById(uId);
-                logContent.append(userName).append(" ");
+                UserEntity userEntity = userService.findById(uId);
+                logContent.append(userEntity.getUserName()).append(" ");
             }
         }
 
@@ -459,8 +459,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         if(reduce2 != null && reduce2.size() > 0){
             logContent.append(TaskLogFunction.C.getName()).append(" ");
             for (String uId : reduce2) {
-                String userName = userService.findUserNameById(uId);
-                logContent.append(userName).append(" ");
+                UserEntity userEntity = userService.findById(uId);
+                logContent.append(userEntity.getUserName()).append(" ");
             }
         }
 
@@ -473,7 +473,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
             fileService.updateFile(file);
-            log = logService.saveLog(fileId,logContent.toString(),2);
+            logService.saveLog(fileId,logContent.toString(),2);
         }
     }
 

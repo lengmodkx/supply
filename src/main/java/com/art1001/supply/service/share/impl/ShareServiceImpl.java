@@ -8,6 +8,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
@@ -165,8 +166,8 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 		if(reduce1 != null && reduce1.size() > 0){
 			logContent.append(TaskLogFunction.B.getName()).append(" ");
 			for (String uId : reduce1) {
-				String userName = userService.findUserNameById(uId);
-				logContent.append(userName).append(" ");
+				UserEntity userEntity = userService.findById(uId);
+				logContent.append(userEntity.getUserName()).append(" ");
 			}
 		}
 
@@ -175,8 +176,8 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 		if(reduce2 != null && reduce2.size() > 0){
 			logContent.append(TaskLogFunction.C.getName()).append(" ");
 			for (String uId : reduce2) {
-				String userName = userService.findUserNameById(uId);
-				logContent.append(userName).append(" ");
+				UserEntity userEntity = userService.findById(uId);
+				logContent.append(userEntity.getUserName()).append(" ");
 			}
 		}
 
