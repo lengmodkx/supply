@@ -7,10 +7,8 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +36,6 @@ public class GroupChatApi {
     private FileService fileService;
     @Resource
     private ChatService chatService;
-    @Resource
-    private LogService logService;
 
     /**
      * 发消息
@@ -63,7 +59,10 @@ public class GroupChatApi {
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
             chat.setContent(content);
             chat.setProjectId(projectId);
-            chatService.saveChat(chat,files);
+            if (StringUtils.isNotEmpty(files)) {
+                fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
+            }
+            chatService.save(chat);
 
             object.put("result",1);
             object.put("msg","保存成功");
@@ -77,15 +76,19 @@ public class GroupChatApi {
     /**
      * 撤回消息
      *
-     * @param id 消息id
+     * @param chatId 消息id
      * @return
      */
-    @PatchMapping("/{id}/withdraw")
-    public JSONObject withdrawMessage(@PathVariable(value = "id") String id, @RequestParam(value = "projectId") String projectId) {
+    @PatchMapping("/{chatId}/withdraw")
+    public JSONObject withdrawMessage(@PathVariable(value = "chatId") String chatId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            logService.withdrawMessage(id);
+            Chat chat = new Chat();
+            chat.setChatId(chatId);
+            chat.setChatDel(1);
+            chatService.updateById(chat);
             jsonObject.put("result", 1);
+            jsonObject.put("msg","撤回成功");
         } catch (Exception e) {
             log.error("系统异常,撤回失败:", e);
             throw new AjaxException(e);
@@ -115,12 +118,7 @@ public class GroupChatApi {
     public JSONObject chats(){
         JSONObject object = new JSONObject();
         try{
-            List<Chat> chatList = chatService.findChatAllList();
-            if(CommonUtils.listIsEmpty(chatList)){
-                object.put("data","无数据");
-                object.put("result",1);
-                return object;
-            }
+            List<Chat> chatList = chatService.findChatList();
             object.put("result",1);
             object.put("data",chatList);
         }catch(Exception e){

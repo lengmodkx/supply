@@ -589,7 +589,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         fabulous.setMemberId(ShiroAuthenticationManager.getUserId());
         fabulous.setFabulousId(System.currentTimeMillis());
         //添加任务和赞的关系数据
-        int result = fabulousMapper.addFabulous(fabulous);
+        int result = fabulousMapper.insert(fabulous);
         //更新任务得赞数量
         task.setFabulousCount(taskFabulous + 1);
         return taskMapper.updateTask(task);

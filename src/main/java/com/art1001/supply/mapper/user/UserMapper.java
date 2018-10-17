@@ -1,6 +1,5 @@
 package com.art1001.supply.mapper.user;
 
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -36,14 +35,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	 * @return
 	 */
 	public int deleteBatchUserRole(List<String> userIds);
-	
-	/**
-	 * 添加用户个人资料信息
-	 * @param userEntity
-	 * @return
-	 */
-	public int insertUserInfo(UserEntity userEntity);
-	
+
 	/**
 	 * 更新用户个人资料信息
 	 * @param userEntity
