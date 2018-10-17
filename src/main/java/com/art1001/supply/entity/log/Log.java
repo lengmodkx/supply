@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -64,6 +65,16 @@ public class Log extends Model<Log> {
 	 * (任务,文件,日程,分享) 的日志区分
 	 */
 	private int logFlag;
+
+	/**
+	 * 创建时间字符串
+	 */
+	private String createTimeStr;
+
+	public String getCreateTimeStr() {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return format.format(createTime);
+	}
 
 	/**
 	 * 返回的结果集

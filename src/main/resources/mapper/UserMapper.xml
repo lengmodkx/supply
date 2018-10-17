@@ -18,11 +18,9 @@
 		u_job,
 		u_default_img,
 		u_account_name,
-		u_password,
 		u_delete_status,
 		u_locked,
 		u_description,
-		u_credentials_salt,
 		u_creator_name,
 		u_create_time,
 		u_update_time

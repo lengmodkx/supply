@@ -101,7 +101,7 @@
             prm_share s left join prm_tag_relation tr on s.id = tr.share_id left join prm_tag tg on tr.tag_id = tg.tag_id
         WHERE
             s.project_id = #{projectId}
-        AND s.is_del = #{isDel}
+        AND s.is_del = #{isDel} order by create_time Desc
     </select>
 
     <insert id="saveShare" parameterType="com.art1001.supply.entity.share.Share">
