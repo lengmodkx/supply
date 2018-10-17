@@ -7,11 +7,7 @@ import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
-import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.schedule.ScheduleService;
-import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
-import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,19 +27,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	/** tagMapper接口*/
 	@Resource
 	private TagMapper tagMapper;
-
-	/** 任务Service接口 */
-	@Resource
-	private TaskService taskService;
-
-	@Resource
-	private ScheduleService scheduleService;
-
-	@Resource
-	private FileService fileService;
-
-	@Resource
-	private ShareService shareService;
 
 	@Resource
 	private TagRelationMapper tagRelationMapper;

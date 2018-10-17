@@ -9,7 +9,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.EmailUtil;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ImageUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -54,8 +53,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public int insert(UserEntity userEntity, String password) {
         try {
-            // 生成用户id
-            userEntity.setUserId(IdGen.uuid());
             // 图片byte数组
             byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
             // oss上传

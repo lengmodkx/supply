@@ -7,191 +7,63 @@
 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
 
 	<sql id="userAttributes">
-		u_id,
-		u_name,
-		u_sex,
-		u_birthday,
-		u_telephone,
-		u_email,
-		u_image,
-		u_address,
-		u_job,
-		u_default_img,
-		u_account_name,
-		u_delete_status,
-		u_locked,
-		u_description,
-		u_creator_name,
-		u_create_time,
-		u_update_time
+		user_id,
+		user_name,
+		sex,
+	    birthday,
+		telephone,
+		email,
+		image,
+	    address,
+		job,
+		default_image,
+		account_name,
+		delete_status,
+		locked,
+		description,
+		creator_name,
+		create_time,
+		update_time
 	</sql>
 
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
-		<id property="id" column="u_id"/>
-		<result property="userName" column="u_name" />
-		<result property="accountName" column="u_account_name"/>
-		<result property="password" column="u_password"/>
-		<result property="deleteStatus" column="u_delete_status"/>
-		<result property="locked" column="u_locked"/>
-		<result property="description" column="u_description"/>
-		<result property="credentialsSalt" column="u_credentials_salt"/>
-		<result property="creatorName" column="u_creator_name"/>
-		<result property="createTime" column="u_create_time"/>
-		<result property="updateTime" column="u_update_time"/>
-		<result property="sex" column="u_sex"/>
-		<result property="birthday" column="u_birthday"/>
-		<result property="telephone" column="u_telephone"/>
-		<result property="email" column="u_email"/>
-		<result property="image" column="u_image"/>
-		<result property="address" column="u_address"/>
-		<result property="job" column="u_job"/>
-		<result property="defaultImage" column="u_default_img"/>
+		<id property="userId" column="user_id"/>
+		<result property="userName" column="user_name" />
+		<result property="accountName" column="account_name"/>
+		<result property="password" column="password"/>
+		<result property="deleteStatus" column="delete_status"/>
+		<result property="locked" column="locked"/>
+		<result property="description" column="description"/>
+		<result property="credentialsSalt" column="credentials_salt"/>
+		<result property="creatorName" column="creator_name"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="sex" column="sex"/>
+		<result property="birthday" column="birthday"/>
+		<result property="telephone" column="telephone"/>
+		<result property="email" column="email"/>
+		<result property="image" column="image"/>
+		<result property="address" column="address"/>
+		<result property="job" column="job"/>
+		<result property="defaultImage" column="default_image"/>
 	</resultMap>
 
 	<select id="findCount" resultType="java.lang.Integer">
 		select count(0) from tb_user
 	</select>
 	
-	<select id="findByName" parameterType="String" resultMap="userMap">
+	<select id="findByName" parameterType="java.lang.String" resultMap="userMap">
 		SELECT <include refid="userAttributes"/>
 		from tb_user
-		where u_account_name = #{name}
+		where account_name = #{name}
 	</select>
 	
-	<select id="findById" parameterType="String" resultMap="userMap">
+	<select id="findById" parameterType="java.lang.String" resultMap="userMap">
 		SELECT
 		<include refid="userAttributes"/>
 		FROM tb_user
-		where u_id = #{id}
+		where user_id = #{id}
 	</select>
-
-	<insert id="insert" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="id">
-
-		insert into tb_user
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-
-			<if test="id != null and id != ''">
-				u_id,
-			</if>
-			<if test="userName != null and userName != ''">
-				u_name,
-			</if>
-			<if test="sex != null ">
-				u_sex,
-			</if>
-			<if test="birthday != null ">
-				u_birthday,
-			</if>
-			<if test="image != null and image != ''">
-				u_image,
-			</if>
-			<if test="telephone != null and telephone != ''">
-				u_telephone,
-			</if>
-			<if test="email != null and email != ''">
-				u_email,
-			</if>
-			<if test="address != null and address != ''">
-				u_address,
-			</if>
-			<if test="job != null and job != ''">
-				u_job,
-			</if>
-			<if test="defaultImage != null and defaultImage != ''">
-				u_default_img,
-			</if>
-			<if test="accountName != null and accountName != ''">
-				u_account_name,
-			</if>
-			<if test="password != null and password != ''">
-				u_password,
-			</if>
-			<if test="deleteStatus != null ">
-				u_delete_status,
-			</if>
-			<if test="locked != null ">
-				u_locked,
-			</if>
-			<if test="description != null and description != ''">
-				u_description,
-			</if>
-			<if test="credentialsSalt != null and credentialsSalt != ''">
-				u_credentials_salt,
-			</if>
-			<if test="creatorName != null and creatorName != ''">
-				u_creator_name,
-			</if>
-			<if test="createTime != null ">
-				u_create_time,
-			</if>
-			<if test="updateTime != null ">
-				u_update_time,
-			</if>
-		</trim>
-
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-
-			<if test="id != null and id != ''">
-				#{id},
-			</if>
-			<if test="userName != null and userName != ''">
-				#{userName},
-			</if>
-			<if test="sex != null ">
-				#{sex},
-			</if>
-			<if test="birthday != null ">
-				#{birthday},
-			</if>
-			<if test="image != null and image != ''">
-				#{image},
-			</if>
-			<if test="telephone != null and telephone != ''">
-				#{telephone},
-			</if>
-			<if test="email != null and email != ''">
-				#{email},
-			</if>
-			<if test="address != null and address != ''">
-				#{address},
-			</if>
-			<if test="job != null and job != ''">
-				#{job},
-			</if>
-			<if test="defaultImage != null and defaultImage != ''">
-				#{defaultImage},
-			</if>
-			<if test="accountName != null and accountName != ''">
-				#{accountName},
-			</if>
-			<if test="password != null and password != ''">
-				#{password},
-			</if>
-			<if test="deleteStatus != null ">
-				#{deleteStatus},
-			</if>
-			<if test="locked != null ">
-				#{locked},
-			</if>
-			<if test="description != null and description != ''">
-				#{description},
-			</if>
-			<if test="credentialsSalt != null and credentialsSalt != ''">
-				#{credentialsSalt},
-			</if>
-			<if test="creatorName != null and creatorName != ''">
-				#{creatorName},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-
-		</trim>
-
-	</insert>
 
 	<insert id="insertUserRole" parameterType="com.art1001.supply.entity.user.UserEntity" useGeneratedKeys="true" keyProperty="role.id">
 		insert ignore into tb_role_user (
