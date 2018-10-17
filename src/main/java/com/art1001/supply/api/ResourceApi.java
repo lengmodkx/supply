@@ -41,16 +41,16 @@ public class ResourceApi {
         JSONObject object = new JSONObject();
         try{
             ResourceEntity resourceEntity = new ResourceEntity();
-            resourceEntity.setName(resourceName);
-            resourceEntity.setSourceKey(resourceKey);
-            resourceEntity.setSourceUrl(resourceUrl);
+            resourceEntity.setResourceName(resourceName);
+            resourceEntity.setResourceKey(resourceKey);
+            resourceEntity.setResourceUrl(resourceUrl);
             resourceEntity.setDescription(resourceDes);
             resourceEntity.setParentId(parentId);
-            resourceEntity.setType(resourceType);
+            resourceEntity.setResourceType(resourceType);
             if(parentId != 0){
-                resourceEntity.setLevel(2);
+                resourceEntity.setResourceLevel(2);
             }else{
-                resourceEntity.setLevel(1);
+                resourceEntity.setResourceLevel(1);
             }
 
             resourceEntity.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
@@ -101,14 +101,14 @@ public class ResourceApi {
         JSONObject object = new JSONObject();
         try{
             ResourceEntity resourceEntity = new ResourceEntity();
-            resourceEntity.setId(resourceId);
-            resourceEntity.setName(resourceName);
-            resourceEntity.setSourceKey(resourceKey);
-            resourceEntity.setSourceUrl(resourceUrl);
+            resourceEntity.setResourceId(resourceId);
+            resourceEntity.setResourceName(resourceName);
+            resourceEntity.setResourceKey(resourceKey);
+            resourceEntity.setResourceUrl(resourceUrl);
             resourceEntity.setDescription(resourceDes);
             resourceEntity.setParentId(parentId);
-            resourceEntity.setType(resourceType);
-            resourceEntity.setLevel(resourceLevel);
+            resourceEntity.setResourceType(resourceType);
+            resourceEntity.setResourceLevel(resourceLevel);
             resourceEntity.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             resourceService.updateById(resourceEntity);
             object.put("result",1);
@@ -127,7 +127,7 @@ public class ResourceApi {
         JSONObject object = new JSONObject();
         try{
             ResourceEntity resourceEntity = new ResourceEntity();
-            resourceEntity.setName(resourceName);
+            resourceEntity.setResourceName(resourceName);
             Page<ResourceEntity> roleList = resourceService.selectListPage(current, size, resourceEntity);
             object.put("data",roleList);
             object.put("result",1);
@@ -147,7 +147,7 @@ public class ResourceApi {
     public JSONObject getResourceMenu(@RequestParam(value = "param") String param){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ResourceEntity> resourceList = resourceService.list(new QueryWrapper<ResourceEntity>().select("s_id as id", "s_name as name", "s_source_key as sourceKey", "s_description as description", "s_type as type","s_parent_id as parentId").eq("s_parent_id", "0"));
+            List<ResourceEntity> resourceList = resourceService.list(new QueryWrapper<ResourceEntity>().eq("parent_id", "0"));
             jsonObject.put("data",resourceList);
             jsonObject.put("result",1);
             jsonObject.put("msg","资源菜单信息获取成功!");

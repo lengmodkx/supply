@@ -1,16 +1,19 @@
 package com.art1001.supply.service.user.impl;
 
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.EmailUtil;
+import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.ImageUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     public int insert(UserEntity userEntity, String password) {
         try {
             // 生成用户id
-            userEntity.setId(IdGen.uuid());
+            userEntity.setUserId(IdGen.uuid());
             // 图片byte数组
             byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
             // oss上传
@@ -66,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             if(cnt == 1){
                 return cnt;
             } else{
-                throw new ServiceException("新增用户: " + userEntity.getId() + " 失败");
+                throw new ServiceException("新增用户: " + userEntity.getUserId() + " 失败");
             }
         } catch (Exception e) {
             throw new ServiceException(e);
@@ -183,7 +186,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         //把集合中任务的创建者删除掉
         if(notExistList != null && notExistList.size() > 0){
             for (UserEntity userEntity : notExistList) {
-                if(userEntity.getId().equals(taskMemberIdByTaskId)){
+                if(userEntity.getUserId().equals(taskMemberIdByTaskId)){
                     notExistList.remove(userEntity);
                     break;
                 }

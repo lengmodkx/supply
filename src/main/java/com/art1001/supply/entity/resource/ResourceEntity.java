@@ -28,67 +28,57 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	/**
 	 * 资源id
 	 */
-	@TableId(value = "s_id",type = IdType.AUTO)
-	public Integer id;
+	@TableId(value = "resource_id",type = IdType.AUTO)
+	public Integer resourceId;
 
 	/**
 	 * 父节点ID
 	 */
-	@TableField(value = "s_parent_id")
 	private Integer parentId;
 
 	/**
 	 * 权限名称
 	 */
-	@TableField(value = "s_name")
-	private String name;
+	private String resourceName;
 
 	/**
 	 * 资源标识key
 	 */
-	@TableField(value = "s_source_key")
-	private String sourceKey;
+	private String resourceKey;
 
 	/**
 	 * 类型：0：菜单；1：按钮
 	 */
-	@TableField(value = "s_type")
-	private Integer type;
+	private Integer resourceType;
 
 	/**
 	 * 菜单URL
 	 */
-	@TableField(value = "s_source_url")
-	private String sourceUrl;
+	private String resourceUrl;
 
 	/**
 	 * 菜单的展开层级(暂不用)
 	 */
-	@TableField(value = "s_level")
-	private Integer level;
+	private Integer resourceLevel;
 
 	/**
 	 * 是否隐藏
 	 */
-	@TableField(value = "s_is_hide")
 	private Integer isHide;
 
 	/**
 	 * 资源描述
 	 */
-	@TableField(value = "s_description")
 	private String description;
 
 	/**
 	 * 资源创建时间
 	 */
-	@TableField(value = "s_create_time")
 	private Timestamp createTime;
 
 	/**
 	 * 资源更新时间
 	 */
-	@TableField(value = "s_update_time")
 	private Timestamp updateTime;
 
 	/**
@@ -111,6 +101,6 @@ public class ResourceEntity extends Model<ResourceEntity> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.resourceId;
 	}
 }

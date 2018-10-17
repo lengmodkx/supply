@@ -20,7 +20,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 	@Override
 	public int deleteResource(Integer resourceId){
 		ResourceEntity resourceEntity = resourceMapper.selectById(resourceId);
-		int count = resourceMapper.selectCount(new QueryWrapper<>(resourceEntity).eq("s_parent_id",resourceEntity.getId()));
+		int count = resourceMapper.selectCount(new QueryWrapper<>(resourceEntity).eq("s_parent_id",resourceEntity.getResourceId()));
 		if(count>0){
 			return 0;
 		}else{

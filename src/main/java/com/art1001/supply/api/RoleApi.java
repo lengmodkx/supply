@@ -98,7 +98,7 @@ public class RoleApi {
         try{
 
             Role role = new Role();
-            role.setId(roleId);
+            role.setRoleId(roleId);
             role.setRoleName(roleName);
             role.setRoleDes(roleDes);
             role.setRoleKey(roleKey);

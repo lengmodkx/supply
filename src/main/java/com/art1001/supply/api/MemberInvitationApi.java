@@ -80,7 +80,7 @@ public class MemberInvitationApi {
             member.setDefaultGroup(groupId);
             member.setProjectId(projectId);
             member.setMemberId(memberId);
-            member.setRId(roleEntity.getId());
+            member.setRId(roleEntity.getRoleId());
             projectMemberService.saveProjectMember(member);
             object.put("result",1);
         }catch(Exception e){

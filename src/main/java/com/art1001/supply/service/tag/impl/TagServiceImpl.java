@@ -1,12 +1,9 @@
 package com.art1001.supply.service.tag.impl;
 
-import java.util.*;
-import javax.annotation.Resource;
-
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
@@ -19,7 +16,11 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * tagServiceImpl
@@ -105,8 +106,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		}
 		tag.setCreateTime(System.currentTimeMillis());
 		tag.setUpdateTime(System.currentTimeMillis());
-		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-		tag.setMemberId(userEntity.getId());
+		tag.setMemberId(ShiroAuthenticationManager.getUserId());
 		tag.setIsDel(0);
         tagMapper.saveTag(tag);
         return tag;

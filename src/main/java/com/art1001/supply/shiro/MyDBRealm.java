@@ -46,7 +46,7 @@ public class MyDBRealm extends AuthorizingRealm {
 		String username = JwtUtil.getUsername(principalCollection.toString());
 		UserEntity user = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
 		if (user != null) {
-			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getId());
+			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getUserId());
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			//根据用户ID查询角色（role），放入到Authorization里。
@@ -56,9 +56,9 @@ public class MyDBRealm extends AuthorizingRealm {
 			// info.setRoles(user.getRolesName());
 			// 用户的角色对应的所有权限
 			for (ResourceEntity resourceEntity : resourceList) {
-				info.addStringPermission(resourceEntity.getSourceKey().trim());
-				if(StringUtils.isNotBlank(resourceEntity.getSourceUrl().trim())) {
-					info.addStringPermission(resourceEntity.getSourceUrl().trim());
+				info.addStringPermission(resourceEntity.getResourceKey().trim());
+				if(StringUtils.isNotBlank(resourceEntity.getResourceUrl().trim())) {
+					info.addStringPermission(resourceEntity.getResourceUrl().trim());
 				}
 			}
 			//或者直接查询出所有权限set集合

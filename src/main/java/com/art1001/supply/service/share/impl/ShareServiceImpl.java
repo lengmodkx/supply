@@ -8,7 +8,6 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
@@ -90,8 +89,7 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public Share updateShare(Share share){
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        share.setMemberId(userEntity.getId());
+        share.setMemberId(ShiroAuthenticationManager.getUserId());
         share.setUpdateTime(System.currentTimeMillis());
 		shareMapper.updateShare(share);
 		return share;
@@ -103,9 +101,8 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public Share saveShare(Share share){
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
 	    share.setId(IdGen.uuid());
-        share.setMemberId(userEntity.getId());
+        share.setMemberId(ShiroAuthenticationManager.getUserId());
         share.setCreateTime(System.currentTimeMillis());
         share.setUpdateTime(System.currentTimeMillis());
 

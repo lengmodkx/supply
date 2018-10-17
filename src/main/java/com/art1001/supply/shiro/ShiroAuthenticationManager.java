@@ -3,11 +3,11 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserSessionEntity;
 import com.art1001.supply.service.user.UserSessionService;
 import com.art1001.supply.util.SpringContextUtil;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class ShiroAuthenticationManager {
 	 * @return
 	 */
 	public static String getUserId() {
-		return getUserEntity() == null ? null : getUserEntity().getId();
+		return getUserEntity() == null ? null : getUserEntity().getUserId();
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class ShiroAuthenticationManager {
 		List<UserSessionEntity> list = userSessionService.getAllUser();
 		List<String> userIds = new ArrayList<String>();
 		list.forEach(user -> {
-			userIds.add(user.getId());
+			userIds.add(user.getUserId());
 		});
 		clearUserAuthByUserId(userIds.toArray(new String[0]));
 	}

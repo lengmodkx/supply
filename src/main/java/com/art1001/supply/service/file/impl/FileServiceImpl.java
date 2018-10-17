@@ -168,8 +168,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public void updateFile(File file) {
         // 修改操作用户
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        file.setMemberId(userEntity.getId());
+        file.setMemberId(ShiroAuthenticationManager.getUserId());
         // 修改跟新时间
         file.setUpdateTime(System.currentTimeMillis());
         fileMapper.updateFile(file);
@@ -184,9 +183,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public void saveFile(File file) {
         file.setFileId(IdGen.uuid());
         // 获取操作用户
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 设置操作用户信息
-        file.setMemberId(userEntity.getId());
+        file.setMemberId(ShiroAuthenticationManager.getUserId());
         // 设置时间
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());

@@ -109,7 +109,7 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 		PublicCollect publicCollect = new PublicCollect();
 		//设置收藏的id
 		publicCollect.setId(IdGen.uuid());
-		publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+		publicCollect.setMemberId(ShiroAuthenticationManager.getUserId());
 		//设置收藏的任务id
 		publicCollect.setPublicId(publicId);
 		//设置收藏的类型

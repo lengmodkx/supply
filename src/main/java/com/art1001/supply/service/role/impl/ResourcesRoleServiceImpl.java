@@ -41,7 +41,7 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
         List<ResourceEntity> allResources = resourceService.list(null);
         for (ResourceEntity resource : allResources) {
             for (Integer haveResources : roleHaveResource) {
-                if(resource.getId().equals(haveResources)){
+                if(resource.getResourceId().equals(haveResources)){
                     resource.setHave(true);
                 }
             }

@@ -200,10 +200,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	@Override
 	public void saveTask(Task task) {
         task.setTaskId(IdGen.uuid());
-	    //获取当前登录用户的id
-        String id = ShiroAuthenticationManager.getUserEntity().getId();
         //设置任务的创建者
-        task.setMemberId(id);
+        task.setMemberId(ShiroAuthenticationManager.getUserId());
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -217,7 +215,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     @Override
     public void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList) {
-        String id = ShiroAuthenticationManager.getUserEntity().getId();
+        String id = ShiroAuthenticationManager.getUserId();
         taskMapper.saveTaskBatch(projectId,menuId,templateDataList,id);
     }
 
@@ -604,7 +602,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public int cancelFabulous(Task task) {
         Integer taskFabulousCount = taskMapper.findTaskFabulousCount(task.getTaskId());
         //获取当前用户登录的id (暂时不用)
-        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        String memberId = ShiroAuthenticationManager.getUserId();
         //这里要把当前任务的赞 - 1
         task.setFabulousCount(taskFabulousCount - 1);
         taskMapper.updateTask(task);
@@ -620,7 +618,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public Log addSubLevelTasks(String parentTaskId, Task subLevel) {
         //获取当前登录用户的id
-        String id = ShiroAuthenticationManager.getUserEntity().getId();
+        String id = ShiroAuthenticationManager.getUserId();
         //设置任务的层级
         subLevel.setLevel(2);
         //设置父任务id
@@ -745,7 +743,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public int collectTask(Task task) {
         PublicCollect publicCollect = new PublicCollect();
         //设置收藏的id
-        publicCollect.setMemberId(ShiroAuthenticationManager.getUserEntity().getId());
+        publicCollect.setMemberId(ShiroAuthenticationManager.getUserId());
         //设置收藏的项目的id
         publicCollect.setProjectId(task.getProjectId());
         //设置收藏的任务id
@@ -767,7 +765,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public int cancelCollectTask(Task task) {
-        String memberId = ShiroAuthenticationManager.getUserEntity().getId();
+        String memberId = ShiroAuthenticationManager.getUserId();
         int result = publicCollectService.deletePublicCollectById(memberId,task.getTaskId());
         return result;
     }

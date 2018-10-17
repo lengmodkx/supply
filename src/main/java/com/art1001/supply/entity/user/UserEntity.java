@@ -22,8 +22,8 @@ public class UserEntity extends Model<UserEntity> {
 
 	private static final long serialVersionUID = -6743567631108323096L;
 
-	@TableId(value = "u_id",type = IdType.UUID)
-	public String id;
+	@TableId(value = "user_id",type = IdType.UUID)
+	public String userId;
 
 	/*
 	 * 用户真实姓名
@@ -113,11 +113,11 @@ public class UserEntity extends Model<UserEntity> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.userId;
 	}
 
 	public UserEntity(UserEntity userEntity) {
-		this.id = userEntity.getId();
+		this.userId = userEntity.getUserId();
 		this.accountName = userEntity.getAccountName();
 		this.password = userEntity.getPassword();
 		this.deleteStatus = userEntity.getDeleteStatus();

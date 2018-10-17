@@ -23,8 +23,8 @@ public class Role extends Model<Role> {
 	/**
 	 * 角色id
 	 */
-	@TableId(value = "r_id",type = IdType.AUTO)
-	private Integer id;
+	@TableId(value = "role_id",type = IdType.AUTO)
+	private Integer roleId;
 
 	/*
 	 * 角色名
@@ -59,6 +59,6 @@ public class Role extends Model<Role> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.roleId;
 	}
 }

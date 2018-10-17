@@ -3,7 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
 import com.art1001.supply.entity.share.Share;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.binding.BindingService;
@@ -149,15 +148,15 @@ public class ShareApi {
             @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
     ){
         JSONObject jsonObject = new JSONObject();
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        String  userId = ShiroAuthenticationManager.getUserId();
         try {
             Share share = new Share();
             share.setTitle(title);
             share.setContent(content);
             share.setProjectId(projectId);
             share.setIsPrivacy(isPrivacy);
-            share.setMemberId(userEntity.getId());
-            share.setUids(userEntity.getId());
+            share.setMemberId(userId);
+            share.setUids(userId);
             shareService.saveShare(share);
             jsonObject.put("result", 1);
         } catch (Exception e){
