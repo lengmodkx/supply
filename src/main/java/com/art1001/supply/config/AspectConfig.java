@@ -1,12 +1,18 @@
 package com.art1001.supply.config;
 
 import com.art1001.supply.service.log.LogService;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
+@Slf4j
 @Configuration
 @Aspect
 public class AspectConfig {
@@ -20,8 +26,16 @@ public class AspectConfig {
     public void todo(){}
 
     @Before("todo()")
-    public void before(){
-        System.out.println("方法执行之钱");
+    public void before(JoinPoint joinPoint){
+        // 接收到请求，记录请求内容
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        // 记录下请求内容
+        log.info("请求目标 URL : " + request.getRequestURL().toString());
+        log.info("请求方式 HTTP_METHOD : " + request.getMethod());
+        log.info("客户端 IP : " + request.getRemoteAddr());
+        log.info("执行的方法 CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        log.info("附带参数 ARGS : " + Arrays.toString(joinPoint.getArgs()));
     }
 
     @AfterReturning(returning = "result", pointcut = "todo()")
