@@ -89,7 +89,7 @@ public class MyDBRealm extends AuthorizingRealm {
 			username = JwtUtil.getUsername(token);
 		}
 
-		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
+		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",username));
 
 		if (userEntity != null) {
 			if (userEntity.getLocked() == 1) {

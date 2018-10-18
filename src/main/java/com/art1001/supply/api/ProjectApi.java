@@ -65,8 +65,7 @@ public class ProjectApi {
             object.put("data", project.getProjectId());
             object.put("msg", "创建成功");
         } catch (Exception e) {
-            log.error("系统异常,项目创建失败:", e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,项目创建失败",e);
         }
         return object;
     }
@@ -257,5 +256,45 @@ public class ProjectApi {
             throw new AjaxException("项目归档操作异常!",e);
         }
         return object;
+    }
+
+    /**
+     * 移入项目至回收站
+     * @param projectId 项目id
+     * @return
+     */
+    @PutMapping("/{projectId}/recycle_bin")
+    public JSONObject projectMoveRecycleBin(@PathVariable(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = new Project();
+            project.setProjectDel(1);
+            projectService.update(project,new QueryWrapper<Project>().eq("project_id",projectId));
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目移入回收站成功!");
+        } catch (Exception e){
+            throw new AjaxException("项目移入回收站失败!",e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移出项目至回收站
+     * @param projectId 项目id
+     * @return
+     */
+    @PutMapping("/{projectId}/out_recycle_bin")
+    public JSONObject projectOutRecycleBin(@PathVariable(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = new Project();
+            project.setProjectDel(0);
+            projectService.update(project,new QueryWrapper<Project>().eq("project_id",projectId));
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目移出回收站成功!");
+        } catch (Exception e){
+            throw new AjaxException("项目移出回收站失败!",e);
+        }
+        return jsonObject;
     }
 }
