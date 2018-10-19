@@ -140,7 +140,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
-    @Todo
+    @Todo(note = "获取项目详情")
     @GetMapping("/{projectId}")
     public JSONObject projectDetail(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -148,7 +148,6 @@ public class ProjectApi {
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result", 1);
             object.put("data", project);
-            object.put("projectId","这里是项目uid");
             object.put("msg", "获取成功");
         } catch (Exception e) {
             log.error("系统异常,信息获取失败:", e);
@@ -206,6 +205,7 @@ public class ProjectApi {
      * 项目收藏/取消收藏
      * @param projectId 项目id
      */
+    @Todo(note = "ceshi")
     @PutMapping("/{projectId}/collect")
     public JSONObject collectProject(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();

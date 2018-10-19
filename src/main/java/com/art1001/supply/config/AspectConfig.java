@@ -26,7 +26,7 @@ public class AspectConfig {
     private LogService logService;
 
 
-    @Pointcut("execution(public * com.art1001.supply.api.*.*(..)) && @annotation(com.art1001.supply.annotation.Todo)")
+    @Pointcut("@annotation(com.art1001.supply.annotation.Todo)")
     public void todo(){}
 
     /**
@@ -41,7 +41,8 @@ public class AspectConfig {
      * @return
      */
     @Around("todo()")
-    public Object timeAround(ProceedingJoinPoint joinPoint, Todo todo) {
+    public Object timeAround(ProceedingJoinPoint joinPoint) {
+        Todo todo = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Todo.class);
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
@@ -51,6 +52,7 @@ public class AspectConfig {
         log.info("客户端 IP : " + request.getRemoteAddr());
         log.info("执行的方法 CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         log.info("附带参数 ARGS : " + Arrays.toString(joinPoint.getArgs()));
+        log.info("方法备注 : "+ todo.note());
         // 定义返回对象、得到方法需要的参数
         Object obj = null;
         long startTime = System.currentTimeMillis();
@@ -78,7 +80,7 @@ public class AspectConfig {
     //后置异常通知
     @AfterThrowing("todo()")
     public void throwss(JoinPoint jp){
-        System.out.println("方法异常时执行.....");
+        log.error("方法执行异常");
     }
 
     @After("todo()")
