@@ -2,7 +2,6 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -14,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author heshaohua
@@ -50,7 +50,6 @@ public class TagApi {
                               @RequestParam(value="publicType", required = false)String publicType) {
         JSONObject jsonObject = new JSONObject();
         try {
-            String tagId = "";
             //查询出项目的所有标签
             List<Tag> tagList = tagService.findByProjectId(projectId);
             //根据publicId 和 publicType查询出tag
@@ -62,10 +61,8 @@ public class TagApi {
                     }
                 }));
             }
-            jsonObject.put("tagList", tagList);
-            jsonObject.put("projectId", projectId);
-            jsonObject.put("publicId", publicId);
-            jsonObject.put("publicType",publicType);
+            jsonObject.put("result",1);
+            jsonObject.put("data", tagList);
         } catch (Exception e){
             log.error("系统异常,标签初始化失败:",e);
             throw new SystemException(e);
