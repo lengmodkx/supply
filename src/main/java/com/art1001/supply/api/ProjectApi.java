@@ -148,6 +148,7 @@ public class ProjectApi {
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result", 1);
             object.put("data", project);
+            object.put("projectId","这里是项目uid");
             object.put("msg", "获取成功");
         } catch (Exception e) {
             log.error("系统异常,信息获取失败:", e);
