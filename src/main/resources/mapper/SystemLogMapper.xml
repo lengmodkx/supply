@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.system.SystemLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.system.SystemLog">
+        <id column="id" property="id" />
+        <result column="request_url" property="requestUrl" />
+        <result column="request_method" property="requestMethod" />
+        <result column="ip" property="ip" />
+        <result column="method_name" property="methodName" />
+        <result column="method_args" property="methodArgs" />
+        <result column="note" property="note" />
+        <result column="run_time" property="runTime" />
+    </resultMap>
+
+    <!-- 保存系统日志信息 -->
+    <insert id="save">
+        insert into system_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="requestUrl != null and requestUrl != ''">
+                request_url,
+            </if>
+            <if test="requestMethod != null and requestMethod != ''">
+                request_method,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if><if test="methodName != null and methodName != ''">
+                method_name,
+            </if>
+            <if test="methodArgs != null and methodArgs != ''">
+                method_args,
+            </if>
+            <if test="note != null and note != ''">
+                note,
+            </if>
+            <if test="runTime != null and runTime != ''">
+                run_time,
+            </if>
+            <if test="runResult != null and runResult != ''">
+                run_result,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="requestUrl != null and requestUrl != ''">
+                #{requestUrl},
+            </if>
+            <if test="requestMethod != null and requestMethod != ''">
+                #{requestMethod},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if><if test="methodName != null and methodName != ''">
+                 #{methodName},
+            </if>
+            <if test="methodArgs != null and methodArgs != ''">
+                #{methodArgs},
+            </if>
+            <if test="note != null and note != ''">
+                #{note},
+            </if>
+            <if test="runTime != null and runTime != ''">
+                #{runTime},
+            </if>
+            <if test="runResult != null and runResult != ''">
+                #{runResult},
+            </if>
+        </trim>
+    </insert>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, request_url, request_method, ip, method_name, method_args, note, run_time
+    </sql>
+
+</mapper>

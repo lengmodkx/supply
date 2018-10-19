@@ -2,7 +2,10 @@ package com.art1001.supply.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
-import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.entity.system.SystemLog;
+import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.system.SystemLogService;
+import com.art1001.supply.util.IdGen;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,7 +26,7 @@ public class AspectConfig {
 
     /** 日志逻辑层接口 */
     @Resource
-    private LogService logService;
+    private SystemLogService systemLogService;
 
 
     @Pointcut("@annotation(com.art1001.supply.annotation.Todo)")
@@ -41,7 +44,7 @@ public class AspectConfig {
      * @return
      */
     @Around("todo()")
-    public Object timeAround(ProceedingJoinPoint joinPoint) {
+    public Object timeAround(ProceedingJoinPoint joinPoint) throws Exception {
         Todo todo = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Todo.class);
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -53,6 +56,17 @@ public class AspectConfig {
         log.info("执行的方法 CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         log.info("附带参数 ARGS : " + Arrays.toString(joinPoint.getArgs()));
         log.info("方法备注 : "+ todo.note());
+
+        //封装日志信息
+        SystemLog sl = new SystemLog();
+        sl.setId(IdGen.uuid());
+        sl.setRequestUrl(request.getRequestURL().toString());
+        sl.setIp(request.getRemoteAddr());
+        sl.setMethodName(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        sl.setRequestMethod(request.getMethod());
+        sl.setMethodArgs(Arrays.toString(joinPoint.getArgs()));
+        sl.setNote(todo.note());
+
         // 定义返回对象、得到方法需要的参数
         Object obj = null;
         long startTime = System.currentTimeMillis();
@@ -60,12 +74,20 @@ public class AspectConfig {
             obj = joinPoint.proceed(joinPoint.getArgs());
         } catch (Throwable e) {
             log.error("方法执行出错", e);
+            sl.setRunResult("失败:\t" + e.getMessage());
+            //异常时存储日志信息
+            int result = systemLogService.save(sl);
+            throw new AjaxException(e);
         }
         // 获取执行的方法名
         long endTime = System.currentTimeMillis();
         long total = endTime - startTime;
+        sl.setRunTime(total+"ms");
+        sl.setRunResult("成功");
+        //存储日志信息
+        int result = systemLogService.save(sl);
+
         log.info("方法执行时间:\t"+ total + "ms");
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         return obj;
     }
 
@@ -75,6 +97,7 @@ public class AspectConfig {
      */
     @AfterReturning(returning = "object", pointcut = "push()")
     public void pushAfter(JSONObject object){
+        object.remove("msg");
     }
 
     //后置异常通知
