@@ -96,7 +96,7 @@ public class ProjectMember extends Model<ProjectMember> {
 	/**
 	 * 项目成员的角色,默认成员
 	 */
-	@TableField("r_id")
+	@TableField("role_id")
 	private Integer roleId;
 
 	/**

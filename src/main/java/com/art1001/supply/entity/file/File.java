@@ -122,6 +122,7 @@ public class File extends Model<File> {
     /**
      * 文件全路径
      */
+    @TableField(exist = false)
     private String fileUrlTemp;
 
     /**

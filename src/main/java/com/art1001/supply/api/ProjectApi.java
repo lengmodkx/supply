@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Todo;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -65,8 +66,7 @@ public class ProjectApi {
             object.put("data", project.getProjectId());
             object.put("msg", "创建成功");
         } catch (Exception e) {
-            log.error("系统异常,项目创建失败:", e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,项目创建失败",e);
         }
         return object;
     }
@@ -115,9 +115,9 @@ public class ProjectApi {
 
     /**
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
-     *
      * @return
      */
+    @Todo
     @GetMapping
     public JSONObject projects() {
         JSONObject object = new JSONObject();
@@ -140,6 +140,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
+    @Todo
     @GetMapping("/{projectId}")
     public JSONObject projectDetail(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -147,6 +148,7 @@ public class ProjectApi {
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result", 1);
             object.put("data", project);
+            object.put("projectId","这里是项目uid");
             object.put("msg", "获取成功");
         } catch (Exception e) {
             log.error("系统异常,信息获取失败:", e);
@@ -257,5 +259,45 @@ public class ProjectApi {
             throw new AjaxException("项目归档操作异常!",e);
         }
         return object;
+    }
+
+    /**
+     * 移入项目至回收站
+     * @param projectId 项目id
+     * @return
+     */
+    @PutMapping("/{projectId}/recycle_bin")
+    public JSONObject projectMoveRecycleBin(@PathVariable(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = new Project();
+            project.setProjectDel(1);
+            projectService.update(project,new QueryWrapper<Project>().eq("project_id",projectId));
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目移入回收站成功!");
+        } catch (Exception e){
+            throw new AjaxException("项目移入回收站失败!",e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 移出项目至回收站
+     * @param projectId 项目id
+     * @return
+     */
+    @PutMapping("/{projectId}/out_recycle_bin")
+    public JSONObject projectOutRecycleBin(@PathVariable(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = new Project();
+            project.setProjectDel(0);
+            projectService.update(project,new QueryWrapper<Project>().eq("project_id",projectId));
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目移出回收站成功!");
+        } catch (Exception e){
+            throw new AjaxException("项目移出回收站失败!",e);
+        }
+        return jsonObject;
     }
 }
