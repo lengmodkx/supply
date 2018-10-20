@@ -2,10 +2,7 @@ package com.art1001.supply.service.share.impl;
 
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.user.UserEntity;
@@ -17,7 +14,6 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -68,34 +64,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	}
 
 	/**
-	 * 通过id删除share数据
-	 * 
-	 * @param id
-	 */
-	@Override
-	public void deleteById(String id){
-		base.deleteItemOther(id,BindingConstants.BINDING_SHARE_NAME);
-		shareMapper.deleteById(id);
-	}
-
-	@Override
-	public void deleteTag(String shareId, String tagIds) {
-		shareMapper.deleteTag(shareId, tagIds);
-	}
-
-	/**
-	 * 修改share数据
-	 * 
-	 * @param share
-	 */
-	@Override
-	public Share updateShare(Share share){
-        share.setMemberId(ShiroAuthenticationManager.getUserId());
-        share.setUpdateTime(System.currentTimeMillis());
-		shareMapper.updateShare(share);
-		return share;
-	}
-	/**
 	 * 保存share数据
 	 * 
 	 * @param share
@@ -106,41 +74,8 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
         share.setMemberId(ShiroAuthenticationManager.getUserId());
         share.setCreateTime(System.currentTimeMillis());
         share.setUpdateTime(System.currentTimeMillis());
-
-        shareMapper.saveShare(share);
-
+        save(share);
         return share;
-	}
-
-	/**
-	 * 根据项目id 查询出项目下的所有分享信息
-	 * @param projectId 项目id
-	 * @return 返回分享信息  集合
-	 */
-	@Override
-	public List<Share> shareByProjectId(String projectId) {
-		return shareMapper.shareByProjectId(projectId);
-	}
-
-	/**
-	 * 查询出分享的参与人员
-	 * @param shareId 分享的id
-	 * @return 参与者的信息
-	 */
-	@Override
-	public List<ProjectMember> shareJoinInfo(String shareId) {
-		return shareMapper.shareJoinInfo(shareId);
-	}
-
-	/**
-	 * 查询出项目的成员信息 排除 分享的参与者
-	 * @param projectId 项目id
-	 * @param shareId 分享id
-	 * @return
-	 */
-	@Override
-	public List<ProjectMember> findProjectMemberNotShareJoin(String projectId, String shareId) {
-		return shareMapper.findProjectMemberShareJoin(projectId,shareId);
 	}
 
 	/**
@@ -195,15 +130,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	}
 
 	/**
-	 * 清空分享的标签
-	 * @param shareId 分享的id
-	 */
-	@Override
-	public void shareClearTag(String shareId) {
-		shareMapper.shareClearTag(shareId);
-	}
-
-	/**
 	 * 根据id 查询出该分享的标题
 	 * @param publicId 分享id
 	 * @return
@@ -243,15 +169,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	}
 
 	/**
-	 * 根据分享id 查询出分享的 参与者id
-	 * @param shareId 分享id
-	 */
-	@Override
-	public String findUidsByShareId(String shareId) {
-		return shareMapper.findUidsByShareId(shareId);
-	}
-
-	/**
 	 * 复制分享
 	 * @param shareId 分享id
 	 * @param projectId 项目id
@@ -279,7 +196,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Override
 	public Share findByIdAllInfo(String shareId) {
 		Share byId = shareMapper.findById(shareId);
-		byId.setCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("public_id",shareId)));
 		return byId;
 	}
 

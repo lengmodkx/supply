@@ -46,7 +46,17 @@ public class Log extends Model<Log> {
 	 */
 	private String memberId;
 
+
 	/**
+	 * 用户名
+	 */
+	private String memberName;
+
+
+	/**
+	 * 头像
+	 */
+	private String memberImg;	/**
 	 * 内容
 	 */
 	private String content;

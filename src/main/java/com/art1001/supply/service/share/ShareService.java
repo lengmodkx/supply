@@ -1,12 +1,11 @@
 package com.art1001.supply.service.share;
 
-import java.util.List;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * shareService接口
@@ -32,54 +31,11 @@ public interface ShareService extends IService<Share> {
 	Share saveShare(Share share);
 
 	/**
-	 * 更新
-	 */
-	Share updateShare(Share share);
-
-	/**
-	 * 删除分享
-	 */
-	void deleteById(String id);
-
-	/**
-	 * 移除标签
-	 */
-    void deleteTag(String shareId, String tagIds);
-
-	/**
-	 * 根据项目id 查询分享
-	 * @param projectId 项目id
-	 * @return 分享的实体集合
-	 */
-	List<Share> shareByProjectId(String projectId);
-
-	/**
-	 * 查询出分享的参与人员
-	 * @param shareId 分享的id
-	 * @return 参与者的信息
-	 */
-    List<ProjectMember> shareJoinInfo(String shareId);
-
-	/**
-	 * 查询出项目的成员信息 排除 分享的参与者
-	 * @param projectId 项目id
-	 * @param shareId 分享id
-	 * @return
-	 */
-	List<ProjectMember> findProjectMemberNotShareJoin(String projectId, String shareId);
-
-	/**
 	 * 添加或者移除分享的成员信息
 	 * @param shareId 分享的id
 	 * @param addUserEntity 要添加的成员id
 	 */
     void updateMembers(String shareId, String addUserEntity);
-
-	/**
-	 * 清空分享的标签
-	 * @param shareId 分享的id
-	 */
-	void shareClearTag(String shareId);
 
 	/**
 	 * 根据id 查询出该分享的标题
@@ -105,12 +61,6 @@ public interface ShareService extends IService<Share> {
 	 * @param shareId 分享id
 	 */
 	void moveToRecycleBin(String shareId);
-
-	/**
-	 * 根据分享id 查询出分享的 参与者id
-	 * @param shareId 分享id
-	 */
-    String findUidsByShareId(String shareId);
 
 	/**
 	 * 复制分享

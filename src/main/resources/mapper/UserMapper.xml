@@ -70,21 +70,21 @@
 		SELECT
 		<include refid="userAttributes"/>
 		FROM
-			tb_user
+			tb_user u
 		<where>
 			<if test="memberIds != null and memberIds != ''">
-				and u.u_id in (
+				and u.user_id in (
 				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
 					#{id}
 				</foreach>
 				)
-				ORDER BY FIELD(u.u_id,
+				ORDER BY FIELD(u.user_id,
 				<foreach collection="memberIds.split(',')" item="id" index="index" separator=",">
 					#{id}
 				</foreach>)
 			</if>
 			<if test="memberIds == null and memberIds == ''">
-				and u.u_id in ('')
+				and u.user_id in ('')
 			</if>
 		</where>
 	</select>

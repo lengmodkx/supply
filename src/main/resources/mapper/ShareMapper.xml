@@ -7,7 +7,6 @@
 		<result column="title" property="title" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="tag_ids" property="tagIds" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
@@ -16,10 +15,9 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
         <result column="uids" property="uids" jdbcType="CLOB" />
-        <association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-                     select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-        <association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
-                     select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById" />
+        <collection property="logs" javaType="java.util.ArrayList" column="id"
+                    select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
+        <collection property="bindings" javaType="java.util.ArrayList" column="id" select="com.art1001.supply.mapper.binding.BindingMapper.findBindingList"/>
         <collection property="logs" javaType="java.util.ArrayList" column="id"
                     select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
         <!--查询标签-->
@@ -53,7 +51,6 @@
 		id,
 		title,
 		content,
-		tag_ids,
 		project_id,
 		member_id,
 		member_name,
@@ -69,11 +66,10 @@
 		s.id,
 		s.title,
 		s.content,
-		s.tag_ids,
 		s.project_id,
 		s.member_id,
-		s.member_name,
-		s.member_img,
+		u.user_name as member_name,
+		u.image as member_img,
 		s.is_privacy,
 		s.is_del,
 		s.create_time,
@@ -98,160 +94,14 @@
         SELECT
         <include refid="Base_Column_List2" />
         FROM
-            prm_share s left join prm_tag_relation tr on s.id = tr.share_id left join prm_tag tg on tr.tag_id = tg.tag_id
+            prm_share s
+        left join prm_tag_relation tr on s.id = tr.share_id
+        left join prm_tag tg on tr.tag_id = tg.tag_id
+        left join tb_user u on s.member_id = u.user_id
         WHERE
             s.project_id = #{projectId}
         AND s.is_del = #{isDel} order by create_time Desc
     </select>
-
-    <insert id="saveShare" parameterType="com.art1001.supply.entity.share.Share">
-        insert into prm_share
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-
-            <if test="id != null and id != ''">
-                id,
-            </if>
-            <if test="title != null and title != ''">
-                title,
-            </if>
-            <if test="content != null and content != ''">
-                content,
-            </if>
-            <if test="tagIds != null and tagIds != ''">
-                tag_ids,
-            </if>
-            <if test="projectId != null and projectId != ''">
-                project_id,
-            </if>
-            <if test="memberId != null and memberId != ''">
-                member_id,
-            </if>
-            <if test="memberName != null and memberName != ''">
-                member_name,
-            </if>
-            <if test="memberImg != null and memberImg != ''">
-                member_img,
-            </if>
-            <if test="isPrivacy != null">
-                is_privacy,
-            </if>
-            <if test="isDel != null">
-                is_del,
-            </if>
-            <if test="createTime != null ">
-                create_time,
-            </if>
-            <if test="updateTime != null ">
-                update_time,
-            </if>
-            <if test="uids != null ">
-                uids,
-            </if>
-        </trim>
-
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-
-            <if test="id != null and id != ''">
-                #{id},
-            </if>
-            <if test="title != null and title != ''">
-                #{title},
-            </if>
-            <if test="content != null and content != ''">
-                #{content},
-            </if>
-            <if test="projectId != null and projectId != ''">
-                #{projectId},
-            </if>
-            <if test="tagIds != null and tagIds != ''">
-                #{tagIds},
-            </if>
-            <if test="memberId != null and memberId != ''">
-                #{memberId},
-            </if>
-            <if test="memberName != null and memberName != ''">
-                #{memberName},
-            </if>
-            <if test="memberImg != null and memberImg != ''">
-                #{memberImg},
-            </if>
-            <if test="isPrivacy != null">
-                #{isPrivacy},
-            </if>
-            <if test="isDel != null">
-                #{isDel},
-            </if>
-            <if test="createTime != null ">
-                #{createTime},
-            </if>
-            <if test="updateTime != null ">
-                #{updateTime},
-            </if>
-            <if test="uids != null ">
-                #{uids},
-            </if>
-        </trim>
-    </insert>
-
-    <update id="updateShare" parameterType="com.art1001.supply.entity.share.Share">
-        update prm_share
-        <set>
-            <if test="title != null and title != ''">
-                title = #{title},
-            </if>
-            <if test="content != null and content != ''">
-                content = #{content},
-            </if>
-            <if test="projectId != null and projectId != ''">
-                project_id = #{projectId},
-            </if>
-            <if test="tagIds != null and tagIds != ''">
-                tag_ids = #{tagIds},
-            </if>
-            <if test="memberId != null and memberId != ''">
-                member_id = #{memberId},
-            </if>
-            <if test="memberName != null and memberName != ''">
-                member_name = #{memberName},
-            </if>
-            <if test="memberImg != null and memberImg != ''">
-                member_img = #{memberImg},
-            </if>
-            <if test="isPrivacy != null">
-                is_privacy = #{isPrivacy},
-            </if>
-            <if test="isDel != null">
-                is_del = #{isDel},
-            </if>
-            <if test="createTime != null ">
-                create_time = #{createTime},
-            </if>
-            <if test="updateTime != null ">
-                update_time = #{updateTime},
-            </if>
-            <if test="uids != null ">
-                uids = #{uids},
-            </if>
-        </set>
-
-        WHERE id = #{id}
-    </update>
-
-    <delete id="deleteById" parameterType="java.lang.String">
-        delete
-        from
-		  prm_share
-		where
-		  id = #{id}
-    </delete>
-
-    <update id="deleteTag" parameterType="java.lang.String">
-        update prm_share
-        set
-            tag_ids = #{tagIds}
-        where
-            id = #{id}
-    </update>
 
     <select id="shareByProjectId" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>

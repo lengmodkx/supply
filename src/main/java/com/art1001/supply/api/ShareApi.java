@@ -5,12 +5,7 @@ import com.art1001.supply.annotation.Todo;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
-import com.art1001.supply.service.binding.BindingService;
-import com.art1001.supply.service.collect.PublicCollectService;
-import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.share.ShareService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import lombok.extern.slf4j.Slf4j;
@@ -43,36 +38,6 @@ public class ShareApi {
     private ShareService shareService;
 
     /**
-     * 注入收藏逻辑层实例
-     */
-    @Resource
-    private PublicCollectService publicCollectService;
-
-    /**
-     * 注入关联逻辑层实例
-     */
-    @Resource
-    private BindingService bindingService;
-
-    /**
-     * 注入分组/菜单逻辑层实例
-     */
-    @Resource
-    private RelationService relationService;
-
-    /**
-     * 注入用户信息逻辑层实例
-     */
-    @Resource
-    private UserService userService;
-
-    /**
-     * 注入项目逻辑层实例
-     */
-    @Resource
-    private ProjectService projectService;
-
-    /**
      * 加载分享页面
      * @param projectId 项目id
      * @return
@@ -82,7 +47,6 @@ public class ShareApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Share> shares = shareService.findByProjectId(projectId, 0);
-
             jsonObject.put("data",shares);
             jsonObject.put("result",1);
         } catch (Exception e){
@@ -175,7 +139,7 @@ public class ShareApi {
     public JSONObject shareDelate(@PathVariable("shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
         try{
-            shareService.deleteById(shareId);
+            shareService.removeById(shareId);
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("分享删除失败:",e);

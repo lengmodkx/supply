@@ -1,18 +1,15 @@
 package com.art1001.supply.mapper.share;
 
-import java.util.List;
-
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+
+import java.util.List;
 
 /**
  * sharemapper接口
@@ -34,24 +31,11 @@ public interface ShareMapper extends BaseMapper<Share> {
     Share findById(String id);
 
     /**
-     * 保存
-     */
-    void saveShare(Share share);
-
-    /**
      * 更新
      */
     void updateShare(Share share);
 
-    /**
-     * 删除分享
-     */
-    void deleteById(String id);
 
-    /**
-     * 移除标签
-     */
-    void deleteTag(@Param("id") String id, @Param("tagIds") String tagIds);
 
     /**
      * 根据项目id 返回所有的分享
@@ -59,21 +43,6 @@ public interface ShareMapper extends BaseMapper<Share> {
      * @return 分享信息集合
      */
     List<Share> shareByProjectId(String projectId);
-
-    /**
-     * 查询出分享的参与人员
-     * @param shareId 分享的id
-     * @return 参与者的信息
-     */
-    List<ProjectMember> shareJoinInfo(String shareId);
-
-    /**
-     * 查询出项目的成员信息 排除 分享的参与者
-     * @param projectId 项目id
-     * @param shareId 分享id
-     * @return
-     */
-    List<ProjectMember> findProjectMemberShareJoin(String projectId, String shareId);
 
     /**
      * 清空分享的标签
@@ -117,8 +86,6 @@ public interface ShareMapper extends BaseMapper<Share> {
      */
     @Select("select uids from prm_share where id = #{shareId}")
     String findUidsByShareId(String shareId);
-
-    Share findByIdAllInfo(String shareId, String userId);
 
     /**
      * 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容)

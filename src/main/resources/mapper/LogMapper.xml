@@ -7,14 +7,15 @@
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="log_type" property="logType" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="log_flag" property="logFlag" jdbcType="INTEGER" />
 		<result column="log_is_withdraw" property="logIsWithdraw" jdbcType="INTEGER" />
 		<result column="file_ids" property="fileIds" jdbcType="CLOB" />
-		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity" column="member_id"
-					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
+
 		<!--<collection property="fileList" javaType="java.util.ArrayList" column="{fileIds=file_ids}" select="com.art1001.supply.mapper.file.FileMapper.findByFileIds"/>-->
 	</resultMap>
     
@@ -196,8 +197,21 @@
 	<!-- 查询出最近的五条日志记录 -->
 	<select id="initLog" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List"/>
-		from prm_log where public_id = #{publicId} order by create_time desc limit 0,5
+			l.id,
+			l.public_id,
+			l.project_id,
+			l.member_id,
+			u.user_name as member_name,
+			u.image as member_img,
+			l.content,
+			l.log_type,
+			l.create_time,
+			l.log_flag,
+			l.file_ids,
+			l.log_is_withdraw
+		from prm_log l
+		left join tb_user u on l.member_id = u.user_id
+		where public_id = #{publicId} order by create_time desc limit 0,5
 	</select>
 
 	<select id="findLogByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">

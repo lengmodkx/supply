@@ -1,8 +1,7 @@
 package com.art1001.supply.entity.share;
 
-import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -11,7 +10,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -94,16 +92,14 @@ public class Share extends Model<Share> {
 	/**
 	 * 该分享的关联内容
 	 */
-	private BindingVo bindingVo;
+	private List<Binding> bindings;
 
-	private List<Tag> tagList = new ArrayList<>();
+	private List<Tag> tagList;
 
 	/**
 	 * 该任务的 聊天记录 和  log 日志
 	 */
-	private List<Log> logs = new ArrayList<Log>();
-
-	private Project project;
+	private List<Log> logs;
 
 	/**
 	 * 分享的参与者信息
@@ -112,15 +108,11 @@ public class Share extends Model<Share> {
 
 	List<UserEntity> joinInfo;
 
-	/**
-	 * 是否被登录用户收藏
-	 */
-	private int collect;
 
 	private String createTimeStr;
 
     public String getCreateTimeStr() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月-dd日");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
         return format.format(createTime);
     }
 
