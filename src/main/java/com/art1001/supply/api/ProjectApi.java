@@ -142,7 +142,7 @@ public class ProjectApi {
      */
     @Todo(note = "获取项目详情")
     @GetMapping("/{projectId}")
-    public JSONObject projectDetail(@PathVariable String projectId) {
+    public void projectDetail(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
             Project project = projectService.findProjectByProjectId(projectId);
@@ -153,7 +153,6 @@ public class ProjectApi {
             log.error("系统异常,信息获取失败:", e);
             throw new SystemException(e);
         }
-        return object;
     }
 
     /**
@@ -238,6 +237,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @param status 要操作的 标识
      */
+    @Todo(note = ":dfdfdfdfd")
     @PutMapping("/{projectId}/status")
     public JSONObject updateStatus(@PathVariable String projectId,@RequestParam(value = "status") Integer status){
         JSONObject object = new JSONObject();
