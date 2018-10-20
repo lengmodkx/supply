@@ -2,12 +2,15 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Todo;
+import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +40,8 @@ public class ShareApi {
     @Resource
     private ShareService shareService;
 
+    @Resource
+    private PublicCollectService collectService;
     /**
      * 加载分享页面
      * @param projectId 项目id
@@ -46,8 +51,11 @@ public class ShareApi {
     public JSONObject share(@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
+            String userId = ShiroAuthenticationManager.getUserId();
             List<Share> shares = shareService.findByProjectId(projectId, 0);
+            List<PublicCollect> collectList = collectService.list(new QueryWrapper<PublicCollect>().eq("collect_type", "分享").eq("project_id", projectId).eq("member_id", userId));
             jsonObject.put("data",shares);
+            jsonObject.put("collects",collectList);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,分享数据加载失败:",e);
