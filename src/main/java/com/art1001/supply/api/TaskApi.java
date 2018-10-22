@@ -165,6 +165,7 @@ public class TaskApi {
             object.put("data",task);
             object.put("msgId",projectId);
             object.put("id",task.getTaskId());
+            object.put("name",task.getTaskName());
         }catch (Exception e){
             log.error("创建任失败:",e);
             throw new AjaxException(e);

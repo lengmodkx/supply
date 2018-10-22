@@ -5,6 +5,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -40,15 +41,18 @@ public class PushAspect {
     public void pushAfter(JoinPoint joinPoint,JSONObject object){
         if(StringUtils.isNotEmpty(object.getString("msgId"))){
             Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
-            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.getJSONObject("data"));
             Log log = new Log();
             log.setPublicId(object.getString("id"));
             log.setProjectId(object.getString("msgId"));
-            log.setLogType(0);
+            log.setCreateTime(System.currentTimeMillis());
+            log.setContent(push.value().getName()+" "+object.getString("name"));
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
             logService.save(log);
+            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.getJSONObject("data"));
             object.remove("msgId");
             object.remove("data");
             object.remove("id");
+            object.remove("name");
         }
     }
 
