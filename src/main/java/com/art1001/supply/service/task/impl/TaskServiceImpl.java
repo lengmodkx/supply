@@ -1,11 +1,8 @@
 package com.art1001.supply.service.task.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.ServerMessage;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -678,7 +675,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         jsonObject.put("type","子任务完成/重做");
         jsonObject.put("taskId",task.getTaskId());
         jsonObject.put("result",task.getTaskStatus());
-        messagingTemplate.convertAndSend("/topic/"+parentTask.getTaskId(),new ServerMessage(JSON.toJSONString(jsonObject)));
         return log;
     }
 
@@ -730,7 +726,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","创建了任务");
         jsonObject.put("task",taskMapper.findTaskByTaskId(oldTask.getTaskId()));
-        messagingTemplate.convertAndSend("/topic/"+ projectId, new ServerMessage(JSON.toJSONString(jsonObject, SerializerFeature.DisableCircularReferenceDetect)));
         return oldTask.getTaskId();
     }
 
