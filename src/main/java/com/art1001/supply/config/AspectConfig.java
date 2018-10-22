@@ -12,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -23,6 +24,9 @@ import java.util.Arrays;
 @Configuration
 @Aspect
 public class AspectConfig {
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /** 日志逻辑层接口 */
     @Resource
@@ -97,7 +101,8 @@ public class AspectConfig {
      */
     @AfterReturning(returning = "object", pointcut = "push()")
     public void pushAfter(JSONObject object){
-
+        simpMessagingTemplate.convertAndSend("推送频道","推送内容");
+        //拦截返回值 并且去除 推送内容
     }
 
     //后置异常通知
