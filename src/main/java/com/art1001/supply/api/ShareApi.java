@@ -113,8 +113,8 @@ public class ShareApi {
      * @param isPrivacy 是否是隐私模式
      * @return
      */
-    @Log(note = PushType.B1)
-    @Push(value = PushType.B1)
+    @Log(PushType.B1)
+    @Push(PushType.B1)
     @PostMapping
     public JSONObject saveShare(
             @RequestParam(value = "projectId") String projectId,

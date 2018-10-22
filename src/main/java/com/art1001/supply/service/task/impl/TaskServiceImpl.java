@@ -185,7 +185,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             apiBeanService.updateJSON(task.getTaskId(),taskBean,Constants.TASK);
         }
         int result = taskMapper.updateTask(task);
-        log.setResult(result);
         return log;
 	}
 
@@ -207,7 +206,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        taskMapper.saveTask(task);
+        save(task);
+
     }
 
     @Override
@@ -240,7 +240,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setTaskId(taskId);
         //任务状态为0 日志打印内容为 xxx把任务移入了回收站
         Log log = logService.saveLog(taskId,TaskLogFunction.P.getName(),1);
-        log.setResult(result);
         return log;
     }
 
@@ -283,7 +282,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //修改任务状态
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
         return log;
     }
 
@@ -307,7 +305,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         }
         int result =  taskMapper.updateTask(task);
         Log log = logService.saveLog(task.getTaskId(), content,1);
-        log.setResult(result);
         return log;
     }
 

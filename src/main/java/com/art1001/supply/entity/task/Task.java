@@ -1,8 +1,13 @@
 package com.art1001.supply.entity.task;
+
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
@@ -13,6 +18,7 @@ import java.util.List;
  * taskEntity
  */
 @Data
+@TableName("prm_task")
 public class Task extends Model<Task> {
 	
 	private static final long serialVersionUID = 1L;
@@ -21,7 +27,7 @@ public class Task extends Model<Task> {
 	/**
 	 * task_id
 	 */
-	@TableId("task_id")
+	@TableId(value = "task_id",type = IdType.UUID)
 	private String taskId;
 
 
@@ -71,6 +77,7 @@ public class Task extends Model<Task> {
 	 */
 	private String priority;
 
+	@TableField(exist = false)
 	private List<Tag> tagList;
 	/**
 	 * 任务的层级
@@ -94,7 +101,16 @@ public class Task extends Model<Task> {
 	 * 执行者
 	 */
 	private String executor;
-
+	/**
+	 * 执行者名字
+	 */
+	@TableField(exist = false)
+	private String memberName;
+	/**
+	 * 执行者头像
+	 */
+	@TableField(exist = false)
+	private String memberImg;
 	/**
 	 * 参与者
 	 */
@@ -157,11 +173,6 @@ public class Task extends Model<Task> {
 	private Long repetitionTime;
 
 	/**
-	 * 任务得赞数
-	 */
-	private Integer fabulousCount;
-
-	/**
 	 * 任务的隐私模式
 	 */
 	private Integer privacyPattern;
@@ -187,29 +198,22 @@ public class Task extends Model<Task> {
 	private Project project;
 
 	/**
-	 * 该任务的创建者
-	 */
-	private UserEntity creatorInfo;
-	/**
-	 * 该任务的执行者
-	 */
-	private UserEntity executorInfo;
-
-	/**
 	 * 该任务的参与者
 	 */
+	@TableField(exist = false)
 	private List<UserEntity> joinInfo;
 
 	/**
 	 * 该任务的子任务
 	 */
-
+	@TableField(exist = false)
 	private List<Task> taskList;
 
 	/**
 	 * 任务附件
 	 */
-	private List<TaskFile> taskFileList;
+	@TableField(exist = false)
+	private List<File> fileList;
 
 	@Override
 	protected Serializable pkVal() {

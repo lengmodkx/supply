@@ -7,5 +7,5 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface Log {
 
-    PushType note() default PushType.Default;
+    PushType value() default PushType.Default;
 }

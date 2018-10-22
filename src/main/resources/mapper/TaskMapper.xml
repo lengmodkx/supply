@@ -16,6 +16,8 @@
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="executor" property="executor" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
 		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
 		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
@@ -32,12 +34,7 @@
 		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
-		<!--查询创建者-->
-		<association property="creatorInfo" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
-			select="com.art1001.supply.mapper.user.UserMapper.findById"/>
-		<!--查询执行者-->
-		<association property="executorInfo" column="executor" javaType="com.art1001.supply.entity.user.UserEntity"
-					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
+
 		<!--查询项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -218,6 +215,8 @@
 		t.parent_id,
 		t.member_id,
 		t.executor,
+		u.user_name as member_name,
+		u.image as member_img,
 		t.task_type,
 		t.task_menu_id,
 		t.task_status,
@@ -280,7 +279,9 @@
 	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
 	SELECT
 	<include refid="Base_Column_List3"/>
-	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+	from prm_task t
+		left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		left join tb_user u on t.executor = u.user_id
 		where t.task_id = #{taskId}
 	</select>
 	

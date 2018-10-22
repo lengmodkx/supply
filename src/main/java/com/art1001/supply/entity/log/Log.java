@@ -1,8 +1,8 @@
 package com.art1001.supply.entity.log;
 
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -10,7 +10,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 /**
  * @author heshaohua
@@ -29,16 +28,17 @@ public class Log extends Model<Log> {
 	/**
 	 * id
 	 */
+	@TableId(value = "id",type = IdType.UUID)
 	private String id;
 
 
 	/**
-	 * 任务id
+	 * 任务，分享，日程，文件
 	 */
 	private String publicId;
 
 	/**
-	 * 下面id
+	 * 项目id
 	 */
 	private String projectId;
 	/**
@@ -50,13 +50,17 @@ public class Log extends Model<Log> {
 	/**
 	 * 用户名
 	 */
+	@TableField(exist = false)
 	private String memberName;
 
 
 	/**
 	 * 头像
 	 */
-	private String memberImg;	/**
+	@TableField(exist = false)
+	private String memberImg;
+
+	/**
 	 * 内容
 	 */
 	private String content;
@@ -79,6 +83,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 创建时间字符串
 	 */
+	@TableField(exist = false)
 	private String createTimeStr;
 
 	public String getCreateTimeStr() {
@@ -86,26 +91,6 @@ public class Log extends Model<Log> {
 		return format.format(createTime);
 	}
 
-	/**
-	 * 返回的结果集
-	 */
-	@TableField(exist = false)
-	private int result;
-
-	private String fileIds;
-	/**
-	 * 用户实体信息
-	 */
-	private UserEntity userEntity;
-
-	@TableField(exist = false)
-	private List<File> fileList;
-
-	/**
-	 * 标记是否为撤回消息
-	 * (0.正常 1.撤回)
-	 */
-	private int logIsWithdraw;
 
 	@Override
 	protected Serializable pkVal() {

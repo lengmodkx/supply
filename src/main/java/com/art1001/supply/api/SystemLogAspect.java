@@ -51,7 +51,7 @@ public class SystemLogAspect {
         sl.setMethodName(joinPoint.getSignature().getName());
         sl.setRequestMethod(request.getMethod());
         sl.setMethodArgs(Arrays.toString(joinPoint.getArgs()));
-        sl.setNote(todo.note().getName());
+        sl.setNote(todo.value().getName());
 
         // 定义返回对象、得到方法需要的参数
         Object obj = null;
