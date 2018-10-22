@@ -115,7 +115,7 @@ public class TaskApi {
      * @return JSONObject
      */
     @Log(PushType.A1)
-    @Push(PushType.A1)
+    @Push(value = PushType.A1,type = 1)
     @PostMapping
     public JSONObject addTask(@RequestParam("taskName") String taskName,
                               @RequestParam("memberIds") String memberIds,
@@ -180,14 +180,15 @@ public class TaskApi {
      * @return JSONObject
      */
     @Log(PushType.A2)
-    @Push(PushType.A2)
+    @Push(value = PushType.A2,type = 1)
     @DeleteMapping("/{taskId}")
     public JSONObject deleteTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
-            taskService.deleteTask(taskId);
+            taskService.removeById(taskId);
             object.put("result",1);
             object.put("msg","删除成功!");
+            object.put("data",taskId);
         }catch(Exception e){
             log.error("系统异常,删除失败:",e);
             throw new AjaxException(e);
@@ -209,9 +210,10 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus(taskStatus);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("taskStatus",taskStatus));
         }catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);

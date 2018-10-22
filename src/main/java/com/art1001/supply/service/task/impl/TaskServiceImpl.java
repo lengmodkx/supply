@@ -389,7 +389,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         content.append(TaskLogFunction.A8.getName()).append(" ").append(task.getTaskName()).append(" ").append(TaskLogFunction.A9.getName());
         //保存日志
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
         return log;
     }
 
@@ -423,7 +422,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             StringBuilder content = new StringBuilder("");
             content.append(TaskLogFunction.A10.getName()).append(" ").append(tag.getTagName());
             log = logService.saveLog(task.getTaskId(), content.toString(),1);
-            log.setResult(result);
+
             return log;
         }
         return log;
@@ -455,7 +454,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         int result = taskMapper.updateTask(task);
         String content = TaskLogFunction.D.getName();
         Log log = logService.saveLog(task.getTaskId(), content,1);
-        log.setResult(result);
+
         return log;
     }
 
@@ -482,7 +481,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         content.append(TaskLogFunction.A13.getName()).append(" ").append(task.getRemind());
         int result = taskMapper.updateTask(task);
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
+
         return log;
         //UserEntity是要被提醒的成员信息(暂时先不用)
     }
@@ -502,7 +501,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         content.append(TaskLogFunction.J.getName());
         //保存操作日志
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
+
         return log;
     }
 
@@ -521,7 +520,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         content.append(TaskLogFunction.K.getName());
         //保存操作日志
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
+
         return log;
     }
 
@@ -635,7 +634,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Task task = new Task();
         task.setTaskId(parentTaskId);
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        log.setResult(result);
+
         //查询父任务的任务名称
         String parentTask = taskMapper.findTaskNameById(parentTaskId);
         content = new StringBuilder("");
@@ -667,7 +666,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
         logService.saveLog(task.getTaskId(),content.toString(),1);
         Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
-        log.setResult(result);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","子任务完成/重做");
         jsonObject.put("taskId",task.getTaskId());
@@ -848,7 +847,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         String content = TaskLogFunction.A.getName();
         //保存被移除的参与者的消息信息
         Task task = taskMapper.findTaskByTaskId(taskId);
-        userNewsService.saveUserNews(task.getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A.getName() + " " + task.getExecutorInfo().getUserName(),0);
         //先将任务成员关系表的执行者清掉
         taskMapper.clearExecutor(taskId);
         return logService.saveLog(taskId,content,1);
@@ -1451,26 +1449,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         }
         //更新任务信息
         int result = taskMapper.updateTask(task);
-    }
-
-    /**
-     * 永久删除任务
-     * 步骤1 : 删除此任务的所有关联信息
-     * 步骤2 : 删除此任务的所有日志记录
-     * 步骤3 : 删除此任务的所有评论记录
-     * 步骤4 : 删除此任务的所有得赞记录
-     * 步骤5 : 删除此任务的所有收藏记录
-     * 步骤6 : 删除此任务的所有标签记录
-     * 步骤7 : 删除和此任务相关的用户消息信息
-     * 步骤8 : 删除此任务上传的文件信息
-     * 步骤9 : 删除此任务的子任务
-     * @param taskId 任务id
-     */
-    @Override
-    public void deleteTask(String taskId) {
-        base.deleteItemOther(taskId,BindingConstants.BINDING_TASK_NAME);
-        taskMapper.deleteSubTaskByParentId(taskId);
-        taskMapper.deleteTask(taskId);
     }
 
     /**

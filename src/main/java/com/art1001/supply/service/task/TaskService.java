@@ -449,12 +449,6 @@ public interface TaskService extends IService<Task> {
 	List<RecycleBinVO> findRecycleBin(String projectId);
 
 	/**
-	 * 永久删除任务
-	 * @param taskId 任务id
-	 */
-	void deleteTask(String taskId);
-
-	/**
 	 * 删除一个任务的所有子任务
 	 * @param taskId 任务id
 	 */

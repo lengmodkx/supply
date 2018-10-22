@@ -6,9 +6,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -39,8 +37,13 @@ public class PushAspect {
      */
     @AfterReturning(returning = "object", pointcut = "push()")
     public void pushAfter(JoinPoint joinPoint,JSONObject object){
-        if(StringUtils.isNotEmpty(object.getString("msgId"))){
-            Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
+        //先写入操作日志
+        Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
+
+        if(push.type()==0){//只需要推送，不需要日志
+            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.get("data"));
+        }else if (push.type()==1){ //既需要推送也需要日志
+            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.get("data"));
             Log log = new Log();
             log.setPublicId(object.getString("id"));
             log.setProjectId(object.getString("msgId"));
@@ -48,20 +51,19 @@ public class PushAspect {
             log.setContent(push.value().getName()+" "+object.getString("name"));
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             logService.save(log);
-            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.getJSONObject("data"));
-            object.remove("msgId");
-            object.remove("data");
-            object.remove("id");
-            object.remove("name");
+        }else{//只需要日志
+            Log log = new Log();
+            log.setPublicId(object.getString("id"));
+            log.setProjectId(object.getString("msgId"));
+            log.setCreateTime(System.currentTimeMillis());
+            log.setContent(push.value().getName()+" "+object.getString("name"));
+            log.setMemberId(ShiroAuthenticationManager.getUserId());
+            logService.save(log);
         }
-    }
 
-    @After("push()")
-    public void doAfter(JoinPoint joinPoint){
-        System.out.println("方法执行之后");
-//        for (int i = 0; i < joinPoint.getArgs().length; i++) {
-//            System.out.println(joinPoint.getArgs()[i]);
-//        }
-//        System.out.println(joinPoint.getSignature().getName());
+        object.remove("msgId");
+        object.remove("data");
+        object.remove("id");
+        object.remove("name");
     }
 }

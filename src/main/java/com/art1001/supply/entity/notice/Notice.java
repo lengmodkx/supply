@@ -10,5 +10,5 @@ public class Notice implements Serializable {
 
     private int type;
 
-    private JSONObject object;
+    private Object object;
 }

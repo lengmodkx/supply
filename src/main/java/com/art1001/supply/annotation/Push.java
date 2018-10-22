@@ -12,4 +12,5 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface Push {
     PushType value();
+    int type() default 0;
 }

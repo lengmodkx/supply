@@ -219,4 +219,9 @@ public class Task extends Model<Task> {
 	protected Serializable pkVal() {
 		return this.taskId;
 	}
+
+	/**
+	 * 任务的赞
+	 */
+    private int fabulousCount;
 }
