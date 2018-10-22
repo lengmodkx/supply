@@ -73,7 +73,7 @@ public class AspectConfig {
         try {
             obj = joinPoint.proceed(joinPoint.getArgs());
         } catch (Throwable e) {
-            log.error("方法执行出错", e);
+            log.error("方法执行出错:", e);
             sl.setRunResult("失败:\t" + e.getMessage());
             //异常时存储日志信息
             int result = systemLogService.save(sl);
@@ -97,7 +97,7 @@ public class AspectConfig {
      */
     @AfterReturning(returning = "object", pointcut = "push()")
     public void pushAfter(JSONObject object){
-        object.remove("msg");
+
     }
 
     //后置异常通知
