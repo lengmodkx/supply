@@ -1,7 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Todo;
+import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
@@ -134,7 +134,7 @@ public class TaskApi {
      * @param tagIds 任务标签
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PostMapping
     public JSONObject addTask(@RequestParam("taskName") String taskName,
                               @RequestParam("memberIds") String memberIds,
@@ -214,7 +214,7 @@ public class TaskApi {
      * @param taskStatus 完成/未完成
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/status")
     public JSONObject updateTaskStatus(@PathVariable(value = "taskId")String taskId,@RequestParam(value = "taskStatus")String taskStatus){
         JSONObject object = new JSONObject();
@@ -239,7 +239,7 @@ public class TaskApi {
      * @param taskName 任务名称
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId")String taskId,
                                  @RequestParam(value = "taskName")String taskName){
@@ -264,7 +264,7 @@ public class TaskApi {
      * @param executor 执行者id
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId")String taskId,
                                      @RequestParam(value = "executor")String executor){
@@ -288,7 +288,7 @@ public class TaskApi {
      * @param startTime 任务开始时间
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
                                          @RequestParam(value = "startTime")String startTime){
@@ -312,7 +312,7 @@ public class TaskApi {
      * @param endTime 任务结束时间
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
                                           @RequestParam(value = "endTime")String endTime){
@@ -336,7 +336,7 @@ public class TaskApi {
      * @param repeat 任务结束时间
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId")String taskId,
                                         @RequestParam(value = "repeat")String repeat){
@@ -360,7 +360,7 @@ public class TaskApi {
      * @param remind 任务提醒
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/remind")
     public JSONObject upadteTaskRemind(@PathVariable(value = "taskId")String taskId,
                                        @RequestParam(value = "remind")String remind){
@@ -384,7 +384,7 @@ public class TaskApi {
      * @param remarks 任务备注信息
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/remarks")
     public JSONObject upadteTaskRemarks(@PathVariable(value = "taskId")String taskId,
                                        @RequestParam(value = "remarks")String remarks){
@@ -408,7 +408,7 @@ public class TaskApi {
      * @param priority 任务优先级
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId")String taskId,
                                         @RequestParam(value = "priority")String priority){
@@ -434,7 +434,7 @@ public class TaskApi {
      * @param startTime 子任务的结束时间
      * @return JSONObject
      */
-    @Todo
+    @Log
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
                                    @RequestParam(value = "taskName")String taskName,
@@ -464,7 +464,7 @@ public class TaskApi {
      * @param taskUids 参与者id
      * @return
      */
-    @Todo
+    @Log
     @PutMapping("/{taskId}/members")
     public JSONObject addTaskUids(@PathVariable(value = "taskId")String taskId,
                                   @RequestParam(value = "taskUids")String taskUids){

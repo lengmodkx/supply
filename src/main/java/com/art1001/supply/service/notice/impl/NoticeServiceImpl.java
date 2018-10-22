@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.notice.Notice;
 import com.art1001.supply.service.notice.NoticeService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+@Service
 public class NoticeServiceImpl implements NoticeService {
 
     /** 用于订阅推送消息 */

@@ -1,9 +1,6 @@
 package com.art1001.supply.service.notice;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.stereotype.Service;
-
-@Service
 public interface NoticeService {
 
     /**

@@ -1,11 +1,7 @@
-package com.art1001.supply.enums;
+package com.art1001.supply.annotation;
 
-/**
- * @author heshaohua
- * @Description: 日志的功能名称
- * @date 2018/6/11 16:36
- */
-public enum TaskLogFunction {
+public enum PushType {
+    Default(0,""),
     A(1,"移除了执行者"),
     B(2,"移除了参与者"),
     C(3,"添加了参与者"),
@@ -62,14 +58,20 @@ public enum TaskLogFunction {
     A29(54,"恢复了日程"),
     A30(55,"更新标签"),
     A31(56,"添加附件"),
-    A32(57,"添加普通附件");
+    A32(57,"添加普通附件"),
 
-    private String name;
-    private TaskLogFunction(int id,String name){
+    B1(58,"添加分享"),
+    B2(58,"更新分享"),
+
+
+    ;
+    PushType(int id,String name){
         this.name = name;
         this.id = id;
     }
     private int id;
+    private String name;
+
     public int getId(){
         return this.id;
     }

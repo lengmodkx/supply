@@ -12,8 +12,6 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -64,21 +62,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	}
 
 	/**
-	 * 保存share数据
-	 * 
-	 * @param share
-	 */
-	@Override
-	public Share saveShare(Share share){
-	    share.setId(IdGen.uuid());
-        share.setMemberId(ShiroAuthenticationManager.getUserId());
-        share.setCreateTime(System.currentTimeMillis());
-        share.setUpdateTime(System.currentTimeMillis());
-        save(share);
-        return share;
-	}
-
-	/**
 	 * 添加或者移除掉 分享的参与者 然后将结果推送
 	 * @param shareId 分享的id
 	 * @param addUserEntity 要添加的成员id
@@ -124,7 +107,7 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 		    share.setId(shareId);
 		    share.setUids(addUserEntity);
 		    share.setUpdateTime(System.currentTimeMillis());
-		    shareMapper.updateShare(share);
+		    updateById(share);
 			log = logService.saveLog(shareId,logContent.toString(),4);
 		}
 	}

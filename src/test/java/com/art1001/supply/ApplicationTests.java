@@ -9,9 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,8 +34,6 @@ public class ApplicationTests {
 
     @Test
     public void test1(){
-        SimpleDateFormat format = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
-        Date date = new Date();
-        System.out.println(format.format(date));
+
     }
 }

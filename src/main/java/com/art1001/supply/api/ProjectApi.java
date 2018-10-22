@@ -1,7 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Todo;
+import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -117,7 +117,7 @@ public class ProjectApi {
      * 获取 我创建的项目，我参与的项目，我收藏的项目，项目回收站
      * @return
      */
-    @Todo
+    @Log
     @GetMapping
     public JSONObject projects() {
         JSONObject object = new JSONObject();
@@ -140,7 +140,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
-    @Todo(note = "获取项目详情")
+    @Log
     @GetMapping("/{projectId}")
     public void projectDetail(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -204,7 +204,7 @@ public class ProjectApi {
      * 项目收藏/取消收藏
      * @param projectId 项目id
      */
-    @Todo(note = "ceshi")
+    @Log
     @PutMapping("/{projectId}/collect")
     public JSONObject collectProject(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
@@ -237,7 +237,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @param status 要操作的 标识
      */
-    @Todo(note = ":dfdfdfdfd")
+    @Log
     @PutMapping("/{projectId}/status")
     public JSONObject updateStatus(@PathVariable String projectId,@RequestParam(value = "status") Integer status){
         JSONObject object = new JSONObject();

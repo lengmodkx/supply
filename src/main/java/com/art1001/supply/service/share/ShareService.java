@@ -26,11 +26,6 @@ public interface ShareService extends IService<Share> {
 	Share findById(String id);
 
 	/**
-	 * 保存
-	 */
-	Share saveShare(Share share);
-
-	/**
 	 * 添加或者移除分享的成员信息
 	 * @param shareId 分享的id
 	 * @param addUserEntity 要添加的成员id

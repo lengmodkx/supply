@@ -1,7 +1,9 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Todo;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.exception.AjaxException;
@@ -89,7 +91,7 @@ public class ShareApi {
      * @param memberIds 多个成员id的字符串
      * @return
      */
-    @Todo
+    @Log
     @PutMapping("/{shareId}/update/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
@@ -111,7 +113,8 @@ public class ShareApi {
      * @param isPrivacy 是否是隐私模式
      * @return
      */
-    @Todo
+    @Log(note = PushType.B1)
+    @Push(value = PushType.B1)
     @PostMapping
     public JSONObject saveShare(
             @RequestParam(value = "projectId") String projectId,
@@ -119,7 +122,7 @@ public class ShareApi {
             @RequestParam(value = "content") String content,
             @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
     ){
-        JSONObject jsonObject = new JSONObject();
+        JSONObject object = new JSONObject();
         String  userId = ShiroAuthenticationManager.getUserId();
         try {
             Share share = new Share();
@@ -129,13 +132,17 @@ public class ShareApi {
             share.setIsPrivacy(isPrivacy);
             share.setMemberId(userId);
             share.setUids(userId);
-            shareService.saveShare(share);
-            jsonObject.put("result", 1);
+            share.setCreateTime(System.currentTimeMillis());
+            share.setUpdateTime(System.currentTimeMillis());
+            shareService.save(share);
+            object.put("result",1);
+            object.put("data",share);
+            object.put("msgId",projectId);
         } catch (Exception e){
             log.error("保存分享异常:",e);
             throw new AjaxException(e);
         }
-        return jsonObject;
+        return object;
     }
 
     /**
@@ -161,7 +168,7 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
-    @Todo
+    @Log
     @PutMapping("/{shareId}/recyclebin")
     public JSONObject recyclebin(@PathVariable(value = "shareId") String shareId){
         JSONObject jsonObject = new JSONObject();
@@ -264,7 +271,7 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
-    @Todo
+    @Log
     @PutMapping("/{shareId}/privacy")
     public JSONObject privacy(@PathVariable(value = "shareId")String shareId){
         JSONObject jsonObject = new JSONObject();

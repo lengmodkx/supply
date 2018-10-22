@@ -30,12 +30,6 @@ public interface ShareMapper extends BaseMapper<Share> {
      */
     Share findById(String id);
 
-    /**
-     * 更新
-     */
-    void updateShare(Share share);
-
-
 
     /**
      * 根据项目id 返回所有的分享
