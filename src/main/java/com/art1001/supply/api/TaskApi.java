@@ -15,10 +15,10 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -48,9 +48,6 @@ public class TaskApi {
     private TaskService taskService;
 
     @Resource
-    private ProjectService projectService;
-
-    @Resource
     private PublicCollectService publicCollectService;
 
     @Resource
@@ -68,6 +65,10 @@ public class TaskApi {
     /** 标签标签的逻辑层接口 */
     @Resource
     private TagRelationService tagRelationService;
+
+    @Resource
+    private UserService userService;
+
     /**
      * 任务页面初始化
      * @return
@@ -150,6 +151,8 @@ public class TaskApi {
             if(StringUtils.isNotEmpty(endTime)){
                 task.setStartTime(DateUtils.strToLong(endTime));
             }
+            //设置任务的创建者
+            task.setMemberId(ShiroAuthenticationManager.getUserId());
             taskService.saveTask(task);
             //保存任务和标签的关联关系
             if(StringUtils.isNotEmpty(tagIds)){
@@ -188,7 +191,8 @@ public class TaskApi {
             taskService.removeById(taskId);
             object.put("result",1);
             object.put("msg","删除成功!");
-            object.put("data",taskId);
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("taskId",taskId));
         }catch(Exception e){
             log.error("系统异常,删除失败:",e);
             throw new AjaxException(e);
@@ -197,23 +201,24 @@ public class TaskApi {
     }
 
     /**
-     * 完成任务/重做任务
+     * 完成任务
      * @param taskId 任务id
-     * @param taskStatus 完成/未完成
      * @return JSONObject
      */
-    @Log
-    @PutMapping("/{taskId}/status")
-    public JSONObject updateTaskStatus(@PathVariable(value = "taskId")String taskId,@RequestParam(value = "taskStatus")String taskStatus){
+    @Log(PushType.A3)
+    @Push(value = PushType.A3,type = 1)
+    @PutMapping("/{taskId}/finish")
+    public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setTaskStatus(taskStatus);
+            task.setTaskStatus("1");
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("taskStatus",taskStatus));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("status",1));
         }catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
@@ -221,6 +226,30 @@ public class TaskApi {
         return object;
     }
 
+    /**
+     * 重做任务
+     * @param taskId 任务id
+     * @return JSONObject
+     */
+    @Log(PushType.A4)
+    @Push(value = PushType.A4,type = 1)
+    @PutMapping("/{taskId}/unFinish")
+    public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
+        JSONObject object = new JSONObject();
+        try{
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setTaskStatus("0");
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("status",1));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 
     /**
      * 更新任务名称
@@ -228,7 +257,8 @@ public class TaskApi {
      * @param taskName 任务名称
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A5)
+    @Push(value = PushType.A5,type = 1)
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId")String taskId,
                                  @RequestParam(value = "taskName")String taskName){
@@ -237,9 +267,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskName(taskName);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("taskName",taskName));
         }catch(Exception e){
             log.error("系统异常,任务名称更新失败:",e);
             throw new AjaxException(e);
@@ -250,20 +282,24 @@ public class TaskApi {
     /**
      * 更新任务执行者
      * @param taskId 任务id
-     * @param executor 执行者id
+     * @param userId 执行者id
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A6)
+    @Push(value = PushType.A6,type = 1)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId")String taskId,
-                                     @RequestParam(value = "executor")String executor){
+                                     @RequestParam(value = "executor")String userId){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setExecutor(executor);
-            taskService.updateTask(task);
+            task.setExecutor(userId);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("executor",userService.getById(userId)));
         }catch(Exception e){
             log.error("系统异常,执行者更新失败:",e);
             throw new AjaxException(e);
@@ -277,7 +313,8 @@ public class TaskApi {
      * @param startTime 任务开始时间
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A7)
+    @Push(value = PushType.A7,type = 1)
     @PutMapping("/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
                                          @RequestParam(value = "startTime")String startTime){
@@ -286,8 +323,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setStartTime(DateUtils.strToLong(startTime));
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("startTime",startTime));
         }catch(Exception e){
             log.error("系统异常,开始时间更新失败:",e);
             throw new AjaxException(e);
@@ -301,7 +341,8 @@ public class TaskApi {
      * @param endTime 任务结束时间
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A8)
+    @Push(value = PushType.A8,type = 1)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
                                           @RequestParam(value = "endTime")String endTime){
@@ -310,8 +351,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setEndTime(DateUtils.strToLong(endTime));
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("endTime",endTime));
         }catch(Exception e){
             log.error("系统异常,结束时间更新失败:",e);
             throw new AjaxException(e);
@@ -325,7 +369,8 @@ public class TaskApi {
      * @param repeat 任务结束时间
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A9)
+    @Push(value = PushType.A9,type = 1)
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId")String taskId,
                                         @RequestParam(value = "repeat")String repeat){
@@ -334,8 +379,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setRepeat(repeat);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("repeat",repeat));
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
             throw new AjaxException(e);
@@ -349,7 +397,8 @@ public class TaskApi {
      * @param remind 任务提醒
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A10)
+    @Push(value = PushType.A10,type = 1)
     @PutMapping("/{taskId}/remind")
     public JSONObject upadteTaskRemind(@PathVariable(value = "taskId")String taskId,
                                        @RequestParam(value = "remind")String remind){
@@ -358,8 +407,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setRemind(remind);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("remind",remind));
         }catch(Exception e){
             log.error("系统异常,提醒模式更新失败:",e);
             throw new AjaxException(e);
@@ -373,7 +425,8 @@ public class TaskApi {
      * @param remarks 任务备注信息
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A11)
+    @Push(value = PushType.A11,type = 1)
     @PutMapping("/{taskId}/remarks")
     public JSONObject upadteTaskRemarks(@PathVariable(value = "taskId")String taskId,
                                        @RequestParam(value = "remarks")String remarks){
@@ -382,8 +435,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setRemarks(remarks);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("remarks",remarks));
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
             throw new AjaxException(e);
@@ -397,7 +453,8 @@ public class TaskApi {
      * @param priority 任务优先级
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A12)
+    @Push(value = PushType.A12,type = 1)
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId")String taskId,
                                         @RequestParam(value = "priority")String priority){
@@ -406,8 +463,11 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPriority(priority);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("priority",priority));
         }catch(Exception e){
             log.error("系统异常,优先级更新失败:",e);
             throw new AjaxException(e);
@@ -423,9 +483,11 @@ public class TaskApi {
      * @param startTime 子任务的结束时间
      * @return JSONObject
      */
-    @Log
+    @Log(PushType.A13)
+    @Push(value = PushType.A13,type = 1)
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
+                                   @RequestParam(value = "taskName")String projectId,
                                    @RequestParam(value = "taskName")String taskName,
                                    @RequestParam(value = "executor",required = false)String executor,
                                    @RequestParam(value = "startTime",required = false)String startTime){
@@ -440,6 +502,9 @@ public class TaskApi {
             }
             taskService.saveTask(task);
             object.put("result",1);
+            object.put("msg","创建成功!");
+            object.put("data",task);
+            object.put("msgId",taskId);
         }catch(Exception e){
             log.error("系统异常,子任务添加失败:",e);
             throw new AjaxException(e);
@@ -448,12 +513,13 @@ public class TaskApi {
     }
 
     /**
-     * 任务参与者
+     * 更新任务参与者
      * @param taskId 任务id
      * @param taskUids 参与者id
      * @return
      */
-    @Log
+    @Log(PushType.A14)
+    @Push(value = PushType.A14,type = 1)
     @PutMapping("/{taskId}/members")
     public JSONObject addTaskUids(@PathVariable(value = "taskId")String taskId,
                                   @RequestParam(value = "taskUids")String taskUids){
@@ -462,8 +528,11 @@ public class TaskApi {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskUIds(taskUids);
-            taskService.saveTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("members",userService.findManyUserById(taskUids)));
         }catch(Exception e){
             log.error("系统异常,任务参与者更新:",e);
             throw new AjaxException(e);
@@ -478,6 +547,8 @@ public class TaskApi {
      * @param menuId 菜单id
      * @return
      */
+    @Log(PushType.A15)
+    @Push(value = PushType.A15)
     @PutMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
@@ -486,6 +557,9 @@ public class TaskApi {
         try{
             taskService.copyTask(taskId,projectId,menuId);
             object.put("result",1);
+            object.put("msg","复制成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,任务复制失败:",e);
             throw new AjaxException(e);
@@ -508,6 +582,8 @@ public class TaskApi {
         try{
             taskService.mobileTask(taskId,projectId,menuId);
             object.put("result",1);
+            object.put("msg","移动成功");
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);
             throw new AjaxException(e);
@@ -527,8 +603,10 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskDel(1);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -548,8 +626,10 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPrivacyPattern(privacy);
-            taskService.updateTask(task);
+            taskService.updateById(task);
             object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("privacy",privacy));
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
             throw new AjaxException(e);

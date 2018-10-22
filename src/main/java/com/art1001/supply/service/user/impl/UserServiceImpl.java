@@ -36,7 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public UserEntity findById(String id) {
-        return null;
+        return getById(id);
     }
 
     /**
