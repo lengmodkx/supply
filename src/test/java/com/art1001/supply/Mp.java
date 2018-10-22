@@ -1,16 +1,15 @@
 package com.art1001.supply;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
-import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author heshaohua
@@ -36,11 +35,12 @@ public class Mp {
         gc.setBaseColumnList(true);// XML columList
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
-        // gc.setMapperName("%sDao");
-        // gc.setXmlName("%sMapper");
-        // gc.setServiceName("MP%sService");
-        // gc.setServiceImplName("%sServiceDiy");
-        gc.setControllerName("Controller");
+         gc.setMapperName("%sDao");
+         gc.setXmlName("%sMapper");
+         gc.setServiceName("MP%sService");
+         gc.setServiceImplName("%sServiceDiy");
+         gc.setControllerName("Controller");
+         gc.setEntityName("SystemLog");
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
@@ -48,8 +48,8 @@ public class Mp {
         dsc.setDbType(DbType.MYSQL);
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("root");
-        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/supply?characterEncoding=utf8");
+        dsc.setPassword("123456");
+        dsc.setUrl("jdbc:mysql://47.93.237.225:3306/supply?characterEncoding=utf8");
         mpg.setDataSource(dsc);
 
         // 策略配置
@@ -57,7 +57,7 @@ public class Mp {
         // strategy.setCapitalMode(true);// 全局大写命名 ORACLE 注意
         strategy.setTablePrefix(new String[] { "tb_", "tsys_" });// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
-        strategy.setInclude(new String[] { "prm_task" }); // 需要生成的表
+        strategy.setInclude(new String[] { "system_log" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");

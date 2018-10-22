@@ -12,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -23,6 +24,9 @@ import java.util.Arrays;
 @Configuration
 @Aspect
 public class AspectConfig {
+
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /** 日志逻辑层接口 */
     @Resource
@@ -73,7 +77,7 @@ public class AspectConfig {
         try {
             obj = joinPoint.proceed(joinPoint.getArgs());
         } catch (Throwable e) {
-            log.error("方法执行出错", e);
+            log.error("方法执行出错:", e);
             sl.setRunResult("失败:\t" + e.getMessage());
             //异常时存储日志信息
             int result = systemLogService.save(sl);
@@ -97,7 +101,8 @@ public class AspectConfig {
      */
     @AfterReturning(returning = "object", pointcut = "push()")
     public void pushAfter(JSONObject object){
-        object.remove("msg");
+        simpMessagingTemplate.convertAndSend("推送频道","推送内容");
+        //拦截返回值 并且去除 推送内容
     }
 
     //后置异常通知
