@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages ="com.art1001.supply")
 @ServletComponentScan
 @SpringBootApplication
-@MapperScan("com.art1001.supply.mapper")
+@MapperScan(basePackages = {"com.art1001.supply.mapper","com.art1001.supply.quartz.mapper"})
 public class SupplyApplication  extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

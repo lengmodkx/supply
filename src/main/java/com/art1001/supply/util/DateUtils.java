@@ -35,6 +35,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 
 	/**
+	 * long 类型转为cron表达式
+	 * @param date
+	 * @return
+	 */
+	public static String cronStr(Date date){
+		SimpleDateFormat format = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
+		return format.format(date);
+	}
+
+	/**
 	 * 获取32位的UUID 编码
 	 *
 	 * @return String

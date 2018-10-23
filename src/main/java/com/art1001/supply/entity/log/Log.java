@@ -75,11 +75,6 @@ public class Log extends Model<Log> {
 	 */
 	private Long createTime;
 
-    /**
-	 * (任务,文件,日程,分享) 的日志区分
-	 */
-	private int logFlag;
-
 	/**
 	 * 创建时间字符串
 	 */

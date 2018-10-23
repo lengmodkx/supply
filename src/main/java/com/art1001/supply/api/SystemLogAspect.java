@@ -64,7 +64,6 @@ public class SystemLogAspect {
             systemLogService.save(sl);
             throw new AjaxException(e);
         }
-        // 获取执行的方法名
         long endTime = System.currentTimeMillis();
         long total = endTime - startTime;
         sl.setRunTime(total+"ms");

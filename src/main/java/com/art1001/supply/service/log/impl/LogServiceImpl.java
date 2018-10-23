@@ -33,8 +33,6 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 		log.setId(IdGen.uuid());
 		//0:日志 1:聊天评论
 		log.setLogType(0);
-		//是(1.任务,2.文件,3.日程,4.分享) 哪个的日志
-		log.setLogFlag(logFlag);
 		log.setContent("何少华" + " " + content);
 		//哪个用户操作产生的日志
 		log.setMemberId("0ea056a169424185993ff8c6fa832dd5");

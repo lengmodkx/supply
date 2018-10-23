@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.quartz.mapper.ScheduleTriggerMapper">
+
+    <resultMap id="map1" type="com.art1001.supply.quartz.ScheduleTrigger">
+        <id column="id" property="id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="cron" column="cron"/>
+        <result property="jobGroup" column="group_name"/>
+        <result property="status" column="status" />
+    </resultMap>
+
+
+    <select id="findAll" resultMap = "map1">
+        select * from qrtz_jobs
+    </select>
+
+</mapper>
