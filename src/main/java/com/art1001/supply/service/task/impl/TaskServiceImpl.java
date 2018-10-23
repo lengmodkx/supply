@@ -3,7 +3,6 @@ package com.art1001.supply.service.task.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -44,14 +43,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +58,6 @@ import java.util.stream.Collectors;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
-    private String isparent = "0";
     /** taskMapper接口*/
     @Resource
     private TaskMapper taskMapper;
@@ -106,10 +102,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Resource
     private ProjectMemberService projectMemberService;
 
-    /** 用于订阅推送消息 */
-    @Resource
-    private SimpMessagingTemplate messagingTemplate;
-
     /** 标签标签的逻辑层接口 */
     @Resource
     private TagRelationService tagRelationService;
@@ -123,18 +115,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     private Base base;
 
 	/**
-	 * 重写方法
-	 * 查询分页task数据
-	 * @param pager 分页对象
-	 * @return
-	 */
-	@Override
-	public List<Task> findTaskPagerList(Pager pager){
-		return taskMapper.findTaskPagerList(pager);
-	}
-
-	/**
-	 * 重写方法
 	 * 通过taskId获取单条task数据
 	 * @param taskId
 	 * @return
@@ -145,59 +125,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	}
 
 	/**
-	 * 重写方法
-	 * 修改task数据
-	 * @param task 任务信息
-	 */
-	@Override
-    @Transactional(rollbackFor = Exception.class)
-	public Log updateTask(Task task){
-	    String content = "";
-	    Log log = new Log();
-	    //任务更新时间
-        task.setUpdateTime(System.currentTimeMillis());
-        //更新任务优先级
-        if(StringUtils.isNotEmpty(task.getPriority())){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.F.getName() + " " + task.getPriority(),1);
-        }
-        //更新任务备注
-        if(task.getRemarks() != null){
-            if(!"".equals(task.getRemarks())){
-                log = logService.saveLog(task.getTaskId(),TaskLogFunction.E.getName(),1);
-            } else{
-                log = logService.saveLog(task.getTaskId(),TaskLogFunction.A26.getName(),1);
-            }
-        }
-        //更新任务执行者
-        if(StringUtils.isNotEmpty(task.getExecutor())){
-            UserEntity user = userMapper.findUserById(task.getExecutor());
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.U.getName() + " " + user.getUserName(),1);
-        }
-        //更新任务其他
-        if(StringUtils.isNotEmpty(task.getOther())){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.G.getName() + " " + task.getOther(),1);
-        }
-        //更新任务的名称
-        if(StringUtils.isNotEmpty(task.getTaskName())){
-            log = logService.saveLog(task.getTaskId(),TaskLogFunction.A18.getName() + " " + task.getTaskName(),1);
-            TaskApiBean taskBean = new TaskApiBean();
-            taskBean.setTaskName(task.getTaskName());
-            apiBeanService.updateJSON(task.getTaskId(),taskBean,Constants.TASK);
-        }
-        int result = taskMapper.updateTask(task);
-        return log;
-	}
-
-	/**
-	 * 重写方法
 	 * 将添加的任务信息保存至数据库
      * @param task task信息
      */
 	@Override
 	public void saveTask(Task task) {
-        task.setTaskId(IdGen.uuid());
-        //设置任务的创建者
-        task.setMemberId(ShiroAuthenticationManager.getUserId());
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -210,21 +142,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     }
 
+    /**
+     * 批量生成任务
+     * @param projectId 项目id
+     * @param menuId 列表id
+     * @param templateDataList 数据
+     */
     @Override
     public void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList) {
         String id = ShiroAuthenticationManager.getUserId();
         taskMapper.saveTaskBatch(projectId,menuId,templateDataList,id);
     }
 
-    /**
-	 * 重写方法
-	 * 获取所有task数据
-	 * @return
-	 */
-	@Override
-	public List<Task> findTaskAllList(){
-		return taskMapper.findTaskAllList();
-	}
+    @Override
+    public List<Task> findTaskAllList() {
+        return null;
+    }
+
 
     /**
 	 * 重写方法
@@ -243,70 +177,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return log;
     }
 
-	/**
-	 * 重写方法
-	 * 修改当前任务状态
-	 * @param task 任务信息
-	 * @return
-	 */
-	@Override
-	public Log resetAndCompleteTask(Task task) {
-	    StringBuilder content = new StringBuilder("");
-        //如果当前状态为未完成  则 日志记录为 完成任务 否则为 重做任务
-        if(task.getTaskStatus().equals("完成")){
-            content.append(TaskLogFunction.Q.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("未完成")){
-            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        if(task.getTaskStatus().equals("重新开始")){
-            content.append(TaskLogFunction.S.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
-        }
-        //查询出该父级任务下的所有子级任务
-        List<Task> subLevelList = taskMapper.findSubLevelTask(task.getTaskId());
-        if(subLevelList != null && subLevelList.size() > 0){
-            //如果所有的子级任务里有未完成的则抛出异常
-            for (Task t : subLevelList) {
-                if(t.getTaskStatus().equals("未完成") || t.getTaskStatus().equals("重新开始")){
-                    throw new ServiceException("必须完成子级任务,才能完成父级任务!");
-                }
-            }
-        }
-        if(task.getTaskStatus().equals("完成")){
-            task.setTaskStatus("未完成");
-        } else if (task.getTaskStatus().equals("未完成")){
-            task.setTaskStatus("完成");
-        } else if (task.getTaskStatus().equals("重新开始")){
-            task.setTaskStatus("完成");
-        }
-        //修改任务状态
-        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-        return log;
-    }
-
-    /**
-     * 重写方法
-     * 设定任务的时间(开始 / 结束)
-     * @param task 任务时间的信息
-     * @return
-     */
-    @Override
-    public Log updateTaskStartAndEndTime(Task task) {
-        String content = "";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        if(task.getStartTime() != null){
-            Date date = new Date(task.getStartTime());
-            content = TaskLogFunction.M.getName()+ " " + format.format(date);
-        }
-        if(task.getEndTime() != null){
-            Date date = new Date(task.getEndTime());
-            content = TaskLogFunction.L.getName() + " " + format.format(date);
-        }
-        int result =  taskMapper.updateTask(task);
-        Log log = logService.saveLog(task.getTaskId(), content,1);
-        return log;
-    }
 
     /**
      * 移动任务至 ( 项目、分组、菜单 )
@@ -390,100 +260,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //保存日志
         Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
         return log;
-    }
-
-    /**
-     * 绑定标签到当前任务
-     * @param tag 标签的实体信息
-     * @param taskId 当前任务的id
-     * @param countByTagName 判断要绑定到任务上的标签是不是已经存在
-     * @return
-     */
-    @Override
-    public Log addTaskTags(Tag tag,String taskId,int countByTagName) {
-        //先查询出当前任务原有的标签id信息
-        String taskTag = taskMapper.findTaskTagByTaskId(taskId);
-        if(taskTag == null){
-            taskTag = "";
-        }
-        //将原有标签id和新添加的标签id拼接在一起存入数据库
-        StringBuilder newTaskTag = new StringBuilder();
-        newTaskTag.append(taskTag).append(tag.getTagId()).append(",");
-        Task task = new Task();
-        task.setTaskId(taskId);
-        //设置最后更新时间
-        task.setUpdateTime(System.currentTimeMillis());
-        //更新到数据库
-        int result = taskMapper.updateTask(task);
-        Log log = new Log();
-        //判断 如果是向数据库新插入了标签 则保存日志 否则不保存
-        if(countByTagName == 0){
-            //拼接任务操作日志内容
-            StringBuilder content = new StringBuilder("");
-            content.append(TaskLogFunction.A10.getName()).append(" ").append(tag.getTagName());
-            log = logService.saveLog(task.getTaskId(), content.toString(),1);
-
-            return log;
-        }
-        return log;
-    }
-
-    /**
-     * 移除该任务上的标签
-     * @param taskId 当前任务uid
-     * @return
-     */
-    @Override
-    public void removeTaskTag(String tagId, String taskId) {
-
-    }
-
-    /**
-     * 更新任务的重复规则
-     * @param task 任务的实体信息
-     * @param object 时间重复周期的具体信息 (未设定)
-     * @return
-     */
-    @Override
-    public Log updateTaskRepeat(Task task, Object object) {
-        //判断是不是自定义重复
-        if(!task.getRepeat().equals("自定义重复")){
-            //如果不是自定义重复删除该任务的自定义重复时间
-        }
-        task.setUpdateTime(System.currentTimeMillis());
-        int result = taskMapper.updateTask(task);
-        String content = TaskLogFunction.D.getName();
-        Log log = logService.saveLog(task.getTaskId(), content,1);
-
-        return log;
-    }
-
-    /**
-     * 更新任务的提醒时间
-     * @param task 任务实体信息
-     * @param userEntity 用户实体信息
-     * @return
-     */
-    @Override
-    public Log updateTaskRemindTime(Task task, UserEntity userEntity) {
-        StringBuilder content = new StringBuilder("");
-        //判断是开始时提醒还是结束时提醒
-        if(task.getRemind().equals("任务截止时提醒")){
-           task.setRepetitionTime(task.getEndTime());
-        }
-        if(task.getRemind().equals("任务开始时提醒")){
-            task.setRepetitionTime(task.getStartTime());
-        }
-        if(task.getRemind().equals("不提醒")){
-            task.setRepetitionTime(0L);
-        }
-        task.setUpdateTime(System.currentTimeMillis());
-        content.append(TaskLogFunction.A13.getName()).append(" ").append(task.getRemind());
-        int result = taskMapper.updateTask(task);
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
-
-        return log;
-        //UserEntity是要被提醒的成员信息(暂时先不用)
     }
 
     /**

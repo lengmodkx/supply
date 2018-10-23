@@ -1,6 +1,5 @@
 package com.art1001.supply.service.task;
 
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.statistics.Statistics;
@@ -20,13 +19,7 @@ import java.util.Map;
  */
 public interface TaskService extends IService<Task> {
 
-	/**
-	 * 查询分页task数据
-	 *
-	 * @param pager 分页对象
-	 * @return
-	 */
-	public List<Task> findTaskPagerList(Pager pager);
+
 
 	/**
 	 * 通过taskId获取单条task数据
@@ -35,12 +28,6 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	public Task findTaskByTaskId(String taskId);
-
-	/**
-	 * 修改task数据
-	 * @param task 任务的信息
-	 */
-	public Log updateTask(Task task);
 
 	/**
 	 * 保存task数据
@@ -65,20 +52,6 @@ public interface TaskService extends IService<Task> {
 	Log moveToRecycleBin(String taskId);
 
 	/**
-	 * 修改当前任务状态（完成/重做）
-	 * @param task 任务id
-	 * @return
-	 */
-	Log resetAndCompleteTask(Task task);
-
-	/**
-	 * 设定任务的时间(开始 / 结束)
-	 * @param task 任务的时间信息
-	 * @return
-	 */
-	Log updateTaskStartAndEndTime(Task task);
-
-	/**
 	 * 移动任务
 	 * @param taskId 任务id
 	 * @param projectId 项目id
@@ -101,38 +74,6 @@ public interface TaskService extends IService<Task> {
 	 */
 	Log turnToFatherLevel(Task task);
 
-	/**
-	 * 给任务添加标签
-	 * @param tag 标签实体信息
-	 * @param taskId 当前任务的id
-	 * @param countByTagName 判断要绑定到任务上的标签是不是已经存在
-	 * @return
-	 */
-	Log addTaskTags(Tag tag,String taskId,int countByTagName);
-
-	/**
-	 * 移除该任务上的标签
-	 * @param taskId 当前任务uid
-	 * @return
-	 */
-	void removeTaskTag(String tagId, String taskId);
-
-
-	/**
-	 * 更新任务的重复规则
-	 * @param task 任务的实体信息
-	 * @param object 时间重复周期的具体信息 (未设定)
-	 * @return
-	 */
-	Log updateTaskRepeat(Task task, Object object);
-
-	/**
-	 * 更新任务提醒时间 和 指定提醒某个成员
-	 * @param task 任务实体信息
-	 * @param userEntity 用户实体信息
-	 * @return
-	 */
-	Log updateTaskRemindTime(Task task, UserEntity userEntity);
 
 	/**
 	 * 清除任务的开始时间和结束时间
