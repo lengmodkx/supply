@@ -259,7 +259,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 				newTask.setTaskId(task.getTaskId());
 				newTask.setUpdateTime(System.currentTimeMillis());
 				//保存到数据库
-				taskService.updateTaskStartAndEndTime(newTask);
+				taskService.updateById(newTask);
 			}
 		}
 	}

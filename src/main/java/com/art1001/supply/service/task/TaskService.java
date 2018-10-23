@@ -55,10 +55,11 @@ public interface TaskService extends IService<Task> {
 	 * 移动任务
 	 * @param taskId 任务id
 	 * @param projectId 项目id
+	 * @param groupId 组id
 	 * @param menuId 菜单id
 	 * @return
 	 */
-	Log mobileTask(String taskId, String projectId, String menuId);
+	void mobileTask(String taskId, String projectId, String groupId,String menuId);
 
 	/**
 	 * 根据任务id数组,查找出多个任务
@@ -128,10 +129,11 @@ public interface TaskService extends IService<Task> {
 	 * 复制任务
 	 * @return
 	 * @param taskId 当前任务信息
-	 * @param projectId 当前任务所在的项目id
-	 * @param menuId 复制到的位置的信息
+	 * @param projectId 项目id
+	 * @param groupId 组id
+	 * @param menuId 菜单id
 	 */
-	String copyTask(String taskId, String projectId, String menuId);
+	void copyTask(String taskId, String projectId, String groupId,String menuId);
 
 	/**
 	 * 收藏任务

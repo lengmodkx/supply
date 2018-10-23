@@ -322,7 +322,12 @@ public class TaskApi {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setStartTime(DateUtils.strToLong(startTime));
+            if(StringUtils.isNotEmpty(startTime)){
+                task.setStartTime(DateUtils.strToLong(startTime));
+            }else{
+                task.setStartTime(null);
+            }
+
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -350,7 +355,11 @@ public class TaskApi {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setEndTime(DateUtils.strToLong(endTime));
+            if(StringUtils.isNotEmpty(endTime)){
+                task.setStartTime(DateUtils.strToLong(endTime));
+            }else{
+                task.setStartTime(null);
+            }
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -487,7 +496,6 @@ public class TaskApi {
     @Push(value = PushType.A13,type = 1)
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
-                                   @RequestParam(value = "taskName")String projectId,
                                    @RequestParam(value = "taskName")String taskName,
                                    @RequestParam(value = "executor",required = false)String executor,
                                    @RequestParam(value = "startTime",required = false)String startTime){
@@ -544,6 +552,7 @@ public class TaskApi {
      * 复制任务
      * @param taskId 任务id
      * @param projectId 项目id
+     * @param groupId 组id
      * @param menuId 菜单id
      * @return
      */
@@ -552,10 +561,11 @@ public class TaskApi {
     @PutMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
+                               @RequestParam(value = "groupId")String groupId,
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            taskService.copyTask(taskId,projectId,menuId);
+            taskService.copyTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","复制成功");
             object.put("msgId",taskId);
@@ -571,19 +581,24 @@ public class TaskApi {
      * 移动任务
      * @param taskId 任务id
      * @param projectId 项目id
+     * @param groupId 组id
      * @param menuId 菜单id
      * @return
      */
+    @Log(PushType.A16)
+    @Push(value = PushType.A16)
     @PutMapping("/{taskId}/move")
     public JSONObject moveTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
+                               @RequestParam(value = "groupId")String groupId,
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            taskService.mobileTask(taskId,projectId,menuId);
+            taskService.mobileTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","移动成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);
             throw new AjaxException(e);
@@ -596,6 +611,8 @@ public class TaskApi {
      * @param taskId 任务id
      * @return
      */
+    @Log(PushType.A17)
+    @Push(value = PushType.A17,type = 1)
     @PutMapping("/{taskId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
@@ -606,7 +623,8 @@ public class TaskApi {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -619,6 +637,8 @@ public class TaskApi {
      * @param taskId 任务id
      * @return
      */
+    @Log(PushType.A18)
+    @Push(value = PushType.A18,type = 1)
     @PutMapping("/{taskId}/privacy")
     public JSONObject taskPrivacy(@PathVariable(value = "taskId")String taskId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
@@ -629,11 +649,70 @@ public class TaskApi {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("privacy",privacy));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
     }
+
+    /**
+     *  子任务转父任务
+     * @param taskId 任务id
+     * @return
+     */
+    @Log(PushType.A19)
+    @Push(value = PushType.A19)
+    @PutMapping("/{taskId}/toFather")
+    public JSONObject taskToParent(@PathVariable(value = "taskId")String taskId){
+        JSONObject object = new JSONObject();
+        try{
+            Task task = taskService.getById(taskId);
+            Task parentTask = taskService.getOne(new QueryWrapper<Task>().eq("parent_id", task.getTaskId()));
+            task.setTaskGroupId(parentTask.getTaskGroupId());
+            task.setTaskMenuId(parentTask.getTaskMenuId());
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+
+    /**
+     *  对此任务点赞
+     * @param taskId 任务id
+     * @return
+     */
+    @Log(PushType.A20)
+    @Push(value = PushType.A20,type = 1)
+    @PutMapping("/{taskId}/fabulous")
+    public JSONObject taskFabulous(@PathVariable(value = "taskId")String taskId){
+        JSONObject object = new JSONObject();
+        try{
+            Fabulous fabulous = new Fabulous();
+            fabulous.setMemberId(ShiroAuthenticationManager.getUserId());
+            fabulous.setPublicId(taskId);
+            fabulousService.save(fabulous);
+            Task task = taskService.getById(taskId);
+            int count = fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id", taskId));
+            task.setFabulousCount(count);
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",task));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+
 }

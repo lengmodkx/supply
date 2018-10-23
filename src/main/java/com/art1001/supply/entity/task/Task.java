@@ -214,14 +214,15 @@ public class Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private List<File> fileList;
+	/**
+	 * 任务的赞
+	 */
+	private int fabulousCount;
 
 	@Override
 	protected Serializable pkVal() {
 		return this.taskId;
 	}
 
-	/**
-	 * 任务的赞
-	 */
-    private int fabulousCount;
+
 }

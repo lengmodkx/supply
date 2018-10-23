@@ -1,5 +1,5 @@
 package com.art1001.supply.entity.fabulous;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -20,21 +20,19 @@ public class Fabulous extends Model<Fabulous> {
 	/**
 	 * id
 	 */
-	@TableId("fabulous_id")
+	@TableId(value = "fabulous_id",type = IdType.AUTO)
 	private Long fabulousId;
 
 
 	/**
 	 * 成员id
 	 */
-	@TableField("member_id")
 	private String memberId;
 
 
 	/**
 	 * 任务,文件,分享,日程id
 	 */
-	@TableField("public_id")
 	private String publicId;
 
 	@Override

@@ -2,7 +2,6 @@ package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.base.Base;
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -44,8 +43,6 @@ import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
@@ -182,50 +179,28 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * 移动任务至 ( 项目、分组、菜单 )
      * @param taskId 任务id
      * @param projectId 项目id
+     * @param groupId 组id
      * @param menuId 菜单id
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Log mobileTask(String taskId, String projectId, String menuId) {
-        Task task = new Task();
+    public void mobileTask(String taskId, String projectId, String groupId,String menuId) {
+        Task task = getById(taskId);
         task.setTaskId(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
+        task.setTaskGroupId(groupId);
         task.setUpdateTime(System.currentTimeMillis());
-        taskMapper.updateTask(task);
+        updateById(task);
 
         //移动子任务
-        for(Task subTask : taskMapper.findSubLevelTask(taskId)){
-            subTask.setProjectId(projectId);
-            subTask.setUpdateTime(System.currentTimeMillis());
-            taskMapper.updateTask(subTask);
+        if(task.getTaskList()!=null&&task.getTaskList().size()>0){
+            task.getTaskList().forEach(subTask->{
+                subTask.setProjectId(projectId);
+                subTask.setUpdateTime(System.currentTimeMillis());
+                updateById(subTask);
+            });
         }
-
-        //生成日志信息
-        String oldMenuId = taskMapper.findMenuNameByTaskId(taskId);
-        TaskMenuVO oldTaskMenuVO = relationService.findRelationNameAndProjectName(menuId);
-        TaskMenuVO newTaskMenuVO = relationService.findRelationNameAndProjectName(oldMenuId);
-        String oldProjectId = taskMapper.findTaskProjectId(taskId);
-        StringBuilder content = new StringBuilder();
-        if(projectId.equals(oldProjectId)){
-            content.append(TaskLogFunction.X.getName()).append(newTaskMenuVO.getTaskMenuName());
-            //更新 关联、收藏表的 json数据
-            TaskApiBean taskBean = new TaskApiBean();
-            taskBean.setGroupName(oldTaskMenuVO.getTaskGroupName());
-            taskBean.setMenuName(oldTaskMenuVO.getTaskMenuName());
-            apiBeanService.updateJSON(taskId,taskBean,Constants.TASK);
-        } else{
-            content.append(TaskLogFunction.V.getName()).append(oldTaskMenuVO.getProjectName()).append("/").append(oldTaskMenuVO.getTaskMenuName()).append(TaskLogFunction.W.getName()).append(newTaskMenuVO.getProjectName()).append("/").append(newTaskMenuVO.getTaskMenuName());
-            //更新 关联、收藏表的 json数据
-            TaskApiBean taskBean = new TaskApiBean();
-            taskBean.setProjectName(newTaskMenuVO.getProjectName());
-            taskBean.setGroupName(newTaskMenuVO.getTaskGroupName());
-            taskBean.setMenuName(newTaskMenuVO.getTaskMenuName());
-            apiBeanService.updateJSON(taskId,taskBean,Constants.TASK);
-        }
-        Log log = logService.saveLog(taskId, content.toString(),1);
-        return log;
     }
 
     /**
@@ -456,28 +431,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param projectId 当前任务所在的项目id
      * @return
      */
-    @Transactional(propagation=Propagation.REQUIRED,rollbackFor=Exception.class)
     @Override
-    public String copyTask(String taskId, String projectId, String menuId) {
-        Log log = new Log();
-        List<Task> tasks = new ArrayList<Task>();
+    public void copyTask(String taskId, String projectId, String groupId,String menuId) {
         Task oldTask = taskMapper.findTaskByTaskId(taskId);
         try {
-            //设置新的id
-            oldTask.setTaskId(IdGen.uuid());
             //更新新任务的创建时间
             oldTask.setCreateTime(System.currentTimeMillis());
             //设置新任务的更新时间
             oldTask.setUpdateTime(System.currentTimeMillis());
             oldTask.setProjectId(projectId);
             oldTask.setTaskMenuId(menuId);
-            tasks.add(oldTask);
-            //根据被复制任务的id 取出该任务所有的子任务
-            List<Task> subLevelTaskList = taskMapper.findSubLevelTask(taskId);
-            if(subLevelTaskList != null && subLevelTaskList.size() > 0) {
-                for (Task task : subLevelTaskList) {
+            oldTask.setTaskGroupId(groupId);
+            save(oldTask);
+            if(oldTask.getTaskList()!=null&&oldTask.getTaskList().size()>0){
+                oldTask.getTaskList().forEach(task->{
                     //设置新的子任务id
-                    task.setTaskId(IdGen.uuid());
                     task.setProjectId(projectId);
                     //设置新的子任务的父任务id
                     task.setParentId(oldTask.getTaskId());
@@ -485,20 +453,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                     task.setUpdateTime(System.currentTimeMillis());
                     //设置新子任务的创建时间
                     task.setCreateTime(System.currentTimeMillis());
-                    tasks.add(task);
-                }
-            }
-            //插入数据
-            for (Task task : tasks) {
-                taskMapper.saveTask(task);
+                    save(task);
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type","创建了任务");
-        jsonObject.put("task",taskMapper.findTaskByTaskId(oldTask.getTaskId()));
-        return oldTask.getTaskId();
     }
 
     /**
