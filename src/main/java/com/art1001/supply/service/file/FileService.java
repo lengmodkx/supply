@@ -27,6 +27,7 @@ import java.util.List;
 
 	 void saveFile(String files,String publicId,String projectId);
 
+	 File saveModel(String fileModel,String fileCommon,String projectId,String pubicId,String filename,String parentId);
 	/**
 	 * 项目创建后初始化文件目录
 	 * @param project 项目信息

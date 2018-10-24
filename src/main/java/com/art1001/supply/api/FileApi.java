@@ -199,13 +199,8 @@ public class FileApi {
         try {
             fileService.saveFileBatch(projectId,files,parentId,publicId);
             jsonObject.put("result", 1);
-            if(StringUtils.isNotEmpty(publicId)){
-                jsonObject.put("msgId",publicId);
-                jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("public_id",publicId)));
-            }else{
-                jsonObject.put("msgId",projectId);
-                jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("parent_id",parentId).eq("public_lable",0)));
-            }
+            jsonObject.put("msgId",projectId);
+            jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("parent_id",parentId).eq("public_lable",0)));
         } catch (Exception e) {
             log.error("上传文件异常:", e);
             throw new AjaxException(e);
@@ -226,51 +221,16 @@ public class FileApi {
             @RequestParam(value = "projectId") String projectId,
             @RequestParam(value = "fileCommon") String fileCommon,
             @RequestParam(value = "fileModel") String fileModel,
-            @RequestParam(value = "filename") String filename,
-            @RequestParam(value = "publicId",required = false) String publicId
+            @RequestParam(value = "filename") String filename
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            //查询出当前文件夹的level
-            int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
 
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            JSONObject array = JSON.parseObject(fileCommon);
-            JSONObject object = JSON.parseObject(fileModel);
-            String fileName = object.getString("fileName");
-            String fileUrl = object.getString("fileUrl");
-            String size = object.getString("size");
-            File modelFile = new File();
-            // 用原本的文件名
-            modelFile.setFileName(filename);
-            modelFile.setLevel(parentLevel+1);
-            modelFile.setSize(size);
-            modelFile.setFileUrl(fileUrl);
-            modelFile.setParentId(parentId);
-            modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
-            modelFile.setProjectId(projectId);
-            modelFile.setFileThumbnail(array.getString("fileUrl"));
-            if(StringUtils.isNotEmpty(publicId)){
-                modelFile.setPublicId(publicId);
-                modelFile.setPublicLable(1);
-            }
-            fileService.save(modelFile);
-            //版本历史更新
-            FileVersion fileVersion = new FileVersion();
-            fileVersion.setFileId(modelFile.getFileId());
-            fileVersion.setIsMaster(1);
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-            fileVersionService.save(fileVersion);
+            File modelFile = fileService.saveModel(fileModel,fileCommon,projectId,null,filename,parentId);
             jsonObject.put("result",1);
-            if(StringUtils.isNotEmpty(publicId)){
-                jsonObject.put("msgId",publicId);
-                jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("public_id",publicId)));
-                jsonObject.put("id",publicId);
-            }else{
-                jsonObject.put("msgId",projectId);
-                jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("parent_id",parentId).eq("public_lable",0)));
-                jsonObject.put("id",modelFile.getFileId());
-            }
+            jsonObject.put("msgId",projectId);
+            jsonObject.put("data",fileService.getById(modelFile.getFileId()));
+            jsonObject.put("id",modelFile.getFileId());
         } catch (Exception e) {
             log.error("上传文件异常:", e);
             throw new AjaxException(e);

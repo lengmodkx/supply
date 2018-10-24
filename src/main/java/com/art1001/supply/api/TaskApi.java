@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
@@ -18,6 +19,7 @@ import com.art1001.supply.quartz.job.RemindJob;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
@@ -82,6 +84,8 @@ public class TaskApi {
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
 
+    @Resource
+    private FileService fileService;
     /**
      * 任务页面初始化
      * @return
@@ -206,6 +210,7 @@ public class TaskApi {
             object.put("msg","删除成功!");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("taskId",taskId));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,删除失败:",e);
             throw new AjaxException(e);
@@ -232,6 +237,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("status",1));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
@@ -257,7 +263,8 @@ public class TaskApi {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("status",1));
+            object.put("data",new JSONObject().fluentPut("status",0));
+            object.put("id",taskId);
         }catch(Exception e){
             throw new AjaxException(e);
         }
@@ -285,6 +292,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("taskName",taskName));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务名称更新失败:",e);
             throw new AjaxException(e);
@@ -313,6 +321,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("executor",userService.getById(userId)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,执行者更新失败:",e);
             throw new AjaxException(e);
@@ -346,6 +355,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("startTime",startTime));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,开始时间更新失败:",e);
             throw new AjaxException(e);
@@ -378,6 +388,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("endTime",endTime));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,结束时间更新失败:",e);
             throw new AjaxException(e);
@@ -406,6 +417,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("repeat",repeat));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
             throw new AjaxException(e);
@@ -528,6 +540,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("remarks",remarks));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
             throw new AjaxException(e);
@@ -556,6 +569,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("priority",priority));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,优先级更新失败:",e);
             throw new AjaxException(e);
@@ -592,6 +606,7 @@ public class TaskApi {
             object.put("msg","创建成功!");
             object.put("data",task);
             object.put("msgId",taskId);
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,子任务添加失败:",e);
             throw new AjaxException(e);
@@ -620,6 +635,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("members",userService.findManyUserById(taskUids)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务参与者更新:",e);
             throw new AjaxException(e);
@@ -649,6 +665,7 @@ public class TaskApi {
             object.put("msg","复制成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务复制失败:",e);
             throw new AjaxException(e);
@@ -678,6 +695,7 @@ public class TaskApi {
             object.put("msg","移动成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);
             throw new AjaxException(e);
@@ -704,6 +722,7 @@ public class TaskApi {
             object.put("msg","移入成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -730,6 +749,7 @@ public class TaskApi {
             object.put("msg","移入成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
             throw new AjaxException(e);
@@ -787,6 +807,7 @@ public class TaskApi {
             object.put("msg","移入成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("id",taskId);
         }catch(Exception e){
             throw new AjaxException(e);
         }
@@ -794,4 +815,64 @@ public class TaskApi {
     }
 
 
+    /**
+     * 上传文件
+     *
+     * @param projectId 项目id
+     */
+    @Log(PushType.A21)
+    @Push(value = PushType.A21,type = 1)
+    @PostMapping("/{taskId}/upload")
+    public JSONObject uploadFile(
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "files") String files,
+            @PathVariable(value = "taskId") String taskId
+
+    ) {
+        JSONObject object = new JSONObject();
+        try {
+            fileService.saveFileBatch(projectId,files,null,taskId);
+            object.put("result", 1);
+            object.put("msgId",taskId);
+            object.put("data",fileService.list(new QueryWrapper<File>().eq("public_id",taskId)));
+            object.put("id",taskId);
+        } catch (Exception e) {
+            log.error("上传文件异常:", e);
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
+     * 上传模型
+     * @param taskId 任务id
+     * @param projectId 项目id
+     * @param fileCommon 缩略图
+     * @param fileModel 模型
+     * @param filename 自定义文件名称
+     * @return
+     */
+    @Log(PushType.A22)
+    @Push(value = PushType.A22,type = 1)
+    @PostMapping("/{taskId}/model")
+    public JSONObject uploadModel(
+            @PathVariable(value = "taskId") String taskId,
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "fileCommon") String fileCommon,
+            @RequestParam(value = "fileModel") String fileModel,
+            @RequestParam(value = "filename") String filename
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.saveModel(fileModel,fileCommon,projectId,taskId,filename,null);
+            jsonObject.put("result",1);
+            jsonObject.put("msgId",taskId);
+            jsonObject.put("data",fileService.getOne(new QueryWrapper<File>().eq("public_id",taskId)));
+            jsonObject.put("id",taskId);
+        } catch (Exception e) {
+            log.error("上传文件异常:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

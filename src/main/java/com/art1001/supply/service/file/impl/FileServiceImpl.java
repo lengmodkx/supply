@@ -124,6 +124,43 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         }
     }
 
+    @Override
+    public File saveModel(String fileModel, String fileCommon, String projectId, String publicId, String filename, String parentId) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        JSONObject array = JSON.parseObject(fileCommon);
+        JSONObject object = JSON.parseObject(fileModel);
+        String fileName = object.getString("fileName");
+        String fileUrl = object.getString("fileUrl");
+        String size = object.getString("size");
+        File modelFile = new File();
+        // 用原本的文件名
+        modelFile.setFileName(filename);
+        //查询出当前文件夹的level
+        if(StringUtils.isNotEmpty(parentId)){
+            int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
+            modelFile.setLevel(parentLevel+1);
+        }
+
+        modelFile.setSize(size);
+        modelFile.setFileUrl(fileUrl);
+        modelFile.setParentId(parentId);
+        modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
+        modelFile.setProjectId(projectId);
+        modelFile.setFileThumbnail(array.getString("fileUrl"));
+        if(StringUtils.isNotEmpty(publicId)){
+            modelFile.setPublicId(publicId);
+            modelFile.setPublicLable(1);
+        }
+        fileService.save(modelFile);
+        //版本历史更新
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(modelFile.getFileId());
+        fileVersion.setIsMaster(1);
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersionService.save(fileVersion);
+        return modelFile;
+    }
+
     /**
      * 初始化创建项目文件夹
      */
@@ -378,8 +415,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         List<File> fileList = new ArrayList<>();
         List<FileVersion> versionList = new ArrayList<>();
-        //查询出当前文件夹的level
-        int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
         if(StringUtils.isNotEmpty(files)){
             JSONArray array = JSON.parseArray(files);
             for (int i=0;i<array.size();i++) {
@@ -398,10 +433,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setCatalog(0);
                 // 得到上传文件的大小
                 myFile.setSize(size);
-                myFile.setParentId(parentId);
-
                 //文件的层级
-                myFile.setLevel(parentLevel+1);
+                if(StringUtils.isNotEmpty(parentId)){
+                    //查询出当前文件夹的level
+                    int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
+                    myFile.setLevel(parentLevel+1);
+                }
+                myFile.setParentId(parentId);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
