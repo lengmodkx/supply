@@ -13,7 +13,6 @@
 		<result column="size" property="size" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
-		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="file_uids" property="fileUids" jdbcType="CLOB" />
@@ -34,6 +33,7 @@
 			<result property="tagName" column="tag_name"/>
 			<result property="bgColor" column="bg_color"/>
 		</collection>
+		<collection property="logList" javaType="java.util.ArrayList" select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
 	</resultMap>
 
 	<!-- 映射回收站数据 -->
@@ -78,7 +78,6 @@
 				`size`,
 				parent_id,
 				file_del,
-				tag_id,
 				create_time,
 				update_time,
 				file_uids,
@@ -163,9 +162,27 @@
 	<!-- 查询子文件 -->
 	<select id="findChildFile" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from prm_file
-		where parent_id = #{parentId} and public_lable = 0
+			f.file_id,
+			f.file_name,
+			f.ext,
+			f.file_url,
+			f.project_id,
+			f.member_id,
+			f.`catalog`,
+			f.`size`,
+			f.parent_id,
+			f.file_del,
+			f.create_time,
+			f.update_time,
+			f.file_uids,
+			f.file_label,
+			f.file_thumbnail,
+			f.file_privacy,
+			f.public_id,
+			f.`level`
+		from prm_file f
+		left join prm_file_version v on f.file_id = v.file_id
+		where parent_id = #{parentId} and public_lable = 0 and v.is_master = 1
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">

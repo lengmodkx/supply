@@ -1,9 +1,12 @@
 package com.art1001.supply.entity.file;
 
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -28,6 +31,7 @@ public class File extends Model<File> {
     /**
      * file_id
      */
+    @TableId(value = "file_id",type = IdType.UUID)
     private String fileId;
 
 
@@ -63,7 +67,6 @@ public class File extends Model<File> {
      */
     private Integer catalog;
 
-
     /**
      * 文件大小
      */
@@ -73,23 +76,18 @@ public class File extends Model<File> {
     /**
      * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
-    private String parentId = "0";
+    private String parentId;
 
     /**
      * 是否删除
      */
-    private Integer fileDel = 0;
+    private Integer fileDel;
 
     /**
      * 该文件的附属项目的实体信息
      */
     @TableField(exist = false)
     private Project project;
-
-    /**
-     * 标签id
-     */
-    private String tagId;
 
     /**
      * 文件创建者信息
@@ -109,6 +107,11 @@ public class File extends Model<File> {
     @TableField(exist = false)
     private List<UserEntity> joinInfo;
 
+    /**
+     * 文件操作日志
+     */
+    @TableField(exist = false)
+    private List<Log> logList;
     /**
      * 所有文件参与者的Id
      */
@@ -155,6 +158,11 @@ public class File extends Model<File> {
      * 文件隐私模式 0所有成员可见，1参与者可见
      */
     private int filePrivacy;
+
+    /**
+     * 0一般文件，1图片，2模型
+     */
+    private int fileFlag;
 
     public String getFileUrlTemp(){
         try {

@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Push {
-    PushType value();
+    PushType value() default PushType.Default;
     int type() default 0;
 }
