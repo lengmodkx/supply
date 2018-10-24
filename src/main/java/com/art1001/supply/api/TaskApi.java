@@ -10,20 +10,27 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.quartz.MyJob;
+import com.art1001.supply.quartz.QuartzService;
+import com.art1001.supply.quartz.job.RemindJob;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.JobDataMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -68,6 +75,12 @@ public class TaskApi {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private QuartzService quartzService;
+
+    @Resource
+    private TaskRemindRuleService taskRemindRuleService;
 
     /**
      * 任务页面初始化
@@ -392,26 +405,92 @@ public class TaskApi {
     }
 
     /**
-     * 更新任务提醒
+     * 更新任务提醒规则
      * @param taskId 任务id
-     * @param remind 任务提醒
-     * @return JSONObject
+     * @param remindType 任务的提醒规则类型
+     * @param num 时间数量
+     * @param timeType 时间类型
+     * @param customTime 自定义时间
+     * @return
      */
     @Log(PushType.A10)
     @Push(value = PushType.A10,type = 1)
     @PutMapping("/{taskId}/remind")
-    public JSONObject upadteTaskRemind(@PathVariable(value = "taskId")String taskId,
-                                       @RequestParam(value = "remind")String remind){
+    public JSONObject updateTaskRemind(@PathVariable(value = "taskId")String taskId,
+                                       @RequestParam(value = "jobName")String jobName,
+                                       @RequestParam(value = "remindType")String remindType,
+                                       @RequestParam(value = "num", required = false) int num,
+                                       @RequestParam(value = "timeType", required = false) String timeType,
+                                       @RequestParam(value = "customTime", required = false) String customTime,
+                                       @RequestParam(value = "users") String[] users){
         JSONObject object = new JSONObject();
         try{
-            Task task = new Task();
-            task.setTaskId(taskId);
-            task.setRemind(remind);
-            taskService.updateById(task);
-            object.put("result",1);
-            object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("remind",remind));
+            //更新任务提醒
+            TaskRemindRule taskRemindRule = new TaskRemindRule();
+            taskRemindRule.setNum(num);
+            taskRemindRule.setRemindType(remindType);
+            taskRemindRule.setTimeType(timeType);
+            taskRemindRule.setCustomTime(customTime);
+            taskRemindRuleService.update(taskRemindRule,new QueryWrapper<TaskRemindRule>().eq("job_name",jobName));
+            //更新成功后添加到定时任务
+            MyJob myJob = new MyJob();
+            myJob.setJobName(jobName);
+            myJob.setCronTime(taskService.remindCron(taskId,remindType,num,timeType,customTime));
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("users",users);
+            myJob.setJobDataMap(jobDataMap);
+            myJob.setJobGroupName("task");
+            myJob.setTriggerGroupName("task");
+            quartzService.modifyJobDateMap(RemindJob.class,myJob);
+        }catch(Exception e){
+            log.error("系统异常,提醒模式更新失败:",e);
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
+     * 新增任务提醒规则
+     * @param taskId 任务id
+     * @param remindType 任务的提醒规则类型
+     * @param num 时间数量
+     * @param timeType 时间类型
+     * @param customTime 自定义时间
+     * @return
+     */
+    @Log(PushType.A10)
+    @Push(value = PushType.A10,type = 1)
+    @PostMapping("/{taskId}/remind")
+    public JSONObject addTaskRemind(@PathVariable(value = "taskId")String taskId,
+                                       @RequestParam(value = "remindType")String remindType,
+                                       @RequestParam(value = "num", required = false) int num,
+                                       @RequestParam(value = "timeType", required = false) String timeType,
+                                       @RequestParam(value = "customTime", required = false) String customTime,
+                                       @RequestParam(value = "users") String[] users){
+        JSONObject object = new JSONObject();
+        try{
+            //封装实体
+            TaskRemindRule taskRemindRule = new TaskRemindRule();
+            taskRemindRule.setId(IdGen.uuid());
+            taskRemindRule.setJobName(IdGen.uuid());
+            taskRemindRule.setNum(num);
+            taskRemindRule.setRemindType(remindType);
+            taskRemindRule.setTaskId(taskId);
+            taskRemindRule.setTimeType(timeType);
+            String cron = taskService.remindCron(taskId,remindType,num,timeType,customTime);
+            taskRemindRule.setTimeCron(cron);
+            taskRemindRuleService.save(taskRemindRule);
+
+            //添加到定时任务
+            MyJob myJob = new MyJob();
+            myJob.setJobName(taskRemindRule.getJobName());
+            myJob.setCronTime(cron);
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("users",users);
+            myJob.setJobDataMap(jobDataMap);
+            myJob.setJobGroupName("task");
+            myJob.setTriggerGroupName("task");
+            quartzService.addJobByCronTrigger(RemindJob.class,myJob);
         }catch(Exception e){
             log.error("系统异常,提醒模式更新失败:",e);
             throw new AjaxException(e);

@@ -1,10 +1,11 @@
 package com.art1001.supply.quartz.config;
 
 import org.quartz.spi.TriggerFiredBundle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.scheduling.quartz.AdaptableJobFactory;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @Description
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobFactory extends AdaptableJobFactory {
 
-    @Autowired
+    @Resource
     private AutowireCapableBeanFactory capableBeanFactory;
 
     @Override

@@ -5,9 +5,8 @@ import com.art1001.supply.quartz.MyJob;
 import com.art1001.supply.quartz.QuartzService;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 @Service
 public class QuartzServiceImpl implements QuartzService {
@@ -15,8 +14,7 @@ public class QuartzServiceImpl implements QuartzService {
     /**
      * 调度器工厂
      */
-    @Resource
-    private static SchedulerFactory schedulerFactory;
+    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
     /**
      * 默认Job组名

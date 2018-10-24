@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.dao.TaskRemindRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskRemindRule">
+        <id column="id" property="id" />
+        <result column="task_id" property="taskId" />
+        <result column="job_name" property="jobName" />
+        <result column="remind_type" property="remindType" />
+        <result column="num" property="num" />
+        <result column="time_type" property="timeType" />
+        <result column="time_cron" property="timeCron" />
+        <result column="custom_time" property="customTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, task_id, job_name, remind_type, num, time_type, time_cron, custom_time
+    </sql>
+
+</mapper>

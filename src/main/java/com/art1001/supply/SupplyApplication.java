@@ -7,11 +7,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @ComponentScan(basePackages ="com.art1001.supply")
 @ServletComponentScan
 @SpringBootApplication
-@MapperScan(basePackages = {"com.art1001.supply.mapper","com.art1001.supply.quartz.mapper"})
+@MapperScan("com.art1001.supply.mapper")
+@EnableScheduling
 public class SupplyApplication  extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

@@ -37,7 +37,9 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
@@ -46,6 +48,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1223,6 +1226,75 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public TaskApiBean findTaskApiBean(String id) {
        return taskMapper.findTaskApiBean(id);
+    }
+
+    /**
+     * 生成任务提醒的规则
+     * @param taskId 任务id
+     * @param remindType 提醒类型
+     * @param num 数量
+     * @param timeType 时间类型
+     * @param customTime 自定义时间的字符串
+     * @return cron 表达式
+     */
+    @Override
+    public String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime){
+        SimpleDateFormat format = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
+        //查询出该任务的开始时间
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("start_time startTime","end_time endTime"));
+        //生成自定义时间表达式
+        if(!StringUtils.isEmpty(customTime)){
+            return DateUtils.cronStr(DateUtils.parse(customTime,"yyyy-MM-dd hh:mm:ss"));
+        }
+        if(task == null){
+            return null;
+        }
+        //任务开始时
+        if(TaskStatusConstant.BEGIN.equals(remindType)){
+            return task.getStartTime() == null ? null : DateUtils.cronStr(new Date(task.getStartTime()));
+        }
+        //任务截止时
+        if(TaskStatusConstant.END.equals(remindType)){
+            return task.getEndTime() == null ? null : DateUtils.cronStr(new Date(task.getEndTime()));
+        }
+        Long day = 86400000L * num;
+        Long hour = 3600000L * num;
+        Long minute = 60000L * num;
+        //算出各单位的毫秒数
+        Long times = 0L;
+        if(TaskStatusConstant.DAY.equals(timeType)){
+            times = day;
+        }
+        if(TaskStatusConstant.HOUR.equals(timeType)){
+            times = hour;
+        }
+        if(TaskStatusConstant.MINUTE.equals(timeType)){
+            times = minute;
+        }
+        if(task.getStartTime() != null){
+            //任务开始前
+            if(TaskStatusConstant.BEGIN_BEORE.equals(remindType)){
+                task.setStartTime(task.getStartTime() - times);
+            }
+            //任务开始后
+            if(TaskStatusConstant.BEGIN_AFTER.equals(remindType)){
+                task.setStartTime(task.getStartTime() + times);
+            }
+            return DateUtils.cronStr(new Date(task.getStartTime()));
+        }
+        if(task.getEndTime() != null){
+            Long end = 0L;
+            //任务截止后
+            if(TaskStatusConstant.END_AFTER.equals(remindType)){
+                end = task.getEndTime() + times;
+            }
+            //任务截止前
+            if(TaskStatusConstant.END_BEFORE.equals(remindType)){
+                end = task.getEndTime() - times;
+            }
+            return DateUtils.cronStr(new Date(end));
+        }
+        return null;
     }
 }
 

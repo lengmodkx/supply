@@ -437,4 +437,15 @@ public interface TaskService extends IService<Task> {
 	 * @param id 任务id集合
 	 */
     TaskApiBean findTaskApiBean(String id);
+
+	/**
+	 * 生成任务提醒的规则
+	 * @param taskId 任务id
+	 * @param remindType 提醒类型
+	 * @param num 数量
+	 * @param timeType 时间类型
+	 * @param customTime 自定义时间的字符串
+	 * @return cron 表达式
+	 */
+	String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime);
 }
