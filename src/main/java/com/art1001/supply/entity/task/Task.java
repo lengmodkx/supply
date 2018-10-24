@@ -57,6 +57,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 设置任务重复
 	 */
+	@TableField("`repeat`")
 	private String repeat;
 
 
@@ -217,7 +218,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务的赞
 	 */
-	private int fabulousCount;
+	private Integer fabulousCount;
 
 	@Override
 	protected Serializable pkVal() {

@@ -8,13 +8,15 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class QuartzServiceImpl implements QuartzService {
 
     /**
      * 调度器工厂
      */
-    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();;
 
     /**
      * 默认Job组名
@@ -36,6 +38,7 @@ public class QuartzServiceImpl implements QuartzService {
         if (bJob == null) {
             return false;
         }
+
         String jobName = bJob.getJobName();
         if (StringUtils.isBlank(jobName)) {
             return false;
@@ -68,6 +71,30 @@ public class QuartzServiceImpl implements QuartzService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * 修改某个任务的执行时间
+     * @param name
+     * @param group
+     * @param time
+     * @return
+     * @throws SchedulerException
+     */
+    @Override
+    public boolean modifyJobTime(String name, String group, String time) throws SchedulerException {
+        Scheduler scheduler = getScheduler();
+        Date date = null;
+        TriggerKey triggerKey = new TriggerKey(name, group);
+        CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+        String oldTime = cronTrigger.getCronExpression();
+        if (!oldTime.equalsIgnoreCase(time)) {
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(time);
+            CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(name, group)
+                    .withSchedule(cronScheduleBuilder).build();
+            date = scheduler.rescheduleJob(triggerKey, trigger);
+        }
+        return date != null;
     }
 
 
@@ -142,6 +169,7 @@ public class QuartzServiceImpl implements QuartzService {
         return TriggerBuilder.newTrigger().withIdentity(jobName, triggerGroupName)
                 .withSchedule(CronScheduleBuilder.cronSchedule(time)).build();
     }
+
 
     /**
      * 获取JobDetail

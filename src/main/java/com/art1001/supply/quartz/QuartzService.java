@@ -1,6 +1,7 @@
 package com.art1001.supply.quartz;
 
 import org.quartz.Job;
+import org.quartz.SchedulerException;
 
 public interface QuartzService {
 
@@ -22,4 +23,13 @@ public interface QuartzService {
      * @return 是否添加成功
      */
     boolean addJobByCronTrigger(Class<? extends Job> cls, MyJob bJob);
+
+    /**
+     * 更改任务的执行时间
+     * @param name 任务名称
+     * @param group 触发器组
+     * @param time cron表达式
+     * @return
+     */
+    boolean modifyJobTime(String name, String group, String time) throws SchedulerException;
 }

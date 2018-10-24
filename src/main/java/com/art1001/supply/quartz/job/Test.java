@@ -6,14 +6,14 @@ import org.quartz.JobExecutionException;
 
 /**
  * @author heshaohua
- * @Title: RemindJob
+ * @Title: Test
  * @Description: TODO
- * @date 2018/10/23 10:44
+ * @date 2018/10/24 18:05
  **/
-public class RemindJob implements Job {
+public class Test implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("任务开始:\t" + "提醒:\t");
+        System.out.println("这是测试的");
     }
 }

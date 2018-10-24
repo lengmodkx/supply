@@ -16,6 +16,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.quartz.MyJob;
 import com.art1001.supply.quartz.QuartzService;
 import com.art1001.supply.quartz.job.RemindJob;
+import com.art1001.supply.quartz.job.Test;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
@@ -413,6 +414,16 @@ public class TaskApi {
             task.setTaskId(taskId);
             task.setRepeat(repeat);
             taskService.updateById(task);
+            //更新成功后添加到定时任务
+            MyJob myJob = new MyJob();
+            myJob.setJobName("111112121113");
+            myJob.setCronTime("0/3 * * * * ?");
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("users","123");
+            myJob.setJobDataMap(jobDataMap);
+            myJob.setJobGroupName("task");
+            myJob.setTriggerGroupName("task");
+            quartzService.addJobByCronTrigger(Test.class,myJob);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
@@ -420,7 +431,7 @@ public class TaskApi {
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,重复性更新失败:",e);
         }
         return object;
     }
