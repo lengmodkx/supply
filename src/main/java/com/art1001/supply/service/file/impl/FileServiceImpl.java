@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileVersion;
@@ -78,16 +77,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     /**
      * 何少华
      * 通过id删除file数据
-     * @param id 文件id
+     * @param fileId 文件id
      */
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
-    public void deleteFileById(String id) {
-        //删除和该文件相关的所有信息
-        base.deleteItemOther(id,BindingConstants.BINDING_FILE_NAME);
-
-        File file = fileMapper.findFileById(id);
-
+    public void deleteFileById(String fileId) {
+        //删除文件
+        removeById(fileId);
+        //删除文件版本信息
+        fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id",fileId));
     }
 
 

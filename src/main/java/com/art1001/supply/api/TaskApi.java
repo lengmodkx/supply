@@ -10,27 +10,20 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.quartz.MyJob;
-import com.art1001.supply.quartz.QuartzService;
-import com.art1001.supply.quartz.job.RemindJob;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
-import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.JobDataMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -75,12 +68,6 @@ public class TaskApi {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private QuartzService quartzService;
-
-    @Resource
-    private TaskRemindRuleService taskRemindRuleService;
 
     /**
      * 任务页面初始化
@@ -274,7 +261,7 @@ public class TaskApi {
     @Push(value = PushType.A5,type = 1)
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId")String taskId,
-                                 @RequestParam(value = "taskName")String taskName){
+                                     @RequestParam(value = "taskName")String taskName){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
@@ -302,7 +289,7 @@ public class TaskApi {
     @Push(value = PushType.A6,type = 1)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId")String taskId,
-                                     @RequestParam(value = "executor")String userId){
+                                         @RequestParam(value = "executor")String userId){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
@@ -330,12 +317,17 @@ public class TaskApi {
     @Push(value = PushType.A7,type = 1)
     @PutMapping("/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
-                                         @RequestParam(value = "startTime")String startTime){
+                                          @RequestParam(value = "startTime")String startTime){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setStartTime(DateUtils.strToLong(startTime));
+            if(StringUtils.isNotEmpty(startTime)){
+                task.setStartTime(DateUtils.strToLong(startTime));
+            }else{
+                task.setStartTime(null);
+            }
+
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -358,12 +350,16 @@ public class TaskApi {
     @Push(value = PushType.A8,type = 1)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
-                                          @RequestParam(value = "endTime")String endTime){
+                                        @RequestParam(value = "endTime")String endTime){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setEndTime(DateUtils.strToLong(endTime));
+            if(StringUtils.isNotEmpty(endTime)){
+                task.setStartTime(DateUtils.strToLong(endTime));
+            }else{
+                task.setStartTime(null);
+            }
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -386,7 +382,7 @@ public class TaskApi {
     @Push(value = PushType.A9,type = 1)
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId")String taskId,
-                                        @RequestParam(value = "repeat")String repeat){
+                                       @RequestParam(value = "repeat")String repeat){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
@@ -405,92 +401,26 @@ public class TaskApi {
     }
 
     /**
-     * 更新任务提醒规则
+     * 更新任务提醒
      * @param taskId 任务id
-     * @param remindType 任务的提醒规则类型
-     * @param num 时间数量
-     * @param timeType 时间类型
-     * @param customTime 自定义时间
-     * @return
+     * @param remind 任务提醒
+     * @return JSONObject
      */
     @Log(PushType.A10)
     @Push(value = PushType.A10,type = 1)
     @PutMapping("/{taskId}/remind")
-    public JSONObject updateTaskRemind(@PathVariable(value = "taskId")String taskId,
-                                       @RequestParam(value = "jobName")String jobName,
-                                       @RequestParam(value = "remindType")String remindType,
-                                       @RequestParam(value = "num", required = false) int num,
-                                       @RequestParam(value = "timeType", required = false) String timeType,
-                                       @RequestParam(value = "customTime", required = false) String customTime,
-                                       @RequestParam(value = "users") String[] users){
+    public JSONObject upadteTaskRemind(@PathVariable(value = "taskId")String taskId,
+                                       @RequestParam(value = "remind")String remind){
         JSONObject object = new JSONObject();
         try{
-            //更新任务提醒
-            TaskRemindRule taskRemindRule = new TaskRemindRule();
-            taskRemindRule.setNum(num);
-            taskRemindRule.setRemindType(remindType);
-            taskRemindRule.setTimeType(timeType);
-            taskRemindRule.setCustomTime(customTime);
-            taskRemindRuleService.update(taskRemindRule,new QueryWrapper<TaskRemindRule>().eq("job_name",jobName));
-            //更新成功后添加到定时任务
-            MyJob myJob = new MyJob();
-            myJob.setJobName(jobName);
-            myJob.setCronTime(taskService.remindCron(taskId,remindType,num,timeType,customTime));
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("users",users);
-            myJob.setJobDataMap(jobDataMap);
-            myJob.setJobGroupName("task");
-            myJob.setTriggerGroupName("task");
-            quartzService.modifyJobDateMap(RemindJob.class,myJob);
-        }catch(Exception e){
-            log.error("系统异常,提醒模式更新失败:",e);
-            throw new AjaxException(e);
-        }
-        return object;
-    }
-
-    /**
-     * 新增任务提醒规则
-     * @param taskId 任务id
-     * @param remindType 任务的提醒规则类型
-     * @param num 时间数量
-     * @param timeType 时间类型
-     * @param customTime 自定义时间
-     * @return
-     */
-    @Log(PushType.A10)
-    @Push(value = PushType.A10,type = 1)
-    @PostMapping("/{taskId}/remind")
-    public JSONObject addTaskRemind(@PathVariable(value = "taskId")String taskId,
-                                       @RequestParam(value = "remindType")String remindType,
-                                       @RequestParam(value = "num", required = false) int num,
-                                       @RequestParam(value = "timeType", required = false) String timeType,
-                                       @RequestParam(value = "customTime", required = false) String customTime,
-                                       @RequestParam(value = "users") String[] users){
-        JSONObject object = new JSONObject();
-        try{
-            //封装实体
-            TaskRemindRule taskRemindRule = new TaskRemindRule();
-            taskRemindRule.setId(IdGen.uuid());
-            taskRemindRule.setJobName(IdGen.uuid());
-            taskRemindRule.setNum(num);
-            taskRemindRule.setRemindType(remindType);
-            taskRemindRule.setTaskId(taskId);
-            taskRemindRule.setTimeType(timeType);
-            String cron = taskService.remindCron(taskId,remindType,num,timeType,customTime);
-            taskRemindRule.setTimeCron(cron);
-            taskRemindRuleService.save(taskRemindRule);
-
-            //添加到定时任务
-            MyJob myJob = new MyJob();
-            myJob.setJobName(taskRemindRule.getJobName());
-            myJob.setCronTime(cron);
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("users",users);
-            myJob.setJobDataMap(jobDataMap);
-            myJob.setJobGroupName("task");
-            myJob.setTriggerGroupName("task");
-            quartzService.addJobByCronTrigger(RemindJob.class,myJob);
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setRemind(remind);
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("remind",remind));
         }catch(Exception e){
             log.error("系统异常,提醒模式更新失败:",e);
             throw new AjaxException(e);
@@ -508,7 +438,7 @@ public class TaskApi {
     @Push(value = PushType.A11,type = 1)
     @PutMapping("/{taskId}/remarks")
     public JSONObject upadteTaskRemarks(@PathVariable(value = "taskId")String taskId,
-                                       @RequestParam(value = "remarks")String remarks){
+                                        @RequestParam(value = "remarks")String remarks){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
@@ -536,7 +466,7 @@ public class TaskApi {
     @Push(value = PushType.A12,type = 1)
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId")String taskId,
-                                        @RequestParam(value = "priority")String priority){
+                                         @RequestParam(value = "priority")String priority){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
@@ -566,7 +496,6 @@ public class TaskApi {
     @Push(value = PushType.A13,type = 1)
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
-                                   @RequestParam(value = "taskName")String projectId,
                                    @RequestParam(value = "taskName")String taskName,
                                    @RequestParam(value = "executor",required = false)String executor,
                                    @RequestParam(value = "startTime",required = false)String startTime){
@@ -623,6 +552,7 @@ public class TaskApi {
      * 复制任务
      * @param taskId 任务id
      * @param projectId 项目id
+     * @param groupId 组id
      * @param menuId 菜单id
      * @return
      */
@@ -631,10 +561,11 @@ public class TaskApi {
     @PutMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
+                               @RequestParam(value = "groupId")String groupId,
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            //taskService.copyTask(taskId,projectId,menuId);
+            taskService.copyTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","复制成功");
             object.put("msgId",taskId);
@@ -650,19 +581,24 @@ public class TaskApi {
      * 移动任务
      * @param taskId 任务id
      * @param projectId 项目id
+     * @param groupId 组id
      * @param menuId 菜单id
      * @return
      */
+    @Log(PushType.A16)
+    @Push(value = PushType.A16)
     @PutMapping("/{taskId}/move")
     public JSONObject moveTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
+                               @RequestParam(value = "groupId")String groupId,
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            //taskService.mobileTask(taskId,projectId,menuId);
+            taskService.mobileTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","移动成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);
             throw new AjaxException(e);
@@ -675,6 +611,8 @@ public class TaskApi {
      * @param taskId 任务id
      * @return
      */
+    @Log(PushType.A17)
+    @Push(value = PushType.A17,type = 1)
     @PutMapping("/{taskId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
@@ -685,7 +623,8 @@ public class TaskApi {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("task",taskService.getById(taskId)));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -698,6 +637,8 @@ public class TaskApi {
      * @param taskId 任务id
      * @return
      */
+    @Log(PushType.A18)
+    @Push(value = PushType.A18,type = 1)
     @PutMapping("/{taskId}/privacy")
     public JSONObject taskPrivacy(@PathVariable(value = "taskId")String taskId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
@@ -708,11 +649,70 @@ public class TaskApi {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("privacy",privacy));
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
             throw new AjaxException(e);
         }
         return object;
     }
+
+    /**
+     *  子任务转父任务
+     * @param taskId 任务id
+     * @return
+     */
+    @Log(PushType.A19)
+    @Push(value = PushType.A19)
+    @PutMapping("/{taskId}/toFather")
+    public JSONObject taskToParent(@PathVariable(value = "taskId")String taskId){
+        JSONObject object = new JSONObject();
+        try{
+            Task task = taskService.getById(taskId);
+            Task parentTask = taskService.getOne(new QueryWrapper<Task>().eq("parent_id", task.getTaskId()));
+            task.setTaskGroupId(parentTask.getTaskGroupId());
+            task.setTaskMenuId(parentTask.getTaskMenuId());
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+
+    /**
+     *  对此任务点赞
+     * @param taskId 任务id
+     * @return
+     */
+    @Log(PushType.A20)
+    @Push(value = PushType.A20,type = 1)
+    @PutMapping("/{taskId}/fabulous")
+    public JSONObject taskFabulous(@PathVariable(value = "taskId")String taskId){
+        JSONObject object = new JSONObject();
+        try{
+            Fabulous fabulous = new Fabulous();
+            fabulous.setMemberId(ShiroAuthenticationManager.getUserId());
+            fabulous.setPublicId(taskId);
+            fabulousService.save(fabulous);
+            Task task = taskService.getById(taskId);
+            int count = fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id", taskId));
+            task.setFabulousCount(count);
+            taskService.updateById(task);
+            object.put("result",1);
+            object.put("msg","移入成功");
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+
 }

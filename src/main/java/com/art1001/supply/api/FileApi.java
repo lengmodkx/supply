@@ -227,8 +227,7 @@ public class FileApi {
             @RequestParam(value = "fileCommon") String fileCommon,
             @RequestParam(value = "fileModel") String fileModel,
             @RequestParam(value = "filename") String filename,
-            @RequestParam(value = "publicId",required = false) String publicId,
-            @RequestParam(value = "fileId",required = false) String fileId
+            @RequestParam(value = "publicId",required = false) String publicId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -256,10 +255,6 @@ public class FileApi {
                 modelFile.setPublicLable(1);
             }
             fileService.save(modelFile);
-
-            if(StringUtils.isNotEmpty(fileId)){//更新模型文件版本
-                fileVersionService.update(new FileVersion(),new UpdateWrapper<FileVersion>().set("is_master","0").eq("file_id",fileId));
-            }
             //版本历史更新
             FileVersion fileVersion = new FileVersion();
             fileVersion.setFileId(modelFile.getFileId());
@@ -270,9 +265,11 @@ public class FileApi {
             if(StringUtils.isNotEmpty(publicId)){
                 jsonObject.put("msgId",publicId);
                 jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("public_id",publicId)));
+                jsonObject.put("id",publicId);
             }else{
                 jsonObject.put("msgId",projectId);
                 jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("parent_id",parentId).eq("public_lable",0)));
+                jsonObject.put("id",modelFile.getFileId());
             }
         } catch (Exception e) {
             log.error("上传文件异常:", e);
@@ -281,14 +278,15 @@ public class FileApi {
         return jsonObject;
     }
 
+
     /**
-     * 更新文件版本
+     * 更新普通文件版本
      * @param fileId 文件id
      * @param fileObj 文件对象
      * @return
      */
     @Log(PushType.C4)
-    @Push(value = PushType.C4)
+    @Push(value = PushType.C4,type = 2)
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
             @PathVariable(value = "fileId") String fileId,
@@ -296,6 +294,7 @@ public class FileApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             fileVersionService.update(new FileVersion(),new UpdateWrapper<FileVersion>().set("is_master","0").eq("file_id",fileId));
             File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
             JSONObject object = JSON.parseObject(fileObj);
@@ -317,8 +316,14 @@ public class FileApi {
             }
 
             fileService.save(myFile);
+            //版本历史更新
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(myFile.getFileId());
+            fileVersion.setIsMaster(1);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+            fileVersionService.save(fileVersion);
             // 设置返回数据
-            jsonObject.put("data", "");
+            jsonObject.put("msg","更新成功");
             jsonObject.put("result", 1);
         } catch (ServiceException e){
             log.error("文件版本更新失败:",e);
@@ -331,18 +336,78 @@ public class FileApi {
     }
 
     /**
+     * 更新模型文件
+     *
+     * @param fileId 文件id
+     */
+    @Log(PushType.C5)
+    @Push(value = PushType.C5,type = 2)
+    @PostMapping("/{fileId}/update_model")
+    public JSONObject updateModel(
+            @PathVariable(value = "fileId") String fileId,
+            @RequestParam(value = "fileCommon") String fileCommon,
+            @RequestParam(value = "fileModel") String fileModel,
+            @RequestParam(value = "filename") String filename,
+            @RequestParam(value = "publicId",required = false) String publicId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileVersionService.update(new FileVersion(),new UpdateWrapper<FileVersion>().set("is_master","0").eq("file_id",fileId));
+            //查询出当前文件
+            File file = fileService.getById(fileId);
+
+            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+            JSONObject array = JSON.parseObject(fileCommon);
+            JSONObject object = JSON.parseObject(fileModel);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            File modelFile = new File();
+            // 用原本的文件名
+            modelFile.setFileName(filename);
+            modelFile.setLevel(file.getLevel());
+            modelFile.setSize(size);
+            modelFile.setFileUrl(fileUrl);
+            modelFile.setParentId(file.getParentId());
+            modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
+            modelFile.setProjectId(file.getProjectId());
+            modelFile.setFileThumbnail(array.getString("fileUrl"));
+            if(StringUtils.isNotEmpty(publicId)){
+                modelFile.setPublicId(publicId);
+                modelFile.setPublicLable(1);
+            }
+            fileService.save(modelFile);
+            //版本历史更新
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(modelFile.getFileId());
+            fileVersion.setIsMaster(1);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+            fileVersionService.save(fileVersion);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","更新成功");
+        } catch (Exception e) {
+            log.error("上传文件异常:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+    /**
      * 删除文件
      * @param fileId 文件id
      * @param projectId
      * @return
      */
+    @Log(PushType.C6)
+    @Push(value = PushType.C6)
     @DeleteMapping("/{fileId}")
     public JSONObject deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.deleteFileById(fileId);
             jsonObject.put("result", 1);
-            jsonObject.put("msg", "删除成功");
+
         } catch (Exception e) {
             log.error("删除文件异常:", e);
             throw new AjaxException(e);
