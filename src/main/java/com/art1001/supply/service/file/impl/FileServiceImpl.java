@@ -3,7 +3,6 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.oss.ServiceException;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -20,18 +19,16 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.FileExt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,66 +87,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         base.deleteItemOther(id,BindingConstants.BINDING_FILE_NAME);
 
         File file = fileMapper.findFileById(id);
-        List<FileVersion> byFileId = fileVersionService.findByFileId(id);
-
-        //删除文件的oss版本记录
-        byFileId.forEach(item -> {
-            AliyunOss.deleteFile(item.getFileUrl());
-        });
-        // 删除oss数据
-        AliyunOss.deleteFile(file.getFileUrl());
-
-        //删除库中的文件版本信息
-        fileVersionService.deleteVersionInfoByFileId(id);
-        fileMapper.deleteFileById(id);
-    }
-
-    @Override
-    public File uploadFile(String projectId, String parentId, MultipartFile multipartFile) throws Exception {
-        // 得到文件名
-        String originalFilename = multipartFile.getOriginalFilename();
-        // 获取要创建文件的上级目录实体
-        String parentUrl = fileService.findProjectUrl(projectId);
-        // 重置文件名
-        String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        // 设置文件url
-        String fileUrl = parentUrl + fileName;
-        // 上传oss
-        AliyunOss.uploadInputStream(fileUrl, multipartFile.getInputStream());
-        // 获取后缀名
-        String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-
-        // 写库
-        File file = new File();
-        // 用原本的文件名
-        file.setFileName(originalFilename);
-        file.setExt(ext);
-        file.setProjectId(projectId);
-        file.setFileUrl(fileUrl);
-
-        // 得到上传文件的大小
-        long contentLength = multipartFile.getSize();
-        file.setSize(FileUtils.convertFileSize(contentLength));
-//        file.setCatalog(0);
-//        file.setParentId(parentId);
-//        file.setFileUids(ShiroAuthenticationManager.getUserId());
-//        file.setFileLabel(0);
-        save(file);
-
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        // 修改文件版本
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(file.getFileId());
-        fileVersion.setFileUrl(fileUrl);
-        fileVersion.setFileSize(FileUtils.convertFileSize(contentLength));
-        Date time = Calendar.getInstance().getTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String format = simpleDateFormat.format(time);
-        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-        fileVersionService.saveFileVersion(fileVersion);
-        return file;
 
     }
+
 
     /**
      * 保存文件--文件在前端直接传oss
@@ -194,11 +134,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Transactional(rollbackFor = Exception.class)
     public String initProjectFolder(Project project) {
         File projectFile = new File();
-        projectFile.setFileId(IdGen.uuid());
         projectFile.setFileName(project.getProjectName());
         projectFile.setProjectId(project.getProjectId());
         projectFile.setFileUrl(DateUtils.getDateStr("yyyy-MM-dd hh:mm:ss"));
-        projectFile.setParentId("1");
         projectFile.setCatalog(1);
         save(projectFile);
         // 初始化项目
@@ -220,23 +158,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public File createFolder(String projectId, String parentId, String fileName) {
-        //判断当前文件夹的名字是否在库中存在
-        int result = fileService.findFolderIsExist(fileName,projectId,parentId);
-        if(result > 0){
-            throw new ServiceException("文件夹已存在!");
-        }
         // 存库
         File file = new File();
-        file.setFileId(IdGen.uuid());
-        // 拿到项目的名字作为初始化的文件名
         file.setFileName(fileName);
         // 设置父级id
         file.setParentId(parentId);
         // 项目id
         file.setProjectId(projectId);
-
+        file.setMemberId(ShiroAuthenticationManager.getUserId());
+        file.setCreateTime(System.currentTimeMillis());
         // 设置目录
-//        file.setCatalog(1);
+        file.setCatalog(1);
         save(file);
         return file;
     }
@@ -408,27 +340,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return fileMapper.findPublicFile(parentId);
     }
 
-    /**
-     * 保存文件信息到公开文件表
-     * @param file 文件信息
-     */
-    @Override
-    public void savePublicFile(File file) {
-        file.setFileId(IdGen.uuid());
-        fileMapper.savePublicFile(file);
-    }
-
-    /**
-     * 判断文件夹的名字 是否存在
-     * @param folderName 文件夹名字
-     * @param projectId 项目id
-     * @param parentId 当前目录id
-     * @return
-     */
-    @Override
-    public int findFolderIsExist(String folderName, String projectId,String parentId) {
-        return fileMapper.findFolderIsExist(folderName,projectId,parentId);
-    }
 
     @Override
     public List<File> findFileByPublicId(String publicId) {
@@ -466,10 +377,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveFileBatch(String projectId, String files, String parentId) {
+    public void saveFileBatch(String projectId, String files, String parentId,String publicId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-        List<File> fileList = new ArrayList<File>();
-
+        List<File> fileList = new ArrayList<>();
+        List<FileVersion> versionList = new ArrayList<>();
         //查询出当前文件夹的level
         int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
         if(StringUtils.isNotEmpty(files)){
@@ -487,91 +398,33 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setExt(ext);
                 myFile.setProjectId(projectId);
                 myFile.setFileUrl(fileUrl);
-                myFile.setCatalog(1);
+                myFile.setCatalog(0);
                 // 得到上传文件的大小
                 myFile.setSize(size);
                 myFile.setParentId(parentId);
 
                 //文件的层级
                 myFile.setLevel(parentLevel+1);
-               // myFile.setCatalog(0);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
-                myFile.setFileId(IdGen.uuid());
                 if(FileExt.extMap.get("images").contains(ext)){
                     myFile.setFileThumbnail(fileUrl);
+                }
+                if(StringUtils.isNotEmpty(publicId)){
+                    myFile.setPublicId(publicId);
+                    myFile.setPublicLable(1);
                 }
                 fileList.add(myFile);
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
-                fileVersion.setFileSize(size);
-                fileVersion.setFileUrl(fileUrl);
                 fileVersion.setIsMaster(1);
-                Date time = Calendar.getInstance().getTime();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                String format = simpleDateFormat.format(time);
-                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-                fileVersionService.saveFileVersion(fileVersion);
+                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+                versionList.add(fileVersion);
             }
-            fileMapper.saveFileBatch(fileList);
+            saveBatch(fileList);
+            fileVersionService.saveBatch(versionList);
         }
-    }
-
-    /**
-     * 更新文件版本信息
-     * @param file 文件对象
-     * @param fileId 更新的文件id
-     */
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    @Override
-    public String updateVersion(MultipartFile file, String fileId) {
-        try {
-            // 得到文件名
-            String originalFilename = file.getOriginalFilename();
-            // 得到原来的文件
-            File f = fileService.findFileById(fileId);
-            // 设置文件url
-            // 获取要创建文件的上级目录实体
-            String parentUrl = fileService.findProjectUrl(f.getProjectId());
-            // 重置文件名
-            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-            // 设置文件url
-            String fileUrl = parentUrl + fileName;
-            // 上传oss，相同的objectName会覆盖
-            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
-
-            // 设置修改后的文件名
-            f.setFileName(originalFilename.substring(0,originalFilename.lastIndexOf(".")));
-            f.setExt(originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase());
-            f.setFileUrl(fileUrl);
-            f.setSize(FileUtils.convertFileSize(file.getSize()));
-
-            // 更新数据库
-            updateById(f);
-            // 修改文件版本
-            fileVersionService.saveFileVersion(setFileVersion(f));
-            return fileUrl;
-        } catch (IOException e){
-            throw new ServiceException(e);
-        }
-    }
-
-    /**
-     * 封装文件版本信息
-     * @param f 文件信息
-     * @return 文件版本实体
-     */
-    public FileVersion setFileVersion(File f){
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(f.getFileId());
-        fileVersion.setFileUrl(f.getFileUrl());
-        fileVersion.setFileSize(f.getSize());
-        Date time = Calendar.getInstance().getTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String format = simpleDateFormat.format(time);
-        fileVersion.setInfo(ShiroAuthenticationManager.getUserEntity().getUserName() + " 上传于 " + format);
-        return fileVersion;
     }
 
     /**

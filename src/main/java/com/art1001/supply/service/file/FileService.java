@@ -5,7 +5,6 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ import java.util.List;
 
 	 void saveFile(String files,String publicId,String projectId);
 
-	File uploadFile(String projectId, String parentId, MultipartFile multipartFile)throws Exception;
 	/**
 	 * 项目创建后初始化文件目录
 	 * @param project 项目信息
@@ -139,21 +137,6 @@ import java.util.List;
 	 */
 	List<File> findPublicFile(String parentId);
 
-	/**
-	 * 保存文件信息到公开文件表
-	 * @param file 文件信息
-	 */
-	void savePublicFile(File file);
-
-	/**
-	 * 判断文件夹的名字 是否存在
-	 * @param folderName 文件夹名字
-	 * @param projectId 项目id
-	 * @param parentId 当前目录id
-	 * @return
-	 */
-    int findFolderIsExist(String folderName, String projectId,String parentId);
-
 
     List<File> findFileByPublicId(String publicId);
 
@@ -171,14 +154,7 @@ import java.util.List;
 	 * 插入多条文件信息
 	 * @param files 文件id
 	 */
-	void saveFileBatch(String projectId, String files, String parnentId);
-
-	/**
-	 * 更新文件版本信息
-	 * @param file 文件对象
-	 * @param fileId 更新的文件id
-	 */
-	String updateVersion(MultipartFile file, String fileId);
+	void saveFileBatch(String projectId, String files, String parentId,String publicId);
 
 	/**
 	 * 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url)
