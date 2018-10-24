@@ -421,6 +421,7 @@ public class TaskApi {
             object.put("msg","更新成功");
             object.put("msgId",taskId);
             object.put("data",new JSONObject().fluentPut("remind",remind));
+
         }catch(Exception e){
             log.error("系统异常,提醒模式更新失败:",e);
             throw new AjaxException(e);
