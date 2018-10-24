@@ -367,7 +367,8 @@ public class FileApi {
         try {
             fileService.deleteFileById(fileId);
             jsonObject.put("result", 1);
-
+            jsonObject.put("msgId",projectId+"/recyclebin");
+            jsonObject.put("data",new JSONObject().fluentPut("fileId",fileId));
         } catch (Exception e) {
             log.error("删除文件异常:", e);
             throw new AjaxException(e);
@@ -381,12 +382,19 @@ public class FileApi {
      * @param projectId 项目id
      * @return
      */
+    @Log(PushType.C7)
+    @Push(value = PushType.C7)
     @PutMapping("/{fileId}/recovery")
     public JSONObject recoveryFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.recoveryFile(fileId);
+            File file = new File();
+            file.setFileId(fileId);
+            file.setFileDel(0);
+            fileService.updateById(file);
             jsonObject.put("result", 1);
+            jsonObject.put("msgId",projectId+"/recyclebin");
+            jsonObject.put("data",new JSONObject().fluentPut("fileId",fileId));
         } catch (Exception e) {
             log.error("文件恢复失败:", e);
             throw new AjaxException(e);
@@ -414,7 +422,7 @@ public class FileApi {
             fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             ServletOutputStream outputStream = response.getOutputStream();
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[1024*1024];
             int n;
             assert inputStream != null;
             while ((n = inputStream.read(bytes)) != -1) {
