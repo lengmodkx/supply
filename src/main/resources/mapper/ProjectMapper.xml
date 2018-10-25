@@ -17,6 +17,7 @@
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
 		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
+		<result column="func" property="func" jdbcType="VARCHAR" />
 		<!--<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"-->
 					 <!--select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>-->
 
@@ -291,7 +292,8 @@
 			p.project_del,
 			p.project_status,
 			pm.member_label as member_label,
-		    pm.default_group as group_id
+		    pm.default_group as group_id,
+			p.func
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
 		where pm.member_id = #{userId} and p.organization_id=0 order by pm.create_time asc
 	</select>

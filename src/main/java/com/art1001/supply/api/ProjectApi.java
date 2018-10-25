@@ -175,6 +175,18 @@ public class ProjectApi {
         return object;
     }
 
+    @GetMapping("/{projectId}/menu")
+    public JSONObject initMenu(@PathVariable String projectId){
+        JSONObject object = new JSONObject();
+        try{
+
+            object.put("result",1);
+            object.put("msg","");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
 
     //任务界面初始化
     @GetMapping("/{projectId}/tasks")
