@@ -162,10 +162,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String initProjectFolder(String projectId) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         File projectFile = new File();
         projectFile.setFileName(DateUtils.getDateStr());
         projectFile.setProjectId(projectId);
-        projectFile.setMemberId(ShiroAuthenticationManager.getUserId());
+        projectFile.setMemberId(userEntity.getUserId());
         projectFile.setCatalog(1);
         save(projectFile);
         File file = new File();
@@ -179,6 +180,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setCatalog(1);
         // 设置是否目录
         save(file);
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setIsMaster(1);
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersionService.save(fileVersion);
         return projectFile.getFileId();
     }
 
