@@ -43,7 +43,7 @@
 	</resultMap>
 
 	<resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
-		<collection property="taskList" column="{menuId=relation_id}" javaType="ArrayList"
+		<collection property="taskList" column="relation_id" javaType="ArrayList"
 					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId"/>
 	</resultMap>
 

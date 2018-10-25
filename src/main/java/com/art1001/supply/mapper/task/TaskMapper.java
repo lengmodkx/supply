@@ -135,7 +135,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param menuId
 	 * @return
 	 */
-    List<Task> findTaskByMenuId(@Param("menuId") String menuId);
+    List<Task> findTaskByMenuId(String menuId);
 
 	/**
 	 * 查询某个人执行的所有任务
