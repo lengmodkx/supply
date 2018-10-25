@@ -196,7 +196,7 @@ public class ProjectApi {
             });
 
             object.put("result",1);
-            object.put("msg","");
+            object.put("data",funcList);
         }catch(Exception e){
             throw new AjaxException(e);
         }
