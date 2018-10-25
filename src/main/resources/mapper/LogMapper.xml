@@ -68,7 +68,7 @@
 			u.image as member_img,
 			l.content,
 			l.log_type,
-			l.create_time,
+			l.create_time
 		from prm_log l
 		left join tb_user u on l.member_id = u.user_id
 		where public_id = #{publicId} order by create_time desc
