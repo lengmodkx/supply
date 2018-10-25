@@ -1,12 +1,15 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -40,6 +43,9 @@ public class ProjectApi {
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 创建项目
@@ -179,6 +185,15 @@ public class ProjectApi {
     public JSONObject initMenu(@PathVariable String projectId){
         JSONObject object = new JSONObject();
         try{
+            Project project = projectService.getById(projectId);
+            List<ProjectFunc> funcList = JSON.parseArray(project.getFunc(), ProjectFunc.class);
+            funcList.forEach(item->{
+                switch (item.getFuncName()){
+                    case "文件":
+                        item.setSuffix(fileService.findParentId(projectId));
+                        break;
+                }
+            });
 
             object.put("result",1);
             object.put("msg","");
