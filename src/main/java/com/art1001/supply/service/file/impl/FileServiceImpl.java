@@ -170,7 +170,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         File projectFile = new File();
         projectFile.setFileName(project.getProjectName());
         projectFile.setProjectId(project.getProjectId());
-        projectFile.setFileUrl(DateUtils.getDateStr("yyyy-MM-dd hh:mm:ss"));
+        projectFile.setMemberId(ShiroAuthenticationManager.getUserId());
         projectFile.setCatalog(1);
         save(projectFile);
         // 初始化项目
@@ -182,6 +182,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             // 项目id
             file.setProjectId(project.getProjectId());
             file.setParentId(projectFile.getFileId());
+            projectFile.setMemberId(ShiroAuthenticationManager.getUserId());
             file.setLevel(1);
             file.setCatalog(1);
             // 设置是否目录
