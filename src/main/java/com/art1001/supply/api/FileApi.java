@@ -212,8 +212,7 @@ public class FileApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-            File modelFile = fileService.saveModel(fileModel,fileCommon,projectId,null,filename,parentId);
+            File modelFile = fileService.saveModel(fileModel,fileCommon,null,filename,parentId);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
             jsonObject.put("data",fileService.getById(modelFile.getFileId()));

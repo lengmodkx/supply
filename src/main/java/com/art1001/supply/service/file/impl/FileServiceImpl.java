@@ -120,7 +120,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public File saveModel(String fileModel, String fileCommon, String projectId, String publicId, String filename, String parentId) {
+    public File saveModel(String fileModel, String fileCommon, String publicId, String filename, String parentId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         JSONObject array = JSON.parseObject(fileCommon);
         JSONObject object = JSON.parseObject(fileModel);
@@ -132,15 +132,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         modelFile.setFileName(filename);
         //查询出当前文件夹的level
         if(StringUtils.isNotEmpty(parentId)){
-            int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
-            modelFile.setLevel(parentLevel+1);
+            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",parentId));
+            modelFile.setLevel(file.getLevel()+1);
+            modelFile.setProjectId(file.getProjectId());
         }
 
         modelFile.setSize(size);
         modelFile.setFileUrl(fileUrl);
         modelFile.setParentId(parentId);
         modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
-        modelFile.setProjectId(projectId);
         modelFile.setFileThumbnail(array.getString("fileUrl"));
         if(StringUtils.isNotEmpty(publicId)){
             modelFile.setPublicId(publicId);

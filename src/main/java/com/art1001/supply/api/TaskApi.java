@@ -875,7 +875,7 @@ public class TaskApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.saveModel(fileModel,fileCommon,projectId,taskId,filename,null);
+            fileService.saveModel(fileModel,fileCommon,taskId,filename,null);
             jsonObject.put("result",1);
             jsonObject.put("msgId",taskId);
             jsonObject.put("data",fileService.getOne(new QueryWrapper<File>().eq("public_id",taskId)));
