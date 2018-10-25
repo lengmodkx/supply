@@ -205,7 +205,6 @@ public class FileApi {
     @PostMapping("/{parentId}/model")
     public JSONObject uploadModel(
             @PathVariable(value = "parentId") String parentId,
-            @RequestParam(value = "projectId") String projectId,
             @RequestParam(value = "fileCommon") String fileCommon,
             @RequestParam(value = "fileModel") String fileModel,
             @RequestParam(value = "filename") String filename
@@ -214,7 +213,7 @@ public class FileApi {
         try {
             File modelFile = fileService.saveModel(fileModel,fileCommon,null,filename,parentId);
             jsonObject.put("result",1);
-            jsonObject.put("msgId",projectId);
+            jsonObject.put("msgId",modelFile.getProjectId());
             jsonObject.put("data",fileService.getById(modelFile.getFileId()));
             jsonObject.put("id",modelFile.getFileId());
         } catch (Exception e) {
