@@ -140,6 +140,11 @@ public class Project extends Model<Project> {
     @TableField("organization_id")
     private String organizationId;
 
+    /**
+     * 默认组
+     * @return
+     */
+    private String groupId;
 
     @Override
     protected Serializable pkVal() {

@@ -16,14 +16,12 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
-		<!--<collection property="funcList" column="project_id" javaType="ArrayList"-->
-					 <!--select="com.art1001.supply.mapper.project.ProjectFuncMapper.findProjectFuncList"/>-->
+		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
+		<!--<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"-->
+					 <!--select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>-->
 
-		<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"
-					 select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>
-
-		<collection property="logList" column="project_id" javaType="java.util.ArrayList"
-					 select="com.art1001.supply.mapper.log.LogMapper.findLogByProjectId"/>
+		<!--<collection property="logList" column="project_id" javaType="java.util.ArrayList"-->
+					 <!--select="com.art1001.supply.mapper.log.LogMapper.findLogByProjectId"/>-->
 	</resultMap>
 
 	<resultMap id="ProjectAndTaskByExecutor" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
@@ -292,7 +290,8 @@
 			pm.collect as collect,
 			p.project_del,
 			p.project_status,
-			pm.member_label as member_label
+			pm.member_label as member_label,
+		    pm.default_group as group_id
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
 		where pm.member_id = #{userId} and p.organization_id=0 order by pm.create_time asc
 	</select>

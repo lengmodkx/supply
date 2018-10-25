@@ -175,6 +175,7 @@ public class ProjectApi {
         return object;
     }
 
+
     //任务界面初始化
     @GetMapping("/{projectId}/tasks")
     public JSONObject mainpage(@PathVariable String projectId) {
@@ -182,17 +183,14 @@ public class ProjectApi {
         try {
             String userId = ShiroAuthenticationManager.getUserId();
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
-
+            Project project = projectService.findProjectByProjectId(projectId);
             //查询项目默认分组
             Relation relation = new Relation();
             relation.setParentId(groupId);
             relation.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
-            Project project = projectService.findProjectByProjectId(projectId);
-
             object.put("result", 1);
-            object.put("msg", "删除成功");
-            object.put("menu",taskMenu);
+            object.put("munus",taskMenu);
             object.put("project",project);
         } catch (Exception e) {
             throw new AjaxException(e);

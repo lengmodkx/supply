@@ -149,28 +149,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			JSONObject object = new JSONObject();
 			object.put("funcName",item);
 			object.put("isOpen",true);
-			switch (item){
-				case "任务":
-					object.put("prefix","/tasks/group");
-					object.put("suffix",relation.getRelationId());
-					break;
-				case "分享":
-					object.put("prefix","/posts");
-					object.put("suffix","");
-					break;
-				case "文件":
-					object.put("prefix","/files");
-					object.put("suffix",parentId);
-					break;
-				case "日程":
-					object.put("prefix","/schedules");
-					object.put("suffix","");
-					break;
-				case "群聊":
-					object.put("prefix","/groupchat");
-					object.put("suffix","");
-					break;
-			}
 			array.add(object);
 		});
 
