@@ -1,11 +1,11 @@
 package com.art1001.supply.service.project.impl;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.Role;
@@ -138,12 +138,44 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relation.setUpdateTime(System.currentTimeMillis());
 		relationService.saveRelation(relation);
 
+		//初始化项目文件夹
+		String parentId = fileService.initProjectFolder(project.getProjectId());
+
 		//初始化项目功能菜单
 		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
-		String jsonfun = projectFunc(funcs);
-		project.setFunc(jsonfun);
-		projectMapper.saveProject(project);
+		JSONArray array = new JSONArray();
 
+		Arrays.stream(funcs).forEach(item->{
+			JSONObject object = new JSONObject();
+			object.put("funcName",item);
+			object.put("isOpen",true);
+			switch (item){
+				case "任务":
+					object.put("prefix","/tasks/group");
+					object.put("suffix",relation.getRelationId());
+					break;
+				case "分享":
+					object.put("prefix","/posts");
+					object.put("suffix","");
+					break;
+				case "文件":
+					object.put("prefix","/files");
+					object.put("suffix",parentId);
+					break;
+				case "日程":
+					object.put("prefix","/schedules");
+					object.put("suffix","");
+					break;
+				case "群聊":
+					object.put("prefix","/groupchat");
+					object.put("suffix","");
+					break;
+			}
+			array.add(object);
+		});
+
+		project.setFunc(array.toString());
+		save(project);
 		//初始化菜单
 		String[] menus  = new String[]{"待处理","进行中","已完成"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
@@ -270,21 +302,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		return projectMapper.findOrgProject(userId,orgId);
 	}
 
-	/**
-	 * 生成项目插件数据
-	 * @param funcs 插件名称数组
-	 * @return
-	 */
-	private String projectFunc(String[] funcs){
-		List<ProjectFunc> funs = new ArrayList<>();
-		Arrays.stream(funcs).forEach(item -> {
-			ProjectFunc pf = new ProjectFunc();
-			pf.setFuncName(item);
-			pf.setFlag(true);
-			funs.add(pf);
-		});
-		return JSON.toJSONString(funs);
-	}
 
 	/**
 	 * 查询出该项目的默认分组

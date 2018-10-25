@@ -105,10 +105,6 @@ public class FileApi {
             String parentId = fileService.findParentId(projectId);
             if(StringUtils.isEmpty(fileId)){
                 fileList = fileService.findChildFile(parentId);
-                if(fileList.isEmpty()){
-                    parentId = fileService.initProjectFolder(projectId);
-                    fileList = fileService.findChildFile(fileId);
-                }
             }else{
                 fileList = fileService.findChildFile(fileId);
                 parentId = fileId;

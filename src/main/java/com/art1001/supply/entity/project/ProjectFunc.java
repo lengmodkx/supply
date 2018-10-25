@@ -21,7 +21,7 @@ public class ProjectFunc {
 	/**
 	 * is_open
 	 */
-	private boolean flag;
+	private boolean isOpen;
 
 	/**
 	 * 后缀
