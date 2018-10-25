@@ -138,9 +138,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relation.setUpdateTime(System.currentTimeMillis());
 		relationService.saveRelation(relation);
 
-		//初始化项目文件夹
-		fileService.initProjectFolder(project);
-
 		//初始化项目功能菜单
 		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
 		String jsonfun = projectFunc(funcs);

@@ -30,11 +30,10 @@ import java.util.List;
 	 File saveModel(String fileModel,String fileCommon,String projectId,String pubicId,String filename,String parentId);
 	/**
 	 * 项目创建后初始化文件目录
-	 * @param project 项目信息
+	 * @param projectId 项目信息
 	 * @return 项目根文件夹的id
 	 */
-	String initProjectFolder(Project project);
-
+	String initProjectFolder(String projectId);
 
     /**
      * 创建目录

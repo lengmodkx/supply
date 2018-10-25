@@ -39,10 +39,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -108,6 +105,10 @@ public class FileApi {
             String parentId = fileService.findParentId(projectId);
             if(StringUtils.isEmpty(fileId)){
                 fileList = fileService.findChildFile(parentId);
+                if(fileList.isEmpty()){
+                    parentId = fileService.initProjectFolder(projectId);
+                    fileList = fileService.findChildFile(fileId);
+                }
             }else{
                 fileList = fileService.findChildFile(fileId);
                 parentId = fileId;

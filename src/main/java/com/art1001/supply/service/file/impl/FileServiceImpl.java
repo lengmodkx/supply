@@ -3,13 +3,11 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
@@ -54,9 +52,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Resource
     private LogService logService;
-
-    @Resource
-    private Base base;
 
     /**
      * 公共模型库 常量定义信息
@@ -166,28 +161,24 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String initProjectFolder(Project project) {
+    public String initProjectFolder(String projectId) {
         File projectFile = new File();
-        projectFile.setFileName(project.getProjectName());
-        projectFile.setProjectId(project.getProjectId());
+        projectFile.setFileName(DateUtils.getDateStr());
+        projectFile.setProjectId(projectId);
         projectFile.setMemberId(ShiroAuthenticationManager.getUserId());
         projectFile.setCatalog(1);
         save(projectFile);
-        // 初始化项目
-        String[] childFolderNameArr = {"图片", "文档","模型文件","公共模型库"};
-        for (String childFolderName : childFolderNameArr) {
-            File file = new File();
-            // 写库
-            file.setFileName(childFolderName);
-            // 项目id
-            file.setProjectId(project.getProjectId());
-            file.setParentId(projectFile.getFileId());
-            projectFile.setMemberId(ShiroAuthenticationManager.getUserId());
-            file.setLevel(1);
-            file.setCatalog(1);
-            // 设置是否目录
-            save(file);
-        }
+        File file = new File();
+        // 写库
+        file.setFileName("公共模型库");
+        // 项目id
+        file.setProjectId(projectId);
+        file.setParentId(projectFile.getFileId());
+        file.setMemberId(ShiroAuthenticationManager.getUserId());
+        file.setLevel(1);
+        file.setCatalog(1);
+        // 设置是否目录
+        save(file);
         return projectFile.getFileId();
     }
 
