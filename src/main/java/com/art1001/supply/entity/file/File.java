@@ -159,11 +159,6 @@ public class File extends Model<File> {
      */
     private int filePrivacy;
 
-    /**
-     * 0一般文件，1图片，2模型
-     */
-    private int fileFlag;
-
     public String getFileUrlTemp(){
         try {
             return URLEncoder.encode("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/"+fileUrl,"utf-8");
