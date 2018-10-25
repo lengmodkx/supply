@@ -113,7 +113,8 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_project where project_id = #{projectId}
+		from prm_project
+		where project_id = #{projectId}
         and project_del = 0
 	</select>
 	

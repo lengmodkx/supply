@@ -28,4 +28,8 @@ public class ProjectFunc {
 	 */
 	private String suffix;
 
+	/**
+	 * 前缀
+	 */
+	private String prefix;
 }

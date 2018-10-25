@@ -92,26 +92,16 @@ public class FileApi {
 
     /**
      * 加载项目下文件列表数据
-     * @param projectId 项目id
      * @param fileId 文件id
      * @return
      */
     @GetMapping
-    public JSONObject fileList(@RequestParam(value = "projectId") String projectId,
-                               @RequestParam(value = "fileId",required = false) String fileId) {
+    public JSONObject fileList(@RequestParam(value = "fileId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<File> fileList;
-            String parentId = fileService.findParentId(projectId);
-            if(StringUtils.isEmpty(fileId)){
-                fileList = fileService.findChildFile(parentId);
-            }else{
-                fileList = fileService.findChildFile(fileId);
-                parentId = fileId;
-            }
-
+            List<File> fileList = fileService.findChildFile(fileId);
             jsonObject.put("data", fileList);
-            jsonObject.put("parentId",parentId);
+            jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
         } catch (Exception e){
             throw new AjaxException(e);
