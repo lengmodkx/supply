@@ -153,10 +153,10 @@ public class FileApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            File file =fileService.createFolder(projectId,parentId,folderName);
+            fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",file);
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -187,7 +187,7 @@ public class FileApi {
             fileService.saveFileBatch(projectId,files,parentId,publicId);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("parent_id",parentId).eq("public_lable",0)));
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
         } catch (Exception e) {
             log.error("上传文件异常:", e);
             throw new AjaxException(e);
