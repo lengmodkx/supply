@@ -8,6 +8,6 @@ public interface NoticeService {
      * @param type 消息类型
      * @param payload 消息内容
      */
-    void pushMsg(String msgId,int type, Object payload);
+    void pushMsg(String msgId,String type, Object payload);
 
 }

@@ -16,7 +16,7 @@ public class NoticeServiceImpl implements NoticeService {
 
 
     @Override
-    public void pushMsg(String msgId,int type, Object payload) {
+    public void pushMsg(String msgId,String type, Object payload) {
         Notice notice = new Notice();
         notice.setType(type);
         notice.setObject(payload);

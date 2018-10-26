@@ -197,8 +197,7 @@ public class FileApi {
 
     /**
      * 上传模型文件
-     *
-     * @param projectId 项目id
+
      */
     @Log(PushType.C3)
     @Push(value = PushType.C3)

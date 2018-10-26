@@ -41,9 +41,9 @@ public class PushAspect {
         Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
 
         if(push.type()==0){//只需要推送，不需要日志
-            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.get("data"));
+            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
         }else if (push.type()==1){ //既需要推送也需要日志
-            noticeService.pushMsg(object.getString("msgId"),push.value().getId(),object.get("data"));
+            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
             Log log = new Log();
             log.setPublicId(object.getString("id"));
             log.setProjectId(object.getString("msgId"));
