@@ -213,7 +213,7 @@ public class FileApi {
             File modelFile = fileService.saveModel(fileModel,fileCommon,null,filename,parentId);
             jsonObject.put("result",1);
             jsonObject.put("msgId",modelFile.getProjectId());
-            jsonObject.put("data",fileService.getById(modelFile.getFileId()));
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
             jsonObject.put("id",modelFile.getFileId());
         } catch (Exception e) {
             log.error("上传文件异常:", e);
