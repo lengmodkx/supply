@@ -8,16 +8,14 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.quartz.QuartzInfo;
 import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskApiBean;
-import com.art1001.supply.entity.task.TaskMenuVO;
-import com.art1001.supply.entity.task.TaskStatusConstant;
+import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -25,14 +23,19 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.quartz.MyJob;
+import com.art1001.supply.quartz.QuartzService;
+import com.art1001.supply.quartz.job.RemindJob;
 import com.art1001.supply.service.apiBean.ApiBeanService;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.quartz.QuartzInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
@@ -44,7 +47,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.JobDataMap;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
@@ -109,6 +117,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /** 用户更新json信息的接口 */
     @Resource
     private ApiBeanService apiBeanService;
+
+    /** 任务的提醒规则接口 */
+    @Resource
+    private TaskRemindRuleService taskRemindRuleService;
+
+    /** quartz 信息的接口 */
+    @Resource
+    QuartzInfoService quartzInfoService;
+
+    /** quartz操作接口 */
+    @Resource
+    QuartzService quartzService;
 
     /** 公共封装的方法 */
     @Resource
@@ -1229,6 +1249,90 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 添加任务的提醒规则
+     * @param taskRemindRule 规则实体
+     * @param users 提醒的用户id字符串
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void addTaskRemind(TaskRemindRule taskRemindRule, String users) throws ServiceException{
+        //存库
+        taskRemindRule.setId(IdGen.uuid());
+        taskRemindRuleService.save(taskRemindRule);
+
+        //存储quartz的job信息和trigger信息
+        QuartzInfo quartzInfo = new QuartzInfo();
+        quartzInfo.setId(IdGen.uuid());
+        quartzInfo.setJobName(IdGen.uuid());
+        quartzInfo.setJobGroup("task");
+        quartzInfo.setRemindId(taskRemindRule.getId());
+        quartzInfo.setTriggerGroup("task");
+        quartzInfoService.save(quartzInfo);
+
+        //封装Myjob实体
+        MyJob myJob = new MyJob();
+        myJob.setJobName(quartzInfo.getJobName());
+        myJob.setJobGroupName(quartzInfo.getJobGroup());
+        myJob.setTriggerGroupName("task");
+        try {
+            //生成cron表达式
+            myJob.setCronTime(remindCron(taskRemindRule.getTaskId(),taskRemindRule.getRemindType(),taskRemindRule.getNum(),taskRemindRule.getTimeType(),taskRemindRule.getCustomTime()));
+        } catch (ServiceException e){
+           throw new ServiceException(e);
+        }
+        //额外信息
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("users",users);
+        myJob.setJobDataMap(jobDataMap);
+
+        //把任务的提醒规则加入quartz中
+        quartzService.addJobByCronTrigger(RemindJob.class,myJob);
+    }
+
+    /**
+     * 更新任务的提醒规则
+     * @param taskRemindRule 提醒规则实体信息
+     */
+    @Override
+    public void updateTaskRemind(TaskRemindRule taskRemindRule) throws SchedulerException {
+        taskRemindRuleService.update(taskRemindRule,new QueryWrapper<TaskRemindRule>().eq("id",taskRemindRule.getId()));
+        QuartzInfo quartzInfo = quartzInfoService.getOne(new QueryWrapper<QuartzInfo>().eq("remind_id", taskRemindRule.getId()));
+        //更新quartz定时任务
+        quartzService.modifyJobTime(quartzInfo.getJobName(),quartzInfo.getTriggerGroup(),remindCron(taskRemindRule.getTaskId(),taskRemindRule.getRemindType(),taskRemindRule.getNum(),taskRemindRule.getTimeType(),taskRemindRule.getCustomTime()));
+    }
+
+    /**
+     * 移除这条任务的提醒规则 并且从quartz移除
+     * @param id 规则的id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void removeRemind(String id) throws SchedulerException {
+        QuartzInfo quartzInfo = quartzInfoService.getOne(new QueryWrapper<QuartzInfo>().eq("remind_id", id));
+        //从quartz 中移除该任务
+        quartzService.removeJob(quartzService.getScheduler(),new TriggerKey(quartzInfo.getJobName(),"task"), new JobKey(quartzInfo.getJobName(),"task"));
+        //移除掉该条规则
+        taskRemindRuleService.removeById(id);
+        //移除quartz信息
+        quartzInfoService.removeById(quartzInfo.getId());
+    }
+
+    /**
+     * 更新任务要提醒的成员信息
+     * @param taskId 任务id
+     * @param users 成员id 信息
+     */
+    @Override
+    public void updateRemindUsers(String taskId, String users) {
+        List<TaskRemindRule> taskRemindRules = taskRemindRuleService.listRuleAndQuartz(taskId);
+        taskRemindRules.forEach(item -> {
+            MyJob myJob = new MyJob();
+//            myJob.set
+//           quartzService.modifyJobDateMap(RemindJob.class,)
+        });
+    }
+
+    /**
      * 生成任务提醒的规则
      * @param taskId 任务id
      * @param remindType 提醒类型
@@ -1238,24 +1342,30 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return cron 表达式
      */
     @Override
-    public String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime){
+    public String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime) throws ServiceException{
         SimpleDateFormat format = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
         //查询出该任务的开始时间
         Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("start_time startTime","end_time endTime"));
         //生成自定义时间表达式
         if(!StringUtils.isEmpty(customTime)){
-            return DateUtils.cronStr(DateUtils.parse(customTime,"yyyy-MM-dd hh:mm:ss"));
+            return DateUtils.cronStr(DateUtils.parse(customTime,"yyyy-MM-dd HH:mm:ss"));
         }
         if(task == null){
-            return null;
+            throw new ServiceException("该任务时间不合则规则设定,或者没有时间!");
         }
         //任务开始时
         if(TaskStatusConstant.BEGIN.equals(remindType)){
-            return task.getStartTime() == null ? null : DateUtils.cronStr(new Date(task.getStartTime()));
+            if(task.getStartTime() == null){
+                throw new ServiceException("该任务没有开始时间!");
+            }
+            return DateUtils.cronStr(new Date(task.getStartTime()));
         }
         //任务截止时
         if(TaskStatusConstant.END.equals(remindType)){
-            return task.getEndTime() == null ? null : DateUtils.cronStr(new Date(task.getEndTime()));
+            if(task.getEndTime() == null){
+                throw new ServiceException("该任务没有结束时间!");
+            }
+            return DateUtils.cronStr(new Date(task.getEndTime()));
         }
         Long day = 86400000L * num;
         Long hour = 3600000L * num;

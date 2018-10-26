@@ -6,9 +6,12 @@ import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
+import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.quartz.SchedulerException;
 
 import java.util.List;
 import java.util.Map;
@@ -447,5 +450,31 @@ public interface TaskService extends IService<Task> {
 	 * @param customTime 自定义时间的字符串
 	 * @return cron 表达式
 	 */
-	String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime);
+	String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime) throws ServiceException;
+
+	/**
+	 * 添加任务的提醒规则
+	 * @param taskRemindRule 规则实体
+	 * @param users 提醒的用户id字符串
+	 */
+    void addTaskRemind(TaskRemindRule taskRemindRule, String users) throws ServiceException;
+
+	/**
+	 * 更新任务的提醒规则
+	 * @param taskRemindRule 提醒规则实体信息
+	 */
+	void updateTaskRemind(TaskRemindRule taskRemindRule) throws SchedulerException;
+
+	/**
+	 * 移除一条任务提醒规则
+	 * @param id
+	 */
+	void removeRemind(String id) throws SchedulerException;
+
+	/**
+	 * 更新任务要提醒的成员信息
+	 * @param taskId 任务id
+	 * @param users 成员id 信息
+	 */
+	void updateRemindUsers(String taskId, String users);
 }

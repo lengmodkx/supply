@@ -142,7 +142,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		fileService.initProjectFolder(project.getProjectId());
 
 		//初始化项目功能菜单
-		String[] funcs = new String[]{"任务","分享","文件","日程","群聊"};
+		String[] funcs = new String[]{"任务","分享","文件","日程","群聊","统计"};
 		JSONArray array = new JSONArray();
 
 		Arrays.stream(funcs).forEach(item->{
