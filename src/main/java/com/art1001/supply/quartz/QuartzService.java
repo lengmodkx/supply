@@ -1,7 +1,6 @@
 package com.art1001.supply.quartz;
 
-import org.quartz.Job;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 
 public interface QuartzService {
 
@@ -32,4 +31,18 @@ public interface QuartzService {
      * @return
      */
     boolean modifyJobTime(String name, String group, String time) throws SchedulerException;
+
+    /**
+     * 从调度器中移除该任务
+     * @param scheduler 调度器
+     * @param triggerKey
+     * @param jobKey
+     */
+    void removeJob(Scheduler scheduler, TriggerKey triggerKey, JobKey jobKey);
+
+    /**
+     * 获取调度器
+     * @return
+     */
+    Scheduler getScheduler() throws SchedulerException;
 }

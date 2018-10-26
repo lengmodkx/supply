@@ -151,7 +151,8 @@ public class QuartzServiceImpl implements QuartzService {
      * @return Scheduler
      * @throws SchedulerException Scheduler获取异常
      */
-    private Scheduler getScheduler() throws SchedulerException {
+    @Override
+    public Scheduler getScheduler() throws SchedulerException {
         return schedulerFactory.getScheduler();
     }
     /**
@@ -194,12 +195,12 @@ public class QuartzServiceImpl implements QuartzService {
 
     /**
      * 从调度器中移除Job
-     *
      * @param scheduler  调度器
      * @param triggerKey 触发器key（名，组）
      * @param jobKey     任务key（名，组）
      */
-    private void removeJob(Scheduler scheduler, TriggerKey triggerKey, JobKey jobKey) {
+    @Override
+    public void removeJob(Scheduler scheduler, TriggerKey triggerKey, JobKey jobKey) {
         try {
             // 停止触发器
             scheduler.pauseTrigger(triggerKey);

@@ -123,12 +123,6 @@ public class File extends Model<File> {
     private String fileThumbnail;
 
     /**
-     * 文件全路径
-     */
-    @TableField(exist = false)
-    private String fileUrlTemp;
-
-    /**
      * 文件标识
      */
     private int fileLabel;

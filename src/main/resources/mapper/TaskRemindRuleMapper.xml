@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.art1001.dao.TaskRemindRuleMapper">
+<mapper namespace="com.art1001.supply.mapper.task.TaskRemindRuleMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.TaskRemindRule">
         <id column="id" property="id" />
         <result column="task_id" property="taskId" />
-        <result column="job_name" property="jobName" />
         <result column="remind_type" property="remindType" />
         <result column="num" property="num" />
         <result column="time_type" property="timeType" />
-        <result column="time_cron" property="timeCron" />
         <result column="custom_time" property="customTime" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.TaskRemindRule">
+        <id column="id" property="id" />
+        <result column="task_id" property="taskId" />
+        <result column="remind_type" property="remindType" />
+        <result column="num" property="num" />
+        <result column="time_type" property="timeType" />
+        <result column="custom_time" property="customTime" />
+        <association property="quartzInfo" javaType="com.art1001.supply.entity.quartz.QuartzInfo">
+            <result property="jobName" column="job_name"/>
+            <result property="jobGroup" column="job_group"/>
+            <result property="triggerGroup" column="trigger_group"/>
+        </association>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, task_id, job_name, remind_type, num, time_type, time_cron, custom_time
+        id, task_id, remind_type, num, time_type, custom_time
     </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List2">
+        id, task_id, remind_type, num, time_type, custom_time,job_name,job_group,trigger_group,
+    </sql>
+
+    <select id="listRuleAndQuartz" resultMap="BaseResultMap2">
+        select <include refid="Base_Column_List2"/>
+        from prm_task_remind r left join prm_quartz q on r.id = q.remind_id
+    </select>
 
 </mapper>

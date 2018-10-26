@@ -69,7 +69,7 @@ public class SystemLogAspect {
         sl.setRunTime(total+"ms");
         sl.setRunResult("成功");
         //存储日志信息
-        systemLogService.save(sl);
+        //systemLogService.save(sl);
         return obj;
     }
 }

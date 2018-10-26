@@ -142,6 +142,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         modelFile.setParentId(parentId);
         modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
         modelFile.setFileThumbnail(array.getString("fileUrl"));
+        modelFile.setMemberId(userEntity.getUserId());
         if(StringUtils.isNotEmpty(publicId)){
             modelFile.setPublicId(publicId);
             modelFile.setPublicLable(1);

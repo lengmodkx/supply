@@ -130,6 +130,7 @@ public class Project extends Model<Project> {
      * 默认组
      * @return
      */
+    @TableField(exist = false)
     private String groupId;
 
     @Override

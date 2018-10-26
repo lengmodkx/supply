@@ -3,6 +3,7 @@
  */
 package com.art1001.supply.listener;
 
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
@@ -36,7 +37,12 @@ public class InitializationListener implements ApplicationListener<ContextRefres
 			 * 这里是quartz任务调度器的启动  删了就不行了
 			 */
 			try {
-				schedulerFactory.getScheduler().start();
+				Scheduler scheduler = schedulerFactory.getScheduler();
+				if(scheduler.isStarted()){
+					logger.info("scheduler  xxxxx ");
+				}else{
+					scheduler.start();
+				}
 			} catch (SchedulerException e) {
 				e.printStackTrace();
 			}
