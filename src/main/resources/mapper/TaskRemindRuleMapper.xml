@@ -19,7 +19,7 @@
         <result column="remind_type" property="remindType" />
         <result column="num" property="num" />
         <result column="time_type" property="timeType" />
-        <result column="custom_time" property="customTime" />
+        <result column="cron_str" property="cronStr"/>
         <association property="quartzInfo" javaType="com.art1001.supply.entity.quartz.QuartzInfo">
             <result property="jobName" column="job_name"/>
             <result property="jobGroup" column="job_group"/>
@@ -34,7 +34,17 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List2">
-        id, task_id, remind_type, num, time_type, custom_time,job_name,job_group,trigger_group,
+        r.id rid,
+	    q.id qid,
+	    r.task_id,
+        remind_type,
+        num,
+        cron_str,
+        time_type,
+        custom_time,
+        job_name,
+        job_group,
+        trigger_group
     </sql>
 
     <select id="listRuleAndQuartz" resultMap="BaseResultMap2">

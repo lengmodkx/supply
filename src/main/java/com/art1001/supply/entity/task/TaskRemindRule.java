@@ -60,6 +60,8 @@ public class TaskRemindRule extends Model<TaskRemindRule> {
     @TableField(exist = false)
     private QuartzInfo quartzInfo;
 
+    private String cronStr;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

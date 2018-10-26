@@ -59,7 +59,7 @@ public class PushAspect {
                 log.setCreateTime(System.currentTimeMillis());
                 log.setContent(push.value().getName()+" "+object.getString("name"));
                 log.setMemberId(ShiroAuthenticationManager.getUserId());
-                logService.save(log);
+                //logService.save(log);
             }
         }
 

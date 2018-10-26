@@ -476,5 +476,5 @@ public interface TaskService extends IService<Task> {
 	 * @param taskId 任务id
 	 * @param users 成员id 信息
 	 */
-	void updateRemindUsers(String taskId, String users);
+	void updateRemindUsers(String taskId, String users) throws SchedulerException;
 }

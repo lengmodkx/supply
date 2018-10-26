@@ -1256,8 +1256,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void addTaskRemind(TaskRemindRule taskRemindRule, String users) throws ServiceException{
+        //生成cron 字符串
+        String cronStr = remindCron(taskRemindRule.getTaskId(), taskRemindRule.getRemindType(), taskRemindRule.getNum(), taskRemindRule.getTimeType(), taskRemindRule.getCustomTime());
+
         //存库
         taskRemindRule.setId(IdGen.uuid());
+        taskRemindRule.setCronStr(cronStr);
         taskRemindRuleService.save(taskRemindRule);
 
         //存储quartz的job信息和trigger信息
@@ -1276,7 +1280,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         myJob.setTriggerGroupName("task");
         try {
             //生成cron表达式
-            myJob.setCronTime(remindCron(taskRemindRule.getTaskId(),taskRemindRule.getRemindType(),taskRemindRule.getNum(),taskRemindRule.getTimeType(),taskRemindRule.getCustomTime()));
+            myJob.setCronTime(cronStr);
         } catch (ServiceException e){
            throw new ServiceException(e);
         }
@@ -1295,10 +1299,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public void updateTaskRemind(TaskRemindRule taskRemindRule) throws SchedulerException {
+        String cronStr = remindCron(taskRemindRule.getTaskId(), taskRemindRule.getRemindType(), taskRemindRule.getNum(), taskRemindRule.getTimeType(), taskRemindRule.getCustomTime());
+        taskRemindRule.setCronStr(cronStr);
         taskRemindRuleService.update(taskRemindRule,new QueryWrapper<TaskRemindRule>().eq("id",taskRemindRule.getId()));
         QuartzInfo quartzInfo = quartzInfoService.getOne(new QueryWrapper<QuartzInfo>().eq("remind_id", taskRemindRule.getId()));
         //更新quartz定时任务
-        quartzService.modifyJobTime(quartzInfo.getJobName(),quartzInfo.getTriggerGroup(),remindCron(taskRemindRule.getTaskId(),taskRemindRule.getRemindType(),taskRemindRule.getNum(),taskRemindRule.getTimeType(),taskRemindRule.getCustomTime()));
+        quartzService.modifyJobTime(quartzInfo.getJobName(),quartzInfo.getTriggerGroup(),cronStr);
     }
 
     /**
@@ -1323,12 +1329,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param users 成员id 信息
      */
     @Override
-    public void updateRemindUsers(String taskId, String users) {
+    public void updateRemindUsers(String taskId, String users){
         List<TaskRemindRule> taskRemindRules = taskRemindRuleService.listRuleAndQuartz(taskId);
         taskRemindRules.forEach(item -> {
+            QuartzInfo quartzInfo = item.getQuartzInfo();
             MyJob myJob = new MyJob();
-//            myJob.set
-//           quartzService.modifyJobDateMap(RemindJob.class,)
+            myJob.setJobName(quartzInfo.getJobName());
+            myJob.setJobGroupName(quartzInfo.getJobGroup());
+            myJob.setCronTime(item.getCronStr());
+            myJob.setTriggerGroupName(quartzInfo.getTriggerGroup());
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("users",users);
+            myJob.setJobDataMap(jobDataMap);
+            quartzService.modifyJobDateMap(RemindJob.class, myJob);
         });
     }
 

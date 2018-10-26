@@ -74,6 +74,17 @@ public class QuartzServiceImpl implements QuartzService {
     }
 
     /**
+     * 更新quartz
+     * @param users
+     * @param jobName
+     * @param jobGroup
+     */
+    @Override
+    public void updateJobDataMap(String jobName, String jobGroup, String users) throws SchedulerException {
+        getScheduler().getJobDetail(new JobKey(jobName, jobGroup)).getJobDataMap().put("users",users);
+    }
+
+    /**
      * 修改某个任务的执行时间
      * @param name
      * @param group

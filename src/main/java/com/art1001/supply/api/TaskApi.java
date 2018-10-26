@@ -549,7 +549,7 @@ public class TaskApi {
      */
     @Log(PushType.A26)
     @PutMapping("/{taskId}/remind/user")
-    public JSONObject updateRemindUsers(@PathVariable String taskId, @RequestParam String users){
+    public JSONObject updateRemindUsers(@PathVariable String taskId, @RequestParam("users") String users){
         JSONObject jsonObject = new JSONObject();
         try {
             taskService.updateRemindUsers(taskId,users);

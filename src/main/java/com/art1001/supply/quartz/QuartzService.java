@@ -45,4 +45,11 @@ public interface QuartzService {
      * @return
      */
     Scheduler getScheduler() throws SchedulerException;
+
+    /**
+     * 更新jobDataMap
+     * @param jobName
+     * @param jobGroup
+     */
+    void updateJobDataMap(String jobName, String jobGroup, String users) throws SchedulerException;
 }
