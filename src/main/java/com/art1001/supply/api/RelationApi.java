@@ -28,10 +28,10 @@ public class RelationApi {
      * 添加菜单
      * @return
      */
-    @PostMapping("/{groupId}/menu")
-    public JSONObject addMenu(@RequestParam(value = "menuName") String menuName,
-                              @RequestParam(value = "projectId") String projectId,
-                              @PathVariable(value = "groupId") String groupId){
+    @PostMapping("/{projectId}/menu")
+    public JSONObject addMenu(@PathVariable(value = "projectId") String projectId,
+                              @RequestParam(value = "groupId") String groupId,
+                              @RequestParam(value = "menuName") String menuName){
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();
@@ -55,11 +55,11 @@ public class RelationApi {
     @PostMapping("/{projectId}/group")
     public JSONObject addMenu(
             @PathVariable(value = "projectId") String projectId,
-            @RequestParam(value = "groupName") String menuName){
+            @RequestParam(value = "groupName") String groupName){
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();
-            relation.setRelationName(menuName);
+            relation.setRelationName(groupName);
             relation.setProjectId(projectId);
             relationService.saveGroup(relation);
             jsonObject.put("groupId",relation.getRelationId());
