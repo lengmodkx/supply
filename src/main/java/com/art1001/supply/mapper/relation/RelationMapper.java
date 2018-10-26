@@ -151,5 +151,4 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 */
 	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
 
-
 }

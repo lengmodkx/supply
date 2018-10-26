@@ -457,6 +457,20 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		relationMapper.saveRelation(relation);
 	}
 
-
+	/**
+	 * 排序菜单
+	 * @param menuIds 菜单id
+	 */
+	@Override
+	public void orderMenu(String[] menuIds) {
+		int index = 1;
+		for (String id : menuIds) {
+			Relation relation = new Relation();
+			relation.setRelationId(id);
+			relation.setOrder(index);
+			relationMapper.updateById(relation);
+			index++;
+		}
+	}
 }
 

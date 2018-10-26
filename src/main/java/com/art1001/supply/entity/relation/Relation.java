@@ -77,7 +77,7 @@ public class Relation extends Model<Relation> {
 	/**
 	 * 菜单的当前顺序
 	 */
-	@TableField("order")
+	@TableField("`order`")
 	private Integer order;
 
 	/**

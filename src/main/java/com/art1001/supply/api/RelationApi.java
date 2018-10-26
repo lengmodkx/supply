@@ -49,6 +49,25 @@ public class RelationApi {
     }
 
     /**
+     * 排序菜单顺序
+     * @param menuIds 排序后的菜单数组
+     * @return
+     */
+    @PutMapping("/{menuIds}/orderMenu")
+    public JSONObject orderMenu(@PathVariable("menuIds") String[] menuIds){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            relationService.orderMenu(menuIds);
+            jsonObject.put("msg","排序成功!");
+            jsonObject.put("result",1);
+        }catch (Exception e){
+            log.error("排序异常:",e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
      * 添加分组
      * @return
      */

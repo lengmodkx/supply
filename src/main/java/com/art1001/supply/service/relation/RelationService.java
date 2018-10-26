@@ -198,4 +198,10 @@ public interface RelationService extends IService<Relation> {
 	 * @param relation 分组信息(名称,所在项目)
 	 */
 	void saveGroup(Relation relation);
+
+	/**
+	 * 排序菜单
+	 * @param menuIds 菜单id
+	 */
+    void orderMenu(String[] menuIds);
 }
