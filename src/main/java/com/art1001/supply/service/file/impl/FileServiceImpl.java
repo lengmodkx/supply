@@ -143,6 +143,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
         modelFile.setFileThumbnail(array.getString("fileUrl"));
         modelFile.setMemberId(userEntity.getUserId());
+        modelFile.setCreateTime(System.currentTimeMillis());
         if(StringUtils.isNotEmpty(publicId)){
             modelFile.setPublicId(publicId);
             modelFile.setPublicLable(1);
@@ -169,6 +170,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setProjectId(projectId);
         projectFile.setMemberId(userEntity.getUserId());
         projectFile.setCatalog(1);
+        projectFile.setCreateTime(System.currentTimeMillis());
+        projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
         File file = new File();
         // 写库
@@ -177,6 +180,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setProjectId(projectId);
         file.setParentId(projectFile.getFileId());
         file.setMemberId(ShiroAuthenticationManager.getUserId());
+        file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
         file.setLevel(1);
         file.setCatalog(1);
         // 设置是否目录
@@ -200,6 +205,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setProjectId(projectId);
         file.setMemberId(ShiroAuthenticationManager.getUserId());
         file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
         // 设置目录
         file.setCatalog(1);
         save(file);
