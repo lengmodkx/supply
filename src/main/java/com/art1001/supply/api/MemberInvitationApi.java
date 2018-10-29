@@ -139,4 +139,23 @@ public class MemberInvitationApi {
         }
         return object;
     }
+
+    /**
+     * 获取某个项目的所有成员
+     * @param projectId 项目id
+     * @return
+     */
+    @GetMapping("/{projectId}/member")
+    public JSONObject getProjectMembers(@PathVariable("projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            List<UserEntity> users = userService.getProjectMembers(projectId);
+            jsonObject.put("data",users);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功!");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

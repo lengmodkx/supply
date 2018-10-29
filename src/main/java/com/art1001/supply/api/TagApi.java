@@ -80,7 +80,6 @@ public class TagApi {
             List<Tag> tagList = tagService.findTagByProjectIdWithAllInfo(projectId);
             jsonObject.put("result", 1);
             jsonObject.put("tagList", tagList);
-            jsonObject.put("projectId", projectId);
         } catch (Exception e) {
             log.error("获取标签异常:", e);
             throw new SystemException(e);

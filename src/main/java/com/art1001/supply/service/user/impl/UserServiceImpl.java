@@ -102,4 +102,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         return userMapper.findByKey(keyword);
     }
 
+    /**
+     * 查询出某个项目下的所有成员信息
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<UserEntity> getProjectMembers(String projectId) {
+        return userMapper.selectProjectMembers(projectId);
+    }
 }

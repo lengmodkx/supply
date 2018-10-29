@@ -26,6 +26,26 @@
 		update_time
 	</sql>
 
+	<sql id="users">
+		u.user_id,
+		u.user_name,
+		u.sex,
+	    u.birthday,
+		u.telephone,
+		u.email,
+		u.image,
+	    u.address,
+		u.job,
+		u.default_image,
+		u.account_name,
+		u.delete_status,
+		u.locked,
+		u.description,
+		u.creator_name,
+		u.create_time,
+		u.update_time
+	</sql>
+
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
 		<id property="userId" column="user_id"/>
 		<result property="userName" column="user_name" />
@@ -130,5 +150,11 @@
 		SELECT <include refid="userAttributes"/>
 		FROM tb_user
 		where account_name like CONCAT('%',#{keyword},'%')
+	</select>
+
+	<!-- 查询出某个项目中的所有成员信息 -->
+    <select id="selectProjectMembers" resultType="com.art1001.supply.entity.user.UserEntity">
+		select <include refid="users"/>
+		from tb_user AS u left join prm_project_member AS m on u.user_id = m.member_id where m.project_id = #{projectId}
 	</select>
 </mapper>

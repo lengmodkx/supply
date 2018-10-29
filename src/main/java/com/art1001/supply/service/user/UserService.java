@@ -36,4 +36,10 @@ public interface UserService extends IService<UserEntity> {
 	//根据关键字模糊查询用户
 	List<UserEntity> findByKey(String keyword);
 
+	/**
+	 * 查询出某个项目下的所有成员信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<UserEntity> getProjectMembers(String projectId);
 }

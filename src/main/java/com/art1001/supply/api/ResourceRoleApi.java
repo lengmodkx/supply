@@ -54,9 +54,9 @@ public class ResourceRoleApi {
                 List<ResourcesRole> resourcesRoleList = new ArrayList<ResourcesRole>();
                 for (int i = 0;i < sIds.length;i++){
                     ResourcesRole resourcesRole = new ResourcesRole();
-                    resourcesRole.setRId(Integer.valueOf(roleId));
-                    resourcesRole.setSId(Integer.valueOf(sIds[i]));
-                    resourcesRole.setTCreateTime(LocalDateTime.now());
+                    resourcesRole.setRoleId(Integer.valueOf(roleId));
+                    resourcesRole.setResourceId(Integer.valueOf(sIds[i]));
+                    resourcesRole.setCreateTime(LocalDateTime.now());
                     resourcesRoleList.add(resourcesRole);
                 }
                 resourcesRoleService.saveBatch(resourcesRoleList);
