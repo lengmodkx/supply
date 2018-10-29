@@ -219,6 +219,7 @@ public class ProjectApi {
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
             object.put("result", 1);
             object.put("munus",taskMenu);
+            object.put("user",ShiroAuthenticationManager.getUserEntity());
             object.put("project",project);
         } catch (Exception e) {
             throw new AjaxException(e);

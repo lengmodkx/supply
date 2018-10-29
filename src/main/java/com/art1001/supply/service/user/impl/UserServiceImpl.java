@@ -105,7 +105,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     /**
-     * 查询出某个项目下的所有成员信息
+     * 查询出某个项目下的所有成员信息(去除当前请求者的信息)
      * @param projectId 项目id
      * @return
      */
