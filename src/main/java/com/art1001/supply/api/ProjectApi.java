@@ -13,6 +13,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,9 @@ public class ProjectApi {
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 创建项目
@@ -219,7 +223,7 @@ public class ProjectApi {
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
             object.put("result", 1);
             object.put("munus",taskMenu);
-            object.put("user",ShiroAuthenticationManager.getUserEntity());
+            object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));
             object.put("project",project);
         } catch (Exception e) {
             throw new AjaxException(e);
