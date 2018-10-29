@@ -13,8 +13,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -31,7 +29,7 @@ public class File extends Model<File> {
     /**
      * file_id
      */
-    @TableId(value = "file_id",type = IdType.UUID)
+    @TableId(value = "file_id",type = IdType.INPUT)
     private String fileId;
 
 
@@ -135,7 +133,6 @@ public class File extends Model<File> {
     /**
      * 文件层级
      */
-    @TableField("level")
     private int level;
     /** 创建时间
      *
@@ -152,16 +149,6 @@ public class File extends Model<File> {
      * 文件隐私模式 0所有成员可见，1参与者可见
      */
     private int filePrivacy;
-
-    public String getFileUrlTemp(){
-        try {
-            return URLEncoder.encode("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/"+fileUrl,"utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
 
     @Override
     protected Serializable pkVal() {

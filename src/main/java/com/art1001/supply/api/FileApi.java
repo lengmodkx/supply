@@ -178,13 +178,12 @@ public class FileApi {
     public JSONObject uploadFile(
             @PathVariable(value = "parentId") String parentId,
             @RequestParam(value = "projectId") String projectId,
-            @RequestParam(value = "files") String files,
-            @RequestParam(value = "publicId",required = false) String publicId
+            @RequestParam(value = "files") String files
 
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.saveFileBatch(projectId,files,parentId,publicId);
+            fileService.saveFileBatch(projectId,files,parentId,null);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId);
             jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));

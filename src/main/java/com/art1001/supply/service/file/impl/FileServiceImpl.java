@@ -18,6 +18,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
+import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -414,7 +415,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * 插入多条文件信息
      * @param files 文件id
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveFileBatch(String projectId, String files, String parentId,String publicId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
@@ -430,6 +430,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                 // 写库
                 File myFile = new File();
+                myFile.setFileId(IdGen.uuid());
                 // 用原本的文件名
                 myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
                 myFile.setExt(ext);
@@ -443,11 +444,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                     //查询出当前文件夹的level
                     int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
                     myFile.setLevel(parentLevel+1);
+                    myFile.setParentId(parentId);
                 }
-                myFile.setParentId(parentId);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
+                myFile.setUpdateTime(System.currentTimeMillis());
                 if(FileExt.extMap.get("images").contains(ext)){
                     myFile.setFileThumbnail(fileUrl);
                 }

@@ -3,13 +3,13 @@
 <mapper namespace="com.art1001.supply.mapper.file.FileVersionMapper">
 	
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.FileVersion">
-		<result column="file_id" property="fileId" jdbcType="VARCHAR" />
+		<result column="version_id" property="versionId" jdbcType="VARCHAR" />
 		<result column="info" property="info" jdbcType="VARCHAR" />
 		<result column="is_master" property="isMaster" jdbcType="INTEGER" />
 	</resultMap>
     
 	<sql id="Base_Column_List">
-		id,file_id,info,is_master
+		version_id,file_id,info,is_master
 	</sql>
 
 </mapper>
