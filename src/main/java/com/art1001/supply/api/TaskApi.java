@@ -9,8 +9,6 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.resource.ResourceEntity;
-import com.art1001.supply.entity.role.ResourcesRole;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
@@ -42,7 +40,6 @@ import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -147,7 +144,6 @@ public class TaskApi {
      * @param priority 任务优先级
      * @param tagIds 任务标签
      * @param taskRemindRules 提醒规则集合
-     * @param users 要提醒的任务成员
      * @return JSONObject
      */
     @Log(PushType.A1)
@@ -589,18 +585,6 @@ public class TaskApi {
             throw new AjaxException(e);
         }
         return jsonObject;
-    }
-
-    @GetMapping("/test1/{id}")
-    public void test1(@PathVariable String id){
-        List<ResourceEntity> resource_type = resourceService.list(new QueryWrapper<ResourceEntity>().eq("parent_id", id));
-        resource_type.forEach(item -> {
-            ResourcesRole resourcesRole = new ResourcesRole();
-            resourcesRole.setRoleId(2);
-            resourcesRole.setCreateTime(LocalDateTime.now());
-            resourcesRole.setResourceId(item.getResourceId());
-            resourcesRoleService.save(resourcesRole);
-        });
     }
 
     /**
