@@ -5,6 +5,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.EmailUtil;
 import com.art1001.supply.util.ImageUtil;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {
@@ -109,6 +111,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
      */
     @Override
     public List<UserEntity> getProjectMembers(String projectId) {
-        return userMapper.selectProjectMembers(projectId);
+        List<UserEntity> projectMembers = userMapper.selectProjectMembers(projectId);
+        List<UserEntity> after = projectMembers.stream().filter(itme -> !itme.getUserId().equals(ShiroAuthenticationManager.getUserId())).collect(Collectors.toList());
+        return after;
     }
 }
