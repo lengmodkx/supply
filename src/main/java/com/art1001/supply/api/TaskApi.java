@@ -135,7 +135,7 @@ public class TaskApi {
     /**
      * 创建任务
      * @param taskName 任务名称
-     * @param memberIds 任务参与者
+     * @param taskJoins 任务的参与者id
      * @param privacyPattern 任务隐私模式
      * @param executor 任务执行者
      * @param startTime 任务开始时间
@@ -150,9 +150,9 @@ public class TaskApi {
     @Push(value = PushType.A1,type = 1)
     @PostMapping
     public JSONObject addTask(@RequestParam("taskName") String taskName,
-                              @RequestParam("taskJoins") String taskJoins,
                               @RequestParam("privacyPattern") Integer privacyPattern,
                               @RequestParam("projectId") String projectId,
+                              @RequestParam(value = "taskJoins",required = false) String taskJoins,
                               @RequestParam(value = "executor",required = false) String executor,
                               @RequestParam(value = "startTime",required = false) String startTime,
                               @RequestParam(value = "endTime",required = false)String endTime,
