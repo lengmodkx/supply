@@ -1,18 +1,19 @@
 package com.art1001.supply.entity.schedule;
-import java.io.Serializable;
-import java.util.List;
-
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * scheduleEntity
  */
 @Data
+@TableName("prm_schedule")
 public class Schedule extends Model<Schedule> {
 	
 	private static final long serialVersionUID = 1L;

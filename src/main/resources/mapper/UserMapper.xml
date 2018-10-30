@@ -50,7 +50,6 @@
 		<id property="userId" column="user_id"/>
 		<result property="userName" column="user_name" />
 		<result property="accountName" column="account_name"/>
-		<result property="password" column="password"/>
 		<result property="deleteStatus" column="delete_status"/>
 		<result property="locked" column="locked"/>
 		<result property="description" column="description"/>

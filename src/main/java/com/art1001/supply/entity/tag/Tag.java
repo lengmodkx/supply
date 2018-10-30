@@ -1,20 +1,22 @@
 package com.art1001.supply.entity.tag;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * tagEntity
  */
 @Data
+@TableName("prm_tag")
 public class Tag extends Model<Tag> {
 	
 	private static final long serialVersionUID = 1L;
