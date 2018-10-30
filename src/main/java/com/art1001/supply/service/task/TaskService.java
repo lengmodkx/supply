@@ -490,5 +490,5 @@ public interface TaskService extends IService<Task> {
 	 * 完成任务
 	 * @param taskId 任务id
 	 */
-	void completeTask(String taskId);
+	Task completeTask(String taskId);
 }

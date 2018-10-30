@@ -420,9 +420,6 @@
 			<if test="updateTime != null ">
 				#{updateTime},
 			</if>
-			<if test="repetitionTime != null">
-				#{repetitionTime},
-			</if>
 			<if test="fabulousCount != null">
 				#{fabulousCount},
 			</if>
@@ -434,9 +431,6 @@
 			</if>
 			<if test="order != null">
 				#{order},
-			</if>
-			<if test="taskCalendar != null">
-				#{taskCalendar},
 			</if>
 			<if test="taskUIds != null and taskUIds!=''">
 				#{taskUIds},

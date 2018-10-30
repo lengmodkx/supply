@@ -57,4 +57,9 @@ public class ApplicationTests {
             resourcesRoleService.save(resourcesRole);
         });
     }
+
+    @Test
+    public void test3(){
+        taskService.completeTask("16a13489a79246949e91ac429012f384");
+    }
 }

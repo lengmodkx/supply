@@ -1393,21 +1393,62 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param taskId 任务id
      */
     @Override
-    public void completeTask(String taskId) {
+    public Task completeTask(String taskId) {
         Task task = taskMapper.selectById(taskId);
+        Long startTime = task.getStartTime();
+        Long endTime = task.getEndTime();
+        Long newStartTime = null;
+        Long newEndTime = null;
         if(TaskStatusConstant.DAY_REPEAT.equals(task.getRepeat())){
-            
+            //每天重复后的时间
+            if(startTime != null){
+                newStartTime = afterDaysTime(startTime, 1);
+            }
+            if(endTime != null){
+                newEndTime = afterDaysTime(endTime, 1);
+            }
         } else if (TaskStatusConstant.WEEK_REPEAT.equals(task.getRepeat())){
-
+            //每周重复后的时间
+            if(startTime != null){
+                newStartTime = afterDaysTime(startTime,7);
+            }
+            if(endTime != null){
+                newEndTime = afterDaysTime(endTime,7);
+            }
         } else if (TaskStatusConstant.MONTH_REPEAT.equals(task.getRepeat())){
-
+            //每月重复后的时间
+            if(startTime != null){
+                newStartTime = afterMonthTime(startTime);
+            }
+            if(endTime != null){
+                newEndTime = afterMonthTime(endTime);
+            }
         } else if (TaskStatusConstant.YEAR_REPEAT.equals(task.getRepeat())){
-
+            //每年重复后的时间
+            if(startTime != null){
+                newStartTime = DateUtils.afterYearTime(1,new Date(startTime));
+            }
+            if(endTime != null){
+                newEndTime = DateUtils.afterYearTime(1,new Date(endTime));
+            }
         } else if (TaskStatusConstant.WORKING_DAY_REPEAT.equals(task.getRepeat())){
-
-        } else{
-
+            //工作日重复后的时间
+            if(startTime != null){
+                newStartTime = DateUtils.afterWorkDay(new Date(startTime));
+            }
+            if(endTime != null){
+                newEndTime = DateUtils.afterWorkDay(new Date(startTime));
+            }
+        } else {
+            return null;
         }
+        //更新任务id  以及时间信息
+        task.setTaskId(IdGen.uuid());
+        task.setStartTime(newStartTime);
+        task.setEndTime(newEndTime);
+        //存库
+        taskMapper.saveTask(task);
+        return task;
     }
 
     /**
@@ -1483,6 +1524,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             return DateUtils.cronStr(new Date(end));
         }
         return null;
+    }
+
+    /**
+     * 获取给定时间指定天数后的时间戳
+     * @param time 时间毫秒数
+     * @param days 天数
+     */
+    public long afterDaysTime(Long time, int days){
+        return DateUtils.strToLong(DateUtils.getAfterDay(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), days, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss"));
+    }
+
+    /**
+     * 获取给定时间的下个月的时间戳
+     * @param time 给定的时间
+     * @return
+     */
+    public long afterMonthTime(Long time){
+        return DateUtils.strToLong(DateUtils.getMonth(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", 1));
     }
 }
 

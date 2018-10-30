@@ -678,6 +678,42 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		return date.getTime();
 	}
 
+	/**获取一年之后的时间戳
+	 * @param yearnum
+	 *  传入几年
+	 * @return
+	 */
+	public static Long afterYearTime(Integer yearnum, Date curr){
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(curr);
+		calendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR)+yearnum);
+		Date date=calendar.getTime();
+		return date.getTime();
+	}
+
+	/**
+	 * 获取下一个工作日的时间戳
+	 * @param curr
+	 * @return
+	 */
+	public static Long afterWorkDay(Date curr){
+		Calendar now = new GregorianCalendar();
+		now.setTime(curr);
+
+		//取得今天的星期值
+		int week = now.get(Calendar.DAY_OF_WEEK)-1;
+
+		if(week == 5){
+			now.roll(Calendar.DAY_OF_YEAR, +3);
+		} else{
+			now.roll(Calendar.DAY_OF_YEAR, +1);
+		}
+		long l = strToLong(getDateStr(now.getTime(), "yyyy-MM-dd HH:mm:ss"));
+		return l;
+	}
+
+
+
 	/**
 	 * 转换为默认的时间格式
 	 * @param times
