@@ -159,8 +159,8 @@ public class TaskApi {
                               @RequestParam(value = "repeat",required = false)String repeat,
                               @RequestParam(value = "priority",required = false)String priority,
                               @RequestParam(value = "tagIds",required = false)String tagIds,
-                              @RequestParam(value = "taskMenuId",required = false)String taskMenuId,
-                              @RequestParam(value = "taskGroupId",required = false)String taskGroupId,
+                              @RequestParam(value = "taskMenuId")String taskMenuId,
+                              @RequestParam(value = "taskGroupId")String taskGroupId,
                               @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules
      ){
         JSONObject object = new JSONObject();
