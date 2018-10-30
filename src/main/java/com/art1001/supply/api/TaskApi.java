@@ -184,7 +184,11 @@ public class TaskApi {
             }
             //设置任务的创建者
             task.setMemberId(ShiroAuthenticationManager.getUserId());
-            taskService.saveTask(task,taskRemindRules);
+            if(StringUtils.isEmpty(taskRemindRules)){
+                taskService.saveTask(task);
+            } else{
+                taskService.saveTask(task,taskRemindRules);
+            }
             //保存任务和标签的关联关系
             if(StringUtils.isNotEmpty(tagIds)){
                 Arrays.stream(tagIds.split(",")).forEach(tagId->{
@@ -202,7 +206,7 @@ public class TaskApi {
             object.put("name",task.getTaskName());
         }catch (Exception e){
             log.error("创建任失败:",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常任务创建失败!",e);
         }
 
         return object;

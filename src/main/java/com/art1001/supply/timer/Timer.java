@@ -8,14 +8,19 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.chat.ChatService;
+import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -57,6 +62,21 @@ public class Timer {
     @Resource
     private TagService tagService;
 
+    @Resource
+    private PublicCollectService publicCollectService;
+
+    @Resource
+    private LogService logService;
+
+    @Resource
+    private TagRelationService tagRelationService;
+
+    @Resource
+    private UserNewsService userNewsService;
+
+    @Resource
+    private BindingService bindingService;
+
     @Scheduled(cron = "0 0 0 * * ?")
     public void clearProjectInfo(){
         taskService.remove(new QueryWrapper<Task>().notInSql("project_id", "select project_id from prm_project"));
@@ -83,5 +103,29 @@ public class Timer {
         //清除标签信息
         tagService.remove(new QueryWrapper<Tag>().notInSql("project_id","select project_id from prm_project"));
     }
+
+//    /**
+//     * 每天0点2分 清除(任务,文件,分享,日程) 的残留信息
+//     */
+//    @Scheduled(cron = "0 2 0 * * ?")
+//    public void clearItemInfo(){
+//        //清除收藏数据
+//        int result = publicCollectService.clearCollect();
+//
+//        //清除日志数据
+//        int result1 = logService.clearLog();
+//
+//        //清除标签关联信息
+//        int result2 = tagRelationService.clearRelationTag();
+//
+//        //删除用户的消息信息
+//        int reuslt3 = userNewsService.clearUserNews();
+//
+//        //清除关联信息
+//        int result4 = bindingService.clear();
+//
+//        //清除子任务信息
+//        int result5 = taskService.clearSub();
+//    }
 
 }
