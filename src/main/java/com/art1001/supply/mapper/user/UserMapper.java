@@ -61,4 +61,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	List<UserEntity> findByKey(String keyword);
 
 	UserEntity findByName(String username);
+
+	/**
+	 * 查询出某个项目下的所有成员信息
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<UserEntity> selectProjectMembers(String projectId);
 }

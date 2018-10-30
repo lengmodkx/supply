@@ -62,6 +62,12 @@ public class TaskRemindRule extends Model<TaskRemindRule> {
 
     private String cronStr;
 
+    /**
+     * 通知的人员id
+     * @return
+     */
+    private String users;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

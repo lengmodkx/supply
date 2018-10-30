@@ -1,5 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
@@ -47,10 +48,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.JobDataMap;
-import org.quartz.JobKey;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerKey;
+import org.quartz.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,11 +122,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /** quartz 信息的接口 */
     @Resource
-    QuartzInfoService quartzInfoService;
+    private QuartzInfoService quartzInfoService;
 
     /** quartz操作接口 */
     @Resource
-    QuartzService quartzService;
+    private QuartzService quartzService;
 
     /** 公共封装的方法 */
     @Resource
@@ -147,9 +145,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	/**
 	 * 将添加的任务信息保存至数据库
      * @param task task信息
+     * @param taskRemindRules 提醒规则
      */
 	@Override
-	public void saveTask(Task task) {
+	public void saveTask(Task task, String taskRemindRules) {
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -160,6 +159,50 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //保存任务信息
         save(task);
 
+        List<TaskRemindRule> remindList = JSON.parseArray(taskRemindRules, TaskRemindRule.class);
+        remindList.forEach(item -> {
+            item.setId(IdGen.uuid());
+            item.setTaskId(task.getTaskId());
+            //存储quartz的job信息和trigger信息
+            QuartzInfo quartzInfo = new QuartzInfo();
+            quartzInfo.setId(IdGen.uuid());
+            quartzInfo.setJobName(IdGen.uuid());
+            quartzInfo.setJobGroup("task");
+            quartzInfo.setRemindId(item.getId());
+            quartzInfo.setTriggerGroup("task");
+            quartzInfoService.save(quartzInfo);
+
+            MyJob myJob = new MyJob();
+            myJob.setJobGroupName("task");
+            myJob.setTriggerGroupName("task");
+            myJob.setJobName(quartzInfo.getJobName());
+
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("users",item.getUsers());
+
+            myJob.setJobDataMap(jobDataMap);
+            myJob.setCronTime(remindCron(item.getTaskId(), item.getRemindType(), item.getNum(), item.getTimeType(), item.getCustomTime()));
+            quartzService.addJobByCronTrigger(RemindJob.class,myJob);
+        });
+        //保存任务的提醒规则
+        taskRemindRuleService.saveBatch(remindList);
+    }
+
+    /**
+     * 将添加的任务信息保存至数据库
+     * @param task task信息
+     */
+    @Override
+    public void saveTask(Task task) {
+        //设置该任务的创建时间
+        task.setCreateTime(System.currentTimeMillis());
+        //设置该任务的最后更新时间
+        task.setUpdateTime(System.currentTimeMillis());
+        //根据查询菜单id 查询 菜单id 下的 最大排序号
+        Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+        task.setOrder(++maxOrder);
+        //保存任务信息
+        save(task);
     }
 
     /**

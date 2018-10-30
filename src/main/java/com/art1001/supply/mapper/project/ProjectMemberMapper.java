@@ -30,5 +30,4 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 */
 	@Select("select count(0) from prm_project_member where project_id = #{projectId} and member_id = #{id}")
 	int findMemberIsExist(@Param("projectId") String projectId, @Param("id") String id);
-
 }

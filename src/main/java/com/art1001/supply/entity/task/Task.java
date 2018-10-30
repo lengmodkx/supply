@@ -115,6 +115,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 参与者
 	 */
+	@TableField("task_uids")
 	private String taskUIds;
 
 	/**
@@ -186,6 +187,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务的排序编号
 	 */
+	@TableField("`order`")
 	private Integer order;
 
 	/**

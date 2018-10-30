@@ -24,6 +24,8 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.quartz.QuartzInfoService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.resource.ResourceService;
+import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
@@ -92,6 +94,12 @@ public class TaskApi {
     @Resource
     private QuartzInfoService quartzInfoService;
 
+    @Resource
+    private ResourcesRoleService resourcesRoleService;
+
+    @Resource
+    private ResourceService resourceService;
+
     /**
      * 任务页面初始化
      * @return
@@ -133,9 +141,9 @@ public class TaskApi {
      * @param startTime 任务开始时间
      * @param endTime 任务结束时间
      * @param repeat 任务重复
-     * @param remind 任务提醒
      * @param priority 任务优先级
      * @param tagIds 任务标签
+     * @param taskRemindRules 提醒规则集合
      * @return JSONObject
      */
     @Log(PushType.A1)
@@ -149,11 +157,12 @@ public class TaskApi {
                               @RequestParam(value = "startTime",required = false) String startTime,
                               @RequestParam(value = "endTime",required = false)String endTime,
                               @RequestParam(value = "repeat",required = false)String repeat,
-                              @RequestParam(value = "remind",required = false)String remind,
                               @RequestParam(value = "priority",required = false)String priority,
                               @RequestParam(value = "tagIds",required = false)String tagIds,
                               @RequestParam(value = "taskMenuId",required = false)String taskMenuId,
-                              @RequestParam(value = "taskGroupId",required = false)String taskGroupId){
+                              @RequestParam(value = "taskGroupId",required = false)String taskGroupId,
+                              @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules
+     ){
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -165,7 +174,6 @@ public class TaskApi {
             task.setPrivacyPattern(privacyPattern);
             task.setExecutor(executor);
             task.setRepeat(repeat);
-            task.setRemind(remind);
             task.setPriority(priority);
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
@@ -176,7 +184,7 @@ public class TaskApi {
             }
             //设置任务的创建者
             task.setMemberId(ShiroAuthenticationManager.getUserId());
-            taskService.saveTask(task);
+            taskService.saveTask(task,taskRemindRules);
             //保存任务和标签的关联关系
             if(StringUtils.isNotEmpty(tagIds)){
                 Arrays.stream(tagIds.split(",")).forEach(tagId->{

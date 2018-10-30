@@ -29,17 +29,17 @@ public class ResourcesRole extends Model<ResourcesRole> {
     /**
      * 资源id
      */
-    private Integer sId;
+    private Integer resourceId;
 
     /**
      * 角色id
      */
-    private Integer rId;
+    private Integer roleId;
 
     /**
      * 创建时间
      */
-    private LocalDateTime tCreateTime;
+    private LocalDateTime createTime;
 
     @Override
     protected Serializable pkVal() {

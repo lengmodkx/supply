@@ -80,7 +80,6 @@ public class TagApi {
             List<Tag> tagList = tagService.findTagByProjectIdWithAllInfo(projectId);
             jsonObject.put("result", 1);
             jsonObject.put("tagList", tagList);
-            jsonObject.put("projectId", projectId);
         } catch (Exception e) {
             log.error("获取标签异常:", e);
             throw new SystemException(e);
@@ -201,18 +200,21 @@ public class TagApi {
      * @param projectId 项目的id
      * @return
      */
-    @PostMapping("addItemTag")
+    @PostMapping("/add/tag")
     public JSONObject addItemTag(@RequestParam(value = "tagId",required = false) Long tagId,
                                  @RequestParam(value = "tagName",required = false) String tagName,
+                                 @RequestParam(value = "bgColor",required = false) String bgColor,
                                  @RequestParam(value = "publicId") String publicId,
                                  @RequestParam(value = "publicType") String publicType,
-                                 @RequestParam(value = "projectId") String projectId){
+                                 @RequestParam(value = "projectId",required = false) String projectId
+    ){
         JSONObject jsonObject = new JSONObject();
         try {
             Tag tag = new Tag();
             tag.setTagId(tagId);
             tag.setTagName(tagName);
             tag.setProjectId(projectId);
+            tag.setBgColor(bgColor);
             if(StringUtils.isNotEmpty(tag.getTagName())){
                 int countByTagName = tagService.findCountByTagName(tag.getProjectId(), tag.getTagName());
                 if(countByTagName == 0){
@@ -224,9 +226,10 @@ public class TagApi {
                 }
             }
             tagService.addItemTag(tag.getTagId(),publicId,publicType);
+            jsonObject.put("msg","添加成功!");
+            jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,添加标签失败:",e);
-
         }
         return jsonObject;
     }
