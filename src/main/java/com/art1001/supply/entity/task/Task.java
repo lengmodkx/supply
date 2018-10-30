@@ -174,6 +174,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 该任务所在的项目
 	 */
+	@TableField(exist = false)
 	private Project project;
 
 	/**
