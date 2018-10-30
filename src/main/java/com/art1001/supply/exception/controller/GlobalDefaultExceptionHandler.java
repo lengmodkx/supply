@@ -75,7 +75,7 @@ public class GlobalDefaultExceptionHandler {
 	 * @param ex	ajax异常对象
 	 * @throws IOException	异常信息
 	 */
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler(AjaxException.class)
 	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
 		logger.error(ex.getMessage(), ex);
