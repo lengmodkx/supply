@@ -69,12 +69,6 @@ public class Relation extends Model<Relation> {
 	private List<Task> taskList;
 
 	/**
-	 * 分组 或者 菜单的描述
-	 */
-	@TableField("describe")
-	private String describe;
-
-	/**
 	 * 菜单的当前顺序
 	 */
 	@TableField("`order`")

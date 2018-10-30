@@ -135,7 +135,6 @@
 		prm_task.start_time,
 		prm_task.end_time,
 		prm_task.`repeat`,
-		prm_task.remind,
 		prm_task.remarks,
 		prm_task.priority,
 		prm_task.`level`,
@@ -149,12 +148,10 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
-		prm_task.repetition_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
 		prm_task.other,
 		prm_task.order,
-		prm_task.task_calendar,
 		prm_task.task_uids
 	</sql>
 	<sql id="Base_Column_List2">
@@ -164,7 +161,6 @@
 		prm_task.start_time,
 		prm_task.end_time,
 		prm_task.`repeat`,
-		prm_task.remind,
 		prm_task.remarks,
 		prm_task.priority,
 		prm_task.tag_id,
@@ -179,12 +175,10 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
-		prm_task.repetition_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
 		prm_task.other,
 		prm_task.`order`,
-		prm_task.task_calendar,
 		prm_task.task_uids
 	</sql>
 
@@ -210,12 +204,10 @@
 		t.task_del,
 		t.create_time,
 		t.update_time,
-		t.repetition_time,
 		t.fabulous_count,
 		t.privacy_pattern,
 		t.other,
 		t.order,
-		t.task_calendar,
 		t.task_uids,
 		tg.tag_id,
 		tg.tag_name,
@@ -276,7 +268,7 @@
 	</delete>
 
 	<insert id="saveTaskBatch">
-		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
+		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, fabulous_count, privacy_pattern, other, `order`, task_uids) values
 		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
 		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
 		</foreach>
@@ -305,9 +297,6 @@
 			</if>
 			<if test="repeat != null and repeat != ''">
 			`repeat`,
-			</if>
-			<if test="remind != null and remind != ''">
-			remind,
 			</if>
 			<if test="remarks != null and remarks != ''">
 			remarks,
@@ -351,9 +340,6 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
-			<if test="repetitionTime != null">
-			repetition_Time,
-			</if>
 			<if test="fabulousCount != null">
 				fabulous_count,
 			</if>
@@ -365,9 +351,6 @@
 			</if>
 			<if test="order != null">
 				`order`,
-			</if>
-			<if test="taskCalendar != null">
-				task_calendar,
 			</if>
 			<if test="taskUIds != null and taskUIds!=''">
 				task_uids,
@@ -436,9 +419,6 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
-			</if>
-			<if test="remindTime != null">
-				#{remindTime},
 			</if>
 			<if test="repetitionTime != null">
 				#{repetitionTime},
@@ -523,9 +503,6 @@
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
-			<if test="repetitionTime != null">
-				repetition_Time = #{repetitionTime},
-			</if>
 			<if test="fabulousCount != null">
 				fabulous_count = #{fabulousCount},
 			</if>
@@ -537,9 +514,6 @@
 			</if>
 			<if test="order != null">
 				`order` = #{order},
-			</if>
-			<if test="taskCalendar != null">
-				task_calendar = #{taskCalendar},
 			</if>
 			<if test="taskUIds != null and taskUIds != null">
 				task_uids = #{taskUIds},
