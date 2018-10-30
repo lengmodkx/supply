@@ -60,58 +60,54 @@ public class Task extends Model<Task> {
 	@TableField("`repeat`")
 	private String repeat;
 
-
-	/**
-	 * 任务提醒
-	 */
-	private String remind;
-
-
 	/**
 	 * 备注
 	 */
 	private String remarks;
-
 
 	/**
 	 * 优先级
 	 */
 	private String priority;
 
+	/**
+	 * 标签
+	 */
 	@TableField(exist = false)
 	private List<Tag> tagList;
+
 	/**
 	 * 任务的层级
 	 */
 	private Integer level;
-
 
 	/**
 	 * 父级id
 	 */
 	private String parentId;
 
-
 	/**
 	 * 创建者
 	 */
 	private String memberId;
 
-
 	/**
 	 * 执行者
 	 */
 	private String executor;
+
 	/**
 	 * 执行者名字
 	 */
 	@TableField(exist = false)
 	private String memberName;
+
 	/**
 	 * 执行者头像
 	 */
 	@TableField(exist = false)
 	private String memberImg;
+
 	/**
 	 * 参与者
 	 */
@@ -119,10 +115,9 @@ public class Task extends Model<Task> {
 	private String taskUIds;
 
 	/**
-	 * 任务类型
+	 * 任务类型 (保留字段)
 	 */
 	private String taskType;
-
 
 	/**
 	 * 任务菜单id
@@ -134,24 +129,20 @@ public class Task extends Model<Task> {
 	 */
 	private String taskGroupId;
 
-
 	/**
 	 * 任务状态
 	 */
 	private String taskStatus;
 
-
 	/**
-	 * 任务码
+	 * 任务码(保留字段)
 	 */
 	private String taskCode;
-
 
 	/**
 	 * 是否删除
 	 */
 	private Integer taskDel;
-
 
 	/**
 	 * 创建时间
@@ -163,16 +154,6 @@ public class Task extends Model<Task> {
 	 * 更新时间
 	 */
 	private Long updateTime;
-
-	/**
-	 * 提醒时间
-	 */
-	private Long remindTime;
-
-	/**
-	 * 自定义重复时间
-	 */
-	private Long repetitionTime;
 
 	/**
 	 * 任务的隐私模式
@@ -189,12 +170,7 @@ public class Task extends Model<Task> {
 	 */
 	@TableField("`order`")
 	private Integer order;
-
-	/**
-	 * 任务的日历日期
-	 */
-	private Long taskCalendar;
-
+	
 	/**
 	 * 该任务所在的项目
 	 */
@@ -217,6 +193,7 @@ public class Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private List<File> fileList;
+
 	/**
 	 * 任务的赞
 	 */

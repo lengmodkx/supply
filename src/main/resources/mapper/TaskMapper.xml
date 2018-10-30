@@ -9,7 +9,6 @@
 		<result column="start_time" property="startTime" jdbcType="BIGINT" />
 		<result column="end_time" property="endTime" jdbcType="BIGINT" />
 		<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-		<result column="remind" property="remind" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
 		<result column="priority" property="priority" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER" />
@@ -25,13 +24,10 @@
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="remind_time" property="remindTime" jdbcType="BIGINT"/>
-		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
-		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 
@@ -44,9 +40,6 @@
 		<!--查询子任务-->
 		<collection property="taskList" column="task_id" javaType="java.util.ArrayList"
 					select="com.art1001.supply.mapper.task.TaskMapper.findSubLevelTask"/>
-
-		<collection property="taskFileList" column="task_id" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.task.TaskFileMapper.findTaskFileAllList"/>
 		<!--查询标签-->
 		<collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
@@ -63,7 +56,6 @@
 		<result column="start_time" property="startTime" jdbcType="BIGINT" />
 		<result column="end_time" property="endTime" jdbcType="BIGINT" />
 		<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-		<result column="remind" property="remind" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
 		<result column="priority" property="priority" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER" />
@@ -79,13 +71,10 @@
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="remind_time" property="remindTime" jdbcType="BIGINT"/>
-		<result column="repetition_time" property="repetitionTime" jdbcType="BIGINT"/>
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
-		<result column="task_calendar" property="taskCalendar" jdbcType="BIGINT"/>
 		<result column="task_uids" property="memberId" jdbcType="CLOB" />
 		<!--查询标签-->
 		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
@@ -160,7 +149,6 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
-		prm_task.remind_time,
 		prm_task.repetition_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
@@ -191,7 +179,6 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
-		prm_task.remind_time,
 		prm_task.repetition_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
@@ -208,7 +195,6 @@
 		t.start_time,
 		t.end_time,
 		t.`repeat`,
-		t.remind,
 		t.remarks,
 		t.priority,
 		t.`level`,
@@ -224,7 +210,6 @@
 		t.task_del,
 		t.create_time,
 		t.update_time,
-		t.remind_time,
 		t.repetition_time,
 		t.fabulous_count,
 		t.privacy_pattern,
@@ -291,7 +276,7 @@
 	</delete>
 
 	<insert id="saveTaskBatch">
-		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
+		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, repetition_time, fabulous_count, privacy_pattern, other, `order`, task_calendar, task_uids) values
 		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
 		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
 		</foreach>
@@ -366,9 +351,6 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
-			<if test="remindTime != null">
-			remind_time,
-			</if>
 			<if test="repetitionTime != null">
 			repetition_Time,
 			</if>
@@ -412,9 +394,6 @@
 			</if>
 			<if test="repeat != null and repeat != ''">
 				#{repeat},
-			</if>
-			<if test="remind != null and remind != ''">
-				#{remind},
 			</if>
 			<if test="remarks != null and remarks != ''">
 				#{remarks},
@@ -505,9 +484,6 @@
 			<if test="repeat != null and repeat != ''">
 				`repeat` = #{repeat},
 			</if>
-			<if test="remind != null and remind != ''">
-				`remind` = #{remind},
-			</if>
 			<if test="remarks != null">
 				`remarks` = #{remarks},
 			</if>
@@ -546,9 +522,6 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
-			</if>
-			<if test="remindTime != null">
-				remind_time = #{remindTime},
 			</if>
 			<if test="repetitionTime != null">
 				repetition_Time = #{repetitionTime},

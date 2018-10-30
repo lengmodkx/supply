@@ -61,7 +61,6 @@
 				project_id,
 				create_time,
 				update_time,
-				lable,
 				relation_del,
 				`order`,
 				creator

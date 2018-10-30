@@ -225,6 +225,7 @@ public class ProjectApi {
             object.put("munus",taskMenu);
             object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));
             object.put("project",project);
+            object.put("groupId",groupId);
         } catch (Exception e) {
             throw new AjaxException(e);
         }

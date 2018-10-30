@@ -104,13 +104,13 @@ public class Timer {
         tagService.remove(new QueryWrapper<Tag>().notInSql("project_id","select project_id from prm_project"));
     }
 
-//    /**
-//     * 每天0点2分 清除(任务,文件,分享,日程) 的残留信息
-//     */
+    /**
+     * 每天0点2分 清除(任务,文件,分享,日程) 的残留信息
+     */
 //    @Scheduled(cron = "0 2 0 * * ?")
 //    public void clearItemInfo(){
 //        //清除收藏数据
-//        int result = publicCollectService.clearCollect();
+//        int result = publicCollectService.remove(new QueryWrapper<PublicCollect>().notInSql())
 //
 //        //清除日志数据
 //        int result1 = logService.clearLog();

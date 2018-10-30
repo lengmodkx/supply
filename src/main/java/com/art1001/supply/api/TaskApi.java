@@ -150,14 +150,14 @@ public class TaskApi {
     @Push(value = PushType.A1,type = 1)
     @PostMapping
     public JSONObject addTask(@RequestParam("taskName") String taskName,
-                              @RequestParam("memberIds") String memberIds,
+                              @RequestParam("taskJoins") String taskJoins,
                               @RequestParam("privacyPattern") Integer privacyPattern,
                               @RequestParam("projectId") String projectId,
                               @RequestParam(value = "executor",required = false) String executor,
                               @RequestParam(value = "startTime",required = false) String startTime,
                               @RequestParam(value = "endTime",required = false)String endTime,
-                              @RequestParam(value = "repeat",required = false)String repeat,
-                              @RequestParam(value = "priority",required = false)String priority,
+                              @RequestParam(value = "repeat",required = false,defaultValue = "不重复")String repeat,
+                              @RequestParam(value = "priority",required = false,defaultValue = "普通")String priority,
                               @RequestParam(value = "tagIds",required = false)String tagIds,
                               @RequestParam(value = "taskMenuId")String taskMenuId,
                               @RequestParam(value = "taskGroupId")String taskGroupId,
@@ -167,7 +167,7 @@ public class TaskApi {
         try {
             Task task = new Task();
             task.setTaskName(taskName);
-            task.setTaskUIds(memberIds);
+            task.setTaskUIds(taskJoins);
             task.setTaskMenuId(taskMenuId);
             task.setProjectId(projectId);
             task.setTaskGroupId(taskGroupId);
@@ -201,14 +201,12 @@ public class TaskApi {
             object.put("result",1);
             object.put("msg","创建成功!");
             object.put("data",task);
-            object.put("msgId",projectId);
             object.put("id",task.getTaskId());
             object.put("name",task.getTaskName());
         }catch (Exception e){
             log.error("创建任失败:",e);
             throw new AjaxException("系统异常任务创建失败!",e);
         }
-
         return object;
     }
 
