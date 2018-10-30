@@ -29,7 +29,7 @@ public class File extends Model<File> {
     /**
      * file_id
      */
-    @TableId(value = "file_id",type = IdType.INPUT)
+    @TableId(value = "file_id",type = IdType.UUID)
     private String fileId;
 
 

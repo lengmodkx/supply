@@ -180,7 +180,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         // 项目id
         file.setProjectId(projectId);
         file.setParentId(projectFile.getFileId());
-        file.setMemberId(ShiroAuthenticationManager.getUserId());
+        file.setMemberId(userEntity.getUserId());
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         file.setLevel(1);
@@ -190,26 +190,33 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
-        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
         return projectFile.getFileId();
     }
 
     @Override
     public File createFolder(String projectId, String parentId, String fileName) {
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         // 存库
         File file = new File();
         file.setFileName(fileName);
         // 设置父级id
         file.setParentId(parentId);
+        file.setLevel(getOne(new QueryWrapper<File>().eq("file_id",parentId)).getLevel()+1);
         // 项目id
         file.setProjectId(projectId);
-        file.setMemberId(ShiroAuthenticationManager.getUserId());
+        file.setMemberId(userEntity.getUserId());
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         // 设置目录
         file.setCatalog(1);
         save(file);
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setIsMaster(1);
+        fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersionService.save(fileVersion);
         return file;
     }
 

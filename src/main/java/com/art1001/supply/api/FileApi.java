@@ -388,12 +388,9 @@ public class FileApi {
     /**
      * 下载
      * @param fileId 文件id
-     * @param isPublic 下载的是不是模型文件
      */
     @GetMapping("/{fileId}/download")
-    public void downloadFile(@PathVariable(value = "fileId") String fileId,
-                             @RequestParam(value = "isPublic",defaultValue = "false") boolean isPublic,
-                             HttpServletResponse response){
+    public void downloadFile(@PathVariable(value = "fileId") String fileId, HttpServletResponse response){
         try {
             File file = fileService.findFileById(fileId);
             String fileName = file.getFileName();

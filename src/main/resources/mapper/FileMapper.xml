@@ -182,6 +182,7 @@
 		from prm_file f
 		left join prm_file_version v on f.file_id = v.file_id
 		where parent_id = #{parentId} and public_lable = 0 and v.is_master = 1
+		order by `catalog` desc,create_time asc
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
