@@ -19,6 +19,13 @@ public class TaskStatusConstant {
     public static final String END = "任务截止时";
     public static final String CUSTOM = "今天的任务";
 
+    public static final String NO_REPEAT = "不重复";
+    public static final String DAY_REPEAT = "每天重复";
+    public static final String WEEK_REPEAT = "每周重复";
+    public static final String MONTH_REPEAT = "每月重复";
+    public static final String YEAR_REPEAT = "每年重复";
+    public static final String WORKING_DAY_REPEAT = "工作日重复";
+
     public static final String DAY = "天";
     public static final String MINUTE = "分钟";
     public static final String HOUR = "小时";

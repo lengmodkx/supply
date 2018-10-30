@@ -13,9 +13,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.quartz.MyJob;
 import com.art1001.supply.quartz.QuartzService;
-import com.art1001.supply.quartz.job.Test;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
@@ -34,7 +32,6 @@ import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.JobDataMap;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
@@ -241,10 +238,7 @@ public class TaskApi {
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
-            Task task = new Task();
-            task.setTaskId(taskId);
-            task.setTaskStatus("1");
-            taskService.updateById(task);
+            taskService.completeTask(taskId);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
@@ -391,9 +385,9 @@ public class TaskApi {
             Task task = new Task();
             task.setTaskId(taskId);
             if(StringUtils.isNotEmpty(endTime)){
-                task.setStartTime(DateUtils.strToLong(endTime));
+                task.setEndTime(DateUtils.strToLong(endTime));
             }else{
-                task.setStartTime(null);
+                task.setEndTime(null);
             }
             taskService.updateById(task);
             object.put("result",1);
@@ -425,16 +419,6 @@ public class TaskApi {
             task.setTaskId(taskId);
             task.setRepeat(repeat);
             taskService.updateById(task);
-            //更新成功后添加到定时任务
-            MyJob myJob = new MyJob();
-            myJob.setJobName("111112121113");
-            myJob.setCronTime("0/3 * * * * ?");
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("users","123");
-            myJob.setJobDataMap(jobDataMap);
-            myJob.setJobGroupName("task");
-            myJob.setTriggerGroupName("task");
-            quartzService.addJobByCronTrigger(Test.class,myJob);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);

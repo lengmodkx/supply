@@ -485,4 +485,10 @@ public interface TaskService extends IService<Task> {
 	 * @param users 成员id 信息
 	 */
 	void updateRemindUsers(String taskId, String users) throws SchedulerException;
+
+	/**
+	 * 完成任务
+	 * @param taskId 任务id
+	 */
+	void completeTask(String taskId);
 }

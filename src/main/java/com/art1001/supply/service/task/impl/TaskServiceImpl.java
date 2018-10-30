@@ -1389,6 +1389,28 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 完成任务
+     * @param taskId 任务id
+     */
+    @Override
+    public void completeTask(String taskId) {
+        Task task = taskMapper.selectById(taskId);
+        if(TaskStatusConstant.DAY_REPEAT.equals(task.getRepeat())){
+            
+        } else if (TaskStatusConstant.WEEK_REPEAT.equals(task.getRepeat())){
+
+        } else if (TaskStatusConstant.MONTH_REPEAT.equals(task.getRepeat())){
+
+        } else if (TaskStatusConstant.YEAR_REPEAT.equals(task.getRepeat())){
+
+        } else if (TaskStatusConstant.WORKING_DAY_REPEAT.equals(task.getRepeat())){
+
+        } else{
+
+        }
+    }
+
+    /**
      * 生成任务提醒的规则
      * @param taskId 任务id
      * @param remindType 提醒类型
