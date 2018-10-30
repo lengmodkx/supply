@@ -100,13 +100,13 @@ public class Task extends Model<Task> {
 	 * 执行者名字
 	 */
 	@TableField(exist = false)
-	private String memberName;
+	private String executorName;
 
 	/**
 	 * 执行者头像
 	 */
 	@TableField(exist = false)
-	private String memberImg;
+	private String executorImg;
 
 	/**
 	 * 参与者
@@ -170,7 +170,7 @@ public class Task extends Model<Task> {
 	 */
 	@TableField("`order`")
 	private Integer order;
-	
+
 	/**
 	 * 该任务所在的项目
 	 */

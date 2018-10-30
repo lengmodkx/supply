@@ -8,7 +8,6 @@ import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
@@ -117,9 +116,6 @@ public class TaskApi {
             //判断当前用户有没有收藏该任务
             int collectCount = publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId()));
             object.put("collect",collectCount);
-            //查询出该任务所在的菜单信息
-            Relation relation = relationService.getOne(new QueryWrapper<Relation>().eq("project_id",taskInfo.getProjectId()));
-            object.put("relation",relation);
             //查询出任务的关联信息
             List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
             object.put("bindings",bindings);
