@@ -348,15 +348,7 @@ public class TaskApi {
                                           @RequestParam(value = "startTime")String startTime){
         JSONObject object = new JSONObject();
         try{
-            Task task = new Task();
-            task.setTaskId(taskId);
-            if(StringUtils.isNotEmpty(startTime)){
-                task.setStartTime(DateUtils.strToLong(startTime));
-            }else{
-                task.setStartTime(null);
-            }
-
-            taskService.updateById(task);
+            taskService.updateStartTime(taskId,startTime);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);

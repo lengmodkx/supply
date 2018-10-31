@@ -1272,6 +1272,28 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskMapper.findUidsByTaskId(taskId);
     }
 
+    /**
+     * 更新任务的开始时间
+     * @param taskId 任务id
+     * @param startTime 新的开始时间
+     */
+    @Override
+    public void updateStartTime(String taskId, String startTime) {
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setStartTime(DateUtils.strToLong(startTime));
+        taskMapper.updateById(task);
+        List<TaskRemindRule> taskRemindRules = taskRemindRuleService.listRuleAndQuartz(taskId);
+        taskRemindRules.forEach(item -> {
+            String cron = remindCron(taskId, item.getRemindType(), item.getNum(), item.getTimeType(), item.getCustomTime());
+            try {
+                quartzService.modifyJobTime(item.getQuartzInfo().getJobName(),"task",cron);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
 
     /**
      * 永久删除多个任务

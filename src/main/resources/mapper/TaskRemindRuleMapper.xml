@@ -14,7 +14,7 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.TaskRemindRule">
-        <id column="id" property="id" />
+        <id column="qid" property="id" />
         <result column="task_id" property="taskId" />
         <result column="remind_type" property="remindType" />
         <result column="num" property="num" />
