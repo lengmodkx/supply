@@ -147,7 +147,7 @@ public class TagApi {
             jsonObject.put("msg", "添加成功");
         } catch (ServiceException e){
             jsonObject.put("result",0);
-            jsonObject.put("msg","该标签已存在!");
+            jsonObject.put("msg",e.getMessage());
         } catch (Exception e) {
             log.error("添加标签异常:", e);
             throw new AjaxException(e);
@@ -254,16 +254,14 @@ public class TagApi {
             tag.setTagId(tagId);
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
-            try {
-                tagService.updateTag(tag);
-            } catch (Exception e){
-                jsonObject.put("msg",e.getMessage());
-                jsonObject.put("result",0);
-                return jsonObject;
-            }
+            tagService.updateTag(tag);
             jsonObject.put("result",1);
             jsonObject.put("data",tag);
-        }catch (Exception e){
+        } catch (ServiceException e){
+            jsonObject.put("msg",e.getMessage());
+            jsonObject.put("result",0);
+            return jsonObject;
+        } catch (Exception e){
             log.error("系统异常,更新失败:",e);
             throw new AjaxException(e);
         }
