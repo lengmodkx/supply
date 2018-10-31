@@ -238,11 +238,11 @@ public class TaskApi {
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
-            taskService.completeTask(taskId);
+            object.put("data",taskService.completeTask(taskId));
+            object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("status",1));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
