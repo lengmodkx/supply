@@ -1,14 +1,18 @@
 package com.art1001.supply.entity.template;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * 模板Entity
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class TemplateData extends Model<TemplateData> {
 	
 	private static final long serialVersionUID = 1L;

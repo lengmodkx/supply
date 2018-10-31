@@ -657,7 +657,7 @@ public class FileApi {
         try {
             //查询出该文件的所有参与者id
             String uids = fileService.findJoinId(fileId);
-            List<UserEntity> joinInfo = userService.list(new QueryWrapper<UserEntity>().in("u_id",uids.split(",")));
+            List<UserEntity> joinInfo = userService.list(new QueryWrapper<UserEntity>().in("u_id", (Object[]) uids.split(",")));
             List<UserEntity> projectMembers = userService.findProjectAllMember(projectId);
             //比较项目全部成员集合 和 文件参与者集合的差集
             List<UserEntity> reduce1 = projectMembers.stream().filter(item -> !joinInfo.contains(item)).collect(Collectors.toList());

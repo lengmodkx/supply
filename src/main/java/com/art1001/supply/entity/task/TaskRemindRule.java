@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -18,6 +20,8 @@ import java.io.Serializable;
  * @since 2018-10-25
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName("prm_task_remind")
 public class TaskRemindRule extends Model<TaskRemindRule> {
 

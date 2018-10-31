@@ -1,13 +1,19 @@
 package com.art1001.supply.entity.user;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * Entity
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
+@TableName(value = "prm_user_news")
 public class UserNews extends Model<UserNews> {
 	
 	private static final long serialVersionUID = 1L;

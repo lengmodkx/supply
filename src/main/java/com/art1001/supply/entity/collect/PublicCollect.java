@@ -1,17 +1,21 @@
 package com.art1001.supply.entity.collect;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * collectEntity
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName(value = "prm_public_collect")
 public class PublicCollect extends Model<PublicCollect> {
 	
