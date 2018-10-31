@@ -8,9 +8,6 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-@ComponentScan(basePackages ="com.art1001.supply")
-@ServletComponentScan
 @SpringBootApplication
 @MapperScan("com.art1001.supply.mapper")
 @EnableScheduling
