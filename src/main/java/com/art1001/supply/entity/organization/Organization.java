@@ -1,17 +1,21 @@
 package com.art1001.supply.entity.organization;
-import java.io.Serializable;
-import java.util.List;
-
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * organizationEntity
  */
 @Data
 @ToString
+@EqualsAndHashCode(callSuper = false)
+@TableName(value = "prm_organization")
 public class Organization extends Model<Organization> {
 	
 	private static final long serialVersionUID = 1L;

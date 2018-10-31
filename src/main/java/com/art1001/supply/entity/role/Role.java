@@ -3,6 +3,9 @@ package com.art1001.supply.entity.role;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -15,6 +18,8 @@ import java.sql.Timestamp;
  *
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName(value = "tb_role")
 public class Role extends Model<Role> {
 

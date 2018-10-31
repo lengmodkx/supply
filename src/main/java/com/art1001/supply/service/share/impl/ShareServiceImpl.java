@@ -1,6 +1,4 @@
 package com.art1001.supply.service.share.impl;
-
-import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
@@ -8,7 +6,6 @@ import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
-import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.user.UserService;
@@ -35,12 +32,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 
 	@Resource
     private LogService logService;
-
-	@Resource
-	private Base base;
-
-	@Resource
-	private PublicCollectService publicCollectService;
 
 	/**
 	 * 查询分页share数据

@@ -2,7 +2,6 @@ package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -127,10 +126,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /** quartz操作接口 */
     @Resource
     private QuartzService quartzService;
-
-    /** 公共封装的方法 */
-    @Resource
-    private Base base;
 
 	/**
 	 * 通过taskId获取单条task数据

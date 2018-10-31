@@ -7,6 +7,8 @@ import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.util.List;
  * tagEntity
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName("prm_tag")
 public class Tag extends Model<Tag> {
 	

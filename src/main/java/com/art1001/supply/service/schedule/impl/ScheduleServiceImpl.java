@@ -1,9 +1,7 @@
 package com.art1001.supply.service.schedule.impl;
 
-import com.art1001.supply.base.Base;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
@@ -19,7 +17,6 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,12 +39,6 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
 	@Resource
 	private LogService logService;
-
-	@Resource
-	private Base base;
-
-	@Resource
-	private SimpMessagingTemplate messagingTemplate;
 	/**
 	 * 查询分页schedule数据
 	 * 
@@ -77,7 +68,6 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 	 */
 	@Override
 	public void deleteScheduleById(String id){
-		base.deleteItemOther(id,BindingConstants.BINDING_SCHEDULE_NAME);
 		scheduleMapper.deleteScheduleById(id);
 	}
 

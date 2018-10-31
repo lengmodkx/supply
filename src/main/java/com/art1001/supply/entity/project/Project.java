@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Data
 @ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName("prm_project")
 public class Project extends Model<Project> {
 

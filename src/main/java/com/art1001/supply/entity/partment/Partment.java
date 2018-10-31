@@ -1,16 +1,20 @@
 package com.art1001.supply.entity.partment;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * partmentEntity
  */
 @Data
 @ToString
+@EqualsAndHashCode(callSuper = false)
+@TableName(value = "prm_parment")
 public class Partment extends Model<Partment> {
 	
 	private static final long serialVersionUID = 1L;

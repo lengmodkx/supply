@@ -1,6 +1,8 @@
 package com.art1001.supply.entity.user;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.util.Date;
  * @date 2016年7月12日 下午2:29:40
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class UserSessionEntity extends UserEntity implements Serializable {
 

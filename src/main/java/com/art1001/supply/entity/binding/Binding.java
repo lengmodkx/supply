@@ -1,20 +1,21 @@
 package com.art1001.supply.entity.binding;
 
-import java.io.Serializable;
-
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * Entity
  */
 @Data
 @ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName(value = "prm_binding")
 public class Binding extends Model<Binding> {
 	

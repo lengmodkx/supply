@@ -5,6 +5,8 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
  * scheduleEntity
  */
 @Data
+@ToString
+@EqualsAndHashCode(callSuper = false)
 @TableName("prm_schedule")
 public class Schedule extends Model<Schedule> {
 	
