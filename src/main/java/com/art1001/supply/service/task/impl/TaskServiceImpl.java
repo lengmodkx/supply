@@ -1411,6 +1411,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
+        //先更新任务状态
+        Task completeTask = new Task();
+        completeTask.setTaskStatus("完成");
+        completeTask.setTaskId(taskId);
+        taskMapper.updateById(completeTask);
+
         Task task = taskMapper.selectById(taskId);
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
