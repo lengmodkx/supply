@@ -185,7 +185,6 @@
     <delete id="deleteTagByTagId" parameterType="java.lang.Long">
 		delete from
 		prm_tag where tag_id = #{tagId}
-		and project_id = #{projectId}
 	</delete>
 
     <insert id="saveTag" keyProperty="tagId" useGeneratedKeys="true" parameterType="com.art1001.supply.entity.tag.Tag">
