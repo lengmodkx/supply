@@ -63,6 +63,9 @@ import java.util.stream.Collectors;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
+    @Resource
+    private TaskService taskService;
+
     /** taskMapper接口*/
     @Resource
     private TaskMapper taskMapper;
@@ -142,6 +145,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param task task信息
      * @param taskRemindRules 提醒规则
      */
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void saveTask(Task task, String taskRemindRules) {
         //设置该任务的创建时间
