@@ -155,7 +155,6 @@ public class File extends Model<File> {
      * 文件隐私模式 0所有成员可见，1参与者可见
      */
     private int filePrivacy;
-
     @Override
     protected Serializable pkVal() {
         return this.fileId;
