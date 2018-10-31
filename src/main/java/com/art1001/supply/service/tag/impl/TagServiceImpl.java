@@ -240,7 +240,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	@Override
 	public List<Tag> findTagByProjectIdWithAllInfo(String projectId) {
 		//查询出项目下的所有标签
-		List<Tag> tagList = tagMapper.findTagByProjectIdWithAllInfo(projectId);
-		return tagList;
+		return tagMapper.findTagByProjectIdWithAllInfo(projectId);
 	}
+
 }
