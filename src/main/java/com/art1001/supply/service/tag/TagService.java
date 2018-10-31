@@ -1,13 +1,14 @@
 package com.art1001.supply.service.tag;
 
-import java.util.List;
-import java.util.Map;
-
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -43,7 +44,7 @@ public interface TagService extends IService<Tag> {
 	 * 
 	 * @param tag
 	 */
-	public void updateTag(Tag tag);
+	public void updateTag(Tag tag) throws ServiceException;
 
 	/**
 	 * 保存tag数据

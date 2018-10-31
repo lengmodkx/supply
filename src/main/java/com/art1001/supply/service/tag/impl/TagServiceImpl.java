@@ -71,7 +71,10 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	 * @param tag
 	 */
 	@Override
-	public void updateTag(Tag tag){
+	public void updateTag(Tag tag) throws ServiceException{
+		if(tagMapper.findCountByTagName(tag.getProjectId(), tag.getTagName()) > 0){
+			throw new ServiceException("标签名称已存在,无法修改!");
+		}
 		tagMapper.updateTag(tag);
 	}
 

@@ -243,15 +243,24 @@ public class TagApi {
      */
     @PutMapping("/{tagId}")
     public JSONObject updateTag(@PathVariable Long tagId,
+                                @RequestParam(value = "projectId") String projectId,
                                 @RequestParam(value = "tagName",required = false) String tagName,
-                                @RequestParam(value = "bgColor",required = false) String bgColor){
+                                @RequestParam(value = "bgColor",required = false) String bgColor
+                                ){
         JSONObject jsonObject = new JSONObject();
         try{
             Tag tag = new Tag();
+            tag.setProjectId(projectId);
             tag.setTagId(tagId);
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
-            tagService.updateTag(tag);
+            try {
+                tagService.updateTag(tag);
+            } catch (Exception e){
+                jsonObject.put("msg",e.getMessage());
+                jsonObject.put("result",0);
+                return jsonObject;
+            }
             jsonObject.put("result",1);
             jsonObject.put("data",tag);
         }catch (Exception e){
