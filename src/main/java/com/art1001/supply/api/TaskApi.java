@@ -291,6 +291,7 @@ public class TaskApi {
             taskService.orderTask(taskIds);
             object.put("result",1);
             object.put("msg","更新成功");
+            object.put("msgId",projectId);
             object.put("data",taskIds.split(","));
         }catch(Exception e){
             throw new AjaxException(e);
