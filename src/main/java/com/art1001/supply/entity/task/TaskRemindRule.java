@@ -28,7 +28,7 @@ public class TaskRemindRule extends Model<TaskRemindRule> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("")
+    @TableId("id")
     private String id;
 
     /**

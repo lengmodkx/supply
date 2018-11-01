@@ -36,7 +36,6 @@ public interface TaskService extends IService<Task> {
 	 * 保存task数据
 	 * @param task 其他信息
 	 * @param taskRemindRules 提醒规则
-	 * @param users 要提醒的成员信息
 	 */
 	void saveTask(Task task, String taskRemindRules);
 
