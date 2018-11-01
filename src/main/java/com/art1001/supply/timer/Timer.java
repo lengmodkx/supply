@@ -102,7 +102,7 @@ public class Timer {
     private static final String SHARE_SQL = "SELECT id FROM prm_share";
     private static final String SCHEDULE_SQL = "SELECT schedule_id from prm_schedule";
 
-    //@Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 1 0 * * ?")
     public void clearProjectInfo(){
         taskService.remove(new QueryWrapper<Task>().notInSql("project_id", PROJECT_SQL));
         log.info("删除没有项目的任务信息");
@@ -132,7 +132,7 @@ public class Timer {
     /**
      * 清除任务的quartz 信息
      */
-    @Scheduled(cron = "30/40 * * * * ?")
+    @Scheduled(cron = "0 3 0 * * ?")
     public void clearRemindInfo(){
         List<TaskRemindRule> reminds = taskRemindRuleService.list(new QueryWrapper<TaskRemindRule>().select("id").notInSql("task_id", TASK_SQL));
         List<String> remindIds = new ArrayList<>();
@@ -161,7 +161,7 @@ public class Timer {
     /**
      * 每天0点5分 清除(任务,文件,分享,日程) 的残留信息
      */
-    @Scheduled(cron = "10/30 * * * * ?")
+    @Scheduled(cron = "0 5 0 * * ?")
     public void clearItemInfo(){
         //清除收藏数据
         publicCollectService.remove(new QueryWrapper<PublicCollect>()
