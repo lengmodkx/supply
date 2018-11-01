@@ -39,10 +39,10 @@ public class PushAspect {
     public void pushAfter(JoinPoint joinPoint,JSONObject object){
         //先写入操作日志
         Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
-
-        if(push.type()==0){//只需要推送，不需要日志
+        //只需要推送，不需要日志
+        if(push.type()==0){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
-        }else if (push.type()==1){ //既需要推送也需要日志
+        } else if (push.type()==1){ //既需要推送也需要日志
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
             Log log = new Log();
             log.setPublicId(object.getString("id"));

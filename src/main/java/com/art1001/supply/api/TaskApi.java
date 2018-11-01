@@ -278,6 +278,28 @@ public class TaskApi {
     }
 
     /**
+     * 排列菜单下的任务
+     * @param projectId 项目id
+     * @param taskIds 任务ids
+     * @return
+     */
+    @Push(value = PushType.A27)
+    @PutMapping("/order")
+    public JSONObject order(@RequestParam("projectId") String projectId, @RequestParam("taskIds") String taskIds){
+        JSONObject object = new JSONObject();
+        try{
+            taskService.orderTask(taskIds);
+            object.put("result",1);
+            object.put("msg","更新成功");
+            object.put("msgId",projectId);
+            object.put("data",taskIds.split(","));
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
      * 更新任务名称
      * @param taskId 任务id
      * @param taskName 任务名称

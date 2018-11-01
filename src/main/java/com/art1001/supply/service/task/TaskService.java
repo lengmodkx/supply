@@ -498,4 +498,10 @@ public interface TaskService extends IService<Task> {
 	 * @param startTime 新的开始时间
 	 */
     void updateStartTime(String taskId, String startTime);
+
+	/**
+	 * 任务排序
+	 * @param taskIds 排序后的所有任务id
+	 */
+	void orderTask(String taskIds);
 }

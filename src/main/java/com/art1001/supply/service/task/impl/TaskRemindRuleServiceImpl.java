@@ -2,6 +2,7 @@ package com.art1001.supply.service.task.impl;
 
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.mapper.task.TaskRemindRuleMapper;
+import com.art1001.supply.service.quartz.QuartzInfoService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class TaskRemindRuleServiceImpl extends ServiceImpl<TaskRemindRuleMapper,
 
     @Resource
     private TaskRemindRuleMapper taskRemindRuleMapper;
+
+    @Resource
+    private QuartzInfoService quartzInfoService;
 
     /**
      * 查询出某个任务的所有规则 以及quartz定时信息
