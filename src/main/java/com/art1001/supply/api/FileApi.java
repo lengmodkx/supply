@@ -640,7 +640,7 @@ public class FileApi {
             if(StringUtils.isEmpty(fileId)){
                 fileId = fileService.findParentId(projectId);
             }
-            List<File> fileList = fileService.list(new QueryWrapper<File>().eq("file_id", fileId).eq("catalog", "1").orderByDesc("create_time"));
+            List<File> fileList = fileService.list(new QueryWrapper<File>().eq("parent_id", fileId).eq("catalog", "1").orderByDesc("create_time"));
             jsonObject.put("data",fileList);
             jsonObject.put("result",1);
         } catch (Exception e){
