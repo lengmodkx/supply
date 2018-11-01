@@ -52,7 +52,7 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @param catalog 要查询的是否是目录
 	 * @return
 	 */
-	List<File> findChildFile(@Param("parentId") String parentId, String catalog);
+	List<File> findChildFile(@Param("parentId") String parentId, @Param("catalog") String catalog);
 
 	/**
 	 * 查新该目录下的名称是否存在
