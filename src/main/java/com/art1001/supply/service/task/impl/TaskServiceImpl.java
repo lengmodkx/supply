@@ -1291,7 +1291,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 e.printStackTrace();
             }
         });
+    }
 
+    /**
+     * 重新排序任务
+     * @param taskIds 排序后的所有任务id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void orderTask(String taskIds) {
+        String[] split = taskIds.split(",");
+        int index = 0;
+        List<Task> tasks = new ArrayList<>();
+        for (String id : split) {
+            index++;
+            Task task = new Task();
+            task.setTaskId(id);
+            task.setOrder(index);
+            task.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateById(task);
+        }
     }
 
     /**
