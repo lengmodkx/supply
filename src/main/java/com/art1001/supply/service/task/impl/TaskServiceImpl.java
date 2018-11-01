@@ -182,9 +182,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             myJob.setJobDataMap(jobDataMap);
             myJob.setCronTime(remindCron(item.getTaskId(), item.getRemindType(), item.getNum(), item.getTimeType(), item.getCustomTime()));
             quartzService.addJobByCronTrigger(RemindJob.class,myJob);
+            //提醒规则存库
+            taskRemindRuleService.save(item);
         });
-        //保存任务的提醒规则
-        taskRemindRuleService.saveBatch(remindList);
     }
 
     /**
