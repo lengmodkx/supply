@@ -96,10 +96,10 @@ public class FileApi {
      * @return
      */
     @GetMapping
-    public JSONObject fileList(@RequestParam(value = "fileId") String fileId, @RequestParam(value = "catalog",required = false) String catalog) {
+    public JSONObject fileList(@RequestParam(value = "fileId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<File> fileList = fileService.findChildFile(fileId,catalog);
+            List<File> fileList = fileService.findChildFile(fileId);
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
@@ -505,7 +505,7 @@ public class FileApi {
                     file.setParentId(folderId);
                     String fId = file.getFileId();
                     fileService.save(file);
-                    List<File> childFile = fileService.findChildFile(fId,null);
+                    List<File> childFile = fileService.findChildFile(fId);
                     if (childFile.size() > 0) {
                         Map<String, List<File>> map = new HashMap<>(10);
                         map.put(file.getFileId(), childFile);
@@ -542,7 +542,7 @@ public class FileApi {
                     // 存库
                     fileService.save(file);
                     // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(fId,null);
+                    List<File> childFile = fileService.findChildFile(fId);
                     fileMap.put(file.getFileId(), childFile);
                 } else { //文件
                     this.copyFileSave(file, parentId);
@@ -630,13 +630,18 @@ public class FileApi {
     }
 
     /**
-     * 获取该文件夹下的 所有文件和子文件夹
+     * 获取所有文件夹/子文件夹
      */
-    @GetMapping("/{fileId}/child")
-    public JSONObject findChildFile(@RequestParam(value = "projectId") String projectId, @PathVariable(value = "fileId") String fileId){
+    @GetMapping("/{projectId}/folder")
+    public JSONObject findChildFile(@PathVariable(value = "projectId") String projectId,
+                                    @RequestParam(value = "fileId",required = false) String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.findChildFile(fileId,null));
+            if(StringUtils.isEmpty(fileId)){
+                fileId = fileService.findParentId(projectId);
+            }
+            List<File> fileList = fileService.list(new QueryWrapper<File>().eq("file_id", fileId).eq("catalog", "1").orderByDesc("create_time"));
+            jsonObject.put("data",fileList);
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常!",e);

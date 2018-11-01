@@ -49,10 +49,9 @@ public interface FileMapper extends BaseMapper<File> {
 	/**
 	 * 查询出该文件夹下的所有子文件夹及文件
 	 * @param parentId 父级id，顶级目录为 0
-	 * @param catalog 要查询的是否是目录
 	 * @return
 	 */
-	List<File> findChildFile(@Param("parentId") String parentId, String catalog);
+	List<File> findChildFile(@Param("parentId") String parentId);
 
 	/**
 	 * 查新该目录下的名称是否存在

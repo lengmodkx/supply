@@ -46,10 +46,9 @@ import java.util.List;
     /**
      * 查询当前文件目录下的文件夹及文件
      * @param parentId 父级id，顶级目录为 0
-	 * @param catalog 返回的是否是文件夹
      * @return List<File> 返回的文件集合
      */
-	List<File> findChildFile(String parentId, String catalog);
+	List<File> findChildFile(String parentId);
 
 	/**
 	 * 移动文件
