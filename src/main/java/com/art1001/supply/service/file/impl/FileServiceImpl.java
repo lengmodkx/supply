@@ -223,11 +223,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     /**
      * 查询出该文件夹下的所有子文件夹及文件
      * @param parentId 父级id，顶级目录为 0
+     * @param catalog 要查询的是否是目录
      * @return
      */
     @Override
-    public List<File> findChildFile(String parentId) {
-        return fileMapper.findChildFile(parentId);
+    public List<File> findChildFile(String parentId, String catalog) {
+        return fileMapper.findChildFile(parentId,catalog);
     }
 
     /**
@@ -408,7 +409,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> findProjectFile(String projectId, String fileId) {
         List<File> fileList = new ArrayList<>();
         if("0".equals(fileId)){
-            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId));
+            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId),null);
         } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
             //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
             fileList = fileService.findPublicFile(fileService.findFileId());

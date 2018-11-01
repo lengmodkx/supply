@@ -96,10 +96,10 @@ public class FileApi {
      * @return
      */
     @GetMapping
-    public JSONObject fileList(@RequestParam(value = "fileId") String fileId) {
+    public JSONObject fileList(@RequestParam(value = "fileId") String fileId, @RequestParam(value = "catalog",required = false) String catalog) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<File> fileList = fileService.findChildFile(fileId);
+            List<File> fileList = fileService.findChildFile(fileId,catalog);
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
@@ -505,7 +505,7 @@ public class FileApi {
                     file.setParentId(folderId);
                     String fId = file.getFileId();
                     fileService.save(file);
-                    List<File> childFile = fileService.findChildFile(fId);
+                    List<File> childFile = fileService.findChildFile(fId,null);
                     if (childFile.size() > 0) {
                         Map<String, List<File>> map = new HashMap<>(10);
                         map.put(file.getFileId(), childFile);
@@ -542,7 +542,7 @@ public class FileApi {
                     // 存库
                     fileService.save(file);
                     // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(fId);
+                    List<File> childFile = fileService.findChildFile(fId,null);
                     fileMap.put(file.getFileId(), childFile);
                 } else { //文件
                     this.copyFileSave(file, parentId);
@@ -636,7 +636,7 @@ public class FileApi {
     public JSONObject findChildFile(@RequestParam(value = "projectId") String projectId, @PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.findChildFile(fileId));
+            jsonObject.put("data",fileService.findChildFile(fileId,null));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常!",e);
