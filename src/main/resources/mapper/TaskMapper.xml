@@ -797,7 +797,7 @@
 	</select>
 
 	<!-- 查询某个用户的参与的所有任务 并且排序 -->
-	<select id="findTaskByUserAndTime">
+	<select id="findTaskByUserAndTime" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
 		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">

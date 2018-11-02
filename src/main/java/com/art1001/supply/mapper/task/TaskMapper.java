@@ -1,15 +1,15 @@
 package com.art1001.supply.mapper.task;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 /**
  * taskmapper接口
