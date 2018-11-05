@@ -335,6 +335,22 @@ public class FileApi {
         return jsonObject;
     }
 
+    /**
+     * 判断该文件夹下有没有子文件夹
+     * @return
+     */
+    @GetMapping("{fileId}/check/folder")
+    public JSONObject checkChildFolder(@PathVariable(value = "fileId") String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",fileService.checkChildFolder(fileId));
+        } catch (Exception e) {
+            log.error("系统异常,查询失败!", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
     /**
      * 删除文件

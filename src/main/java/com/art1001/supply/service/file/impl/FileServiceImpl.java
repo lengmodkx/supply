@@ -495,4 +495,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public String findParentId(String projectId) {
         return fileMapper.selectParentId(projectId);
     }
+
+    /**
+     * 检查该目录下是否有子文件夹
+     * @param fileId 目录id
+     */
+    @Override
+    public int checkChildFolder(String fileId) {
+        return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("catalog",1)) > 0 ? 1 : 0;
+    }
 }

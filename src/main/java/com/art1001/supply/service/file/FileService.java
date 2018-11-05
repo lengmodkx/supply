@@ -168,4 +168,10 @@ import java.util.List;
 	 * @return
 	 */
 	String findParentId(String projectId);
+
+	/**
+	 * 检查该目录下是否有子文件夹
+	 * @param fileId 目录id
+	 */
+    int checkChildFolder(String fileId);
 }
