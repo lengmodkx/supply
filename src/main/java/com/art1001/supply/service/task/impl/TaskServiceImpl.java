@@ -1294,15 +1294,22 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
-     * 重新排序任务
-     * @param taskIds 排序后的所有任务id
+     * 任务排序
+     * @param taskIds 排序后的菜单下所有任务id
+     * @param taskId 拖动的任务id
+     * @param newMenu 推动到的任务菜单id
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void orderTask(String taskIds) {
+    public void orderTask(String taskIds, String taskId, String newMenu) {
+        if(StringUtils.isNotEmpty(newMenu)){
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setTaskMenuId(newMenu);
+            taskMapper.updateById(task);
+        }
         String[] split = taskIds.split(",");
         int index = 0;
-        List<Task> tasks = new ArrayList<>();
         for (String id : split) {
             index++;
             Task task = new Task();

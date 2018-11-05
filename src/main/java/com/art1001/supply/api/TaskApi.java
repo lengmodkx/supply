@@ -283,12 +283,16 @@ public class TaskApi {
      * @param taskIds 任务ids
      * @return
      */
-    @Push(value = PushType.A27)
+    @Log
+    @Push(value = PushType.A27,type = 1)
     @PutMapping("/order")
-    public JSONObject order(@RequestParam("projectId") String projectId, @RequestParam("taskIds") String taskIds){
+    public JSONObject order(@RequestParam(value = "projectId") String projectId,
+                            @RequestParam(value = "taskId",required = false) String taskId,
+                            @RequestParam(value = "taskIds") String taskIds,
+                            @RequestParam(value = "newMenu",required = false) String newMenu){
         JSONObject object = new JSONObject();
         try{
-            taskService.orderTask(taskIds);
+            taskService.orderTask(taskIds,taskId,newMenu);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",projectId);

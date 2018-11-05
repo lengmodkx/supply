@@ -500,7 +500,9 @@ public interface TaskService extends IService<Task> {
 
 	/**
 	 * 任务排序
-	 * @param taskIds 排序后的所有任务id
+	 * @param taskIds 排序后的菜单下所有任务id
+	 * @param taskId 拖动的任务id
+	 * @param newMenu 推动到的任务菜单id
 	 */
-	void orderTask(String taskIds);
+	void orderTask(String taskIds, String taskId, String newMenu);
 }
