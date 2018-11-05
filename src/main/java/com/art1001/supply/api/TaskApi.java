@@ -264,7 +264,7 @@ public class TaskApi {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setTaskStatus("0");
+            task.setTaskStatus("未完成");
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
