@@ -1,0 +1,1401 @@
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20003} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20004} Parameters : [70576f3187554784a6af3ab2d5b07100]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20004} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20004} executed. 6.219422 millis. SELECT
+		 
+		id,task_id,file_name,file_ext,file_size,file_url,file_thumbnail
+	 
+		from prm_task_file where task_id = ? order by task_id ASC
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50013} open
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50013} Header: [id, task_id, file_name, file_ext, file_size, file_url, file_thumbnail]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50013} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20004} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50009} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20000} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20005} Parameters : [null, 70576f3187554784a6af3ab2d5b07100]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20005} Types : [OTHER, VARCHAR]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20005} executed. 6.227234 millis. SELECT COUNT(1) FROM prm_fabulous  WHERE  member_id = ? AND public_id = ?
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50014} open
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50014} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50014} Result: [0]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50014} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20005} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20006} Parameters : [null]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20006} Types : [OTHER]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20006} executed. 6.605826 millis. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50015} open
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50015} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50015} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20006} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20007} Parameters : [70576f3187554784a6af3ab2d5b07100, null]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20007} Types : [VARCHAR, OTHER]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20007} executed. 6.131084 millis. SELECT COUNT(1) FROM prm_public_collect  WHERE  public_id = ? AND member_id = ?
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50016} open
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50016} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50016} Result: [0]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50016} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20007} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20008} Parameters : [null]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20008} Types : [OTHER]
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20008} executed. 6.319478 millis. SELECT  
+relation_id,relation_name,parent_id
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50017} open
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50017} Header: [relation_id, relation_name, parent_id]
+DEBUG http-nio-8080-exec-6 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50017} closed
+DEBUG http-nio-8080-exec-6 druid.sql.Statement - {conn-10005, pstmt-20008} clearParameters. 
+DEBUG http-nio-8080-exec-6 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-6 freemarker.cache - TemplateLoader.findTemplateSource("tasks/70576f3187554784a6af3ab2d5b07100_zh_CN.ftl"): Not found
+DEBUG http-nio-8080-exec-6 freemarker.cache - TemplateLoader.findTemplateSource("tasks/70576f3187554784a6af3ab2d5b07100_zh.ftl"): Not found
+DEBUG http-nio-8080-exec-6 freemarker.cache - TemplateLoader.findTemplateSource("tasks/70576f3187554784a6af3ab2d5b07100.ftl"): Not found
+DEBUG http-nio-8080-exec-6 freemarker.cache - "tasks/70576f3187554784a6af3ab2d5b07100.ftl"("zh_CN", UTF-8, parsed) no source found.
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} executed. 7.003947 millis. SELECT
+	 
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	 
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50018} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50018} Header: [task_id, project_id, task_name, start_time, end_time, repeat, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, order, task_calendar, task_uids, tag_id, tag_name, bg_color]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50018} Result: [316400a36ca64bd8b807972d93647a55, 72ba17a42980404da025902114f0227b, 111, null, null, 不重复, 不提醒, null, 普通, null, 0, 58740e66e67e4f768ccebbea2da0bc60, 58740e66e67e4f768ccebbea2da0bc60, null, bb843889b34111e8928fc85b76c405c2, 未完成, null, false, 1536403040240, 1536549670516, null, null, 0, 0, null, 0, null, 58740e66e67e4f768ccebbea2da0bc60, null, null, null]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} Parameters : [58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} executed. 6.65991 millis. SELECT
+		 
+		u_id,
+		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	 
+		FROM tb_user
+		where u_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50019} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50019} Header: [u_id, u_name, u_sex, u_birthday, u_telephone, u_email, u_image, u_address, u_job, u_default_img, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50019} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 0, null, null, null, null, null, null, null, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50019} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} executed. 6.641882 millis. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50020} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50020} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50020} Result: [72ba17a42980404da025902114f0227b, 测试项目, 58740e66e67e4f768ccebbea2da0bc60, null, null, upload/project/bj.png, 测试项目简介, false, false, 1536395463173, null, false, false, null]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} created. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} executed. 6.667121 millis. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50021} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50021} Header: [id, project_id, member_id, member_label, u_name, u_image]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50021} Result: [859d366661914a2fb2a8a143c60a230a, 72ba17a42980404da025902114f0227b, 58740e66e67e4f768ccebbea2da0bc60, true, 万刮风66, null]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50021} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} created. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} executed. 6.415628 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50022} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50022} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50022} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50020} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20002} Parameters : [58740e66e67e4f768ccebbea2da0bc60, 58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20002} Types : [VARCHAR, VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20002} executed. 6.662614 millis. SELECT
+			u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			u.u_image
+		FROM
+			tb_user u
+		 WHERE  u.u_id in (
+				
+					?
+				
+				)
+				ORDER BY FIELD(u.u_id,
+				
+					?
+				)
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50023} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50023} Header: [u_id, u_name, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time, u_image]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50023} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0, null]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50023} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20002} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20003} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20003} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20003} executed. 6.64729 millis. select
+		 
+		prm_task.task_id,
+		prm_task.project_id,
+		prm_task.task_name,
+		prm_task.start_time,
+		prm_task.end_time,
+		prm_task.`repeat`,
+		prm_task.remind,
+		prm_task.remarks,
+		prm_task.priority,
+		prm_task.`level`,
+		prm_task.parent_id,
+		prm_task.member_id,
+		prm_task.executor,
+		prm_task.task_type,
+		prm_task.task_menu_id,
+		prm_task.task_status,
+		prm_task.task_code,
+		prm_task.task_del,
+		prm_task.create_time,
+		prm_task.update_time,
+		prm_task.remind_time,
+		prm_task.repetition_time,
+		prm_task.fabulous_count,
+		prm_task.privacy_pattern,
+		prm_task.other,
+		prm_task.order,
+		prm_task.task_calendar,
+		prm_task.task_uids
+	 
+		from prm_task where parent_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50024} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50024} Header: [task_id, project_id, task_name, start_time, end_time, repeat, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, order, task_calendar, task_uids]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50024} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20003} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20004} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20004} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20004} executed. 6.363647 millis. SELECT
+		 
+		id,task_id,file_name,file_ext,file_size,file_url,file_thumbnail
+	 
+		from prm_task_file where task_id = ? order by task_id ASC
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} Header: [id, task_id, file_name, file_ext, file_size, file_url, file_thumbnail]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} Result: [14fd670bf86b46448fc9a878af506948, 316400a36ca64bd8b807972d93647a55, headerimg.jpg, .jpg, 25 kb, upload/project/72ba17a42980404da025902114f0227b/PbikzswEFn.jpg, upload/project/72ba17a42980404da025902114f0227b/PbikzswEFn.jpg]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} Result: [4f15c439ab92472a955806a9ed002d84, 316400a36ca64bd8b807972d93647a55, 会议准备.txt, .txt, 173 b, upload/project/72ba17a42980404da025902114f0227b/XfErPydm2r.txt, null]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} Result: [555fe365f30d481a94248ce4b0ce2649, 316400a36ca64bd8b807972d93647a55, bj.png, .png, 223 kb, upload/project/72ba17a42980404da025902114f0227b/hM54sAybiW.png, upload/project/72ba17a42980404da025902114f0227b/hM54sAybiW.png]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} Result: [a27eba364bca40c09666c347194ec433, 316400a36ca64bd8b807972d93647a55, pppp.gsm, .gsm, 19 kb, upload/project/72ba17a42980404da025902114f0227b/tA2R7WK4Bb.gsm, upload/project/72ba17a42980404da025902114f0227b/bMFPwx6PBb.png]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50025} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20004} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50018} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20005} Parameters : [null, 316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20005} Types : [OTHER, VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20005} executed. 6.31407 millis. SELECT COUNT(1) FROM prm_fabulous  WHERE  member_id = ? AND public_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50026} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50026} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50026} Result: [0]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50026} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20005} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} executed. 6.497657 millis. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50027} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50027} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50027} Result: [72ba17a42980404da025902114f0227b, 测试项目, 58740e66e67e4f768ccebbea2da0bc60, null, null, upload/project/bj.png, 测试项目简介, false, false, 1536395463173, null, false, false, null]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} executed. 6.42945 millis. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50028} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50028} Header: [id, project_id, member_id, member_label, u_name, u_image]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50028} Result: [859d366661914a2fb2a8a143c60a230a, 72ba17a42980404da025902114f0227b, 58740e66e67e4f768ccebbea2da0bc60, true, 万刮风66, null]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50028} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20009} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} executed. 6.575478 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50029} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50029} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50029} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20010} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50027} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20006} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20007} Parameters : [316400a36ca64bd8b807972d93647a55, null]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20007} Types : [VARCHAR, OTHER]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20007} executed. 6.168041 millis. SELECT COUNT(1) FROM prm_public_collect  WHERE  public_id = ? AND member_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50030} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50030} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50030} Result: [0]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50030} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20007} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20008} Parameters : [bb843889b34111e8928fc85b76c405c2]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20008} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20008} executed. 6.833281 millis. SELECT  
+relation_id,relation_name,parent_id
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50031} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50031} Header: [relation_id, relation_name, parent_id]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50031} Result: [bb843889b34111e8928fc85b76c405c2, 待处理, 9766c9afc3e44b82b0dd590992b8d52c]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50031} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20008} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20011} created. SELECT  
+relation_id,relation_name
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20011} Parameters : [9766c9afc3e44b82b0dd590992b8d52c]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20011} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20011} executed. 5.619984 millis. SELECT  
+relation_id,relation_name
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50032} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50032} Header: [relation_id, relation_name]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50032} Result: [9766c9afc3e44b82b0dd590992b8d52c, 任111]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50032} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20011} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20012} created. SELECT  id,public_id,bind_id,public_type,bind_content  FROM prm_binding  WHERE  public_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20012} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20012} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20012} executed. 7.253338 millis. SELECT  id,public_id,bind_id,public_type,bind_content  FROM prm_binding  WHERE  public_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50033} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50033} Header: [id, public_id, bind_id, public_type, bind_content]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50033} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20012} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20013} created. SELECT
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project where project_del = ? and member_id = ?
+		order by create_time asc
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20013} Parameters : [0, null]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20013} Types : [INTEGER, OTHER]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20013} executed. 6.477224 millis. SELECT
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project where project_del = ? and member_id = ?
+		order by create_time asc
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50034} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50034} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50034} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20013} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20014} created. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where public_id = ? order by create_time desc limit 0,5
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20014} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20014} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20014} executed. 7.234708 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where public_id = ? order by create_time desc limit 0,5
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50035} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50035} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50035} Result: [0343d9cdd9db4805958c8dd138d491ca, 316400a36ca64bd8b807972d93647a55, null, 58740e66e67e4f768ccebbea2da0bc60, 万刮风66 创建了任务111, 0, 1536403040280, 1, null, false]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} Parameters : [58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} executed. 6.492248 millis. SELECT
+		 
+		u_id,
+		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	 
+		FROM tb_user
+		where u_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50036} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50036} Header: [u_id, u_name, u_sex, u_birthday, u_telephone, u_email, u_image, u_address, u_job, u_default_img, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50036} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 0, null, null, null, null, null, null, null, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50036} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20001} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50035} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20014} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} closed
+DEBUG main druid.sql.Connection - {conn-10002} closed
+DEBUG main druid.sql.Connection - {conn-10003} closed
+DEBUG main druid.sql.Connection - {conn-10004} closed
+DEBUG main druid.sql.Connection - {conn-10005} closed
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} created. SELECT
+	 
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	 
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} Parameters : [531205cfc3c411e88a1a6045cba76d77]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} executed. 10.232194 millis. SELECT
+	 
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	 
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = ?
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} open
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} Header: [task_id, project_id, task_name, start_time, end_time, repeat, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, order, task_calendar, task_uids, tag_id, tag_name, bg_color]
+DEBUG http-nio-8080-exec-7 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} closed
+DEBUG http-nio-8080-exec-7 druid.sql.Statement - {conn-10005, pstmt-20000} clearParameters. 
+DEBUG http-nio-8080-exec-7 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-7 freemarker.cache - Couldn't find template in cache for "tasks/531205cfc3c411e88a1a6045cba76d77.ftl"("zh_CN", UTF-8, parsed); will try to load it.
+DEBUG http-nio-8080-exec-7 freemarker.cache - TemplateLoader.findTemplateSource("tasks/531205cfc3c411e88a1a6045cba76d77_zh_CN.ftl"): Not found
+DEBUG http-nio-8080-exec-7 freemarker.cache - TemplateLoader.findTemplateSource("tasks/531205cfc3c411e88a1a6045cba76d77_zh.ftl"): Not found
+DEBUG http-nio-8080-exec-7 freemarker.cache - TemplateLoader.findTemplateSource("tasks/531205cfc3c411e88a1a6045cba76d77.ftl"): Not found
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20000} created. SELECT
+	 
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	 
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20000} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20000} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20000} executed. 10.021264 millis. SELECT
+	 
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remind,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		t.task_type,
+		t.task_menu_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.remind_time,
+		t.repetition_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.order,
+		t.task_calendar,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color
+	 
+	from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		where t.task_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} Header: [task_id, project_id, task_name, start_time, end_time, repeat, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, order, task_calendar, task_uids, tag_id, tag_name, bg_color]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} Result: [316400a36ca64bd8b807972d93647a55, 72ba17a42980404da025902114f0227b, 111, null, null, 不重复, 不提醒, null, 普通, null, 0, 58740e66e67e4f768ccebbea2da0bc60, 58740e66e67e4f768ccebbea2da0bc60, null, bb843889b34111e8928fc85b76c405c2, 未完成, null, false, 1536403040240, 1536549670516, null, null, 0, 0, null, 0, null, 58740e66e67e4f768ccebbea2da0bc60, null, null, null]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} created. SELECT
+		 
+		u_id,
+		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	 
+		FROM tb_user
+		where u_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} Parameters : [58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} executed. 6.904793 millis. SELECT
+		 
+		u_id,
+		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	 
+		FROM tb_user
+		where u_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50001} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50001} Header: [u_id, u_name, u_sex, u_birthday, u_telephone, u_email, u_image, u_address, u_job, u_default_img, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50001} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 0, null, null, null, null, null, null, null, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50001} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} created. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} executed. 6.486239 millis. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50002} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50002} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50002} Result: [72ba17a42980404da025902114f0227b, 测试项目, 58740e66e67e4f768ccebbea2da0bc60, null, null, upload/project/bj.png, 测试项目简介, false, false, 1536395463173, null, false, false, null]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} created. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} executed. 6.678239 millis. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50003} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50003} Header: [id, project_id, member_id, member_label, u_name, u_image]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50003} Result: [859d366661914a2fb2a8a143c60a230a, 72ba17a42980404da025902114f0227b, 58740e66e67e4f768ccebbea2da0bc60, true, 万刮风66, null]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50003} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} created. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} executed. 6.361244 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50004} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50004} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50004} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50002} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20005} created. SELECT
+			u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			u.u_image
+		FROM
+			tb_user u
+		 WHERE  u.u_id in (
+				
+					?
+				
+				)
+				ORDER BY FIELD(u.u_id,
+				
+					?
+				)
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20005} Parameters : [58740e66e67e4f768ccebbea2da0bc60, 58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20005} Types : [VARCHAR, VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20005} executed. 6.733225 millis. SELECT
+			u.u_id,
+			u.u_name,
+			u.u_account_name,
+			u.u_password,
+			u.u_delete_status,
+			u.u_locked,
+			u.u_description,
+			u.u_credentials_salt,
+			u.u_creator_name,
+			u.u_create_time,
+			u.u_update_time,
+			u.u_image
+		FROM
+			tb_user u
+		 WHERE  u.u_id in (
+				
+					?
+				
+				)
+				ORDER BY FIELD(u.u_id,
+				
+					?
+				)
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50005} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50005} Header: [u_id, u_name, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time, u_image]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50005} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0, null]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20005, rs-50005} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20005} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20006} created. select
+		 
+		prm_task.task_id,
+		prm_task.project_id,
+		prm_task.task_name,
+		prm_task.start_time,
+		prm_task.end_time,
+		prm_task.`repeat`,
+		prm_task.remind,
+		prm_task.remarks,
+		prm_task.priority,
+		prm_task.`level`,
+		prm_task.parent_id,
+		prm_task.member_id,
+		prm_task.executor,
+		prm_task.task_type,
+		prm_task.task_menu_id,
+		prm_task.task_status,
+		prm_task.task_code,
+		prm_task.task_del,
+		prm_task.create_time,
+		prm_task.update_time,
+		prm_task.remind_time,
+		prm_task.repetition_time,
+		prm_task.fabulous_count,
+		prm_task.privacy_pattern,
+		prm_task.other,
+		prm_task.order,
+		prm_task.task_calendar,
+		prm_task.task_uids
+	 
+		from prm_task where parent_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20006} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20006} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20006} executed. 7.003648 millis. select
+		 
+		prm_task.task_id,
+		prm_task.project_id,
+		prm_task.task_name,
+		prm_task.start_time,
+		prm_task.end_time,
+		prm_task.`repeat`,
+		prm_task.remind,
+		prm_task.remarks,
+		prm_task.priority,
+		prm_task.`level`,
+		prm_task.parent_id,
+		prm_task.member_id,
+		prm_task.executor,
+		prm_task.task_type,
+		prm_task.task_menu_id,
+		prm_task.task_status,
+		prm_task.task_code,
+		prm_task.task_del,
+		prm_task.create_time,
+		prm_task.update_time,
+		prm_task.remind_time,
+		prm_task.repetition_time,
+		prm_task.fabulous_count,
+		prm_task.privacy_pattern,
+		prm_task.other,
+		prm_task.order,
+		prm_task.task_calendar,
+		prm_task.task_uids
+	 
+		from prm_task where parent_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50006} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50006} Header: [task_id, project_id, task_name, start_time, end_time, repeat, remind, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, remind_time, repetition_time, fabulous_count, privacy_pattern, other, order, task_calendar, task_uids]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20006, rs-50006} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20006} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20007} created. SELECT
+		 
+		id,task_id,file_name,file_ext,file_size,file_url,file_thumbnail
+	 
+		from prm_task_file where task_id = ? order by task_id ASC
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20007} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20007} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20007} executed. 6.542727 millis. SELECT
+		 
+		id,task_id,file_name,file_ext,file_size,file_url,file_thumbnail
+	 
+		from prm_task_file where task_id = ? order by task_id ASC
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} Header: [id, task_id, file_name, file_ext, file_size, file_url, file_thumbnail]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} Result: [14fd670bf86b46448fc9a878af506948, 316400a36ca64bd8b807972d93647a55, headerimg.jpg, .jpg, 25 kb, upload/project/72ba17a42980404da025902114f0227b/PbikzswEFn.jpg, upload/project/72ba17a42980404da025902114f0227b/PbikzswEFn.jpg]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} Result: [4f15c439ab92472a955806a9ed002d84, 316400a36ca64bd8b807972d93647a55, 会议准备.txt, .txt, 173 b, upload/project/72ba17a42980404da025902114f0227b/XfErPydm2r.txt, null]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} Result: [555fe365f30d481a94248ce4b0ce2649, 316400a36ca64bd8b807972d93647a55, bj.png, .png, 223 kb, upload/project/72ba17a42980404da025902114f0227b/hM54sAybiW.png, upload/project/72ba17a42980404da025902114f0227b/hM54sAybiW.png]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} Result: [a27eba364bca40c09666c347194ec433, 316400a36ca64bd8b807972d93647a55, pppp.gsm, .gsm, 19 kb, upload/project/72ba17a42980404da025902114f0227b/tA2R7WK4Bb.gsm, upload/project/72ba17a42980404da025902114f0227b/bMFPwx6PBb.png]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20007, rs-50007} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20007} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20000, rs-50000} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20000} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20008} created. SELECT COUNT(1) FROM prm_fabulous  WHERE  member_id = ? AND public_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20008} Parameters : [null, 316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20008} Types : [OTHER, VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20008} executed. 6.263891 millis. SELECT COUNT(1) FROM prm_fabulous  WHERE  member_id = ? AND public_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50008} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50008} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50008} Result: [0]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20008, rs-50008} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20008} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} executed. 6.938746 millis. select
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project c where project_id = ?
+        and project_del = 0
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50009} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50009} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50009} Result: [72ba17a42980404da025902114f0227b, 测试项目, 58740e66e67e4f768ccebbea2da0bc60, null, null, upload/project/bj.png, 测试项目简介, false, false, 1536395463173, null, false, false, null]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} executed. 7.369619 millis. SELECT p.id,p.project_id,p.member_id,p.member_label, u.u_name as member_name,u.u_image as member_img FROM prm_project_member p
+		LEFT JOIN tb_user u on p.member_id = u.u_id
+		where
+			project_id = ? order by p.member_label desc
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50010} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50010} Header: [id, project_id, member_id, member_label, u_name, u_image]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50010} Result: [859d366661914a2fb2a8a143c60a230a, 72ba17a42980404da025902114f0227b, 58740e66e67e4f768ccebbea2da0bc60, true, 万刮风66, null]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20003, rs-50010} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20003} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} Parameters : [72ba17a42980404da025902114f0227b]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} executed. 222.15495 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where project_id = ? and log_type = 0
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50011} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50011} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20004, rs-50011} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20004} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20002, rs-50009} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20002} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20009} created. SELECT COUNT(1) FROM prm_public_collect  WHERE  public_id = ? AND member_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20009} Parameters : [316400a36ca64bd8b807972d93647a55, null]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20009} Types : [VARCHAR, OTHER]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20009} executed. 6.959779 millis. SELECT COUNT(1) FROM prm_public_collect  WHERE  public_id = ? AND member_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50012} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50012} Header: [COUNT(1)]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50012} Result: [0]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20009, rs-50012} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20009} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20010} created. SELECT  
+relation_id,relation_name,parent_id
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20010} Parameters : [bb843889b34111e8928fc85b76c405c2]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20010} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20010} executed. 6.335704 millis. SELECT  
+relation_id,relation_name,parent_id
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50013} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50013} Header: [relation_id, relation_name, parent_id]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50013} Result: [bb843889b34111e8928fc85b76c405c2, 待处理, 9766c9afc3e44b82b0dd590992b8d52c]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20010, rs-50013} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20010} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20011} created. SELECT  
+relation_id,relation_name
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20011} Parameters : [9766c9afc3e44b82b0dd590992b8d52c]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20011} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20011} executed. 6.335704 millis. SELECT  
+relation_id,relation_name
+  FROM prm_relation  WHERE  relation_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50014} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50014} Header: [relation_id, relation_name]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50014} Result: [9766c9afc3e44b82b0dd590992b8d52c, 任111]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20011, rs-50014} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20011} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20012} created. SELECT  id,public_id,bind_id,public_type,bind_content  FROM prm_binding  WHERE  public_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20012} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20012} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20012} executed. 6.398501 millis. SELECT  id,public_id,bind_id,public_type,bind_content  FROM prm_binding  WHERE  public_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50015} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50015} Header: [id, public_id, bind_id, public_type, bind_content]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20012, rs-50015} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20012} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20013} created. SELECT
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project where project_del = ? and member_id = ?
+		order by create_time asc
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20013} Parameters : [0, null]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20013} Types : [INTEGER, OTHER]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20013} executed. 6.670727 millis. SELECT
+		 
+		project_id,
+		project_name,
+		member_id,
+		start_time,
+		end_time,
+		project_cover,
+		project_des,
+		project_del,
+		project_status,
+		create_time,
+		update_time,
+		is_public,
+		project_remind,
+		func
+	 
+		from prm_project where project_del = ? and member_id = ?
+		order by create_time asc
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50016} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50016} Header: [project_id, project_name, member_id, start_time, end_time, project_cover, project_des, project_del, project_status, create_time, update_time, is_public, project_remind, func]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20013, rs-50016} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20013} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-connect
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20014} created. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where public_id = ? order by create_time desc limit 0,5
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20014} Parameters : [316400a36ca64bd8b807972d93647a55]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20014} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20014} executed. 6.334201 millis. select
+		 
+						id,
+				public_id,
+				project_id,
+				member_id,
+				content,
+				log_type,
+				create_time,
+				log_flag,
+				file_ids,
+				log_is_withdraw
+	 
+		from prm_log where public_id = ? order by create_time desc limit 0,5
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50017} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50017} Header: [id, public_id, project_id, member_id, content, log_type, create_time, log_flag, file_ids, log_is_withdraw]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50017} Result: [0343d9cdd9db4805958c8dd138d491ca, 316400a36ca64bd8b807972d93647a55, null, 58740e66e67e4f768ccebbea2da0bc60, 万刮风66 创建了任务111, 0, 1536403040280, 1, null, false]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} Parameters : [58740e66e67e4f768ccebbea2da0bc60]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} Types : [VARCHAR]
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} executed. 6.887065 millis. SELECT
+		 
+		u_id,
+		u_name,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_image,
+		u_address,
+		u_job,
+		u_default_img,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	 
+		FROM tb_user
+		where u_id = ?
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50018} open
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50018} Header: [u_id, u_name, u_sex, u_birthday, u_telephone, u_email, u_image, u_address, u_job, u_default_img, u_account_name, u_password, u_delete_status, u_locked, u_description, u_credentials_salt, u_creator_name, u_create_time, u_update_time]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50018} Result: [58740e66e67e4f768ccebbea2da0bc60, 万刮风66, 0, null, null, null, null, null, null, null, 18701053211, ZnqqqLc4liB4NP2wxniuUw==, 0, 0, 成员, e4146a5961c03da73155c5e4a3ae39a4, 18701053211, 2018-07-16 14:01:48.0, 2018-08-01 18:45:04.0]
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20001, rs-50018} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20001} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.ResultSet - {conn-10005, pstmt-20014, rs-50017} closed
+DEBUG http-nio-8080-exec-1 druid.sql.Statement - {conn-10005, pstmt-20014} clearParameters. 
+DEBUG http-nio-8080-exec-1 druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10001} connected
+DEBUG main druid.sql.Connection - {conn-10002} connected
+DEBUG main druid.sql.Connection - {conn-10003} connected
+DEBUG main druid.sql.Connection - {conn-10004} connected
+DEBUG main druid.sql.Connection - {conn-10005} connected
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle
+DEBUG main druid.sql.Connection - {conn-10005} pool-connect
+DEBUG main druid.sql.Connection - {conn-10005} pool-recycle

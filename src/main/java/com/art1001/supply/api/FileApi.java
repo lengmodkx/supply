@@ -339,7 +339,7 @@ public class FileApi {
      * 判断该文件夹下有没有子文件夹
      * @return
      */
-    @GetMapping("{fileId}/check/folder")
+    @GetMapping("{fileId}/check_folder")
     public JSONObject checkChildFolder(@PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
