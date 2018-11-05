@@ -130,6 +130,7 @@ public class UserApi {
         //设置创建者姓名
         UserEntity userEntity = new UserEntity();
         userEntity.setCreatorName(accountName);
+        userEntity.setAccountName(accountName);
         userEntity.setUserName(userName);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
