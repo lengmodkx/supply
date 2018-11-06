@@ -17,7 +17,6 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -82,8 +81,8 @@ public class ScheduleApi {
     @PostMapping
     public JSONObject addSchedule(@RequestParam String projectId,
                                     @RequestParam String scheduleName,
-                                    @RequestParam(required = false) String startTime,
-                                    @RequestParam(required = false) String endTime,
+                                    @RequestParam(required = false) Long startTime,
+                                    @RequestParam(required = false) Long endTime,
                                     @RequestParam(defaultValue = "不重复",required = false) String repeat,
                                     @RequestParam(defaultValue = "不提醒",required = false) String remind,
                                     @RequestParam(value = "memberIds",required = false) String memberIds,
@@ -93,12 +92,8 @@ public class ScheduleApi {
             Schedule schedule = new Schedule();
             schedule.setProjectId(projectId);
             schedule.setScheduleName(scheduleName);
-            if(StringUtils.isNotEmpty(startTime)){
-                schedule.setStartTime(DateUtils.strToLong(startTime));
-            }
-            if(StringUtils.isNotEmpty(endTime)){
-                schedule.setEndTime(DateUtils.strToLong(endTime));
-            }
+            schedule.setStartTime(startTime);
+            schedule.setEndTime(endTime);
             schedule.setRepeat(repeat);
             schedule.setRemind(remind);
             schedule.setMemberIds(memberIds);
