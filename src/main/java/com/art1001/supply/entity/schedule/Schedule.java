@@ -1,7 +1,10 @@
 package com.art1001.supply.entity.schedule;
+
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -22,18 +25,16 @@ public class Schedule extends Model<Schedule> {
 	
 	private static final long serialVersionUID = 1L;
 
-
 	/**
 	 * schedule_id
 	 */
+	@TableId("schedule_id")
 	private String scheduleId;
-
 
 	/**
 	 * 日程名称
 	 */
 	private String scheduleName;
-
 
 	/**
 	 * 关联的项目
@@ -43,53 +44,51 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * 设置任务重复
 	 */
+	@TableField("`repeat`")
 	private String repeat;
-
 
 	/**
 	 * 任务提醒
 	 */
+	@TableField("`remind`")
 	private String remind;
-
 
 	/**
 	 * 地点
 	 */
 	private String address;
 
-
 	/**
 	 * 备注
 	 */
 	private String remarks;
 
-
-	/**
-	 * 标签
-	 */
-	private String tagId;
-
 	/**
 	 * 创建者id
 	 */
 	private String memberId;
+
 	/**
 	 * 参与者
 	 */
 	private String memberIds;
+
 	/**
 	 * 创建者信息
 	 */
+	@TableField(exist = false)
 	private UserEntity userEntity;
 
 	/**
 	 * 所在的项目信息
 	 */
+	@TableField(exist = false)
 	private Project project;
 
 	/**
 	 * 参与者
 	 */
+	@TableField(exist = false)
 	private List<UserEntity> joinInfo;
 
 	/**
@@ -100,12 +99,8 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * 标签的集合
 	 */
+	@TableField(exist = false)
 	private List<Tag> tagList;
-
-	/**
-	 * 标签集合
-	 */
-	private List<Tag> tags;
 
 	/**
 	 * 在日历上创建日程的日期
@@ -113,9 +108,14 @@ public class Schedule extends Model<Schedule> {
 	private Long scheduleCalendar;
 
 	/**
+	 * 日程得赞数
+	 */
+	private Integer fabulousCount;
+
+	/**
 	 * 是否删除
 	 */
-	private int isDel;
+	private Integer isDel;
 
 	/**
 	 * 创建时间
@@ -128,12 +128,12 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * 日程开始时间
 	 */
-	private long startTime;
+	private Long startTime;
 
 	/**
 	 * 日程结束时间
 	 */
-	private long endTime;
+	private Long endTime;
 
 	@Override
 	protected Serializable pkVal() {

@@ -174,4 +174,12 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return
 	 */
     ScheduleApiBean selectScheduleApiBean(String id);
+
+	/**
+	 * 月份分组查询每月已过去的日程
+	 * @param currTime 当前时间
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Schedule> findScheduleGroup(@Param("currTime") Long currTime, @Param("projectId") String projectId);
 }

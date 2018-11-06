@@ -12,7 +12,6 @@
 		<result column="remind" property="remind" jdbcType="VARCHAR" />
 		<result column="address" property="address" jdbcType="VARCHAR" />
 		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-		<result column="tag_id" property="tagId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
@@ -201,9 +200,6 @@
 			<if test="remarks != null and remarks != ''">
 			remarks,
 			</if>
-			<if test="tagId != null and tagId != ''">
-			tag_id,
-			</if>
 			<if test="createTime != null ">
 			create_time,
 			</if>
@@ -252,9 +248,6 @@
 			</if>
 			<if test="remarks != null and remarks != ''">
 				#{remarks},
-			</if>
-			<if test="tagId != null and tagId != ''">
-				#{tagId},
 			</if>
 			<if test="createTime != null ">
 				#{createTime},
@@ -309,9 +302,6 @@
 			<if test="remarks != null and remarks != ''">
 				remarks = #{remarks},
 			</if>
-			<if test="tagId != null and tagId != ''">
-				tag_id = #{tagId},
-			</if>
 			<if test="createTime != null ">
 				create_time = #{createTime},
 			</if>
@@ -334,9 +324,7 @@
 				is_del = #{isDel},
 			</if>
 		</set>
-
 		WHERE schedule_id = #{scheduleId}
-
 	</update>
 
 	<select id="findScheduleGroupByCreateTime" resultMap="resultMap">
@@ -351,14 +339,9 @@
 		</where>
 		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
 	</select>
+
 	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.util.Map">
-
-		SELECT * from prm_schedule where FROM_UNIXTIME(create_time / 1000,'%Y-%m') = #{date} and is_del = 0 and project_id = #{projectId}
-
-	</select>
-
-	<select id="findScheduleListByDay" resultMap="BaseResultMap" parameterType="java.util.Map">
-		SELECT * from prm_schedule where FROM_UNIXTIME(start_time / 1000,'%Y-%m-%d') = #{date} and member_id = #{userId}
+		SELECT * from prm_schedule where FROM_UNIXTIME(end_time / 1000,'%Y-%m') = #{date} and is_del = 0 and project_id = #{projectId}
 	</select>
 
 	<!-- 根据项目id 查询出该项目下的所有日程信息 -->
@@ -458,6 +441,16 @@
 		FROM
 		prm_schedule s
 		LEFT JOIN prm_project p ON s.project_id = p.project_id WHERE schedule_id = #{id}
+	</select>
+
+	<!--  月份分组查询每月已过去的日程 -->
+	<select id="findScheduleGroup" resultMap="resultMap">
+		SELECT FROM_UNIXTIME(end_time / 1000,'%Y-%m') as date,project_id from prm_schedule
+		<where>
+			end_time &lt; #{currTime}
+			and project_id = #{projectId}
+		</where>
+		GROUP BY FROM_UNIXTIME(end_time / 1000,'%Y-%m');
 	</select>
 
 </mapper>

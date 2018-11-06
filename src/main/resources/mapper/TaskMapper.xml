@@ -981,13 +981,13 @@
 			t.task_id,
 			t.task_name,
 			t.remarks,
-			u.u_image,
+			u.image,
 			p.project_name,
 			r.relation_name as menu_name,
 			r1.relation_name as group_name
 		FROM
 			prm_task t
-			LEFT JOIN tb_user u ON t.executor = u.u_id
+			LEFT JOIN tb_user u ON t.executor = u.user_id
 			LEFT JOIN prm_project p ON t.project_id = p.project_id
 			LEFT JOIN prm_relation r ON t.task_menu_id = r.relation_id
 			LEFT JOIN prm_relation r1 ON t.task_group_id = r1.relation_id

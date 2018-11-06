@@ -1,6 +1,5 @@
 package com.art1001.supply.service.schedule;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
@@ -8,6 +7,8 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 
 /**
@@ -62,7 +63,7 @@ public interface ScheduleService extends IService<Schedule> {
     List<Schedule> findByIds(String[] scheduleIds);
 
 	/**
-	 * 根据时间分组查询日程
+	 *
 	 * @return
 	 */
 	List<ScheduleVo> findScheduleGroupByCreateTime(Long currTime,String projectId);
@@ -171,4 +172,11 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return
 	 */
 	ScheduleApiBean findScheduleApiBean(String id);
+
+	/**
+	 * 根据月份分组查询日程
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Schedule> findScheduleGroup(String projectId);
 }

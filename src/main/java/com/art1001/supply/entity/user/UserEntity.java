@@ -33,6 +33,7 @@ public class UserEntity extends Model<UserEntity> {
 	 * 用户真实姓名
 	 */
 	private String userName;
+
 	/*
 	 * 这里账户名称统一使用邮箱/手机号
 	 */

@@ -48,7 +48,7 @@ public class PushAspect {
             log.setPublicId(object.getString("id"));
             log.setProjectId(object.getString("msgId"));
             log.setCreateTime(System.currentTimeMillis());
-            log.setContent(push.value().getName()+" "+object.getString("name"));
+            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString("name"));
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             logService.save(log);
         }else{//只需要日志
@@ -57,7 +57,7 @@ public class PushAspect {
                 log.setPublicId(object.getString("id"));
                 log.setProjectId(object.getString("msgId"));
                 log.setCreateTime(System.currentTimeMillis());
-                log.setContent(push.value().getName()+" "+object.getString("name"));
+                log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString("name"));
                 log.setMemberId(ShiroAuthenticationManager.getUserId());
                 //logService.save(log);
             }
