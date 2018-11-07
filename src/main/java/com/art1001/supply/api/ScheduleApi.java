@@ -57,7 +57,7 @@ public class ScheduleApi {
     public JSONObject initSchedule(@RequestParam("projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("after",scheduleService.list(new QueryWrapper<Schedule>().eq("project_id", projectId).gt("end_time", System.currentTimeMillis())));
+            jsonObject.put("after",scheduleService.findScheduleListByProjectId(projectId));
             jsonObject.put("before",scheduleService.findScheduleGroup(projectId));
         } catch (Exception e){
             throw new AjaxException(e);

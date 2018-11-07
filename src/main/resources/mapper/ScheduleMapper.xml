@@ -78,7 +78,6 @@
 				remind,
 				address,
 				remarks,
-				tag_id,
 				create_time,
 				update_time,
 				member_id,

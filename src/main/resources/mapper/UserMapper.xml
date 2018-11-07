@@ -26,6 +26,20 @@
 		update_time
 	</sql>
 
+	<sql id="join">
+		user_id,
+		user_name,
+		sex,
+	    birthday,
+		telephone,
+		email,
+		image,
+	    address,
+		job,
+		default_image,
+		account_name
+	</sql>
+
 	<sql id="users">
 		u.user_id,
 		u.user_name,
@@ -87,7 +101,7 @@
 	<!-- 查询指定id的人员信息 -->
 	<select id="findManyUserById" resultMap="userMap">
 		SELECT
-		<include refid="userAttributes"/>
+		<include refid="join"/>
 		FROM
 			tb_user u
 		<where>
