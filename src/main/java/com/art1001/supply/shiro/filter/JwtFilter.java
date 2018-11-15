@@ -31,6 +31,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 response.getWriter().print(object);
                 return false;
             }
+
             //检查refreshToken是否存在在缓存中
             RedisManager redisManager = new RedisManager();
             String userName = JwtUtil.getUsername(token);
