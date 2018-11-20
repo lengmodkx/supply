@@ -1,11 +1,12 @@
 package com.art1001.supply.mapper.tagrelation;
 
-import java.util.List;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * mapper接口

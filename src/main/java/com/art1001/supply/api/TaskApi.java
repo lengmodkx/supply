@@ -8,10 +8,10 @@ import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.quartz.QuartzService;
 import com.art1001.supply.service.binding.BindingService;
@@ -28,7 +28,9 @@ import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.BeanPropertiesUtil;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +38,7 @@ import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -127,76 +129,32 @@ public class TaskApi {
 
     /**
      * 创建任务
-     * @param taskName 任务名称
-     * @param taskJoins 任务的参与者id
-     * @param privacyPattern 任务隐私模式
-     * @param executor 任务执行者
-     * @param startTime 任务开始时间
-     * @param endTime 任务结束时间
-     * @param repeat 任务重复
-     * @param priority 任务优先级
-     * @param tagIds 任务标签
      * @param taskRemindRules 提醒规则集合
      * @return JSONObject
      */
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
-    public JSONObject addTask(@RequestParam("taskName") String taskName,
-                              @RequestParam("privacyPattern") Integer privacyPattern,
-                              @RequestParam("projectId") String projectId,
-                              @RequestParam(value = "taskJoins",required = false) String taskJoins,
-                              @RequestParam(value = "executor",required = false) String executor,
-                              @RequestParam(value = "startTime",required = false) String startTime,
-                              @RequestParam(value = "endTime",required = false)String endTime,
-                              @RequestParam(value = "repeat",required = false,defaultValue = "不重复")String repeat,
-                              @RequestParam(value = "priority",required = false,defaultValue = "普通")String priority,
-                              @RequestParam(value = "tagIds",required = false)String tagIds,
-                              @RequestParam(value = "taskMenuId")String taskMenuId,
-                              @RequestParam(value = "taskGroupId")String taskGroupId,
-                              @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules
-     ){
+    public JSONObject addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds, @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules){
         JSONObject object = new JSONObject();
         try {
-            Task task = new Task();
-            task.setTaskName(taskName);
-            task.setTaskUIds(taskJoins);
-            task.setTaskMenuId(taskMenuId);
-            task.setProjectId(projectId);
-            task.setTaskGroupId(taskGroupId);
-            task.setPrivacyPattern(privacyPattern);
-            task.setExecutor(executor);
-            task.setRepeat(repeat);
-            task.setPriority(priority);
-            if(StringUtils.isNotEmpty(startTime)){
-                task.setStartTime(DateUtils.strToLong(startTime));
-            }
-
-            if(StringUtils.isNotEmpty(endTime)){
-                task.setStartTime(DateUtils.strToLong(endTime));
-            }
-            //设置任务的创建者
-            task.setMemberId(ShiroAuthenticationManager.getUserId());
+            BeanPropertiesUtil.fieldsNotNullOrEmpty(task,new String[]{"taskName","projectId","taskMenuId","taskGroupId"});
+            task.setTaskId(IdGen.uuid());
             if(StringUtils.isEmpty(taskRemindRules)){
-                taskService.saveTask(task);
+                taskService.saveTask(task,tagIds);
             } else{
-                taskService.saveTask(task,taskRemindRules);
-            }
-            //保存任务和标签的关联关系
-            if(StringUtils.isNotEmpty(tagIds)){
-                Arrays.stream(tagIds.split(",")).forEach(tagId->{
-                    TagRelation tagRelation = new TagRelation();
-                    tagRelation.setTagId(Long.valueOf(tagId));
-                    tagRelation.setTaskId(task.getTaskId());
-                    tagRelationService.save(tagRelation);
-                });
+                taskService.saveTask(task,taskRemindRules,tagIds);
             }
             object.put("result",1);
             object.put("msg","创建成功!");
             object.put("data",task);
             object.put("id",task.getTaskId());
             object.put("name",task.getTaskName());
-        }catch (Exception e){
+
+        } catch (BaseException e){
+            object.put("msg",e.getMessage());
+            object.put("result",0);
+        } catch (Exception e){
             log.error("创建任失败:",e);
             throw new AjaxException("系统异常任务创建失败!",e);
         }
@@ -262,6 +220,7 @@ public class TaskApi {
     public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
+            List<String> a = new ArrayList<>();
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus("未完成");
@@ -669,7 +628,7 @@ public class TaskApi {
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
-            taskService.saveTask(task);
+            taskService.saveTask(task,null);
             object.put("result",1);
             object.put("msg","创建成功!");
             object.put("data",task);

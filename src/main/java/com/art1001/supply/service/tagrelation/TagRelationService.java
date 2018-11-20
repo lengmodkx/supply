@@ -59,4 +59,5 @@ public interface TagRelationService extends IService<TagRelation> {
 	 * @param publicId 项的id
 	 */
 	void deleteManyItemTagRelation(List<String> publicId);
+
 }

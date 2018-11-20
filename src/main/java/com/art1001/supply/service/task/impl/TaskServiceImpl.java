@@ -147,7 +147,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void saveTask(Task task, String taskRemindRules) {
+	public void saveTask(Task task, String taskRemindRules, String tagIds) {
+	    //设置创建者
+        task.setMemberId(ShiroAuthenticationManager.getUserId());
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -156,7 +158,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        save(task);
+        taskMapper.saveTask(task);
+        //保存标签
+        this.saveBatchTaskTag(tagIds,task.getTaskId());
 
         List<TaskRemindRule> remindList = JSON.parseArray(taskRemindRules, TaskRemindRule.class);
         remindList.forEach(item -> {
@@ -192,7 +196,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param task task信息
      */
     @Override
-    public void saveTask(Task task) {
+    public void saveTask(Task task,String tagIds) {
+        //设置创建者
+        task.setMemberId(ShiroAuthenticationManager.getUserId());
         //设置该任务的创建时间
         task.setCreateTime(System.currentTimeMillis());
         //设置该任务的最后更新时间
@@ -201,7 +207,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        save(task);
+        taskMapper.saveTask(task);
+        //保存标签
+        this.saveBatchTaskTag(tagIds,task.getTaskId());
     }
 
     /**
@@ -1580,11 +1588,27 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 保存多个任务的标签
+     * @param tagIds 标签的id字符串
+     * @param taskId 任务id
+     */
+    private void saveBatchTaskTag(String tagIds, String taskId){
+        if(StringUtils.isNotEmpty(tagIds)){
+            Arrays.stream(tagIds.split(",")).forEach(tagId->{
+                TagRelation tagRelation = new TagRelation();
+                tagRelation.setTagId(Long.valueOf(tagId));
+                tagRelation.setTaskId(taskId);
+                tagRelationService.save(tagRelation);
+            });
+        }
+    }
+
+    /**
      * 获取给定时间指定天数后的时间戳
      * @param time 时间毫秒数
      * @param days 天数
      */
-    public long afterDaysTime(Long time, int days){
+    private long afterDaysTime(Long time, int days){
         return DateUtils.strToLong(DateUtils.getAfterDay(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), days, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss"));
     }
 
@@ -1593,7 +1617,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param time 给定的时间
      * @return
      */
-    public long afterMonthTime(Long time){
+    private long afterMonthTime(Long time){
         return DateUtils.strToLong(DateUtils.getMonth(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", 1));
     }
 }
