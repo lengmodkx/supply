@@ -79,7 +79,7 @@ public class GroupChatApi {
      * @param chatId 消息id
      * @return
      */
-    @PatchMapping("/{chatId}/withdraw")
+    @PutMapping("/{chatId}/withdraw")
     public JSONObject withdrawMessage(@PathVariable(value = "chatId") String chatId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {

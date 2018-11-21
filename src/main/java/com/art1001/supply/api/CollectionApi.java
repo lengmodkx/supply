@@ -30,7 +30,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-    @RequestMapping("collections")
+@RequestMapping("collections")
 public class CollectionApi {
 
     @Resource

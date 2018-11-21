@@ -31,6 +31,16 @@ public class ResourceApi {
     @Resource
     private ResourceService resourceService;
 
+    /**
+     * 添加资源
+     * @param resourceType
+     * @param parentId
+     * @param resourceName
+     * @param resourceKey
+     * @param resourceUrl
+     * @param resourceDes
+     * @return
+     */
     @PostMapping
     public JSONObject addResource(@RequestParam(value = "resourceType") Integer resourceType,
                                   @RequestParam(value = "parentId",defaultValue = "0",required = false) Integer parentId,
@@ -65,6 +75,11 @@ public class ResourceApi {
         return object;
     }
 
+    /**
+     * 删除资源
+     * @param resourceId 资源id
+     * @return
+     */
     @DeleteMapping("/{resourceId}")
     public JSONObject deleteResource(@PathVariable Integer resourceId){
         JSONObject object = new JSONObject();
@@ -89,6 +104,18 @@ public class ResourceApi {
         return object;
     }
 
+    /**
+     * 修改资源
+     * @param resourceId
+     * @param resourceType
+     * @param parentId
+     * @param resourceName
+     * @param resourceKey
+     * @param resourceUrl
+     * @param resourceDes
+     * @param resourceLevel
+     * @return
+     */
     @PutMapping("/{resourceId}")
     public JSONObject updateResource(@PathVariable Integer resourceId,
                                      @RequestParam(value = "resourceType") Integer resourceType,
@@ -119,7 +146,14 @@ public class ResourceApi {
         return object;
     }
 
-    
+
+    /**
+     * 获取资源信息
+     * @param resourceName
+     * @param current
+     * @param size
+     * @return
+     */
     @GetMapping("/{current}/{size}")
     public JSONObject resourceList(@RequestParam(value = "resourceName",required = false)String resourceName,
                                    @PathVariable(value = "current")Long current,

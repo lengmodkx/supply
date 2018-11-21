@@ -44,6 +44,7 @@ public class ShareApi {
 
     @Resource
     private PublicCollectService collectService;
+
     /**
      * 加载分享页面
      * @param projectId 项目id

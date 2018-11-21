@@ -758,7 +758,7 @@ public class TaskApi {
     }
 
     /**
-     *  任务隐私模式
+     * 任务隐私模式
      * @param taskId 任务id
      * @return
      */
@@ -785,13 +785,13 @@ public class TaskApi {
     }
 
     /**
-     *  子任务转父任务
+     * 子任务转父任务
      * @param taskId 任务id
      * @return
      */
     @Log(PushType.A19)
     @Push(value = PushType.A19)
-    @PutMapping("/{taskId}/toFather")
+    @PutMapping("/{taskId}/to_father")
     public JSONObject taskToParent(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
@@ -812,7 +812,7 @@ public class TaskApi {
 
 
     /**
-     *  对此任务点赞
+     * 对此任务点赞
      * @param taskId 任务id
      * @return
      */

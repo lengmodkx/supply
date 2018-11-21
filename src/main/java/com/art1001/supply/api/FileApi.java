@@ -196,7 +196,6 @@ public class FileApi {
 
     /**
      * 上传模型文件
-
      */
     @Log(PushType.C3)
     @Push(value = PushType.C3)
@@ -280,7 +279,6 @@ public class FileApi {
 
     /**
      * 更新模型文件
-     *
      * @param fileId 文件id
      */
     @Log(PushType.C5)
@@ -339,7 +337,7 @@ public class FileApi {
      * 判断该文件夹下有没有子文件夹
      * @return
      */
-    @GetMapping("{fileId}/check_folder")
+    @GetMapping("/{fileId}/check_folder")
     public JSONObject checkChildFolder(@PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -480,7 +478,6 @@ public class FileApi {
 
     /**
      * 移动文件
-     *
      * @param fileIds  文件id数组
      * @param folderId 目标文件夹id
      */
@@ -502,7 +499,6 @@ public class FileApi {
 
     /**
      * 复制文件
-     *
      * @param fileIds  多个文件id
      * @param folderId 目标文件夹id
      */

@@ -38,10 +38,10 @@ public class OrganizationApi {
      * @return
      */
     @PostMapping
-        public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
-                              @RequestParam(value = "orgDes") String orgDes,
-                              @RequestParam(value = "contact") String contact,
-                              @RequestParam(value = "contactPhone") String contactPhone){
+    public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
+                          @RequestParam(value = "orgDes") String orgDes,
+                          @RequestParam(value = "contact") String contact,
+                          @RequestParam(value = "contactPhone") String contactPhone){
         JSONObject jsonObject = new JSONObject();
         try {
             Organization organization = new Organization();
@@ -55,7 +55,6 @@ public class OrganizationApi {
             log.error("企业添加失败:",e);
             throw new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -131,9 +130,4 @@ public class OrganizationApi {
         }
         return jsonObject;
     }
-
-
-
-
-
 }

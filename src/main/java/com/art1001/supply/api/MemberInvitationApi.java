@@ -111,7 +111,6 @@ public class MemberInvitationApi {
         return object;
     }
 
-
     @PutMapping("/{memberId}")
     public JSONObject upadteMemberRole(@PathVariable(value = "memberId") String memberId,@RequestParam(value = "projectId") String projectId){
         JSONObject object = new JSONObject();
@@ -126,6 +125,12 @@ public class MemberInvitationApi {
         return object;
     }
 
+    /**
+     * 更新项目成员的默认分组
+     * @param groupId 分组id
+     * @param projectId 项目id
+     * @return
+     */
     @PutMapping("/{groupId}/group")
     public JSONObject updateMemberGroup(@PathVariable(value = "groupId")String groupId,@RequestParam(value = "projectId") String projectId){
         JSONObject object = new JSONObject();

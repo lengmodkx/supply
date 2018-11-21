@@ -119,7 +119,6 @@ public class ProjectApi {
             log.error("保存失败:", e);
             throw new AjaxException(e);
         }
-
         return object;
     }
 
@@ -314,7 +313,7 @@ public class ProjectApi {
     }
 
     /**
-     * 移出项目至回收站
+     * 将向项目移出回收站
      * @param projectId 项目id
      * @return
      */
