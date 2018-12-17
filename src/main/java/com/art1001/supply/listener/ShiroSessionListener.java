@@ -31,6 +31,7 @@ public class ShiroSessionListener implements SessionListener {
      */
     @Override
     public void onStop(Session session) {
+
     }
 
     /**
