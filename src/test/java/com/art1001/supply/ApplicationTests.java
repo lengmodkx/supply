@@ -13,6 +13,10 @@ import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.BatchOptions;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -39,6 +43,9 @@ public class ApplicationTests {
 
     @Resource
     private FileService fileService;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Test
     public void testSql(){
@@ -85,6 +92,7 @@ public class ApplicationTests {
 
     @Test
     public void test3(){
-        taskService.completeTask("16a13489a79246949e91ac429012f384");
+        RBucket<String> bucket = redissonClient.getBucket("1");
+        bucket.set("shaohua");
     }
 }
