@@ -37,8 +37,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             String userName = JwtUtil.getUsername(token);
             if (!redisManager.exists(userName)){
                 JSONObject object = new JSONObject();
+
                 object.put("result","0");
-                object.put("msg","refreshToken is invalid");
+                object.put("msg","accessToken is invalid");
                 response.getWriter().print(object);
                 return false;
             }
