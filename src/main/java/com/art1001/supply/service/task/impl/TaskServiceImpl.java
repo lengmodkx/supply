@@ -2,13 +2,18 @@ package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
@@ -16,6 +21,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.task.vo.TaskShowVo;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -29,6 +35,7 @@ import com.art1001.supply.quartz.job.RemindJob;
 import com.art1001.supply.service.apiBean.ApiBeanService;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.quartz.QuartzInfoService;
@@ -130,6 +137,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Resource
     private QuartzService quartzService;
 
+    /**
+     * 用户点赞接口
+     */
+    @Resource
+    private FabulousService fabulousService;
+
 	/**
 	 * 通过taskId获取单条task数据
 	 * @param taskId
@@ -150,12 +163,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	public void saveTask(Task task, String taskRemindRules, String tagIds) {
 	    //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
-        //设置该任务的创建时间
-        task.setCreateTime(System.currentTimeMillis());
-        //设置该任务的最后更新时间
-        task.setUpdateTime(System.currentTimeMillis());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
-        Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+        int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
@@ -199,12 +208,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public void saveTask(Task task,String tagIds) {
         //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
-        //设置该任务的创建时间
-        task.setCreateTime(System.currentTimeMillis());
-        //设置该任务的最后更新时间
-        task.setUpdateTime(System.currentTimeMillis());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
-        Integer maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+        int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
         taskMapper.saveTask(task);
@@ -1619,6 +1624,58 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     private long afterMonthTime(Long time){
         return DateUtils.strToLong(DateUtils.getMonth(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", 1));
+    }
+
+    /**
+     * 返回任务的视图信息
+     * @param taskId 任务id
+     * @return 任务视图信息
+     */
+    @Override
+    public TaskShowVo taskInfoShow(String taskId) {
+        TaskShowVo taskShowVo = new TaskShowVo();
+        //查询出此条任务的具体信息
+        taskShowVo.setTask(taskService.findTaskByTaskId(taskId));
+        //判断当前用户有没有对该任务点赞
+        taskShowVo.setFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
+        //判断当前用户有没有收藏该任务
+        taskShowVo.setCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
+        //查询出该任务的日志信息
+        taskShowVo.setLogs(logService.initLog(taskId));
+        //设置关联信息
+        this.setBindingInfo(taskId,taskShowVo);
+        return taskShowVo;
+    }
+
+    /**
+     * 设置关联信息
+     * @param taskId 任务id
+     * @param taskShowVo 添加到的 taskShowVo对象
+     */
+    public void setBindingInfo(String taskId,TaskShowVo taskShowVo){
+        List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
+        List<Task> tasks = new ArrayList<>();
+        List<Schedule> schedules = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        List<Share> shares = new ArrayList<>();
+        bindings.forEach(item -> {
+            if(item.getPublicType().equals(Constants.TASK)){
+                tasks.add(JSON.parseObject(item.getBindContent(), Task.class));
+            }
+            if(item.getPublicType().equals(Constants.SCHEDULE)){
+                schedules.add(JSON.parseObject(item.getBindContent(), Schedule.class));
+            }
+            if(item.getPublicType().equals(Constants.FILE)){
+                files.add(JSON.parseObject(item.getBindContent(), File.class));
+            }
+            if(item.getPublicType().equals(Constants.TASK)){
+                shares.add(JSON.parseObject(item.getBindContent(), Share.class));
+            }
+        });
+        taskShowVo.setBindingFiles(files);
+        taskShowVo.setBindingTasks(tasks);
+        taskShowVo.setBindingSchedules(schedules);
+        taskShowVo.setBindingShares(shares);
     }
 }
 

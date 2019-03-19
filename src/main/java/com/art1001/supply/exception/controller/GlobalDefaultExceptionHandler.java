@@ -2,6 +2,7 @@ package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,6 +22,7 @@ import java.io.IOException;
  *
  */
 //@EnableWebMvc
+@Slf4j
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
@@ -78,7 +80,7 @@ public class GlobalDefaultExceptionHandler {
 	@ExceptionHandler(AjaxException.class)
 	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
-		logger.error(ex.getMessage(), ex);
+		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台，用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());

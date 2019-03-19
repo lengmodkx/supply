@@ -7,6 +7,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.task.vo.TaskShowVo;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
@@ -30,7 +31,7 @@ public interface TaskService extends IService<Task> {
 	 * @param taskId
 	 * @return
 	 */
-	public Task findTaskByTaskId(String taskId);
+	Task findTaskByTaskId(String taskId);
 
 	/**
 	 * 保存task数据
@@ -507,4 +508,11 @@ public interface TaskService extends IService<Task> {
 	 * @param newMenu 推动到的任务菜单id
 	 */
 	void orderTask(String taskIds, String taskId, String newMenu);
+
+	/**
+	 * 返回任务的视图信息
+	 * @param taskId 任务id
+	 * @return 任务视图信息
+	 */
+	TaskShowVo taskInfoShow(String taskId);
 }

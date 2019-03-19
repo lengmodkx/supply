@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
@@ -17,7 +18,7 @@ import javax.annotation.Resource;
 
 @Aspect
 @Component
-public class PushAspect {
+public class PushAspect extends BaseController {
 
     @Resource
     private NoticeService noticeService;
@@ -47,7 +48,6 @@ public class PushAspect {
             Log log = new Log();
             log.setPublicId(object.getString("id"));
             log.setProjectId(object.getString("msgId"));
-            log.setCreateTime(System.currentTimeMillis());
             log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString("name"));
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             logService.save(log);

@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
-import com.art1001.supply.entity.binding.Binding;
-import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.task.Task;
@@ -13,33 +12,19 @@ import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.quartz.QuartzService;
-import com.art1001.supply.service.binding.BindingService;
-import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.quartz.QuartzInfoService;
-import com.art1001.supply.service.relation.RelationService;
-import com.art1001.supply.service.resource.ResourceService;
-import com.art1001.supply.service.role.ResourcesRoleService;
-import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.BeanPropertiesUtil;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 任务增删改查，复制，移动
@@ -53,35 +38,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("tasks")
-public class TaskApi {
+public class TaskApi extends BaseController {
 
     @Resource
     private TaskService taskService;
 
     @Resource
-    private PublicCollectService publicCollectService;
-
-    @Resource
-    private RelationService relationService;
-
-    @Resource
-    private BindingService bindingService;
-
-    @Resource
-    private LogService logService;
-
-    @Resource
     private FabulousService fabulousService;
-
-    /** 标签标签的逻辑层接口 */
-    @Resource
-    private TagRelationService tagRelationService;
 
     @Resource
     private UserService userService;
 
-    @Resource
-    private QuartzService quartzService;
 
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
@@ -89,108 +56,64 @@ public class TaskApi {
     @Resource
     private FileService fileService;
 
-    @Resource
-    private QuartzInfoService quartzInfoService;
-
-    @Resource
-    private ResourcesRoleService resourcesRoleService;
-
-    @Resource
-    private ResourceService resourceService;
-
     /**
      * 任务页面初始化
-     * @return
+     * @return object
      */
     @GetMapping("/{taskId}")
-    public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
-        JSONObject object = new JSONObject();
+    public Object getTask(@PathVariable(value = "taskId") String taskId){
         try {
-            //查询出此条任务的具体信息
-            Task taskInfo = taskService.findTaskByTaskId(taskId);
-            object.put("task",taskInfo);
-            //判断当前用户有没有对该任务点赞
-            int count = fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId));
-            object.put("isFabulous",count);
-            //判断当前用户有没有收藏该任务
-            int collectCount = publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId()));
-            object.put("collect",collectCount);
-            //查询出任务的关联信息
-            List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
-            object.put("bindings",bindings);
-            //查询出该任务的日志信息
-            object.put("taskLogs",logService.initLog(taskId));
-            object.put("result",1);
+            return success(taskService.taskInfoShow(taskId));
         } catch (Exception e){
             throw new AjaxException(e);
         }
-        return object;
     }
 
     /**
      * 创建任务
      * @param taskRemindRules 提醒规则集合
-     * @return JSONObject
+     * @return object
      */
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
-    public JSONObject addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds, @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules){
-        JSONObject object = new JSONObject();
+    public Object addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds, @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules){
         try {
-            BeanPropertiesUtil.fieldsNotNullOrEmpty(task,new String[]{"taskName","projectId","taskMenuId","taskGroupId"});
-            task.setTaskId(IdGen.uuid());
             if(StringUtils.isEmpty(taskRemindRules)){
                 taskService.saveTask(task,tagIds);
             } else{
                 taskService.saveTask(task,taskRemindRules,tagIds);
             }
-            object.put("result",1);
-            object.put("msg","创建成功!");
-            object.put("data",task);
-            object.put("id",task.getTaskId());
-            object.put("name",task.getTaskName());
-
+            return success(task);
         } catch (BaseException e){
-            object.put("msg",e.getMessage());
-            object.put("result",0);
+            return error(e.getMessage());
         } catch (Exception e){
-            log.error("创建任失败:",e);
             throw new AjaxException("系统异常任务创建失败!",e);
         }
-        return object;
     }
 
     /**
      * 删除任务
      * @param taskId 任务id
-     * @return JSONObject
+     * @return object
      */
     @Log(PushType.A2)
     @Push(value = PushType.A2,type = 1)
     @DeleteMapping("/{taskId}")
-    public JSONObject deleteTask(@PathVariable(value = "taskId")String taskId){
-        JSONObject object = new JSONObject();
+    public Object deleteTask(@PathVariable(value = "taskId")String taskId){
         try{
             taskService.removeById(taskId);
-            object.put("result",1);
-            object.put("msg","删除成功!");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("taskId",taskId));
-            object.put("id",taskId);
+            return success(taskId);
         }catch(Exception e){
-            log.error("系统异常,删除失败:",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,删除失败",e);
         }
-        return object;
     }
 
     /**
      * 完成任务
      * @param taskId 任务id
-     * @return JSONObject
+     * @return object
      */
-    @Log(PushType.A3)
     @Push(value = PushType.A3,type = 1)
     @PutMapping("/{taskId}/finish")
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
@@ -220,7 +143,6 @@ public class TaskApi {
     public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
-            List<String> a = new ArrayList<>();
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus("未完成");

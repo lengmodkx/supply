@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
 /**
- * @Author: ddm
+ * @Author: heshaohua
  * @Description: 基类Controller 封装基本操作
  */
 @Controller
