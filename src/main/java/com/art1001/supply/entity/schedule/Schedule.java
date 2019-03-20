@@ -3,9 +3,7 @@ package com.art1001.supply.entity.schedule;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +26,7 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * schedule_id
 	 */
-	@TableId("schedule_id")
+	@TableId(value = "schedule_id",type = IdType.UUID)
 	private String scheduleId;
 
 	/**
@@ -120,10 +118,13 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * 创建时间
 	 */
+	@TableField(fill = FieldFill.INSERT)
 	private Long createTime;
+
 	/**
 	 * 修改时间
 	 */
+	@TableField(fill = FieldFill.UPDATE)
 	private Long updateTime;
 	/**
 	 * 日程开始时间

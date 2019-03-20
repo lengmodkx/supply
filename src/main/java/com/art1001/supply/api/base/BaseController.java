@@ -57,6 +57,17 @@ public class BaseController {
     }
 
     /**
+     * @param success -
+     * @return
+     * @throws Exception
+     * @author by chippy
+     * @desc 构造成功的返回信息.
+     */
+    protected Object success(boolean success) {
+        return new ResponseEntity(success).toJson();
+    }
+
+    /**
      * @param obj
      * @return
      * @author chippy

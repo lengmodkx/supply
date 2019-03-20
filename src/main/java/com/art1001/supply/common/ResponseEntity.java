@@ -29,6 +29,10 @@ public class ResponseEntity {
         this.errmsg = errmsg;
     }
 
+    public ResponseEntity(boolean success){
+        this.success = success;
+    }
+
     /**
      * @param errcode
      * @param errmsg

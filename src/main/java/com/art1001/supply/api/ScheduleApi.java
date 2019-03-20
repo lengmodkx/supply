@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
@@ -17,9 +18,11 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 日程
@@ -33,7 +36,7 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("schedules")
-public class ScheduleApi {
+public class ScheduleApi extends BaseController {
 
     @Resource
     private ScheduleService scheduleService;
@@ -63,6 +66,22 @@ public class ScheduleApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 获取选中成员在当前时间范围中是否合法
+     * @param userId 当前用户id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 冲突的日程集合
+     */
+    @GetMapping("/{userId}/member_time_range")
+    public Object testMemberTimeRange(@PathVariable String userId, Long startTime, Long endTime){
+        try {
+            return success(scheduleService.testMemberTimeRange(userId, startTime, endTime));
+        } catch (Exception e){
+            throw new AjaxException("系统异常,成员时间范围合法性检测失败!");
+        }
     }
 
 

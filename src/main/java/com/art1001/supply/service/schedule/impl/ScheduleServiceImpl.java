@@ -17,11 +17,13 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -389,5 +391,27 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     @Override
     public List<Schedule> findScheduleGroup(String projectId) {
         return scheduleMapper.findScheduleGroup(System.currentTimeMillis(),projectId);
+    }
+
+    /**
+     * 检测成员时间范围的合法性
+     * @param userId 用户id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 是否合法
+     */
+    @Override
+    public List<Schedule> testMemberTimeRange(String userId, Long startTime, Long endTime) {
+        List<Schedule> conflictSchedules = new ArrayList<>();
+        //查询出和该用户关联的日程id集合
+        List<String> scheduleIds = scheduleMapper.selectList(new QueryWrapper<Schedule>().select("schedule_id").eq("member_id", userId).or().apply("FIND_IN_SET({0},member_ids)", userId)).stream().map(Schedule::getScheduleId).collect(Collectors.toList());
+        //查询出和改用和关联的日程信息
+        List<Schedule> schedules = scheduleMapper.selectList(new QueryWrapper<Schedule>().select("schedule_id","schedule_name","start_time","end_time").in("schedule_id",scheduleIds));
+        schedules.forEach(item -> {
+            if(!(startTime > item.getEndTime() || endTime < item.getStartTime())){
+                conflictSchedules.add(item);
+            }
+        });
+        return conflictSchedules;
     }
 }

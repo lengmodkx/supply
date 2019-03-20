@@ -179,4 +179,13 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return
 	 */
 	List<Schedule> findScheduleGroup(String projectId);
+
+	/**
+	 * 检测成员时间范围的合法性
+	 * @param userId 用户id
+	 * @param startTime 开始时间
+	 * @param endTime 结束时间
+	 * @return 冲突的日程信息
+	 */
+	List<Schedule> testMemberTimeRange(String userId, Long startTime, Long endTime);
 }
