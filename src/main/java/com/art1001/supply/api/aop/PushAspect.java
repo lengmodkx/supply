@@ -1,4 +1,4 @@
-package com.art1001.supply.api;
+package com.art1001.supply.api.aop;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
