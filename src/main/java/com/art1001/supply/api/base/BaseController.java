@@ -85,14 +85,8 @@ public class BaseController {
      */
     protected JSONObject success(Object data) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code",200);
-        if(Stringer.isNullOrEmpty(data)){
-            jsonObject.put("data","无数据");
-            jsonObject.put("result",false);
-        } else{
-            jsonObject.put("data",data);
-            jsonObject.put("result",true);
-        }
+        jsonObject.put("data",data);
+        jsonObject.put("result",1);
         return jsonObject;
     }
 
