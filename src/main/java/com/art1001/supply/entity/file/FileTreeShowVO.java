@@ -27,5 +27,5 @@ public class FileTreeShowVO {
     /**
      * 子目录集合
      */
-    private List<FileTreeShowVO> subFolder;
+    private List<FileTreeShowVO> childRen;
 }

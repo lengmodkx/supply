@@ -574,8 +574,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVOS.add(fileTreeShowVO);
             if(!CollectionUtils.isEmpty(file.getFiles())){
-                fileTreeShowVO.setSubFolder(new ArrayList<FileTreeShowVO>());
-                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getSubFolder());
+                fileTreeShowVO.setChildRen(new ArrayList<FileTreeShowVO>());
+                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getChildRen());
             }
         });
     }
