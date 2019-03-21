@@ -151,4 +151,10 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 */
 	int findMaxOrder(@Param("publicId") String publicId, @Param("lable") int lable);
 
+	/**
+	 * 获取分组下所有菜单以及任务信息数据
+	 * @param groupId 分组id
+	 * @return 菜单和任务数据集合
+	 */
+	List<Relation> selectMenuTask(@Param("groupId") String groupId);
 }

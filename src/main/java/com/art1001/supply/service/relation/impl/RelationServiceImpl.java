@@ -472,6 +472,17 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			index++;
 		}
 	}
+
+	/**
+	 * 获取分组下所有菜单以及任务信息数据
+	 * @param groupId 分组id
+	 * @return 菜单和任务数据集合
+	 */
+	@Override
+	public List<Relation> initMainPage(String groupId) {
+		return relationMapper.selectMenuTask(groupId);
+
+	}
 }
 
 

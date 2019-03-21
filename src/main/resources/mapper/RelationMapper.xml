@@ -47,6 +47,27 @@
 					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId"/>
 	</resultMap>
 
+	<!-- 映射菜单信息,任务信息 -->
+	<resultMap id="MenuTask" type="com.art1001.supply.entity.relation.Relation">
+		<id property="relationId" column="menu_id" />
+		<result property="relationName" column="menu_name"/>
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<result property="taskId" column="task_id"/>
+			<result property="taskName" column="task_name"/>
+			<result property="repeat" column="task_repeat"/>
+			<result property="priority" column="task_priority"/>
+			<result property="memberId" column="member_id"/>
+			<result property="taskStatus" column="task_status"/>
+			<result property="executor" column="executor_id"/>
+			<result property="executorName" column="executor_name"/>
+			<result property="executorImg" column="executor_image"/>
+			<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+				<id property="tagId" column="tag_id"/>
+				<result property="tagName" column="tag_name"/>
+			</collection>
+		</collection>
+	</resultMap>
+
 	<!-- 菜单、分组、项目 名称 映射 -->
 	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
 		<result property="projectName" column="project_name"/>
@@ -372,5 +393,33 @@
 			</if>
 		</where>
 
+	</select>
+
+	<!-- 获取分组下所有菜单以及任务信息数据 -->
+	<select id="selectMenuTask" resultMap="MenuTask">
+		SELECT
+			me.relation_id AS menu_id,
+			me.relation_name AS menu_name,
+			task.task_id AS task_id,
+			task.task_name AS task_name,
+			task.`repeat` AS task_repeat,
+			task.priority AS task_priority,
+			task.member_id AS member_id,
+			task.task_status,
+			tag_name,
+			u.image AS executor_image,
+			u.user_id executor_id,
+			u.user_name AS u_username
+		FROM
+			prm_relation AS gr
+			LEFT JOIN prm_relation AS me ON gr.relation_id = me.parent_id
+			LEFT JOIN prm_task AS task ON me.relation_id = task.task_menu_id
+			LEFT JOIN prm_tag_relation AS tr ON task.task_id = tr.task_id
+			LEFT JOIN prm_tag AS tag ON tr.tag_id = tag.tag_id
+			LEFT JOIN tb_user AS u ON task.executor = u.user_id
+		WHERE
+			gr.relation_id = #{groupId}
+		ORDER BY
+			task.ORDER
 	</select>
 </mapper>

@@ -204,4 +204,11 @@ public interface RelationService extends IService<Relation> {
 	 * @param menuIds 菜单id
 	 */
     void orderMenu(String[] menuIds);
+
+	/**
+	 * 获取分组下所有菜单以及任务信息数据
+	 * @param groupId 分组id
+	 * @return 菜单和任务数据集合
+	 */
+	List<Relation> initMainPage(String groupId);
 }
