@@ -44,13 +44,4 @@ public class MybatisPlusConfig {
         return DruidDataSourceBuilder.create().build();
     }
 
-    /**
-     * 生成主键
-     * @return
-     */
-    @Bean
-    public OracleKeyGenerator oracleKeyGenerator(){
-        return new OracleKeyGenerator();
-    }
-
 }

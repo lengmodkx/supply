@@ -420,6 +420,6 @@
 		WHERE
 			gr.relation_id = #{groupId}
 		ORDER BY
-			task.ORDER
+			me.order,task.ORDER
 	</select>
 </mapper>

@@ -243,4 +243,11 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return 文件树形图信息
 	 */
 	List<FileTreeShowVO> selectTreeChildFolder(@Param("parentId") String parentId);
+
+	/**
+	 * 获取一个项目的所有文件夹
+	 * @param fileId 根目录id
+	 * @return 文件夹信息
+	 */
+	List<File> selectProjectAllFolder(@Param("fileId") String fileId);
 }

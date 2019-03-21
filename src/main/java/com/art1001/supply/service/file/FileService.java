@@ -189,4 +189,11 @@ import java.util.List;
 	 * @return 文件树形图信息
 	 */
 	List<FileTreeShowVO> findTreeChildFolder(String parentId);
+
+	/**
+	 * 获取一个项目的所有文件夹
+	 * @param fileId 根目录id
+	 * @return 文件夹信息
+	 */
+	List<FileTreeShowVO> getProjectAllFolder(String fileId);
 }

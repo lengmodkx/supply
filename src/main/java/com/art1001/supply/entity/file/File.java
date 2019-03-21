@@ -4,10 +4,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -141,12 +138,19 @@ public class File extends Model<File> {
     /** 创建时间
      *
      */
+    @TableField(fill = FieldFill.INSERT)
     private Long createTime;
 
     /**
      *  修改时间
      */
     private Long updateTime;
+
+    /**
+     * 子文件
+     */
+    @TableField(exist = false)
+    private List<File> files;
 
     /**
      * 从(文件,任务,分享,日程) 评论区上传的文件 或者 项目群聊上传的文件时候 的项目id 或者 文件,任务,分享,日程 的id

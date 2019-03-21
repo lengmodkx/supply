@@ -153,70 +153,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 		return taskMapper.findTaskByTaskId(taskId);
 	}
 
-	/**
-	 * 将添加的任务信息保存至数据库
-     * @param task task信息
-     * @param taskRemindRules 提醒规则
-     */
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void saveTask(Task task, String taskRemindRules, String tagIds) {
-	    task.setTaskId(IdGen.uuid());
-	    //设置创建者
-        task.setMemberId(ShiroAuthenticationManager.getUserId());
-        //根据查询菜单id 查询 菜单id 下的 最大排序号
-        int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
-        task.setOrder(++maxOrder);
-        //保存任务信息
-        taskMapper.saveTask(task);
-        //保存标签
-        this.saveBatchTaskTag(tagIds,task.getTaskId());
-
-        List<TaskRemindRule> remindList = JSON.parseArray(taskRemindRules, TaskRemindRule.class);
-        remindList.forEach(item -> {
-            item.setId(IdGen.uuid());
-            item.setTaskId(task.getTaskId());
-            //存储quartz的job信息和trigger信息
-            QuartzInfo quartzInfo = new QuartzInfo();
-            quartzInfo.setId(IdGen.uuid());
-            quartzInfo.setJobName(IdGen.uuid());
-            quartzInfo.setJobGroup("task");
-            quartzInfo.setRemindId(item.getId());
-            quartzInfo.setTriggerGroup("task");
-            quartzInfoService.save(quartzInfo);
-
-            MyJob myJob = new MyJob();
-            myJob.setJobGroupName("task");
-            myJob.setTriggerGroupName("task");
-            myJob.setJobName(quartzInfo.getJobName());
-
-            JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("users",item.getUsers());
-
-            myJob.setJobDataMap(jobDataMap);
-            myJob.setCronTime(remindCron(item.getTaskId(), item.getRemindType(), item.getNum(), item.getTimeType(), item.getCustomTime()));
-            quartzService.addJobByCronTrigger(RemindJob.class,myJob);
-            //提醒规则存库
-            taskRemindRuleService.save(item);
-        });
-    }
 
     /**
      * 将添加的任务信息保存至数据库
      * @param task task信息
      */
     @Override
-    public void saveTask(Task task,String tagIds) {
-        task.setTaskId(IdGen.uuid());
+    public void saveTask(Task task) {
         //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        taskMapper.saveTask(task);
-        //保存标签
-        this.saveBatchTaskTag(tagIds,task.getTaskId());
+        taskMapper.insert(task);
     }
 
     /**

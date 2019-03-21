@@ -77,10 +77,10 @@ public class TaskApi extends BaseController {
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
-    public JSONObject addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds){
+    public JSONObject addTask(Task task){
         try {
-            taskService.saveTask(task,tagIds);
-            return success(task.getTaskId(),task,task.getTaskId(),task.getTaskName(),taskService.findProjectIdByTaskId(task.getTaskId()));
+            taskService.saveTask(task);
+            return success(task.getProjectId(),task,task.getTaskId(),task.getTaskName(),taskService.findProjectIdByTaskId(task.getTaskId()));
         } catch (BaseException e){
             return error(e.getMessage());
         } catch (Exception e){
@@ -546,7 +546,7 @@ public class TaskApi extends BaseController {
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
-            taskService.saveTask(task,null);
+            taskService.saveTask(task);
             object.put("result",1);
             object.put("msg","创建成功!");
             object.put("data",task);

@@ -39,14 +39,13 @@ public interface TaskService extends IService<Task> {
 	 * @param taskRemindRules 提醒规则
 	 * @param tagIds 任务的标签
 	 */
-	void saveTask(Task task, String taskRemindRules, String tagIds);
+	//void saveTask(Task task, String taskRemindRules, String tagIds);
 
 	/**
 	 * 保存task数据
 	 * @param task 其他信息
-	 * @param tagIds 任务的标签
 	 */
-	void saveTask(Task task, String tagIds);
+	void saveTask(Task task);
 
 	void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList);
 

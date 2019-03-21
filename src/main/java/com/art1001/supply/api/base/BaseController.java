@@ -58,7 +58,7 @@ public class BaseController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("msgId",msgId);
         jsonObject.put("data",data);
-        jsonObject.put("result",true);
+        jsonObject.put("result",1);
         jsonObject.put("id",id);
         jsonObject.put("name",name);
         jsonObject.put("projectId",projectId);
@@ -72,7 +72,7 @@ public class BaseController {
     protected JSONObject success(String msgId, String id, String name) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("msgId",msgId);
-        jsonObject.put("result",true);
+        jsonObject.put("result",1);
         jsonObject.put("id",id);
         jsonObject.put("name",name);
         return jsonObject;

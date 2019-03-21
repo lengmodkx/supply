@@ -388,6 +388,10 @@
 			create_time DESC
 	</select>
 
+	<!-- 获取一个项目的所有文件夹 -->
+	<select id="selectProjectAllFolder" resultType="com.art1001.supply.entity.file.File">
+		select * from prm_file where catalog = 1 AND find_in_set(file_id,getChildFolder(#{fileId})) order by create_time desc
+	</select>
 
 	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">

@@ -23,6 +23,7 @@ import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -524,5 +525,58 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<FileTreeShowVO> findTreeChildFolder(String parentId) {
         return fileMapper.selectTreeChildFolder(parentId);
+    }
+
+    /**
+     * 获取一个项目的所有文件夹
+     * @param fileId 根目录id
+     * @return 文件夹信息
+     */
+    @Override
+    public List<FileTreeShowVO> getProjectAllFolder(String fileId) {
+        List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
+        List<File> files = fileMapper.selectProjectAllFolder(fileId);
+        List<File> root = files.stream().filter(item -> item.getParentId().equals(fileId)).collect(Collectors.toList());
+        List<File> sub = files.stream().filter(item -> !item.getParentId().equals(fileId)).collect(Collectors.toList());
+        this.folderLayered(sub,root);
+        this.chanageToFileTreeVO(root,fileTreeShowVOS);
+        return fileTreeShowVOS;
+    }
+
+    /**
+     * 文件夹分层
+     * @param files 文件夹集合
+     */
+    private void folderLayered(List<File> files, List<File> collect){
+        collect.forEach(parentFile -> {
+            files.forEach(file -> {
+                if(file.getParentId().equals(parentFile.getFileId())){
+                    if(parentFile.getFiles() == null){
+                        parentFile.setFiles(new ArrayList<File>());
+                    }
+                    parentFile.getFiles().add(file);
+                }
+            });
+            if(!CollectionUtils.isEmpty(parentFile.getFiles())){
+                folderLayered(files,parentFile.getFiles());
+            }
+        });
+    }
+
+    /**
+     * 文件夹类型转化
+     */
+    private void chanageToFileTreeVO(List<File> files,List<FileTreeShowVO> fileTreeShowVOS){
+        List<File> collect = files.stream().sorted(Comparator.comparing(File::getCreateTime).reversed()).collect(Collectors.toList());
+        collect.forEach(file -> {
+            FileTreeShowVO fileTreeShowVO = new FileTreeShowVO();
+            fileTreeShowVO.setId(file.getFileId());
+            fileTreeShowVO.setText(file.getFileName());
+            fileTreeShowVOS.add(fileTreeShowVO);
+            if(!CollectionUtils.isEmpty(file.getFiles())){
+                fileTreeShowVO.setSubFolder(new ArrayList<FileTreeShowVO>());
+                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getSubFolder());
+            }
+        });
     }
 }

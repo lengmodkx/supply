@@ -112,6 +112,24 @@ public class FileApi extends BaseController {
     }
 
     /**
+     * 获取一个项目的所有文件夹
+     * @return 文件夹信息
+     */
+    @GetMapping("/{projectId}/folder/all")
+    public JSONObject getProjectAllFolder(@PathVariable String projectId){
+        try {
+            File one = fileService.getOne(new QueryWrapper<File>().select("file_id").eq("project_id", projectId).eq("parent_id", "0"));
+            if(one == null){
+                return error("该项目不存在!");
+            }
+            return success(fileService.getProjectAllFolder(one.getFileId()));
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
+    /**
      * 打开文件详情
      */
     @GetMapping("/{fileId}/details")
