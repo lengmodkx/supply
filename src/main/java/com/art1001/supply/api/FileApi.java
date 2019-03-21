@@ -763,7 +763,7 @@ public class FileApi extends BaseController {
             return success(fileService.findTreeFolderByProjectId(projectId));
         } catch (Exception e){
             e.printStackTrace();
-            throw new AjaxException("系统异常,获取数据失败!",e);
+            throw new AjaxException(e);
         }
     }
 
