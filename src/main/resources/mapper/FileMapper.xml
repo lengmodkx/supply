@@ -280,7 +280,7 @@
 		<include refid="Base_Column_List" />
 		FROM
 		prm_file
-		where catalog = 1 and  parent_id = #{fileId} and public_lable = 0
+		where catalog = 1 and  parent_id = #{fileId} and public_lable = 0 order by create_time desc
 	</select>
 
 	<update id="moveFile" parameterType="java.util.Map">
@@ -356,6 +356,38 @@
 	<select id="selectParentId" resultType="java.lang.String">
 		select file_id from prm_file where project_id = #{projectId} and `level` = 0
 	</select>
+
+	<!-- 根据项目id获取该项目下的根文件夹 -->
+	<select id="selectTreeFolderByProjectId" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
+		SELECT
+			file_id AS id,
+			file_name AS text
+		FROM
+			prm_file
+		WHERE
+			project_id = #{projectId}
+			AND parent_id = '0'
+			AND catalog = 1
+			AND public_lable = 0
+		ORDER BY
+			create_time DESC
+	</select>
+
+	<!-- 根据父级id获取该项目下的根文件夹 -->
+	<select id="selectTreeChildFolder" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
+		SELECT
+			file_id AS id,
+			file_name AS text
+		FROM
+			prm_file
+		WHERE
+			parent_id = #{parentId}
+			AND catalog = 1
+			AND public_lable = 0
+		ORDER BY
+			create_time DESC
+	</select>
+
 
 	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">

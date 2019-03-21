@@ -1,7 +1,9 @@
 package com.art1001.supply.api.base;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.ResponseEntity;
 import com.art1001.supply.util.Stringer;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -37,34 +39,61 @@ public class BaseController {
     /**
      * @param errorMessage 错误信息
      * @return
-     * @throws Exception
      * @author by chippy
      * @desc 构造错误的返回信息（不带errorCode）.
      */
-    protected Object error(String errorMessage) {
-        return new ResponseEntity(null, errorMessage).toJson();
+    protected JSONObject error(String errorMessage) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",false);
+        jsonObject.put("msg",errorMessage);
+        return jsonObject;
     }
 
     /**
      * @param data - 业务数据json
-     * @return
-     * @throws Exception
+     * @return 返回值信息
      * @author by chippy
-     * @desc 构造成功的返回信息.
      */
-    protected Object success(Object data) {
-        return new ResponseEntity(data).toJson();
+    protected JSONObject success(String msgId, Object data, String id, String name,String projectId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msgId",msgId);
+        jsonObject.put("data",data);
+        jsonObject.put("result",true);
+        jsonObject.put("id",id);
+        jsonObject.put("name",name);
+        jsonObject.put("projectId",projectId);
+        return jsonObject;
     }
 
     /**
-     * @param success -
-     * @return
-     * @throws Exception
+     * @return 返回值信息
      * @author by chippy
-     * @desc 构造成功的返回信息.
      */
-    protected Object success(boolean success) {
-        return new ResponseEntity(success).toJson();
+    protected JSONObject success(String msgId, String id, String name) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msgId",msgId);
+        jsonObject.put("result",true);
+        jsonObject.put("id",id);
+        jsonObject.put("name",name);
+        return jsonObject;
+    }
+
+    /**
+     * @param data - 业务数据json
+     * @return 返回值信息
+     * @author by chippy
+     */
+    protected JSONObject success(Object data) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",200);
+        if(Stringer.isNullOrEmpty(data)){
+            jsonObject.put("data","无数据");
+            jsonObject.put("result",false);
+        } else{
+            jsonObject.put("data",data);
+            jsonObject.put("result",true);
+        }
+        return jsonObject;
     }
 
     /**

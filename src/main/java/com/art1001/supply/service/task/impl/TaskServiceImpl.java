@@ -161,6 +161,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void saveTask(Task task, String taskRemindRules, String tagIds) {
+	    task.setTaskId(IdGen.uuid());
 	    //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
@@ -206,6 +207,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public void saveTask(Task task,String tagIds) {
+        task.setTaskId(IdGen.uuid());
         //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
@@ -628,6 +630,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<Task> simpleTaskMenu(String menuId) {
         return taskMapper.simpleTaskMenu(menuId);
+    }
+
+    /**
+     * 根据任务的id 获取当前所属的项目id
+     * @param taskId 任务id
+     * @return 项目id
+     */
+    @Override
+    public String findProjectIdByTaskId(String taskId) {
+        return taskMapper.selectOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
     }
 
     /**

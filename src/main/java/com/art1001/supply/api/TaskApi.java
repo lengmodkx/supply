@@ -20,6 +20,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
@@ -61,7 +62,7 @@ public class TaskApi extends BaseController {
      * @return object
      */
     @GetMapping("/{taskId}")
-    public Object getTask(@PathVariable(value = "taskId") String taskId){
+    public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
         try {
             return success(taskService.taskInfoShow(taskId));
         } catch (Exception e){
@@ -71,20 +72,15 @@ public class TaskApi extends BaseController {
 
     /**
      * 创建任务
-     * @param taskRemindRules 提醒规则集合
      * @return object
      */
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
-    public Object addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds, @RequestParam(value = "taskRemindRules",required = false) String taskRemindRules){
+    public JSONObject addTask(Task task, @RequestParam(value = "tagIds",required = false) String tagIds){
         try {
-            if(StringUtils.isEmpty(taskRemindRules)){
-                taskService.saveTask(task,tagIds);
-            } else{
-                taskService.saveTask(task,taskRemindRules,tagIds);
-            }
-            return success(task);
+            taskService.saveTask(task,tagIds);
+            return success(task.getTaskId(),task,task.getTaskId(),task.getTaskName(),taskService.findProjectIdByTaskId(task.getTaskId()));
         } catch (BaseException e){
             return error(e.getMessage());
         } catch (Exception e){
@@ -103,7 +99,7 @@ public class TaskApi extends BaseController {
     public Object deleteTask(@PathVariable(value = "taskId")String taskId){
         try{
             taskService.removeById(taskId);
-            return success(taskId);
+            return success(taskId,taskId,taskService.findTaskNameById(taskId));
         }catch(Exception e){
             throw new AjaxException("系统异常,删除失败",e);
         }

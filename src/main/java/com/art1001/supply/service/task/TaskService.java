@@ -192,6 +192,13 @@ public interface TaskService extends IService<Task> {
 	List<Task> simpleTaskMenu(String menuId);
 
 	/**
+	 * 根据任务的id 获取当前所属的项目id
+	 * @param taskId 任务id
+	 * @return 项目id
+	 */
+	String findProjectIdByTaskId(String taskId);
+
+	/**
 	 * 查询某个人执行的所有任务
 	 * @param uId 当前用户id
 	 * @param orderType 任务的排序类型

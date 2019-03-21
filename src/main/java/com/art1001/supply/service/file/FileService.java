@@ -3,6 +3,7 @@ package com.art1001.supply.service.file;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -174,4 +175,18 @@ import java.util.List;
 	 * @param fileId 目录id
 	 */
     int checkChildFolder(String fileId);
+
+	/**
+	 * 根据项目id获取该项目下的根文件夹
+	 * @param projectId 项目id
+	 * @return 文件树形图信息
+	 */
+	List<FileTreeShowVO> findTreeFolderByProjectId(String projectId);
+
+	/**
+	 * 根据父级id获取该项目下的根文件夹
+	 * @param parentId 父级id
+	 * @return 文件树形图信息
+	 */
+	List<FileTreeShowVO> findTreeChildFolder(String parentId);
 }

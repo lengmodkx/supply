@@ -1,6 +1,7 @@
 package com.art1001.supply.config;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import com.baomidou.mybatisplus.extension.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,6 +42,15 @@ public class MybatisPlusConfig {
     @ConfigurationProperties("spring.datasource.druid" )
     public DataSource dataSource() {
         return DruidDataSourceBuilder.create().build();
+    }
+
+    /**
+     * 生成主键
+     * @return
+     */
+    @Bean
+    public OracleKeyGenerator oracleKeyGenerator(){
+        return new OracleKeyGenerator();
     }
 
 }

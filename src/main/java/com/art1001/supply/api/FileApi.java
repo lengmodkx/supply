@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
@@ -52,7 +54,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping("files")
 @RestController
-public class FileApi {
+public class FileApi extends BaseController {
 
     /**
      * 文件逻辑层接口
@@ -748,5 +750,35 @@ public class FileApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 根据项目id获取到该项目下的所有根文件夹
+     * @param projectId 项目
+     * @return 文件夹集合
+     */
+    @GetMapping("/folder/project/{projectId}")
+    public JSONObject getFolderByProjectId(@PathVariable String projectId){
+        try {
+            return success(fileService.findTreeFolderByProjectId(projectId));
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,获取数据失败!",e);
+        }
+    }
+
+    /**
+     * 根据父文件夹id获取子文件夹的树形图数据
+     * @param parentId 父文件夹id
+     * @return 子文件夹数据
+     */
+    @GetMapping("/folder/child/{parentId}")
+    public JSONObject getFolderByParentId(@PathVariable String parentId){
+        try {
+            return success(fileService.findTreeChildFolder(parentId));
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,获取数据失败!",e);
+        }
     }
 }

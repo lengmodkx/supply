@@ -207,7 +207,11 @@ public class ProjectApi {
         return object;
     }
 
-    //任务界面初始化
+    /**
+     * 任务界面初始化
+     * @param projectId 项目id
+     * @return
+     */
     @GetMapping("/{projectId}/tasks")
     public JSONObject mainpage(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -226,6 +230,7 @@ public class ProjectApi {
             object.put("project",project);
             object.put("groupId",groupId);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AjaxException(e);
         }
       return object;

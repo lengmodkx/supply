@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.user.UserEntity;
@@ -503,5 +504,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public int checkChildFolder(String fileId) {
         return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("catalog",1)) > 0 ? 1 : 0;
+    }
+
+    /**
+     * 根据项目id获取该项目下的根文件夹
+     * @param projectId 项目id
+     * @return 文件树形图信息
+     */
+    @Override
+    public List<FileTreeShowVO> findTreeFolderByProjectId(String projectId) {
+        return fileMapper.selectTreeFolderByProjectId(projectId);
+    }
+
+    /**
+     * 根据父级id获取该项目下的根文件夹
+     * @param parentId 父级id
+     * @return 文件树形图信息
+     */
+    @Override
+    public List<FileTreeShowVO> findTreeChildFolder(String parentId) {
+        return fileMapper.selectTreeChildFolder(parentId);
     }
 }

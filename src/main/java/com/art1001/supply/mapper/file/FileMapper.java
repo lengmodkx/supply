@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 
@@ -228,4 +229,18 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return
 	 */
 	String selectParentId(String projectId);
+
+	/**
+	 * 根据项目id获取该项目下的根文件夹
+	 * @param projectId 项目id
+	 * @return 文件树形图信息
+	 */
+    List<FileTreeShowVO> selectTreeFolderByProjectId(@Param("projectId") String projectId);
+
+	/**
+	 * 根据父级id获取该项目下的根文件夹
+	 * @param parentId 父级id
+	 * @return 文件树形图信息
+	 */
+	List<FileTreeShowVO> selectTreeChildFolder(@Param("parentId") String parentId);
 }

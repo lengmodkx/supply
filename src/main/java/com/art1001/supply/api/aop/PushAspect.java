@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * @author shaohua
+ */
 @Aspect
 @Component
 public class PushAspect extends BaseController {
@@ -25,6 +28,10 @@ public class PushAspect extends BaseController {
 
     @Resource
     private LogService logService;
+
+    private final static String ID = "id";
+    private final static String PROJECT_ID = "projectId";
+    private final static String NAME = "name";
 
     /**
      * 推送的切点
@@ -43,29 +50,33 @@ public class PushAspect extends BaseController {
         //只需要推送，不需要日志
         if(push.type()==0){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
-        } else if (push.type()==1){ //既需要推送也需要日志
+            //既需要推送也需要日志
+        } else if (push.type()==1){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
-            Log log = new Log();
-            log.setPublicId(object.getString("id"));
-            log.setProjectId(object.getString("msgId"));
-            log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString("name"));
-            log.setMemberId(ShiroAuthenticationManager.getUserId());
-            logService.save(log);
+            this.saveLog(object,push);
         }else{//只需要日志
-            if(object.containsKey("id")){
-                Log log = new Log();
-                log.setPublicId(object.getString("id"));
-                log.setProjectId(object.getString("msgId"));
-                log.setCreateTime(System.currentTimeMillis());
-                log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString("name"));
-                log.setMemberId(ShiroAuthenticationManager.getUserId());
-                //logService.save(log);
+            if(object.containsKey(ID)){
+                this.saveLog(object,push);
             }
         }
-
+        //去除无用的返回参数
         object.remove("msgId");
         object.remove("data");
         object.remove("id");
         object.remove("name");
+    }
+
+    /**
+     * 保存操作日志
+     * @param object 返回值信息
+     */
+    private void saveLog(JSONObject object,Push push){
+        Log log = new Log();
+        log.setPublicId(object.getString(ID));
+        log.setProjectId(object.getString(PROJECT_ID));
+        log.setCreateTime(System.currentTimeMillis());
+        log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString(NAME));
+        log.setMemberId(ShiroAuthenticationManager.getUserId());
+        logService.save(log);
     }
 }
