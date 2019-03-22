@@ -14,6 +14,7 @@ import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
@@ -50,6 +51,8 @@ public class TaskApi extends BaseController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RelationService relationService;
 
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
@@ -80,7 +83,8 @@ public class TaskApi extends BaseController {
     public JSONObject addTask(Task task){
         try {
             taskService.saveTask(task);
-            return success(task.getProjectId(),task,task.getTaskId(),task.getTaskName(),taskService.findProjectIdByTaskId(task.getTaskId()));
+
+            return success(task.getProjectId(),relationService.initMainPage(task.getTaskGroupId()),task.getTaskId(),task.getTaskName(),task.getProjectId());
         } catch (BaseException e){
             return error(e.getMessage());
         } catch (Exception e){
