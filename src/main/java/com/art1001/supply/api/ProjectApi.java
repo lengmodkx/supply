@@ -195,9 +195,13 @@ public class ProjectApi {
                     case "文件":
                         item.setSuffix(fileService.findParentId(projectId));
                         break;
+                    case "任务":
+                        item.setSuffix(projectMemberService.findDefaultGroup(projectId,ShiroAuthenticationManager.getUserId()));
+                        break;
+                    default:
+
                 }
             });
-
             object.put("result",1);
             object.put("data",funcList);
         }catch(Exception e){
