@@ -1614,7 +1614,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param taskId 任务id
      * @param taskShowVo 添加到的 taskShowVo对象
      */
-    public void setBindingInfo(String taskId,TaskShowVo taskShowVo){
+    private void setBindingInfo(String taskId,TaskShowVo taskShowVo){
         List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
         List<Task> tasks = new ArrayList<>();
         List<Schedule> schedules = new ArrayList<>();
@@ -1630,7 +1630,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             if(item.getPublicType().equals(Constants.FILE)){
                 files.add(JSON.parseObject(item.getBindContent(), File.class));
             }
-            if(item.getPublicType().equals(Constants.TASK)){
+            if(item.getPublicType().equals(Constants.SHARE)){
                 shares.add(JSON.parseObject(item.getBindContent(), Share.class));
             }
         });

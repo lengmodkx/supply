@@ -15,7 +15,7 @@ import java.util.List;
  * @Author heshaohua
  **/
 @Data
-public class TaskShowVo {
+public class  TaskShowVo {
 
     /**
      * 任务的实体信息

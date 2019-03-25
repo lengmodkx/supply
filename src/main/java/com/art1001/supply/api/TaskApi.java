@@ -69,6 +69,7 @@ public class TaskApi extends BaseController {
         try {
             return success(taskService.taskInfoShow(taskId));
         } catch (Exception e){
+            e.printStackTrace();
             throw new AjaxException(e);
         }
     }
@@ -119,11 +120,15 @@ public class TaskApi extends BaseController {
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
-            object.put("data",taskService.completeTask(taskId));
+            taskService.completeTask(taskId);
+            Task t = new Task();
+            t.setTaskId(taskId);
+            t.setTaskStatus("完成");
+            object.put("data",new JSONObject().fluentPut("task",t));
             object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
@@ -149,8 +154,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("status",0));
+            object.put("msgId",this.getTaskProjectId(taskId));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
             throw new AjaxException(e);
@@ -203,9 +208,10 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("taskName",taskName));
+            object.put("msgId",this.getTaskProjectId(taskId));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("name",taskName);
         }catch(Exception e){
             log.error("系统异常,任务名称更新失败:",e);
             throw new AjaxException(e);
@@ -515,9 +521,8 @@ public class TaskApi extends BaseController {
             task.setPriority(priority);
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("priority",priority));
+            object.put("msgId",getTaskProjectId(taskId));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,优先级更新失败:",e);
@@ -823,5 +828,14 @@ public class TaskApi extends BaseController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 获取任务的项目id
+     * @param taskId 任务id
+     * @return 项目id
+     */
+    private String getTaskProjectId(String taskId){
+        return taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
     }
 }
