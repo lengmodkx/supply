@@ -288,21 +288,17 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A8,type = 1)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
-                                        @RequestParam(value = "endTime")String endTime){
+                                        @RequestParam(value = "endTime")Long endTime){
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            if(StringUtils.isNotEmpty(endTime)){
-                task.setEndTime(DateUtils.strToLong(endTime));
-            }else{
-                task.setEndTime(null);
-            }
+            task.setEndTime(endTime);
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("endTime",endTime));
+            object.put("msgId",this.getTaskProjectId(taskId));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,结束时间更新失败:",e);
@@ -330,8 +326,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("repeat",repeat));
+            object.put("msgId",this.getTaskProjectId(taskId));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
