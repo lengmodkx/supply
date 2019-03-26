@@ -268,7 +268,7 @@ public class TaskApi extends BaseController {
             task.setStartTime(startTime);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
