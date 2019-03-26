@@ -505,7 +505,7 @@ public interface TaskService extends IService<Task> {
 	 * @param taskId 任务id
 	 * @param startTime 新的开始时间
 	 */
-    void updateStartTime(String taskId, String startTime);
+    void updateStartTime(String taskId, Long startTime);
 
 	/**
 	 * 任务排序

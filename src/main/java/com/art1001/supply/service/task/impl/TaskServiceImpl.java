@@ -1252,10 +1252,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param startTime 新的开始时间
      */
     @Override
-    public void updateStartTime(String taskId, String startTime) {
+    public void updateStartTime(String taskId, Long startTime) {
         Task task = new Task();
         task.setTaskId(taskId);
-        task.setStartTime(DateUtils.strToLong(startTime));
+        task.setStartTime(startTime);
         taskMapper.updateById(task);
         List<TaskRemindRule> taskRemindRules = taskRemindRuleService.listRuleAndQuartz(taskId);
         taskRemindRules.forEach(item -> {

@@ -9,6 +9,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.enums.MediaTypes;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
@@ -258,14 +259,17 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A7,type = 1)
     @PutMapping("/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
-                                          @RequestParam(value = "startTime")String startTime){
+                                          @RequestParam(value = "startTime")Long startTime){
         JSONObject object = new JSONObject();
         try{
             taskService.updateStartTime(taskId,startTime);
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setStartTime(startTime);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("startTime",startTime));
+            object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,开始时间更新失败:",e);
