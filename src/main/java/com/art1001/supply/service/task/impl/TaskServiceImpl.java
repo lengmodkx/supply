@@ -52,6 +52,7 @@ import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
@@ -470,29 +471,31 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param projectId 当前任务所在的项目id
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void copyTask(String taskId, String projectId, String groupId,String menuId) {
-        Task oldTask = taskMapper.findTaskByTaskId(taskId);
+        Task task = new Task();
+        List<Task> child = this.findTaskByFatherTask(taskId);
         try {
             //更新新任务的创建时间
-            oldTask.setCreateTime(System.currentTimeMillis());
+            task.setCreateTime(System.currentTimeMillis());
             //设置新任务的更新时间
-            oldTask.setUpdateTime(System.currentTimeMillis());
-            oldTask.setProjectId(projectId);
-            oldTask.setTaskMenuId(menuId);
-            oldTask.setTaskGroupId(groupId);
-            save(oldTask);
-            if(oldTask.getTaskList()!=null&&oldTask.getTaskList().size()>0){
-                oldTask.getTaskList().forEach(task->{
+            task.setUpdateTime(System.currentTimeMillis());
+            task.setProjectId(projectId);
+            task.setTaskMenuId(menuId);
+            task.setTaskGroupId(groupId);
+            save(task);
+            if(CollectionUtils.isNotEmpty(child)){
+                child.forEach(item ->{
                     //设置新的子任务id
-                    task.setProjectId(projectId);
+                    item.setProjectId(projectId);
                     //设置新的子任务的父任务id
-                    task.setParentId(oldTask.getTaskId());
+                    item.setParentId(item.getTaskId());
                     //设置新子任务的更新时间
-                    task.setUpdateTime(System.currentTimeMillis());
+                    item.setUpdateTime(System.currentTimeMillis());
                     //设置新子任务的创建时间
-                    task.setCreateTime(System.currentTimeMillis());
-                    save(task);
+                    item.setCreateTime(System.currentTimeMillis());
+                    save(item);
                 });
             }
         } catch (Exception e) {

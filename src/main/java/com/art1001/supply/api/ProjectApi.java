@@ -226,9 +226,9 @@ public class ProjectApi {
             Relation relation = new Relation();
             relation.setParentId(groupId);
             relation.setLable(1);
-            List<Relation> relations = relationService.findRelationAllList(relation);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
             object.put("result", 1);
-            object.put("menus",relations);
+            object.put("menus",taskMenu);
             object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));
             object.put("project",project);
             object.put("groupId",groupId);

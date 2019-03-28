@@ -97,8 +97,7 @@ public class CollectionApi {
     public JSONObject deleteCollection(@PathVariable String publicId){
         JSONObject object = new JSONObject();
         try{
-            String userId = ShiroAuthenticationManager.getUserId();
-            collectService.deletePublicCollectById(userId,publicId);
+            collectService.remove(new QueryWrapper<PublicCollect>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("public_id",publicId));
             object.put("result",1);
             object.put("msg","取消收藏成功");
         }catch(Exception e){

@@ -201,8 +201,6 @@
 		t.parent_id,
 		t.member_id,
 		t.executor,
-		parent.task_id as par_id,
-		parent.task_name as par_name,
 		u.user_name as executor_name,
 		u.image as executor_img,
 		t.task_type,
@@ -806,7 +804,7 @@
 	</select>
 
 	<!-- 查询某个用户的参与的所有任务 并且排序 -->
-	<select id="findTaskByUserAndTime" resultMap="BaseResultMap ">
+	<select id="findTaskByUserAndTime" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
 		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">
