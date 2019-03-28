@@ -206,12 +206,12 @@ public class ScheduleApi extends BaseController {
      */
     @PutMapping("/{scheduleId}/starttime")
     public JSONObject updateScheduleStartTime(@PathVariable String scheduleId,
-                                         @RequestParam String startTime){
+                                         @RequestParam Long startTime){
         JSONObject object = new JSONObject();
         try{
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
-            schedule.setStartTime(DateUtils.strToLong(startTime));
+            schedule.setStartTime(startTime);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
