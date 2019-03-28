@@ -31,4 +31,17 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	@Select("select count(0) from prm_project_member where project_id = #{projectId} and member_id = #{id}")
 	int findMemberIsExist(@Param("projectId") String projectId, @Param("id") String id);
 
+	/**
+	 * 获取当前用户的星标项目
+	 * @param userId 用户id
+	 * @return 星标项目
+	 */
+    List<Project> getStarProject(@Param("userId") String userId);
+
+	/**
+	 * 获取当前用户的非星标项目
+	 * @param userId 用户id
+	 * @return 非星标项目
+	 */
+	List<Project> getNotStarProject(@Param("userId") String userId);
 }

@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
@@ -182,5 +183,23 @@ public class MemberInvitationApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 获取一个用户的星标项目和非星标项目
+     * @return 项目集合
+     */
+    @GetMapping("/star")
+    public JSONObject getStarProject(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            jsonObject.put("starProject",projectMemberService.getStarProject(userId));
+            jsonObject.put("notStarProject",projectMemberService.getNotStarProject(userId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException(e);
+        }
     }
 }

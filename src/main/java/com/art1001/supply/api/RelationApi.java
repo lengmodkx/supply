@@ -187,4 +187,21 @@ public class RelationApi {
         return jsonObject;
     }
 
+    /**
+     * 获取分组下的所有菜单信息
+     * @param groupId
+     * @return
+     */
+    @GetMapping("/{groupId}/menus")
+    public JSONObject getMenus(@PathVariable("groupId") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",relationService.findAllMenuInfoByGroupId(groupId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取菜单信息失败!",e);
+        }
+    }
+
 }

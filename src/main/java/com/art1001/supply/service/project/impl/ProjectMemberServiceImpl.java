@@ -151,4 +151,24 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
 		return projectAllMember.stream().filter(item -> !newUserList.contains(item)).collect(Collectors.toList());
 	}
+
+	/**
+	 * 获取当前用户的星标项目
+	 * @param userId 用户id
+	 * @return 星标项目
+	 */
+	@Override
+	public List<Project> getStarProject(String userId) {
+		return projectMemberMapper.getStarProject(userId);
+	}
+
+	/**
+	 * 获取当前用户的非星标项目
+	 * @param userId 用户id
+	 * @return 非星标项目
+	 */
+	@Override
+	public List<Project> getNotStarProject(String userId) {
+		return projectMemberMapper.getNotStarProject(userId);
+	}
 }
