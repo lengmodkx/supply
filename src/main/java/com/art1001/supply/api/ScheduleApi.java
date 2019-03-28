@@ -231,12 +231,12 @@ public class ScheduleApi extends BaseController {
      */
     @PutMapping("/{scheduleId}/endtime")
     public JSONObject updateScheduleEndtime(@PathVariable String scheduleId,
-                                              @RequestParam String endTime){
+                                              @RequestParam Long endTime){
         JSONObject object = new JSONObject();
         try{
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
-            schedule.setEndTime(DateUtils.strToLong(endTime));
+            schedule.setEndTime(endTime);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
