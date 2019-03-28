@@ -54,6 +54,21 @@ public class Task extends Model<Task> {
 	 */
 	private Long endTime;
 
+	/**
+	 * 完成的子任务数
+	 */
+	@TableField(exist = false)
+	private int completeCount;
+
+	@TableField(exist = false)
+	private boolean isComplete;
+
+	/**
+	 * 子任务总数
+	 */
+	@TableField(exist = false)
+	private int childCount;
+
 
 	/**
 	 * 设置任务重复
@@ -184,6 +199,12 @@ public class Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private List<UserEntity> joinInfo;
+
+	/**
+	 * 该任务的父级任务
+	 */
+	@TableField(exist = false)
+	private Task parentTask;
 
 	/**
 	 * 该任务的子任务

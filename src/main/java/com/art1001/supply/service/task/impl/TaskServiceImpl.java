@@ -153,6 +153,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 		return taskMapper.findTaskByTaskId(taskId);
 	}
 
+    /**
+     * 获取子任务的项目id
+     * @param taskId 子任务id
+     * @return 项目id
+     */
+    @Override
+    public String findChildTaskProject(String taskId) {
+        return taskMapper.findChildTaskProject(taskId);
+    }
 
     /**
      * 将添加的任务信息保存至数据库

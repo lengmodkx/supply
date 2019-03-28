@@ -2,6 +2,7 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -43,4 +44,13 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @param groupId
 	 */
 	void updateDefaultGroup(String projectId, String userId,String groupId);
+
+	/**
+	 * 获取到模块在当前项目的的参与者信息与非参与者信息
+	 * @param type 模块类型
+	 * @param id 信息id
+	 * @param projectId 所在项目id
+	 * @return 该项目成员在当前模块信息中的参与者信息与非参与者信息
+	 */
+	List<UserEntity> getModelProjectMember(String type, String id, String projectId);
 }

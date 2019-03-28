@@ -125,7 +125,7 @@
 	<!-- 查询指定项目下所有的成员信息 -->
 	<select id="findProjectAllMember" resultMap="userMap">
 		select
-		<include refid="userAttributes"/>
+		<include refid="join"/>
 		from tb_user u where u.user_id in (select member_id from prm_project_member where project_id = #{projectId} order by member_label desc)
 	</select>
 

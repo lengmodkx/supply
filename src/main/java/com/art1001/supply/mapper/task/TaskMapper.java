@@ -618,4 +618,11 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param id 任务id集合
 	 */
 	TaskApiBean findTaskApiBean(String id);
+
+	/**
+	 * 获取子任务的项目id
+	 * @param taskId 子任务id
+	 * @return 项目id
+	 */
+	String findChildTaskProject(@Param("taskId") String taskId);
 }

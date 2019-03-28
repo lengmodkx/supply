@@ -61,6 +61,9 @@
 			<result property="executor" column="executor_id"/>
 			<result property="executorName" column="executor_name"/>
 			<result property="executorImg" column="executor_image"/>
+			<result property="childCount" column="child_count"/>
+			<result property="completeCount" column="complete_count"/>
+			<result property="isComplete" column="isComplete"/>
 			<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
 				<id property="tagId" column="tag_id"/>
 				<result property="tagName" column="tag_name"/>
@@ -405,7 +408,9 @@
 			task.`repeat` AS task_repeat,
 			task.priority AS task_priority,
 			task.member_id AS member_id,
-			task.task_status,
+			if(task.task_status='完成',true,false) as `isComplete`,
+			child.count as child_count,
+			complete.count as complete_count,
 			tag_name,
 			u.image AS executor_image,
 			u.user_id executor_id,
@@ -414,12 +419,15 @@
 			prm_relation AS gr
 			LEFT JOIN prm_relation AS me ON gr.relation_id = me.parent_id
 			LEFT JOIN prm_task AS task ON me.relation_id = task.task_menu_id
+			LEFT JOIN (select count(1) as count,parent_id from prm_task where parent_id != '0' GROUP BY parent_id) as child on task.task_id = child.parent_id
+			LEFT JOIN (select count(1) as count,parent_id from prm_task where parent_id != '0' and task_status = '完成' GROUP BY parent_id) as complete on task.task_id = complete.parent_id
 			LEFT JOIN prm_tag_relation AS tr ON task.task_id = tr.task_id
 			LEFT JOIN prm_tag AS tag ON tr.tag_id = tag.tag_id
 			LEFT JOIN tb_user AS u ON task.executor = u.user_id
 		WHERE
 			gr.relation_id = #{groupId}
 		ORDER BY
-			me.order,task.ORDER
+			me.ORDER,
+			task.ORDER
 	</select>
 </mapper>

@@ -163,4 +163,24 @@ public class MemberInvitationApi {
         }
         return jsonObject;
     }
+
+    /**
+     * 获取到模块在当前项目的的参与者信息与非参与者信息
+     * @param type 模块类型
+     * @param id 信息id
+     * @param projectId 所在项目id
+     * @return 该项目成员在当前模块信息中的参与者信息与非参与者信息
+     */
+    @GetMapping("/member_info")
+    public JSONObject getModelProjectMember(String type, String id, String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("joinInfo",projectMemberService.getModelProjectMember(type,id,projectId));
+            jsonObject.put("result",1);
+        } catch (Exception e){
+            log.error("系统异常,项目成员信息获取失败!");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

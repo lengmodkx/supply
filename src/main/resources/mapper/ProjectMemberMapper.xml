@@ -80,4 +80,5 @@
         prm_project_member.member_id = #{memberId} and project_del = #{projectDel}
 	</select>
 
+
 </mapper>

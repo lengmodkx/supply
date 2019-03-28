@@ -34,6 +34,13 @@ public interface TaskService extends IService<Task> {
 	Task findTaskByTaskId(String taskId);
 
 	/**
+	 * 获取子任务的项目id
+	 * @param taskId 子任务id
+	 * @return 项目id
+	 */
+	String findChildTaskProject(String taskId);
+
+	/**
 	 * 保存task数据
 	 * @param task 其他信息
 	 * @param taskRemindRules 提醒规则

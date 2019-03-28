@@ -21,6 +21,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.extern.slf4j.Slf4j;
@@ -551,15 +552,22 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
-            task.setExecutor(executor);
+            if(StringUtils.isNotEmpty(executor)){
+                task.setExecutor(executor);
+            }
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
             taskService.saveTask(task);
             object.put("result",1);
             object.put("msg","创建成功!");
-            object.put("data",task);
-            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",task));
+            String taskProjectId = this.getTaskProjectId(taskId);
+            if(StringUtils.isNotEmpty(taskProjectId)){
+                object.put("msgId",taskProjectId);
+            } else{
+                object.put("msgId",taskService.findChildTaskProject(taskId));
+            }
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,子任务添加失败:",e);
