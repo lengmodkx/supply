@@ -135,15 +135,16 @@ public class ScheduleApi extends BaseController {
     public JSONObject getSchedule(@PathVariable("scheduleId") String scheduleId){
         JSONObject object = new JSONObject();
         try{
-            object.put("data",scheduleService.findScheduleById(scheduleId));
+            Schedule scheduleById = scheduleService.findScheduleById(scheduleId);
             //当前用户是否收藏了该日程
-            object.put("isCollect",publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", scheduleId).eq("member_id", ShiroAuthenticationManager.getUserId())));
+            scheduleById.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", scheduleId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
             //当前用户是否对该日程点过赞
-            object.put("isFabulous",fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", scheduleId)));
+            scheduleById.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", scheduleId)) > 0);
             //该日程的关联信息
-            object.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", scheduleId)));
+            scheduleById.setBindings(bindingService.list(new QueryWrapper<Binding>().eq("public_id", scheduleId)));
             //查询出该任务的日志信息
-            object.put("taskLogs",logService.initLog(scheduleId));
+            scheduleById.setLogs(logService.initLog(scheduleId));
+            object.put("data",scheduleById);
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,名称更新失败:",e);

@@ -1,5 +1,7 @@
 package com.art1001.supply.entity.schedule;
 
+import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
@@ -135,6 +137,31 @@ public class Schedule extends Model<Schedule> {
 	 * 日程结束时间
 	 */
 	private Long endTime;
+
+	/**
+	 * 判断当前用户是否收藏了该日程
+	 */
+	@TableField(exist = false)
+	private Boolean isCollect;
+
+	/**
+	 * 判断当前用户是否对该日程点过赞
+	 * @return
+	 */
+	@TableField(exist = false)
+	private Boolean isFabulous;
+
+	/**
+	 * 该日程的关联信息
+	 */
+	@TableField(exist = false)
+	private List<Binding> bindings;
+
+	/**
+	 * 该日程的日志信息
+	 */
+	@TableField(exist = false)
+	private List<Log> logs;
 
 	@Override
 	protected Serializable pkVal() {
