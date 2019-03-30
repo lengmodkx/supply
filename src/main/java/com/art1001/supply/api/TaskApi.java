@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 任务增删改查，复制，移动
@@ -611,22 +613,21 @@ public class TaskApi extends BaseController {
      * @param projectId 项目id
      * @param groupId 组id
      * @param menuId 菜单id
-     * @return
+     * @return 是否复制成功
      */
     @Log(PushType.A15)
-    @Push(value = PushType.A15)
-    @PutMapping("/{taskId}/copy")
+    @Push(value = PushType.A15,type = 1)
+    @PostMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
                                @RequestParam(value = "groupId")String groupId,
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            taskService.copyTask(taskId,projectId,groupId,menuId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.copyTask(taskId,projectId,groupId,menuId)));
             object.put("result",1);
             object.put("msg","复制成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("msgId",projectId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务复制失败:",e);
@@ -644,7 +645,7 @@ public class TaskApi extends BaseController {
      * @return
      */
     @Log(PushType.A16)
-    @Push(value = PushType.A16)
+    @Push(value = PushType.A16,type = 2 )
     @PutMapping("/{taskId}/move")
     public JSONObject moveTask(@PathVariable(value = "taskId")String taskId,
                                @RequestParam(value = "projectId")String projectId,
@@ -652,11 +653,18 @@ public class TaskApi extends BaseController {
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
+            Task task = new Task();
+            task.setTaskId(taskId);
+            //获取到任务移动前的项目id
+            String taskProjectId = this.getTaskProjectId(taskId);
+            //获取到任务移动钱的
             taskService.mobileTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","移动成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            Map<String,Object> maps = new HashMap<String,Object>(2);
+            maps.put(projectId,new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            maps.put(taskProjectId,new JSONObject().fluentPut("task",task));
+            object.put("data",maps);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务移动失败:",e);

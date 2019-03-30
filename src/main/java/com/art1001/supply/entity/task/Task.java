@@ -1,11 +1,16 @@
 package com.art1001.supply.entity.task;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -148,6 +153,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务状态
 	 */
+	@JSONField
 	private String taskStatus;
 
 	/**
@@ -221,7 +227,51 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务的赞
 	 */
+	@TableField(exist = false)
 	private Integer fabulousCount;
+
+	/**
+	 * 判断是否点赞
+	 */
+	@TableField(exist = false)
+	private Boolean isFabulous;
+
+	/**
+	 * 判断是否收藏
+	 */
+	@TableField(exist = false)
+	private Boolean isCollect;
+
+	/**
+	 * 任务日志信息
+	 */
+	@TableField(exist = false)
+	private List<Log> logs;
+
+	/**
+	 * 关联的任务信息
+	 */
+	@TableField(exist = false)
+	private List<Task> bindTasks;
+
+	/**
+	 * 关联的文件信息
+	 */
+	@TableField(exist = false)
+	private List<File> bindFiles;
+
+	/**
+	 * 关联的日程信息
+	 */
+	@TableField(exist = false)
+	private List<Schedule> bindSchedules;
+
+	/**
+	 * 关联的分享信息
+	 */
+	@TableField(exist = false)
+	private List<Share> bindShares;
+
 
 	@Override
 	protected Serializable pkVal() {

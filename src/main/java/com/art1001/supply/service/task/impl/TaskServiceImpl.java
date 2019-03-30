@@ -226,18 +226,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public void mobileTask(String taskId, String projectId, String groupId,String menuId) {
         Task task = getById(taskId);
-        task.setTaskId(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setTaskGroupId(groupId);
         task.setUpdateTime(System.currentTimeMillis());
+        task.setTaskUIds(null);
+        //根据查询菜单id 查询 菜单id 下的 最大排序号
+        int maxOrder = relationService.findMenuTaskMaxOrder(menuId);
+        task.setOrder(++ maxOrder);
         updateById(task);
-
         //移动子任务
-        if(task.getTaskList()!=null&&task.getTaskList().size()>0){
+        if(CollectionUtils.isNotEmpty(task.getTaskList())){
             task.getTaskList().forEach(subTask->{
-                subTask.setProjectId(projectId);
-                subTask.setUpdateTime(System.currentTimeMillis());
+                subTask.setTaskUIds(null);
                 updateById(subTask);
             });
         }
@@ -469,14 +470,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * 复制任务
      * @param taskId 当前任务信息
      * @param projectId 当前任务所在的项目id
-     * @return
+     * @return 新生成的任务实体信息
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void copyTask(String taskId, String projectId, String groupId,String menuId) {
-        Task task = new Task();
-        List<Task> child = this.findTaskByFatherTask(taskId);
+    public Task copyTask(String taskId, String projectId, String groupId,String menuId) {
+        Task task = taskService.findTaskByTaskId(taskId);
+        List<Task> child = task.getTaskList();
         try {
+            task.setTaskId(IdGen.uuid());
             //更新新任务的创建时间
             task.setCreateTime(System.currentTimeMillis());
             //设置新任务的更新时间
@@ -484,22 +486,29 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             task.setProjectId(projectId);
             task.setTaskMenuId(menuId);
             task.setTaskGroupId(groupId);
-            save(task);
+            //清空参与者
+            task.setTaskUIds(null);
+            //根据查询菜单id 查询 菜单id 下的 最大排序号
+            int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
+            task.setOrder(++maxOrder);
+            this.save(task);
             if(CollectionUtils.isNotEmpty(child)){
                 child.forEach(item ->{
+                    item.setTaskId(IdGen.uuid());
                     //设置新的子任务id
                     item.setProjectId(projectId);
                     //设置新的子任务的父任务id
-                    item.setParentId(item.getTaskId());
+                    item.setParentId(task.getTaskId());
                     //设置新子任务的更新时间
                     item.setUpdateTime(System.currentTimeMillis());
                     //设置新子任务的创建时间
                     item.setCreateTime(System.currentTimeMillis());
-                    save(item);
+                    this.save(item);
                 });
             }
+            return task;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1606,27 +1615,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return 任务视图信息
      */
     @Override
-    public TaskShowVo taskInfoShow(String taskId) {
-        TaskShowVo taskShowVo = new TaskShowVo();
+    public Task taskInfoShow(String taskId) {
         //查询出此条任务的具体信息
-        taskShowVo.setTask(taskService.findTaskByTaskId(taskId));
+        Task task = taskService.findTaskByTaskId(taskId);
         //判断当前用户有没有对该任务点赞
-        taskShowVo.setFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
+        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
         //判断当前用户有没有收藏该任务
-        taskShowVo.setCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
+        task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
         //查询出该任务的日志信息
-        taskShowVo.setLogs(logService.initLog(taskId));
+        task.setLogs(logService.initLog(taskId));
         //设置关联信息
-        this.setBindingInfo(taskId,taskShowVo);
-        return taskShowVo;
+        this.setBindingInfo(taskId,task);
+        return task;
     }
 
     /**
      * 设置关联信息
      * @param taskId 任务id
-     * @param taskShowVo 添加到的 taskShowVo对象
+     * @param task 添加到的 task对象
      */
-    private void setBindingInfo(String taskId,TaskShowVo taskShowVo){
+    private void setBindingInfo(String taskId,Task task){
         List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
         List<Task> tasks = new ArrayList<>();
         List<Schedule> schedules = new ArrayList<>();
@@ -1646,10 +1654,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 shares.add(JSON.parseObject(item.getBindContent(), Share.class));
             }
         });
-        taskShowVo.setBindingFiles(files);
-        taskShowVo.setBindingTasks(tasks);
-        taskShowVo.setBindingSchedules(schedules);
-        taskShowVo.setBindingShares(shares);
+        task.setBindFiles(files);
+        task.setBindTasks(tasks);
+        task.setBindSchedules(schedules);
+        task.setBindShares(shares);
     }
 }
 

@@ -15,6 +15,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author shaohua
@@ -32,6 +35,7 @@ public class PushAspect extends BaseController {
     private final static String ID = "id";
     private final static String PROJECT_ID = "projectId";
     private final static String NAME = "name";
+    private final static String SEPARATOR = ",";
 
     /**
      * 推送的切点
@@ -54,7 +58,14 @@ public class PushAspect extends BaseController {
         } else if (push.type()==1){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
             this.saveLog(object,push);
-        }else{//只需要日志
+            //需要往不同的频道推送不同的数据
+        } else if(push.type() == 2){
+            Map<String,Object> data = object.getObject("data", HashMap.class);
+            data.keySet().forEach(key -> {
+                noticeService.pushMsg(key,push.value().name(),data.get(key));
+            });
+            this.saveLog(object,push);
+        } else{//只需要日志
             if(object.containsKey(ID)){
                 this.saveLog(object,push);
             }

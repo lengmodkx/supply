@@ -146,13 +146,13 @@ public interface TaskService extends IService<Task> {
 
 	/**
 	 * 复制任务
-	 * @return
+	 * @return 新生成的任务实体信息
 	 * @param taskId 当前任务信息
 	 * @param projectId 项目id
 	 * @param groupId 组id
 	 * @param menuId 菜单id
 	 */
-	void copyTask(String taskId, String projectId, String groupId,String menuId);
+	Task copyTask(String taskId, String projectId, String groupId,String menuId);
 
 	/**
 	 * 收藏任务
@@ -527,5 +527,5 @@ public interface TaskService extends IService<Task> {
 	 * @param taskId 任务id
 	 * @return 任务视图信息
 	 */
-	TaskShowVo taskInfoShow(String taskId);
+	Task taskInfoShow(String taskId);
 }
