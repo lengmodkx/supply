@@ -42,7 +42,7 @@
 	</delete>
 
 
-	<delete id="deleteTagRelationByPublicId" parameterType="com.art1001.supply.entity.tag.TagRelation">
+	<delete id="deleteByPublicId" parameterType="com.art1001.supply.entity.tag.TagRelation">
 		delete from
 			prm_tag_relation where tag_id = #{tagId}
 			<if test="taskId != null and taskId != ''">

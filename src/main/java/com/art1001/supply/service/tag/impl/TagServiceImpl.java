@@ -1,5 +1,6 @@
 package com.art1001.supply.service.tag.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
@@ -8,8 +9,10 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +34,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	@Resource
 	private TagRelationMapper tagRelationMapper;
 
+	@Resource
+	private TagRelationService tagRelationService;
+
 	/**
 	 * 查询分页tag数据
-	 * 
+	 *
 	 * @param pager 分页对象
 	 * @return
 	 */
@@ -44,18 +50,18 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
 	/**
 	 * 通过tagId获取单条tag数据
-	 * 
+	 *
 	 * @param tagId
 	 * @return
 	 */
-	@Override 
+	@Override
 	public Tag findById(Integer tagId){
 		return tagMapper.findById(tagId);
 	}
 
 	/**
 	 * 通过tagId删除tag数据
-	 * 
+	 *
 	 * @param tagId
 	 */
 	@Override
@@ -67,7 +73,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
 	/**
 	 * 修改tag数据
-	 * 
+	 *
 	 * @param tag
 	 */
 	@Override
@@ -102,7 +108,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
     }
 	/**
 	 * 获取所有tag数据
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -143,52 +149,31 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
     /**
      * 移除标签
-     * @param publicId
-     * @param publicType
-     * @param tagId
+     * @param tagId 标签id
+	 * @param publicId (任务 ,文件, 日程, 分享) id
+	 * @param publicType (任务,文件,日程,分享) 类型
      */
 	@Override
 	public void removeTag(String publicId, String publicType, long tagId) {
 		TagRelation tagRelation = new TagRelation();
 		tagRelation.setTagId(tagId);
-		if("任务".equals(publicType)){
-			tagRelation.setTaskId(publicId);
-		}else if("文件".equals(publicType)){
-			tagRelation.setFileId(publicId);
-		}else if("日程".equals(publicType)){
-			tagRelation.setScheduleId(publicId);
-		}else{
-			tagRelation.setShareId(publicId);
-		}
-		tagRelationMapper.deleteTagRelationByPublicId(tagRelation);
+		this.setTagRelation(publicId,publicType,tagRelation);
+		tagRelationMapper.deleteByPublicId(tagRelation);
 	}
 
     /**
-     * 添加标签
-     * 步骤逻辑
-     * 1:查询出标签id  字符串
-     * 2:如果 原先已经存在标签id 则把新的标签插入到集合第一个位置 否则 直接add进去
-     * 3:更新最新的标签信息至数据库
+	 * 保存信息和标签的绑定关系
      * @param tagId 标签id
      * @param publicId (任务 ,文件, 日程, 分享) id
      * @param publicType (任务,文件,日程,分享) 类型
      */
     @Override
-    public void addItemTag(long tagId, String publicId, String publicType) {
+    public boolean addItemTag(long tagId, String publicId, String publicType) {
 		TagRelation tagRelation = new TagRelation();
-		tagRelation.setId(IdGen.uuid());
+		this.setTagRelation(publicId,publicType,tagRelation);
 		tagRelation.setTagId(tagId);
-		if("任务".equals(publicType)){
-			tagRelation.setTaskId(publicId);
-		}else if("文件".equals(publicType)){
-			tagRelation.setFileId(publicId);
-		}else if("日程".equals(publicType)){
-            tagRelation.setScheduleId(publicId);
-		}else{
-			tagRelation.setShareId(publicId);
-		}
-
-		tagRelationMapper.saveTagRelation(tagRelation);
+		tagRelation.setId(IdGen.uuid());
+		return tagRelation.insert();
     }
 
 	/**
@@ -247,6 +232,26 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	public List<Tag> findTagByProjectIdWithAllInfo(String projectId) {
 		//查询出项目下的所有标签
 		return tagMapper.findTagByProjectIdWithAllInfo(projectId);
+	}
+
+	/**
+	 * 该方法用于封装tagRelation对象信息
+	 * @param publicId 绑定的信息id
+	 * @param publicType 绑定的信息类型
+	 * @param tr 要放入的实体
+	 */
+	private void setTagRelation(String publicId, String publicType, TagRelation tr) {
+		if(Constants.TASK.equals(publicType)){
+			tr.setTaskId(publicId);
+		}else if(Constants.FILE.equals(publicType)){
+			tr.setFileId(publicId);
+		}else if(Constants.SCHEDULE.equals(publicType)){
+			tr.setScheduleId(publicId);
+		}else if(Constants.SHARE.equals(publicType)){
+			tr.setShareId(publicId);
+		} else{
+			throw new ServiceException("指定的绑定信息错误！");
+		}
 	}
 
 }

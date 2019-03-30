@@ -94,8 +94,9 @@ public interface TagService extends IService<Tag> {
 	 * @param tagId 标签id
 	 * @param publicId (任务 ,文件, 日程, 分享) id
 	 * @param publicType (任务,文件,日程,分享) 类型
+	 * @return 是否绑定成功
 	 */
-	void addItemTag(long tagId, String publicId, String publicType);
+	boolean addItemTag(long tagId, String publicId, String publicType);
 
 	/**
 	 * 保存多条tag

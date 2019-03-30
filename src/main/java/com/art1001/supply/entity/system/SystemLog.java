@@ -59,4 +59,9 @@ public class SystemLog {
      * 执行结果
      */
     private String runResult;
+
+    /**
+     * 创建时间
+     */
+    private Long createTime;
 }

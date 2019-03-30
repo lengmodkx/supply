@@ -35,15 +35,7 @@ public interface TagRelationMapper extends BaseMapper<TagRelation> {
 	 */
 	void updateTagRelation(TagRelation tagRelation);
 
-	/**
-	 * 保存数据
-	 * 
-	 * @param tagRelation
-	 */
-	void saveTagRelation(TagRelation tagRelation);
-
-
-	void deleteTagRelationByPublicId(TagRelation tagRelation);
+	void deleteByPublicId(TagRelation tagRelation);
 
 	List<TagRelation> findTagRelationByTagId(long tagId);
 

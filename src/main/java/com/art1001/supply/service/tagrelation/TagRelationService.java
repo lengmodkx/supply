@@ -32,13 +32,6 @@ public interface TagRelationService extends IService<TagRelation> {
 	 */
 	public void updateTagRelation(TagRelation tagRelation);
 
-	/**
-	 * 保存数据
-	 * 
-	 * @param tagRelation
-	 */
-	public void saveTagRelation(TagRelation tagRelation);
-
 	List<TagRelation> findTagRelationByTagId(long tagId);
 
 	/**

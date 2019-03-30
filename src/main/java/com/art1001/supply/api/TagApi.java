@@ -2,14 +2,19 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.util.CommonUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -178,12 +183,16 @@ public class TagApi {
      * @param tagId 标签id
      * @return
      */
+    @Push(value = PushType.E2,type = 1)
     @DeleteMapping("/{tagId}/remove/tag")
     public JSONObject removeTag(@RequestParam(value = "publicId") String publicId, @RequestParam(value = "publicType") String publicType, @PathVariable long tagId){
         JSONObject jsonObject = new JSONObject();
         try {
             tagService.removeTag(publicId,publicType,tagId);
+            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+            jsonObject.put("msgId",this.getProjectId(tagId));
             jsonObject.put("result",1);
+            jsonObject.put("msg","移除成功");
         } catch (Exception e){
             log.error("系统异常,标签移除失败:",e);
             throw new AjaxException(e);
@@ -232,6 +241,37 @@ public class TagApi {
             log.error("系统异常,添加标签失败:",e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 给某个信息绑定标签
+     * @param tagId 标签id
+     * @param publicId 信息id
+     * @param publicType 信息类型
+     * @return 是否成功
+     */
+    @Push(value = PushType.E1,type = 1)
+    @PostMapping("/binding")
+    public JSONObject bindingInfo(@RequestParam("tagId")Long tagId, @RequestParam("publicId") String publicId, @RequestParam("publicType")String publicType){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(tagService.addItemTag(tagId,publicId,publicType)) {
+                Tag byId = tagService.getById(tagId);
+                jsonObject.put("result", 1);
+                jsonObject.put("data", new JSONObject().fluentPut("tag",byId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+                jsonObject.put("name", byId.getTagName());
+                jsonObject.put("msgId", this.getProjectId(tagId));
+                jsonObject.put("msg", "绑定成功!");
+                jsonObject.put("id", publicId);
+            } else{
+                jsonObject.put("result",0);
+                jsonObject.put("msg","绑定失败!");
+            }
+
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,标签绑定失败!",e);
+        }
     }
 
     /**
@@ -287,5 +327,14 @@ public class TagApi {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 用于获取当前标签的所属项目id
+     * @param tagId 标签id
+     * @return 项目id
+     */
+    private String getProjectId(Long tagId){
+        return tagService.getOne(new QueryWrapper<Tag>().select("project_id").eq("tag_id",tagId)).getProjectId();
     }
 }
