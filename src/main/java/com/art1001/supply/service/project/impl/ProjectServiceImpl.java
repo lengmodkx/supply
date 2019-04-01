@@ -127,15 +127,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	public void saveProject(Project project){
 		project.setProjectId(IdGen.uuid());
 		project.setProjectCover("upload/project/bj.png");
-		project.setCreateTime(System.currentTimeMillis());
 
 		//初始化分组
 		Relation relation = new Relation();
 		relation.setRelationName("任务");
 		relation.setProjectId(project.getProjectId());
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
-		relation.setCreateTime(System.currentTimeMillis());
-		relation.setUpdateTime(System.currentTimeMillis());
 		relationService.saveRelation(relation);
 
 		//初始化项目文件夹

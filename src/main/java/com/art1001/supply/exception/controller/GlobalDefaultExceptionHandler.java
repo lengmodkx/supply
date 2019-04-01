@@ -80,10 +80,11 @@ public class GlobalDefaultExceptionHandler {
 	@ExceptionHandler(AjaxException.class)
 	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
+		ex.getCause().printStackTrace();
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台，用于页面的提示
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msg",ex.getCause().getMessage());
+		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);
 		return jsonObject;
 	}

@@ -157,4 +157,11 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 * @return 菜单和任务数据集合
 	 */
 	List<Relation> selectMenuTask(@Param("groupId") String groupId);
+
+	/**
+	 * 获取分组下的菜单信息以及任务信息
+	 * @param groupId 分组id
+	 * @return relation集合信息
+	 */
+    List<Relation> bindMenuInfo(@Param("groupId") String groupId);
 }

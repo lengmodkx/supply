@@ -100,7 +100,9 @@ public enum PushType {
     C7(7,"从回收站中恢复文件"),
 
     E1(1,"添加了标签"),
-    E2(2,"移除了标签");
+    E2(2,"移除了标签"),
+
+    F1(1,"发送消息");
 
     PushType(int id,String name){
         this.name = name;

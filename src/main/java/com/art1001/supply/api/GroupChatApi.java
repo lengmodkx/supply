@@ -42,7 +42,7 @@ public class GroupChatApi {
      * @param projectId 项目id
      * @param content 发送的内容
      * @param files 是否附带文件
-     * @return
+     *   @return
      */
     @PostMapping
     public JSONObject chat(@RequestParam String projectId,

@@ -204,4 +204,20 @@ public class RelationApi {
         }
     }
 
+    /**
+     * 获取一个分组下的任务和菜单信息
+     * @return 信息
+     */
+    @GetMapping("/bind_menu_info")
+    public JSONObject getBindingMenuInfo(@RequestParam("groupId") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("data",relationService.bindMenuInfo(groupId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,信息获取失败!", e);
+        }
+    }
+
 }

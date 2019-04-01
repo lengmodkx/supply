@@ -2,6 +2,7 @@ package com.art1001.supply.entity.project;
 
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -116,11 +117,13 @@ public class Project extends Model<Project> {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Long createTime;
 
     /**
      * 修改时间
      */
+    @TableField(fill = FieldFill.UPDATE)
     private Long updateTime;
 
     /**

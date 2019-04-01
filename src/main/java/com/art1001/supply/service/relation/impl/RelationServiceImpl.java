@@ -120,13 +120,11 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	public void saveRelation(Relation relation){
         relation.setRelationId(IdGen.uuid());
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
-		relation.setCreateTime(System.currentTimeMillis());
-		relation.setUpdateTime(System.currentTimeMillis());
         relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0)+1);
 		ProjectMember projectMember = new ProjectMember();
 		projectMember.setDefaultGroup(relation.getRelationId());
 		projectMemberService.update(projectMember,new QueryWrapper<ProjectMember>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("project_id",relation.getProjectId()));
-		relationMapper.saveRelation(relation);
+		save(relation);
 	}
 
 
@@ -482,6 +480,16 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	public List<Relation> initMainPage(String groupId) {
 		return relationMapper.selectMenuTask(groupId);
 
+	}
+
+	/**
+	 * 获取一个分组下的菜单信息以及任务信息
+	 * @param groupId 分组id
+	 * @return 菜单和任务的集合
+	 */
+	@Override
+	public List<Relation> bindMenuInfo(String groupId) {
+		return relationMapper.bindMenuInfo(groupId);
 	}
 }
 

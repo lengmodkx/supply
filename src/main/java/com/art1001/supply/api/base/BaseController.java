@@ -44,7 +44,7 @@ public class BaseController {
      */
     protected JSONObject error(String errorMessage) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("result",false);
+        jsonObject.put("result",0);
         jsonObject.put("msg",errorMessage);
         return jsonObject;
     }

@@ -211,4 +211,12 @@ public interface RelationService extends IService<Relation> {
 	 * @return 菜单和任务数据集合
 	 */
 	List<Relation> initMainPage(String groupId);
+
+	/**
+	 * 获取一个分组下的菜单以及菜单下的任务信息
+	 * 注意(任务信息只包含执行者头像和任务名称,任务id)
+	 * @param groupId 分组id
+	 * @return 菜单以及任务信息
+	 */
+    List<Relation> bindMenuInfo(String groupId);
 }

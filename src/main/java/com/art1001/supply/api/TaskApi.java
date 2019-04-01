@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.enums.MediaTypes;
@@ -27,9 +28,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -657,13 +660,16 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             //获取到任务移动前的项目id
             String taskProjectId = this.getTaskProjectId(taskId);
-            //获取到任务移动钱的
             taskService.mobileTask(taskId,projectId,groupId,menuId);
             object.put("result",1);
             object.put("msg","移动成功");
             Map<String,Object> maps = new HashMap<String,Object>(2);
-            maps.put(projectId,new JSONObject().fluentPut("task",taskService.getById(taskId)));
-            maps.put(taskProjectId,new JSONObject().fluentPut("task",task));
+            if(projectId.equals(taskProjectId)){
+                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
+            } else{
+                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
+                maps.put(taskProjectId,new JSONObject().fluentPut("task",task));
+            }
             object.put("data",maps);
             object.put("id",taskId);
         }catch(Exception e){
@@ -752,7 +758,6 @@ public class TaskApi extends BaseController {
         }
         return object;
     }
-
 
     /**
      * 对此任务点赞
@@ -854,4 +859,5 @@ public class TaskApi extends BaseController {
     private String getTaskProjectId(String taskId){
         return taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
     }
+
 }

@@ -34,6 +34,17 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
+	<!-- 关联专用  用于获取一个分组下的所有菜单以及菜单下的所有任务的简短信息 -->
+	<resultMap id="bindingResultMap" type="com.art1001.supply.entity.relation.Relation">
+		<id column="menu_id" property="relationId"/>
+		<result column="r_name" property="relationName"/>
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<id column="t_id" property="taskId"/>
+			<result column="t_name" property="taskName"/>
+			<result column="u_image" property="executorImg"/>
+		</collection>
+	</resultMap>
+
 	<!-- 根据菜单查询 分组,项目信息的resultMap -->
 	<resultMap id="MenuVOMap" type="com.art1001.supply.entity.task.TaskMenuVO">
 		<result column="relation_id" property="taskGroupId" jdbcType="VARCHAR" />
@@ -428,5 +439,21 @@
 		ORDER BY
 			me.ORDER,
 			task.ORDER
+	</select>
+
+	<!-- 获取一个分组下的菜单信息 -->
+	<select id="bindMenuInfo" resultMap="bindingResultMap">
+		SELECT
+			r.relation_id AS menu_id,
+			r.relation_name AS r_name,
+			t.task_id AS t_id,
+			t.task_name AS t_name,
+			u.image AS u_image
+		FROM
+			prm_relation AS r
+			LEFT JOIN prm_task t ON r.relation_id = t.task_menu_id
+			LEFT JOIN tb_user u ON t.executor = u.user_id
+		WHERE
+			r.parent_id = #{groupId}  order by r.order,t.order desc
 	</select>
 </mapper>

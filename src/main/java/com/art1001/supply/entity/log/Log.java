@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.log;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author heshaohua
@@ -76,16 +78,10 @@ public class Log extends Model<Log> {
 	private Long createTime;
 
 	/**
-	 * 创建时间字符串
+	 * 时间字符串
 	 */
 	@TableField(exist = false)
-	private String createTimeStr;
-
-	public String getCreateTimeStr() {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return format.format(createTime);
-	}
-
+	private String dateStr;
 
 	@Override
 	protected Serializable pkVal() {
