@@ -57,7 +57,6 @@ public class LogApi extends BaseController {
             log.setContent(content);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             if(logService.save(log)) {
-                jsonObject.put("a",log);
                 jsonObject.put("data",log);
                 jsonObject.put("msgId",projectId);
                 jsonObject.put("result",1);
