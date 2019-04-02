@@ -528,4 +528,12 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务视图信息
 	 */
 	Task taskInfoShow(String taskId);
+
+	/**
+	 * 获取绑定信息的子任务信息
+	 * 注意子任务信息 只包括(任务id,任务执行者头像,任务名称)
+	 * @param taskId 任务id
+	 * @return 子任务信息集合
+	 */
+	List<Task> getBindChild(String taskId);
 }

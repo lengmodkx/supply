@@ -625,4 +625,11 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 项目id
 	 */
 	String findChildTaskProject(@Param("taskId") String taskId);
+
+	/**
+	 * 获取子任务的绑定信息
+	 * @param taskId 任务id
+	 * @return 子任务信息集合
+	 */
+    List<Task> getBindChild(@Param("taskId") String taskId);
 }

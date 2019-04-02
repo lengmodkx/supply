@@ -1630,6 +1630,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 获取绑定子任务信息
+     * @param taskId 任务id
+     * @return 子任务集合
+     */
+    @Override
+    public List<Task> getBindChild(String taskId) {
+        return taskMapper.getBindChild(taskId);
+    }
+
+    /**
      * 设置关联信息
      * @param taskId 任务id
      * @param task 添加到的 task对象

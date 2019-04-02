@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.AjAttribute;
 import org.quartz.SchedulerException;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.web.bind.annotation.*;
@@ -852,6 +853,23 @@ public class TaskApi extends BaseController {
     }
 
     /**
+     * 获取任务的子任务(用于绑定信息处)
+     * @param taskId 任务id
+     * @return 信息
+     */
+    @GetMapping("/{taskId}/bind/child")
+    public JSONObject getBindChild(@PathVariable String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",taskService.getBindChild(taskId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取子任务失败!",e);
+        }
+    }
+
+    /**
      * 获取任务的项目id
      * @param taskId 任务id
      * @return 项目id
@@ -859,5 +877,7 @@ public class TaskApi extends BaseController {
     private String getTaskProjectId(String taskId){
         return taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
     }
+
+
 
 }
