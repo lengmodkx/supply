@@ -205,15 +205,30 @@ public class RelationApi {
     }
 
     /**
+     * 获取一个项目下的分组信息(分组id,分组名称,分组创建者) 根据order排序
+     */
+    @GetMapping("/{projectId}/bind/group_info")
+    public JSONObject getGroupByProject(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",relationService.loadGroupInfo(projectId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取分组信息失败!",e);
+        }
+    }
+
+    /**
      * 获取一个分组下的任务和菜单信息
      * @return 信息
      */
-    @GetMapping("/bind_menu_info")
-    public JSONObject getBindingMenuInfo(@RequestParam("groupId") String groupId){
+    @GetMapping("{groupId}/bind/menu_info")
+    public JSONObject getBindingMenuInfo(@PathVariable("groupId") String groupId) {
         JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put("data",relationService.bindMenuInfo(groupId));
-            jsonObject.put("result",1);
+        try {
+            jsonObject.put("data", relationService.bindMenuInfo(groupId));
+            jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常,信息获取失败!", e);
