@@ -588,7 +588,6 @@ public class TaskApi extends BaseController {
      * @param taskUids 参与者id
      * @return
      */
-    @Log(PushType.A14)
     @Push(value = PushType.A14,type = 1)
     @PutMapping("/{taskId}/members")
     public JSONObject addTaskUids(@PathVariable(value = "taskId")String taskId,
@@ -596,12 +595,12 @@ public class TaskApi extends BaseController {
         JSONObject object = new JSONObject();
         try{
             Task task = new Task();
-            task.setParentId(taskId);
+            task.setTaskId(taskId);
             task.setTaskUIds(taskUids);
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("members",userService.findManyUserById(taskUids)));
             object.put("id",taskId);
         }catch(Exception e){

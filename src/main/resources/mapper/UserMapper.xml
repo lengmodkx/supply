@@ -116,7 +116,7 @@
 					#{id}
 				</foreach>)
 			</if>
-			<if test="memberIds == null and memberIds == ''">
+			<if test="memberIds == null or memberIds == ''">
 				and u.user_id in ('')
 			</if>
 		</where>
