@@ -779,8 +779,7 @@ public class TaskApi extends BaseController {
             task.setFabulousCount(count);
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msg","移入成功");
-            object.put("msgId",taskId);
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
             object.put("id",taskId);
         }catch(Exception e){
