@@ -452,7 +452,7 @@ public class ScheduleApi extends BaseController {
      * 更新日程隐私
      * @param scheduleId 日程id
      * @param privacy 日程隐私
-     * @return
+     * @return 是否成功
      */
     @PutMapping("/{scheduleId}/privacy")
     public JSONObject upadtePrivacy(@PathVariable String scheduleId,@RequestParam Integer privacy){
@@ -464,6 +464,7 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("msg","更新成功!");
+            object.put("result",1);
         }catch(Exception e){
             log.error("系统异常:",e);
             throw new AjaxException(e);
