@@ -120,4 +120,9 @@
         where id = #{id}
     </select>
 
+    <!-- 获取绑定的分享信息 -->
+    <select id="getBindInfo" resultType="com.art1001.supply.entity.share.Share">
+        select id,title from prm_share where project_id = #{projectId} and is_Del = 0
+    </select>
+
 </mapper>

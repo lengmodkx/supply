@@ -15,6 +15,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,6 +68,7 @@ public class Share extends Model<Share> {
 	/**
 	 * 头像
 	 */
+	@TableField(exist = false)
 	private String memberImg;
 
 	/**
@@ -118,10 +120,11 @@ public class Share extends Model<Share> {
 	@TableField(exist = false)
 	private String createTimeStr;
 
-    public String getCreateTimeStr() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
-        return format.format(createTime);
-    }
+//    private String getCreateTimeStr() {
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
+//        Date date = new Date(createTime);
+//        return format.format(date);
+//    }
 
     /**
 	 * 是否被删除

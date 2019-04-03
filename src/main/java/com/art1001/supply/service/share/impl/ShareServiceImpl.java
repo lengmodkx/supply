@@ -182,4 +182,14 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	public ShareApiBean findShareApiBean(String id) {
 		return shareMapper.selectShareApiBean(id);
 	}
+
+	/**
+	 * 获取分享信息
+	 * @param projectId  项目id
+	 * @return 分享信息
+	 */
+	@Override
+	public List<Share> getBindInfo(String projectId) {
+		return shareMapper.getBindInfo(projectId);
+	}
 }

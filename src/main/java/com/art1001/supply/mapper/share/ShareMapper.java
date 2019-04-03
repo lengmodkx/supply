@@ -87,4 +87,11 @@ public interface ShareMapper extends BaseMapper<Share> {
      * @return
      */
     ShareApiBean selectShareApiBean(String id);
+
+    /**
+     * 获取分享的绑定信息
+     * @param projectId 项目id
+     * @return 分享信息
+     */
+    List<Share> getBindInfo(@Param("projectId") String projectId);
 }

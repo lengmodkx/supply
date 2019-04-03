@@ -54,6 +54,17 @@
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
 	</resultMap>
 
+	<!-- 用于获取日程的绑定信息 -->
+	<resultMap id="bindInfoMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
+		<id property="date" column="date"/>
+		<collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
+			<id property="scheduleId" column="schedule_id"/>
+			<result property="scheduleName" column="schedule_name"/>
+			<result property="startTime" column="start_time"/>
+			<result property="endTime" column="end_time"/>
+		</collection>
+	</resultMap>
+
 	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id property="date" column="date" />
 		<result property="proejctId" column="project_id" />
@@ -361,6 +372,7 @@
 				and start_time <![CDATA[<]]> #{currTime}
 			</if>
 		</if>
+		and is_del = 0
 	</select>
 
 	<!-- 查询出未来的日程 (根据 日 存放) -->
@@ -450,6 +462,37 @@
 			and project_id = #{projectId}
 		</where>
 		GROUP BY FROM_UNIXTIME(end_time / 1000,'%Y-%m');
+	</select>
+
+	<!-- 获取日程信息根据月份分组 -->
+	<select id="getBeforeByMonth" resultMap="bindInfoMap">
+		SELECT
+			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date,
+			schedule_id,
+			schedule_name,
+			start_time,
+			end_time
+		FROM
+			prm_schedule
+			WHERE
+				FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) IN ( SELECT FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date FROM prm_schedule WHERE project_id = #{projectId} )
+			ORDER BY
+			date,
+			create_time DESC
+	</select>
+
+	<!-- 获取日程绑定信息 -->
+	<select id="getAfterBind" resultType="com.art1001.supply.entity.schedule.Schedule">
+		SELECT
+			schedule_id AS scheduleId,
+			schedule_name AS scheduleName,
+			start_time startTime,
+			end_time AS endTime
+		FROM
+			prm_schedule
+		WHERE
+			project_id = #{projectId}
+			AND start_time > unix_timestamp( ) * 1000
 	</select>
 
 </mapper>

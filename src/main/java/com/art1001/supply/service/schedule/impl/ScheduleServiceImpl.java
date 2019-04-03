@@ -414,4 +414,24 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         });
         return conflictSchedules;
     }
+
+    /**
+     * 获取日程信息 根据月份分组
+     * @param projectId 项目id
+     * @return 日程信息
+     */
+    @Override
+    public List<ScheduleVo> getBeforeByMonth(String projectId) {
+        return scheduleMapper.getBeforeByMonth(projectId);
+    }
+
+    /**
+     * 获取日程信息 根据月份分组
+     * @param projectId 项目id
+     * @return 日程信息集合
+     */
+    @Override
+    public List<Schedule> getAfterBind(String projectId) {
+        return scheduleMapper.getAfterBind(projectId);
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -286,4 +287,19 @@ public class ShareApi {
         return jsonObject;
     }
 
+    /**
+     * 获取项目下的分享基本信息(用于绑定处)
+     * @param projectId 项目id
+     * @return 分享集合
+     */
+    @GetMapping("/{projectId}/bind")
+    public JSONObject getBindInfo(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",new ArrayList<Share>(shareService.getBindInfo(projectId)));
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取绑定信息失败!",e);
+        }
+    }
 }

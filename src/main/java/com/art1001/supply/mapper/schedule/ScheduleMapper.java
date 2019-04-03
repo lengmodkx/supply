@@ -182,4 +182,18 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return
 	 */
 	List<Schedule> findScheduleGroup(@Param("currTime") Long currTime, @Param("projectId") String projectId);
+
+	/**
+	 * 获取日程信息 根据月份分组
+	 * @param projectId 项目id
+	 * @return 日程信息
+	 */
+	List<ScheduleVo> getBeforeByMonth(@Param("projectId") String projectId);
+
+	/**
+	 * 获取日程信息
+	 * @param projectId 项目id
+	 * @return 日程信息集合
+	 */
+	List<Schedule> getAfterBind(@Param("projectId") String projectId);
 }

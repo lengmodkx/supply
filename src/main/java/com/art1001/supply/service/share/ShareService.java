@@ -90,4 +90,13 @@ public interface ShareService extends IService<Share> {
 	 * @return
 	 */
 	ShareApiBean findShareApiBean(String id);
+
+	/**
+	 * 获取项目下的分享信息
+	 * 注:用于绑定
+	 * 因为分享信息只包含 id,title
+	 * @param projectId  项目id
+	 * @return 分享信息
+	 */
+    List<Share> getBindInfo(String projectId);
 }

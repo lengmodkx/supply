@@ -9,6 +9,7 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
@@ -468,5 +469,24 @@ public class ScheduleApi extends BaseController {
             throw new AjaxException(e);
         }
         return object;
+    }
+
+    /**
+     * 获取日程信息 (用于绑定处)
+     * 该日程信息仅包括 scheduleName,startTime,endTime,id
+     * @param projectId 项目id
+     * @return 日程信息
+     */
+    @GetMapping("/{projectId}/bind")
+    public JSONObject getBindInfo(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<ScheduleVo> beforeByMonth = scheduleService.getBeforeByMonth(projectId);
+            jsonObject.put("data",new JSONObject().fluentPut("before",beforeByMonth).fluentPut("after",scheduleService.getAfterBind(projectId)).fluentPut("beforeCount",beforeByMonth.stream().mapToInt(b -> b.getScheduleList().size()).sum()));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取绑定信息失败!",e);
+        }
     }
 }

@@ -188,4 +188,22 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return 冲突的日程信息
 	 */
 	List<Schedule> testMemberTimeRange(String userId, Long startTime, Long endTime);
+
+	/**
+	 * 获取日程信息 根据月份分组
+	 * 注:此接口只用于获取绑定信息处
+	 * 返回信息包括  id , scheduleName,startTime,endTime
+	 * @param projectId 项目id
+	 * @return 日程信息集合
+	 */
+	List<ScheduleVo> getBeforeByMonth(String projectId);
+
+	/**
+	 * 获取日程信息
+	 * 注:此接口只用于获取绑定信息处
+	 * 返回信息包括  id , scheduleName,startTime,endTime
+	 * @param projectId 项目id
+	 * @return 日程信息集合
+	 */
+	List<Schedule> getAfterBind(String projectId);
 }
