@@ -57,7 +57,6 @@ public class LogApi extends BaseController {
             Log log = new Log();
             log.setPublicId(publicId);
             log.setProjectId(projectId);
-            log.setProjectId(projectId);
             log.setLogType(1);
             log.setContent(content);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
