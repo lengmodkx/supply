@@ -13,14 +13,12 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 日志消息api
@@ -72,6 +70,27 @@ public class LogApi extends BaseController {
             }
         } catch (Exception e){
             throw new AjaxException("系统异常,消息发送失败!",e);
+        }
+    }
+
+    /**
+     * 加载剩余消息数据
+     * @param publicId 信息id
+     * @param surpluscount 当前显示的最后一条消息的索引
+     * @return 返回消息数据
+     */
+    @GetMapping("/{publicId}/surplus_msg")
+    public JSONObject getSurplusMsg(@PathVariable String publicId,@RequestParam Integer surpluscount){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(Stringer.isNullOrEmpty(surpluscount) || surpluscount == 0){
+                throw new AjaxException("当前消息的索引不正确!");
+            }
+            jsonObject.put("data",logService.getSurplusMsg(publicId,surpluscount));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,消息加载失败!",e);
         }
     }
 

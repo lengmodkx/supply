@@ -272,6 +272,12 @@ public class Task extends Model<Task> {
 	@TableField(exist = false)
 	private List<Share> bindShares;
 
+	/**
+	 * 未读消息数
+	 */
+	@TableField(exist = false)
+	private int readMsg;
+
 
 	@Override
 	protected Serializable pkVal() {

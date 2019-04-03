@@ -71,7 +71,7 @@
 			l.create_time
 		from prm_log l
 		left join tb_user u on l.member_id = u.user_id
-		where public_id = #{publicId} order by create_time desc limit 0,5
+		where public_id = #{publicId} order by create_time desc limit 0,10
 	</select>
 
 	<select id="findLogByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -86,6 +86,12 @@
 	<select id="initAllLog" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
+	</select>
+
+	<!-- 加载剩余消息的数据 -->
+	<select id="selectSurplusMsg" resultType="com.art1001.supply.entity.log.Log">
+		select id,public_id as publicId,project_id as projectId,member_id as memberId,content,log_type as logType,create_time as createTime
+		from prm_log where public_id = #{publicId} order by create_time limit 10,#{surpluscount}
 	</select>
 
 	<!-- 删除多个任务的日志信息 -->

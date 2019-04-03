@@ -74,4 +74,15 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	public void deleteManyByPublicId(List<String> publicId) {
 		logMapper.deleteManyByPublicId(publicId);
 	}
+
+	/**
+	 * 加载剩余消息数据
+	 * @param publicId 公共id
+	 * @param surpluscount 剩余消息数
+	 * @return 剩余消息数据
+	 */
+	@Override
+	public List<Log> getSurplusMsg(String publicId, Integer surpluscount) {
+		return logMapper.selectSurplusMsg(publicId,surpluscount);
+	}
 }

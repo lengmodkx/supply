@@ -1622,6 +1622,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
+        task.setReadMsg(logService.count(new QueryWrapper<Log>().eq("public_id",taskId))-10);
         //查询出该任务的日志信息
         task.setLogs(logService.initLog(taskId));
         //设置关联信息

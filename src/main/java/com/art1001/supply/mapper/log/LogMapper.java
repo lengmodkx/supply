@@ -4,6 +4,7 @@ import com.art1001.supply.entity.log.Log;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
@@ -78,4 +79,12 @@ public interface LogMapper extends BaseMapper<Log> {
 	 * @param publicId 信息id 如:(任务id,文件id 等);
 	 */
     void deleteManyByPublicId(List<String> publicId);
+
+	/**
+	 * 加载剩余消息数据
+	 * @param publicId 公共id
+	 * @param surpluscount 剩余消息数
+	 * @return 剩余消息数据
+	 */
+	List<Log> selectSurplusMsg(@Param("publicId") String publicId, @Param("surpluscount") Integer surpluscount);
 }
