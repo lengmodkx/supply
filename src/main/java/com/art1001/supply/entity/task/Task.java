@@ -276,7 +276,7 @@ public class Task extends Model<Task> {
 	 * 未读消息数
 	 */
 	@TableField(exist = false)
-	private int readMsg;
+	private int unReadMsg;
 
 
 	@Override
