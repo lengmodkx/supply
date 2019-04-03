@@ -78,7 +78,7 @@ public class TaskApi extends BaseController {
             return success(taskService.taskInfoShow(taskId));
         } catch (Exception e){
             e.printStackTrace();
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,获取任务信息失败!",e);
         }
     }
 
