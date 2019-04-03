@@ -163,6 +163,12 @@ public class Schedule extends Model<Schedule> {
 	@TableField(exist = false)
 	private List<Log> logs;
 
+	/**
+	 * 未读消息数
+	 */
+	@TableField(exist = false)
+	private int unReadMsg;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.scheduleId;

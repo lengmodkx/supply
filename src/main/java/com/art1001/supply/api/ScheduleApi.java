@@ -7,6 +7,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.binding.BindingService;
@@ -144,6 +145,9 @@ public class ScheduleApi extends BaseController {
             scheduleById.setBindings(bindingService.list(new QueryWrapper<Binding>().eq("public_id", scheduleId)));
             //查询出该任务的日志信息
             scheduleById.setLogs(logService.initLog(scheduleId));
+            //获取日程的未读消息数
+            int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", scheduleId)) - 10;
+            scheduleById.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
             object.put("data",scheduleById);
             object.put("result",1);
         }catch(Exception e){
