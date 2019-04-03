@@ -196,4 +196,13 @@ import java.util.List;
 	 * @return 文件夹信息
 	 */
 	List<FileTreeShowVO> getProjectAllFolder(String fileId);
+
+	/**
+	 * 获取文件的绑定信息接口
+	 * 用于获取绑定信息处
+	 * 注 结果仅包含 file_id,file_name,ext,catalog
+	 * @param id 父id
+	 * @return 文件id
+	 */
+	List<File> getBindInfo(String id);
 }

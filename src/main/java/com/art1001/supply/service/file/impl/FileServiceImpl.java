@@ -579,4 +579,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             }
         });
     }
+
+    /**
+     * 获取文件的绑定信息
+     * @param id 父id
+     * @return 文件信息
+     */
+    @Override
+    public List<File> getBindInfo(String id) {
+        return fileService.list(new QueryWrapper<File>().select("file_id fileId","file_name fileName","ext ext","catalog catalog").eq("parent_id",id));
+    }
 }

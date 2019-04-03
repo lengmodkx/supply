@@ -799,4 +799,40 @@ public class FileApi extends BaseController {
             throw new AjaxException(e);
         }
     }
+
+    /**
+     * 获取文件绑定信息
+     * @param id 父级id
+     * @return 文件信息 (file_id,file_name,ext,catalog)
+     */
+    @GetMapping("/{id}/bind")
+    public JSONObject getBindInfo(@PathVariable String id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String parentId = checkIsProjectId(id);
+            if(parentId == null){
+                jsonObject.put("data",fileService.getBindInfo(id));
+            } else {
+                jsonObject.put("data",fileService.getBindInfo(parentId));
+            }
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取文件信息失败!",e);
+        }
+    }
+
+    /**
+     * 校验传入的参数是文件的id还是项目的id
+     * 如果是项目的id那么就返回该项目的根目录id
+     * @param id id
+     * @return 根目录id 没有为null
+     */
+    private String checkIsProjectId(String id){
+        if(fileService.getOne(new QueryWrapper<File>().select("file_id as fileId").eq("file_id",id)) == null){
+            return fileService.findParentId(id);
+        } else {
+            return null;
+        }
+    }
 }
