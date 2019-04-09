@@ -475,6 +475,8 @@
 		FROM
 			prm_schedule
 			WHERE
+			project_id = #{projectId}
+			AND
 				FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) IN ( SELECT FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date FROM prm_schedule WHERE project_id = #{projectId} )
 			ORDER BY
 			date,

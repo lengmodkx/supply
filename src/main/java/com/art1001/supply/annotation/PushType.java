@@ -1,4 +1,5 @@
 package com.art1001.supply.annotation;
+
 public enum PushType {
     Default(0,""),
 //    A(1,"移除了执行者"),
@@ -102,7 +103,8 @@ public enum PushType {
     E1(1,"添加了标签"),
     E2(2,"移除了标签"),
 
-    F1(1,"发送消息");
+    F1(1,"发送消息"),
+    G1(1,"群聊消息");
 
     PushType(int id,String name){
         this.name = name;

@@ -2,6 +2,8 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSException;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.exception.AjaxException;
@@ -42,8 +44,9 @@ public class GroupChatApi {
      * @param projectId 项目id
      * @param content 发送的内容
      * @param files 是否附带文件
-     *   @return
+     * @return 返回结果
      */
+    @Push(value = PushType.G1)
     @PostMapping
     public JSONObject chat(@RequestParam String projectId,
                            @RequestParam(required = false, defaultValue = "") String content,
@@ -59,12 +62,13 @@ public class GroupChatApi {
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
             chat.setContent(content);
             chat.setProjectId(projectId);
+            chatService.save(chat);
             if (StringUtils.isNotEmpty(files)) {
                 fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
             }
-            chatService.save(chat);
-
             object.put("result",1);
+            object.put("data",content);
+            object.put("msgId",projectId);
             object.put("msg","保存成功");
         }catch(Exception e){
             log.error("系统异常,群聊消息发送失败:",e);
