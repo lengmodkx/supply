@@ -49,7 +49,7 @@ public class Chat extends Model<Chat> {
 	/**
 	 * 聊天发送时间
 	 */
-	private long createTime;
+	private Long createTime;
 
 	/**
 	 * 项目Id
