@@ -207,7 +207,7 @@ public interface FileMapper extends BaseMapper<File> {
 	@Delete("delete from prm_file where public_id = #{publicId}")
 	void deleteFileByPublicId(String publicId);
 
-	@Select("select fileId,fileName,fileUrl, from prm_file where public_id = #{publicId}")
+	@Select("select file_id as fileId,file_name as fileName,file_url as fileUrl from prm_file where public_id = #{publicId}")
 	List<File> findFileByPublicId(String publicId);
 
 	/**

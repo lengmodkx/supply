@@ -19,7 +19,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
     private ChatMapper chatMapper;
 
     @Override
-    public List<Chat> findChatList() {
-        return chatMapper.findChatList();
+    public List<Chat> findChatList(String projectId) {
+        return chatMapper.findChatList(projectId);
     }
 }

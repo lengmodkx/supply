@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface ChatService extends IService<Chat> {
 
-    List<Chat> findChatList();
+    List<Chat> findChatList(String projectId);
 }

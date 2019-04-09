@@ -113,20 +113,22 @@ public class GroupChatApi {
             log.error("文件不存在!",e);
             throw new AjaxException(e);
         } catch(Exception e){
-            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
     }
 
+    /**
+     * 进入群聊的首页加载所有消息
+     * @return 群聊消息
+     */
     @GetMapping
-    public JSONObject chats(){
+    public JSONObject chats(@RequestParam String projectId){
         JSONObject object = new JSONObject();
         try{
-            List<Chat> chatList = chatService.findChatList();
+            List<Chat> chatList = chatService.findChatList(projectId);
             object.put("result",1);
             object.put("data",chatList);
         }catch(Exception e){
-            log.error("系统异常:",e);
             throw new AjaxException(e);
         }
         return object;
