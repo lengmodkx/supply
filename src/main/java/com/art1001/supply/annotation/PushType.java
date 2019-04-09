@@ -104,7 +104,8 @@ public enum PushType {
     E2(2,"移除了标签"),
 
     F1(1,"发送消息"),
-    G1(1,"群聊消息");
+    G1(1,"群聊消息"),
+    G2(2,"撤回消息");
 
     PushType(int id,String name){
         this.name = name;

@@ -83,14 +83,17 @@ public class GroupChatApi {
      * @param chatId 消息id
      * @return
      */
-    @PutMapping("/{chatId}/withdraw")
-    public JSONObject withdrawMessage(@PathVariable(value = "chatId") String chatId, @RequestParam(value = "projectId") String projectId) {
+    @Push(value = PushType.G2)
+    @PutMapping("/{chatId}/revoke")
+    public JSONObject revokeMessage(@PathVariable(value = "chatId") String chatId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             Chat chat = new Chat();
             chat.setChatId(chatId);
             chat.setChatDel(1);
             chatService.updateById(chat);
+            jsonObject.put("data",chatId);
+            jsonObject.put("msgId",projectId);
             jsonObject.put("result", 1);
             jsonObject.put("msg","撤回成功");
         } catch (Exception e) {

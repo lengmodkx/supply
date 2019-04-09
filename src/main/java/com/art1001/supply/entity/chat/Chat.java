@@ -68,6 +68,13 @@ public class Chat extends Model<Chat> {
 	private List<File> fileList;
 
 	/**
+	 * 是否是当前登录用户发送的消息
+	 * 0:不是 1:是
+	 */
+	@TableField(exist = false)
+	private int isOwn;
+
+	/**
 	 * 消息发送人的相关信息
 	 */
 	@TableField(exist = false)

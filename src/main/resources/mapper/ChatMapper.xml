@@ -8,6 +8,7 @@
 		<result column="content" property="content" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="chat_del" property="chatDel" jdbcType="VARCHAR" />
 		<association property="user" javaType="com.art1001.supply.entity.user.UserEntity">
 			<id column="user_id" property="userId"/>
 			<result column="user_name" property="userName"/>
@@ -30,6 +31,7 @@
 			content,
 			chat.create_time,
 			project_id,
+			chat_del,
 			user_id,
 			image,
 			user_name
