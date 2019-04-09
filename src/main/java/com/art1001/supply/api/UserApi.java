@@ -67,6 +67,7 @@ public class UserApi {
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
                  object.put("refreshToken",refreshToken);
+                 object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
                  object.put("accessToken",JwtUtil.sign(accountName,refreshToken));
             } else {
                  object.put("result", 0);

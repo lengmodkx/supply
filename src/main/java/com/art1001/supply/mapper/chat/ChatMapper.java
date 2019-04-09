@@ -13,4 +13,6 @@ import java.util.List;
 @Mapper
 public interface ChatMapper extends BaseMapper<Chat> {
     List<Chat> findChatList(@Param("projectId") String projectId);
+
+    Chat findChatById(@Param("chatId") String chatId);
 }

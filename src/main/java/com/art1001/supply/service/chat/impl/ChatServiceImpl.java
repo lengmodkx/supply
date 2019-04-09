@@ -34,4 +34,14 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
         });
         return chatList;
     }
+
+    /**
+     * 根据id 查询出消息的详情信息 包括发送者信息
+     * @param chatId 消息id
+     * @return 消息信息
+     */
+    @Override
+    public Chat findChatById(String chatId) {
+        return chatMapper.findChatById(chatId);
+    }
 }

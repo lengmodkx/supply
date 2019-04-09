@@ -44,4 +44,22 @@
 			create_time
 	</select>
 
+	<!-- 根据id 查询出消息的详情信息 包括发送者信息 -->
+	<select id="findChatById" resultMap="BaseResultMap">
+		SELECT
+			chat_id,
+			member_id,
+			content,
+			chat.create_time,
+			project_id,
+			user_id,
+			image,
+			user_name
+		FROM
+			prm_chat AS chat
+			LEFT JOIN tb_user u ON chat.member_id = u.user_id
+		WHERE
+			chat_id = #{chatId}
+	</select>
+
 </mapper>

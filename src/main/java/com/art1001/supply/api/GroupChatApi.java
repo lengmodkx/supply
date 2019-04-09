@@ -66,8 +66,10 @@ public class GroupChatApi {
             if (StringUtils.isNotEmpty(files)) {
                 fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
             }
+            Chat chatById = chatService.findChatById(chat.getChatId());
+            chatById.setIsOwn(1);
             object.put("result",1);
-            object.put("data",content);
+            object.put("data",chatById);
             object.put("msgId",projectId);
             object.put("msg","保存成功");
         }catch(Exception e){
