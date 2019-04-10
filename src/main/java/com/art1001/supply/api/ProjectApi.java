@@ -339,4 +339,22 @@ public class ProjectApi {
         }
         return jsonObject;
     }
+
+    /**
+     * 根据项目id 获取成员信息
+     * @param projectId 项目id
+     * @return 成员信息
+     */
+    @GetMapping("/{projectId}/members")
+    public JSONObject getMembersByProject(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取成员信息失败!",e);
+        }
+
+    }
 }
