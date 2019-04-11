@@ -74,6 +74,12 @@ public class Schedule extends Model<Schedule> {
 	private String memberIds;
 
 	/**
+	 * yyyy-MM-dd 形式的字符串日期
+	 */
+	@TableField(exist = false)
+	private String date;
+
+	/**
 	 * 创建者信息
 	 */
 	@TableField(exist = false)

@@ -91,6 +91,19 @@
 		</association>
 	</resultMap>
 
+	<!-- 我的模块 根据月份查询信息 -->
+	<resultMap id="byMonth" type="com.art1001.supply.entity.schedule.Schedule">
+		<id column="schedule_id" property="scheduleId"/>
+		<result column="schedule_name" property="scheduleName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="date" property="date"/>
+		<association property="project" javaType="com.art1001.supply.entity.project.Project">
+			<id column="p_id" property="projectId"/>
+			<result column="project_name" property="projectName"/>
+		</association>
+	</resultMap>
+
 	<!-- 我的模块 日程数据获取 -->
 	<resultMap id="selectMe" type="com.art1001.supply.entity.schedule.ScheduleVo">
 		<id column="date" property="date"/>
@@ -569,7 +582,7 @@
 	</select>
 
 	<!-- 根据月份获取日程信息 -->
-	<select id="findByMonth" resultMap="selectMe">
+	<select id="findByMonth" resultMap="byMonth">
 		SELECT
 			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date,
 			s.start_time,
