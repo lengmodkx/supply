@@ -294,11 +294,10 @@ public interface TaskService extends IService<Task> {
 	List<Tag> findTaskTag(String taskId);
 
 	/**
-	 * 查询出该用户参与的近三天的任务
-	 * @param userId 用户id
+	 * 查询出和该用户有关的近三天的任务
 	 * @return
 	 */
-	List<Task> findTaskByUserIdAndByTreeDay(String userId);
+	List<Task> findByUserIdAndByTreeDay();
 
 	/**
 	 * 查询出我创建的任务信息

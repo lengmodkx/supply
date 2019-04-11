@@ -153,13 +153,11 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 查询出该用户参与的近三天的日程
-     *
-     * @param uId 用户Id
      * @return
      */
     @Override
-    public List<Schedule> findScheduleByUserIdAndByTreeDay(String uId) {
-        return scheduleMapper.findScheduleByUserIdAndByTreeDay(uId);
+    public List<Schedule> findScheduleByUserIdAndByTreeDay() {
+        return scheduleMapper.findScheduleByUserIdAndByTreeDay(ShiroAuthenticationManager.getUserId());
     }
 
     /**

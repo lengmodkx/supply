@@ -807,12 +807,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出该用户参与的近三天的任务
-     * @param userId 用户id
      * @return
      */
     @Override
-    public List<Task> findTaskByUserIdAndByTreeDay(String userId) {
-        return taskMapper.findTaskByUserIdAndByTreeDay(userId);
+    public List<Task> findByUserIdAndByTreeDay() {
+        return taskMapper.findByUserIdAndByTreeDay(ShiroAuthenticationManager.getUserId());
     }
 
     /**

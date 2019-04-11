@@ -290,7 +290,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param userId 当前用户的id
 	 * @return
 	 */
-	List<Task> findTaskByUserIdAndByTreeDay(String userId);
+	List<Task> findByUserIdAndByTreeDay(@Param("userId") String userId);
 
 	/**
 	 * 查询出我创建的任务

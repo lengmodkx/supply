@@ -59,4 +59,12 @@ public class TaskTest extends ApplicationTests {
             System.out.println(item.toString());
         });
     }
+
+    @Test
+    public void testRecentThing(){
+        List<Task> c0ef5cfb273a47d7b81394f9d00ceb1d = taskmapper.findByUserIdAndByTreeDay("c0ef5cfb273a47d7b81394f9d00ceb1d");
+        c0ef5cfb273a47d7b81394f9d00ceb1d.forEach(item -> {
+            System.out.println(item.toString());
+        });
+    }
 }

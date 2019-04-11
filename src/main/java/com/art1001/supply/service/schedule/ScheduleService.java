@@ -70,10 +70,9 @@ public interface ScheduleService extends IService<Schedule> {
 
 	/**
 	 * 查询该用户参与的近三天的日程
-	 * @param uId 用户Id
 	 * @return
 	 */
-    List<Schedule> findScheduleByUserIdAndByTreeDay(String uId);
+    List<Schedule> findScheduleByUserIdAndByTreeDay();
 
 	/**
 	 * 根据项目id 查询出该项目下的所有日程信息

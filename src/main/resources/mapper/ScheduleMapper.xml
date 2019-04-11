@@ -79,6 +79,18 @@
 					select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleListByDay"/>
 	</resultMap>
 
+	<!-- 我的模块 近期的事儿 -->
+	<resultMap id="meRecentThing" type="com.art1001.supply.entity.schedule.Schedule">
+		<id column="schedule_id" property="scheduleId"/>
+		<result column="schedule_name" property="scheduleName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<association property="project" javaType="com.art1001.supply.entity.project.Project">
+			<id column="p_id" property="projectId"/>
+			<result column="project_name" property="projectName"/>
+		</association>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 				schedule_id,
 				schedule_name,
@@ -406,14 +418,19 @@
 		FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d');
 	</select>
 
-	<select id="findScheduleByUserIdAndByTreeDay" resultMap="BaseResultMap">
+	<select id="findScheduleByUserIdAndByTreeDay" resultMap="meRecentThing">
 		SELECT
-		<include refid="Base_Column_List" />
-		from prm_schedule where member_id = #{uId}
+		s.schedule_id,
+		s.schedule_name,
+		s.start_time,
+		s.end_time,
+		p.project_id as p_id,
+		p.project_name
+		from prm_schedule as s left join prm_project p on s.project_id = p.project_id where s.member_id = #{uId} or find_in_set( #{userId}, s.member_ids)
 		AND (
 		SELECT
 		FROM_UNIXTIME(
-		start_time / 1000,
+		s.start_time / 1000,
 		'%Y-%m-%d'
 		)
 		) &lt;= (
@@ -423,7 +440,7 @@
 		AND (
 		SELECT
 		FROM_UNIXTIME(
-		start_time / 1000,
+		s.start_time / 1000,
 		'%Y-%m-%d'
 		)
 		) &gt;= (SELECT curdate())
