@@ -432,4 +432,32 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     public List<Schedule> getAfterBind(String projectId) {
         return scheduleMapper.getAfterBind(projectId);
     }
+
+    /**
+     * 查询出关于用户的所有未来日程信息 按照日分组
+     * @return 日程VO集合
+     */
+    @Override
+    public List<ScheduleVo> findMe() {
+        return scheduleMapper.selectMe(ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+    }
+
+    /**
+     * 查询出和当前登录用户有关日程的月份信息
+     * @return 月份集合
+     */
+    @Override
+    public List<String> findScheduleMonth() {
+        return scheduleMapper.findScheduleMonth(ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+    }
+
+    /**
+     * 根据日程的月份信息获取日程
+     * @param month 月份
+     * @return 日程集合
+     */
+    @Override
+    public List<Schedule> findByMonth(String month) {
+        return scheduleMapper.findByMonth(month,ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+    }
 }

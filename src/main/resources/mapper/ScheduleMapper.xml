@@ -91,6 +91,22 @@
 		</association>
 	</resultMap>
 
+	<!-- 我的模块 日程数据获取 -->
+	<resultMap id="selectMe" type="com.art1001.supply.entity.schedule.ScheduleVo">
+		<id column="date" property="date"/>
+		<collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
+			<id column="schedule_id" property="scheduleId"/>
+			<result column="schedule_name" property="scheduleName"/>
+			<result column="start_time" property="startTime"/>
+			<result column="end_time" property="endTime"/>
+			<result column="member_ids" property="memberIds"/>
+			<association property="project" javaType="com.art1001.supply.entity.project.Project">
+				<id column="p_id" property="projectId"/>
+				<result column="project_name" property="projectName"/>
+			</association>
+ 		</collection>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 				schedule_id,
 				schedule_name,
@@ -512,6 +528,65 @@
 		WHERE
 			project_id = #{projectId}
 			AND start_time > unix_timestamp( ) * 1000
+	</select>
+
+	<!-- 查询关于用户的所有未来日程信息按照日期分组 -->
+	<select id="selectMe" resultMap="selectMe">
+		SELECT
+			s.schedule_id,
+			s.schedule_name,
+			s.start_time,
+			s.end_time,
+			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date,
+			s.member_ids,
+			p.project_id as p_id,
+			p.project_name
+		FROM
+			prm_schedule AS s left join prm_project as p on s.project_id = p.project_id
+		WHERE
+			s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids)
+		AND
+			s.start_time <![CDATA[>]]> #{currTime}
+		AND
+			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) IN ( SELECT FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date FROM prm_schedule GROUP BY date ORDER BY date DESC )
+
+	</select>
+
+	<!-- 查询出和当前登录用户有关日程的月份信息 -->
+	<select id="findScheduleMonth" resultType="java.lang.String">
+		SELECT
+			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date
+		FROM
+			prm_schedule
+		WHERE
+			(member_id = #{userId}
+			OR member_ids = #{userId})
+		AND end_time  <![CDATA[<]]> #{currTime}
+		GROUP BY
+			date
+		ORDER BY
+			date DESC
+	</select>
+
+	<!-- 根据月份获取日程信息 -->
+	<select id="findByMonth" resultMap="selectMe">
+		SELECT
+			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date,
+			s.start_time,
+			s.end_time,
+			s.schedule_id,
+			s.schedule_name,
+			p.project_name,
+			s.member_id,
+			s.member_ids,
+			p.project_id AS p_id
+		FROM
+			prm_schedule AS s
+			LEFT JOIN prm_project AS p ON s.project_id = p.project_id
+		WHERE
+			( s.member_id = #{userId} OR s.member_ids = #{userId} )
+			AND FROM_UNIXTIME( s.start_time / 1000, '%Y-%m' ) = #{month}
+			AND s.end_time <![CDATA[<]]> #{currTime}
 	</select>
 
 </mapper>

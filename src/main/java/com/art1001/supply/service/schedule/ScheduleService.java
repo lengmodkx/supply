@@ -205,4 +205,23 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return 日程信息集合
 	 */
 	List<Schedule> getAfterBind(String projectId);
+
+	/**
+	 * 查询出关于用户的所有未来日程信息 按照日分组
+	 * @return 日程VO集合
+	 */
+    List<ScheduleVo> findMe();
+
+	/**
+	 * 查询出和当前登录用户有关日程的月份信息
+	 * @return 月份集合
+	 */
+	List<String> findScheduleMonth();
+
+	/**
+	 * 根据日程的月份信息获取日程
+	 * @param month 月份
+	 * @return 日程集合
+	 */
+	List<Schedule> findByMonth(String month);
 }

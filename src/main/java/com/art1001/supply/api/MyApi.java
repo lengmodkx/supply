@@ -2,15 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -69,4 +67,54 @@ public class MyApi {
             throw new AjaxException("系统异常,获取信息失败!",e);
         }
     }
+
+    /**
+     * 获取未来的日程
+     * @return
+     */
+    @GetMapping("/schedule/after")
+    public JSONObject getScheduleAfter(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",scheduleService.findMe());
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取数据失败!",e);
+        }
+    }
+
+    /**
+     * 获取和用户有关的日程的月份信息
+     * @return 月份集合
+     */
+    @GetMapping("/schedule/before")
+    public JSONObject getScheduleBefore(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",scheduleService.findScheduleMonth());
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
+    /**
+     * 根据月份获取日程信息
+     * @param month 月份
+     * @return
+     */
+    @GetMapping("schedule/{month}")
+    public JSONObject getScheduleByMonth(@PathVariable String month){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",scheduleService.findByMonth(month));
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
 }

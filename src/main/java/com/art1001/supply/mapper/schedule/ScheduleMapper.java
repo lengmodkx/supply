@@ -132,6 +132,13 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	List<Schedule> findScheduleByUserIdAndThreeDay(String uId);
 
 	/**
+	 * 查询关于用户的所有未来日程信息按照日期分组
+	 * @param userId 用户id
+	 * @return
+	 */
+	List<ScheduleVo> selectMe(@Param("userId") String userId, @Param("currTime") Long currTime);
+
+	/**
 	 * 查询出日历上的所有日程
 	 * @param uId 当前登录用户的id
 	 * @return
@@ -196,4 +203,21 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return 日程信息集合
 	 */
 	List<Schedule> getAfterBind(@Param("projectId") String projectId);
+
+	/**
+	 * 查询出和当前登录用户有关日程的月份信息
+	 * @param userId 当前用户id
+	 * @param currentTimeMillis 当前时间
+	 * @return 月份集合
+	 */
+	List<String> findScheduleMonth(@Param("userId") String userId, @Param("currTime") long currentTimeMillis);
+
+	/**
+	 * 根据月份获取日程信息
+	 * @param month 月份
+	 * @param userId 用户id
+	 * @param currentTimeMillis 当前时间
+	 * @return 日程集合
+	 */
+	List<Schedule> findByMonth(@Param("month") String month, @Param("userId") String userId, @Param("currTime") long currentTimeMillis);
 }
