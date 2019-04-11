@@ -10,6 +10,7 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -845,16 +846,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskMapper.findTaskByUserId(id,orderType);
     }
 
-    /**
-     * 查询出当前用户执行的所有任务信息 并且按照创建时间或者截止时间排序
-     * @param id 用户id
-     * @param orderType 按照时间排序的类型  (创建时间,截止时间)
-     * @return
-     */
-    @Override
-    public List<Task> findTaskByExecutorIdAndTime(String id, String orderType) {
-        return null; //taskMapper.findTaskByExecutorIdAndTime(id,orderType);
-    }
 
     /**
      * 查询出该用户执行的 已经完成的任务
@@ -1673,6 +1664,39 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setBindTasks(tasks);
         task.setBindSchedules(schedules);
         task.setBindShares(shares);
+    }
+
+    /**
+     * 查询" 我的" 任务并且按照筛选条件进行筛选
+     * 我的任务就是(当前用户 参与,创建 项目中和当前用户有关的所有任务)
+     * @param isDone 是否完成
+     * @param order 根据 (最近创建时间,截止时间,优先级) 排序
+     * @param type 查询类型(我执行的,我创建的,我参与的)
+     * @return 任务集合
+     */
+    @Override
+    public List<Task> findMeAndOrder(Boolean isDone, String order, String type) {
+        if(Constants.EXECUTE.equals(type)){
+            return taskMapper.selectExecuteAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+        }
+        if(Constants.JOIN.equals(type)){
+            return taskMapper.selectJoinAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+        }
+        if(Constants.CREATED.equals(type)){
+            return taskMapper.selectCreatedAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+        }
+        return null;
+    }
+
+    /**
+     * 查询出我执行的任务并且按照项目排序
+     * 每个项目对象下包括一个任务集合 项目:任务 一对多
+     * @param isDone 是否完成 (筛选条件)
+     * @return 项目集合
+     */
+    @Override
+    public List<Project> findExecuteOrderProject(Boolean isDone) {
+        return taskMapper.selectExecuteOrderProject(isDone,ShiroAuthenticationManager.getUserId());
     }
 }
 

@@ -134,6 +134,39 @@
 		<result column="relation_name" property="listView" jdbcType="VARCHAR" />
 	</resultMap>
 
+	<!-- 用于查询我执行的任务信息映射 -->
+	<resultMap id="meTask" type="com.art1001.supply.entity.task.Task">
+		<id column="task_id" property="taskId"/>
+		<result column="task_name" property="taskName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="level" property="level"/>
+		<association property="project" javaType="com.art1001.supply.entity.project.Project">
+			<id column="p_id" property="projectId"/>
+			<result column="project_name" property="projectName"/>
+		</association>
+		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+			<result column="f_name" property="taskName"/>
+		</association>
+ 	</resultMap>
+
+	<!-- 查询我只执行的任务并且按照项目分组 -->
+	<resultMap id="meExecuteByProject" type="com.art1001.supply.entity.project.Project">
+		<id column="p_id" property="projectId"/>
+		<result column="project_name" property="projectName"/>
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<id column="task_id" property="taskId"/>
+			<result column="task_name" property="taskName"/>
+			<result column="start_time" property="startTime"/>
+			<result column="end_time" property="endTime"/>
+			<result column="level" property="level"/>
+			<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+				<id column="f_id" property="taskId"/>
+				<result column="f_name" property="taskName"/>
+			</association>
+		</collection>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.project_id,
@@ -1020,5 +1053,142 @@
 			AND t.task_del = 0
 		ORDER BY
 			t.ORDER DESC
+	</select>
+
+	<!-- 查询我执行的任务并且筛选 -->
+	<select id="selectExecuteAndOrder" resultMap="meTask">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			t.`level`,
+			p.project_id AS p_id,
+			p.project_name,
+			f.task_name AS f_name
+		FROM
+			prm_task AS t
+			LEFT JOIN prm_project AS p ON t.project_id = p.project_id
+			LEFT JOIN prm_task f ON t.parent_id = f.task_id
+			<where>
+				t.executor = #{userId}
+				AND
+				<if test="isDone">
+					t.task_status = '完成'
+				</if>
+				<if test="!isDone">
+					t.task_status = '未完成'
+				</if>
+			</where>
+			<if test="order == 'created'">
+				order by t.create_time desc
+			</if>
+			<if test="order == 'dueDate'">
+				order by t.end_time desc
+			</if>
+			<if test="order == 'priority'">
+				order by FIELD(t.priority,'非常紧急','紧急','普通')
+			</if>
+	</select>
+
+	<!-- 查询我参与的任务并且筛选 -->
+	<select id="selectJoinAndOrder" resultMap="meTask">
+		select
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			t.`level`,
+			p.project_id AS p_id,
+			p.project_name,
+			f.task_name AS f_name
+		FROM
+			prm_task AS t
+			LEFT JOIN prm_project AS p ON
+			t.project_id = p.project_id
+			LEFT JOIN prm_task f ON t.parent_id = f.task_id
+			<where>
+				find_in_set(#{userId}, t.task_uids)
+				AND
+				<if test="isDone">
+					t.task_status = '完成'
+				</if>
+				<if test="!isDone">
+					t.task_status = '未完成'
+				</if>
+			</where>
+			<if test="order == 'created'">
+				order by t.create_time desc
+			</if>
+			<if test="order == 'dueDate'">
+				order by t.end_time desc
+			</if>
+			<if test="order == 'priority'">
+				order by FIELD(t.priority,'非常紧急','紧急','普通')
+			</if>
+	</select>
+
+	<!-- 查询我创建的任务并且筛选 -->
+	<select id="selectCreatedAndOrder" resultMap="meTask">
+		select
+		t.task_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`level`
+		p.project_name,
+		f.task_name AS f_name
+		FROM
+		prm_task AS t
+		LEFT JOIN prm_project AS p ON
+		t.project_id = p.project_id
+		LEFT JOIN prm_task f ON t.parent_id = f.task_id
+		<where>
+			t.member_id = #{userId}
+			AND
+			<if test="isDone">
+				t.task_status = '完成'
+			</if>
+			<if test="!isDone">
+				t.task_status = '未完成'
+			</if>
+		</where>
+		<if test="order == 'created'">
+			order by t.create_time desc
+		</if>
+		<if test="order == 'dueDate'">
+			order by t.end_time desc
+		</if>
+		<if test="order == 'priority'">
+			order by FIELD(t.priority,'非常紧急','紧急','普通')
+		</if>
+	</select>
+
+	<!-- 查询出我执行的任务并且按照项目排序 -->
+	<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
+		SELECT
+			p.project_id AS p_id,
+			p.project_name,
+			t.task_id,
+			t.task_name,
+			t.`level`,
+			t.start_time,
+			t.end_time,
+			f.task_id as f_id,
+			f.task_name AS f_name
+		FROM
+			prm_project AS p
+			LEFT JOIN prm_task AS t ON p.project_id = t.project_id
+			LEFT JOIN prm_task f ON t.parent_id = f.task_id
+		WHERE
+			p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
+			AND t.executor = #{userId}
+			AND
+			<if test="isDone">
+				t.task_status = '完成'
+			</if>
+			<if test="!isDone">
+				t.task_status = '未完成'
+			</if>
 	</select>
 </mapper>

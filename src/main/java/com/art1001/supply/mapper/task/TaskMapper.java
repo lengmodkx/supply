@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.task;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
@@ -632,4 +633,40 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 子任务信息集合
 	 */
     List<Task> getBindChild(@Param("taskId") String taskId);
+
+	/**
+	 * 查询出我执行的任务并且排序
+	 * @param isDone 是否完成
+	 * @param order 筛选条件 (最近创建时间,截止时间,优先级)
+	 * @param userId 当前用户id
+	 * @return 任务集合
+	 */
+	List<Task> selectExecuteAndOrder(@Param("isDone") Boolean isDone, @Param("order") String order, @Param("userId") String userId);
+
+	/**
+	 * 查询出我参与的任务并且排序
+	 * @param isDone 是否完成
+	 * @param order 筛选条件 (最近创建时间,截止时间,优先级)
+	 * @param userId 当前用户id
+	 * @return 任务集合
+	 */
+	List<Task> selectJoinAndOrder(@Param("isDone") Boolean isDone, @Param("order") String order, @Param("userId") String userId);
+
+	/**
+	 * 查询出我创建的任务并且排序
+	 * @param isDone 是否完成
+	 * @param order 筛选条件 (最近创建时间,截止时间,优先级)
+	 * @param userId 当前用户id
+	 * @return 任务集合
+	 */
+	List<Task> selectCreatedAndOrder(@Param("isDone") Boolean isDone, @Param("order") String order, @Param("userId") String userId);
+
+	/**
+	 * 查询出我执行的任务并且按照项目排序
+	 * 每个项目对象下包括一个任务集合 项目:任务 一对多
+	 * @param isDone 是否完成 (筛选条件)
+	 * @param userId 当前用户id
+	 * @return 项目集合
+	 */
+	List<Project> selectExecuteOrderProject(@Param("isDone") Boolean isDone, @Param("userId") String userId);
 }

@@ -25,4 +25,13 @@ public class Constants {
     public static final String TAG_NAME = "标签";
     public static final String TASK_GROUP = "任务分组";
     public static final String FOLDER = "文件夹";
+
+    public static final String EXECUTE = "execute";
+    public static final String JOIN = "join";
+
+    //用于筛选 " 我的" 模块排序规则
+    public static final String PROJECT = "project";
+    public static final String DUE_DATE = "dueDate";
+    public static final String PRIORITY = "priority";
+    public static final String CREATED = "created";
 }
