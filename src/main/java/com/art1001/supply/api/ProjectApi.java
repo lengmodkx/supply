@@ -204,6 +204,7 @@ public class ProjectApi {
             });
             object.put("result",1);
             object.put("data",funcList);
+            object.put("count",projectMemberService.count(new QueryWrapper<ProjectMember>().eq("projectId",projectId)));
         }catch(Exception e){
             throw new AjaxException(e);
         }

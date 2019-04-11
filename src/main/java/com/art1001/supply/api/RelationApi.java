@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("relations")
 @RestController
-public class RelationApi {
+public class  RelationApi {
 
     @Resource
     private RelationService relationService;

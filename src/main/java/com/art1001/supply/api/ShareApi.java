@@ -302,4 +302,23 @@ public class ShareApi {
             throw new AjaxException("系统异常,获取绑定信息失败!",e);
         }
     }
+
+    /**
+     * 置顶分享
+     */
+    @PostMapping("/{shareId}/top")
+    public JSONObject setTop(@PathVariable String shareId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            Share share = new Share();
+            share.setId(shareId);
+            share.setCreateTime(System.currentTimeMillis());
+            shareService.updateById(share);
+            return jsonObject;
+        }catch (Exception e){
+            throw new AjaxException("置顶失败");
+        }
+    }
+
+
 }

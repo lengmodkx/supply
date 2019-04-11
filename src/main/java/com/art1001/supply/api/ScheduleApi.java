@@ -215,6 +215,7 @@ public class ScheduleApi extends BaseController {
                                          @RequestParam Long startTime){
         JSONObject object = new JSONObject();
         try{
+
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
             schedule.setStartTime(startTime);

@@ -1627,7 +1627,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //获取该任务的未读消息数
         int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", taskId)) - 10;
         task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
-        //查询出该任务的日志信息
+        //查询出  该任务的日志信息
         task.setLogs(logService.initLog(taskId));
         //设置关联信息
         this.setBindingInfo(taskId,task);

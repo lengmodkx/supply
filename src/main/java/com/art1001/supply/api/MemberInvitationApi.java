@@ -74,6 +74,13 @@ public class MemberInvitationApi {
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
         try{
+            int exist = projectMemberService.findMemberIsExist(projectId,memberId);
+            if(exist>0){
+                object.put("result",0);
+                object.put("msg","项目成员已存在，请勿重复添加");
+                return  object;
+            }
+
             //查询出当前项目的默认分组
             String groupId = projectService.findDefaultGroup(projectId);
             Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","成员"));
@@ -87,6 +94,7 @@ public class MemberInvitationApi {
             member.setMemberLabel(1);
             projectMemberService.save(member);
             object.put("result",1);
+            object.put("msg","添加成功");
         }catch(Exception e){
             log.error("系统异常,成员添加失败:",e);
             throw new AjaxException(e);
@@ -105,6 +113,7 @@ public class MemberInvitationApi {
         try{
             projectMemberService.remove(new QueryWrapper<ProjectMember>().eq("member_id",memberId));
             object.put("result",1);
+            object.put("msg","移除成功");
         }catch(Exception e){
             log.error("系统异常,成员移除失败:",e);
             throw new AjaxException(e);

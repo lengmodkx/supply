@@ -122,7 +122,11 @@ public class FileApi extends BaseController {
             if(one == null){
                 return error("该项目不存在!");
             }
-            return success(fileService.getProjectAllFolder(one.getFileId()));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("data",fileService.getProjectAllFolder(one.getFileId()));
+            jsonObject.put("result",1);
+            return jsonObject;
+           // return success(fileService.getProjectAllFolder(one.getFileId()));
         } catch (Exception e){
             e.printStackTrace();
             throw new AjaxException("系统异常,数据获取失败!",e);
@@ -176,7 +180,7 @@ public class FileApi extends BaseController {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
+            jsonObject.put("data",fileService.findChildFile(parentId));
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -769,31 +773,15 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
-
-    /**
-     * 根据项目id获取到该项目下的所有根文件夹
-     * @param projectId 项目
-     * @return 文件夹集合
-     */
-    @GetMapping("/folder/project/{projectId}")
-    public JSONObject getFolderByProjectId(@PathVariable String projectId){
-        try {
-            return success(fileService.findTreeFolderByProjectId(projectId));
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new AjaxException(e);
-        }
-    }
-
-    /**
+     /**
      * 根据父文件夹id获取子文件夹的树形图数据
-     * @param parentId 父文件夹id
+     * @param fileId 父文件夹id
      * @return 子文件夹数据
      */
-    @GetMapping("/folder/child/{parentId}")
-    public JSONObject getFolderByParentId(@PathVariable String parentId){
+    @GetMapping("/folder/child")
+    public JSONObject getFolderByParentId(@RequestParam String fileId){
         try {
-            return success(fileService.findTreeChildFolder(parentId));
+            return success(fileService.findTreeChildFolder(fileId));
         } catch (Exception e){
             e.printStackTrace();
             throw new AjaxException(e);

@@ -24,8 +24,11 @@ public class FileTreeShowVO {
      */
     private String text;
 
+    private boolean opened;
+
+    private boolean selected;
     /**
      * 子目录集合
      */
-    private List<FileTreeShowVO> childRen;
+    private List<FileTreeShowVO> child;
 }
