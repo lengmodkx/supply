@@ -61,6 +61,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     private final static String PUBLIC_FILE_NAME = "公共模型库";
 
+    private final static String[] company =  {"GB","MB","KB"};
+
     /**
      * 通过id获取单条file数据
      *
@@ -589,4 +591,23 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> getBindInfo(String id) {
         return fileService.list(new QueryWrapper<File>().select("file_id fileId","file_name fileName","ext ext","catalog catalog").eq("parent_id",id));
     }
+
+    /**
+     * 获取我创建的文件并且排序
+     * @param order 排序规则(名称,大小,创建时间)
+     * @return 我创建的文件数据
+     */
+    @Override
+    public List<File> created(String order) {
+        List<File> created = new ArrayList<>(30);
+        if(StringUtils.isNotEmpty(order) && order.equals("size")){
+            for (String c : company) {
+                created.addAll(fileMapper.createdBySize(ShiroAuthenticationManager.getUserId(),c));
+            }
+        } else{
+            created = fileMapper.created(order, ShiroAuthenticationManager.getUserId());
+        }
+        return created;
+    }
+
 }

@@ -104,4 +104,11 @@ public interface PublicCollectService extends IService<PublicCollect> {
 	 * @param type 要更新的信息类型
 	 */
     void updateJson(String id, Object obj, String type);
+
+	/**
+	 * 根据类型获取该用户的收藏信息
+	 * @param collectType 收藏类型
+	 * @return 收藏数据信息
+	 */
+	List<PublicCollect> getByType(String collectType);
 }

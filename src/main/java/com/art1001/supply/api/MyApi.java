@@ -5,6 +5,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -28,6 +29,9 @@ public class MyApi {
 
     @Resource
     private ScheduleService scheduleService;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 根据筛选条件获取我的任务信息
@@ -114,6 +118,23 @@ public class MyApi {
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
+    /**
+     * 获取我创建的文件并且排序
+     * @param order 排序规则(名称,大小,创建时间)
+     * @return 我创建的文件数据
+     */
+    @GetMapping("file")
+    public JSONObject meCreated(@RequestParam(required = false) String order){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",fileService.created(order));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取数据失败!");
         }
     }
 

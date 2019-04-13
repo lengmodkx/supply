@@ -28,6 +28,7 @@ import java.util.List;
 	 void saveFile(String files,String publicId,String projectId);
 
 	 File saveModel(String fileModel,String fileCommon,String pubicId,String filename,String parentId);
+
 	/**
 	 * 项目创建后初始化文件目录
 	 * @param projectId 项目信息
@@ -205,4 +206,11 @@ import java.util.List;
 	 * @return 文件id
 	 */
 	List<File> getBindInfo(String id);
+
+	/**
+	 * 获取我创建的文件并且排序
+	 * @param order 排序规则(名称,大小,创建时间)
+	 * @return 我创建的文件数据
+	 */
+	List<File> created(String order);
 }

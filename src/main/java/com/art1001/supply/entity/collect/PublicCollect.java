@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.collect;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -63,6 +64,9 @@ public class PublicCollect extends Model<PublicCollect> {
 	 * 收藏内容
 	 */
 	private String collectContent;
+
+	@TableField(exist = false)
+	private Object item;
 
 	@Override
 	protected Serializable pkVal() {

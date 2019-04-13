@@ -102,7 +102,7 @@
 	<resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskApiBean">
 		<id column="task_id" property="taskId" />
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="u_image" property="userImage" jdbcType="VARCHAR"/>
+		<result column="image" property="userImage" jdbcType="VARCHAR"/>
 		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
 		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
 		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
@@ -141,6 +141,7 @@
 		<result column="start_time" property="startTime"/>
 		<result column="end_time" property="endTime"/>
 		<result column="level" property="level"/>
+		<result column="image" property="executorImg"/>
 		<association property="project" javaType="com.art1001.supply.entity.project.Project">
 			<id column="p_id" property="projectId"/>
 			<result column="project_name" property="projectName"/>
@@ -148,7 +149,7 @@
 		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
 			<result column="f_name" property="taskName"/>
 		</association>
- 	</resultMap>
+	</resultMap>
 
 	<!-- 查询我只执行的任务并且按照项目分组 -->
 	<resultMap id="meExecuteByProject" type="com.art1001.supply.entity.project.Project">
@@ -785,7 +786,7 @@
 			LEFT JOIN prm_project AS p ON t.project_id = p.project_id
 			LEFT JOIN prm_task f ON t.parent_id = f.task_id
 			WHERE
-			t.executor = #{userId} OR t.member_id = #{userId} OR find_in_set( #{userId}, t.task_uids )
+			(t.executor = #{userId} OR t.member_id = #{userId} OR find_in_set( #{userId}, t.task_uids ))
 			AND ( SELECT FROM_UNIXTIME( t.start_time / 1000, '%Y-%m-%d' ) ) &lt;= ( SELECT adddate( curdate( ), '+2 days' ) ) AND ( SELECT FROM_UNIXTIME( t.start_time / 1000, '%Y-%m-%d' ) ) &gt;= ( SELECT curdate( ) ) order by t.end_time desc
 	</select>
 
@@ -1060,10 +1061,12 @@
 			t.`level`,
 			p.project_id AS p_id,
 			p.project_name,
-			f.task_name AS f_name
+			f.task_name AS f_name,
+			u.image
 		FROM
 			prm_task AS t
 			LEFT JOIN prm_project AS p ON t.project_id = p.project_id
+			LEFT JOIN tb_user as u on u.user_id = t.executor
 			LEFT JOIN prm_task f ON t.parent_id = f.task_id
 			<where>
 				t.executor = #{userId}
@@ -1096,11 +1099,13 @@
 			t.`level`,
 			p.project_id AS p_id,
 			p.project_name,
-			f.task_name AS f_name
+			f.task_name AS f_name,
+			u.image
 		FROM
 			prm_task AS t
 			LEFT JOIN prm_project AS p ON
 			t.project_id = p.project_id
+			LEFT JOIN tb_user as u on u.user_id = t.executor
 			LEFT JOIN prm_task f ON t.parent_id = f.task_id
 			<where>
 				find_in_set(#{userId}, t.task_uids)
@@ -1133,11 +1138,13 @@
 		t.`level`,
 		p.project_id AS p_id,
 		p.project_name,
-		f.task_name AS f_name
+		f.task_name AS f_name,
+		u.image
 		FROM
 		prm_task AS t
 		LEFT JOIN prm_project AS p ON
 		t.project_id = p.project_id
+		LEFT JOIN tb_user as u on u.user_id = t.executor
 		LEFT JOIN prm_task f ON t.parent_id = f.task_id
 		<where>
 			t.member_id = #{userId}
@@ -1171,10 +1178,12 @@
 			t.start_time,
 			t.end_time,
 			f.task_id as f_id,
-			f.task_name AS f_name
+			f.task_name AS f_name,
+			u.image
 		FROM
 			prm_project AS p
 			LEFT JOIN prm_task AS t ON p.project_id = t.project_id
+			LEFT JOIN tb_user as u on u.user_id = t.executor
 			LEFT JOIN prm_task f ON t.parent_id = f.task_id
 		WHERE
 			p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )

@@ -455,7 +455,7 @@
 		s.end_time,
 		p.project_id as p_id,
 		p.project_name
-		from prm_schedule as s left join prm_project p on s.project_id = p.project_id where s.member_id = #{uId} or find_in_set( #{userId}, s.member_ids)
+		from prm_schedule as s left join prm_project p on s.project_id = p.project_id where (s.member_id = #{uId} or find_in_set( #{userId}, s.member_ids))
 		AND (
 		SELECT
 		FROM_UNIXTIME(
@@ -557,7 +557,7 @@
 		FROM
 			prm_schedule AS s left join prm_project as p on s.project_id = p.project_id
 		WHERE
-			s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids)
+				s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids)
 		AND
 			s.start_time <![CDATA[>]]> #{currTime}
 		AND

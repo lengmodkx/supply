@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 任务，文件，日程，分享收藏
@@ -113,16 +114,13 @@ public class CollectionApi {
     /**
      * 全部收藏
      * @param collectType 收藏类型
-     * @param size 每页数量
-     * @param currPage 当前页
      * @return
      */
     @GetMapping
-    public JSONObject collections(@RequestParam("currPage") long currPage, @RequestParam("size") long size, @RequestParam(required = false) String collectType){
+    public JSONObject collections(@RequestParam(required = false) String collectType){
         JSONObject object = new JSONObject();
         try{
-            IPage<PublicCollect> page = collectService.page(new Page<PublicCollect>().setSize(size).setCurrent(currPage), new QueryWrapper<PublicCollect>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("collect_type", collectType));
-            object.put("data",page);
+            object.put("data",collectService.getByType(collectType));
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,收藏数据获取失败:",e);

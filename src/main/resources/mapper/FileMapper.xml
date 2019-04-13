@@ -308,7 +308,7 @@
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
 
-	<!-- 根据项目id 查询文件信息 -->
+    <!-- 根据项目id 查询文件信息 -->
 	<select id="findFileByProjectId" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_file where project_id = #{projectId}
@@ -375,6 +375,48 @@
 	<!-- 获取一个项目的所有文件夹 -->
 	<select id="selectProjectAllFolder" resultType="com.art1001.supply.entity.file.File">
 		select * from prm_file where catalog = 1 AND find_in_set(file_id,getChildFolder(#{fileId})) order by create_time desc
+	</select>
+
+	<!-- 获取我创建的文件并且排序 -->
+	<select id="created" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+			file_id,
+			file_name,
+			size,
+			ext,
+			file_url,
+			update_time,
+			catalog
+		FROM
+			prm_file
+		WHERE
+			member_id = #{userId}
+			AND catalog = '0'
+		<if test="order != null and order != ''">
+			<if test="order == 'update'">
+				order by update_time desc
+			</if>
+			<if test="order == 'name'">
+				order by file_name desc
+			</if>
+		</if>
+	</select>
+
+
+	<select id="createdBySize" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+		file_id,
+		file_name,
+		`size`,
+		ext,
+		update_time,
+		`catalog`
+		FROM
+		prm_file
+		WHERE
+		member_id = #{userId}
+		AND catalog = '0' AND size like <![CDATA[ CONCAT('%',#{company}) ]]>
+		order by size desc
 	</select>
 
 	<!-- 插入多条文件信息 -->

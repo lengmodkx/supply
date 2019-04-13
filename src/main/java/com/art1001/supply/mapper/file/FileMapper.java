@@ -250,4 +250,13 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return 文件夹信息
 	 */
 	List<File> selectProjectAllFolder(@Param("fileId") String fileId);
+
+	/**
+	 * 获取我创建的文件并且排序
+	 * @param order 排序规则(名称,大小,创建时间)
+	 * @return 我创建的文件数据
+	 */
+    List<File> created(@Param("order") String order, @Param("userId")String userId);
+
+	List<File> createdBySize(@Param("userId") String userId,@Param("company")String company);
 }
