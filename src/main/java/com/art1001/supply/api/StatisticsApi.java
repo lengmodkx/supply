@@ -2,9 +2,9 @@ package com.art1001.supply.api;
 
 import com.art1001.supply.service.statistics.StatisticsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author yanglujing
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("statistics")
 public class StatisticsApi {
 
-
+    @Resource
     private StatisticsService statisticsService;
 
 
@@ -27,11 +27,11 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return
      */
-    @GetMapping(value = "getPieChart")
-    public  String  ProjectStatistics(String projectId){
+    @GetMapping(value = "getPieChart/{projectId}")
+    public  String  ProjectStatistics(@PathVariable("projectId") String projectId){
 
           //根据项目id获取饼图数据
-          String result=statisticsService.getPieChart(projectId);
+          String result=this.statisticsService.getPieChart(projectId);
 
         return result;
     }
