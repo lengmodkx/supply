@@ -15,7 +15,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private StatisticsMapper statisticsMapper;
 
     @Override
-    public String getPieChart(String projectId) {
+    public List<StatisticsPie> getPieChart(String projectId) {
         //获取任务总数
         Integer count=statisticsMapper.getCountTask(projectId);
         //获取每个用户的任务数
@@ -23,22 +23,21 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //StatisticsPie[]  pieDate=new StatisticsPie[statisticsPies.size()];
 
-        StringBuilder result=new StringBuilder();
-        result.append("[");
+       /* StringBuilder result=new StringBuilder();
+        StringBuilder result2=new StringBuilder();
+        result.append("[");*/
 
-       for (int i=0; i<statisticsPies.size() ;i++){
+       /*for (int i=0; i<statisticsPies.size() ;i++){
             if(statisticsPies.get(i).getName()!=null){
-                result.append("{name:").append(statisticsPies.get(i).getName()).append(",").append("y:").append(statisticsPies.get(i).getY()).append("}");
+                result.append("{name:").append(statisticsPies.get(i).getName()).append(",").append("y:").append(statisticsPies.get(i).getY()).append("}").append(",");
             }else{
-                result.append("{name:").append("待认领").append(",").append("y:").append(statisticsPies.get(i).getY()).append("}");
+                result.append("{name:").append("待认领").append(",").append("y:").append(statisticsPies.get(i).getY()).append("}").append(",");
             }
-        }
-        result.append("]");
-
-
-            System.out.print("list=============="+result.toString());
-
-        return result.toString();
+        }*/
+        /*result2.append(result.substring(0, result.length()-1));
+        result2.append("]");*/
+        //return result2.toString();
+        return  statisticsPies;
     }
 
 

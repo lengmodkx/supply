@@ -1,5 +1,9 @@
 package com.art1001.supply.service.statistics;
 
+import com.art1001.supply.entity.statistics.StatisticsPie;
+
+import java.util.List;
+
 /**
  * @author yanglujing
  * @Title: StatisticsService
@@ -9,6 +13,6 @@ package com.art1001.supply.service.statistics;
 public interface StatisticsService {
 
     //获取统计页面饼图数据
-    String getPieChart(String projectId);
+    List<StatisticsPie> getPieChart(String projectId);
 
 }

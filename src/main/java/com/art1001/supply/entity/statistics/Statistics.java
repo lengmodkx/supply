@@ -2,6 +2,8 @@ package com.art1001.supply.entity.statistics;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author heshaohua
  * @Title: Statistics
@@ -12,6 +14,10 @@ import lombok.Data;
 public class Statistics {
 
     /**
+    *  饼图数据list
+    **/
+    List<StatisticsPie> statisticsPieList;
+     /**
      * 分组名
      */
     private String name;
