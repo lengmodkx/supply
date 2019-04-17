@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 @Mapper
-public interface StatisticsMapper  extends BaseMapper<Task> {
+public interface StaticInfoMapper extends BaseMapper<Task> {
 
     /**
      * 查询任务总数

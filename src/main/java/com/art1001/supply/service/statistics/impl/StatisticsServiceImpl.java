@@ -2,7 +2,7 @@ package com.art1001.supply.service.statistics.impl;
 
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.statistics.StatisticsPie;
-import com.art1001.supply.mapper.statistics.StatisticsMapper;
+import com.art1001.supply.mapper.statistics.StaticInfoMapper;
 import com.art1001.supply.service.statistics.StatisticsService;
 import com.art1001.supply.util.CalculateProportionUtil;
 import com.google.gson.Gson;
@@ -16,7 +16,7 @@ import java.util.List;
 public class StatisticsServiceImpl implements StatisticsService {
 
     @Resource
-    private StatisticsMapper statisticsMapper;
+    private StaticInfoMapper statisticsMapper;
 
     @Override
     public List<StatisticsPie> getPieChart(String projectId) {

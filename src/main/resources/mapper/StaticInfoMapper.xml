@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.statistics.StaticInfoMapper" >
+
+    <resultMap id="resultPie" type="com.art1001.supply.entity.statistics.StatisticsPie">
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="y" property="y" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getPieDate" parameterType="java.lang.String"  resultMap="resultPie" >
+         SELECT tu.user_name as name ,COUNT(1) as y FROM prm_task pt LEFT JOIN tb_user tu ON  tu.user_id=pt.task_uids   WHERE  pt.project_id=#{projectId} GROUP BY pt.task_uids
+    </select>
+
+</mapper>
