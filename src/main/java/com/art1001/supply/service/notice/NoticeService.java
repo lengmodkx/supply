@@ -10,4 +10,20 @@ public interface NoticeService {
      */
     void pushMsg(String msgId,String type, Object payload);
 
+    /**
+     * 推送给指定的用户
+     * @param userId 用户id
+     * @param type 消息类型
+     * @param payload 内容
+     */
+    void toUser(String userId,String type, Object payload);
+
+    /**
+     * 推送给指定的用户
+     * @param userIds 多个用户id
+     * @param type 消息类型
+     * @param payload 内容
+     */
+    void toUsers(String[] userIds, String type, Object payload);
+
 }

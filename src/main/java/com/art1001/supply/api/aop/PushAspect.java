@@ -4,9 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
+import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,6 +37,12 @@ public class PushAspect extends BaseController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private UserNewsService userNewsService;
+
+    @Resource
+    private TaskService taskService;
 
     private final static String ID = "id";
     private final static String PROJECT_ID = "projectId";
@@ -65,6 +77,17 @@ public class PushAspect extends BaseController {
                 noticeService.pushMsg(key,push.value().name(),data.get(key));
             });
             this.saveLog(object,push);
+            //即需要推送到项目频道也要推送到指定用户频道
+        } else if(push.type() == 3){
+            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
+            Log log = this.saveLog(object, push);
+            String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
+            if(ids != null && ids.length > 0){
+                userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent());
+            }
+            //用户发消息时候通知到用户 并不需要写入日志,因为消息本身就是日志
+        } else if(push.type() == 4){
+
         } else{//只需要日志
             if(object.containsKey(ID)){
                 this.saveLog(object,push);
@@ -75,19 +98,23 @@ public class PushAspect extends BaseController {
         object.remove("data");
         object.remove("id");
         object.remove("name");
+        object.remove("users");
+        object.remove("publicType");
     }
 
     /**
      * 保存操作日志
      * @param object 返回值信息
      */
-    private void saveLog(JSONObject object,Push push){
+    private Log saveLog(JSONObject object,Push push){
         Log log = new Log();
         log.setPublicId(object.getString(ID));
         log.setProjectId(object.getString(PROJECT_ID));
         log.setCreateTime(System.currentTimeMillis());
-        log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+object.getString(NAME));
+        String name = object.getString(NAME) != null ? object.getString(NAME):"";
+        log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+ name);
         log.setMemberId(ShiroAuthenticationManager.getUserId());
         logService.save(log);
+        return log;
     }
 }

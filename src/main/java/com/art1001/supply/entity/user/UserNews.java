@@ -1,4 +1,6 @@
 package com.art1001.supply.entity.user;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -52,12 +54,14 @@ public class UserNews extends Model<UserNews> {
 	/**
 	 * 消息来自谁 id
 	 */
+	@TableField("news_from_user")
 	private String newsFromUserId;
 
 
 	/**
 	 * 消息发给谁 id
 	 */
+	@TableField("news_to_user")
 	private String newsToUserId;
 
 
@@ -82,11 +86,13 @@ public class UserNews extends Model<UserNews> {
 	/**
 	 * 创建时间
 	 */
+	@TableField(fill = FieldFill.INSERT)
 	private Long createTime;
 
 	/**
 	 * 最后更新时间
 	 */
+	@TableField(fill = FieldFill.INSERT_UPDATE)
 	private Long updateTime;
 
 	/**

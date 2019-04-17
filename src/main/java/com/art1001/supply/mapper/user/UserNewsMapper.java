@@ -86,7 +86,7 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<UserNews> findAllUserNewsByUserId(String userId);
+	List<UserNews> findAllUserNewsByUserId(String userId, Boolean isRead);
 
 	/**
 	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0
@@ -107,4 +107,11 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	 * @param publicId 信息id
 	 */
     void deleteManyNewsByPublicId(List<String> publicId);
+
+	/**
+	 * 根据用户id查询出用户的一条消息信息
+	 * @return 用户消息信息
+	 */
+	UserNews findUserNewsByToUser(@Param("userId") String userId, @Param("publicId") String publicId);
+
 }

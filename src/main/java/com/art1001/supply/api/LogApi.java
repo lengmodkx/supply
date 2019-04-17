@@ -8,6 +8,8 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +39,12 @@ public class LogApi extends BaseController {
      */
     @Resource
     private LogService logService;
+
+    @Resource
+    private UserNewsService userNewsService;
+
+    @Resource
+    private TaskService taskService;
 
     /**
      * 发送消息
@@ -59,6 +68,10 @@ public class LogApi extends BaseController {
             log.setContent(content);
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             if(logService.save(log)) {
+                String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(publicId);
+                if(taskJoinAndExecutorId != null && taskJoinAndExecutorId.length > 0){
+                    userNewsService.saveUserNews(taskJoinAndExecutorId,publicId,publicType,ShiroAuthenticationManager.getUserEntity().getUserName()+": "+ content);
+                }
                 log.setMemberImg(ShiroAuthenticationManager.getUserEntity().getImage());
                 jsonObject.put("data",new JSONObject().fluentPut("log",log).fluentPut("type",publicType));
                 jsonObject.put("msgId",projectId);
@@ -101,7 +114,7 @@ public class LogApi extends BaseController {
         if(Stringer.isNullOrEmpty(publicType)){
             throw new AjaxException("消息类型不能为空!");
         }
-        if(Constants.TASK.equals(publicType) || Constants.FILE.equals(publicType) || Constants.SHARE.equals(publicType) || Constants.SCHEDULE.equals(publicType)){
+        if(!(Constants.TASK.equals(publicType) || Constants.FILE.equals(publicType) || Constants.SHARE.equals(publicType) || Constants.SCHEDULE.equals(publicType))){
             throw new AjaxException("消息类型不合法!");
         }
     }

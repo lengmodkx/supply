@@ -5,11 +5,13 @@ import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.enums.MediaTypes;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
@@ -19,22 +21,24 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import javafx.beans.binding.StringBinding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.weaver.AjAttribute;
 import org.quartz.SchedulerException;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 任务增删改查，复制，移动
@@ -67,6 +71,9 @@ public class TaskApi extends BaseController {
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private UserNewsService userNewsService;
 
     /**
      * 任务页面初始化
@@ -123,7 +130,7 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
-    @Push(value = PushType.A3,type = 1)
+    @Push(value = PushType.A3,type = 3)
     @PutMapping("/{taskId}/finish")
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
@@ -136,6 +143,7 @@ public class TaskApi extends BaseController {
             object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
+            object.put("publicType",Constants.TASK);
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
         }catch(Exception e){
@@ -151,7 +159,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A4)
-    @Push(value = PushType.A4,type = 1)
+    @Push(value = PushType.A4,type = 3)
     @PutMapping("/{taskId}/unFinish")
     public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
@@ -165,6 +173,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             throw new AjaxException(e);
         }
@@ -204,7 +213,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A5)
-    @Push(value = PushType.A5,type = 1)
+    @Push(value = PushType.A5,type = 3)
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId")String taskId,
                                      @RequestParam(value = "taskName")String taskName){
@@ -214,12 +223,21 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setTaskName(taskName);
             taskService.updateById(task);
+            for (String s : taskService.getTaskJoinAndExecutorId(taskId)) {
+                UserNews userNews = new UserNews();
+                userNews.setNewsToUserId(s);
+                userNews.setNewsPublicId(taskId);
+                userNews.setNewsName(taskName);
+                userNewsService.updateUserNews(userNews);
+            }
+
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
             object.put("name",taskName);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,任务名称更新失败:",e);
             throw new AjaxException(e);
@@ -263,7 +281,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A7)
-    @Push(value = PushType.A7,type = 1)
+    @Push(value = PushType.A7,type = 3)
     @PutMapping("/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
                                           @RequestParam(value = "startTime")Long startTime){
@@ -278,6 +296,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,开始时间更新失败:",e);
             throw new AjaxException(e);
@@ -292,7 +311,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A8)
-    @Push(value = PushType.A8,type = 1)
+    @Push(value = PushType.A8,type = 3)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
                                         @RequestParam(value = "endTime")Long endTime){
@@ -307,6 +326,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,结束时间更新失败:",e);
             throw new AjaxException(e);
@@ -321,7 +341,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A9)
-    @Push(value = PushType.A9,type = 1)
+    @Push(value = PushType.A9,type = 3)
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId")String taskId,
                                        @RequestParam(value = "repeat")String repeat){
@@ -336,6 +356,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("publicType",Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
             throw new AjaxException("系统异常,重复性更新失败:",e);
@@ -517,7 +538,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A12)
-    @Push(value = PushType.A12,type = 1)
+    @Push(value = PushType.A12,type = 3)
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId")String taskId,
                                          @RequestParam(value = "priority")String priority){
@@ -531,6 +552,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",task));
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,优先级更新失败:",e);
             throw new AjaxException(e);
@@ -547,7 +569,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A13)
-    @Push(value = PushType.A13,type = 1)
+    @Push(value = PushType.A13,type = 3)
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId")String taskId,
                                    @RequestParam(value = "taskName")String taskName,
@@ -598,6 +620,7 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setTaskUIds(taskUids);
             taskService.updateById(task);
+            userNewsService.saveUserNews(taskUids.split(","),taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName());
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
@@ -685,7 +708,7 @@ public class TaskApi extends BaseController {
      * @return
      */
     @Log(PushType.A17)
-    @Push(value = PushType.A17,type = 1)
+    @Push(value = PushType.A17,type = 3)
     @PutMapping("/{taskId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
@@ -699,6 +722,7 @@ public class TaskApi extends BaseController {
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -876,6 +900,9 @@ public class TaskApi extends BaseController {
         return taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
     }
 
+    private String getTaskName(String taskId){
+        return taskService.getTaskNameById(taskId);
+    }
 
 
 }

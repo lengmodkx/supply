@@ -1,5 +1,6 @@
 package com.art1001.supply.service.notice.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.entity.notice.Notice;
 import com.art1001.supply.service.notice.NoticeService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,5 +22,20 @@ public class NoticeServiceImpl implements NoticeService {
         notice.setType(type);
         notice.setObject(payload);
         messagingTemplate.convertAndSend("/topic/"+msgId,notice);
+    }
+
+    @Override
+    public void toUser(String userId, String type, Object payload) {
+        Notice notice = new Notice();
+        notice.setType(type);
+        notice.setObject(payload);
+        messagingTemplate.convertAndSendToUser(userId, "/message",JSON.toJSONString(payload));
+    }
+
+    @Override
+    public void toUsers(String[] userIds, String type, Object payload) {
+        for (String userId : userIds) {
+            this.toUser(userId,type,payload);
+        }
     }
 }

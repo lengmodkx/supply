@@ -76,7 +76,7 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_user_news c where id = #{id}
+		from prm_user_news c where news_id = #{id}
 
 	</select>
 	
@@ -86,7 +86,6 @@
 	</delete>
 	
 	<insert id="saveUserNews" parameterType="com.art1001.supply.entity.user.UserNews">
-
 		insert into prm_user_news
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
@@ -219,6 +218,19 @@
 	<select id="findAllUserNewsByUserId" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_user_news where news_to_user = #{userId}
+		<if test="isRead == true">
+			AND news_handle = 1
+		</if>
+		<if test="isRead == false">
+			AND news_handle = 0
+		</if>
+
+	</select>
+
+
+	<select id="findUserNewsByToUser" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from prm_user_news where news_to_user = #{userId} and news_public_id = #{publicId}
 	</select>
 
 	<!-- 删除多个信息的所有通知消息 -->

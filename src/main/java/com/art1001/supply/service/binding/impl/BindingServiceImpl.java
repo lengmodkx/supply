@@ -165,7 +165,7 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	 * @param publicType 绑定信息的类型
 	 */
 	@Override
-	public void saveBindBatch(String publicId, String bindId, String publicType) {
+	public List<Binding> saveBindBatch(String publicId, String bindId, String publicType) {
 		//移除自己
         List<String> idList = new ArrayList<String>();
         idList = Arrays.asList(bindId.split(","));
@@ -197,6 +197,7 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 			binds.add(binding);
 		});
 		saveBatch(binds);
+		return binds;
 	}
 
 	/**

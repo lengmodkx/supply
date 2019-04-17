@@ -94,7 +94,7 @@ public interface BindingService extends IService<Binding> {
 	 * 添加多条关联关系
 	 *
 	 */
-	void saveBindBatch(String publicId, String bindId ,String publicType);
+	List<Binding> saveBindBatch(String publicId, String bindId ,String publicType);
 
 	/**
 	 * 更新关联信息的json 数据

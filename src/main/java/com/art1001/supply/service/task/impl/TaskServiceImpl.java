@@ -57,6 +57,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -338,12 +339,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 content.append(user.getUserName()).append(",");
             }
             //保存被移除的参与者的消息信息
-            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName(),0);
+            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName());
         }
 
         List<String> subtract2 = ListUtils.subtract(list2, list1);
         //保存被添加进来的参与者的消息信息
-        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName(),0);
+        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName());
         if(subtract2 != null && subtract2.size() > 0){
             content.append(TaskLogFunction.C.getName());
             for (Object aSubtract2 : subtract2) {
@@ -687,7 +688,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
         //保存被移除的参与者的消息信息
-        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName,0);
+        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName);
         return logService.saveLog(task.getTaskId(),content.toString(),1);
     }
 
@@ -1622,6 +1623,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //设置关联信息
         this.setBindingInfo(taskId,task);
         return task;
+    }
+
+    /**
+     * 获取一个任务的人员信息
+     * 人员信息 参与者+执行者 的id
+     * @param taskId 任务id
+     * @return 参与者 + 执行者的id数组
+     */
+    @Override
+    public String[] getTaskJoinAndExecutorId(String taskId){
+        Task one = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("executor", "task_uids"));
+        if(one == null){
+            return null;
+        }
+        StringBuilder userIds = new StringBuilder(one.getTaskUIds());
+        if(StringUtils.isNotEmpty(one.getExecutor())){
+            userIds.append(",").append(one.getExecutor());
+        }
+        return userIds.toString().split(",");
     }
 
     /**

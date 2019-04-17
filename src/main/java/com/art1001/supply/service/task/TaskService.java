@@ -11,7 +11,9 @@ import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.SchedulerException;
 
 import java.util.List;
@@ -519,6 +521,14 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务视图信息
 	 */
 	Task taskInfoShow(String taskId);
+
+	/**
+	 * 获取一个任务的人员信息
+	 * 人员信息 参与者+执行者 的id
+	 * @param taskId 任务id
+	 * @return 参与者 + 执行者的id数组
+	 */
+	String[] getTaskJoinAndExecutorId(String taskId);
 
 	/**
 	 * 获取绑定信息的子任务信息

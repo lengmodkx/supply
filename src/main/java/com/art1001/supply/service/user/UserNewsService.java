@@ -80,9 +80,10 @@ public interface UserNewsService extends IService<UserNews> {
 	/**
 	 * 根据用户id 查询出该用户的 全部消息
 	 * @param userId 用户id
+	 * @Param isRead 是否已读
 	 * @return
 	 */
-	List<UserNews> findAllUserNewsByUserId(String userId);
+	List<UserNews> findAllUserNewsByUserId(String userId, Boolean isRead);
 
 	/**
 	 *	保存用户的消息信息
@@ -90,9 +91,8 @@ public interface UserNewsService extends IService<UserNews> {
 	 * @param publicId 哪条信息的消息
 	 * @param publicType 信息的类型(任务,文件,日程,分享)
 	 * @param content 消息内容
-	 * @param isChat 是否是聊天信息
 	 */
-	void saveUserNews(String[] users, String publicId, String publicType, String content, int isChat);
+	void saveUserNews(String[] users, String publicId, String publicType, String content);
 
 	/**
 	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0

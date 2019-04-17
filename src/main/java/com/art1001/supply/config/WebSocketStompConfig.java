@@ -28,11 +28,11 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // 订阅Broker名称 /topic 代表发布广播，即群发 /queue 代表点对点，即发指定用户
-        registry.enableSimpleBroker("/queue", "/topic");
+        registry.enableSimpleBroker("/user", "/topic");
         // 全局使用的消息前缀（客户端订阅路径上会体现出来）
         registry.setApplicationDestinationPrefixes("/app");
         // 点对点使用的订阅前缀（客户端订阅路径上会体现出来），不设置的话，默认也是/user/
-        // registry.setUserDestinationPrefix("/user/");
+        //registry.setUserDestinationPrefix("/user/");
     }
 
 }

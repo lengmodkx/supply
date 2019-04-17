@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.user.UserEntity;
@@ -13,8 +14,10 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -151,8 +154,8 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	 * @return
 	 */
 	@Override
-	public List<UserNews> findAllUserNewsByUserId(String userId) {
-		return userNewsMapper.findAllUserNewsByUserId(userId);
+	public List<UserNews> findAllUserNewsByUserId(String userId, Boolean isRead) {
+		return userNewsMapper.findAllUserNewsByUserId(userId,isRead);
 	}
 
 	/**
@@ -163,8 +166,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	 * @param content 消息内容
 	 */
 	@Override
-	public void saveUserNews(String[] users, String publicId, String publicType, String content, int isChat) {
-
+	public void saveUserNews(String[] users, String publicId, String publicType, String content) {
 		String name = "";
 		if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
 			name = taskService.findTaskNameById(publicId);
@@ -184,10 +186,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 		}
 
 		for(int i = 0;i < users.length;i++){
-			if(isChat == 0){
-				UserEntity userEntity = userService.findById(users[i]);
-				content += " " + userEntity.getUserName();
-			}
+			UserNews userNews = new UserNews();
 			//如果本次循环的id  是当前操作的用户id 则跳过
 			if(users[i].equals(ShiroAuthenticationManager.getUserId())){
 				continue;
@@ -195,10 +194,9 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 			//查询该用户有没有该信息的 消息记录 如果没有添加一条 如果有在原来的消息数上 +1
 			int result = userNewsMapper.findUserNewsByPublicId(publicId,users[i]);
 			if(result == 0){
-				UserNews userNews = new UserNews(IdGen.uuid(),name,content,publicId,0,ShiroAuthenticationManager.getUserId(),users[i],publicType,1,System.currentTimeMillis(),System.currentTimeMillis());
+				 userNews = new UserNews(IdGen.uuid(),name,content,publicId,0,ShiroAuthenticationManager.getUserId(),users[i],publicType,1,System.currentTimeMillis(),System.currentTimeMillis());
 				userNewsMapper.saveUserNews(userNews);
 			} else{
-				UserNews userNews = new UserNews();
 				userNews.setNewsContent(content);
 				userNews.setNewsPublicId(publicId);
 				userNews.setNewsHandle(0);
@@ -209,7 +207,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 			}
 			//查询出该用户的所有未读消息的总条数
 			int newsCount = userNewsMapper.findUserNewsCount(users[i]);
-			messagingTemplate.convertAndSend("/topic/"+ users[i],newsCount);
+			messagingTemplate.convertAndSendToUser(users[i],"/message",new JSONObject().fluentPut("count",newsCount).fluentPut("message",userNewsMapper.findUserNewsByToUser(users[i],publicId)));
 		}
 	}
 
