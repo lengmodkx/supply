@@ -2,8 +2,6 @@ package com.art1001.supply.entity.statistics;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author heshaohua
  * @Title: Statistics
@@ -14,9 +12,10 @@ import java.util.List;
 public class Statistics {
 
     /**
-    *  饼图数据list
+    *  饼图数据
     **/
-    List<StatisticsPie> statisticsPieList;
+        String pieData;
+
      /**
      * 分组名
      */
@@ -31,4 +30,46 @@ public class Statistics {
      * 该任务完成度的百分比
      */
     private double percentage;
+
+    public String getPieData() {
+        return pieData;
+    }
+
+    public void setPieData(String pieData) {
+        this.pieData = pieData;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(double percentage) {
+        this.percentage = percentage;
+    }
+
+    @Override
+    public String toString() {
+        return "Statistics{" +
+                "pieData=" + pieData +
+                ", name='" + name + '\'' +
+                ", count=" + count +
+                ", percentage=" + percentage +
+                '}';
+    }
 }

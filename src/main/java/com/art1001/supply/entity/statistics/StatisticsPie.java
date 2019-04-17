@@ -8,7 +8,7 @@ package com.art1001.supply.entity.statistics;
 public class StatisticsPie {
 
     private String name;
-    private Integer y;
+    private Float y;
 
     public StatisticsPie() {
 
@@ -22,11 +22,11 @@ public class StatisticsPie {
         this.name = name;
     }
 
-    public Integer getY() {
+    public Float getY() {
         return y;
     }
 
-    public void setY(Integer y) {
+    public void setY(Float y) {
         this.y = y;
     }
 
