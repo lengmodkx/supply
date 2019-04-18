@@ -16,13 +16,31 @@ public class Statistics {
     **/
         String pieData;
 
+    /**
+     * 柱状图数据
+     */
+       StatisticsHistogram staticHistogram;
+
+    /**
+     * 任务燃尽图数据
+     */
+       StatisticsBurnout statisticsBurnout;
+
+
+     /**
+     * 任务累计数据
+     */
+       StatisticsBurnout  statisticsAdd;
+
+
+
      /**
      * 分组名
      */
     private String name;
 
     /**
-     * 任务达成该分组的要求的 数量
+     * 任务总 数量
      */
     private int count;
 
@@ -30,6 +48,8 @@ public class Statistics {
      * 该任务完成度的百分比
      */
     private double percentage;
+
+    //封装
 
     public String getPieData() {
         return pieData;
@@ -62,6 +82,18 @@ public class Statistics {
     public void setPercentage(double percentage) {
         this.percentage = percentage;
     }
+
+    public StatisticsHistogram getStaticHistogram() { return staticHistogram; }
+
+    public void setStaticHistogram(StatisticsHistogram staticHistogram) { this.staticHistogram = staticHistogram; }
+
+    public StatisticsBurnout getStatisticsBurnout() { return statisticsBurnout; }
+
+    public void setStatisticsBurnout(StatisticsBurnout statisticsBurnout) { this.statisticsBurnout = statisticsBurnout; }
+
+    public StatisticsBurnout getStatisticsAdd() { return statisticsAdd; }
+
+    public void setStatisticsAdd(StatisticsBurnout statisticsAdd) { this.statisticsAdd = statisticsAdd; }
 
     @Override
     public String toString() {

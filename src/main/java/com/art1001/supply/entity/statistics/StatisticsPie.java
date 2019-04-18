@@ -7,19 +7,20 @@ package com.art1001.supply.entity.statistics;
  */
 public class StatisticsPie {
 
-    private String name;
+    private String name = "待认领";
     private Float y;
 
     public StatisticsPie() {
 
     }
 
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+         this.name = name;
     }
 
     public Float getY() {

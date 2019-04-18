@@ -1,6 +1,8 @@
 package com.art1001.supply.api;
 
 import com.art1001.supply.entity.statistics.Statistics;
+import com.art1001.supply.entity.statistics.StatisticsBurnout;
+import com.art1001.supply.entity.statistics.StatisticsHistogram;
 import com.art1001.supply.entity.statistics.StatisticsPie;
 import com.art1001.supply.service.statistics.StatisticsService;
 import com.google.gson.Gson;
@@ -36,24 +38,40 @@ public class StatisticsApi {
     /**
      * 页面项目统计总览
      * @param projectId 项目id
-     * @return
+     * @return Statistics 对象
      */
     @GetMapping(value = "getPieChart/{projectId}")
     public Statistics ProjectStatistics(@PathVariable("projectId") String projectId){
 
         try {
+
             Statistics statistics=new Statistics();
+
+            //获取总任务数
+            Integer count=this.statisticsService.getCountTask(projectId);
+
+
+            statistics.setCount(count);
+
+
             //根据项目id获取饼图数据
-            List<StatisticsPie> resultPie=this.statisticsService.getPieChart(projectId);
-            for(int i=0;i<resultPie.size();i++){
-                if (resultPie.get(i).getName()==null){
-                    resultPie.get(i).setName("待认领");
-                }
-            }
+            List<StatisticsPie> staticPies= this.statisticsService.getPieChart(projectId,count);
+            //根据项目id获取折线图数据
+            StatisticsHistogram staticHistograms=this.statisticsService.getHistogramsChart(projectId);
+            //根据项目id获取燃尽图数据
+            StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId);
+            //根据项目id获取累计数据
+            //StatisticsBurnout statisticsAdd=this.statisticsService.selectProjectProgress(projectId);
+
+
             Gson gson = new GsonBuilder().create();
-            String resultJsonMapData = gson.toJson(resultPie);
-            statistics.setPieData(resultJsonMapData);
+            String resultJsonPieData = gson.toJson(staticPies);
+            statistics.setPieData(resultJsonPieData);
+            statistics.setStaticHistogram(staticHistograms);
+            statistics.setStatisticsBurnout(statisticsBurnout);
+            //statistics.setStatisticsAdd(statisticsAdd);
             return statistics;
+
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
