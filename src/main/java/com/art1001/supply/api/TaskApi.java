@@ -11,6 +11,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.enums.MediaTypes;
 import com.art1001.supply.exception.AjaxException;
@@ -261,10 +262,14 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setExecutor(userId);
             taskService.updateById(task);
+            if(!Stringer.isNullOrEmpty(userId)){
+                object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("executor", userService.getOne(new QueryWrapper<UserEntity>().select("user_id","user_name","image").eq("user_id", userId))));
+            } else{
+                object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("executor", ""));
+            }
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("executor",userService.getById(userId)));
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,执行者更新失败:",e);
@@ -281,9 +286,8 @@ public class TaskApi extends BaseController {
      */
     @Log(PushType.A7)
     @Push(value = PushType.A7,type = 3)
-    @PutMapping("/{taskId}/starttime")
-    public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
-                                          @RequestParam(value = "startTime")Long startTime){
+    @PutMapping(value = "/{taskId}/starttime")
+    public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,  @RequestParam(value = "startTime")Long startTime){
         JSONObject object = new JSONObject();
         try{
             taskService.updateStartTime(taskId,startTime);

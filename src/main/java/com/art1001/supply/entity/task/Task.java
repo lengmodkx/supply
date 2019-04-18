@@ -2,10 +2,13 @@ package com.art1001.supply.entity.task;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
@@ -253,25 +256,25 @@ public class Task extends Model<Task> {
 	 * 关联的任务信息
 	 */
 	@TableField(exist = false)
-	private List<Task> bindTasks;
+	private List<TaskApiBean> bindTasks;
 
 	/**
 	 * 关联的文件信息
 	 */
 	@TableField(exist = false)
-	private List<File> bindFiles;
+	private List<FileApiBean> bindFiles;
 
 	/**
 	 * 关联的日程信息
 	 */
 	@TableField(exist = false)
-	private List<Schedule> bindSchedules;
+	private List<ScheduleApiBean> bindSchedules;
 
 	/**
 	 * 关联的分享信息
 	 */
 	@TableField(exist = false)
-	private List<Share> bindShares;
+	private List<ShareApiBean> bindShares;
 
 	/**
 	 * 未读消息数

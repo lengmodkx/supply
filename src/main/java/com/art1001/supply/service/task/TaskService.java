@@ -538,6 +538,8 @@ public interface TaskService extends IService<Task> {
 	 */
 	List<Task> getBindChild(String taskId);
 
+	void setBindingInfo(String taskId,Task t);
+
 	/**
 	 * 查询" 我的" 任务并且按照筛选条件进行筛选
 	 * 我的任务就是(当前用户 参与,创建 项目中和当前用户有关的所有任务)

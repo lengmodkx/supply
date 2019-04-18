@@ -1,10 +1,12 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
@@ -23,11 +25,13 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -76,12 +80,13 @@ public class BindingApi {
     @PostMapping
     public JSONObject saveBinding(@RequestParam String publicId,
                                   @RequestParam String bindId,
+                                  @RequestParam String fromType,
                                   @RequestParam String publicType){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",bindingService.saveBindBatch(publicId,bindId,publicType));
+            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("bind",JSON.parseObject(bindingService.saveBindBatch(publicId, bindId, publicType).toString(),Object.class)).fluentPut("publicType", publicType));
             jsonObject.put("result",1);
-            jsonObject.put("msgId", getProjectId(publicType,publicId));
+            jsonObject.put("msgId", getProjectId(publicId));
             jsonObject.put("id", publicId);
             jsonObject.put("publicType", publicId);
         }catch (Exception e){
@@ -95,11 +100,16 @@ public class BindingApi {
      * @param bindId 关联关系id
      * @return
      */
+    @Push(value = PushType.A29,type = 3)
     @DeleteMapping
-    public JSONObject deleteBinding(@RequestParam(value = "bindId") String bindId){
+    public JSONObject deleteBinding(@RequestParam(value = "bindId") String bindId,@RequestParam String projectId,@RequestParam String fromType,@RequestParam String publicId){
         JSONObject jsonObject = new JSONObject();
         try {
-            bindingService.removeById(bindId);
+            QueryWrapper<Binding> eq = new QueryWrapper<Binding>().eq("public_id", publicId).eq("bind_id", bindId);
+            Binding byId = bindingService.getOne(eq);
+            bindingService.remove(eq);
+            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicType", byId.getPublicType()).fluentPut("bindId", byId.getBindId()));
+            jsonObject.put("msgId", projectId);
             jsonObject.put("result",1);
         }catch (Exception e){
             log.error("系统异常,关联关系删除失败:",e);
@@ -141,22 +151,20 @@ public class BindingApi {
         return jsonObject;
     }
 
-    private String getProjectId(String publicType, String publicId){
-        String projectId;
-        if(publicType.equals(Constants.TASK)){
+    private String getProjectId(String publicId){
+        String projectId = "";
+        if(Stringer.isNullOrEmpty(projectId)){
             projectId = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId)).getProjectId();
         }
 
-        if(publicType.equals(Constants.SHARE)){
+        if(Stringer.isNullOrEmpty(projectId)){
             projectId = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId)).getProjectId();
         }
-        if(publicType.equals(Constants.FILE)){
+        if(Stringer.isNullOrEmpty(projectId)){
             projectId = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id", publicId)).getProjectId();
         }
-        if(publicType.equals(Constants.SCHEDULE)){
+        if(Stringer.isNullOrEmpty(projectId)){
             projectId = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id", publicId)).getProjectId();
-        } else{
-            return null;
         }
         return projectId;
     }

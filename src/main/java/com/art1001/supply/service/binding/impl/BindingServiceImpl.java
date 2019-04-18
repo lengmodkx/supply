@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
@@ -165,10 +166,10 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	 * @param publicType 绑定信息的类型
 	 */
 	@Override
-	public List<Binding> saveBindBatch(String publicId, String bindId, String publicType) {
+	public Object saveBindBatch(String publicId, String bindId, String publicType) {
 		//移除自己
         List<String> idList = new ArrayList<String>();
-        idList = Arrays.asList(bindId.split(","));
+        idList = new ArrayList<>(Arrays.asList(bindId.split(",")));
 		idList.remove(publicId);
 		//批量删除 重复关联的关联项
 		bindingMapper.delete(new QueryWrapper<Binding>().eq("public_id",publicId).in("bind_id",idList));
@@ -197,7 +198,8 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 			binds.add(binding);
 		});
 		saveBatch(binds);
-		return binds;
+		this.list(new QueryWrapper<Binding>().eq("public_id", publicId).in("bind_id",idList));
+		return binds.stream().map(Binding::getBindContent).collect(Collectors.toList());
 	}
 
 	/**

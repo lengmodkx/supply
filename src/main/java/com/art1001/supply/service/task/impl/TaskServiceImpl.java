@@ -9,12 +9,15 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
@@ -1634,14 +1637,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public String[] getTaskJoinAndExecutorId(String taskId){
         Task one = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("executor", "task_uids"));
-        if(one == null){
-            return null;
+        if(one != null){
+            if(one.getTaskUIds() != null){
+                StringBuilder userIds = new StringBuilder(one.getTaskUIds());
+                if(StringUtils.isNotEmpty(one.getExecutor())){
+                    userIds.append(",").append(one.getExecutor());
+                }
+                return userIds.toString().split(",");
+            }
         }
-        StringBuilder userIds = new StringBuilder(one.getTaskUIds());
-        if(StringUtils.isNotEmpty(one.getExecutor())){
-            userIds.append(",").append(one.getExecutor());
-        }
-        return userIds.toString().split(",");
+        return null;
     }
 
     /**
@@ -1659,24 +1664,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @param taskId 任务id
      * @param task 添加到的 task对象
      */
-    private void setBindingInfo(String taskId,Task task){
+    @Override
+    public void setBindingInfo(String taskId,Task task){
         List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
-        List<Task> tasks = new ArrayList<>();
-        List<Schedule> schedules = new ArrayList<>();
-        List<File> files = new ArrayList<>();
-        List<Share> shares = new ArrayList<>();
+        List<TaskApiBean> tasks = new ArrayList<>();
+        List<ScheduleApiBean> schedules = new ArrayList<>();
+        List<FileApiBean> files = new ArrayList<>();
+        List<ShareApiBean> shares = new ArrayList<>();
         bindings.forEach(item -> {
             if(item.getPublicType().equals(Constants.TASK)){
-                tasks.add(JSON.parseObject(item.getBindContent(), Task.class));
+                tasks.add(JSON.parseObject(item.getBindContent(), TaskApiBean.class));
             }
             if(item.getPublicType().equals(Constants.SCHEDULE)){
-                schedules.add(JSON.parseObject(item.getBindContent(), Schedule.class));
+                schedules.add(JSON.parseObject(item.getBindContent(), ScheduleApiBean.class));
             }
             if(item.getPublicType().equals(Constants.FILE)){
-                files.add(JSON.parseObject(item.getBindContent(), File.class));
+                files.add(JSON.parseObject(item.getBindContent(), FileApiBean.class));
             }
             if(item.getPublicType().equals(Constants.SHARE)){
-                shares.add(JSON.parseObject(item.getBindContent(), Share.class));
+                shares.add(JSON.parseObject(item.getBindContent(), ShareApiBean.class));
             }
         });
         task.setBindFiles(files);
