@@ -118,7 +118,6 @@ public class Task extends Model<Task> {
 	/**
 	 * 执行者
 	 */
-	@TableField(strategy = FieldStrategy.IGNORED)
 	private String executor;
 
 	/**

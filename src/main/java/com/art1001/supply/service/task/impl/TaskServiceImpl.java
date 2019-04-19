@@ -1644,6 +1644,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                     userIds.append(",").append(one.getExecutor());
                 }
                 return userIds.toString().split(",");
+            } else if(one.getExecutor() != null){
+                return new String[]{one.getExecutor()};
             }
         }
         return null;
