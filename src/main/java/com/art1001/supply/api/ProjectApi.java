@@ -206,8 +206,11 @@ public class ProjectApi {
             object.put("result",1);
             object.put("data",funcList);
             object.put("count",projectMemberService.count(new QueryWrapper<ProjectMember>().eq("project_id",projectId)));
-        }catch(Exception e){
-            throw new AjaxException(e);
+        } catch (NullPointerException e){
+            object.put("result",0);
+            object.put("msg","项目不存在");
+        } catch(Exception e){
+            throw new AjaxException("系统异常,信息获取失败",e);
         }
         return object;
     }
