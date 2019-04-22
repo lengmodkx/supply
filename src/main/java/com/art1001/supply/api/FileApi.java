@@ -11,6 +11,7 @@ import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.Files;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -202,12 +203,13 @@ public class FileApi extends BaseController {
     public JSONObject uploadFile(
             @PathVariable(value = "parentId") String parentId,
             @RequestParam(value = "projectId") String projectId,
-            @RequestParam(value = "files") String files
+            @RequestParam(value = "files") String files,
+            @RequestParam(required = false) String publicId
 
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.saveFileBatch(projectId,files,parentId,null);
+            fileService.saveFileBatch(projectId,files,parentId,publicId);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId);
             jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
@@ -809,6 +811,24 @@ public class FileApi extends BaseController {
             throw new AjaxException("系统异常,获取文件信息失败!",e);
         }
     }
+
+    /**
+     * 从其他信息绑定文件
+     * @param files 文件信息
+     * @return
+     */
+    @PostMapping("/bind_files")
+    public JSONObject bindFile(@RequestBody List<File> files){
+        JSONObject jsonObject = new JSONObject();
+        try {
+             fileService.bindFile(files);
+             jsonObject.put("result", 1);
+             return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,文件绑定失败!",e);
+        }
+    }
+
 
     /**
      * 校验传入的参数是文件的id还是项目的id

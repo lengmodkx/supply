@@ -610,4 +610,23 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return created;
     }
 
+    /**
+     * 从其他信息(任务,文件,日程,分享) 绑定文件信息
+     * @param files 文件集合信息
+     * @return
+     */
+    @Override
+    public boolean bindFile(List<File> files) {
+        files.forEach(file -> {
+            file.setCreateTime(System.currentTimeMillis());
+            file.setUpdateTime(System.currentTimeMillis());
+            file.setFileName(file.getFileName().substring(0,file.getFileName().lastIndexOf(".")));
+            if(FileExt.extMap.get("images").contains(file.getExt())){
+                file.setFileThumbnail(file.getFileUrl());
+            }
+            file.setMemberId(ShiroAuthenticationManager.getUserId());
+            file.setFileUids(ShiroAuthenticationManager.getUserId());
+        });
+        return this.saveBatch(files);
+    }
 }

@@ -267,7 +267,6 @@ public class TagApi {
                 jsonObject.put("result",0);
                 jsonObject.put("msg","绑定失败!");
             }
-
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,标签绑定失败!",e);

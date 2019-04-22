@@ -213,4 +213,11 @@ import java.util.List;
 	 * @return 我创建的文件数据
 	 */
 	List<File> created(String order);
+
+	/**
+	 * 从其他信息(任务,文件,日程,分享) 绑定文件信息
+	 * @param files 文件集合信息
+	 * @return
+	 */
+	boolean bindFile(List<File> files);
 }
