@@ -436,11 +436,12 @@ public class FileApi extends BaseController {
             String fileName = file.getFileName();
             InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
             // 设置响应类型
-            response.setContentType("multipart/form-data");
+            //response.setContentType("multipart/form-data");
             // 设置头信息
             // 设置fileName的编码
             fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
             ServletOutputStream outputStream = response.getOutputStream();
             byte[] bytes = new byte[1024*1024];
             int n;
@@ -817,12 +818,15 @@ public class FileApi extends BaseController {
      * @param files 文件信息
      * @return
      */
+    @Push(value = PushType.A30,type = 1)
     @PostMapping("/bind_files")
-    public JSONObject bindFile(@RequestBody List<File> files){
+    public JSONObject bindFile(@RequestParam String files,@RequestParam String publicId,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
              fileService.bindFile(files);
+             jsonObject.put("data", publicId);
              jsonObject.put("result", 1);
+             jsonObject.put("msgId", projectId);
              return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,文件绑定失败!",e);

@@ -40,6 +40,7 @@ import com.art1001.supply.service.apiBean.ApiBeanService;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.quartz.QuartzInfoService;
@@ -52,6 +53,7 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -142,6 +144,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /** quartz操作接口 */
     @Resource
     private QuartzService quartzService;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 用户点赞接口
@@ -1623,6 +1628,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
         //查询出  该任务的日志信息
         task.setLogs(logService.initLog(taskId));
+        //任务的附件
+        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
         //设置关联信息
         this.setBindingInfo(taskId,task);
         return task;

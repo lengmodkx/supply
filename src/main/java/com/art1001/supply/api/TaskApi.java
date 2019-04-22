@@ -26,6 +26,7 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -105,6 +106,23 @@ public class TaskApi extends BaseController {
             return error(e.getMessage());
         } catch (Exception e){
             throw new AjaxException("系统异常任务创建失败!",e);
+        }
+    }
+
+    /**
+     * 获取从任务上传的附件信息
+     * @param taskId 任务id
+     * @return
+     */
+    @GetMapping("{taskId}/files")
+    public JSONObject getFiles(@PathVariable String taskId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1).orderByDesc("create_time")));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,信息获取失败!",e);
         }
     }
 

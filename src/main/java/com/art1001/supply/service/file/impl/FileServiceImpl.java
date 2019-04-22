@@ -616,17 +616,45 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * @return
      */
     @Override
-    public boolean bindFile(List<File> files) {
-        files.forEach(file -> {
-            file.setCreateTime(System.currentTimeMillis());
-            file.setUpdateTime(System.currentTimeMillis());
-            file.setFileName(file.getFileName().substring(0,file.getFileName().lastIndexOf(".")));
-            if(FileExt.extMap.get("images").contains(file.getExt())){
-                file.setFileThumbnail(file.getFileUrl());
+    public boolean bindFile(String files) {
+        JSONArray array = JSON.parseArray(files);
+        List<File> fileList = new ArrayList<File>();
+        for (int i=0;i<array.size();i++) {
+            JSONObject object = array.getJSONObject(i);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            String projectId = object.getString("projectId");
+            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+            String publicId = object.getString("publicId");
+            // 写库
+            File myFile = new File();
+            myFile.setFileId(IdGen.uuid());
+            // 用原本的文件名
+            myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
+            myFile.setExt(ext);
+            myFile.setProjectId(projectId);
+            myFile.setFileUrl(fileUrl);
+            myFile.setCatalog(0);
+            myFile.setProjectId(projectId);
+            myFile.setPublicId(publicId);
+            // 得到上传文件的大小
+            myFile.setSize(size);
+            myFile.setLevel(1);
+            myFile.setMemberId(ShiroAuthenticationManager.getUserId());
+            myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+            myFile.setCreateTime(System.currentTimeMillis());
+            myFile.setUpdateTime(System.currentTimeMillis());
+            if(FileExt.extMap.get("images").contains(ext)){
+                myFile.setFileThumbnail(fileUrl);
             }
-            file.setMemberId(ShiroAuthenticationManager.getUserId());
-            file.setFileUids(ShiroAuthenticationManager.getUserId());
-        });
-        return this.saveBatch(files);
+
+            if(StringUtils.isNotEmpty(publicId)){
+                myFile.setPublicId(publicId);
+                myFile.setPublicLable(1);
+            }
+            fileList.add(myFile);
+        }
+       return this.saveBatch(fileList);
     }
 }

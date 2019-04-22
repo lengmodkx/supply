@@ -116,6 +116,11 @@ public class File extends Model<File> {
     private String fileUids;
 
     /**
+     * 是否是模型文件(0:普通文件 1:模型文件)
+     */
+    private int isModel;
+
+    /**
      * 文件的缩略图
      */
     private String fileThumbnail;

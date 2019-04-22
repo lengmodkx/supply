@@ -85,9 +85,8 @@ public class PushAspect extends BaseController {
             if(ids != null && ids.length > 0){
                 userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent());
             }
-            //用户发消息时候通知到用户 并不需要写入日志,因为消息本身就是日志
         } else if(push.type() == 4){
-
+            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get(push));
         } else{//只需要日志
             if(object.containsKey(ID)){
                 this.saveLog(object,push);

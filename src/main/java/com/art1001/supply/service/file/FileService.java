@@ -219,5 +219,5 @@ import java.util.List;
 	 * @param files 文件集合信息
 	 * @return
 	 */
-	boolean bindFile(List<File> files);
+	boolean bindFile(String files);
 }
