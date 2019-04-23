@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setDefaultImage(Constants.MEMBER_IMAGE_URL + fileName);
             //发送邮件
             //emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);
+            userEntity.setCreateTime(new Date());
+            userEntity.setUpdateTime(new Date());
             int cnt = userMapper.insert(userEntity);
             if(cnt == 1){
                 return cnt;

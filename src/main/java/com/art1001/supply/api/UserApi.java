@@ -155,7 +155,7 @@ public class UserApi {
      * 获取图形验证码
      */
     @GetMapping("/captcha")
-    public void getImageCode(HttpServletResponse response) {
+    public void getImageCode(HttpServletResponse response, HttpServletRequest request) {
         ServletOutputStream out = null;
         try {
             response.setDateHeader("Expires", 0);

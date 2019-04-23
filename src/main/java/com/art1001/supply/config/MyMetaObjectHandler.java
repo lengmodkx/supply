@@ -16,11 +16,16 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        setFieldValByName("createTime", System.currentTimeMillis(),metaObject);
+        if(metaObject == null){
+            setFieldValByName("createTime", System.currentTimeMillis(),metaObject);
+
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        setFieldValByName("updateTime", System.currentTimeMillis(),metaObject);
+        if(metaObject == null){
+            setFieldValByName("updateTime", System.currentTimeMillis(),metaObject);
+        }
     }
 }
