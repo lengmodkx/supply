@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -360,6 +361,22 @@ public class ProjectApi {
         } catch (Exception e){
             throw new AjaxException("系统异常,获取成员信息失败!",e);
         }
+    }
 
+    /**
+     * 获取项目甘特图的数据
+     * @param projectId 项目id
+     * @return
+     */
+    @GetMapping("/gantt_chart/{projectId}")
+    public JSONObject ganttChart(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",projectService.getGanttChart(projectId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常，获取失败！",e);
+        }
     }
 }

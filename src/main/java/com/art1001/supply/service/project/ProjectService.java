@@ -2,6 +2,7 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -124,4 +125,12 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
     String findDefaultGroup(String projectId);
+
+	/**
+	 * 获取项目的甘特图数据
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<GantChartVO> getGanttChart(String projectId);
+
 }

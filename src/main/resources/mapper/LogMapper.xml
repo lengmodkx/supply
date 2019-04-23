@@ -23,7 +23,7 @@
 		u.image as member_img,
 		l.content,
 		l.log_type,
-		l.create_time,
+		l.create_time
 	</sql>
 
 	<select id="findLogAllList" resultMap="BaseResultMap"
@@ -48,7 +48,7 @@
 
 		select
 		<include refid="Base_Column_List" />
-		from prm_log where id = #{id}
+		from prm_log l left join tb_user u on l.member_id = u.user_id where id = #{id}
 
 	</select>
 	

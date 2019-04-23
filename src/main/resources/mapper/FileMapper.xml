@@ -187,7 +187,7 @@
 		left join prm_file_version v on f.file_id = v.file_id
 		where parent_id = #{parentId}
 		 and public_lable = 0 and v.is_master = 1
-		order by `catalog` desc,create_time asc
+		order by `catalog` desc,create_time desc
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -424,6 +424,36 @@
 		member_id = #{userId}
 		AND catalog = '0' AND size like <![CDATA[ CONCAT('%',#{company}) ]]>
 		order by size desc
+	</select>
+
+	<!--根据文件名称在项目中进行模糊查询-->
+	<select id="seachByName" resultMap="BaseResultMap">
+		select
+			f.file_id,
+			f.file_name,
+			f.ext,
+			f.file_url,
+			f.project_id,
+			f.member_id,
+			f.`catalog`,
+			f.is_model,
+			f.`size`,
+			f.parent_id,
+			f.file_del,
+			f.create_time,
+			f.update_time,
+			f.file_uids,
+			f.file_label,
+			f.file_thumbnail,
+			f.file_privacy,
+			f.public_id,
+			f.`level`
+		from prm_file f
+		left join prm_file_version v on f.file_id = v.file_id
+		where project_id = #{projectId}
+		 and public_lable = 0 and v.is_master = 1
+		 and file_name like <![CDATA[ concat('%',#{fileName},'%') ]]>
+		order by `catalog` desc,create_time desc
 	</select>
 
 	<!-- 插入多条文件信息 -->

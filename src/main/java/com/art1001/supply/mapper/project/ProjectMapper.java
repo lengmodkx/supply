@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -43,6 +44,8 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @param project
 	 */
 	void updateProject(Project project);
+
+	Project getProjectGanttChart(@Param("projectId") String projectId);
 
 	/**
 	 * 保存project数据
@@ -121,4 +124,12 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @return
 	 */
     String selectDefaultGroup(String projectId);
+
+	/**
+	 * 获取项目下的所有任务id (逗号隔开 需自己分割)
+	 * 包括子任务信息  但是只返回任务id 并且任务之前没有父子关系 需要自行排列
+	 * @param projectId 项目id
+	 * @return
+	 */
+	String selectProjectAllTask(@Param("projectId") String projectId);
 }

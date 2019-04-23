@@ -11,6 +11,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
+		<result column="default_view" property="defaultView"/>
 		<result column="collect" property="collect" jdbcType="INTEGER" />
 		<result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER" />
 		<result column="role_id" property="roleId" jdbcType="INTEGER" />
@@ -30,6 +31,7 @@
         <result column="create_time" property="createTime" jdbcType="BIGINT" />
         <result column="update_time" property="updateTime" jdbcType="BIGINT" />
         <result column="is_public" property="isPublic" jdbcType="INTEGER" />
+		<result column="default_view" property="defaultView"/>
         <result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
     </resultMap>
 

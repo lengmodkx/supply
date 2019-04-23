@@ -2,6 +2,10 @@ package com.art1001.supply.service.binding;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -26,6 +30,16 @@ public interface BindingService extends IService<Binding> {
 	 * @return
 	 */
 	public Binding findBindingById(String id);
+
+	/**
+	 * 设置绑定信息
+	 * @param publicId
+	 * @param file
+	 * @param task
+	 * @param share
+	 * @param schedule
+	 */
+	void setBindingInfo(String publicId, File file, Task task, Share share, Schedule schedule);
 
 	/**
 	 * 通过id删除binding数据

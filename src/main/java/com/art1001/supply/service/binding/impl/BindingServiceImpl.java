@@ -13,9 +13,13 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.binding.BindingVo;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
@@ -209,5 +213,52 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	@Override
 	public void updateJson(String id, Object obj, String type) {
 		bindingMapper.updateJson(id,obj,type);
+	}
+
+	@Override
+	public void setBindingInfo(String publicId, File file,Task task,Share share,Schedule schedule){
+		List<Binding> bindings = this.list(new QueryWrapper<Binding>().eq("public_id", publicId));
+		List<TaskApiBean> tasks = new ArrayList<>();
+		List<ScheduleApiBean> schedules = new ArrayList<>();
+		List<FileApiBean> files = new ArrayList<>();
+		List<ShareApiBean> shares = new ArrayList<>();
+		bindings.forEach(item -> {
+			if(item.getPublicType().equals(Constants.TASK)){
+				tasks.add(JSON.parseObject(item.getBindContent(), TaskApiBean.class));
+			}
+			if(item.getPublicType().equals(Constants.SCHEDULE)){
+				schedules.add(JSON.parseObject(item.getBindContent(), ScheduleApiBean.class));
+			}
+			if(item.getPublicType().equals(Constants.FILE)){
+				files.add(JSON.parseObject(item.getBindContent(), FileApiBean.class));
+			}
+			if(item.getPublicType().equals(Constants.SHARE)){
+				shares.add(JSON.parseObject(item.getBindContent(), ShareApiBean.class));
+			}
+		});
+		if(file != null){
+			file.setBindFiles(files);
+			file.setBindTasks(tasks);
+			file.setBindSchedules(schedules);
+			file.setBindShares(shares);
+		}
+		if(task != null){
+			task.setBindFiles(files);
+			task.setBindTasks(tasks);
+			task.setBindSchedules(schedules);
+			task.setBindShares(shares);
+		}
+		if(share != null){
+			share.setBindFiles(files);
+			share.setBindTasks(tasks);
+			share.setBindSchedules(schedules);
+			share.setBindShares(shares);
+		}
+		if(schedule != null){
+			schedule.setBindFiles(files);
+			schedule.setBindTasks(tasks);
+			schedule.setBindSchedules(schedules);
+			schedule.setBindShares(shares);
+		}
 	}
 }

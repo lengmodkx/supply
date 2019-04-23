@@ -1,9 +1,12 @@
 package com.art1001.supply.entity.schedule;
 
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -101,6 +104,18 @@ public class Schedule extends Model<Schedule> {
 	 * 是否是全天
 	 */
 	private Integer privacyPattern;
+
+	@TableField(exist = false)
+	private List<TaskApiBean> bindTasks;
+
+	@TableField(exist = false)
+	private List<FileApiBean> bindFiles;
+
+	@TableField(exist = false)
+	private List<ScheduleApiBean> bindSchedules;
+
+	@TableField(exist = false)
+	private List<ShareApiBean> bindShares;
 
 	/**
 	 * 标签的集合

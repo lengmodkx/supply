@@ -3,15 +3,22 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
+import com.art1001.supply.entity.share.ShareApiBean;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
@@ -49,6 +56,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Resource
     private FileVersionService fileVersionService;
+
+    @Resource
+    private BindingService bindingService;
 
     @Resource
     private UserService userService;
@@ -656,5 +666,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileList.add(myFile);
         }
        return this.saveBatch(fileList);
+    }
+
+    /**
+     * 根据文件名称在项目中进行模糊查询
+     * @param fileName 文件名称 (模糊查询)
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<File> seachByName(String fileName, String projectId) {
+        return fileMapper.seachByName(fileName,projectId);
     }
 }

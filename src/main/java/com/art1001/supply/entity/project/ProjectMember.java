@@ -117,6 +117,12 @@ public class ProjectMember extends Model<ProjectMember> {
 	@TableField("default_group")
 	private String defaultGroup;
 
+	/**
+	 * 默认视图
+	 * 0:列表 1:看板 2:时间
+	 */
+	private int defaultView;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

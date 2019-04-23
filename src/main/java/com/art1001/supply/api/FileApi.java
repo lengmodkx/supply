@@ -152,7 +152,6 @@ public class FileApi extends BaseController {
             fileService.updateById(file);
             jsonObject.put("result", 1);
             jsonObject.put("msgId", this.getProjectId(id));
-            jsonObject.put("data", id);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常，隐私模式设置失败！",e);
@@ -173,10 +172,12 @@ public class FileApi extends BaseController {
                 return jsonObject;
             }
             List<FileVersion> fileList = fileVersionService.list(new QueryWrapper<FileVersion>().eq("file_id",fileId));
+            //设置关联信息
+            bindingService.setBindingInfo(fileId,file,null,null,null);
             jsonObject.put("data",file);
             jsonObject.put("version",fileList);
             //查询出任务的关联信息
-            jsonObject.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", fileId)));
+            //jsonObject.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", fileId)));
             //查询该文件有没有被当前用户收藏
             jsonObject.put("isCollect",publicCollectService.isCollItem(file.getFileId()));
             jsonObject.put("logs",logService.initLog(fileId));
@@ -238,7 +239,7 @@ public class FileApi extends BaseController {
             fileService.saveFileBatch(projectId,files,parentId,publicId);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
+            jsonObject.put("data",parentId);
         } catch (Exception e) {
             log.error("上传文件异常:", e);
             throw new AjaxException(e);
@@ -271,6 +272,25 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
+
+    /**
+     * 模糊查询文件
+     * @param fileName 文件名称
+     * @param projectId 项目id
+     * @return
+     */
+    @GetMapping("/{fileName}/seach")
+    public JSONObject scachFiles(@PathVariable String fileName, @RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data", fileService.seachByName(fileName,projectId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,搜索失败!",e);
+        }
+    }
+
 
 
     /**
@@ -665,6 +685,12 @@ public class FileApi extends BaseController {
         file.setParentId(parentId);
 
         fileService.save(file);
+
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setIsMaster(1);
+        fileVersion.setInfo(ShiroAuthenticationManager.getUserEntity().getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersionService.save(fileVersion);
     }
 
     /**
@@ -672,6 +698,7 @@ public class FileApi extends BaseController {
      * @param fileIds ids
      * @param projectId 项目id
      */
+    @Push(value = PushType.C13,type = 1)
     @PutMapping("/{fileIds}/m_recycle")
     public JSONObject moveToRecycleBin(
             @PathVariable(value = "fileIds") String[] fileIds,
@@ -681,6 +708,8 @@ public class FileApi extends BaseController {
         try {
             fileService.moveToRecycleBin(fileIds);
             jsonObject.put("result", 1);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("data", fileIds);
         } catch (Exception e) {
             log.error("移入回收站异常:", e);
             throw new AjaxException(e);
@@ -770,7 +799,7 @@ public class FileApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.addAndRemoveFileJoin(fileId, newJoin);
-            jsonObject.put("msg", fileId);
+            jsonObject.put("msg", getProjectId(fileId));
             jsonObject.put("data",userService.listByIds(Arrays.asList(newJoin.split(","))));
             jsonObject.put("result",1);
         } catch (Exception e){

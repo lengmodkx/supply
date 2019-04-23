@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -286,5 +289,42 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Override
 	public String findDefaultGroup(String projectId) {
 		return projectMapper.selectDefaultGroup(projectId);
+	}
+
+	/**
+	 * 获取项目的甘特图数据
+	 * @param projectId 项目id
+	 * @return
+	 */
+	@Override
+	public List<GantChartVO> getGanttChart(String projectId) {
+		//获取到该项目的所有任务id字符串(逗号隔开)
+		String taskIds = projectMapper.selectProjectAllTask(projectId);
+		List<String> idList = Arrays.asList(taskIds.split(","));
+		List<Task> tasks = taskService.listById(idList);
+		//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
+		taskService.buildFatherSon(tasks);
+		List<GantChartVO> gants = new ArrayList<>();
+		//查询出项目的部分信息并且映射近 GantChartVO
+		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
+		GantChartVO pro = new GantChartVO();
+		pro.setId(1);
+		pro.setStart(projectGanttChart.getStartTime());
+		pro.setEnd(projectGanttChart.getEndTime());
+		pro.setLabel(projectGanttChart.getProjectName());
+		pro.setUser(projectGanttChart.getMemberName());
+		//将任务信息循环映射进GantChartsVO
+		tasks.forEach(item -> {
+			GantChartVO gantChartVO = new GantChartVO();
+			gantChartVO.setId(Integer.valueOf(item.getTaskId()));
+			gantChartVO.setStart(item.getStartTime());
+			gantChartVO.setEnd(item.getEndTime());
+			gantChartVO.setLabel(item.getTaskName());
+			gantChartVO.setParentId(Integer.valueOf(item.getParentId()));
+			gantChartVO.setUser(item.getExecutorName());
+			gants.add(gantChartVO);
+		});
+		gants.add(0, pro);
+		return gants;
 	}
 }

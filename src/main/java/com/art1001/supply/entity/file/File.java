@@ -2,7 +2,13 @@ package com.art1001.supply.entity.file;
 
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
+import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -161,6 +167,18 @@ public class File extends Model<File> {
      * 从(文件,任务,分享,日程) 评论区上传的文件 或者 项目群聊上传的文件时候 的项目id 或者 文件,任务,分享,日程 的id
      */
     private String publicId;
+
+    @TableField(exist = false)
+    private List<TaskApiBean> bindTasks;
+
+    @TableField(exist = false)
+    private List<FileApiBean> bindFiles;
+
+    @TableField(exist = false)
+    private List<ScheduleApiBean> bindSchedules;
+
+    @TableField(exist = false)
+    private List<ShareApiBean> bindShares;
 
     /**
      * 文件隐私模式 0所有成员可见，1参与者可见

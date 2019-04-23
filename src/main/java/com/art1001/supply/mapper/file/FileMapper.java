@@ -259,4 +259,12 @@ public interface FileMapper extends BaseMapper<File> {
     List<File> created(@Param("order") String order, @Param("userId")String userId);
 
 	List<File> createdBySize(@Param("userId") String userId,@Param("company")String company);
+
+	/**
+	 * 根据文件名称在项目中进行模糊查询
+	 * @param fileName 文件名称 (模糊查询)
+	 * @param projectId 项目id
+	 * @return
+	 */
+    List<File> seachByName(@Param("fileName") String fileName, @Param("projectId") String projectId);
 }

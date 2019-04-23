@@ -669,4 +669,11 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 项目集合
 	 */
 	List<Project> selectExecuteOrderProject(@Param("isDone") Boolean isDone, @Param("userId") String userId);
+
+	/**
+	 * 根据id集合 查询出对应的任务信息 以及执行者信息
+	 * @param idList id集合
+	 * @return
+	 */
+	List<Task> listById(List<String> idList);
 }

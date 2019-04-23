@@ -18,6 +18,7 @@
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
 		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
 		<result column="func" property="func" jdbcType="VARCHAR" />
+
 		<!--<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"-->
 					 <!--select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>-->
 
@@ -247,6 +248,18 @@
 	<!-- 查询出当前项目的默认分组 -->
     <select id="selectDefaultGroup" resultType="java.lang.String">
 		select relation_id from prm_relation where project_id = #{projectId} and lable = 0 order by create_time limit 0,1
+	</select>
+
+	<!-- 获取项目下的所有任务id   逗号隔开 需要自己分割 -->
+    <select id="selectProjectAllTask" resultType="java.lang.String">
+		SELECT
+		getSubTaskById ((SELECT GROUP_CONCAT(task_id) FROM prm_task WHERE project_id = #{projectId}))
+	</select>
+
+	<!-- 获取项目甘特图所需数据 根据项目id -->
+	<select id="getProjectGanttChart" resultType="com.art1001.supply.entity.project.Project">
+		select p.project_id,p.project_name,p.project_des,p.start_time,p.end_time,u.user_name as memberName
+		from prm_project p left join tb_user u on p.member_id = u.user_id where p.project_id = #{projectId}
 	</select>
 
 

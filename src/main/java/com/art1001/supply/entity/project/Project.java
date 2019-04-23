@@ -84,6 +84,12 @@ public class Project extends Model<Project> {
     private String func;
 
     /**
+     * 项目创建的名称
+     */
+    @TableField(exist = false)
+    private String memberName;
+
+    /**
      * 项目下的所有任务
      */
     @TableField(exist = false)

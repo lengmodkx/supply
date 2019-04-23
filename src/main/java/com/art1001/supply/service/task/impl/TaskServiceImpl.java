@@ -1631,7 +1631,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //任务的附件
         task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
         //设置关联信息
-        this.setBindingInfo(taskId,task);
+        bindingService.setBindingInfo(taskId,null,task,null,null);
         return task;
     }
 
@@ -1669,38 +1669,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
-     * 设置关联信息
-     * @param taskId 任务id
-     * @param task 添加到的 task对象
-     */
-    @Override
-    public void setBindingInfo(String taskId,Task task){
-        List<Binding> bindings = bindingService.list(new QueryWrapper<Binding>().eq("public_id", taskId));
-        List<TaskApiBean> tasks = new ArrayList<>();
-        List<ScheduleApiBean> schedules = new ArrayList<>();
-        List<FileApiBean> files = new ArrayList<>();
-        List<ShareApiBean> shares = new ArrayList<>();
-        bindings.forEach(item -> {
-            if(item.getPublicType().equals(Constants.TASK)){
-                tasks.add(JSON.parseObject(item.getBindContent(), TaskApiBean.class));
-            }
-            if(item.getPublicType().equals(Constants.SCHEDULE)){
-                schedules.add(JSON.parseObject(item.getBindContent(), ScheduleApiBean.class));
-            }
-            if(item.getPublicType().equals(Constants.FILE)){
-                files.add(JSON.parseObject(item.getBindContent(), FileApiBean.class));
-            }
-            if(item.getPublicType().equals(Constants.SHARE)){
-                shares.add(JSON.parseObject(item.getBindContent(), ShareApiBean.class));
-            }
-        });
-        task.setBindFiles(files);
-        task.setBindTasks(tasks);
-        task.setBindSchedules(schedules);
-        task.setBindShares(shares);
-    }
-
-    /**
      * 查询" 我的" 任务并且按照筛选条件进行筛选
      * 我的任务就是(当前用户 参与,创建 项目中和当前用户有关的所有任务)
      * @param isDone 是否完成
@@ -1731,6 +1699,31 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<Project> findExecuteOrderProject(Boolean isDone) {
         return taskMapper.selectExecuteOrderProject(isDone,ShiroAuthenticationManager.getUserId());
+    }
+
+    /**
+     * 根据id集合 查询出对应的任务信息 以及执行者信息
+     * @param idList id集合
+     * @return
+     */
+    @Override
+    public List<Task> listById(List<String> idList) {
+        return taskMapper.listById(idList);
+    }
+
+    @Override
+    public void buildFatherSon(List<Task> tasks){
+        Integer order = 2;
+        for (Task f : tasks) {
+            String taskId = f.getTaskId();
+            for (Task s : tasks) {
+                if(s.getParentId().equals(taskId)){
+                    s.setParentId(order.toString());
+                }
+            }
+            f.setTaskId(order.toString());
+            order++;
+        }
     }
 }
 

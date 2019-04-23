@@ -168,6 +168,15 @@
 		</collection>
 	</resultMap>
 
+	<resultMap id="BaseResult5" type="com.art1001.supply.entity.task.Task">
+		<id column="task_id" property="taskId" />
+		<result column="task_name" property="taskName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="user_name" property="executorName"/>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.project_id,
@@ -1195,5 +1204,14 @@
 			<if test="!isDone">
 				t.task_status = '未完成'
 			</if>
+	</select>
+
+	<!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->
+	<select id="listById" resultMap="BaseResult5">
+		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name
+		from prm_task t left join tb_user u on t.executor = u.user_id where task_id in
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
 	</select>
 </mapper>

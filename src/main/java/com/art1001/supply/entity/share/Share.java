@@ -1,8 +1,11 @@
 package com.art1001.supply.entity.share;
 
 import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -109,6 +112,18 @@ public class Share extends Model<Share> {
 	 */
 	@TableField(exist = false)
 	private List<Log> logs;
+
+	@TableField(exist = false)
+	private List<TaskApiBean> bindTasks;
+
+	@TableField(exist = false)
+	private List<FileApiBean> bindFiles;
+
+	@TableField(exist = false)
+	private List<ScheduleApiBean> bindSchedules;
+
+	@TableField(exist = false)
+	private List<ShareApiBean> bindShares;
 
 	/**
 	 * 分享的参与者信息
