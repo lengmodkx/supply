@@ -21,13 +21,11 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.CommonUtils;
-import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.FileExt;
+import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +66,9 @@ public class FileApi extends BaseController {
      */
     @Resource
     private FileVersionService fileVersionService;
+
+    @Resource
+    private LogService logService;
 
     /**
      * 项目逻辑层接口
@@ -135,6 +136,30 @@ public class FileApi extends BaseController {
     }
 
     /**
+     * 设置文件的隐私模式
+     * @param id 文件id
+     * @param privacy 隐私模式
+     * @return
+     */
+    @Push(value = PushType.C8,type = 1)
+    @PutMapping("/{id}/privacy/{privacy}")
+    public JSONObject privacy(@PathVariable String id, @PathVariable int privacy){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File file = new File();
+            file.setFileId(id);
+            file.setFilePrivacy(privacy);
+            fileService.updateById(file);
+            jsonObject.put("result", 1);
+            jsonObject.put("msgId", this.getProjectId(id));
+            jsonObject.put("data", id);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常，隐私模式设置失败！",e);
+        }
+    }
+
+    /**
      * 打开文件详情
      */
     @GetMapping("/{fileId}/details")
@@ -154,6 +179,7 @@ public class FileApi extends BaseController {
             jsonObject.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", fileId)));
             //查询该文件有没有被当前用户收藏
             jsonObject.put("isCollect",publicCollectService.isCollItem(file.getFileId()));
+            jsonObject.put("logs",logService.initLog(fileId));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常:",e);
@@ -529,16 +555,20 @@ public class FileApi extends BaseController {
      * @param fileIds  多个文件id
      * @param folderId 目标文件夹id
      */
+    @Push(value = PushType.C10,type = 1)
     @PostMapping("/copy")
     public JSONObject copyFile(
             @RequestParam(value = "fileIds") String[] fileIds,
             @RequestParam(value = "folderId") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
+        List<File> files = new ArrayList<File>();
         try {
             for (String fileId : fileIds) {
                 // 获取源文件
                 File file = fileService.findFileById(fileId);
+                files.add(file);
+                jsonObject.put("msgId", file.getProjectId());
                 //文件夹处理
                 if (file.getCatalog() == 1) {
                     file.setParentId(folderId);
@@ -558,6 +588,7 @@ public class FileApi extends BaseController {
             log.error("系统异常:", e);
             throw new AjaxException(e);
         }
+        jsonObject.put("data",files);
         return jsonObject;
     }
 
@@ -603,14 +634,17 @@ public class FileApi extends BaseController {
         // 源文件名
         String fileName = file.getFileName();
         // 得到后缀名
-        String ext = fileName.substring(fileName.lastIndexOf("."), fileName.length() - 1);
+        //String ext = fileName.substring(fileName.lastIndexOf("."), fileName.length() - 1);
+        String ext = file.getExt();
         // 设置现在文件名
-        String newFileName = System.currentTimeMillis() + "." + ext;
+        String newFileName = System.currentTimeMillis() + ext;
         // 设置现在文件objectName
-        String newFileUrl = fileUrl.substring(0, fileUrl.lastIndexOf("/"));
+        String newFileUrl = fileUrl.substring(0, fileUrl.lastIndexOf("/")) + "/"+ newFileName;
 
         // 在oss上复制
-        AliyunOss.copyFile(fileUrl, newFileName);
+        AliyunOss.copyFile(fileUrl, newFileUrl);
+
+        file.setFileId(IdGen.uuid());
 
         // 设置文件名
         file.setFileName(newFileName);
@@ -619,7 +653,6 @@ public class FileApi extends BaseController {
         // 设置父级id
         file.setParentId(parentId);
 
-        file.setFileUrl(fileUrl);
         fileService.save(file);
     }
 
@@ -720,11 +753,14 @@ public class FileApi extends BaseController {
      * @param newJoin 新的参与者id 数组
      * @return
      */
+    @Push(value = PushType.C9,type = 1)
     @PutMapping("/{fileId}/add_remove_join")
     public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "newJoin") String newJoin){
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.addAndRemoveFileJoin(fileId, newJoin);
+            jsonObject.put("msg", fileId);
+            jsonObject.put("data",userService.listByIds(Arrays.asList(newJoin.split(","))));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常,数据拉取失败:{}",e);
@@ -846,5 +882,14 @@ public class FileApi extends BaseController {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 获取文件的项目id
+     * @param fileId 文件id
+     * @return
+     */
+    private String getProjectId(String fileId){
+        return fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId).select("project_id")).getProjectId();
     }
 }
