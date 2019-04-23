@@ -224,7 +224,7 @@ public class FileApi extends BaseController {
      * @param projectId 项目id
      */
     @Log(PushType.C2)
-    @Push(value = PushType.C2)
+    @Push(value = PushType.C2,type = 1)
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
             @PathVariable(value = "parentId") String parentId,
@@ -534,14 +534,25 @@ public class FileApi extends BaseController {
      * @param fileIds  文件id数组
      * @param folderId 目标文件夹id
      */
+    @Push(value = PushType.C12,type = 2)
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
-            @RequestParam String[] fileIds
+            @RequestParam String[] fileIds,
+            @RequestParam String toProjectId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.moveFile(fileIds, folderId);
+            Map<String,Object> maps = new HashMap<>();
+            String projectId = getProjectId(fileIds[0]);
+            if(Objects.equals(toProjectId,projectId)){
+                maps.put(toProjectId,fileService.listByIds(Arrays.asList(fileIds)));
+            } else{
+                maps.put(projectId,fileIds);
+                maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileIds)));
+            }
+            jsonObject.put("data",maps);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("移动文件异常:", e);
@@ -647,7 +658,7 @@ public class FileApi extends BaseController {
         file.setFileId(IdGen.uuid());
 
         // 设置文件名
-        file.setFileName(newFileName);
+        file.setFileName(fileName);
         // 设置url
         file.setFileUrl(newFileUrl);
         // 设置父级id
@@ -797,6 +808,7 @@ public class FileApi extends BaseController {
      * @param fileId 文件id
      * @return
      */
+    @Push(value = PushType.C11)
     @PutMapping("/{fileId}/name")
     public JSONObject changeFileName(@RequestParam(value = "fileName") String fileName, @PathVariable(value = "fileId") String fileId){
         JSONObject jsonObject = new JSONObject();
@@ -806,6 +818,8 @@ public class FileApi extends BaseController {
             file.setFileName(fileName);
             fileService.updateById(file);
             jsonObject.put("result",1);
+            jsonObject.put("msgId",getProjectId(fileId));
+            jsonObject.put("data",fileName);
         }catch (Exception e){
             log.error("系统异常,文件名称更新失败:",e);
             throw new AjaxException(e);
