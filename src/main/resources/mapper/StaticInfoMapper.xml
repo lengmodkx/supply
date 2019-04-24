@@ -12,6 +12,11 @@
         <result column="data" property="data" jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap id="resultTaskGroup" type="com.art1001.supply.entity.statistics.QueryVO">
+        <result column="value" property="value" jdbcType="VARCHAR" />
+        <result column="label" property="label" jdbcType="VARCHAR" />
+    </resultMap>
+
     <!-- 统计页面数据 ResultMap -->
     <resultMap id="BaseResultMap" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
         <result column="end_time" property="endTime" jdbcType="VARCHAR" />
@@ -24,7 +29,7 @@
         <result column="overdue_num" property="overdueNum" jdbcType="VARCHAR" />
         <result column="dynamic_num" property="dynamicNum" jdbcType="VARCHAR" />
         <result column="change_type" property="changeType" jdbcType="VARCHAR" />
-        <result column="task_count" property="taskCountString" jdbcType="VARCHAR" />
+        <result column="task_count_string" property="taskCountString" jdbcType="VARCHAR" />
         <result column="task_count" property="taskCountInt" jdbcType="INTEGER" />
         <result column="task_num" property="taskDayNum" jdbcType="VARCHAR" />
         <result column="task_gross" property="taskDayGross" jdbcType="VARCHAR" />
@@ -32,44 +37,121 @@
         <result column="task_finish" property="finishTaskNum" jdbcType="INTEGER" />
         <result column="task_precedence" property="taskPrecedence" jdbcType="VARCHAR" />
         <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-        <result column="u_name" property="executor" jdbcType="VARCHAR" />
+        <result column="user_name" property="executor" jdbcType="VARCHAR" />
         <result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
         <result column="relation_name" property="listView" jdbcType="VARCHAR" />
         <result column="end_time_isupdate" property="endTimeUpdate" jdbcType="VARCHAR" />
     </resultMap>
 
 
-    <select id="getPieDate" parameterType="java.lang.String"  resultMap="resultPie" >
-         SELECT tu.user_name as name ,COUNT(1) as y FROM prm_task pt LEFT JOIN tb_user tu ON  tu.user_id=pt.executor   WHERE  pt.project_id=#{projectId} GROUP BY pt.executor
+    <sql id="Base_Column_QBC">
+        <if test="stDTO!= null">
+           <if test="stDTO.taskGroup != null and stDTO.taskGroup != ''">
+              AND (SELECT pr1.relation_id FROM prm_relation pr1 WHERE pr1.relation_id=pt.parent_id) IN (#{stDTO.taskGroup})
+           </if>
+           <if test="stDTO.taskMember != null and stDTO.taskMember != ''">
+              AND tu.user_id  IN (#{stDTO.taskMember})
+           </if>
+           <if test="stDTO.taskCase != null and stDTO.taskCase != ''">
+               AND pt.task_status = #{stDTO.taskCase}
+           </if>
+        </if>
+    </sql>
+
+    <sql id="Base_Column_Group">
+        (SELECT pr1.relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id)
+    </sql>
+
+    <!--  查询总任务数 -->
+    <select id="getCountTask" resultType="int">
+        SELECT COUNT(1) FROM prm_task pt  WHERE  pt.project_id=#{projectId}
+
     </select>
+
+
+    <select id="getPieDate" parameterType="java.lang.String"  resultMap="resultPie" >
+         SELECT tu.user_name as name ,COUNT(1) as y FROM prm_task pt LEFT JOIN tb_user tu ON  tu.user_id=pt.executor   WHERE  pt.project_id=#{projectId}   GROUP BY pt.executor
+    </select>
+
+    <select id="selectExcutorTask" resultMap="resultPie">
+        SELECT  tu.user_name as name ,COUNT(1) AS y FROM prm_task pt
+        LEFT JOIN tb_user tu ON pt.executor=tu.user_id
+        where pt.project_id=#{projectId}
+        <include refid="Base_Column_QBC"/>
+        GROUP BY pt.executor
+    </select>
+
 
     <select id="getHistogramsDate"  resultMap="resultHistograms">
          SELECT tu.user_name AS name , COUNT(1) AS data FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
          WHERE pt.task_status='完成' AND  project_id = #{projectId}
          AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
-         BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T')
+         BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T')
+        <include refid="Base_Column_QBC"/>
 		 GROUP BY pt.executor
     </select>
 
     <!-- 项目进展走势 总累计数据 -->
     <select id="taskOfProgress" resultMap="BaseResultMap">
 		SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') AS create_time,COUNT(1) AS task_count
-		FROM  prm_task pt
+		FROM  prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
 		WHERE project_id = #{projectId}
-		AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY)
+		AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
 		AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+        <include refid="Base_Column_QBC"/>
 		GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
     </select>
 
     <!-- 每日完成任务数  每日数据 -->
     <select id="taskOfFinishProgress" resultMap="BaseResultMap">
 		SELECT FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d') AS finish_time,COUNT(1) AS task_count
-		FROM  prm_task pt
+		FROM  prm_task pt  LEFT JOIN tb_user tu ON tu.user_id=pt.executor
 		WHERE pt.task_status='完成'
 		AND project_id = #{projectId}
-        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY)
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
         AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+        <include refid="Base_Column_QBC"/>
 		GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+
 	</select>
+
+    <!-- 任务燃尽 -->
+    <select id="selectTaskBurnOut"  resultMap="BaseResultMap">
+        SELECT FROM_UNIXTIME(pt.create_time/1000) as create_time,pt.task_name,tu.user_name,
+        @status:=CASE WHEN FROM_UNIXTIME(pt.update_time/1000)=FROM_UNIXTIME(pt.create_time/1000)  THEN '新增'
+        WHEN  <![CDATA[ FROM_UNIXTIME(pt.update_time/1000) <> FROM_UNIXTIME(pt.create_time/1000) AND pt.task_status='完成' THEN '完成'  ]]>
+        ELSE '其他' END AS change_type,
+        CASE WHEN @status='新增' THEN '+1'
+        WHEN @status='完成' THEN '-1'
+        ELSE '0' END AS task_count_string
+        FROM  prm_task pt LEFT JOIN tb_user tu ON pt.executor=tu.user_id
+        AND pt.project_id = #{projectId}
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+
+    <!-- 项目进展 -->
+    <select id="selectProjectProgress" resultMap="BaseResultMap">
+        SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as create_time,pt.task_name,tu.user_name
+        FROM prm_task pt
+        LEFT JOIN tb_user tu ON tu.user_id=pt.executor
+        where  pt.task_status='完成'
+        AND pt.project_id = #{projectId}
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 执行者分组 -->
+    <select id="getExecutorGroup"  resultMap="resultTaskGroup">
+        SELECT tu.user_name AS label , tu.user_id AS value FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
+        WHERE  pt.project_id =  #{value}
+		GROUP BY pt.executor
+    </select>
+
+    <!-- 任务分组数据  -->
+    <select id="getTaskGroup" resultMap="resultTaskGroup">
+        SELECT <include refid="Base_Column_Group"/> AS label,pr.relation_id as  value FROM  prm_relation pr
+        LEFT JOIN prm_task pt  ON  pr.relation_id = pt.task_menu_id
+        WHERE pt.project_id=#{value} GROUP BY  <include refid="Base_Column_Group"/>
+    </select>
 
 </mapper>

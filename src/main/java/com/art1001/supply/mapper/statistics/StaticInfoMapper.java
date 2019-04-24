@@ -1,8 +1,6 @@
 package com.art1001.supply.mapper.statistics;
 
-import com.art1001.supply.entity.statistics.StatisticsHistogram;
-import com.art1001.supply.entity.statistics.StatisticsPie;
-import com.art1001.supply.entity.statistics.StatisticsResultVO;
+import com.art1001.supply.entity.statistics.*;
 import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,7 +23,6 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @return integer
      * @param projectId
      */
-    @Select("SELECT COUNT(1) FROM prm_task pt  WHERE  pt.project_id=#{projectId}")
     Integer getCountTask(@Param("projectId") String projectId) ;
 
 
@@ -34,15 +31,17 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * 查询每个用户任务数
      * @return list
      * @param projectId
+     * @param sto
      */
-     List<StatisticsPie> getPieDate(String projectId);
+     List<StatisticsPie> getPieDate(@Param("projectId") String projectId, @Param("stDTO")StaticDto sto);
 
     /**
      * 查询柱状图数据
      * @return list
      * @param projectId 项目id
+     * @param sto
      */
-    List<StatisticsHistogram> getHistogramsDate(@Param("projectId")String projectId, @Param("currentDate")Long currentDate);
+    List<StatisticsHistogram> getHistogramsDate(@Param("projectId") String projectId, @Param("currentDate") Long currentDate, @Param("stDTO")StaticDto sto);
 
 
 
@@ -58,25 +57,65 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * 查询项目进展走势
      * @param projectId 项目id
      * @param currentDate  当前日期
+     * @param sto
      * @return list
      */
-    List<StatisticsResultVO> taskOfProgress(@Param("projectId")String projectId, @Param("currDate")Long currentDate);
+    List<StatisticsResultVO> taskOfProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
 
     /**
      * 查询已完成项目进展走势
      * @param projectId 项目id
      * @param currentDate  当前日期
+     * @param sto
      * @return list
      */
-    List<StatisticsResultVO> taskOfFinishProgress(@Param("projectId")String projectId, @Param("currDate")Long currentDate);
+    List<StatisticsResultVO> taskOfFinishProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
 
     /**
      * 查询七天前完成的任务数据
      *
      * @param projectId 项目id
      * @param currentDate  当前日期
+     * @param sto
      * @return list
      */
     @Select("SELECT COUNT(1) FROM prm_task pt WHERE  DATEDIFF(FROM_UNIXTIME(#{currDate},'%Y-%m-%d %T'),FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T'))>=7 AND pt.task_status='完成' AND project_id = #{projectId}")
-    int taskFinishOfSevenDayAgo(@Param("projectId")String projectId, @Param("currDate")Long currentDate);
+    int taskFinishOfSevenDayAgo(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
+
+    /**
+     * 查询任务燃尽图表数据
+     * @param projectId 项目id
+     * @param sto
+     * @return list
+     */
+    List<StatisticsResultVO> selectTaskBurnOut(@Param("projectId")String projectId, @Param("stDTO")StaticDto sto);
+
+    /**
+     * 查询项目进展图表数据
+     * @param projectId 项目id
+     * @param sto
+     * @return list
+     */
+    List<StatisticsResultVO> selectProjectProgress(@Param("projectId")String projectId, @Param("stDTO")StaticDto sto);
+
+    /**
+     * 查询执行者分组数据
+     * @param projectId 项目id
+     * @return obj
+     */
+    List<QueryVO> getExecutorGroup(String projectId);
+
+    /**
+     * 查询任务分组数据
+     * @param projectId 项目id
+     * @return obj
+     */
+    List<QueryVO> getTaskGroup(String projectId);
+
+    /**
+     *  获取饼图数据
+     * @param projectId 项目id
+     * @return obj
+     */
+    List<StatisticsPie> selectExcutorTask(@Param("projectId")String projectId,  @Param("stDTO")StaticDto resultStatic);
 }
