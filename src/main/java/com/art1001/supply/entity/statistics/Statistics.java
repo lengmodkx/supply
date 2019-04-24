@@ -2,6 +2,8 @@ package com.art1001.supply.entity.statistics;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author heshaohua
  * @Title: Statistics
@@ -14,7 +16,7 @@ public class Statistics {
     /**
     *  饼图数据
     **/
-        String pieData;
+    List<StatisticsPie> pieData;
 
     /**
      * 柱状图数据
@@ -32,9 +34,31 @@ public class Statistics {
      */
        StatisticsBurnout  statisticsAdd;
 
+      /**
+      * 执行者分组
+      */
+      List<QueryVO> executor;
+
+    /**
+     * 任务分组
+     */
+      List<QueryVO> taskGroup;
+
+    /*
+     * 需要返回的table表头
+     */
+    private List<TitleVO> titleList ;
 
 
-     /**
+    public List<TitleVO> getTitleList() {
+        return titleList;
+    }
+
+    public void setTitleList(List<TitleVO> titleList) {
+        this.titleList = titleList;
+    }
+
+    /**
      * 分组名
      */
     private String name;
@@ -51,11 +75,12 @@ public class Statistics {
 
     //封装
 
-    public String getPieData() {
+
+    public List<StatisticsPie> getPieData() {
         return pieData;
     }
 
-    public void setPieData(String pieData) {
+    public void setPieData(List<StatisticsPie> pieData) {
         this.pieData = pieData;
     }
 

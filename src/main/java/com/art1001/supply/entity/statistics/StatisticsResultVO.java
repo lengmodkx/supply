@@ -1,7 +1,6 @@
 package com.art1001.supply.entity.statistics;
 
 
-
 /**
  * 统计页面的总量概览详细数据实体类
  *
@@ -13,16 +12,19 @@ public class StatisticsResultVO {
     /**
      *任务创建时间
      */
+
     private String createTime;
 
     /**
      *任务完成时间
      */
+
     private String finishTime;
 
     /**
      *任务截至时间
      */
+
     private String endTime;
 
 

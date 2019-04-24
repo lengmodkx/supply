@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.statistics;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Auther: yanglujing
@@ -34,7 +35,19 @@ public class StatisticsBurnout {
      */
     private  Integer[]   completionTask;
 
+    /*
+     * 燃尽图表数据
+     */
+    private List<StatisticsResultVO>  sticResultVOS;
 
+
+    public List<StatisticsResultVO> getSticResultVOS() {
+        return sticResultVOS;
+    }
+
+    public void setSticResultVOS(List<StatisticsResultVO> sticResultVOS) {
+        this.sticResultVOS = sticResultVOS;
+    }
 
     public String[] getEveryDate() {
         return everyDate;
