@@ -281,6 +281,11 @@ public class Task extends Model<Task> {
 	@TableField(exist = false)
 	private int unReadMsg;
 
+	/**
+	 * 是否存在子任务
+	 */
+	private Boolean isExistSub;
+
 
 	@Override
 	protected Serializable pkVal() {

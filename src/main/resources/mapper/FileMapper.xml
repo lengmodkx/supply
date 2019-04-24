@@ -187,6 +187,7 @@
 		left join prm_file_version v on f.file_id = v.file_id
 		where parent_id = #{parentId}
 		 and public_lable = 0 and v.is_master = 1
+		 and file_del = 0
 		order by `catalog` desc,create_time desc
 	</select>
 
@@ -422,7 +423,7 @@
 		prm_file
 		WHERE
 		member_id = #{userId}
-		AND catalog = '0' AND size like <![CDATA[ CONCAT('%',#{company}) ]]>
+		AND catalog = '0' AND size like <![CDATA[ CONCAT('%',#{company},'%') ]]>
 		order by size desc
 	</select>
 

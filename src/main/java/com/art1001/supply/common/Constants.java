@@ -34,4 +34,6 @@ public class Constants {
     public static final String DUE_DATE = "dueDate";
     public static final String PRIORITY = "priority";
     public static final String CREATED = "created";
+
+    public static final String STAR ="star";
 }

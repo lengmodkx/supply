@@ -132,4 +132,27 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @return
 	 */
 	String selectProjectAllTask(@Param("projectId") String projectId);
+
+	/**
+	 * 根据项目名称模糊查询星标项目
+	 * @param projectName 项目名称
+	 * @return
+	 */
+    List<Project> selectStarByName(@Param("projectName") String projectName, @Param("userId") String userId);
+
+	/**
+	 * @param userId 用户id
+	 * @param projectName 项目名称
+	 * @return
+	 */
+	List<Project> selectJoin(@Param("userId") String userId, @Param("projectName") String projectName);
+
+	/**
+	 * 查询出当前用户创建的项目 并且根据项目名称模糊查询
+	 * @param userId 用户id
+	 * @param projectName 项目名称
+	 * @return
+	 */
+	List<Project> selectCreatedByName(@Param("userId")String userId, @Param("projectName")String projectName);
+
 }

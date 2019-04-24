@@ -2,6 +2,7 @@ package com.art1001.supply.service.project.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -30,10 +31,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.stream.Collectors;
 
 /**
  * projectServiceImpl
@@ -301,7 +301,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		//获取到该项目的所有任务id字符串(逗号隔开)
 		String taskIds = projectMapper.selectProjectAllTask(projectId);
 		List<String> idList = Arrays.asList(taskIds.split(","));
-		List<Task> tasks = taskService.listById(idList);
+		List<Task> tasks = taskService.listById(idList).stream().sorted(Comparator.comparing(Task::getLevel)).collect(Collectors.toList());
 		//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
 		taskService.buildFatherSon(tasks);
 		List<GantChartVO> gants = new ArrayList<>();
@@ -309,6 +309,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
 		pro.setId(1);
+		pro.setType("project");
 		pro.setStart(projectGanttChart.getStartTime());
 		pro.setEnd(projectGanttChart.getEndTime());
 		pro.setLabel(projectGanttChart.getProjectName());
@@ -319,6 +320,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			gantChartVO.setId(Integer.valueOf(item.getTaskId()));
 			gantChartVO.setStart(item.getStartTime());
 			gantChartVO.setEnd(item.getEndTime());
+			gantChartVO.setType("task");
+			gantChartVO.setExpander(item.getIsExistSub());
 			gantChartVO.setLabel(item.getTaskName());
 			gantChartVO.setParentId(Integer.valueOf(item.getParentId()));
 			gantChartVO.setUser(item.getExecutorName());
@@ -326,5 +329,25 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		});
 		gants.add(0, pro);
 		return gants;
+	}
+
+	/**
+	 * 模糊搜索项目
+	 * @param projectName 项目名称
+	 * @param condition 搜索条件(created,join,star)
+	 * @return
+	 */
+	@Override
+	public List<Project> seachByName(String projectName, String condition) {
+		if(Constants.STAR.equals(condition)){
+			return projectMapper.selectStarByName(projectName,ShiroAuthenticationManager.getUserId());
+		}
+		if(Constants.CREATED.equals(condition)){
+			return projectMapper.selectCreatedByName(ShiroAuthenticationManager.getUserId(),projectName);
+		}
+		if(Constants.JOIN.equals(condition)){
+			return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(),projectName);
+		}
+		return new ArrayList<>();
 	}
 }

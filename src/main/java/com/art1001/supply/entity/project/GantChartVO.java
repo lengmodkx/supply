@@ -25,6 +25,11 @@ public class GantChartVO {
     private String user;
 
     /**
+     * 类型
+     */
+    private String type;
+
+    /**
      * 开始时间
      */
     private Long start;
@@ -38,5 +43,10 @@ public class GantChartVO {
     /**
      * 父级id 指向
      */
-    private int parentId;
+    private Integer parentId;
+
+    /**
+     * 是否存在子任务
+     */
+    private Boolean expander;
 }

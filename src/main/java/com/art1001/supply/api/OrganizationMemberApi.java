@@ -3,11 +3,15 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.CommonUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,6 +28,9 @@ public class OrganizationMemberApi {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 未分配部门的员工
@@ -133,5 +140,31 @@ public class OrganizationMemberApi {
             throw new SystemException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 根据用户手机号,获取用户信息
+     * @param phone 手机号
+     * @param orgId 企业id
+     * @return 用户信息
+     */
+    @GetMapping("/{phone}/user")
+    public JSONObject getUserByPhone(@PathVariable String phone,@RequestParam String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            UserEntity one = userService.getOne(new QueryWrapper<UserEntity>().eq("account_name", phone).select("user_id", "user_name", "image", "telephone"));
+            JSONObject res = new JSONObject();
+            res.fluentPut("user", one);
+            if(organizationMemberService.count(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", one.getUserId())) > 0){
+                res.fluentPut("isExist",true);
+            } else{
+                res.fluentPut("isExist",false);
+            }
+            jsonObject.put("data",res);
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new SystemException("系统异常,获取用户信息失败!",e);
+        }
     }
 }

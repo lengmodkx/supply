@@ -1713,16 +1713,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     @Override
     public void buildFatherSon(List<Task> tasks){
-        Integer order = 2;
+        int order = 2;
         for (Task f : tasks) {
             String taskId = f.getTaskId();
             for (Task s : tasks) {
-                if(s.getParentId().equals(taskId)){
-                    s.setParentId(order.toString());
+                if(s.getParentId().equals(taskId)) {
+                    s.setParentId(String.valueOf(order));
+                    f.setIsExistSub(true);
                 }
             }
-            f.setTaskId(order.toString());
+            if(f.getIsExistSub() == null){
+                f.setIsExistSub(false);
+            }
+            f.setTaskId(String.valueOf(order));
             order++;
+        }
+        for (Task f : tasks) {
+           if(f.getParentId().equals("0")){
+               f.setParentId(String.valueOf(1));
+           }
         }
     }
 }

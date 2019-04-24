@@ -543,7 +543,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("remarks",remarks));
+            object.put("data",remarks);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
@@ -601,6 +601,7 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
+            task.setLevel(taskService.getOne(new QueryWrapper<Task>().eq("task_id", taskId).select("level")).getLevel() + 1);
             if(StringUtils.isNotEmpty(executor)){
                 task.setExecutor(executor);
             }

@@ -1179,36 +1179,36 @@
 	<!-- 查询出我执行的任务并且按照项目排序 -->
 	<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
 		SELECT
-			p.project_id AS p_id,
-			p.project_name,
-			t.task_id,
-			t.task_name,
-			t.`level`,
-			t.start_time,
-			t.end_time,
-			f.task_id as f_id,
-			f.task_name AS f_name,
-			u.image
+		p.project_id AS p_id,
+		p.project_name,
+		t.task_id,
+		t.task_name,
+		t.`level`,
+		t.start_time,
+		t.end_time,
+		f.task_id as f_id,
+		f.task_name AS f_name,
+		u.image
 		FROM
-			prm_project AS p
-			LEFT JOIN prm_task AS t ON p.project_id = t.project_id
-			LEFT JOIN tb_user as u on u.user_id = t.executor
-			LEFT JOIN prm_task f ON t.parent_id = f.task_id
+		prm_project AS p
+		LEFT JOIN prm_task AS t ON p.project_id = t.project_id
+		LEFT JOIN tb_user as u on u.user_id = t.executor
+		LEFT JOIN prm_task f ON t.parent_id = f.task_id
 		WHERE
-			p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
-			AND t.executor = #{userId}
-			AND
-			<if test="isDone">
-				t.task_status = '完成'
-			</if>
-			<if test="!isDone">
-				t.task_status = '未完成'
-			</if>
+		p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
+		AND t.executor = #{userId}
+		AND
+		<if test="isDone">
+			t.task_status = '完成'
+		</if>
+		<if test="!isDone">
+			t.task_status = '未完成'
+		</if>
 	</select>
 
 	<!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->
 	<select id="listById" resultMap="BaseResult5">
-		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name
+		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name,`level`
 		from prm_task t left join tb_user u on t.executor = u.user_id where task_id in
 		<foreach collection="list" item="id" open="(" close=")" separator=",">
 			#{id}

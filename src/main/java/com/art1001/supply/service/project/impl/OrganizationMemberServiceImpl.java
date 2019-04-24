@@ -6,7 +6,9 @@ import javax.annotation.Resource;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -87,4 +89,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		return organizationMemberMapper.findOrgByMemberId(memberId);
 	}
 
+	/**
+	 * 获取用户已经加入的企业数量
+	 * @return 加入的企业数量
+	 */
+	@Override
+	public int userOrgCount() {
+		return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id",ShiroAuthenticationManager.getUserId()));
+	}
 }

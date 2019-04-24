@@ -802,6 +802,7 @@ public class FileApi extends BaseController {
             jsonObject.put("msg", getProjectId(fileId));
             jsonObject.put("data",userService.listByIds(Arrays.asList(newJoin.split(","))));
             jsonObject.put("result",1);
+            jsonObject.put("msgId", getProjectId(fileId));
         } catch (Exception e){
             log.error("系统异常,数据拉取失败:{}",e);
             throw new AjaxException(e);

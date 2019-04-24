@@ -80,9 +80,9 @@ public class UserApi {
             object.put("msg", "账户不存在");
          } catch (IncorrectCredentialsException e) {
             // 密码错误,连续输错5次,帐号将被锁定10分钟
-            log.error("密码错误,连续输错5次,帐号将被锁定10分钟, {}", e);
+            log.error("账号或密码错误,请重新输入{}", e);
             object.put("result", 0);
-            object.put("msg", "密码错误,连续输错5次,帐号将被锁定10分钟");
+            object.put("msg", "账号或密码错误,请重新输入");
          } catch (LockedAccountException e) {
             // 您的账户已被锁定,请与管理员联系或10分钟后重试！
             log.error("您的账户已被锁定,请与管理员联系或10分钟后重试！, {}", e);
@@ -92,7 +92,7 @@ public class UserApi {
             // 您连续输错密码5次,帐号将被锁定10分钟!
             log.error("您连续输错密码5次,帐号将被锁定10分钟!, {}", e);
             object.put("result", 0);
-            object.put("msg", "您连续输错密码5次,帐号将被锁定10分钟!");
+            object.put("msg", "账号或密码错误,请重新输入");
          } catch (AuthenticationException e) {
             // 账户验证失败！
             log.error("账户验证失败！, {}", e);
