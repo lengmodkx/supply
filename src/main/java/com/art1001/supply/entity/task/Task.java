@@ -54,9 +54,11 @@ public class Task extends Model<Task> {
 	/**
 	 * 分组名称
 	 */
+	@TableField(exist = false)
 	private String groupName;
 
-
+	@TableField(exist = false)
+	private String menuName;
 	/**
 	 * 开始时间
 	 */

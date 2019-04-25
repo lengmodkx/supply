@@ -1624,6 +1624,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",taskId)));
         //获取任务名称
         task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
+        task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
         //获取该任务的未读消息数

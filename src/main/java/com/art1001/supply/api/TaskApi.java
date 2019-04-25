@@ -8,12 +8,10 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
-import com.art1001.supply.enums.MediaTypes;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
@@ -26,20 +24,14 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.aspectj.weaver.AjAttribute;
 import org.quartz.SchedulerException;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 任务增删改查，复制，移动

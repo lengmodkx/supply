@@ -236,13 +236,17 @@
 	</select>
 	<select id="findOrgProject" resultMap="BaseResultMap1">
 		select p.project_id,
-			p.project_name,
-			p.project_cover,
-			p.project_des,
-			pm.collect as collect,
-			p.project_del
+		p.project_name,
+		p.project_cover,
+		p.project_des,
+		pm.collect as collect,
+		p.project_del,
+		p.project_status,
+		pm.member_label as member_label,
+		pm.default_group as group_id,
+		p.func
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId} and p.organization_id = #{orgId} order by pm.create_time asc
+		where pm.member_id = #{userId} and p.organization_id=#{orgId} order by pm.create_time asc
 	</select>
 
 	<!-- 查询出当前项目的默认分组 -->
