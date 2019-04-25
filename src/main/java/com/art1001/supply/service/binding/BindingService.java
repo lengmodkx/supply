@@ -103,6 +103,8 @@ public interface BindingService extends IService<Binding> {
 	 */
 	void deleteManyByPublicId(List<String> publicId);
 
+	String getProjectId(String publicId);
+
 
 	/**
 	 * 添加多条关联关系

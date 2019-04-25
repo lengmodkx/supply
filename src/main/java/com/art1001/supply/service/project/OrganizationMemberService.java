@@ -61,7 +61,7 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @param memberId
 	 * @return
 	 */
-	OrganizationMember findOrgByMemberId(String memberId);
+	OrganizationMember findOrgByMemberId(String memberId, String orgId);
 
 	/**
 	 * 获取用户已经加入的企业数量

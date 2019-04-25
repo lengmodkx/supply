@@ -11,6 +11,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
@@ -236,7 +237,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public void mobileTask(String taskId, String projectId, String groupId,String menuId) {
-        Task task = getById(taskId);
+        Task task = taskMapper.selectById(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setTaskGroupId(groupId);
@@ -426,7 +427,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //设置该任务的最后更新时间
         subLevel.setUpdateTime(System.currentTimeMillis());
         //设置该任务的初始状态
-        subLevel.setTaskStatus("未完成");
+        subLevel.setTaskStatus(false);
         subLevel.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //保存任务信息
         int result = taskMapper.saveTask(subLevel);
@@ -1439,11 +1440,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public Task completeTask(String taskId) {
         //先更新任务状态
         Task completeTask = new Task();
-        completeTask.setTaskStatus("完成");
+        completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
         taskMapper.updateById(completeTask);
 
-        Task task = taskMapper.selectById(taskId);
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`").eq("task_id", taskId));
+
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;
@@ -1716,7 +1718,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     @Override
-    public void buildFatherSon(List<Task> tasks){
+    public List<GantChartVO> buildFatherSon(List<Task> tasks){
+        List<GantChartVO> gants = new ArrayList<>();
         int order = 2;
         for (Task f : tasks) {
             String taskId = f.getTaskId();
@@ -1729,14 +1732,27 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             if(f.getIsExistSub() == null){
                 f.setIsExistSub(false);
             }
+            //将任务信息循环映射进GantChartsVO
+            GantChartVO gantChartVO = new GantChartVO();
+            gantChartVO.setPublicId(taskId);
+            gantChartVO.setStart(f.getStartTime());
+            gantChartVO.setEnd(f.getEndTime());
+            gantChartVO.setType("task");
+            gantChartVO.setExpander(f.getIsExistSub());
+            gantChartVO.setLabel(f.getTaskName());
+            gantChartVO.setParentId(Integer.valueOf(f.getParentId()));
+            gantChartVO.setUser(f.getExecutorName());
             f.setTaskId(String.valueOf(order));
+            gantChartVO.setId(Integer.valueOf(f.getTaskId()));
+            gants.add(gantChartVO);
             order++;
         }
-        for (Task f : tasks) {
-           if(f.getParentId().equals("0")){
-               f.setParentId(String.valueOf(1));
+        for (GantChartVO f : gants) {
+           if(f.getParentId() == 0){
+               f.setParentId(1);
            }
         }
+        return gants;
     }
 }
 

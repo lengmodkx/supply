@@ -62,7 +62,7 @@ public class OrganizationMemberApi {
                                 @RequestParam(value = "memberId") String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
-            OrganizationMember member = organizationMemberService.findOrgByMemberId(memberId);
+            OrganizationMember member = organizationMemberService.findOrgByMemberId(memberId,orgId);
             OrganizationMember organizationMember = new OrganizationMember();
             organizationMember.setOrganizationId(orgId);
             organizationMember.setPartmentId(parmentId);
@@ -74,7 +74,8 @@ public class OrganizationMemberApi {
                 organizationMemberService.saveOrganizationMember(organizationMember);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","添加成功");
-            }else{
+                jsonObject.put("data", organizationMemberService.findOrgByMemberId(memberId,orgId));
+            } else{
                 if(member.getMemberLock()==1){
                     organizationMember.setId(member.getId());
                     organizationMemberService.updateOrganizationMember(organizationMember);
@@ -113,6 +114,7 @@ public class OrganizationMemberApi {
             pager.setPageNo(pageNo);
             pager.setPageSize(pageSize);
             OrganizationMember organizationMember = new OrganizationMember();
+            organizationMember.setOrganizationId(orgId);
             organizationMember.setMemberLock(1);
             organizationMember.setId(orgId);
             if(flag==NOT_PARTMENT){

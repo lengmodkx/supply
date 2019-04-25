@@ -85,8 +85,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	}
 
 	@Override
-	public OrganizationMember findOrgByMemberId(String memberId) {
-		return organizationMemberMapper.findOrgByMemberId(memberId);
+	public OrganizationMember findOrgByMemberId(String memberId, String orgId) {
+		return organizationMemberMapper.findOrgByMemberId(memberId,orgId);
 	}
 
 	/**

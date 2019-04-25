@@ -7,6 +7,9 @@
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="user_name" property="userEntity.userName"/>
+		<result column="image" property="userEntity.image"/>
+		<result column="account_name" property="userEntity.accountName"/>
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="organization_lable" property="organizationLable" jdbcType="INTEGER" />
@@ -21,10 +24,6 @@
 				organization_id,
 				partment_id,
 				member_id,
-				member_name,
-				member_img,
-				member_phone,
-				member_email,
 				create_time,
 				update_time,
 				organization_lable,
@@ -49,17 +48,25 @@
 	<select id="findOrganizationMemberPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
-		select * from prm_organization_member where 1=1
+		select
+			m.create_time,
+			m.organization_lable,
+			m.partment_lable,
+			u.user_id,
+			u.account_name,
+			u.user_name,
+			u.image
+		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id where m.organization_id = #{condition.organizationId}
 		<if test="condition.createTime != null">
-			and #{condition.createTime} between create_time and DATE_SUB(create_time,INTERVAL -7 day)
+			and #{condition.createTime} between DATE_SUB(m.create_time,INTERVAL -7 day) and m.create_time
 		</if>
 
 		<if test="condition.partmentId != null and condition.partmentId != ''">
-			AND partment_id != #{condition.partmentId}
+			AND m.partment_id = #{condition.partmentId}
 		</if>
 
 		<if test="condition.memberLock != null and condition.memberLock != ''">
-			AND member_lock != #{condition.memberLock}
+			AND m.member_lock = #{condition.memberLock}
 		</if>
 	</select>
 	
@@ -104,18 +111,6 @@
 			<if test="memberId != null and memberId != ''">
 			member_id,
 			</if>
-			<if test="memberName != null and memberName != ''">
-			member_name,
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-			member_img,
-			</if>
-			<if test="memberPhone != null ">
-			member_phone,
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-			member_email,
-			</if>
 			<if test="createTime != null ">
 			create_time,
 			</if>
@@ -146,18 +141,6 @@
 			</if>
 			<if test="memberId != null and memberId != ''">
 				#{memberId},
-			</if>
-			<if test="memberName != null and memberName != ''">
-				#{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				#{memberImg},
-			</if>
-			<if test="memberPhone != null ">
-				#{memberPhone},
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-				#{memberEmail},
 			</if>
 			<if test="createTime != null ">
 				#{createTime},
@@ -191,18 +174,6 @@
 			<if test="memberId != null and memberId != ''">
 				member_id = #{memberId},
 			</if>
-			<if test="memberName != null and memberName != ''">
-				member_name = #{memberName},
-			</if>
-			<if test="memberImg != null and memberImg != ''">
-				member_img = #{memberImg},
-			</if>
-			<if test="memberPhone != null ">
-				member_phone = #{memberPhone},
-			</if>
-			<if test="memberEmail != null and memberEmail != ''">
-				member_email = #{memberEmail},
-			</if>
 			<if test="createTime != null ">
 				create_time = #{createTime},
 			</if>
@@ -225,8 +196,15 @@
 	</update>
 
 	<select id="findOrgByMemberId" resultMap="BaseResultMap" parameterType="java.lang.String">
-
-		select <include refid="Base_Column_List" /> from prm_organization_member where member_id = #{memberId}
+		select
+		m.create_time,
+		m.organization_lable,
+		m.partment_lable,
+		u.user_id,
+		u.account_name,
+		u.user_name,
+		u.image
+		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id where m.member_id = #{memberId} and organization_id = #{orgId}
 
 	</select>
 

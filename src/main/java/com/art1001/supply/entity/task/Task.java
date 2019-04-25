@@ -164,7 +164,7 @@ public class Task extends Model<Task> {
 	 * 任务状态
 	 */
 	@JSONField
-	private String taskStatus;
+	private Boolean taskStatus;
 
 	/**
 	 * 任务码(保留字段)
@@ -291,6 +291,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 是否存在子任务
 	 */
+	@TableField(exist = false)
 	private Boolean isExistSub;
 
 

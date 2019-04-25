@@ -15,6 +15,11 @@ public class GantChartVO {
     private int id;
 
     /**
+     * 真实id
+     */
+    private String publicId;
+
+    /**
      * 描述
      */
     private String label;

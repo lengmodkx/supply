@@ -86,7 +86,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param updateTime 当前时间毫秒数
      * @return
 	 */
-	int changeTaskStatus(@Param("taskId") String taskId, @Param("taskStatus") String taskStatus, @Param("updateTime") long updateTime);
+	int changeTaskStatus(@Param("taskId") String taskId, @Param("taskStatus") Boolean taskStatus, @Param("updateTime") long updateTime);
 
 	/**
 	 * 根据任务id查找出该任务的所有标签

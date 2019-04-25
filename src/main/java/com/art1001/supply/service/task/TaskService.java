@@ -2,6 +2,7 @@ package com.art1001.supply.service.task;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
@@ -35,7 +36,7 @@ public interface TaskService extends IService<Task> {
 	 */
 	Task findTaskByTaskId(String taskId);
 
-	void buildFatherSon(List<Task> tasks);
+	List<GantChartVO> buildFatherSon(List<Task> tasks);
 
 	/**
 	 * 获取子任务的项目id

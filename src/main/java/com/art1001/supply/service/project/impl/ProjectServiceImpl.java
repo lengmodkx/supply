@@ -303,8 +303,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		List<String> idList = Arrays.asList(taskIds.split(","));
 		List<Task> tasks = taskService.listById(idList).stream().sorted(Comparator.comparing(Task::getLevel)).collect(Collectors.toList());
 		//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
-		taskService.buildFatherSon(tasks);
-		List<GantChartVO> gants = new ArrayList<>();
+		List<GantChartVO> gants = taskService.buildFatherSon(tasks);
 		//查询出项目的部分信息并且映射近 GantChartVO
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
@@ -314,19 +313,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		pro.setEnd(projectGanttChart.getEndTime());
 		pro.setLabel(projectGanttChart.getProjectName());
 		pro.setUser(projectGanttChart.getMemberName());
-		//将任务信息循环映射进GantChartsVO
-		tasks.forEach(item -> {
-			GantChartVO gantChartVO = new GantChartVO();
-			gantChartVO.setId(Integer.valueOf(item.getTaskId()));
-			gantChartVO.setStart(item.getStartTime());
-			gantChartVO.setEnd(item.getEndTime());
-			gantChartVO.setType("task");
-			gantChartVO.setExpander(item.getIsExistSub());
-			gantChartVO.setLabel(item.getTaskName());
-			gantChartVO.setParentId(Integer.valueOf(item.getParentId()));
-			gantChartVO.setUser(item.getExecutorName());
-			gants.add(gantChartVO);
-		});
+		pro.setPublicId(projectId);
 		gants.add(0, pro);
 		return gants;
 	}
