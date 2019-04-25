@@ -5,10 +5,7 @@ import com.art1001.supply.service.statistics.StatisticsService;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -50,7 +47,7 @@ public class StatisticsApi {
             Integer count=this.statisticsService.getCountTask(projectId,new StaticDto());
 
 
-            statistics.setCount(count);
+            //statistics.setCount(count);
 
 
             //根据项目id获取饼图数据
@@ -61,14 +58,17 @@ public class StatisticsApi {
             StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId,0, sto);
             //根据项目id获取累计数据
             //StatisticsBurnout statisticsAdd=this.statisticsService.selectProjectProgress(projectId);
+            //查询出该项目下的所有任务 状态数量概览
+            List<QueryVO> countList=this.statisticsService.findTaskCountOverView(projectId);
 
+            statistics.setCountData(countList);
             statistics.setPieData(staticPies);
             statistics.setStaticHistogram(staticHistograms);
             statistics.setStatisticsBurnout(statisticsBurnout);
             //statistics.setStatisticsAdd(statisticsAdd);
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -114,7 +114,7 @@ public class StatisticsApi {
 
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -153,7 +153,7 @@ public class StatisticsApi {
 
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -174,14 +174,11 @@ public class StatisticsApi {
             sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
         }
 
-
         try {
             Statistics statistics=this.getCondition(projectId);
             //根据项目id获取燃尽图数据
             StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId,1,sto);
             statistics.setStatisticsBurnout(statisticsBurnout);
-
-
 
             ArrayList<TitleVO> arrayList=new ArrayList<>();
             TitleVO title=new TitleVO("时间","createTime");
@@ -198,15 +195,11 @@ public class StatisticsApi {
             statistics.setTitleList(arrayList);
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
     }
-
-
-
-
 
     /**
      * 任累计图统计数据集
@@ -237,10 +230,7 @@ public class StatisticsApi {
             title1=new TitleVO("执行者","executor");
             arrayList.add(title1);
 
-
-
             statistics.setTitleList(arrayList);
-
 
             return statistics;
 
@@ -250,7 +240,44 @@ public class StatisticsApi {
         return  null;
     }
 
-    //获取分组数据
+    /**
+     * 任累计图统计数据集
+     * @param projectId 项目id
+     * @return Statistics 对象
+     */
+    @GetMapping(value = "getCountData/{projectId}/{data}")
+    public Statistics getCountData(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
+        List<QueryVO> taskCountOverView = this.statisticsService.findTaskCountOverView(projectId);
+        Statistics statistics=getCountTable(projectId,"已完成",dto);
+        statistics.setCountData(taskCountOverView);
+        return  statistics;
+    }
+
+
+
+    /**
+     * 页面项目统计总览
+     * @param projectId 项目id
+     * @return Statistics 对象
+     */
+    @GetMapping(value = "getCountTable/{projectId}/{divName}/{data}")
+    public Statistics getCountTable(@PathVariable("projectId") String projectId,@PathVariable("divName")String divName,@PathVariable("data")String dto) {
+
+        StatisticsDTO sto=null;
+        if(dto!=null){
+            JSONObject jsonObject=JSONObject.fromObject(dto);
+            sto=(StatisticsDTO)JSONObject.toBean(jsonObject, StatisticsDTO.class);
+        }
+
+        Statistics condition = this.statisticsService.getCountTable(divName,projectId,sto);
+
+        Statistics condition1 = getCondition(projectId);
+        condition.setExecutor(condition1.getExecutor());
+        condition.setTaskGroup(condition1.getTaskGroup());
+        return  condition;
+    }
+
+        //获取分组数据
     private  Statistics getCondition( String projectId){
         return  this.statisticsService.getGroupData(projectId);
     }

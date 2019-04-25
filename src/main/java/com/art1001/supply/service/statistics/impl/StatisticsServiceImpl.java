@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,8 +20,84 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Resource
     private StaticInfoMapper statisticsMapper;
 
+    /**
+     * 查询未完成和已完成时的传值
+     */
+    private static final String UNFINISH_TASK_CASE = "未完成";
+
+    private static final String FINISH_TASK_CASE = "完成";
 
 
+
+    /**
+     * 查询出该项目下的所有任务 状态数量概览
+     * (多次连库查询比筛选集合效率略高 所以 使用多次按照关键字查库的方式 取出数据)
+     * @param projectId 项目id
+     * @return
+     */
+    public List<QueryVO> findTaskCountOverView(String projectId) {
+        int total = statisticsMapper.getCountTask(projectId);
+        String[] overViewName = {"任务总量","已完成","未完成","已逾期","待认领","按时完成","今日到期",  "逾期完成"};
+        List<QueryVO> list = new ArrayList<QueryVO>();
+        List<String> chartsList = new ArrayList<String>();
+        int taskCount=0;
+        for (String names : overViewName) {
+
+            QueryVO queryVO = new QueryVO();
+            queryVO.setValue(names);
+
+
+            if(StaticticsVO.HANGINTHEAIR.equals(names)){
+                //查询出未完成的任务数量
+                taskCount = statisticsMapper.findHangInTheAirTaskCount(projectId);
+            }else if(StaticticsVO.COMPLETED.equals(names)) {
+                //查询出已完成的任务
+                taskCount = statisticsMapper.findCompletedTaskCount(projectId);
+            }else  if(StaticticsVO.MATURINGTODAY.equals(names)){
+                //查询出今日到期的任务
+                taskCount = statisticsMapper.currDayTaskCount(projectId,System.currentTimeMillis()/1000);
+
+            }else if(StaticticsVO.BEOVERDUE.equals(names)){
+                //查询出已逾期的任务
+                taskCount = statisticsMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis()/1000);
+
+            }else if(StaticticsVO.TOBECLAIMED.equals(names)){
+                //查询出待认领的任务
+                taskCount = statisticsMapper.findTobeclaimedTaskCount(projectId);
+
+            }else  if(StaticticsVO.FINISHONTIME.equals(names)){
+                //查询出按时完成的任务
+                taskCount = statisticsMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis()/1000);
+
+            }else if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
+                //查询出逾期完成任务
+                taskCount = statisticsMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
+            }
+            queryVO.setLabel(String.valueOf(taskCount));
+            //如果非任务总量,执行以下逻辑
+             if(StaticticsVO.TASKTOTALCOUNT.equals(names)){
+                 queryVO.setLabel(String.valueOf(total));
+            }
+                /*//设置百分比
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(2);
+                //设置该组的达标数量
+                statictics.setCount(taskCount);
+                Double value = (double) taskCount / (double) total * 100;
+                if (!value.isNaN()){
+                    statictics.setPercentage(Double.valueOf(numberFormat.format(value)));
+                }else{
+                    statictics.setPercentage(0);
+                }
+            }else{
+                statictics.setCount(total);
+                statictics.setPercentage((double)100);
+            }*/
+            list.add(queryVO);
+
+        }
+        return list;
+    }
 
 
 
@@ -281,7 +358,299 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statistics;
     }
 
+    @Override
+    public Statistics getCountTable(String divName, String projectId, StatisticsDTO statisticsDTO) {
 
+
+        if (divName != null && !"".equals(divName)) {
+            if (StaticticsVO.HANGINTHEAIR.equals(divName)) {
+                return this.selectUnfinishedTask(statisticsDTO, projectId);
+            } else if (StaticticsVO.COMPLETED.equals(divName)) {
+                return this.selectFinishedTask(statisticsDTO, projectId);
+            }  else if (StaticticsVO.MATURINGTODAY.equals(divName)) {
+                return this.selectExpireTask(statisticsDTO, projectId);
+            } else if (StaticticsVO.BEOVERDUE.equals(divName)) {
+                return this.selectOverdueTask(statisticsDTO, projectId);
+            } else if (StaticticsVO.TOBECLAIMED.equals(divName)) {
+                return this.selectWaitClaimTask(statisticsDTO, projectId);
+            } else if (StaticticsVO.FINISHONTIME.equals(divName)) {
+                return this.selectPunctualityTask(statisticsDTO, projectId);
+            } else if (StaticticsVO.OVERDUECOMPLETION.equals(divName)) {
+                return this.selectExpiredToCompleteTask(statisticsDTO, projectId);
+            }
+        } else {
+            System.out.println(">>>>>>>>>divName=" + divName + "statisticsDTO=" + statisticsDTO + ">>>>>>>");
+            throw new NullPointerException();
+        }
+        return null;
+    }
+
+
+        /**
+         * 未完成数据
+         */
+    private Statistics selectUnfinishedTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            // 总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //查询未完成数据
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectUnfinishTask(statisticsDTO, UNFINISH_TASK_CASE, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("截止时间","endTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("---未完成报错---");
+            statistics=null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
+
+
+
+
+    /**
+     * 已完成数据
+     */
+    private Statistics selectFinishedTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //查询已完成任务
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectFinishTask(statisticsDTO, FINISH_TASK_CASE, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("完成时间","finishTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("---已完成报错---");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
+
+
+
+    /**
+     * 今日到期
+     */
+    private Statistics selectExpireTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //查询今日到期的数据
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectExpireTask(statisticsDTO, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("创建时间","createTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("今日到期报错");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
+
+    /**
+     * 已逾期
+     */
+    private Statistics selectOverdueTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //已逾期数据
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectOverdueTask(statisticsDTO, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("截止时间","endTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("已逾期报错");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
+
+    /**
+     * 待认领
+     */
+    private Statistics selectWaitClaimTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //待认领数据
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectWaitClaimTask(statisticsDTO, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("创建时间","createTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("待认领报错");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+
+    }
+
+    /**
+     * 按时完成数据
+     */
+    private Statistics selectPunctualityTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            //按时完成数据
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectPunctualityTask(statisticsDTO, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("完成时间","finishTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("按时完成报错");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
+
+    /**
+     * 逾期完成数据
+     */
+    private Statistics selectExpiredToCompleteTask(StatisticsDTO statisticsDTO, String projectId) {
+        Statistics statistics=new Statistics();
+        try {
+            //总任务数
+            int count = this.statisticsMapper.getCountTask(projectId);
+            List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectExpiredToCompleteTask(statisticsDTO, projectId);
+            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            List<String> titleList = new ArrayList<>();
+            titleList.add("完成时间");
+            titleList.add("任务");
+            titleList.add("执行者");
+            titleList.add("任务分组");
+            titleList.add("列表");
+            titleList.add("逾期天数");
+
+
+            //表格数据
+            ArrayList<TitleVO> arrayList=new ArrayList<>();
+            TitleVO title=new TitleVO("完成时间","finishTime");
+            arrayList.add(title);
+            title=new TitleVO("任务","taskName");
+            arrayList.add(title);
+            title=new TitleVO("执行者","executor");
+            arrayList.add(title);
+            title=new TitleVO("任务分组","taskGroup");
+            arrayList.add(title);
+            title=new TitleVO("列表","listView");
+            arrayList.add(title);
+            title=new TitleVO("逾期天数","overdueNum");
+            arrayList.add(title);
+
+            statistics.setTitleList(arrayList);
+            statistics.setSticsResultList(statisticsResultVOList);
+
+        } catch (Exception e) {
+            System.out.println("逾期完成报错");
+            statistics = null;
+            e.printStackTrace();
+        }
+        return statistics;
+    }
 
 
     /*
@@ -362,6 +731,18 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         }
         return staticDto;
+    }
+
+
+    /**
+     * 将小数转换为百分比
+     */
+    private String numChange(double num) {
+        //获取格式化对象
+        NumberFormat nt = NumberFormat.getInstance();
+        //设置百分数精确度2即保留两位小数
+        nt.setMaximumFractionDigits(2);
+        return nt.format(num * 100);
     }
 
 

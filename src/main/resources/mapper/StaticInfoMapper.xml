@@ -44,6 +44,17 @@
     </resultMap>
 
 
+    <sql id="Base_Column_List">
+        ,pt.task_name,
+        tu.user_name,
+        pr.relation_name,
+        <include refid="Base_Column_Group"/> AS task_group
+        FROM prm_task pt
+        LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
+        LEFT JOIN tb_user tu ON pt.executor=tu.user_id
+    </sql>
+
+
     <sql id="Base_Column_QBC">
         <if test="stDTO!= null">
            <if test="stDTO.taskGroup != null and stDTO.taskGroup != ''">
@@ -64,8 +75,81 @@
 
     <!--  查询总任务数 -->
     <select id="getCountTask" resultType="int">
-        SELECT COUNT(1) FROM prm_task pt  WHERE  pt.project_id=#{projectId}
+          SELECT COUNT(1) FROM prm_task pt  WHERE  pt.project_id=#{projectId}
+    </select>
 
+
+    <!-- 未完成任务数据 -->
+    <select id="selectUnfinishTask"  resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d  %T') as  end_time
+        <include refid="Base_Column_List"/>
+        WHERE pt.task_status=#{unfinishTaskCase}
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+
+
+    <!-- 已完成任务数据 -->
+    <select id="selectFinishTask"  resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') as finish_time
+        <include refid="Base_Column_List"/>
+        WHERE pt.task_status=#{finishTaskCase}
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+
+    <!-- 今日到期任务数据   获取今天的时间 和 任务截至时间做一个对比  end_time = NOW()-->
+    <select id="selectExpireTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d  %T') as create_time
+        <include refid="Base_Column_List"/>
+        WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d') ]]>
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 已逾期任务数据   到截至时间 但是是未完成状态  即为逾期-->
+    <select id="selectOverdueTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d  %T') as  end_time
+        <include refid="Base_Column_List"/>
+        WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') <  DATE_FORMAT (NOW(),'%Y-%m-%d %T')  ]]>
+        AND pt.task_status='未完成'
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+
+
+
+    <!-- 待认领任务数据   没有执行者  即为待认领状态  -->
+    <select id="selectWaitClaimTask"  resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as  create_time
+        <include refid="Base_Column_List"/>
+        WHERE pt.executor = ''
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 按时完成任务数据   update_time 比当前时间小 且任务状态为完成   -->
+    <select id="selectPunctualityTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d  %T') as finish_time
+        <include refid="Base_Column_List"/>
+        WHERE <![CDATA[ FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') > DATE_FORMAT(NOW(),'%Y-%m-%d %T')  ]]>
+        AND pt.task_status='完成'
+        <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 逾期完成 -->
+    <select id="selectExpiredToCompleteTask" resultMap="BaseResultMap">
+        SELECT
+        FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d  %T') as finish_time,
+        (DATEDIFF(DATE_FORMAT(FROM_UNIXTIME(pt.update_time/1000),'%Y-%m-%d') ,DATE_FORMAT(FROM_UNIXTIME(pt.end_time/1000),'%Y-%m-%d %T'))) as overdue_num
+        <include refid="Base_Column_List"/>
+        WHERE <![CDATA[  FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < DATE_FORMAT(NOW(), '%Y-%m-%d %T')  ]]>
+        AND pt.task_status='完成'
+        <include refid="Base_Column_QBC"/>
     </select>
 
 
