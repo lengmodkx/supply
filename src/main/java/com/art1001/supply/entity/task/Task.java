@@ -51,6 +51,11 @@ public class Task extends Model<Task> {
 	 */
 	private String taskName;
 
+	/**
+	 * 分组名称
+	 */
+	private String groupName;
+
 
 	/**
 	 * 开始时间

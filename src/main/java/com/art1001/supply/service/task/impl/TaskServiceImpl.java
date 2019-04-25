@@ -14,6 +14,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.Share;
@@ -1621,6 +1622,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
         //查询任务得赞数
         task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",taskId)));
+        //获取任务名称
+        task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
         //获取该任务的未读消息数
