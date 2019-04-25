@@ -11,6 +11,7 @@ public class QueryVO {
 
     private String label;
 
+
     public String getValue() {
         return value;
     }

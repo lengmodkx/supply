@@ -13,26 +13,48 @@ import java.util.List;
 public interface StatisticsService {
 
 
-    //获取总任务数
+    /*
+     *获取总任务数
+     */
     Integer getCountTask(String projectId, StaticDto sto);
 
-    //获取统计页面饼图图形
+    /*
+     *获取统计页面饼图图形
+     */
     List<StatisticsPie> getPieChart(String projectId, Integer count, StaticDto sto);
 
-    //获取统计页面柱状图数据
+    /*
+     *获取统计页面柱状图数据
+     */
     StatisticsHistogram getHistogramsChart(String projectId, StaticDto sto);
 
-    //获取统计页面任务燃尽图数据
+    /*
+     *获取统计页面任务燃尽图数据
+     */
     StatisticsBurnout getTaskBurnout(String projectId, Integer type, StaticDto sto);
 
-    //获取统计页面累计任务数据
+    /*
+     *获取统计页面累计任务数据
+     */
     StatisticsBurnout selectProjectProgress(String projectId);
 
-    //查询分组数据
+    /*
+     *查询分组数据
+     */
     Statistics getGroupData(String projectId);
 
     /*
     *获取统计页面饼图数据
     */
     List<StatisticsPie> selectExcutorTask(String projectId, Integer count, StaticDto sto);
+
+    /*
+     *查询出该项目下的所有任务 状态数量概览
+     */
+    List<QueryVO> findTaskCountOverView(String projectId);
+
+    /*
+     *查询概览图表数据
+     */
+    Statistics getCountTable(String divName, String projectId, StatisticsDTO statisticsDTO);
 }
