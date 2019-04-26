@@ -1,6 +1,10 @@
 package com.art1001.supply.service.relation.impl;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.fabulous.Fabulous;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;

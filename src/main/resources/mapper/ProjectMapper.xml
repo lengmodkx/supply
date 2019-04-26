@@ -180,7 +180,7 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		from prm_project where project_del = #{projectDel} and member_id = #{memberId}
-		order by create_time asc
+		order by create_time desc
 	</select>
 
 
@@ -236,13 +236,17 @@
 	</select>
 	<select id="findOrgProject" resultMap="BaseResultMap1">
 		select p.project_id,
-			p.project_name,
-			p.project_cover,
-			p.project_des,
-			pm.collect as collect,
-			p.project_del
+		p.project_name,
+		p.project_cover,
+		p.project_des,
+		pm.collect as collect,
+		p.project_del,
+		p.project_status,
+		pm.member_label as member_label,
+		pm.default_group as group_id,
+		p.func
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId} and p.organization_id = #{orgId} order by pm.create_time asc
+		where pm.member_id = #{userId} and p.organization_id=#{orgId} order by pm.create_time asc
 	</select>
 
 	<!-- 查询出当前项目的默认分组 -->
@@ -260,6 +264,48 @@
 	<select id="getProjectGanttChart" resultType="com.art1001.supply.entity.project.Project">
 		select p.project_id,p.project_name,p.project_des,p.start_time,p.end_time,u.user_name as memberName
 		from prm_project p left join tb_user u on p.member_id = u.user_id where p.project_id = #{projectId}
+	</select>
+
+	<!-- 根据项目名称模糊查询星标项目 -->
+    <select id="selectStarByName" resultMap="BaseResultMap1">
+		select p.project_id,
+			p.project_name,
+			p.project_cover,
+			p.project_des,
+			p.project_del,
+			p.project_status,
+			p.func
+		from prm_project p right join prm_project_collect pc on p.project_id = pc.project_id
+		where pc.member_id = #{userId} and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pc.create_time desc
+	</select>
+
+	<!-- 查询出当前用户参与的项目  根据项目名称模糊查询 -->
+	<select id="selectJoin" resultMap="BaseResultMap1">
+		select p.project_id,
+			p.project_name,
+			p.project_cover,
+			p.project_des,
+			pm.collect as collect,
+			p.project_del,
+			p.project_status,
+			pm.member_label as member_label,
+		    pm.default_group as group_id,
+			p.func
+		from prm_project p right join prm_project_member pm on p.project_id = pm.project_id
+		where pm.member_id = #{userId} and pm.member_label = 0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pm.create_time desc
+	</select>
+
+	<!-- 查询当前用户创建的项目 并且 根据项目名称模糊查询 -->
+	<select id="selectCreatedByName" resultMap="BaseResultMap1">
+		select p.project_id,
+			p.project_name,
+			p.project_cover,
+			p.project_des,
+			p.project_del,
+			p.project_status,
+			p.func
+		from prm_project p
+		where p.member_id = #{userId} and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
 	</select>
 
 

@@ -84,9 +84,10 @@ public class BindingApi {
                                   @RequestParam String publicType){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("bind",JSON.parseObject(bindingService.saveBindBatch(publicId, bindId, publicType).toString(),Object.class)).fluentPut("publicType", publicType));
+            bindingService.saveBindBatch(publicId, bindId, publicType);
+            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType));
             jsonObject.put("result",1);
-            jsonObject.put("msgId", getProjectId(publicId));
+            jsonObject.put("msgId", bindingService.getProjectId(publicId));
             jsonObject.put("id", publicId);
             jsonObject.put("publicType", publicId);
         }catch (Exception e){
@@ -108,7 +109,7 @@ public class BindingApi {
             QueryWrapper<Binding> eq = new QueryWrapper<Binding>().eq("public_id", publicId).eq("bind_id", bindId);
             Binding byId = bindingService.getOne(eq);
             bindingService.remove(eq);
-            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicType", byId.getPublicType()).fluentPut("bindId", byId.getBindId()));
+            jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicType", byId.getPublicType()).fluentPut("publicId", publicId));
             jsonObject.put("msgId", projectId);
             jsonObject.put("result",1);
         }catch (Exception e){
@@ -151,34 +152,8 @@ public class BindingApi {
         return jsonObject;
     }
 
-    private String getProjectId(String publicId){
-        String projectId = "";
-        Task task;
-        File file;
-        Schedule schedule;
-        Share share;
-        if(Stringer.isNullOrEmpty(projectId)){
-            if((task = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
-                return task.getProjectId();
-            }
-        }
 
-        if(Stringer.isNullOrEmpty(projectId)){
-            if((share = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
-                return share.getProjectId();
-            }
-        }
-        if(Stringer.isNullOrEmpty(projectId)){
-            if((file = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
-                return file.getProjectId();
-            }
-        }
-        if(Stringer.isNullOrEmpty(projectId)){
-            if((schedule = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
-                return schedule.getProjectId();
-            }
-        }
-        return projectId;
-    }
+
+
 
 }

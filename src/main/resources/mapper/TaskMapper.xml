@@ -19,7 +19,8 @@
 		<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
 		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="INTEGER" />
+		<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
+		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
 		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -30,6 +31,12 @@
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
+
+		<!-- 查询父级任务信息 -->
+		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+			<id column="par_id" property="taskId"/>
+			<result column="par_name" property="taskName"/>
+		</association>
 
 		<!--查询项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
@@ -46,8 +53,6 @@
 			<result property="tagName" column="tag_name"/>
 			<result property="bgColor" column="bg_color"/>
 		</collection>
-		<collection property="fileList" column="task_id" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.file.FileMapper.publicFile"/>
 	</resultMap>
 
 	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
@@ -244,6 +249,7 @@
 		u.image as executor_img,
 		t.task_type,
 		t.task_menu_id,
+		t.task_group_id,
 		t.task_status,
 		t.task_code,
 		t.task_del,
@@ -302,6 +308,7 @@
 	SELECT
 	<include refid="Base_Column_List3"/>
 	from prm_task t
+		left join prm_task parent on t.parent_id = parent.task_id
 		left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id
 		where t.task_id = #{taskId}
@@ -1174,36 +1181,36 @@
 	<!-- 查询出我执行的任务并且按照项目排序 -->
 	<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
 		SELECT
-			p.project_id AS p_id,
-			p.project_name,
-			t.task_id,
-			t.task_name,
-			t.`level`,
-			t.start_time,
-			t.end_time,
-			f.task_id as f_id,
-			f.task_name AS f_name,
-			u.image
+		p.project_id AS p_id,
+		p.project_name,
+		t.task_id,
+		t.task_name,
+		t.`level`,
+		t.start_time,
+		t.end_time,
+		f.task_id as f_id,
+		f.task_name AS f_name,
+		u.image
 		FROM
-			prm_project AS p
-			LEFT JOIN prm_task AS t ON p.project_id = t.project_id
-			LEFT JOIN tb_user as u on u.user_id = t.executor
-			LEFT JOIN prm_task f ON t.parent_id = f.task_id
+		prm_project AS p
+		LEFT JOIN prm_task AS t ON p.project_id = t.project_id
+		LEFT JOIN tb_user as u on u.user_id = t.executor
+		LEFT JOIN prm_task f ON t.parent_id = f.task_id
 		WHERE
-			p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
-			AND t.executor = #{userId}
-			AND
-			<if test="isDone">
-				t.task_status = '完成'
-			</if>
-			<if test="!isDone">
-				t.task_status = '未完成'
-			</if>
+		p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
+		AND t.executor = #{userId}
+		AND
+		<if test="isDone">
+			t.task_status = '完成'
+		</if>
+		<if test="!isDone">
+			t.task_status = '未完成'
+		</if>
 	</select>
 
 	<!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->
 	<select id="listById" resultMap="BaseResult5">
-		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name
+		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name,`level`
 		from prm_task t left join tb_user u on t.executor = u.user_id where task_id in
 		<foreach collection="list" item="id" open="(" close=")" separator=",">
 			#{id}

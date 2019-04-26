@@ -11,6 +11,8 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -52,6 +54,12 @@ public class ProjectApi {
     @Resource
     private UserService userService;
 
+    @Resource
+    private OrganizationService organizationService;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
+
     /**
      * 创建项目
      *
@@ -66,11 +74,15 @@ public class ProjectApi {
                                     @RequestParam(value = "projectDes") String projectDes) {
         JSONObject object = new JSONObject();
         try {
-            String userId = ShiroAuthenticationManager.getUserId();
+//            if(organizationMemberService.userOrgCount() <= 0){
+//                object.put("result", 0);
+//                object.put("msg","必须加入企业才能创建项目!" );
+//                return object;
+//            }
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
-            project.setMemberId(userId);
+            project.setMemberId(ShiroAuthenticationManager.getUserId());
             projectService.saveProject(project);
             //写资源表
             object.put("result", 1);
@@ -304,6 +316,24 @@ public class ProjectApi {
             throw new AjaxException("项目归档操作异常!",e);
         }
         return object;
+    }
+
+    /**
+     * 模糊搜索项目
+     * @param projectName 项目名称
+     * @param condition 搜索条件(created,join,star)
+     * @return
+     */
+    @GetMapping("/seach")
+    public JSONObject seachByName(@RequestParam String projectName,@RequestParam String condition){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",projectService.seachByName(projectName,condition));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
     }
 
     /**

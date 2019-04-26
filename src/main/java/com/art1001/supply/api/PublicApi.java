@@ -1,9 +1,12 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.publics.PublicService;
 import com.art1001.supply.service.task.TaskService;
@@ -29,6 +32,9 @@ public class PublicApi {
     private TaskService taskService;
 
     @Resource
+    private BindingService bindingService;
+
+    @Resource
     private PublicService publicService;
 
     /**
@@ -36,12 +42,15 @@ public class PublicApi {
      * @param publicId 公共id
      * @return 是否成功
      */
+    @Push(value = PushType.A20,type = 1)
     @PostMapping("/fabulous")
     public JSONObject fabulous(@RequestParam String publicId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(publicService.fabulous(publicId) == 1){
                 jsonObject.put("result",1);
+                jsonObject.put("msgId",bindingService.getProjectId(publicId));
+                jsonObject.put("data", publicId);
             } else {
                 jsonObject.put("result",0);
             }
@@ -56,12 +65,15 @@ public class PublicApi {
      * @param publicId 公共id
      * @return 是否成功
      */
+    @Push(value = PushType.A20,type = 1)
     @DeleteMapping("/{publicId}/cancle_fabulous")
     public JSONObject cancleFabulous(@PathVariable String publicId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(fabulousService.remove(new QueryWrapper<Fabulous>().eq("member_id",ShiroAuthenticationManager.getUserId()).eq("public_id",publicId))){
                 jsonObject.put("result",1);
+                jsonObject.put("msgId",bindingService.getProjectId(publicId));
+                jsonObject.put("data", publicId);
             } else{
                 jsonObject.put("result",0);
             }

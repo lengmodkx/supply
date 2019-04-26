@@ -3,12 +3,14 @@ package com.art1001.supply.service.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 
 /**
  * projectService接口
  */
-public interface OrganizationMemberService {
+public interface OrganizationMemberService extends IService<OrganizationMember> {
 
 	/**
 	 * 查询分页project数据
@@ -59,6 +61,12 @@ public interface OrganizationMemberService {
 	 * @param memberId
 	 * @return
 	 */
-	OrganizationMember findOrgByMemberId(String memberId);
+	OrganizationMember findOrgByMemberId(String memberId, String orgId);
+
+	/**
+	 * 获取用户已经加入的企业数量
+	 * @return 加入的企业数量
+	 */
+	int userOrgCount();
 	
 }

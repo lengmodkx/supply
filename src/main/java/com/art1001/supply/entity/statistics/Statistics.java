@@ -49,6 +49,49 @@ public class Statistics {
      */
     private List<TitleVO> titleList ;
 
+    /*
+     * 总量概览
+     */
+    List<QueryVO>   countData;
+
+
+    /*
+     *  概览数据
+     */
+    List<StatisticsResultVO> sticsResultList;
+
+
+    public List<QueryVO> getTaskGroup() {
+        return taskGroup;
+    }
+
+    public void setTaskGroup(List<QueryVO> taskGroup) {
+        this.taskGroup = taskGroup;
+    }
+
+    public List<QueryVO> getCountData() {
+        return countData;
+    }
+
+    public void setCountData(List<QueryVO> countData) {
+        this.countData = countData;
+    }
+
+    public List<StatisticsResultVO> getSticsResultList() {
+        return sticsResultList;
+    }
+
+    public void setSticsResultList(List<StatisticsResultVO> sticsResultList) {
+        this.sticsResultList = sticsResultList;
+    }
+
+    public List<QueryVO> getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(List<QueryVO> executor) {
+        this.executor = executor;
+    }
 
     public List<TitleVO> getTitleList() {
         return titleList;

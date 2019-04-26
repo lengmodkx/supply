@@ -51,6 +51,7 @@ public class OrganizationApi {
             organization.setContactPhone(contactPhone);
             organizationService.saveOrganization(organization);
             jsonObject.put("result",1);
+            jsonObject.put("data", organization.getOrganizationId());
         }catch (Exception e){
             log.error("企业添加失败:",e);
             throw new AjaxException(e);

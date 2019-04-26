@@ -51,7 +51,14 @@ public class Task extends Model<Task> {
 	 */
 	private String taskName;
 
+	/**
+	 * 分组名称
+	 */
+	@TableField(exist = false)
+	private String groupName;
 
+	@TableField(exist = false)
+	private String menuName;
 	/**
 	 * 开始时间
 	 */
@@ -279,6 +286,12 @@ public class Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private int unReadMsg;
+
+	/**
+	 * 是否存在子任务
+	 */
+	@TableField(exist = false)
+	private Boolean isExistSub;
 
 
 	@Override

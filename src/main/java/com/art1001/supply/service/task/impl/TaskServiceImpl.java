@@ -11,9 +11,11 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.Share;
@@ -186,7 +188,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        save(task);
+        taskMapper.insert(task);
     }
 
     /**
@@ -235,7 +237,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public void mobileTask(String taskId, String projectId, String groupId,String menuId) {
-        Task task = getById(taskId);
+        Task task = taskMapper.selectById(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setTaskGroupId(groupId);
@@ -453,26 +455,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public Log resetAndCompleteSubLevelTask(Task task) {
         Task parentTask = taskMapper.findTaskBySubTaskId(task.getTaskId());
-        if(parentTask.isTaskStatus()){
+        if(parentTask.getTaskStatus().equals("完成")){
             throw new ServiceException();
         }
         StringBuilder content = new StringBuilder("");
 
         //拼接日志
-        if(task.isTaskStatus()){
+        if(task.getTaskStatus().equals("完成")){
             content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         } else {
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
-
-        taskMapper.updateById(task);
+        //更新任务信息
+        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
         logService.saveLog(task.getTaskId(),content.toString(),1);
         Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","子任务完成/重做");
         jsonObject.put("taskId",task.getTaskId());
-        jsonObject.put("result",task.isTaskStatus());
+        jsonObject.put("result",task.getTaskStatus());
         return log;
     }
 
@@ -1442,7 +1444,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         completeTask.setTaskId(taskId);
         taskMapper.updateById(completeTask);
 
-        Task task = taskMapper.selectById(taskId);
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`").eq("task_id", taskId));
+
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;
@@ -1617,21 +1620,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public Task taskInfoShow(String taskId) {
         //查询出此条任务的具体信息
         Task task = taskService.findTaskByTaskId(taskId);
-        //判断当前用户有没有对该任务点赞
-        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
-        //查询任务得赞数
-        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",taskId)));
-        //判断当前用户有没有收藏该任务
-        task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
-        //获取该任务的未读消息数
-        int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", taskId)) - 10;
-        task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
-        //查询出  该任务的日志信息
-        task.setLogs(logService.initLog(taskId));
-        //任务的附件
-//        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
-        //设置关联信息
-        bindingService.setBindingInfo(taskId,null,task,null,null);
+        completionTaskInfo(task);
         return task;
     }
 
@@ -1712,18 +1701,63 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     @Override
-    public void buildFatherSon(List<Task> tasks){
-        Integer order = 2;
+    public List<GantChartVO> buildFatherSon(List<Task> tasks){
+        List<GantChartVO> gants = new ArrayList<>();
+        int order = 2;
         for (Task f : tasks) {
             String taskId = f.getTaskId();
             for (Task s : tasks) {
-                if(s.getParentId().equals(taskId)){
-                    s.setParentId(order.toString());
+                if(s.getParentId().equals(taskId)) {
+                    s.setParentId(String.valueOf(order));
+                    f.setIsExistSub(true);
                 }
             }
-            f.setTaskId(order.toString());
+            if(f.getIsExistSub() == null){
+                f.setIsExistSub(false);
+            }
+            //将任务信息循环映射进GantChartsVO
+            GantChartVO gantChartVO = new GantChartVO();
+            gantChartVO.setPublicId(taskId);
+            gantChartVO.setStart(f.getStartTime());
+            gantChartVO.setEnd(f.getEndTime());
+            gantChartVO.setType("task");
+            gantChartVO.setExpander(f.getIsExistSub());
+            gantChartVO.setLabel(f.getTaskName());
+            gantChartVO.setParentId(Integer.valueOf(f.getParentId()));
+            gantChartVO.setUser(f.getExecutorName());
+            f.setTaskId(String.valueOf(order));
+            gantChartVO.setId(Integer.valueOf(f.getTaskId()));
+            gants.add(gantChartVO);
             order++;
         }
+        for (GantChartVO f : gants) {
+           if(f.getParentId() == 0){
+               f.setParentId(1);
+           }
+        }
+        return gants;
+    }
+
+    @Override
+    public void completionTaskInfo(Task task){
+        //判断当前用户有没有对该任务点赞
+        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
+        //查询任务得赞数
+        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
+        //获取任务名称
+        task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
+        task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
+        //判断当前用户有没有收藏该任务
+        task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
+        //获取该任务的未读消息数
+        int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", task.getTaskId())) - 10;
+        task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
+        //查询出  该任务的日志信息
+        task.setLogs(logService.initLog(task.getTaskId()));
+        //任务的附件
+        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1)));
+        //设置关联信息
+        bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
     }
 }
 
