@@ -73,7 +73,8 @@
 		<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
 		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
+		<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
+		<result column="task_status" property="taskStatus"/>
 		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -83,6 +84,9 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_uids" property="memberId" jdbcType="CLOB" />
+		<!--查询项目-->
+		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<!--查询标签-->
 		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
@@ -674,11 +678,14 @@
 
 	<!-- 查询当前菜单下的全部任务信息 -->
 	<select id="findTaskByMenuId" resultMap="BaseResultMap2">
-		select
+		SELECT
 		<include refid="Base_Column_List3"/>
-		from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		from prm_task t
+		left join prm_task parent on t.parent_id = parent.task_id
+		left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id
-		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.order asc
+		where t.task_menu_id = #{menuId} order by t.order asc
+
 	</select>
 
 	<!-- 查询某个执行者的所有任务 -->

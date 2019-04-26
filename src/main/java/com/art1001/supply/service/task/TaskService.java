@@ -565,4 +565,10 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	List<Task> listById(List<String> idList);
+
+	/**
+	 * 补全任务的信息 (关联关系,附件,是否收藏,是否点赞,等等)
+	 * @param task 基本任务信息
+	 */
+	void completionTaskInfo(Task task);
 }

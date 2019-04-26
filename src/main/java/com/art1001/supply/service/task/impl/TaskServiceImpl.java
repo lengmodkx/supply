@@ -1620,24 +1620,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public Task taskInfoShow(String taskId) {
         //查询出此条任务的具体信息
         Task task = taskService.findTaskByTaskId(taskId);
-        //判断当前用户有没有对该任务点赞
-        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", taskId)) > 0);
-        //查询任务得赞数
-        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",taskId)));
-        //获取任务名称
-        task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
-        task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
-        //判断当前用户有没有收藏该任务
-        task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", taskId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
-        //获取该任务的未读消息数
-        int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", taskId)) - 10;
-        task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
-        //查询出  该任务的日志信息
-        task.setLogs(logService.initLog(taskId));
-        //任务的附件
-        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
-        //设置关联信息
-        bindingService.setBindingInfo(taskId,null,task,null,null);
+        completionTaskInfo(task);
         return task;
     }
 
@@ -1753,6 +1736,28 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
            }
         }
         return gants;
+    }
+
+    @Override
+    public void completionTaskInfo(Task task){
+        //判断当前用户有没有对该任务点赞
+        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
+        //查询任务得赞数
+        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
+        //获取任务名称
+        task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
+        task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
+        //判断当前用户有没有收藏该任务
+        task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
+        //获取该任务的未读消息数
+        int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", task.getTaskId())) - 10;
+        task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
+        //查询出  该任务的日志信息
+        task.setLogs(logService.initLog(task.getTaskId()));
+        //任务的附件
+        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1)));
+        //设置关联信息
+        bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
     }
 }
 
