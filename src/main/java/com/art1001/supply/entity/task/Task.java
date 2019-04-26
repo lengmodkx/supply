@@ -163,7 +163,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务状态
 	 */
-	private boolean taskStatus;
+	private Boolean taskStatus;
 
 	/**
 	 * 任务码(保留字段)
