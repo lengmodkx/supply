@@ -2,7 +2,6 @@ package com.art1001.supply.api;
 
 import com.art1001.supply.entity.statistics.*;
 import com.art1001.supply.service.statistics.StatisticsService;
-import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,7 +67,7 @@ public class StatisticsApi {
             //statistics.setStatisticsAdd(statisticsAdd);
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -114,7 +113,7 @@ public class StatisticsApi {
 
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -153,7 +152,7 @@ public class StatisticsApi {
 
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -198,7 +197,7 @@ public class StatisticsApi {
             statistics.setTitleList(arrayList);
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;
@@ -244,7 +243,7 @@ public class StatisticsApi {
 
             return statistics;
 
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return  null;

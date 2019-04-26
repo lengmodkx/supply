@@ -186,7 +186,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
         //保存任务信息
-        taskMapper.insert(task);
+        save(task);
     }
 
     /**
@@ -425,7 +425,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //设置该任务的最后更新时间
         subLevel.setUpdateTime(System.currentTimeMillis());
         //设置该任务的初始状态
-        subLevel.setTaskStatus("未完成");
+        subLevel.setTaskStatus(false);
         subLevel.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //保存任务信息
         int result = taskMapper.saveTask(subLevel);
@@ -453,26 +453,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public Log resetAndCompleteSubLevelTask(Task task) {
         Task parentTask = taskMapper.findTaskBySubTaskId(task.getTaskId());
-        if(parentTask.getTaskStatus().equals("完成")){
+        if(parentTask.isTaskStatus()){
             throw new ServiceException();
         }
         StringBuilder content = new StringBuilder("");
 
         //拼接日志
-        if(task.getTaskStatus().equals("完成")){
+        if(task.isTaskStatus()){
             content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         } else {
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
-        //更新任务信息
-        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
+
+        taskMapper.updateById(task);
         logService.saveLog(task.getTaskId(),content.toString(),1);
         Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type","子任务完成/重做");
         jsonObject.put("taskId",task.getTaskId());
-        jsonObject.put("result",task.getTaskStatus());
+        jsonObject.put("result",task.isTaskStatus());
         return log;
     }
 
@@ -1438,7 +1438,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public Task completeTask(String taskId) {
         //先更新任务状态
         Task completeTask = new Task();
-        completeTask.setTaskStatus("完成");
+        completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
         taskMapper.updateById(completeTask);
 
@@ -1629,7 +1629,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //查询出  该任务的日志信息
         task.setLogs(logService.initLog(taskId));
         //任务的附件
-        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
+//        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", taskId).eq("public_lable", 1)));
         //设置关联信息
         bindingService.setBindingInfo(taskId,null,task,null,null);
         return task;

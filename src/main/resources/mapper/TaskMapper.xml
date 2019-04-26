@@ -19,7 +19,7 @@
 		<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
 		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
 		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
+		<result column="task_status" property="taskStatus" jdbcType="INTEGER" />
 		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -30,12 +30,6 @@
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
-
-		<!-- 查询父级任务信息 -->
-		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
-			<id column="par_id" property="taskId"/>
-			<result column="par_name" property="taskName"/>
-		</association>
 
 		<!--查询项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
@@ -52,6 +46,8 @@
 			<result property="tagName" column="tag_name"/>
 			<result property="bgColor" column="bg_color"/>
 		</collection>
+		<collection property="fileList" column="task_id" javaType="java.util.ArrayList"
+					select="com.art1001.supply.mapper.file.FileMapper.publicFile"/>
 	</resultMap>
 
 	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
@@ -306,7 +302,6 @@
 	SELECT
 	<include refid="Base_Column_List3"/>
 	from prm_task t
-		left join prm_task parent on t.parent_id = parent.task_id
 		left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id
 		where t.task_id = #{taskId}

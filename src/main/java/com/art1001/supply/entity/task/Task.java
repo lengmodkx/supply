@@ -156,8 +156,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 任务状态
 	 */
-	@JSONField
-	private String taskStatus;
+	private boolean taskStatus;
 
 	/**
 	 * 任务码(保留字段)
