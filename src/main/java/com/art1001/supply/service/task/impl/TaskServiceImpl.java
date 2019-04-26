@@ -455,13 +455,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public Log resetAndCompleteSubLevelTask(Task task) {
         Task parentTask = taskMapper.findTaskBySubTaskId(task.getTaskId());
-        if(parentTask.getTaskStatus().equals("完成")){
+        if(parentTask.getTaskStatus()){
             throw new ServiceException();
         }
         StringBuilder content = new StringBuilder("");
 
         //拼接日志
-        if(task.getTaskStatus().equals("完成")){
+        if(task.getTaskStatus()){
             content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         } else {
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
