@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * organizationmapper接口
@@ -63,4 +64,11 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
 	 */
 	List<Organization> selectJoinOrgProject(String userId);
 
+	/**
+	 * 获取和我相关的企业
+	 * @param flag 标识
+	 * @param userId 用户id
+	 * @return 企业列表
+	 */
+    List<Organization> getMyOrg(@Param("flag") Integer flag, @Param("userId") String userId);
 }

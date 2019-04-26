@@ -178,6 +178,25 @@
 		<result column="user_name" property="executorName"/>
 	</resultMap>
 
+	<!-- 任务的简便信息 -->
+	<resultMap id="resultMap6" type="com.art1001.supply.entity.task.Task">
+		<id column="task_id" property="taskId"/>
+		<result column="project_id" property="projectId"/>
+		<result column="task_name" property="taskName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="repeat" property="repeat"/>
+		<result column="user_name" property="executorName"/>
+		<result column="user_id" property="executor"/>
+		<result column="image" property="executorImg"/>
+		<result column="priority" property="priority"/>
+		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+			<id column="tag_id" property="tagId"/>
+			<result column="tag_name" property="tagName"/>
+			<result column="bg_color" property="bgColor"/>
+		</collection>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.project_id,
@@ -1215,5 +1234,28 @@
 		<foreach collection="list" item="id" open="(" close=")" separator=",">
 			#{id}
 		</foreach>
+	</select>
+
+	<!-- 查询出一个任务基本信息 -->
+	<select id="selectSimpleTaskById" resultMap="resultMap6">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			t.projecct_id,
+			t.`repeat`,
+			u.user_name,
+			u.image,
+			u.user_id,
+			t.priority,
+			tag.tag_id,
+			tag.tag_name,
+			tag.bg_color
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user u ON t.executor = u.user_id
+			LEFT JOIN prm_tag_relation tr ON t.task_id = tr.task_id
+			LEFT JOIN prm_tag tag ON tr.tag_id = tag.tag_id where t.task_id = #{taskId}
 	</select>
 </mapper>

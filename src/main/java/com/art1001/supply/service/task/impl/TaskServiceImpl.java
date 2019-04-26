@@ -1691,6 +1691,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 查询出一个任务基本信息
+     * 用户任务简便信息的显示
+     * @param taskId 任务id
+     * @return 任务信息
+     */
+    @Override
+    public Task findSimpleTaskById(String taskId) {
+        return taskMapper.selectSimpleTaskById(taskId);
+    }
+
+    /**
      * 根据id集合 查询出对应的任务信息 以及执行者信息
      * @param idList id集合
      * @return

@@ -210,5 +210,24 @@
 		WHERE
 			orgm.member_id = #{id}
 	</select>
-	
+
+	<!-- 获取和我相关的企业 -->
+    <select id="getMyOrg" resultType="com.art1001.supply.entity.organization.Organization">
+		SELECT
+			o.organization_id,
+			organization_name,
+			o.organization_des
+		FROM
+			prm_organization o
+			LEFT JOIN prm_organization_member om ON o.organization_id = om.organization_id
+		WHERE
+			om.member_id = #{userId}
+		<if test="flag != null and flag == 1">
+			AND partment_lable = 1
+		</if>
+		<if test="flag != null and flag == 2">
+			AND partment_lable = 0
+		</if>
+	</select>
+
 </mapper>

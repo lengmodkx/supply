@@ -61,4 +61,11 @@ public interface OrganizationService extends IService<Organization> {
 	 * @return
 	 */
     List<Organization> findJoinOrgProject(String userId);
+
+	/**
+	 * 获取和我相关的企业
+	 * @param flag 标识
+	 * @return 企业列表
+	 */
+	List<Organization> getMyOrg(Integer flag);
 }

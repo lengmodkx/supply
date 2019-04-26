@@ -571,4 +571,12 @@ public interface TaskService extends IService<Task> {
 	 * @param task 基本任务信息
 	 */
 	void completionTaskInfo(Task task);
+
+	/**
+	 * 查询出一个任务基本信息
+	 * 用户任务简便信息的显示
+	 * @param taskId 任务id
+	 * @return 任务信息
+	 */
+    Task findSimpleTaskById(String taskId);
 }

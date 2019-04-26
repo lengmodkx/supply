@@ -92,7 +92,7 @@ public class TaskApi extends BaseController {
     public JSONObject addTask(Task task){
         try {
             taskService.saveTask(task);
-            return success(task.getProjectId(),task,task.getTaskId(),task.getTaskName(),task.getProjectId());
+            return success(task.getProjectId(),taskService.findSimpleTaskById(task.getTaskId()),task.getTaskId(),task.getTaskName(),task.getProjectId());
         } catch (BaseException e){
             return error(e.getMessage());
         } catch (Exception e){

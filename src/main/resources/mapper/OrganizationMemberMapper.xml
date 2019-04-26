@@ -58,14 +58,14 @@
 			u.image
 		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id where m.organization_id = #{condition.organizationId}
 		<if test="condition.createTime != null">
-			and #{condition.createTime} between DATE_SUB(m.create_time,INTERVAL -7 day) and m.create_time
+			and m.create_time BETWEEN (#{condition.createTime} - 60 * 1000 * 60 * 24 * 7) and #{condition.createTime}
 		</if>
 
 		<if test="condition.partmentId != null and condition.partmentId != ''">
 			AND m.partment_id = #{condition.partmentId}
 		</if>
 
-		<if test="condition.memberLock != null and condition.memberLock != ''">
+		<if test="condition.memberLock != null">
 			AND m.member_lock = #{condition.memberLock}
 		</if>
 	</select>

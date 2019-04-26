@@ -676,4 +676,12 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return
 	 */
 	List<Task> listById(List<String> idList);
+
+	/**
+	 * 查询出一个任务基本信息
+	 * 用户任务简便信息的显示
+	 * @param taskId 任务id
+	 * @return 任务信息
+	 */
+	Task selectSimpleTaskById(@Param("taskId") String taskId);
 }
