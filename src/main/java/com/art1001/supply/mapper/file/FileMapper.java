@@ -267,4 +267,6 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return
 	 */
     List<File> seachByName(@Param("fileName") String fileName, @Param("projectId") String projectId);
+
+    List<File> publicFile(@Param("publicId")String publicId);
 }

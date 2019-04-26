@@ -456,8 +456,13 @@
 		 and file_name like <![CDATA[ concat('%',#{fileName},'%') ]]>
 		order by `catalog` desc,create_time desc
 	</select>
+    <select id="publicFile" resultType="com.art1001.supply.entity.file.File">
+		select <include refid="Base_Column_List" /> from prm_file pf
+		left join prm_file_version pfv on pf.file_id = pfv.file_id
+		where public_id = #{publicId} and pfv.is_master = 1 and pf.file_del=0 and public_lable = 1
+	</select>
 
-	<!-- 插入多条文件信息 -->
+    <!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">
