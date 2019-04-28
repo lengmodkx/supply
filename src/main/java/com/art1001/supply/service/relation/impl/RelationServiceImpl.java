@@ -159,8 +159,10 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			while(iterator.hasNext()){
 				Task task = iterator.next();
 				if(task.getPrivacyPattern() == 0){
-					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),task.getExecutor()) && Arrays.asList(task.getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
-						iterator.remove();
+					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),task.getExecutor()))){
+						if(!(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
+							iterator.remove();
+						}
 					}
 				}
 			}
