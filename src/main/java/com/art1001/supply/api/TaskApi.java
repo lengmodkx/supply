@@ -148,7 +148,7 @@ public class TaskApi extends BaseController {
             Task t = new Task();
             t.setTaskId(taskId);
             t.setTaskStatus(true);
-            object.put("data",new JSONObject().fluentPut("task",t));
+            object.put("data",taskId);
             object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -180,7 +180,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -365,7 +365,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType",Constants.TASK);
         }catch(Exception e){
@@ -532,8 +532,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("remarks",remarks));
+            object.put("msgId",getTaskProjectId(taskId));
+            object.put("data",taskId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
@@ -561,7 +561,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msgId",getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -600,7 +600,7 @@ public class TaskApi extends BaseController {
             taskService.saveTask(task);
             object.put("result",1);
             object.put("msg","创建成功!");
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             String taskProjectId = this.getTaskProjectId(taskId);
             if(StringUtils.isNotEmpty(taskProjectId)){
                 object.put("msgId",taskProjectId);
@@ -635,7 +635,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("members",userService.findManyUserById(taskUids)));
+            object.put("data",taskId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务参与者更新:",e);
@@ -661,7 +661,8 @@ public class TaskApi extends BaseController {
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            object.put("data",new JSONObject().fluentPut("task",taskService.copyTask(taskId,projectId,groupId,menuId)));
+            taskService.copyTask(taskId,projectId,groupId,menuId);
+            object.put("data",projectId);
             object.put("result",1);
             object.put("msg","复制成功");
             object.put("msgId",projectId);
@@ -699,10 +700,10 @@ public class TaskApi extends BaseController {
             object.put("msg","移动成功");
             Map<String,Object> maps = new HashMap<String,Object>(2);
             if(projectId.equals(taskProjectId)){
-                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
+                maps.put(projectId,projectId);
             } else{
-                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
-                maps.put(taskProjectId,new JSONObject().fluentPut("task",task));
+                maps.put(projectId,projectId);
+                maps.put(taskProjectId,taskProjectId);
             }
             object.put("data",maps);
             object.put("id",taskId);
@@ -731,7 +732,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","移入成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -752,15 +753,14 @@ public class TaskApi extends BaseController {
     public JSONObject taskPrivacy(@PathVariable(value = "taskId")String taskId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
         try{
-            String taskProjectId = this.getTaskProjectId(taskId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPrivacyPattern(privacy);
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
-            object.put("msgId",taskProjectId);
-            object.put("data",taskProjectId);
+            object.put("msgId",taskId);
+            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);

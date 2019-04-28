@@ -66,6 +66,7 @@ public class LogApi extends BaseController {
             log.setProjectId(projectId);
             log.setLogType(1);
             log.setContent(content);
+            log.setCreateTime(System.currentTimeMillis());
             log.setMemberId(ShiroAuthenticationManager.getUserId());
             if(logService.save(log)) {
                 String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(publicId);

@@ -258,7 +258,7 @@ public class TagApi {
             if(tagService.addItemTag(tagId,publicId,publicType)) {
                 Tag byId = tagService.getById(tagId);
                 jsonObject.put("result", 1);
-                jsonObject.put("data", new JSONObject().fluentPut("tag",byId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+                jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType));
                 jsonObject.put("name", byId.getTagName());
                 jsonObject.put("msgId", this.getProjectId(tagId));
                 jsonObject.put("msg", "绑定成功!");

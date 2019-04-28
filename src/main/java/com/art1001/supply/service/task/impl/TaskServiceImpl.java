@@ -491,6 +491,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         List<Task> child = task.getTaskList();
         try {
             task.setTaskId(IdGen.uuid());
+            task.setTaskStatus(false);
             //更新新任务的创建时间
             task.setCreateTime(System.currentTimeMillis());
             //设置新任务的更新时间
@@ -506,6 +507,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             this.save(task);
             if(CollectionUtils.isNotEmpty(child)){
                 child.forEach(item ->{
+                    item.setTaskStatus(false);
                     item.setTaskId(IdGen.uuid());
                     //设置新的子任务id
                     item.setProjectId(projectId);

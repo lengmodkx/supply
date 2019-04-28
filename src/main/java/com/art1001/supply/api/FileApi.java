@@ -906,6 +906,7 @@ public class FileApi extends BaseController {
              fileService.bindFile(files);
              jsonObject.put("data", publicId);
              jsonObject.put("result", 1);
+             jsonObject.put("id",publicId);
              jsonObject.put("msgId", projectId);
              return jsonObject;
         } catch (Exception e){
