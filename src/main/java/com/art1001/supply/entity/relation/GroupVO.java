@@ -40,24 +40,29 @@ public class GroupVO {
     private int completeCount;
 
     /**
+     * 完成任务数的百分比数值
+     */
+    private String completePercentage;
+
+    /**
+     * 未完成的任务数的百分比数值
+     */
+    private String noCompletePercentage;
+
+    /**
      * 分组内未完成任务的数量
      */
-    private int notCompleteCount;
+    private Integer notCompleteCount;
 
     /**
-     * 普通百分比
+     * 已经逾期的任务数量
      */
-    private Long ordinary;
+    private Integer beOverdue;
 
     /**
-     * 紧急百分比
+     * 已经逾期的任务百分比数值
      */
-    private Long urgent;
-
-    /**
-     * 非常紧急百分比
-     */
-    private Long veryUrgent;
+    private String beOverduePercentage;
 
     /**
      * 分组下的任务列表

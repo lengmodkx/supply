@@ -26,11 +26,13 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -524,12 +526,23 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public List<GroupVO> getGroupsInfo(String projectId){
+		DecimalFormat df   = new DecimalFormat("######0.00");
 		List<GroupVO> groupsInfo = relationMapper.getGroupsInfo(projectId);
 		groupsInfo.forEach(g -> {
-			g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
-			g.setOrdinary(g.getTasks().stream().filter(t -> "普通".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
-			g.setUrgent(g.getTasks().stream().filter(t -> "紧急".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
-			g.setVeryUrgent(g.getTasks().stream().filter(t -> "非常紧急".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
+			g.setTaskTotal(g.getTasks().size());
+			if(!CollectionUtils.isEmpty(g.getTasks())){
+				g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
+				g.setNotCompleteCount(g.getTasks().size() - g.getCompleteCount());
+				g.setCompletePercentage(df.format((double)g.getCompleteCount() / (double)g.getTasks().size() * 100));
+				g.setNoCompletePercentage(df.format((double)(g.getTasks().size() - g.getCompleteCount()) / (double)g.getTasks().size() * 100));
+
+
+				int beOverdue = (int)g.getTasks().stream().filter(t -> t.getEndTime() != null && t.getEndTime() < System.currentTimeMillis()).count();
+				g.setBeOverdue(beOverdue);
+				g.setBeOverduePercentage(df.format((double)beOverdue / (double)g.getTasks().size() * 100));
+			}
+			//任务信息置空,让gc进行回收
+			g.setTasks(null);
 		});
 		return groupsInfo;
 	}

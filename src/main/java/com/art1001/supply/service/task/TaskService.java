@@ -586,4 +586,11 @@ public interface TaskService extends IService<Task> {
 	 * @return 项目id
 	 */
 	String findChildProjectId(String id);
+
+	/**
+	 * 获取任务的列表看板模式
+	 * @param projectId 项目id
+	 * @return 任务数据
+	 */
+    List<Task> getTaskPanel(String projectId);
 }

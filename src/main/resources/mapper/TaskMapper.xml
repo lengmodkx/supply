@@ -101,6 +101,23 @@
 		</collection>
 	</resultMap>
 
+	<!-- 任务看板模式专用 -->
+	<resultMap id="panelListMap" type="com.art1001.supply.entity.task.Task">
+		<id column="task_id" property="taskId"/>
+		<result column="task_name" property="taskName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="relation_id" property="taskGroupId"/>
+		<result column="relation_name" property="groupName"/>
+		<result column="executor" property="executor"/>
+		<result column="user_name" property="executorName"/>
+		<result column="image" property="executorImg"/>
+		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+			<id column="f_id" property="taskId"/>
+			<result column="f_name" property="taskName"/>
+		</association>
+	</resultMap>
+
 	<!-- 回收站专用 -->
 	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
 		<!--查询执行者-->
@@ -1309,5 +1326,29 @@
 	<!-- 把该子任务向上递归直到获取到顶级父任务的项目id -->
 	<select id="selectChildProjectId" resultType="java.lang.String">
 		select getChildTaskProjectId(#{id})
+	</select>
+
+	<!-- 获取任务的看板模式的数据 -->
+	<select id="getTaskPanel" resultMap="panelListMap">
+		SELECT
+			t.task_id,
+			t.task_name,
+			f.task_id as f_id,
+			f.task_name as f_name,
+			t.start_time,
+			t.end_time,
+			t.executor,
+			g.relation_id,
+			g.relation_name,
+			u.user_name,
+			u.image
+		FROM
+			prm_task AS t
+			LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
+			LEFT JOIN prm_relation AS g ON t.task_group_id = g.relation_id
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			t.project_id = #{projectId}
+			AND t.task_del = 0 ORDER by t.create_time DESC
 	</select>
 </mapper>

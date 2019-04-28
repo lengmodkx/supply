@@ -926,6 +926,18 @@ public class TaskApi extends BaseController {
         }
     }
 
+    @GetMapping("/{projectId}/panel")
+    public JSONObject getTaskPanel(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data", taskService.getTaskPanel(projectId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
     /**
      * 获取任务的项目id
      * @param taskId 任务id

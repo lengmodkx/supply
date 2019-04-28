@@ -691,4 +691,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 项目id
 	 */
 	String selectChildProjectId(@Param("id") String id);
+
+	List<Task> getTaskPanel(@Param("projectId") String projectId);
 }

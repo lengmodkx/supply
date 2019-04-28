@@ -1,0 +1,14 @@
+[
+    data:{
+        "groupId": "4dab9d39965f422f8baf120798828f1f",  //分组id
+        "groupName": "任务",                            //分组名称
+        "projectId": "459c0426bbac407fb9d9de9ebbe53514",//分组所属项目的id
+        "taskTotal": 3,                                 //分组内的任务总数
+        "completeCount": 2,                             //分组内的任务完成数
+        "completePercentage": "66.67",                  //分组内的任务完成数量百分比
+        "noCompletePercentage": "33.33",                //分组内的任务未完成数量百分比
+        "notCompleteCount": 0                           //分组内的任务未完成数量
+        "beOverdue": 2,                                 //分组内已逾期的任务数量
+        "beOverduePercentage": "50.00"                  //分组内已逾期的任务数量百分比
+        }
+]

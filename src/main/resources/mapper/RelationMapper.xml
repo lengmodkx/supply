@@ -23,6 +23,7 @@
 			<id column="task_id" property="taskId"/>
 			<result column="task_status" property="taskStatus"/>
 			<result column="priority" property="priority"/>
+			<result column="end_time" property="endTime"/>
 		</collection>
 	</resultMap>
 
@@ -465,6 +466,7 @@
 			g.project_id,
 			t.task_status,
 			t.priority,
+			t.end_time,
 			g.create_time
 		FROM
 			prm_relation AS g

@@ -1719,6 +1719,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 获取任务的列表看板模式
+     * @param projectId 项目id
+     * @return 任务数据
+     */
+    @Override
+    public List<Task> getTaskPanel(String projectId) {
+        return taskMapper.getTaskPanel(projectId);
+    }
+
+    /**
      * 根据id集合 查询出对应的任务信息 以及执行者信息
      * @param idList id集合
      * @return
