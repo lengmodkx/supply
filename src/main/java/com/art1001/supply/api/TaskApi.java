@@ -178,7 +178,7 @@ public class TaskApi extends BaseController {
             //这里判断父任务是否已经完成
             String parentId = taskService.getById(taskId).getParentId();
             if(parentId != "0"){
-                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId.getParentId()));
+                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId));
                 if(pTask.getTaskStatus()){
                     throw new AjaxException("父任务已经完成");
                 }
