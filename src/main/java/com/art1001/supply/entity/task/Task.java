@@ -304,6 +304,12 @@ public class Task extends Model<Task> {
 	@TableField(exist = false)
 	private String bindId;
 
+	/**
+	 * 附件的id
+	 */
+	@TableField(exist = false)
+	private String fileId;
+
 
 	@Override
 	protected Serializable pkVal() {
