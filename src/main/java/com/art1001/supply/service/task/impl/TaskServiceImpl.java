@@ -1440,14 +1440,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`","parent_id").eq("task_id", taskId));
+        //这里判断是否有子任务未完成
+        List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId));
+        subTask.forEach(t -> {
+            if(!t.getTaskStatus()){
+                throw new ServiceException("有子任务未完成!");
+            }
+        });
         //先更新任务状态
         Task completeTask = new Task();
         completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
         taskMapper.updateById(completeTask);
-
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`").eq("task_id", taskId));
-
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;

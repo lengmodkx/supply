@@ -155,7 +155,9 @@ public class TaskApi extends BaseController {
             object.put("publicType",Constants.TASK);
             object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
-        }catch(Exception e){
+        } catch (ServiceException e){
+          throw new AjaxException(e.getMessage(),e);
+        } catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
         }
@@ -173,6 +175,14 @@ public class TaskApi extends BaseController {
     public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
+            //这里判断父任务是否已经完成
+            String parentId = taskService.getById(taskId).getParentId();
+            if(parentId != "0"){
+                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId.getParentId()));
+                if(pTask.getTaskStatus()){
+                    throw new AjaxException("父任务已经完成");
+                }
+            }
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus(false);
