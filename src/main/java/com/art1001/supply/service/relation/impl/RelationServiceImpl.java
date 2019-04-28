@@ -6,6 +6,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
@@ -512,6 +513,25 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	@Override
 	public List<Relation> bindMenuInfo(String groupId) {
 		return relationMapper.bindMenuInfo(groupId);
+	}
+
+
+	/**
+	 * 获取项目下的全部分组信息
+	 * 分组信息中包括了 任务总数  完成数 优先级信息等
+	 * @param  projectId 项目id
+	 * @return 分组详情信息
+	 */
+	@Override
+	public List<GroupVO> getGroupsInfo(String projectId){
+		List<GroupVO> groupsInfo = relationMapper.getGroupsInfo(projectId);
+		groupsInfo.forEach(g -> {
+			g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
+			g.setOrdinary(g.getTasks().stream().filter(t -> "普通".equals(t.getPriority())).count() / (long)g.getTasks().size());
+			g.setUrgent(g.getTasks().stream().filter(t -> "紧急".equals(t.getPriority())).count() / (long)g.getTasks().size());
+			g.setVeryUrgent(g.getTasks().stream().filter(t -> "非常紧急".equals(t.getPriority())).count() / (long)g.getTasks().size());
+		});
+		return groupsInfo;
 	}
 }
 

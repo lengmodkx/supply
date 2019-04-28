@@ -1,6 +1,9 @@
 package com.art1001.supply.entity.relation;
 
+import com.art1001.supply.entity.task.Task;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author heshaohua
@@ -22,6 +25,11 @@ public class GroupVO {
     private String groupName;
 
     /**
+     * 项目id
+     */
+    private String projectId;
+
+    /**
      * 分组内任务总数
      */
     private int taskTotal;
@@ -29,30 +37,33 @@ public class GroupVO {
     /**
      * 分组内 已完成任务的数量
      */
-    private int complete;
+    private int completeCount;
 
     /**
      * 分组内未完成任务的数量
      */
-    private int hangInTheAir;
+    private int notCompleteCount;
 
     /**
-     * 分组内近期的任务数量
+     * 普通百分比
      */
-    private int recent;
+    private Long ordinary;
 
     /**
-     * 分组内已逾期的任务数量
+     * 紧急百分比
      */
-    private int overdue;
+    private Long urgent;
 
     /**
-     * 分组的创建者
+     * 非常紧急百分比
      */
-    private String creator;
+    private Long veryUrgent;
 
     /**
-     * 分组状态
+     * 分组下的任务列表
      */
-    private int isDel;
+    private List<Task> tasks;
+
+
+
 }

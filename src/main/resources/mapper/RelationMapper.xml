@@ -16,15 +16,14 @@
 	</resultMap>
 
 	<resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">
-		<id column="id" property="groupId" jdbcType="VARCHAR"/>
-		<result column="NAME" property="groupName" jdbcType="VARCHAR" />
-		<result column="创建人" property="creator" jdbcType="VARCHAR" />
-		<result column="分组状态" property="isDel" jdbcType="INTEGER" />
-		<result column="完成" property="complete" jdbcType="INTEGER" />
-		<result column="未完成" property="hangInTheAir" jdbcType="INTEGER" />
-		<result column="已逾期" property="overdue" jdbcType="INTEGER" />
-		<result column="近期的任务" property="recent" jdbcType="INTEGER" />
-		<result column="分组内任务总数" property="taskTotal" jdbcType="INTEGER" />
+		<id column="relation_id" property="groupId"/>
+		<result column="relation_name" property="groupName"/>
+		<result column="project_id" property="projectId"/>
+		<collection property="tasks" ofType="com.art1001.supply.entity.task.Task">
+			<id column="task_id" property="taskId"/>
+			<result column="task_status" property="taskStatus"/>
+			<result column="priority" property="priority"/>
+		</collection>
 	</resultMap>
 
 	<!-- 回收站专用 -->
@@ -455,5 +454,24 @@
 			LEFT JOIN tb_user u ON t.executor = u.user_id
 		WHERE
 			r.parent_id = #{groupId}  order by r.order,t.order desc
+	</select>
+
+	<!-- 获取项目下的全部分组信息 -->
+    <select id="getGroupsInfo" resultMap="groupInfo">
+		SELECT
+			relation_id,
+			relation_name,
+			t.task_id,
+			g.project_id,
+			t.task_status,
+			t.priority
+		FROM
+			prm_relation AS g
+			LEFT JOIN prm_task AS t ON t.task_group_id = g.relation_id
+		WHERE
+			g.project_id = #{projectId}
+			AND lable = 0
+			AND relation_del = 0
+			order by create_time desc
 	</select>
 </mapper>

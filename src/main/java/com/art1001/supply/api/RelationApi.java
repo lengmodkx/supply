@@ -235,4 +235,22 @@ public class  RelationApi {
         }
     }
 
+    /**
+     * 获取一个项目下的分组信息
+     * 分组信息内 包括改分组的任务完成情况 优先级分布等
+     * @param projectId 项目id
+     * @return 分组id
+     */
+    @GetMapping("/{projectId}/groups")
+    public JSONObject getGroupsAndTaskCountInfo(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",relationService.getGroupsInfo(projectId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new SystemException("系统异常,数据获取失败!",e);
+        }
+    }
+
 }

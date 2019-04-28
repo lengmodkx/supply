@@ -1,6 +1,7 @@
 package com.art1001.supply.service.relation;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
@@ -219,4 +220,12 @@ public interface RelationService extends IService<Relation> {
 	 * @return 菜单以及任务信息
 	 */
     List<Relation> bindMenuInfo(String groupId);
+
+	/**
+	 * 获取项目下的全部分组信息
+	 * 分组信息中包括了 任务总数  完成数 优先级信息等
+	 * @param  projectId 项目id
+	 * @return 分组详情信息
+	 */
+    List<GroupVO> getGroupsInfo(String projectId);
 }
