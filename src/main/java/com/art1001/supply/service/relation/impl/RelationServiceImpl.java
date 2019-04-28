@@ -157,8 +157,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			});
 			Iterator<Task> iterator = r.getTaskList().iterator();
 			while(iterator.hasNext()){
-				if(iterator.next().getPrivacyPattern() == 0){
-					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),iterator.next().getExecutor()) && Arrays.asList(iterator.next().getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
+				Task task = iterator.next();
+				if(task.getPrivacyPattern() == 0){
+					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),task.getExecutor()) && Arrays.asList(task.getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
 						iterator.remove();
 					}
 				}

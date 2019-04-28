@@ -753,14 +753,15 @@ public class TaskApi extends BaseController {
     public JSONObject taskPrivacy(@PathVariable(value = "taskId")String taskId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
         try{
+            String projectId = getTaskProjectId(taskId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPrivacyPattern(privacy);
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msg","移入成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("msg","修改成功");
+            object.put("msgId",projectId);
+            object.put("data",projectId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
