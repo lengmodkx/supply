@@ -546,7 +546,11 @@ public class TaskApi extends BaseController {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setRemarks(remarks);
+            if(remarks.equals("<p><br></p>")){
+                task.setRemarks("");
+            } else{
+                task.setRemarks(remarks);
+            }
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
