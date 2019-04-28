@@ -1709,6 +1709,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 把该子任务向上递归直到获取到顶级父任务的项目id
+     * @param id 子任务id
+     * @return 项目id
+     */
+    @Override
+    public String findChildProjectId(String id) {
+        return taskMapper.selectChildProjectId(id);
+    }
+
+    /**
      * 根据id集合 查询出对应的任务信息 以及执行者信息
      * @param idList id集合
      * @return

@@ -31,6 +31,7 @@
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
+		<result column="progress" property="progress"/>
 
 		<!-- 查询父级任务信息 -->
 		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
@@ -206,6 +207,7 @@
 
 	<sql id="Base_Column_List">
 		prm_task.task_id,
+		prm_task.progress,
 		prm_task.project_id,
 		prm_task.task_name,
 		prm_task.start_time,
@@ -1297,5 +1299,10 @@
 			LEFT JOIN tb_user u ON t.executor = u.user_id
 			LEFT JOIN prm_tag_relation tr ON t.task_id = tr.task_id
 			LEFT JOIN prm_tag tag ON tr.tag_id = tag.tag_id where t.task_id = #{taskId}
+	</select>
+
+	<!-- 把该子任务向上递归直到获取到顶级父任务的项目id -->
+	<select id="selectChildProjectId" resultType="java.lang.String">
+		select getChildTaskProjectId(#{id})
 	</select>
 </mapper>

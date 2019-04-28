@@ -145,6 +145,12 @@ public class TaskApi extends BaseController {
         JSONObject object = new JSONObject();
         try{
             taskService.completeTask(taskId);
+            if(taskService.getById(taskId).getParentId() != "0"){
+                object.put("msgId",taskService.findChildProjectId(taskId));
+            } else{
+                object.put("msgId",this.getTaskProjectId(taskId));
+
+            }
             Task t = new Task();
             t.setTaskId(taskId);
             t.setTaskStatus(true);
@@ -153,7 +159,6 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("publicType",Constants.TASK);
-            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
         } catch (ServiceException e){
           throw new AjaxException(e.getMessage(),e);
@@ -182,6 +187,10 @@ public class TaskApi extends BaseController {
                 if(pTask.getTaskStatus()){
                     throw new AjaxException("父任务已经完成");
                 }
+                object.put("msgId",taskService.findChildProjectId(taskId));
+            } else{
+                object.put("msgId",this.getTaskProjectId(taskId));
+
             }
             Task task = new Task();
             task.setTaskId(taskId);
@@ -189,7 +198,6 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);

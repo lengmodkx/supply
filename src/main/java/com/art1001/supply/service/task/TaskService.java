@@ -579,4 +579,11 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务信息
 	 */
     Task findSimpleTaskById(String taskId);
+
+	/**
+	 * 把该子任务向上递归直到获取到顶级父任务的项目id
+	 * @param id 子任务id
+	 * @return 项目id
+	 */
+	String findChildProjectId(String id);
 }
