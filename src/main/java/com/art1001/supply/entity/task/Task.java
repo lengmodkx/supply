@@ -298,6 +298,12 @@ public class Task extends Model<Task> {
 	 */
 	private Integer progress;
 
+	/**
+	 * 关联信息的id
+	 */
+	@TableField(exist = false)
+	private String bindId;
+
 
 	@Override
 	protected Serializable pkVal() {

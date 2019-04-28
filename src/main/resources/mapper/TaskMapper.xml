@@ -84,6 +84,7 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
+		<result column="bind_id" property="bindId"/>
 		<!--查询标签-->
 		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
@@ -738,7 +739,7 @@
 		sub.executor AS sub_executor,
 		sub.task_status as sub_status
 		from prm_task t LEFT JOIN prm_task AS sub ON t.task_id = sub.parent_id left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
-		left join tb_user u on t.executor = u.user_id
+		left join tb_user u on t.executor = u.user_id LEFT JOIN prm_binding as bd on bd.public_id = t.task_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.order asc
 	</select>
 
