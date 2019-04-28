@@ -464,7 +464,8 @@
 			t.task_id,
 			g.project_id,
 			t.task_status,
-			t.priority
+			t.priority,
+			g.create_time
 		FROM
 			prm_relation AS g
 			LEFT JOIN prm_task AS t ON t.task_group_id = g.relation_id

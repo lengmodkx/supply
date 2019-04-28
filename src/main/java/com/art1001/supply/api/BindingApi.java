@@ -89,7 +89,7 @@ public class BindingApi {
             jsonObject.put("result",1);
             jsonObject.put("msgId", bindingService.getProjectId(publicId));
             jsonObject.put("id", publicId);
-            jsonObject.put("publicType", publicId);
+            jsonObject.put("publicType", publicType);
         }catch (Exception e){
             log.error("系统异常,绑定失败:",e);
             throw new AjaxException(e);

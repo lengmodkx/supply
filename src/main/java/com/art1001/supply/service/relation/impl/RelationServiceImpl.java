@@ -527,9 +527,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		List<GroupVO> groupsInfo = relationMapper.getGroupsInfo(projectId);
 		groupsInfo.forEach(g -> {
 			g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
-			g.setOrdinary(g.getTasks().stream().filter(t -> "普通".equals(t.getPriority())).count() / (long)g.getTasks().size());
-			g.setUrgent(g.getTasks().stream().filter(t -> "紧急".equals(t.getPriority())).count() / (long)g.getTasks().size());
-			g.setVeryUrgent(g.getTasks().stream().filter(t -> "非常紧急".equals(t.getPriority())).count() / (long)g.getTasks().size());
+			g.setOrdinary(g.getTasks().stream().filter(t -> "普通".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
+			g.setUrgent(g.getTasks().stream().filter(t -> "紧急".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
+			g.setVeryUrgent(g.getTasks().stream().filter(t -> "非常紧急".equals(t.getPriority())).count() / (long)g.getTasks().size() * 100);
 		});
 		return groupsInfo;
 	}

@@ -145,7 +145,7 @@ public class TaskApi extends BaseController {
         JSONObject object = new JSONObject();
         try{
             taskService.completeTask(taskId);
-            if(taskService.getById(taskId).getParentId() != "0"){
+            if(!taskService.getById(taskId).getParentId().equals("0")){
                 object.put("msgId",taskService.findChildProjectId(taskId));
             } else{
                 object.put("msgId",this.getTaskProjectId(taskId));
@@ -154,7 +154,7 @@ public class TaskApi extends BaseController {
             Task t = new Task();
             t.setTaskId(taskId);
             t.setTaskStatus(true);
-            object.put("data",taskId);
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
             object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
@@ -182,7 +182,7 @@ public class TaskApi extends BaseController {
         try{
             //这里判断父任务是否已经完成
             String parentId = taskService.getById(taskId).getParentId();
-            if(parentId != "0"){
+            if(!parentId.equals("0")){
                 Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId));
                 if(pTask.getTaskStatus()){
                     throw new AjaxException("父任务已经完成");
@@ -198,7 +198,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("data",taskId);
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
