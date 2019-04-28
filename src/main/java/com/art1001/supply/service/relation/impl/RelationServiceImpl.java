@@ -155,6 +155,15 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			r.getTaskList().forEach(t -> {
 				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count() );
 			});
+			Iterator<Task> iterator = r.getTaskList().iterator();
+			while(iterator.hasNext()){
+				if(iterator.next().getPrivacyPattern() == 0){
+					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),iterator.next().getExecutor()) && Arrays.asList(iterator.next().getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
+						iterator.remove();
+					}
+				}
+			}
+
 		});
 		return relationAllList;
 	}
