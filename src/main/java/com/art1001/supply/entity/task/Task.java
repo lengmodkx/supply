@@ -293,6 +293,11 @@ public class Task extends Model<Task> {
 	@TableField(exist = false)
 	private Boolean isExistSub;
 
+	/**
+	 * 任务的进度
+	 */
+	private Integer progress;
+
 
 	@Override
 	protected Serializable pkVal() {
