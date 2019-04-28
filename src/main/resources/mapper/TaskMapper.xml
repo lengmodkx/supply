@@ -89,6 +89,13 @@
 			<result property="tagName" column="tag_name"/>
 			<result property="bgColor" column="bg_color"/>
 		</collection>
+
+		<!-- 查询子任务 -->
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<id column="sub_task_id" property="taskId"/>
+			<result column="sub_task_name" property="taskName"/>
+			<result column="executor" property="executor"/>
+		</collection>
 	</resultMap>
 
 	<!-- 回收站专用 -->
@@ -694,8 +701,41 @@
 	<!-- 查询当前菜单下的全部任务信息 -->
 	<select id="findTaskByMenuId" resultMap="BaseResultMap2">
 		select
-		<include refid="Base_Column_List3"/>
-		from prm_task t left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		t.task_id,
+		t.project_id,
+		t.task_name,
+		t.start_time,
+		t.end_time,
+		t.`repeat`,
+		t.remarks,
+		t.priority,
+		t.`level`,
+		t.parent_id,
+		t.member_id,
+		t.executor,
+		u.user_name AS executor_name,
+		u.image AS executor_img,
+		t.task_type,
+		t.task_menu_id,
+		t.task_group_id,
+		t.task_status,
+		t.task_code,
+		t.task_del,
+		t.create_time,
+		t.update_time,
+		t.fabulous_count,
+		t.privacy_pattern,
+		t.other,
+		t.ORDER,
+		t.task_uids,
+		tg.tag_id,
+		tg.tag_name,
+		tg.bg_color,
+		sub.task_id AS sub_task_id,
+		sub.task_name AS sub_task_name,
+		sub.executor AS sub_executor,
+		sub.task_status as sub_status
+		from prm_task t LEFT JOIN prm_task AS sub ON t.task_id = sub.parent_id left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.order asc
 	</select>

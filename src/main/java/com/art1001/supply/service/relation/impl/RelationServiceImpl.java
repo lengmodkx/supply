@@ -150,7 +150,13 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public List<Relation> findRelationAllList(Relation relation){
-		return relationMapper.findRelationAllList(relation);
+		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
+		relationAllList.forEach(r -> {
+			r.getTaskList().forEach(t -> {
+				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count());
+			});
+		});
+		return relationAllList;
 	}
 
 	/**
