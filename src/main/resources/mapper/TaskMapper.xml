@@ -1307,7 +1307,7 @@
 			t.task_name,
 			t.start_time,
 			t.end_time,
-			t.projecct_id,
+			t.project_id,
 			t.`repeat`,
 			u.user_name,
 			u.image,
