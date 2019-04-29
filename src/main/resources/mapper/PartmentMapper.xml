@@ -71,7 +71,7 @@
 	</select>
 
 	<select id="findMaxOrder" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select MAX(partment_order) from prm_partment where organization_id = #{orgId}
+		select IFNULL(MAX(partment_order),0) from prm_partment where organization_id = #{orgId}
 	</select>
 
 
