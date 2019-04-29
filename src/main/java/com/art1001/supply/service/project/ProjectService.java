@@ -140,4 +140,13 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
     List<Project> seachByName(String projectName, String condition);
+
+	/**
+	 * 获取项目下的所有任务id字符串 (逗号隔开)
+	 * 包括子任务id
+	 * 使用时需要自己分割
+	 * @param projectId 项目id
+	 * @return id字符串
+	 */
+	String findProjectAllTask(String projectId);
 }

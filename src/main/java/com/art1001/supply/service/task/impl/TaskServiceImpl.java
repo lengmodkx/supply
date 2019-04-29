@@ -33,6 +33,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
+import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.quartz.MyJob;
@@ -45,6 +46,7 @@ import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.quartz.QuartzInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
@@ -57,6 +59,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
@@ -90,6 +93,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /** userMapper接口 */
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private ProjectService projectService;
 
     /** FablousMapper接口*/
     @Resource
@@ -1725,7 +1731,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public List<Task> getTaskPanel(String projectId) {
-        return taskMapper.getTaskPanel(projectId);
+        if(Stringer.isNullOrEmpty(projectId)){
+            throw new ServiceException("项目id不能为空!");
+        }
+        String projectAllTask = projectService.findProjectAllTask(projectId);
+        if(Stringer.isNullOrEmpty(projectAllTask)){
+            return new ArrayList<>();
+        }
+        List<String> taskIds = Arrays.asList(projectAllTask.split(","));
+
+        return taskMapper.getTaskPanel(taskIds);
     }
 
     /**

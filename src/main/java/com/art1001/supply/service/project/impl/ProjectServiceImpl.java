@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.ConsoleHandler;
 import java.util.stream.Collectors;
@@ -335,5 +336,17 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(),projectName);
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * 获取项目下的所有任务id字符串 (逗号隔开)
+	 * 包括子任务id
+	 * 使用时需要自己分割
+	 * @param projectId 项目id
+	 * @return id字符串
+	 */
+	@Override
+	public String findProjectAllTask(String projectId){
+		return projectMapper.selectProjectAllTask(projectId);
 	}
 }

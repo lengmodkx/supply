@@ -107,8 +107,8 @@
 		<result column="task_name" property="taskName"/>
 		<result column="start_time" property="startTime"/>
 		<result column="end_time" property="endTime"/>
-		<result column="relation_id" property="taskGroupId"/>
-		<result column="relation_name" property="groupName"/>
+		<result column="relation_id" property="taskMenuId"/>
+		<result column="relation_name" property="taskMenuName"/>
 		<result column="executor" property="executor"/>
 		<result column="user_name" property="executorName"/>
 		<result column="image" property="executorImg"/>
@@ -1338,17 +1338,20 @@
 			t.start_time,
 			t.end_time,
 			t.executor,
-			g.relation_id,
-			g.relation_name,
+			m.relation_id,
+			m.relation_name,
 			u.user_name,
 			u.image
 		FROM
 			prm_task AS t
 			LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
-			LEFT JOIN prm_relation AS g ON t.task_group_id = g.relation_id
+			LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
 			LEFT JOIN tb_user AS u ON t.executor = u.user_id
 		WHERE
-			t.project_id = #{projectId}
-			AND t.task_del = 0 ORDER by t.create_time DESC
+			t.task_id IN
+			<foreach collection="ids" item="id" separator="," close=")" open="(">
+				#{id}
+			</foreach>
+			AND t.task_del = 0 ORDER by t.create_time ,f.create_time DESC
 	</select>
 </mapper>

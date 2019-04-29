@@ -156,6 +156,11 @@ public class Task extends Model<Task> {
 	private String taskMenuId;
 
 	/**
+	 * 列表名称
+	 */
+	private String taskMenuName;
+
+	/**
 	 * 任务分组id
 	 */
 	private String taskGroupId;
