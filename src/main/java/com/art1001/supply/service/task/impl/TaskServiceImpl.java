@@ -1756,21 +1756,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             //将任务信息循环映射进GantChartsVO
             GantChartVO gantChartVO = new GantChartVO();
             gantChartVO.setPublicId(taskId);
-            gantChartVO.setStart(f.getStartTime());
-            gantChartVO.setEnd(f.getEndTime());
-            gantChartVO.setType("task");
-            gantChartVO.setExpander(f.getIsExistSub());
-            gantChartVO.setLabel(f.getTaskName());
-            gantChartVO.setParentId(Integer.valueOf(f.getParentId()));
-            gantChartVO.setUser(f.getExecutorName());
+            gantChartVO.setStart_date(f.getStartTime());
+            gantChartVO.setEnd_date(f.getEndTime());
+            gantChartVO.setType("gantt.config.types.task");
+            gantChartVO.setOpen(f.getIsExistSub());
+            gantChartVO.setText(f.getTaskName());
+            gantChartVO.setParent(Integer.valueOf(f.getParentId()));
             f.setTaskId(String.valueOf(order));
             gantChartVO.setId(Integer.valueOf(f.getTaskId()));
             gants.add(gantChartVO);
             order++;
         }
         for (GantChartVO f : gants) {
-           if(f.getParentId() == 0){
-               f.setParentId(1);
+           if(f.getParent() == 0){
+               f.setParent(1);
            }
         }
         return gants;

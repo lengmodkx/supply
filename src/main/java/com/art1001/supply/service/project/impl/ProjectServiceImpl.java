@@ -308,11 +308,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
 		pro.setId(1);
-		pro.setType("project");
-		pro.setStart(projectGanttChart.getStartTime());
-		pro.setEnd(projectGanttChart.getEndTime());
-		pro.setLabel(projectGanttChart.getProjectName());
-		pro.setUser(projectGanttChart.getMemberName());
+		pro.setType("gantt.config.types.project");
+		pro.setStart_date(projectGanttChart.getStartTime());
+		pro.setEnd_date(projectGanttChart.getEndTime());
+		pro.setText(projectGanttChart.getProjectName());
 		pro.setPublicId(projectId);
 		gants.add(0, pro);
 		return gants;

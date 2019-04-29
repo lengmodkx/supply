@@ -249,6 +249,7 @@ public class  RelationApi {
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e){
+            e.printStackTrace();
             throw new SystemException("系统异常,数据获取失败!",e);
         }
     }

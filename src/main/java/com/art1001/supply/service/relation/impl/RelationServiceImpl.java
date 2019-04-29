@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * relationServiceImpl
@@ -531,13 +532,17 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		groupsInfo.forEach(g -> {
 			g.setTaskTotal(g.getTasks().size());
 			if(!CollectionUtils.isEmpty(g.getTasks())){
+				//计算出完成的任务数据
 				g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
-				g.setNotCompleteCount(g.getTasks().size() - g.getCompleteCount());
 				g.setCompletePercentage(df.format((double)g.getCompleteCount() / (double)g.getTasks().size() * 100));
-				g.setNoCompletePercentage(df.format((double)(g.getTasks().size() - g.getCompleteCount()) / (double)g.getTasks().size() * 100));
 
+				//计算出未完成的任务数据(这里需要过滤逾期的任务)
+				List<Task> noComplete = g.getTasks().stream().filter(t -> t.getEndTime() != null && t.getEndTime() > System.currentTimeMillis() && !t.getTaskStatus()).collect(Collectors.toList());
+				g.setNotCompleteCount(noComplete.size());
+				g.setNoCompletePercentage(df.format((double)noComplete.size() / (double)g.getTasks().size() * 100));
 
-				int beOverdue = (int)g.getTasks().stream().filter(t -> t.getEndTime() != null && t.getEndTime() < System.currentTimeMillis()).count();
+				//计算已逾期数据
+				int beOverdue = (int)g.getTasks().stream().filter(t -> !t.getTaskStatus() && t.getEndTime() != null && t.getEndTime() < System.currentTimeMillis()).count();
 				g.setBeOverdue(beOverdue);
 				g.setBeOverduePercentage(df.format((double)beOverdue / (double)g.getTasks().size() * 100));
 			}

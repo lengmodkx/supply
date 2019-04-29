@@ -619,6 +619,9 @@ public class TaskApi extends BaseController {
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
+            Task parentTask = taskService.getById(taskId);
+            Integer pLevel = parentTask.getLevel();
+            task.setLevel(pLevel + 1);
             taskService.saveTask(task);
             object.put("result",1);
             object.put("msg","创建成功!");
