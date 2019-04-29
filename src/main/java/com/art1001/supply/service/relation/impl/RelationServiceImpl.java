@@ -538,6 +538,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 				//计算出未完成的任务数据(这里需要过滤逾期的任务)
 				List<Task> noComplete = g.getTasks().stream().filter(t -> t.getEndTime() != null && t.getEndTime() > System.currentTimeMillis() && !t.getTaskStatus()).collect(Collectors.toList());
+				noComplete.addAll(g.getTasks().stream().filter(t -> t.getEndTime() == null && !t.getTaskStatus()).collect(Collectors.toList()));
 				g.setNotCompleteCount(noComplete.size());
 				g.setNoCompletePercentage(df.format((double)noComplete.size() / (double)g.getTasks().size() * 100));
 
