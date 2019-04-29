@@ -53,5 +53,19 @@ public interface OrganizationGroupService extends IService<OrganizationGroup> {
 	 * @return
 	 */
 	public List<OrganizationGroup> findOrganizationGroupAllList();
-	
+
+	/**
+	 * 创建企业群组
+	 * @param organizationGroup 群组信息对象
+	 * @param memberIds 成员id 数组
+	 * @return 结果
+	 */
+	Boolean createGroup(OrganizationGroup organizationGroup, String[] memberIds);
+
+	/**
+	 * 删除群组
+	 * @param groupId 群组id
+	 * @return 结果
+	 */
+    Boolean removeGroup(String groupId);
 }

@@ -8,6 +8,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.user.UserEntity;
@@ -945,6 +946,35 @@ public class TaskApi extends BaseController {
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
             throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
+    /**
+     * 更新任务的开始/结束时间
+     * @param projectId 项目id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 结果
+     */
+    @PutMapping("{taskId}/start_end_time")
+    public JSONObject updateStartEndTime(@PathVariable String taskId,@RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(startTime == null && endTime == null){
+                jsonObject.put("msg","开始和结束时间必须给定一个!");
+                jsonObject.put("result",0);
+                return jsonObject;
+            }
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setStartTime(startTime);
+            task.setEndTime(endTime);
+            if(taskService.updateById(task)){
+                jsonObject.put("result",1);
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
         }
     }
 

@@ -1,8 +1,9 @@
 package com.art1001.supply.mapper.organization;
 
 import java.util.List;
-import com.art1001.supply.entity.organization.OrganizationGroup;
+
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

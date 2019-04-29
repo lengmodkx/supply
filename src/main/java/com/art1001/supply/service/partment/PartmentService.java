@@ -54,5 +54,17 @@ public interface PartmentService extends IService<Partment> {
 	 * @return
 	 */
 	List<Partment> findPartmentAllList(Partment partment);
-	
+
+	/**
+	 * 检查该部门是存在
+	 * @param partmentId 部门id
+	 * @return 结果
+	 */
+	boolean checkPartmentIsExist(String partmentId);
+
+	/**
+	 * 排序部门
+	 * @param partmentIds 排序后的部门id
+	 */
+	Boolean orderPartment(String[] partmentIds);
 }

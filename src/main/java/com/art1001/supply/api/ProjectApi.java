@@ -421,4 +421,33 @@ public class ProjectApi {
             throw new AjaxException("系统异常，获取失败！",e);
         }
     }
+
+    /**
+     * 更新项目的开始/结束时间
+     * @param projectId 项目id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 结果
+     */
+    @PutMapping("{projectId}/start_end_time")
+    public JSONObject updateStartEndTime(@PathVariable String projectId,@RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(startTime == null && endTime == null){
+                jsonObject.put("msg","开始和结束时间必须给定一个!");
+                jsonObject.put("result",0);
+                return jsonObject;
+            }
+            Project project = new Project();
+            project.setProjectId(projectId);
+            project.setStartTime(startTime);
+            project.setEndTime(endTime);
+            if(projectService.updateById(project)){
+                jsonObject.put("result",1);
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
 }

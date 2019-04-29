@@ -7,7 +7,6 @@
 		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="owner" property="owner" jdbcType="VARCHAR" />
-		<result column="member_ids" property="memberIds" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>

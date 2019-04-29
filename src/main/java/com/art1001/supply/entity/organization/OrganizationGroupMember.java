@@ -16,40 +16,36 @@ import java.io.Serializable;
  * @since 2019-04-29
  */
 @Data
-@TableName("prm_organization_group")
-public class OrganizationGroup implements Serializable {
+@TableName("prm_organization_group_member")
+public class OrganizationGroupMember implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 群组id
+     * id
      */
     @TableId(type = IdType.UUID)
+    private String id;
+
+    /**
+     * 分组id
+     */
     private String groupId;
 
     /**
-     * 群组名称
+     * 成员id
      */
-    private String groupName;
+    private String memberId;
 
     /**
-     * 该群组属于哪个组织
+     * 更新时间
      */
-    private String organizationId;
-
-    /**
-     * 拥有者
-     */
-    private String owner;
+    private Long updateTime;
 
     /**
      * 创建时间
      */
     private Long createTime;
 
-    /**
-     * 更新时间
-     */
-    private Long updateTime;
 
 }

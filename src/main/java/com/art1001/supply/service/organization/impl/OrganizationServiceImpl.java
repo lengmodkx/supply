@@ -4,14 +4,13 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.organization.Organization;
-import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -125,5 +124,15 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Override
 	public List<Organization> getMyOrg(Integer flag) {
 		return organizationMapper.getMyOrg(flag,ShiroAuthenticationManager.getUserId());
+	}
+
+	/**
+	 * 判断企业是否存在
+	 * @param organizationId 企业id
+	 * @return 结果
+	 */
+	@Override
+	public Boolean checkOrgIsExist(String organizationId) {
+		return organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", organizationId)) > 0;
 	}
 }
