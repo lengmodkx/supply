@@ -91,7 +91,7 @@ public class MemberInvitationApi {
             member.setRoleId(roleEntity.getRoleId());
             member.setCreateTime(System.currentTimeMillis());
             member.setUpdateTime(System.currentTimeMillis());
-            member.setMemberLabel(1);
+            member.setMemberLabel(0);
             projectMemberService.save(member);
             object.put("result",1);
             object.put("msg","添加成功");
