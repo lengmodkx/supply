@@ -218,7 +218,7 @@ public class ProjectApi {
             });
             object.put("result",1);
             object.put("data",funcList);
-            object.put("count",projectMemberService.count(new QueryWrapper<ProjectMember>().eq("project_id",projectId)));
+            object.put("project",project);
         } catch (NullPointerException e){
             object.put("result",0);
             object.put("msg","项目不存在");
