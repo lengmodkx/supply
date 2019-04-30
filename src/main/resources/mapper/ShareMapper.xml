@@ -18,8 +18,7 @@
         <collection property="logs" javaType="java.util.ArrayList" column="id"
                     select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
         <collection property="bindings" javaType="java.util.ArrayList" column="id" select="com.art1001.supply.mapper.binding.BindingMapper.findBindingList"/>
-        <collection property="logs" javaType="java.util.ArrayList" column="id"
-                    select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
+        
         <!--查询标签-->
         <collection property="tagList" column="tag_id" ofType="com.art1001.supply.entity.tag.Tag">
             <id property="tagId" column="tag_id"/>

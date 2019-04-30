@@ -6,7 +6,7 @@
     <groupId>com.art1001.supply</groupId>
     <artifactId>supply</artifactId>
     <version>0.0.1</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>supply</name>
     <description>supply project for Spring Boot</description>
@@ -261,34 +261,31 @@
     <build>
         <plugins>
 
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>buildnumber-maven-plugin</artifactId>-->
-                <!--<version>1.4</version>-->
-                <!--<configuration>-->
-                    <!--<timestampFormat>yyyyMMddHHmmss</timestampFormat>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>create-timestamp</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<inherited>false</inherited>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-war-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<warName>${project.artifactId}_${timestamp}</warName>-->
-                    <!--<packagingExcludes>src/main/resources/**</packagingExcludes>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <timestampFormat>yyyyMMddHHmmss</timestampFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>false</inherited>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>${project.artifactId}_${timestamp}</warName>
+                    <packagingExcludes>src/main/resources/**</packagingExcludes>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
