@@ -123,16 +123,19 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		organizationGroupMapper.insert(organizationGroup);
 
 		//保存分组成员信息
-		List<OrganizationGroupMember> gms = new ArrayList<>();
-		for (String memberId : memberIds) {
-			OrganizationGroupMember om = new OrganizationGroupMember();
-			om.setGroupId(organizationGroup.getGroupId());
-			om.setMemberId(memberId);
-			om.setUpdateTime(System.currentTimeMillis());
-			om.setCreateTime(System.currentTimeMillis());
-			gms.add(om);
+		if(memberIds != null){
+			List<OrganizationGroupMember> gms = new ArrayList<>();
+			for (String memberId : memberIds) {
+				OrganizationGroupMember om = new OrganizationGroupMember();
+				om.setGroupId(organizationGroup.getGroupId());
+				om.setMemberId(memberId);
+				om.setUpdateTime(System.currentTimeMillis());
+				om.setCreateTime(System.currentTimeMillis());
+				gms.add(om);
+			}
+			organizationGroupMemberService.saveBatch(gms);
 		}
-		return organizationGroupMemberService.saveBatch(gms);
+		return true;
 	}
 
 	/**
