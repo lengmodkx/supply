@@ -571,4 +571,26 @@ public interface TaskService extends IService<Task> {
 	 * @param task 基本任务信息
 	 */
 	void completionTaskInfo(Task task);
+
+	/**
+	 * 查询出一个任务基本信息
+	 * 用户任务简便信息的显示
+	 * @param taskId 任务id
+	 * @return 任务信息
+	 */
+    Task findSimpleTaskById(String taskId);
+
+	/**
+	 * 把该子任务向上递归直到获取到顶级父任务的项目id
+	 * @param id 子任务id
+	 * @return 项目id
+	 */
+	String findChildProjectId(String id);
+
+	/**
+	 * 获取任务的列表看板模式
+	 * @param projectId 项目id
+	 * @return 任务数据
+	 */
+    List<Task> getTaskPanel(String projectId);
 }

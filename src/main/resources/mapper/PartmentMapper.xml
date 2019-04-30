@@ -33,13 +33,13 @@
 	<select id="findPartmentPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		
-		select * from prm_partment
+		select * from prm_partment where parent_id = '0'
 		<include refid="whereStatement" />
 		
-		<if test="orderBy == 0">
+		<if test="partmentOrder == 0">
 			order by partment_id desc
 		</if>
-		<if test="orderBy == 1">
+		<if test="partmentOrder == 1">
 			order by partment_id asc
 		</if>
 		
@@ -54,10 +54,10 @@
 		<if test="organizationId!=null and organizationId!=''">
 			and organization_id = #{organizationId}
 		</if>
-		<if test="orderBy == 0">
+		<if test="partmentOrder == 0">
 			order by partment_order desc
 		</if>
-		<if test="orderBy == 1">
+		<if test="partmentOrder == 1">
 			order by partment_order asc
 		</if>
 	</select>
@@ -71,7 +71,11 @@
 	</select>
 
 	<select id="findMaxOrder" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select MAX(partment_order) from prm_partment where organization_id = #{orgId}
+		select IFNULL(MAX(partment_order),0) from prm_partment where organization_id = #{orgId}
+		<if test="parentId != null and parentId != ''">
+			AND
+			parent_id = #{parentId}
+		</if>
 	</select>
 
 

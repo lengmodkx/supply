@@ -156,6 +156,11 @@ public class Task extends Model<Task> {
 	private String taskMenuId;
 
 	/**
+	 * 列表名称
+	 */
+	private String taskMenuName;
+
+	/**
 	 * 任务分组id
 	 */
 	private String taskGroupId;
@@ -292,6 +297,23 @@ public class Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private Boolean isExistSub;
+
+	/**
+	 * 任务的进度
+	 */
+	private Integer progress;
+
+	/**
+	 * 关联信息的id
+	 */
+	@TableField(exist = false)
+	private String bindId;
+
+	/**
+	 * 附件的id
+	 */
+	@TableField(exist = false)
+	private String fileId;
 
 
 	@Override

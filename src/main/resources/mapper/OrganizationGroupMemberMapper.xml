@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.OrganizationGroupMember">
+        <id column="id" property="id" />
+        <result column="group_id" property="groupId" />
+        <result column="member_id" property="memberId" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 获取一个群组下某个成员的信息 -->
+    <select id="selectGroupMemberBymemberId"
+            resultType="com.art1001.supply.entity.organization.OrganizationGroupMember"></select>
+
+    <!-- 获取到最早加入该群组的成员id -->
+    <select id="selectEarliestMemberId" resultType="java.lang.String">
+        SELECT
+            member_id
+        FROM
+            prm_organization_group_member
+        WHERE
+            group_id = #{groupId}
+        ORDER BY
+            create_time
+            LIMIT 0,1
+    </select>
+
+</mapper>

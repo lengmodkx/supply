@@ -1,5 +1,8 @@
 package com.art1001.supply.entity.partment;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -14,7 +17,7 @@ import java.io.Serializable;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "prm_parment")
+@TableName(value = "prm_partment")
 public class Partment extends Model<Partment> {
 	
 	private static final long serialVersionUID = 1L;
@@ -23,6 +26,7 @@ public class Partment extends Model<Partment> {
 	/**
 	 * 部门id
 	 */
+	@TableId(type = IdType.UUID)
 	private String partmentId;
 
 
@@ -57,7 +61,12 @@ public class Partment extends Model<Partment> {
 	 */
 	private Long updateTime;
 
-	private Integer orderBy;
+	/**
+	 *  父级部门的id
+	 */
+	private String parentId;
+
+
 	@Override
 	protected Serializable pkVal() {
 		return this.partmentId;

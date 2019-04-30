@@ -676,4 +676,26 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return
 	 */
 	List<Task> listById(List<String> idList);
+
+	/**
+	 * 查询出一个任务基本信息
+	 * 用户任务简便信息的显示
+	 * @param taskId 任务id
+	 * @return 任务信息
+	 */
+	Task selectSimpleTaskById(@Param("taskId") String taskId);
+
+	/**
+	 * 把该子任务向上递归直到获取到顶级父任务的项目id
+	 * @param id 子任务id
+	 * @return 项目id
+	 */
+	String selectChildProjectId(@Param("id") String id);
+
+	/**
+	 * 根据ids 获取这些任务的数据
+	 * @param taskIds 任务ids
+	 * @return 任务集合
+	 */
+	List<Task> getTaskPanel(@Param("ids") List<String> taskIds);
 }

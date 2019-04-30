@@ -8,6 +8,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.user.UserEntity;
@@ -92,7 +93,7 @@ public class TaskApi extends BaseController {
     public JSONObject addTask(Task task){
         try {
             taskService.saveTask(task);
-            return success(task.getProjectId(),task,task.getTaskId(),task.getTaskName(),task.getProjectId());
+            return success(task.getProjectId(),taskService.findSimpleTaskById(task.getTaskId()),task.getTaskId(),task.getTaskName(),task.getProjectId());
         } catch (BaseException e){
             return error(e.getMessage());
         } catch (Exception e){
@@ -145,17 +146,24 @@ public class TaskApi extends BaseController {
         JSONObject object = new JSONObject();
         try{
             taskService.completeTask(taskId);
+            if(!taskService.getById(taskId).getParentId().equals("0")){
+                object.put("msgId",taskService.findChildProjectId(taskId));
+            } else{
+                object.put("msgId",this.getTaskProjectId(taskId));
+
+            }
             Task t = new Task();
             t.setTaskId(taskId);
             t.setTaskStatus(true);
-            object.put("data",new JSONObject().fluentPut("task",t));
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
             object.put("status",1);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("publicType",Constants.TASK);
-            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
-        }catch(Exception e){
+        } catch (ServiceException e){
+          throw new AjaxException(e.getMessage(),e);
+        } catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
         }
@@ -173,14 +181,25 @@ public class TaskApi extends BaseController {
     public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
         JSONObject object = new JSONObject();
         try{
+            //这里判断父任务是否已经完成
+            String parentId = taskService.getById(taskId).getParentId();
+            if(!parentId.equals("0")){
+                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId));
+                if(pTask.getTaskStatus()){
+                    throw new AjaxException("父任务已经完成");
+                }
+                object.put("msgId",taskService.findChildProjectId(taskId));
+            } else{
+                object.put("msgId",this.getTaskProjectId(taskId));
+
+            }
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus(false);
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -365,7 +384,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType",Constants.TASK);
         }catch(Exception e){
@@ -528,12 +547,16 @@ public class TaskApi extends BaseController {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setRemarks(remarks);
+            if(remarks.equals("<p><br></p>")){
+                task.setRemarks("");
+            } else{
+                task.setRemarks(remarks);
+            }
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("remarks",remarks));
+            object.put("msgId",getTaskProjectId(taskId));
+            object.put("data",taskId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
@@ -561,7 +584,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msgId",getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -597,10 +620,13 @@ public class TaskApi extends BaseController {
             if(StringUtils.isNotEmpty(startTime)){
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
+            Task parentTask = taskService.getById(taskId);
+            Integer pLevel = parentTask.getLevel();
+            task.setLevel(pLevel + 1);
             taskService.saveTask(task);
             object.put("result",1);
             object.put("msg","创建成功!");
-            object.put("data",new JSONObject().fluentPut("task",task));
+            object.put("data",taskId);
             String taskProjectId = this.getTaskProjectId(taskId);
             if(StringUtils.isNotEmpty(taskProjectId)){
                 object.put("msgId",taskProjectId);
@@ -635,7 +661,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("members",userService.findManyUserById(taskUids)));
+            object.put("data",taskId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,任务参与者更新:",e);
@@ -661,7 +687,8 @@ public class TaskApi extends BaseController {
                                @RequestParam(value = "menuId")String menuId){
         JSONObject object = new JSONObject();
         try{
-            object.put("data",new JSONObject().fluentPut("task",taskService.copyTask(taskId,projectId,groupId,menuId)));
+            taskService.copyTask(taskId,projectId,groupId,menuId);
+            object.put("data",projectId);
             object.put("result",1);
             object.put("msg","复制成功");
             object.put("msgId",projectId);
@@ -699,10 +726,10 @@ public class TaskApi extends BaseController {
             object.put("msg","移动成功");
             Map<String,Object> maps = new HashMap<String,Object>(2);
             if(projectId.equals(taskProjectId)){
-                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
+                maps.put(projectId,projectId);
             } else{
-                maps.put(projectId,new JSONObject().fluentPut("task",taskService.findTaskByTaskId(taskId)));
-                maps.put(taskProjectId,new JSONObject().fluentPut("task",task));
+                maps.put(projectId,projectId);
+                maps.put(taskProjectId,taskProjectId);
             }
             object.put("data",maps);
             object.put("id",taskId);
@@ -731,7 +758,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","移入成功");
             object.put("msgId",this.getTaskProjectId(taskId));
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
@@ -752,14 +779,15 @@ public class TaskApi extends BaseController {
     public JSONObject taskPrivacy(@PathVariable(value = "taskId")String taskId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
         try{
+            String projectId = getTaskProjectId(taskId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPrivacyPattern(privacy);
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msg","移入成功");
-            object.put("msgId",taskId);
-            object.put("data",new JSONObject().fluentPut("task",taskService.getById(taskId)));
+            object.put("msg","修改成功");
+            object.put("msgId",projectId);
+            object.put("data",projectId);
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,隐私模式更新失败:",e);
@@ -899,6 +927,54 @@ public class TaskApi extends BaseController {
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,获取子任务失败!",e);
+        }
+    }
+
+    /**
+     * 获取任务的看板数据
+     * @param projectId 项目id
+     * @return 任务集合
+     */
+    @GetMapping("/{projectId}/panel")
+    public JSONObject getTaskPanel(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data", taskService.getTaskPanel(projectId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!",e);
+        }
+    }
+
+    /**
+     * 更新任务的开始/结束时间
+     * @param projectId 项目id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 结果
+     */
+    @PutMapping("{taskId}/start_end_time")
+    public JSONObject updateStartEndTime(@PathVariable String taskId,@RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(startTime == null && endTime == null){
+                jsonObject.put("msg","开始和结束时间必须给定一个!");
+                jsonObject.put("result",0);
+                return jsonObject;
+            }
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setStartTime(startTime);
+            task.setEndTime(endTime);
+            if(taskService.updateById(task)){
+                jsonObject.put("result",1);
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
         }
     }
 

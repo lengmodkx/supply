@@ -12,6 +12,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -24,6 +25,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.ConsoleHandler;
 import java.util.stream.Collectors;
@@ -298,21 +301,29 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	 */
 	@Override
 	public List<GantChartVO> getGanttChart(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			throw new ServiceException("项目id不能为空!");
+		}
+		if(projectMapper.selectById(projectId) == null){
+			throw new ServiceException("该项目不存在!");
+		}
+		List<GantChartVO> gants = new ArrayList<GantChartVO>();
 		//获取到该项目的所有任务id字符串(逗号隔开)
 		String taskIds = projectMapper.selectProjectAllTask(projectId);
-		List<String> idList = Arrays.asList(taskIds.split(","));
-		List<Task> tasks = taskService.listById(idList).stream().sorted(Comparator.comparing(Task::getLevel)).collect(Collectors.toList());
-		//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
-		List<GantChartVO> gants = taskService.buildFatherSon(tasks);
+		if(!Stringer.isNullOrEmpty(taskIds)){
+			List<String> idList = Arrays.asList(taskIds.split(","));
+			List<Task> tasks = taskService.listById(idList).stream().sorted(Comparator.comparing(Task::getLevel)).collect(Collectors.toList());
+			//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
+			gants = taskService.buildFatherSon(tasks);
+		}
 		//查询出项目的部分信息并且映射近 GantChartVO
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
 		pro.setId(1);
-		pro.setType("project");
-		pro.setStart(projectGanttChart.getStartTime());
-		pro.setEnd(projectGanttChart.getEndTime());
-		pro.setLabel(projectGanttChart.getProjectName());
-		pro.setUser(projectGanttChart.getMemberName());
+		pro.setType("gantt.config.types.project");
+		pro.setStart_date(projectGanttChart.getStartTime());
+		pro.setEnd_date(projectGanttChart.getEndTime());
+		pro.setText(projectGanttChart.getProjectName());
 		pro.setPublicId(projectId);
 		gants.add(0, pro);
 		return gants;
@@ -336,5 +347,17 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(),projectName);
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * 获取项目下的所有任务id字符串 (逗号隔开)
+	 * 包括子任务id
+	 * 使用时需要自己分割
+	 * @param projectId 项目id
+	 * @return id字符串
+	 */
+	@Override
+	public String findProjectAllTask(String projectId){
+		return projectMapper.selectProjectAllTask(projectId);
 	}
 }

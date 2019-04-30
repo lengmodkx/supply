@@ -22,12 +22,7 @@ public class GantChartVO {
     /**
      * 描述
      */
-    private String label;
-
-    /**
-     * 创建人名称
-     */
-    private String user;
+    private String text;
 
     /**
      * 类型
@@ -37,21 +32,21 @@ public class GantChartVO {
     /**
      * 开始时间
      */
-    private Long start;
+    private Long start_date;
 
 
     /**
      * 结束时间
      */
-    private Long end;
+    private Long end_date;
 
     /**
      * 父级id 指向
      */
-    private Integer parentId;
+    private Integer parent;
 
     /**
      * 是否存在子任务
      */
-    private Boolean expander;
+    private Boolean open;
 }

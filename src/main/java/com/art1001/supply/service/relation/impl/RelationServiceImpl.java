@@ -6,6 +6,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
@@ -25,12 +26,15 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * relationServiceImpl
@@ -150,7 +154,25 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public List<Relation> findRelationAllList(Relation relation){
-		return relationMapper.findRelationAllList(relation);
+		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
+		relationAllList.forEach(r -> {
+			r.getTaskList().forEach(t -> {
+				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count());
+			});
+			Iterator<Task> iterator = r.getTaskList().iterator();
+			while(iterator.hasNext()){
+				Task task = iterator.next();
+				if(task.getPrivacyPattern() == 0){
+					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),task.getExecutor()))){
+						if(!(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
+							iterator.remove();
+						}
+					}
+				}
+			}
+
+		});
+		return relationAllList;
 	}
 
 	/**
@@ -494,6 +516,36 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	@Override
 	public List<Relation> bindMenuInfo(String groupId) {
 		return relationMapper.bindMenuInfo(groupId);
+	}
+
+
+	/**
+	 * 获取项目下的全部分组信息
+	 * 分组信息中包括了 任务总数  完成数 优先级信息等
+	 * @param  projectId 项目id
+	 * @return 分组详情信息
+	 */
+	@Override
+	public List<GroupVO> getGroupsInfo(String projectId){
+		DecimalFormat df   = new DecimalFormat("######0.00");
+		List<GroupVO> groupsInfo = relationMapper.getGroupsInfo(projectId);
+		groupsInfo.forEach(g -> {
+			g.setTaskTotal(g.getTasks().size());
+			if(!CollectionUtils.isEmpty(g.getTasks())){
+				g.setCompleteCount((int)g.getTasks().stream().filter(Task::getTaskStatus).count());
+				g.setNotCompleteCount(g.getTasks().size() - g.getCompleteCount());
+				g.setCompletePercentage(df.format((double)g.getCompleteCount() / (double)g.getTasks().size() * 100));
+				g.setNoCompletePercentage(df.format((double)(g.getTasks().size() - g.getCompleteCount()) / (double)g.getTasks().size() * 100));
+
+
+				int beOverdue = (int)g.getTasks().stream().filter(t -> t.getEndTime() != null && t.getEndTime() < System.currentTimeMillis()).count();
+				g.setBeOverdue(beOverdue);
+				g.setBeOverduePercentage(df.format((double)beOverdue / (double)g.getTasks().size() * 100));
+			}
+			//任务信息置空,让gc进行回收
+			g.setTasks(null);
+		});
+		return groupsInfo;
 	}
 }
 

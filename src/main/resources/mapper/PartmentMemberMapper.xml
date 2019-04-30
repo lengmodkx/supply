@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.partment.PartmentMemberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.partment.PartmentMember">
+        <id column="id" property="id" />
+        <result column="partment_id" property="partmentId" />
+        <result column="member_id" property="memberId" />
+        <result column="is_master" property="isMaster" />
+        <result column="member_label" property="memberLabel" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
+            <id column="user_id" property="userId"/>
+            <result column="image" property="image"/>
+            <result column="user_name" property="userName"/>
+        </association>
+    </resultMap>
+
+    <!-- 获取部门的某个成员信息 -->
+    <select id="selectPartmentMemberInfo" resultMap="BaseResultMap">
+        SELECT
+            u.user_id,
+            u.image,
+            u.user_name,
+            pm.is_master,
+            pm.member_label
+        FROM
+            prm_partment_member AS pm
+            LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
+            WHERE pm.partment_id = #{partmentId} AND pm.member_id = #{memberId}
+    </select>
+
+    <!-- 获取一个部门的全部成员信息 -->
+    <select id="selectMemberByPartmentId" resultMap="BaseResultMap">
+        SELECT
+            u.user_id,
+            u.image,
+            u.user_name,
+            pm.is_master,
+            pm.member_label
+        FROM
+            prm_partment_member AS pm
+            LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
+        WHERE pm.partment_id = #{partmentId}
+    </select>
+
+</mapper>

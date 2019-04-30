@@ -82,7 +82,7 @@ public class OrganizationApi {
      * 获取 我参与的企业项目，我收藏的企业项目
      * @return
      */
-    @GetMapping("/{orgId}")
+    @GetMapping("/{orgId}/projects")
     public JSONObject orgProjects(@PathVariable(value = "orgId",required = false)String orgId){
         JSONObject object = new JSONObject();
         try{
@@ -95,6 +95,24 @@ public class OrganizationApi {
             throw new SystemException(e);
         }
         return object;
+    }
+
+    /**
+     * 获取我参与者和我创建的企业
+     * @param flag (1.我创建的企业 2.我参与的企业)
+     * @return
+     */
+    @GetMapping("/my_org")
+    public JSONObject getMyOrg(@RequestParam(required = false) Integer flag){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",organizationService.getMyOrg(flag));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new SystemException("系统异常,数据获取失败!",e);
+        }
+
     }
 
     /**

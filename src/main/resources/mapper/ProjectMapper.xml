@@ -18,6 +18,8 @@
 		<result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
 		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
 		<result column="func" property="func" jdbcType="VARCHAR" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
 
 		<!--<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"-->
 					 <!--select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>-->
@@ -157,6 +159,12 @@
 			</if>
 			<if test="createTime != null ">
 				create_time = #{createTime},
+			</if>
+			<if test="startTime != null ">
+				start_time = #{startTime},
+			</if>
+			<if test="endTime != null ">
+				end_time = #{end_time},
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},

@@ -47,6 +47,8 @@ public class OrganizationMemberApi {
      */
     private static final int MEMBER_NEW =3;
 
+    private static final int IS_PARTMENT =4;
+
 
 
     /**
@@ -71,6 +73,7 @@ public class OrganizationMemberApi {
             if(member==null){
                 //新增成员的部门id统一为0
                 organizationMember.setPartmentId("0");
+                organizationMember.setMemberLock(1);
                 organizationMemberService.saveOrganizationMember(organizationMember);
                 jsonObject.put("result",1);
                 jsonObject.put("msg","添加成功");
@@ -89,7 +92,6 @@ public class OrganizationMemberApi {
         }catch (Exception e){
             throw  new AjaxException(e);
         }
-
         return jsonObject;
     }
 
@@ -105,7 +107,7 @@ public class OrganizationMemberApi {
     public JSONObject members(@PathVariable(value = "orgId") String orgId,
                               @RequestParam(value = "pageNo",defaultValue = "1") Integer pageNo,
                               @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
-                              @RequestParam(value = "flag",required = false,defaultValue = "1") Integer flag,
+                              @RequestParam(value = "flag",required = false,defaultValue = "0") Integer flag,
                               @RequestParam(value = "parmentId",required = false,defaultValue = "0")String parmentId){
         JSONObject jsonObject = new JSONObject();
 
@@ -123,7 +125,7 @@ public class OrganizationMemberApi {
                 organizationMember.setMemberLock(0);
             }else if (flag==MEMBER_NEW){
                 organizationMember.setCreateTime(System.currentTimeMillis());
-            }else{
+            }else if (flag == IS_PARTMENT){
                 organizationMember.setPartmentId(parmentId);
             }
 

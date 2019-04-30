@@ -9,6 +9,7 @@ import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationService;
@@ -71,7 +72,9 @@ public class ProjectApi {
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
                                     @RequestParam(value = "projectName") String projectName,
-                                    @RequestParam(value = "projectDes") String projectDes) {
+                                    @RequestParam(value = "projectDes") String projectDes,
+                                    @RequestParam(value = "startTime") Long startTime,
+                                    @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
         try {
 //            if(organizationMemberService.userOrgCount() <= 0){
@@ -82,6 +85,8 @@ public class ProjectApi {
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
+            project.setStartTime(startTime);
+            project.setEndTime(endTime);
             project.setMemberId(ShiroAuthenticationManager.getUserId());
             projectService.saveProject(project);
             //写资源表
@@ -114,7 +119,10 @@ public class ProjectApi {
                                     @RequestParam(value = "isPublic", required = false) Integer isPublic,
                                     @RequestParam(value = "projectCover", required = false) String projectCover,
                                     @RequestParam(value = "projectDel", required = false) Integer projectDel,
-                                    @RequestParam(value = "projectStatus", required = false) Integer projectStatus) {
+                                    @RequestParam(value = "projectStatus", required = false) Integer projectStatus,
+                                    @RequestParam(value = "startTime",required = false) Long startTime,
+                                    @RequestParam(value = "endTime",required = false) Long endTime
+    ) {
         JSONObject object = new JSONObject();
         try {
             Project project = new Project();
@@ -122,6 +130,8 @@ public class ProjectApi {
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
             project.setIsPublic(isPublic);
+            project.setStartTime(startTime);
+            project.setEndTime(endTime);
             project.setProjectCover(projectCover);
             project.setProjectDel(projectDel);
             project.setProjectStatus(projectStatus);
@@ -405,8 +415,39 @@ public class ProjectApi {
             jsonObject.put("data",projectService.getGanttChart(projectId));
             jsonObject.put("result", 1);
             return jsonObject;
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
             throw new AjaxException("系统异常，获取失败！",e);
+        }
+    }
+
+    /**
+     * 更新项目的开始/结束时间
+     * @param projectId 项目id
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 结果
+     */
+    @PutMapping("{projectId}/start_end_time")
+    public JSONObject updateStartEndTime(@PathVariable String projectId,@RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(startTime == null && endTime == null){
+                jsonObject.put("msg","开始和结束时间必须给定一个!");
+                jsonObject.put("result",0);
+                return jsonObject;
+            }
+            Project project = new Project();
+            project.setProjectId(projectId);
+            project.setStartTime(startTime);
+            project.setEndTime(endTime);
+            if(projectService.updateById(project)){
+                jsonObject.put("result",1);
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
         }
     }
 }

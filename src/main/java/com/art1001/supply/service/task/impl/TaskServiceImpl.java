@@ -33,6 +33,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
+import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.quartz.MyJob;
@@ -45,6 +46,7 @@ import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.quartz.QuartzInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tag.TagService;
@@ -57,6 +59,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
@@ -90,6 +93,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /** userMapper接口 */
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private ProjectService projectService;
 
     /** FablousMapper接口*/
     @Resource
@@ -491,6 +497,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         List<Task> child = task.getTaskList();
         try {
             task.setTaskId(IdGen.uuid());
+            task.setTaskStatus(false);
             //更新新任务的创建时间
             task.setCreateTime(System.currentTimeMillis());
             //设置新任务的更新时间
@@ -506,6 +513,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             this.save(task);
             if(CollectionUtils.isNotEmpty(child)){
                 child.forEach(item ->{
+                    item.setTaskStatus(false);
                     item.setTaskId(IdGen.uuid());
                     //设置新的子任务id
                     item.setProjectId(projectId);
@@ -1438,14 +1446,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`","parent_id").eq("task_id", taskId));
+        //这里判断是否有子任务未完成
+        List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId));
+        subTask.forEach(t -> {
+            if(!t.getTaskStatus()){
+                throw new ServiceException("有子任务未完成!");
+            }
+        });
         //先更新任务状态
         Task completeTask = new Task();
         completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
         taskMapper.updateById(completeTask);
-
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`").eq("task_id", taskId));
-
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;
@@ -1691,6 +1704,46 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 查询出一个任务基本信息
+     * 用户任务简便信息的显示
+     * @param taskId 任务id
+     * @return 任务信息
+     */
+    @Override
+    public Task findSimpleTaskById(String taskId) {
+        return taskMapper.selectSimpleTaskById(taskId);
+    }
+
+    /**
+     * 把该子任务向上递归直到获取到顶级父任务的项目id
+     * @param id 子任务id
+     * @return 项目id
+     */
+    @Override
+    public String findChildProjectId(String id) {
+        return taskMapper.selectChildProjectId(id);
+    }
+
+    /**
+     * 获取任务的列表看板模式
+     * @param projectId 项目id
+     * @return 任务数据
+     */
+    @Override
+    public List<Task> getTaskPanel(String projectId) {
+        if(Stringer.isNullOrEmpty(projectId)){
+            throw new ServiceException("项目id不能为空!");
+        }
+        String projectAllTask = projectService.findProjectAllTask(projectId);
+        if(Stringer.isNullOrEmpty(projectAllTask)){
+            return new ArrayList<>();
+        }
+        List<String> taskIds = Arrays.asList(projectAllTask.split(","));
+
+        return taskMapper.getTaskPanel(taskIds);
+    }
+
+    /**
      * 根据id集合 查询出对应的任务信息 以及执行者信息
      * @param idList id集合
      * @return
@@ -1718,21 +1771,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             //将任务信息循环映射进GantChartsVO
             GantChartVO gantChartVO = new GantChartVO();
             gantChartVO.setPublicId(taskId);
-            gantChartVO.setStart(f.getStartTime());
-            gantChartVO.setEnd(f.getEndTime());
-            gantChartVO.setType("task");
-            gantChartVO.setExpander(f.getIsExistSub());
-            gantChartVO.setLabel(f.getTaskName());
-            gantChartVO.setParentId(Integer.valueOf(f.getParentId()));
-            gantChartVO.setUser(f.getExecutorName());
+            gantChartVO.setStart_date(f.getStartTime());
+            gantChartVO.setEnd_date(f.getEndTime());
+            gantChartVO.setType("gantt.config.types.task");
+            gantChartVO.setOpen(f.getIsExistSub());
+            gantChartVO.setText(f.getTaskName());
+            gantChartVO.setParent(Integer.valueOf(f.getParentId()));
             f.setTaskId(String.valueOf(order));
             gantChartVO.setId(Integer.valueOf(f.getTaskId()));
             gants.add(gantChartVO);
             order++;
         }
         for (GantChartVO f : gants) {
-           if(f.getParentId() == 0){
-               f.setParentId(1);
+           if(f.getParent() == 0){
+               f.setParent(1);
            }
         }
         return gants;
@@ -1744,9 +1796,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
         //查询任务得赞数
         task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
-        //获取任务名称
-        task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
-        task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
+        if(task.getTaskGroupId() != null){
+            //获取任务名称
+            task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
+            task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
+        }
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
         //获取该任务的未读消息数

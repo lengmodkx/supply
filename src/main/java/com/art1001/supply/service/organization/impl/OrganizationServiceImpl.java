@@ -4,15 +4,17 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.art1001.supply.entity.organization.Organization;
-import com.art1001.supply.entity.organization.OrganizationGroup;
-import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * organizationServiceImpl
@@ -23,6 +25,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	/** organizationMapper接口*/
 	@Resource
 	private OrganizationMapper organizationMapper;
+
+	@Resource
+	private OrganizationMemberService organizationMemberService;
 
 	/**
 	 * 查询分页organization数据
@@ -71,15 +76,25 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 * 
 	 * @param organization 企业信息
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void saveOrganization(Organization organization){
 		String userId = ShiroAuthenticationManager.getUserId();
 		organization.setOrganizationId(IdGen.uuid());
-		organization.setOrganizationImage("");
 		organization.setOrganizationMember(userId);
 		organization.setCreateTime(System.currentTimeMillis());
 		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.saveOrganization(organization);
+
+		//添加当前用户为企业拥有者
+		OrganizationMember organizationMember = new OrganizationMember();
+		organizationMember.setId(IdGen.uuid());
+		organizationMember.setOrganizationId(organization.getOrganizationId());
+		organizationMember.setMemberId(ShiroAuthenticationManager.getUserId());
+		organizationMember.setCreateTime(System.currentTimeMillis());
+		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setOrganizationLable(1);
+		organizationMemberService.save(organizationMember);
 	}
 	/**
 	 * 获取所有organization数据
@@ -99,5 +114,25 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Override
 	public List<Organization> findJoinOrgProject(String userId) {
 		return organizationMapper.selectJoinOrgProject(userId);
+	}
+
+	/**
+	 * 获取和我相关的企业
+	 * @param flag 标识
+	 * @return 企业列表
+	 */
+	@Override
+	public List<Organization> getMyOrg(Integer flag) {
+		return organizationMapper.getMyOrg(flag,ShiroAuthenticationManager.getUserId());
+	}
+
+	/**
+	 * 判断企业是否存在
+	 * @param organizationId 企业id
+	 * @return 结果
+	 */
+	@Override
+	public Boolean checkOrgIsExist(String organizationId) {
+		return organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", organizationId)) > 0;
 	}
 }
