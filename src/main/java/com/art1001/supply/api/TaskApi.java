@@ -142,11 +142,12 @@ public class TaskApi extends BaseController {
      */
     @Push(value = PushType.A3,type = 3)
     @PutMapping("/{taskId}/finish")
-    public JSONObject finishTask(@PathVariable(value = "taskId")String taskId){
+    public JSONObject finishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
         JSONObject object = new JSONObject();
         try{
             taskService.completeTask(taskId);
-            if(!taskService.getById(taskId).getParentId().equals("0")){
+            String parentId = taskService.getById(taskId).getParentId();
+            if(!parentId.equals("0")){
                 object.put("msgId",taskService.findChildProjectId(taskId));
             } else{
                 object.put("msgId",this.getTaskProjectId(taskId));
@@ -155,14 +156,18 @@ public class TaskApi extends BaseController {
             Task t = new Task();
             t.setTaskId(taskId);
             t.setTaskStatus(true);
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
             object.put("status",1);
             object.put("result",1);
+            if(label == 1){
+                object.put("data",new JSONObject().fluentPut("taskId",parentId).fluentPut("projectId",object.getString("msgId")));
+            } else{
+                object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
+            }
             object.put("msg","更新成功");
             object.put("publicType",Constants.TASK);
             object.put("id",taskId);
         } catch (ServiceException e){
-          throw new AjaxException(e.getMessage(),e);
+            throw new AjaxException(e.getMessage(),e);
         } catch(Exception e){
             log.error("系统异常,状态更新失败:",e);
             throw new AjaxException(e);
@@ -178,7 +183,7 @@ public class TaskApi extends BaseController {
     @Log(PushType.A4)
     @Push(value = PushType.A4,type = 3)
     @PutMapping("/{taskId}/unFinish")
-    public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId){
+    public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
         JSONObject object = new JSONObject();
         try{
             //这里判断父任务是否已经完成
@@ -199,7 +204,11 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
+            if(label == 1){
+                object.put("data",new JSONObject().fluentPut("taskId",parentId).fluentPut("projectId",object.getString("msgId")));
+            } else{
+                object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
+            }
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);
         }catch(Exception e){
