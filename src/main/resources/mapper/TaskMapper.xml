@@ -213,6 +213,7 @@
 		<result column="start_time" property="startTime"/>
 		<result column="end_time" property="endTime"/>
 		<result column="repeat" property="repeat"/>
+		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
 		<result column="user_name" property="executorName"/>
 		<result column="user_id" property="executor"/>
 		<result column="image" property="executorImg"/>
@@ -1309,6 +1310,7 @@
 			t.end_time,
 			t.project_id,
 			t.`repeat`,
+		    t.task_menu_id,
 			u.user_name,
 			u.image,
 			u.user_id,

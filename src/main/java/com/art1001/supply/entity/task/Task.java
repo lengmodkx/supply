@@ -158,6 +158,7 @@ public class Task extends Model<Task> {
 	/**
 	 * 列表名称
 	 */
+	@TableField(exist = false)
 	private String taskMenuName;
 
 	/**

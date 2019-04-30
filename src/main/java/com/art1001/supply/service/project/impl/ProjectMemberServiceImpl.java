@@ -108,9 +108,8 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Override
 	public void updateDefaultGroup(String projectId, String userId, String groupId) {
 		ProjectMember projectMember = new ProjectMember();
-		projectMember.setProjectId(projectId);
-		projectMember.setMemberId(userId);
-		update(projectMember,new UpdateWrapper<ProjectMember>().set("default_group",groupId));
+		projectMember.setDefaultGroup(groupId);
+		update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id",projectId).eq("member_id",userId));
 	}
 
 	/**

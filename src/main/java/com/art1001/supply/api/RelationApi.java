@@ -72,7 +72,7 @@ public class  RelationApi {
      * @return
      */
     @PostMapping("/{projectId}/group")
-    public JSONObject addMenu(
+    public JSONObject addGroup(
             @PathVariable(value = "projectId") String projectId,
             @RequestParam(value = "groupName") String groupName){
         JSONObject jsonObject = new JSONObject();

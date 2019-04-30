@@ -479,6 +479,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		relation.setUpdateTime(System.currentTimeMillis());
 		relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0) + 1);
 		relationMapper.saveRelation(relation);
+		projectMemberService.updateDefaultGroup(relation.getProjectId(),ShiroAuthenticationManager.getUserId(),relation.getRelationId());
 	}
 
 	/**
