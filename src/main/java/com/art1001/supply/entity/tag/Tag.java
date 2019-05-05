@@ -4,6 +4,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -30,7 +31,7 @@ public class Tag extends Model<Tag> {
 	/**
 	 * tag_id
 	 */
-	@TableId("tag_id")
+	@TableId(value = "tag_id",type = IdType.AUTO)
 	private Long tagId;
 
 	/**
