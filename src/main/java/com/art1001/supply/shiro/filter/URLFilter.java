@@ -1,7 +1,6 @@
 package com.art1001.supply.shiro.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.art1001.supply.dtgrid.model.Pager;
 import jodd.util.StringUtil;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.AccessControlFilter;
@@ -44,16 +43,6 @@ public class URLFilter extends AccessControlFilter {
 		{
 			uriParam = uriParam.replace(contextPath, "");
 			if("/".equals(uriParam) || "/index.html".equals(uriParam))
-			{
-				return Boolean.TRUE;
-			}
-		}
-		String gridPager = httpRequest.getParameter("gridPager");
-		//导出时不做过滤
-		if(StringUtil.isNotBlank(gridPager))
-		{
-			Pager pager = JSON.parseObject(gridPager, Pager.class);
-			if(pager.getIsExport())
 			{
 				return Boolean.TRUE;
 			}
