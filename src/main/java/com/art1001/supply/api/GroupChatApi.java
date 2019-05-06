@@ -11,6 +11,7 @@ import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.FileExt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,7 @@ public class GroupChatApi {
             }
             Chat chat = new Chat();
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
+            chat.setCreateTime(System.currentTimeMillis());
             chat.setContent(content);
             chat.setProjectId(projectId);
             chatService.save(chat);
@@ -133,6 +135,7 @@ public class GroupChatApi {
             List<Chat> chatList = chatService.findChatList(projectId);
             object.put("result",1);
             object.put("data",chatList);
+            object.put("images", FileExt.extMap.get("images"));
         }catch(Exception e){
             throw new AjaxException(e);
         }

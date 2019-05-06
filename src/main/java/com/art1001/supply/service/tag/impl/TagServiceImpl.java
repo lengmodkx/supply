@@ -12,9 +12,11 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -232,6 +234,42 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	public List<Tag> findTagByProjectIdWithAllInfo(String projectId) {
 		//查询出项目下的所有标签
 		return tagMapper.findTagByProjectIdWithAllInfo(projectId);
+	}
+
+	/**
+	 * 创建标签的同时绑定到某个信息上
+	 * @param tag 标签信息
+	 * @param publicId 绑定信息的id
+	 * @param publicType 绑定信息的类型(任务,文件,日程,分享)
+	 * @return 是否创建并绑定成功
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Boolean addAndBind(Tag tag, String publicId, String publicType) {
+		if(Stringer.isNullOrEmpty(tag) || tag.getTagName() == null || tag.getBgColor() == null || tag.getProjectId() == null){
+			throw new ServiceException("标签信息不完整无法进行添加!");
+		}
+		if(this.findCountByTagName(tag.getProjectId(),tag.getTagName()) > 0){
+			throw new ServiceException("该标签已经存在不能重复添加!");
+		}
+		tag.setCreateTime(System.currentTimeMillis());
+		tag.setUpdateTime(System.currentTimeMillis());
+		tag.setMemberId(ShiroAuthenticationManager.getUserId());
+		tagMapper.insert(tag);
+		TagRelation tr = new TagRelation();
+		tr.setTagId(tag.getTagId());
+		if(Constants.TASK.equals(publicType)){
+			tr.setTaskId(publicId);
+		}
+		if(Constants.FILE.equals(publicType)){
+			tr.setFileId(publicId);
+		}if(Constants.SHARE.equals(publicType)){
+			tr.setShareId(publicId);
+		}
+		if(Constants.SCHEDULE.equals(publicType)){
+			tr.setScheduleId(publicId);
+		}
+		return tagRelationService.save(tr);
 	}
 
 	/**

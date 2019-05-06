@@ -6,6 +6,7 @@ import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -18,8 +19,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -207,38 +210,31 @@ public class TagApi {
      * @param publicType 要从 (任务,文件,日程,分享) 哪个类型上 添加标签
      * @param tagName 标签名称 标签名称 标签所属项目
      * @param projectId 项目的id
-     * @return
+     * @return 是否成功
      */
-    @PostMapping("/add/tag")
-    public JSONObject addItemTag(@RequestParam(value = "tagId",required = false) Long tagId,
-                                 @RequestParam(value = "tagName",required = false) String tagName,
-                                 @RequestParam(value = "bgColor",required = false) String bgColor,
+    @Push(value = PushType.E1,type = 1)
+    @PostMapping("/add_and_bind")
+    public JSONObject addItemTag(@RequestParam(value = "tagName") String tagName,
+                                 @RequestParam(value = "bgColor") String bgColor,
                                  @RequestParam(value = "publicId") String publicId,
                                  @RequestParam(value = "publicType") String publicType,
-                                 @RequestParam(value = "projectId",required = false) String projectId
+                                 @RequestParam(value = "projectId") String projectId
     ){
         JSONObject jsonObject = new JSONObject();
         try {
             Tag tag = new Tag();
-            tag.setTagId(tagId);
             tag.setTagName(tagName);
-            tag.setProjectId(projectId);
             tag.setBgColor(bgColor);
-            if(StringUtils.isNotEmpty(tag.getTagName())){
-                int countByTagName = tagService.findCountByTagName(tag.getProjectId(), tag.getTagName());
-                if(countByTagName == 0){
-                    tag = tagService.saveTag(tag);
-                } else{
-                    jsonObject.put("msg","标签已存在!");
-                    jsonObject.put("result",0);
-                    return jsonObject;
-                }
+            tag.setProjectId(projectId);
+            if(tagService.addAndBind(tag,publicId,publicType)){
+                jsonObject.put("result", 1);
+                jsonObject.put("data", new JSONObject().fluentPut("publicType", publicType).fluentPut("publicId", publicId));
+                jsonObject.put("msgId", projectId);
             }
-            tagService.addItemTag(tag.getTagId(),publicId,publicType);
-            jsonObject.put("msg","添加成功!");
-            jsonObject.put("result",1);
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
-            log.error("系统异常,添加标签失败:",e);
+            throw new AjaxException("系统异常,添加标签失败",e);
         }
         return jsonObject;
     }

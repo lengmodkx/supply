@@ -120,9 +120,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             myFile.setExt(ext);
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
+            myFile.setLevel(1);
             // 得到上传文件的大小
             myFile.setSize(size);
-            //myFile.setCatalog(0);
             myFile.setMemberId(ShiroAuthenticationManager.getUserId());
             myFile.setPublicId(publicId);
             // 设置操作用户信息

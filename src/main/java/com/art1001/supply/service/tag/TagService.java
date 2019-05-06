@@ -135,4 +135,13 @@ public interface TagService extends IService<Tag> {
 	 * @return
 	 */
 	List<Tag> findTagByProjectIdWithAllInfo(String projectId);
+
+	/**
+	 * 创建标签的同时绑定到某个信息上
+	 * @param tag 标签信息
+	 * @param publicId 绑定信息的id
+	 * @param publicType 绑定信息的类型(任务,文件,日程,分享)
+	 * @return 是否创建并绑定成功
+	 */
+	Boolean addAndBind(Tag tag, String publicId, String publicType);
 }
