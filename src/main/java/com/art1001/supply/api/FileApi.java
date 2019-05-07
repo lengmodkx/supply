@@ -152,6 +152,7 @@ public class FileApi extends BaseController {
             fileService.updateById(file);
             jsonObject.put("result", 1);
             jsonObject.put("msgId", this.getProjectId(id));
+            jsonObject.put("data",fileService.getById(id).getParentId());
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常，隐私模式设置失败！",e);

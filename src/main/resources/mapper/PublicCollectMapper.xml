@@ -10,6 +10,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="collect_type" property="collectType" jdbcType="VARCHAR" />
+		<result column="collect_content" property="collectContent" jdbcType="CLOB" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
