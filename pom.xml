@@ -6,7 +6,7 @@
     <groupId>com.art1001.supply</groupId>
     <artifactId>supply</artifactId>
     <version>0.0.1</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>supply</name>
     <description>supply project for Spring Boot</description>
@@ -27,6 +27,7 @@
         <redisson.version>3.7.0</redisson.version>
         <pagehelper.version>5.0.3</pagehelper.version>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
+        <docker.image.prefix>supply</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -137,12 +138,6 @@
             </exclusions>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.baomidou</groupId>-->
-            <!--<artifactId>mybatis-plus-boot-starter</artifactId>-->
-            <!--<version>3.0.2</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -164,12 +159,6 @@
             <groupId>org.jodd</groupId>
             <artifactId>jodd-props</artifactId>
             <version>3.7.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.5.13</version>
         </dependency>
 
         <dependency>
@@ -260,32 +249,49 @@
 
     <build>
         <plugins>
-
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
-                <configuration>
-                    <timestampFormat>yyyyMMddHHmmss</timestampFormat>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>create-timestamp</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
-                    <warName>${project.artifactId}_${timestamp}</warName>
-                    <packagingExcludes>src/main/resources/**</packagingExcludes>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
-
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>buildnumber-maven-plugin</artifactId>-->
+                <!--<version>1.4</version>-->
+                <!--<configuration>-->
+                    <!--<timestampFormat>yyyyMMddHHmmss</timestampFormat>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>create-timestamp</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<inherited>false</inherited>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<warName>${project.artifactId}_${timestamp}</warName>-->
+                    <!--<packagingExcludes>src/main/resources/**</packagingExcludes>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
