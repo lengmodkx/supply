@@ -42,7 +42,7 @@ public class CodeGenerator {
 
             // 数据源配置
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
-            dataSourceConfig.setUrl("jdbc:mysql://47.93.237.225:3306/supply?useUnicode=true&useSSL=false&characterEncoding=utf8");
+            dataSourceConfig.setUrl("jdbc:mysql://localhost:3306/supply?useUnicode=true&useSSL=false&characterEncoding=utf8");
             dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
             dataSourceConfig.setUsername("root");
             dataSourceConfig.setPassword("123456");
