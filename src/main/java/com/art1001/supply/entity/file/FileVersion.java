@@ -21,7 +21,6 @@ public class FileVersion extends Model<FileVersion> {
 	
 	private static final long serialVersionUID = 1L;
 
-
 	/**
 	 * id
 	 */

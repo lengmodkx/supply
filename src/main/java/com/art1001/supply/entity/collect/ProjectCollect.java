@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.collect;
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -51,7 +52,7 @@ public class ProjectCollect extends Model<ProjectCollect> {
 	 */
 	private Integer collectStatus;
 
-
+	@TableField(exist = false)
 	private Project project;
 
 	@Override

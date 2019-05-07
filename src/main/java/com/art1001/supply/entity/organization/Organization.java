@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.organization;
 import com.art1001.supply.entity.project.Project;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -79,11 +80,13 @@ public class Organization extends Model<Organization> {
 	/**
 	 * 该企业下的所有项目
 	 */
+	@TableField(exist = false)
 	private List<Project> projects;
 
 	/**
 	 * 用户参与该企业的所有项目
 	 */
+	@TableField(exist = false)
 	private List<Project> joinProjects;
 
 	@Override
