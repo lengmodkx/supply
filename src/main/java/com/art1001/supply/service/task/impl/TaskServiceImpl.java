@@ -193,6 +193,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
+        task.setCreateTime(System.currentTimeMillis());
+        task.setUpdateTime(System.currentTimeMillis());
         //保存任务信息
         taskMapper.insert(task);
     }
