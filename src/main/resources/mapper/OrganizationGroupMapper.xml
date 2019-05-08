@@ -64,8 +64,38 @@
 		from prm_organization_group c where group_id = #{groupId}
 
 	</select>
-	
-	<delete id="deleteOrganizationGroupByGroupId" parameterType="java.lang.String">
+
+	<!-- 根据企业id 获取企业下的所有群组信息 -->
+    <select id="selectOrgGroups" resultType="com.art1001.supply.entity.organization.OrganizationGroup">
+		SELECT
+			og.group_id,
+			og.group_name,
+			og.organization_id
+		FROM
+			prm_organization_group AS og
+			LEFT JOIN prm_organization_group_member AS gm ON gm.group_id = og.group_id
+			LEFT JOIN prm_organization AS org ON org.organization_id = og.organization_id
+		WHERE
+			gm.member_id = #{userId}
+			AND org.organization_id = #{orgId}
+		ORDER BY
+			gm.create_time DESC
+	</select>
+
+	<!-- 获取某个群组的拥有者信息 -->
+    <select id="selectOwnerInfo" resultType="com.art1001.supply.entity.organization.OrganizationGroupMember">
+		SELECT
+			u.user_id,
+			u.user_name,
+			u.image
+		FROM
+			prm_organization_group AS og
+			LEFT JOIN tb_user AS u ON og.`owner` = u.user_id
+		WHERE
+			og.group_id = #{groupId}
+	</select>
+
+    <delete id="deleteOrganizationGroupByGroupId" parameterType="java.lang.String">
 		delete from
 		prm_organization_group where group_id = #{groupId}
 	</delete>

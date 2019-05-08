@@ -6,13 +6,17 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
+import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -29,7 +33,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     private OrganizationGroupMemberMapper organizationGroupMemberMapper;
 
     @Resource
-    private OrganizationGroupMapper organizationGroupMapper;
+    private OrganizationGroupService organizationGroupService;
 
     /**
      * 群组中添加组成员
@@ -51,7 +55,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     }
 
     /**
-     * 该成员在分组中是否存在
+     * 该成员在群组中是否存在
      * @param groupId 群组id
      * @param memberId 成员id
      * @return 结果
@@ -89,16 +93,46 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
         organizationGroupMemberMapper.delete(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId).eq("member_id", memberId));
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
-            organizationGroupMapper.deleteById(groupId);
+            organizationGroupService.removeById(groupId);
         } else {
-            if(memberId.equals(organizationGroupMapper.selectById(groupId).getOwner())){
+            if(memberId.equals(organizationGroupService.getById(groupId).getOwner())){
                 OrganizationGroup organizationGroup = new OrganizationGroup();
                 organizationGroup.setGroupId(groupId);
                 organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
                 organizationGroup.setUpdateTime(System.currentTimeMillis());
-                organizationGroupMapper.updateById(organizationGroup);
+                organizationGroupService.updateById(organizationGroup);
             }
         }
         return true;
     }
+
+    /**
+     * 获取群组下的所有成员信息
+     * @param groupId 群组id
+     * @return 群组内所有成员信息
+     */
+    @Override
+    public List<OrganizationGroupMember> getGroupMembers(String groupId) {
+        if(Stringer.isNullOrEmpty(groupId)){
+            throw new ServiceException("groupId不能为空!");
+        }
+        //获取该群组的拥有者
+        OrganizationGroupMember groupOwnerInfo;
+        groupOwnerInfo = organizationGroupService.getGroupOwnerInfo(groupId);
+        //获取该群组的所有成员信息
+        List<OrganizationGroupMember> organizationGroupMembers = organizationGroupMemberMapper.selectGroupMembes(groupId);
+        if(CollectionUtils.isEmpty(organizationGroupMembers)){
+            return new ArrayList<>();
+        }
+        //标记该群组的拥有者成员
+        organizationGroupMembers.forEach(item -> {
+            if(item.getUserId().equals(groupOwnerInfo.getUserId())){
+                item.setIsOwner(true);
+            } else{
+                item.setIsOwner(false);
+            }
+        });
+        return organizationGroupMembers;
+    }
+
 }

@@ -8,9 +8,11 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
+import com.art1001.supply.util.crypto.AesEncryptUtil;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -55,9 +57,18 @@ public class UserApi {
     @PostMapping("/login")
      public JSONObject login(@RequestParam String accountName,
                              @RequestParam String password,
-                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
+                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe,
+                             HttpServletRequest request){
          JSONObject object = new JSONObject();
          try {
+             String key = String.valueOf(request.getSession().getAttribute("key"));
+             String iv = String.valueOf(request.getSession().getAttribute("iv"));
+             if(Stringer.isNullOrEmpty(key) || Stringer.isNullOrEmpty(iv)){
+                 object.put("result", 0);
+                 object.put("msg", "登陆失败，请重试!");
+                 return object;
+             }
+             password = AesEncryptUtil.desEncrypt(password, key,iv);
              Subject subject = SecurityUtils.getSubject();
              UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
              subject.login(token);
@@ -119,10 +130,10 @@ public class UserApi {
     public JSONObject register(@RequestParam String captcha,
                                @RequestParam String accountName,
                                @RequestParam String password,
-                               @RequestParam String userName) {
+                               @RequestParam String userName,
+                               HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
-        String kaptcha = redisManager.get("captcha",String.class);
-        if(!captcha.equalsIgnoreCase(kaptcha)){
+        if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
             return jsonObject;
@@ -165,7 +176,7 @@ public class UserApi {
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
-            redisManager.set("captcha",capText);
+            request.getSession().setAttribute("captcha", capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
@@ -275,5 +286,22 @@ public class UserApi {
         //这里执行退出系统之前需要清理数据的操作
         // 注销登录
         ShiroAuthenticationManager.logout();
+    }
+
+    /**
+     * 获取加密字符串
+     * @param request 用户请求对象
+     * @return 加密字符串
+     */
+    @GetMapping("/encryp_str")
+    public JSONObject getEncrypStr(HttpServletRequest request){
+        JSONObject jsonObject = new JSONObject();
+        String key = RandomStringUtils.randomAlphanumeric(16);
+        String iv = RandomStringUtils.randomAlphanumeric(16);
+        jsonObject.put("key", key);
+        jsonObject.put("iv", iv);
+        request.getSession().setAttribute("key",key);
+        request.getSession().setAttribute("iv",iv);
+        return jsonObject;
     }
 }

@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
@@ -110,6 +111,28 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	}
 
 	/**
+	 * 获取某个企业下的部门信息
+	 * @param orgId 企业id
+	 * @return 部门信息
+	 */
+	@Override
+	public List<Partment> findOrgPartmentInfo(String orgId) {
+		if(Stringer.isNullOrEmpty(orgId)){
+			throw new ServiceException("orgId不能为空!");
+		}
+		List<Partment> partments = partmentMapper.selectOrgPartmentInfo(orgId);
+		partments.forEach(item -> {
+			if(!CollectionUtils.isEmpty(item.getSubPartments())){
+				item.setIsExistSubPartment(true);
+			} else{
+				item.setIsExistSubPartment(false);
+			}
+			item.setSubPartments(null);
+		});
+		return partments;
+	}
+
+	/**
 	 * 排序部门
 	 * @param partmentIds 排序后的部门id
 	 */
@@ -127,15 +150,4 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 		}
 		return updateBatchById(partments);
 	}
-
-	/**
-	 * 获取所有partment数据
-	 * 
-	 * @return
-	 */
-	@Override
-	public List<Partment> findPartmentAllList(Partment partment){
-		return partmentMapper.findPartmentAllList(partment);
-	}
-	
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -31,4 +33,10 @@ public interface OrganizationGroupMemberMapper extends BaseMapper<OrganizationGr
      */
     String selectEarliestMemberId(@Param("groupId") String groupId);
 
+    /**
+     * 获取群组下的所有成员信息
+     * @param groupId 群组id
+     * @return 群组内所有成员信息
+     */
+    List<OrganizationGroupMember> selectGroupMembes(@Param("groupId") String groupId);
 }

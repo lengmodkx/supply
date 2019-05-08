@@ -3,9 +3,11 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.OrganizationGroup;
+import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -86,6 +89,24 @@ public class OrganizationGroupMemberApi {
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
             throw new AjaxException("系统异常,操作失败!",e);
+        }
+    }
+
+    /**
+     * 获取一个群组的所有成员信息
+     * @return 成员信息
+     */
+    @GetMapping("/{groupId}")
+    public JSONObject getGroupMembers(@PathVariable String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data",organizationGroupMemberService.getGroupMembers(groupId));
+            return jsonObject;
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
+        } catch (Exception e){
+            throw new AjaxException("系统异常,成员信息获取失败!",e);
         }
     }
 }

@@ -168,6 +168,7 @@ public class OrganizationMemberApi {
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e){
+            e.printStackTrace();
             throw new SystemException("系统异常,获取用户信息失败!",e);
         }
     }

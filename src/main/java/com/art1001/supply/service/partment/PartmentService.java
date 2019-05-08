@@ -49,13 +49,6 @@ public interface PartmentService extends IService<Partment> {
 	void savePartment(Partment partment);
 
 	/**
-	 * 获取所有partment数据
-	 * 
-	 * @return
-	 */
-	List<Partment> findPartmentAllList(Partment partment);
-
-	/**
 	 * 检查该部门是存在
 	 * @param partmentId 部门id
 	 * @return 结果
@@ -67,4 +60,11 @@ public interface PartmentService extends IService<Partment> {
 	 * @param partmentIds 排序后的部门id
 	 */
 	Boolean orderPartment(String[] partmentIds);
+
+	/**
+	 * 获取某个企业下的部门信息
+	 * @param orgId 企业id
+	 * @return 部门信息
+	 */
+	List<Partment> findOrgPartmentInfo(String orgId);
 }

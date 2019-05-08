@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.organization;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -46,6 +47,30 @@ public class OrganizationGroupMember implements Serializable {
      * 创建时间
      */
     private Long createTime;
+
+    /**
+     * 成员头像
+     */
+    @TableField(exist = false)
+    private String image;
+
+    /**
+     * 成员的名称
+     */
+    @TableField(exist = false)
+    private String userName;
+
+    /**
+     * 成员id
+     */
+    @TableField(exist = false)
+    private String userId;
+
+    /**
+     * 是否是群组的拥有者
+     */
+    @TableField(exist = false)
+    private Boolean isOwner;
 
 
 }

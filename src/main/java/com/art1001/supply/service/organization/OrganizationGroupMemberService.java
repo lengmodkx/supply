@@ -3,6 +3,8 @@ package com.art1001.supply.service.organization;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -46,4 +48,13 @@ public interface OrganizationGroupMemberService extends IService<OrganizationGro
      * @return 结果
      */
     Boolean removeMember(String memberId, String groupId);
+
+    /**
+     * 获取群组下的所有成员信息
+     * @param groupId 群组id
+     * @return 群组内所有成员信息
+     */
+    List<OrganizationGroupMember> getGroupMembers(String groupId);
+
+
 }

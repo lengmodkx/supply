@@ -3,14 +3,19 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.OrganizationGroup;
+import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.OrganizationGroupService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -46,6 +51,7 @@ public class OrganizationGroupApi {
             organizationGroup.setGroupName(groupName);
             if(organizationGroupService.createGroup(organizationGroup,memberIds)){
                 jsonObject.put("result", 1);
+                jsonObject.put("data", organizationGroup);
             }
             return jsonObject;
         } catch (ServiceException e){
@@ -104,5 +110,23 @@ public class OrganizationGroupApi {
         }
     }
 
+    /**
+     * 获取企业下的群组信息
+     * @param orgId 企业id
+     * @return 群组信息
+     */
+    @GetMapping("{orgId}")
+    public JSONObject getOrgGroups(@PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",organizationGroupService.getOrgGroups(orgId));
+            return jsonObject;
+        } catch (ServiceException e){
+            throw new SystemException(e.getMessage(),e);
+        }
+        catch (Exception e){
+            throw new SystemException("系统异常,获取群组信息失败!");
+        }
+    }
 }
 

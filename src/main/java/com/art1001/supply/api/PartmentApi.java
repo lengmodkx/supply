@@ -109,14 +109,10 @@ public class PartmentApi {
     public JSONObject allParment(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
-            Partment partment = new Partment();
-            partment.setOrganizationId(orgId);
-            partment.setPartmentOrder(1);
-            jsonObject.put("result",1);
-            jsonObject.put("data",partmentService.findPartmentAllList(partment));
+            jsonObject.put("data",partmentService.findOrgPartmentInfo(orgId));
         }catch (Exception e){
             log.error("系统异常,信息获取失败:",e);
-            throw new SystemException(e);
+            throw new AjaxException(e);
         }
         return jsonObject;
     }
