@@ -93,9 +93,11 @@ public class TaskApi extends BaseController {
     public JSONObject addTask(Task task){
         try {
             taskService.saveTask(task);
-            return success(task.getProjectId(),taskService.findSimpleTaskById(task.getTaskId()),task.getTaskId(),task.getTaskName(),task.getProjectId());
-        } catch (BaseException e){
-            return error(e.getMessage());
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("msgId",task.getProjectId());
+            jsonObject.put("data",task.getProjectId());
+            jsonObject.put("result",1);
+            return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常任务创建失败!",e);
         }
@@ -126,10 +128,13 @@ public class TaskApi extends BaseController {
     @Log(PushType.A2)
     @Push(value = PushType.A2,type = 1)
     @DeleteMapping("/{taskId}")
-    public Object deleteTask(@PathVariable(value = "taskId")String taskId){
+    public JSONObject deleteTask(@PathVariable(value = "taskId")String taskId){
         try{
+            JSONObject jsonObject = new JSONObject();
             taskService.removeById(taskId);
-            return success(taskId,taskId,taskService.findTaskNameById(taskId));
+            jsonObject.put("msgId",taskService.findProjectIdByTaskId(taskId));
+            jsonObject.put("data",taskService.findProjectIdByTaskId(taskId));
+            return jsonObject;
         }catch(Exception e){
             throw new AjaxException("系统异常,删除失败",e);
         }
@@ -960,7 +965,6 @@ public class TaskApi extends BaseController {
 
     /**
      * 更新任务的开始/结束时间
-     * @param projectId 项目id
      * @param startTime 开始时间
      * @param endTime 结束时间
      * @return 结果

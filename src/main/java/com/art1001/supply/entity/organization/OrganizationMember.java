@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.organization;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -60,9 +61,11 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 * 企业用户是否被停用 0停用，1启用
 	 */
 	private Integer memberLock;
+
 	/**
 	 * 用户实体
 	 */
+	@TableField(exist = false)
 	private UserEntity userEntity;
 
 	/**

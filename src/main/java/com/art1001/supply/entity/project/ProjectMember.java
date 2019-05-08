@@ -72,7 +72,7 @@ public class ProjectMember extends Model<ProjectMember> {
 	private Project project;
 
 	/**
-	 * 是否是项目成员，0是，1是拥有者
+	 * 0:普通成员 1:拥有者
 	 */
 	@TableField("member_label")
 	private Integer memberLabel;

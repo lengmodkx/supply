@@ -101,7 +101,7 @@ public class Schedule extends Model<Schedule> {
 	private List<UserEntity> joinInfo;
 
 	/**
-	 * 是否是全天
+	 * 隐私模式 (0.正常 1.隐私)
 	 */
 	private Integer privacyPattern;
 
@@ -134,7 +134,7 @@ public class Schedule extends Model<Schedule> {
 	private Integer fabulousCount;
 
 	/**
-	 * 是否删除
+	 * 是否在回收站 0 否 1 是
 	 */
 	private Integer isDel;
 
@@ -158,6 +158,11 @@ public class Schedule extends Model<Schedule> {
 	 * 日程结束时间
 	 */
 	private Long endTime;
+
+	/**
+	 * 	标记是否是全天日程(0.否 1.是)
+	 */
+	private int isAllday;
 
 	/**
 	 * 判断当前用户是否收藏了该日程

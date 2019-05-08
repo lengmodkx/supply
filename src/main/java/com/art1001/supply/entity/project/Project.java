@@ -45,7 +45,7 @@ public class Project extends Model<Project> {
     private Long startTime;
 
     /**
-     * 项目结束时间 0：没有 1：
+     * 项目结束时间
      */
     private Long endTime;
 
