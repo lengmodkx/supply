@@ -54,12 +54,24 @@ public class Statistics {
      */
     List<QueryVO>   countData;
 
+    /**
+     * 柱状图表数据
+     */
+    List<StatisticsHistogram>   hisResultlist;
 
     /*
      *  概览数据
      */
     List<StatisticsResultVO> sticsResultList;
 
+
+    public List<StatisticsHistogram> getHisResultlist() {
+        return hisResultlist;
+    }
+
+    public void setHisResultlist(List<StatisticsHistogram> hisResultlist) {
+        this.hisResultlist = hisResultlist;
+    }
 
     public List<QueryVO> getTaskGroup() {
         return taskGroup;

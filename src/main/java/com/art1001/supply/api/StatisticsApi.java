@@ -43,7 +43,7 @@ public class StatisticsApi {
 
 
             //获取总任务数
-            Integer count=this.statisticsService.getCountTask(projectId,new StaticDto());
+            Integer count=this.statisticsService.getCountTask(projectId,sto);
 
 
             //statistics.setCount(count);
@@ -128,7 +128,7 @@ public class StatisticsApi {
     @GetMapping(value = "getHistogramSource/{projectId}/{data}")
     public Statistics histogramStatistics(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
 
-        StaticDto sto=null;
+        StaticDto sto=new StaticDto();
         if(dto!=null){
             JSONObject jsonObject=JSONObject.fromObject(dto);
             sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
@@ -137,14 +137,30 @@ public class StatisticsApi {
         try {
             Statistics statistics=this.getCondition(projectId);
             //根据项目id获取折线图数据
-            StatisticsHistogram staticHistograms=this.statisticsService.getHistogramsChart(projectId,sto);
-            statistics.setStaticHistogram(staticHistograms);
+            List<StatisticsHistogram> staticHistograms=this.statisticsService.getHistogramsData(projectId,sto);
+
+            statistics.setHisResultlist(staticHistograms);
+
+
+            String[] nameArray = new String[staticHistograms.size()];
+            Integer[] dataArray = new Integer[staticHistograms.size()];
+
+            for(int i=0;i<staticHistograms.size();i++){
+                nameArray[i] = staticHistograms.get(i).getName();
+                dataArray[i] = staticHistograms.get(i).getData();
+            }
+
+            StatisticsHistogram staticHistogram = new StatisticsHistogram();
+            staticHistogram.setNameArray(nameArray);
+            staticHistogram.setDataArray(dataArray);
+
+            statistics.setStaticHistogram(staticHistogram);
 
 
             ArrayList<TitleVO> arrayList=new ArrayList<>();
             TitleVO title=new TitleVO("执行者","name");
             arrayList.add(title);
-            title=new TitleVO("任务数","y");
+            title=new TitleVO("任务数","data");
             arrayList.add(title);
 
 

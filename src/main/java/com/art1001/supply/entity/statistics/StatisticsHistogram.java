@@ -1,5 +1,7 @@
 package com.art1001.supply.entity.statistics;
 
+import java.util.Arrays;
+
 /**
  * @Auther: yanglujing
  * @Date: 2019/4/17 18:39
@@ -46,6 +48,8 @@ public class StatisticsHistogram {
         return "StatisticsHistogram{" +
                 "name='" + name + '\'' +
                 ", data=" + data +
+                ", nameArray=" + Arrays.toString(nameArray) +
+                ", dataArray=" + Arrays.toString(dataArray) +
                 '}';
     }
 }

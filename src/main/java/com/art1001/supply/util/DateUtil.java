@@ -83,7 +83,7 @@ public class DateUtil {
     /**
      * 任务燃尽图数据
      *
-     * @param dayNum       查询天数
+     * @param dayNum        查询天数
      * @param taskCountMap 累计任务量计算出的天数值
      */
     public static Map taskBurnout(Map<String, Integer> taskCountMap, int dayNum) {

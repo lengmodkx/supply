@@ -73,28 +73,24 @@ public class StatisticsServiceImpl implements StatisticsService {
                 //查询出逾期完成任务
                 taskCount = statisticsMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
             }
-            queryVO.setLabel(String.valueOf(taskCount));
-            //如果非任务总量,执行以下逻辑
-             if(StaticticsVO.TASKTOTALCOUNT.equals(names)){
-                 queryVO.setLabel(String.valueOf(total));
-            }
-                /*//设置百分比
-                NumberFormat numberFormat = NumberFormat.getInstance();
-                numberFormat.setMaximumFractionDigits(2);
-                //设置该组的达标数量
-                statictics.setCount(taskCount);
-                Double value = (double) taskCount / (double) total * 100;
-                if (!value.isNaN()){
-                    statictics.setPercentage(Double.valueOf(numberFormat.format(value)));
-                }else{
-                    statictics.setPercentage(0);
-                }
-            }else{
-                statictics.setCount(total);
-                statictics.setPercentage((double)100);
-            }*/
-            list.add(queryVO);
 
+                if(!StaticticsVO.TASKTOTALCOUNT.equals(names)){
+                    //设置百分比
+                    NumberFormat numberFormat = NumberFormat.getInstance();
+                    numberFormat.setMaximumFractionDigits(0);
+                    //设置该组的达标数量
+                    queryVO.setLabel(String.valueOf(taskCount));
+                    Double value = (double) taskCount / (double) total * 100;
+                    if (!value.isNaN()){
+                        queryVO.setPercent(Double.valueOf(numberFormat.format(value)));
+                    }else{
+                        queryVO.setPercent((double)0);
+                    }
+                }else{
+                    queryVO.setLabel(String.valueOf(total));
+                    queryVO.setPercent((double)100);
+                }
+            list.add(queryVO);
         }
         return list;
     }
@@ -135,10 +131,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //获取每个用户的任务数
         List<StatisticsPie> statisticsPies=statisticsMapper.selectExcutorTask(projectId,resultStatic(sto));
-        for (int i=0;i<statisticsPies.size();i++) {
+       /* for (int i=0;i<statisticsPies.size();i++) {
             String num = CalculateProportionUtil.proportionDouble( Float.valueOf(statisticsPies.get(i).getY().toString()),(float)count, 2);
             statisticsPies.get(i).setY(Float.valueOf(num));
-        }
+        }*/
         return  statisticsPies;
     }
 
@@ -151,6 +147,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
+
+        sto =  resultStatic(sto);
 
         //获取每个用户的数据
         List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
@@ -385,8 +383,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         return null;
     }
 
+    /**
+     * 获取统计页面的图数据和表数据
+     * @param projectId
+     * @param sto
+     * @return
+     */
+    @Override
+    public List<StatisticsHistogram> getHistogramsData(String projectId, StaticDto sto) {
 
-        /**
+        //系统当前时间
+        Long currentDate = System.currentTimeMillis() / 1000;
+
+        sto =  resultStatic(sto);
+
+        //获取每个用户的数据
+        List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
+        return statisticsHistograms;
+    }
+
+
+    /**
          * 未完成数据
          */
     private Statistics selectUnfinishedTask(StatisticsDTO statisticsDTO, String projectId) {
@@ -396,7 +413,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //查询未完成数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectUnfinishTask(statisticsDTO, UNFINISH_TASK_CASE, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -436,7 +453,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //查询已完成任务
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectFinishTask(statisticsDTO, FINISH_TASK_CASE, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -474,7 +491,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //查询今日到期的数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectExpireTask(statisticsDTO, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -510,7 +527,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //已逾期数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectOverdueTask(statisticsDTO, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -546,7 +563,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //待认领数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectWaitClaimTask(statisticsDTO, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -581,7 +598,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             int count = this.statisticsMapper.getCountTask(projectId);
             //按时完成数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectPunctualityTask(statisticsDTO, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
             ArrayList<TitleVO> arrayList=new ArrayList<>();
@@ -616,7 +633,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId);
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectExpiredToCompleteTask(statisticsDTO, projectId);
-            String percent = numChange((double) statisticsResultVOList.size() / (double) count);
+            //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
             List<String> titleList = new ArrayList<>();
             titleList.add("完成时间");
             titleList.add("任务");
@@ -674,16 +691,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             String today = format.format(new Date());
             //期间统计的时间计算
             if (StringUtils.isEmpty(staticDto.getStartDay()) || StringUtils.isEmpty(staticDto.getEndDay())) {
-                if ("过去7天".equals(staticDto.getTaskDay())) {
+                if ("7".equals(staticDto.getTaskDay())) {
                     c.setTime(new Date());
-                    c.add(Calendar.DATE, -7);
+                    c.add(Calendar.DATE, -8);
                     Date d = c.getTime();
                     String day = format.format(d);
                     //将数据写入实体类
                     staticDto.setStartDay(day);
                     staticDto.setEndDay(today);
                     staticDto.setDayNum(8);
-                } else if ("过去一个月".equals(staticDto.getTaskDay())) {
+                } else if ("30".equals(staticDto.getTaskDay())) {
                     c.setTime(new Date());
                     c.add(Calendar.MONTH, -1);
                     Date m = c.getTime();
@@ -693,7 +710,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     staticDto.setEndDay(today);
                     staticDto.setDayNum(30);
 
-                } else if ("过去三个月".equals(staticDto.getTaskDay())) {
+                } else if ("90".equals(staticDto.getTaskDay())) {
                     c.setTime(new Date());
                     c.add(Calendar.MONTH, -3);
                     Date m3 = c.getTime();
@@ -704,7 +721,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     staticDto.setDayNum(90);
                 } else {
                     c.setTime(new Date());
-                    c.add(Calendar.DATE, -7);
+                    c.add(Calendar.DATE, -8);
                     Date d = c.getTime();
                     String day = format.format(d);
                     //将数据写入实体类

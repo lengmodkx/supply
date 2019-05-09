@@ -84,7 +84,7 @@
         SELECT
         FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d  %T') as  end_time
         <include refid="Base_Column_List"/>
-        WHERE pt.task_status=#{unfinishTaskCase}
+        WHERE pt.task_status=0 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -95,7 +95,7 @@
         SELECT
         FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') as finish_time
         <include refid="Base_Column_List"/>
-        WHERE pt.task_status=#{finishTaskCase}
+        WHERE pt.task_status=1 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -105,7 +105,7 @@
         SELECT
         FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d  %T') as create_time
         <include refid="Base_Column_List"/>
-        WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d') ]]>
+        WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d') ]]> AND  pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -115,7 +115,7 @@
         FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d  %T') as  end_time
         <include refid="Base_Column_List"/>
         WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') <  DATE_FORMAT (NOW(),'%Y-%m-%d %T')  ]]>
-        AND pt.task_status='未完成'
+        AND pt.task_status=0 AND  pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -127,7 +127,7 @@
         SELECT
         FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as  create_time
         <include refid="Base_Column_List"/>
-        WHERE pt.executor = ''
+        WHERE pt.task_uids is NULL  AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -137,7 +137,7 @@
         FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d  %T') as finish_time
         <include refid="Base_Column_List"/>
         WHERE <![CDATA[ FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') > DATE_FORMAT(NOW(),'%Y-%m-%d %T')  ]]>
-        AND pt.task_status='完成'
+        AND pt.task_status=1 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -148,7 +148,7 @@
         (DATEDIFF(DATE_FORMAT(FROM_UNIXTIME(pt.update_time/1000),'%Y-%m-%d') ,DATE_FORMAT(FROM_UNIXTIME(pt.end_time/1000),'%Y-%m-%d %T'))) as overdue_num
         <include refid="Base_Column_List"/>
         WHERE <![CDATA[  FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < DATE_FORMAT(NOW(), '%Y-%m-%d %T')  ]]>
-        AND pt.task_status='完成'
+        AND pt.task_status=1 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
@@ -168,7 +168,8 @@
 
     <select id="getHistogramsDate"  resultMap="resultHistograms">
          SELECT tu.user_name AS name , COUNT(1) AS data FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
-         WHERE pt.task_status='完成' AND  project_id = #{projectId}
+         WHERE pt.task_status=1 AND  project_id = #{projectId}
+
          AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
          BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T')
         <include refid="Base_Column_QBC"/>
@@ -190,7 +191,7 @@
     <select id="taskOfFinishProgress" resultMap="BaseResultMap">
 		SELECT FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d') AS finish_time,COUNT(1) AS task_count
 		FROM  prm_task pt  LEFT JOIN tb_user tu ON tu.user_id=pt.executor
-		WHERE pt.task_status='完成'
+		WHERE pt.task_status=1
 		AND project_id = #{projectId}
         AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
         AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
@@ -201,25 +202,25 @@
 
     <!-- 任务燃尽 -->
     <select id="selectTaskBurnOut"  resultMap="BaseResultMap">
-        SELECT FROM_UNIXTIME(pt.create_time/1000) as create_time,pt.task_name,tu.user_name,
-        @status:=CASE WHEN FROM_UNIXTIME(pt.update_time/1000)=FROM_UNIXTIME(pt.create_time/1000)  THEN '新增'
-        WHEN  <![CDATA[ FROM_UNIXTIME(pt.update_time/1000) <> FROM_UNIXTIME(pt.create_time/1000) AND pt.task_status='完成' THEN '完成'  ]]>
+        SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as create_time,pt.task_name,tu.user_name,
+        @status:=CASE WHEN FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T')=FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  THEN '新增'
+        WHEN  <![CDATA[ FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') <> FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') AND pt.task_status=1 THEN '完成'  ]]>
         ELSE '其他' END AS change_type,
         CASE WHEN @status='新增' THEN '+1'
         WHEN @status='完成' THEN '-1'
         ELSE '0' END AS task_count_string
         FROM  prm_task pt LEFT JOIN tb_user tu ON pt.executor=tu.user_id
-        AND pt.project_id = #{projectId}
+        WHERE pt.project_id = #{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
 
     <!-- 项目进展 -->
     <select id="selectProjectProgress" resultMap="BaseResultMap">
-        SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as create_time,pt.task_name,tu.user_name
+        SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %k:%i:%s') as create_time,pt.task_name,tu.user_name
         FROM prm_task pt
         LEFT JOIN tb_user tu ON tu.user_id=pt.executor
-        where  pt.task_status='完成'
+        where  pt.task_status=1
         AND pt.project_id = #{projectId}
         <include refid="Base_Column_QBC"/>
     </select>

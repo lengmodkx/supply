@@ -11,6 +11,15 @@ public class QueryVO {
 
     private String label;
 
+    private Double percent;
+
+    public Double getPercent() {
+        return percent;
+    }
+
+    public void setPercent(Double percent) {
+        this.percent = percent;
+    }
 
     public String getValue() {
         return value;
