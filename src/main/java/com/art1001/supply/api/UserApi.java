@@ -73,36 +73,11 @@ public class UserApi {
                  object.put("result", 0);
                  object.put("msg", "账号或密码错误");
             }
-         } catch (UnknownAccountException e) {
-            // 账户不存在
-            log.error("账户不存在, {}", e);
-            object.put("result", 0);
-            object.put("msg", "账户不存在");
-         } catch (IncorrectCredentialsException e) {
-            // 密码错误,连续输错5次,帐号将被锁定10分钟
-            log.error("账号或密码错误,请重新输入{}", e);
-            object.put("result", 0);
-            object.put("msg", "账号或密码错误,请重新输入");
-         } catch (LockedAccountException e) {
-            // 您的账户已被锁定,请与管理员联系或10分钟后重试！
-            log.error("您的账户已被锁定,请与管理员联系或10分钟后重试！, {}", e);
-            object.put("result", 0);
-            object.put("msg", "您的账户已被锁定,请与管理员联系或10分钟后重试！");
-         } catch (ExcessiveAttemptsException e) {
-            // 您连续输错密码5次,帐号将被锁定10分钟!
-            log.error("您连续输错密码5次,帐号将被锁定10分钟!, {}", e);
-            object.put("result", 0);
-            object.put("msg", "账号或密码错误,请重新输入");
-         } catch (AuthenticationException e) {
-            // 账户验证失败！
-            log.error("账户验证失败！, {}", e);
-            object.put("result", 0);
-            object.put("msg", "账户验证失败！");
          } catch (Exception e) {
             // 登录异常，请联系管理员！
             log.error("登录异常，请联系管理员！, {}", e);
             object.put("result", 0);
-            object.put("msg", "登录异常，请联系管理员！");
+            object.put("msg", "登录异常，用户名或密码错误！");
          }
          return object;
      }

@@ -2,6 +2,7 @@ package com.art1001.supply.config;
 
 import com.art1001.supply.listener.ShiroSessionListener;
 import com.art1001.supply.redis.RedisManager;
+import com.art1001.supply.shiro.JWTShiroRealm;
 import com.art1001.supply.shiro.LimitRetryCredentialsMatcher;
 import com.art1001.supply.shiro.MyDBRealm;
 import com.art1001.supply.shiro.cache.CustomShiroCacheManager;
@@ -12,7 +13,11 @@ import com.art1001.supply.shiro.service.ChainDefinitionService;
 import com.art1001.supply.shiro.service.impl.ChainDefinitionServiceImpl;
 import com.art1001.supply.shiro.session.ShiroSessionDAO;
 import com.art1001.supply.shiro.session.redis.RedisShiroSessionRepository;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.codec.Base64;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -31,6 +36,7 @@ import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,9 +68,21 @@ public class ShiroConfig {
         return limitRetryCredentialsMatcher;
     }
 
+    @Bean
+    public Authenticator authenticator() {
+        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
+        authenticator.setRealms(Arrays.asList(jwtShiroRealm(), myDBRealm()));
+        authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
+        return authenticator;
+    }
+    @Bean("jwtRealm")
+    public Realm jwtShiroRealm() {
+        return new JWTShiroRealm();
+    }
+
     @Bean("myDBRealm")
     @DependsOn("lifecycleBeanPostProcessor")
-    public MyDBRealm myDBRealm(){
+    public Realm myDBRealm(){
         MyDBRealm myDBRealm = new MyDBRealm();
         myDBRealm.setCredentialsMatcher(credentialsMatcher());
         //开启缓存
