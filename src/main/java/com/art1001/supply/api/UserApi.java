@@ -57,18 +57,9 @@ public class UserApi {
     @PostMapping("/login")
      public JSONObject login(@RequestParam String accountName,
                              @RequestParam String password,
-                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe,
-                             HttpServletRequest request){
+                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
          JSONObject object = new JSONObject();
          try {
-             String key = String.valueOf(request.getSession().getAttribute("key"));
-             String iv = String.valueOf(request.getSession().getAttribute("iv"));
-             if(Stringer.isNullOrEmpty(key) || Stringer.isNullOrEmpty(iv)){
-                 object.put("result", 0);
-                 object.put("msg", "登陆失败，请重试!");
-                 return object;
-             }
-             password = AesEncryptUtil.desEncrypt(password, key,iv);
              Subject subject = SecurityUtils.getSubject();
              UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
              subject.login(token);
@@ -286,22 +277,5 @@ public class UserApi {
         //这里执行退出系统之前需要清理数据的操作
         // 注销登录
         ShiroAuthenticationManager.logout();
-    }
-
-    /**
-     * 获取加密字符串
-     * @param request 用户请求对象
-     * @return 加密字符串
-     */
-    @GetMapping("/encryp_str")
-    public JSONObject getEncrypStr(HttpServletRequest request){
-        JSONObject jsonObject = new JSONObject();
-        String key = RandomStringUtils.randomAlphanumeric(16);
-        String iv = RandomStringUtils.randomAlphanumeric(16);
-        jsonObject.put("key", key);
-        jsonObject.put("iv", iv);
-        request.getSession().setAttribute("key",key);
-        request.getSession().setAttribute("iv",iv);
-        return jsonObject;
     }
 }
