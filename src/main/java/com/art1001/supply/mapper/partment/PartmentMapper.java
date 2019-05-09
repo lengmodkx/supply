@@ -59,4 +59,10 @@ public interface PartmentMapper extends BaseMapper<Partment> {
 
 	int findMaxOrder(@Param("orgId") String orgId, @Param("parentId") String parentId);
 
+	/**
+	 * 获取某个企业下的部门信息
+	 * @param orgId 企业id
+	 * @return 部门信息
+	 */
+    List<Partment> selectOrgPartmentInfo(@Param("orgId") String orgId);
 }

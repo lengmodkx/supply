@@ -57,4 +57,10 @@ public interface StatisticsService {
      *查询概览图表数据
      */
     Statistics getCountTable(String divName, String projectId, StatisticsDTO statisticsDTO);
+
+
+    /*
+     *获取统计页面柱状图的图数据和表数据
+     */
+    List<StatisticsHistogram> getHistogramsData(String projectId, StaticDto sto);
 }

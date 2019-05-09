@@ -26,8 +26,6 @@ import java.io.IOException;
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(GlobalDefaultExceptionHandler.class);
-
 	/*
 	 * 如果抛出UnauthorizedException，将被该异常处理器截获来显示没有权限信息
 	 */
@@ -52,7 +50,8 @@ public class GlobalDefaultExceptionHandler {
 	 */
 	@ExceptionHandler(SystemException.class)
 	public String operateSystemException(SystemException ex, HttpServletRequest request) {
-		logger.error(ex.getMessage(), ex);
+		ex.getCause().printStackTrace();
+		log.error(ex.getMessage(), ex);
 		return "error/500";
 	}
 
@@ -80,9 +79,8 @@ public class GlobalDefaultExceptionHandler {
 	@ExceptionHandler(AjaxException.class)
 	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
-		ex.getCause().printStackTrace();
 		log.error(ex.getMessage(), ex);
-		// 将Ajax异常信息回写到前台，用于页面的提示
+		// 将Ajax异常信息回写到前台,用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);

@@ -79,7 +79,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param sto
      * @return list
      */
-    @Select("SELECT COUNT(1) FROM prm_task pt WHERE  DATEDIFF(FROM_UNIXTIME(#{currDate},'%Y-%m-%d %T'),FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T'))>=7 AND pt.task_status='完成' AND project_id = #{projectId}")
+    @Select("SELECT COUNT(1) FROM prm_task pt WHERE  DATEDIFF(FROM_UNIXTIME(#{currDate},'%Y-%m-%d %T'),FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T'))>=7 AND pt.task_status=1 AND project_id = #{projectId}")
     int taskFinishOfSevenDayAgo(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
 
     /**
@@ -125,7 +125,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param projectId 项目id
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = '未完成'")
+    @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = 0")
     int findHangInTheAirTaskCount(String projectId);
 
     /**
@@ -133,7 +133,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param projectId 项目id
      * @return
      */
-        @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = '完成'")
+        @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = 1")
     int findCompletedTaskCount(String projectId);
 
     /**
@@ -151,7 +151,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param currDate  当前日期 格式为 yyyy-MM-dd
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') and task_status = '未完成'")
+    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') and task_status = 0 ")
     int findBeoberdueTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
     /**
@@ -168,7 +168,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param currDate  当前日期 格式为 yyyy-MM-dd
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') >= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = '完成'")
+    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') >= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1")
     int findFinishontTimeTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
     /**
@@ -177,7 +177,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param currDate  当前日期 格式为 yyyy-MM-dd
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = '完成'")
+    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1")
     int findOverdueCompletion(@Param("projectId") String projectId, @Param("currDate") Long currDate);
 
 

@@ -153,4 +153,46 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		organizationGroupMemberService.remove(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId));
 		return true;
 	}
+
+	/**
+	 * 根据企业id 获取企业下的所有群组信息
+	 * @param orgId 企业id
+	 * @return 企业群组信息
+	 */
+	@Override
+	public List<OrganizationGroup> getOrgGroups(String orgId) {
+		if(Stringer.isNullOrEmpty(orgId)){
+			throw new ServiceException("orgId 不能为空!");
+		}
+		if(!organizationService.checkOrgIsExist(orgId)){
+			throw new ServiceException("该企业已经不存在!");
+		}
+		return organizationGroupMapper.selectOrgGroups(orgId,ShiroAuthenticationManager.getUserId());
+	}
+
+	/**
+	 * 查询该群组是否存在
+	 * @param groupId 群组id
+	 * @return 是否存在
+	 */
+	@Override
+	public Boolean checkGroupIsExist(String groupId) {
+		return organizationGroupMapper.selectCount(new QueryWrapper<OrganizationGroup>().eq("group_id", groupId)) > 0;
+	}
+
+	/**
+	 * 获取某个群组的拥有者信息
+	 * @param groupId 群组id
+	 * @return 拥有者信息
+	 */
+	@Override
+	public OrganizationGroupMember getGroupOwnerInfo(String groupId) {
+		if(Stringer.isNullOrEmpty(groupId)){
+			throw new ServiceException("groupId不能为空!");
+		}
+		if(!this.checkGroupIsExist(groupId)){
+			throw new ServiceException("该群组不存在!");
+		}
+		return organizationGroupMapper.selectOwnerInfo(groupId);
+	}
 }

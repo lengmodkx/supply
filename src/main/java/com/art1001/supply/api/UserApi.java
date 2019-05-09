@@ -8,9 +8,11 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
+import com.art1001.supply.util.crypto.AesEncryptUtil;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -94,10 +96,10 @@ public class UserApi {
     public JSONObject register(@RequestParam String captcha,
                                @RequestParam String accountName,
                                @RequestParam String password,
-                               @RequestParam String userName) {
+                               @RequestParam String userName,
+                               HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
-        String kaptcha = redisManager.get("captcha",String.class);
-        if(!captcha.equalsIgnoreCase(kaptcha)){
+        if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
             return jsonObject;
@@ -140,7 +142,7 @@ public class UserApi {
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
-            redisManager.set("captcha",capText);
+            request.getSession().setAttribute("captcha", capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);

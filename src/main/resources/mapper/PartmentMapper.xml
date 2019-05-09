@@ -11,6 +11,15 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
+
+	<!-- 部门初始化专用 -->
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.partment.Partment">
+		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
+		<result column="partment_name" property="partmentName" jdbcType="VARCHAR" />
+		<collection property="subPartments" ofType="com.art1001.supply.entity.partment.Partment">
+			<id column="s_id" property="parentId"/>
+		</collection>
+	</resultMap>
     
 	<sql id="Base_Column_List">
 						partment_id,
@@ -78,8 +87,23 @@
 		</if>
 	</select>
 
+	<!-- 获取某个企业下的部门信息 -->
+    <select id="selectOrgPartmentInfo" resultMap="BaseResultMap2">
+		SELECT
+			p.partment_id,
+			p.partment_name,
+			s.parent_id AS s_id
+		FROM
+			prm_partment AS p
+			LEFT JOIN prm_partment AS s ON p.partment_id = s.parent_id
+		WHERE
+			p.organization_id = #{orgId} AND p.parent_id = '0'
+		ORDER BY
+			p.partment_order
+	</select>
 
-	<delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
+
+    <delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
 		delete from
 		prm_partment where partment_id = #{partmentId}
 	</delete>

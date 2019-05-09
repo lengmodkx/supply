@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * partmentEntity
@@ -65,6 +66,19 @@ public class Partment extends Model<Partment> {
 	 *  父级部门的id
 	 */
 	private String parentId;
+
+	/**
+	 * 该部门的子部门信息
+	 */
+	@TableField(exist = false)
+	private List<Partment> subPartments;
+
+	/**
+	 * 是否存在子部门
+	 */
+	@TableField(exist = false)
+	private Boolean isExistSubPartment;
+
 
 
 	@Override

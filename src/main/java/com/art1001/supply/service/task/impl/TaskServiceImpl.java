@@ -1,25 +1,18 @@
 package com.art1001.supply.service.task.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.quartz.QuartzInfo;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.schedule.Schedule;
-import com.art1001.supply.entity.schedule.ScheduleApiBean;
-import com.art1001.supply.entity.share.Share;
-import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.statistics.ChartsVO;
 import com.art1001.supply.entity.statistics.StaticticsVO;
 import com.art1001.supply.entity.statistics.Statistics;
@@ -27,13 +20,11 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.*;
-import com.art1001.supply.entity.task.vo.TaskShowVo;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
-import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.quartz.MyJob;
@@ -57,7 +48,6 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -66,8 +56,10 @@ import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.*;
-import org.springframework.messaging.simp.annotation.SendToUser;
+import org.quartz.JobDataMap;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -193,6 +185,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
+        task.setCreateTime(System.currentTimeMillis());
+        task.setUpdateTime(System.currentTimeMillis());
         //保存任务信息
         taskMapper.insert(task);
     }
@@ -1458,6 +1452,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Task completeTask = new Task();
         completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
+        completeTask.setUpdateTime(System.currentTimeMillis());
         taskMapper.updateById(completeTask);
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();

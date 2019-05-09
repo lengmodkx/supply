@@ -47,7 +47,6 @@
 	
 	<select id="findOrganizationMemberPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
-		
 		select
 			m.create_time,
 			m.organization_lable,
