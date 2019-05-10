@@ -58,7 +58,7 @@
     <sql id="Base_Column_QBC">
         <if test="stDTO!= null">
            <if test="stDTO.taskGroup != null and stDTO.taskGroup != ''">
-              AND (SELECT pr1.relation_id FROM prm_relation pr1 WHERE pr1.relation_id=pt.parent_id) IN (#{stDTO.taskGroup})
+              AND (SELECT pr1.relation_id FROM prm_relation pr1 WHERE pr1.relation_id=pt.task_menu_id) IN (#{stDTO.taskGroup})
            </if>
            <if test="stDTO.taskMember != null and stDTO.taskMember != ''">
               AND tu.user_id  IN (#{stDTO.taskMember})
