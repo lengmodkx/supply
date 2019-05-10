@@ -19,12 +19,9 @@ public class JWTCredentialsMatcher implements CredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken authenticationToken, AuthenticationInfo authenticationInfo) {
         String token = (String) authenticationToken.getCredentials();
-        Object stored = authenticationInfo.getCredentials();
-        String salt = stored.toString();
-
         UserEntity user = (UserEntity)authenticationInfo.getPrincipals().getPrimaryPrincipal();
         try {
-            Algorithm algorithm = Algorithm.HMAC256(salt);
+            Algorithm algorithm = Algorithm.HMAC256(user.getCredentialsSalt());
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("username", user.getAccountName())
                     .build();

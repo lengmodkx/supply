@@ -64,13 +64,10 @@ public class UserApi {
              UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
              subject.login(token);
              if(subject.isAuthenticated()) {
-                 String refreshToken = IdGen.uuid();
-                 redisManager.setex(accountName,refreshToken,7*24*60*60);
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
-                 object.put("refreshToken",refreshToken);
                  object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
-                 object.put("accessToken",JwtUtil.sign(accountName,refreshToken));
+                 object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
             } else {
                  object.put("result", 0);
                  object.put("msg", "账号或密码错误");

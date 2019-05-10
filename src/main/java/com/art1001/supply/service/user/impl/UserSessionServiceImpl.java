@@ -11,7 +11,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -24,7 +24,7 @@ import java.util.*;
  * @author wangyafeng
  * @data 2016年12月13日 下午12:33:10
  */
-@Service("userSessionService")
+//@Service("userSessionService")
 public class UserSessionServiceImpl implements UserSessionService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserSessionServiceImpl.class);

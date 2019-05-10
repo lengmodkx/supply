@@ -16,8 +16,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 
@@ -31,16 +30,25 @@ import java.util.List;
  */
 public class MyDBRealm extends AuthorizingRealm {
 
-	@Resource
+	private UserMapper userMapper;
+
 	private ResourceMapper resourceMapper;
 
-	@Resource
-	private UserMapper userMapper;
+	@Autowired
+	public void setResourceMapper(ResourceMapper resourceMapper) {
+		this.resourceMapper = resourceMapper;
+	}
+
+	@Autowired
+	public void setUserMapper(UserMapper userMapper) {
+		this.userMapper = userMapper;
+	}
 
 	/**
 	 * 授权信息
 	 * 只有需要验证权限时才会调用, 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.在配有缓存的情况下，只加载一次.
 	 */
+
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 		String username = JwtUtil.getUsername(principalCollection.toString());
@@ -80,12 +88,6 @@ public class MyDBRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) {
-//		if(auth instanceof UsernamePasswordToken){
-//			username = ((UsernamePasswordToken) auth).getUsername();
-//		}else {
-//			String token = (String) auth.getCredentials();
-//			username = JwtUtil.getUsername(token);
-//		}
 		UsernamePasswordToken token = (UsernamePasswordToken)auth;
 		String username = token.getUsername();
 		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",username));
@@ -93,7 +95,7 @@ public class MyDBRealm extends AuthorizingRealm {
 			throw new AuthenticationException("用户名或者密码错误");
 		return new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码
 				new MyByteSource(username + userEntity.getCredentialsSalt()),
-				this.getName());
+				"dbRealm");
 	}
 	
 	/**

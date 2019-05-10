@@ -61,7 +61,7 @@ public class JwtFilter extends AuthenticatingFilter {
     }
 
     @Override
-    protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
+    protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse){
         HttpServletResponse httpResponse = WebUtils.toHttp(servletResponse);
         httpResponse.setCharacterEncoding("UTF-8");
         httpResponse.setContentType("application/json;charset=UTF-8");
@@ -107,7 +107,7 @@ public class JwtFilter extends AuthenticatingFilter {
     }
 
     @Override
-    protected void postHandle(ServletRequest request, ServletResponse response){
+    protected void postHandle(ServletRequest request, ServletResponse response) {
         this.fillCorsHeader(WebUtils.toHttp(request), WebUtils.toHttp(response));
         request.setAttribute("jwtShiroFilter.FILTERED", true);
     }
@@ -116,6 +116,7 @@ public class JwtFilter extends AuthenticatingFilter {
         httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS,HEAD");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
+        httpServletResponse.setHeader("Access-Control-Allow-Credentials","true");
     }
 
     private String getAuthzHeader(ServletRequest request) {
@@ -124,7 +125,7 @@ public class JwtFilter extends AuthenticatingFilter {
         return StringUtils.removeStart(header, "Bearer ");
     }
 
-    protected boolean shouldTokenRefresh(Date issueAt){
+    private boolean shouldTokenRefresh(Date issueAt){
         LocalDateTime issueTime = LocalDateTime.ofInstant(issueAt.toInstant(), ZoneId.systemDefault());
         return LocalDateTime.now().minusSeconds(tokenRefreshInterval).isAfter(issueTime);
     }

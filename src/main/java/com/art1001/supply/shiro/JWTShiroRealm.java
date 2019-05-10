@@ -11,9 +11,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 自定义身份认证
@@ -22,8 +20,11 @@ import javax.annotation.Resource;
 
 public class JWTShiroRealm extends AuthorizingRealm {
 
-    @Resource
     private UserMapper userMapper;
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     public JWTShiroRealm(){
         this.setCredentialsMatcher(new JWTCredentialsMatcher());
@@ -39,17 +40,18 @@ public class JWTShiroRealm extends AuthorizingRealm {
      * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {    
-        JWTToken jwtToken = (JWTToken) authcToken;
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
+        JWTToken jwtToken = (JWTToken) authToken;
         String token = jwtToken.getToken();
-        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",JwtUtil.getUsername(token)));
+        String userName = JwtUtil.getUsername(token);
+        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",userName));
 
         if(userEntity == null)
             throw new AuthenticationException("token过期，请重新登录");
 
         return new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码
-                new MyByteSource(userEntity.getAccountName() + userEntity.getCredentialsSalt()),
-                this.getName());
+                new MyByteSource(userName + userEntity.getCredentialsSalt()),
+                "jwtRealm");
     }
 
     @Override

@@ -24,11 +24,11 @@ public class ShiroAuthenticationManager {
 	/*
 	 * 用户权限管理
 	 */
-	public static final MyDBRealm myDBRealm = SpringContextUtil.getBean("myDBRealm", MyDBRealm.class);
+	public static final MyDBRealm myDBRealm = SpringContextUtil.getBean("dbRealm", MyDBRealm.class);
 	/*
 	 * 用户session管理
 	 */
-	public static final UserSessionService userSessionService = SpringContextUtil.getBean("userSessionService", UserSessionService.class);
+	//public static final UserSessionService userSessionService = SpringContextUtil.getBean("userSessionService", UserSessionService.class);
 
 	/**
 	 * 获取shiro的session
@@ -56,7 +56,6 @@ public class ShiroAuthenticationManager {
 	public static UserEntity getUserEntity() {
 		UserEntity principal = (UserEntity) SecurityUtils.getSubject().getPrincipal();
 		principal.setPassword(null);
-		principal.setCredentialsSalt(null);
 		return principal;
 	}
 
@@ -149,14 +148,14 @@ public class ShiroAuthenticationManager {
 	 */
 	public static void clearUserAuthByUserId(String...userIds){
 		
-		if(null == userIds || userIds.length == 0)	{
-			return ;
-		}
-		List<SimplePrincipalCollection> result = userSessionService.getSimplePrincipalCollectionByUserId(userIds);
-
-		for (SimplePrincipalCollection simplePrincipalCollection : result) {
-			myDBRealm.clearCachedAuthorizationInfo(simplePrincipalCollection);
-		}
+//		if(null == userIds || userIds.length == 0)	{
+//			return ;
+//		}
+//		List<SimplePrincipalCollection> result = userSessionService.getSimplePrincipalCollectionByUserId(userIds);
+//
+//		for (SimplePrincipalCollection simplePrincipalCollection : result) {
+//			myDBRealm.clearCachedAuthorizationInfo(simplePrincipalCollection);
+//		}
 	}
 
 
@@ -183,12 +182,12 @@ public class ShiroAuthenticationManager {
 	 * @data 2017年1月5日 下午6:08:01
 	 */
 	public static void clearAllUserAuth() {
-		List<UserSessionEntity> list = userSessionService.getAllUser();
-		List<String> userIds = new ArrayList<String>();
-		list.forEach(user -> {
-			userIds.add(user.getUserId());
-		});
-		clearUserAuthByUserId(userIds.toArray(new String[0]));
+//		List<UserSessionEntity> list = userSessionService.getAllUser();
+//		List<String> userIds = new ArrayList<String>();
+//		list.forEach(user -> {
+//			userIds.add(user.getUserId());
+//		});
+//		clearUserAuthByUserId(userIds.toArray(new String[0]));
 	}
 	
 

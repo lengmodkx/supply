@@ -17,7 +17,7 @@ import java.util.Date;
  **/
 public class JwtUtil {
 
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
+    private static final long EXPIRE_TIME = 60 * 60 * 1000;
     /**
      * 获得token中的信息无需secret解密也能获得
      * @return token中包含的签发时间
@@ -74,7 +74,7 @@ public class JwtUtil {
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         Algorithm algorithm = Algorithm.HMAC256(secret);
         // 附带username信息
-        return JWT.create().withClaim("username", username).withExpiresAt(date).sign(algorithm);
+        return JWT.create().withClaim("username", username).withExpiresAt(date).withIssuedAt(new Date()).sign(algorithm);
     }
 
     /**
