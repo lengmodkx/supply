@@ -220,4 +220,18 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return 日程集合
 	 */
 	List<Schedule> findByMonth(@Param("month") String month, @Param("userId") String userId, @Param("currTime") long currentTimeMillis);
+
+	/**
+	 * 获取一个项目的日历日程信息 (version 2.0)
+	 * @param projectId 项目id
+	 * @return 日历日程信息
+	 */
+    List<Schedule> selectCalendarSchedule(@Param("projectId") String projectId);
+
+	/**
+	 * 获取一个用户的日历日程信息
+	 * @param userId 用户id
+	 * @return 日程信息
+	 */
+	List<Schedule> relevant(@Param("userId") String userId);
 }

@@ -698,4 +698,18 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 任务集合
 	 */
 	List<Task> getTaskPanel(@Param("ids") List<String> taskIds);
+
+	/**
+	 * 获取项目中的日历任务信息 (version2.0)
+	 * @param projectId 项目id
+	 * @return 项目日历的任务信息
+	 */
+    List<Task> selectCalendarTask(@Param("projectId") String projectId);
+
+	/**
+	 * 获取和当前用户相关的任务信息 (version2.0)
+	 * @param userId 用户id
+	 * @return 任务信息
+	 */
+	List<Task> relevant(@Param("userId") String userId);
 }

@@ -27,13 +27,13 @@ import java.util.Map;
  */
 public class KickoutSessionFilter extends AccessControlFilter {
 
-	
+
    /*
     * session获取
     */
     @Resource
   	private ShiroSessionRepository shiroSessionRepository;
-  	
+
     @Resource
   	private CacheManager cacheManager;
 
@@ -88,10 +88,10 @@ public class KickoutSessionFilter extends AccessControlFilter {
 			}
 			return Boolean.FALSE;
 		}
-		
+
 		//从缓存获取用户-Session信息 <UserId,SessionId>
 		LinkedHashMap<String, Serializable> infoMap = null;
-		
+
 		Cache cache = cacheManager.getCache(ShiroUtils.ONLINE_USER);
 		if(cache instanceof RedisShiroCache)
 		{
@@ -102,13 +102,13 @@ public class KickoutSessionFilter extends AccessControlFilter {
 			EhcacheShiroCache ehCache = (EhcacheShiroCache)cache;
 			infoMap = (LinkedHashMap<String, Serializable>)ehCache.get(ShiroUtils.ONLINE_USER);
 		}
-		
+
 		//如果不存在，创建一个新的
 		infoMap = null == infoMap ? new LinkedHashMap<String, Serializable>() : infoMap;
-		
+
 		//获取tokenId
 		String userId = ShiroAuthenticationManager.getUserId();
-		
+
 		//如果已经包含当前Session，并且是同一个用户则跳过
 		if(infoMap.containsKey(userId) && infoMap.containsValue(sessionId)){
 			//缓存30分钟（这个时间最好和session的有效期一致或者大于session的有效期）
@@ -121,10 +121,10 @@ public class KickoutSessionFilter extends AccessControlFilter {
 				EhcacheShiroCache ehCache = (EhcacheShiroCache)cache;
 				ehCache.put(ShiroUtils.ONLINE_USER, infoMap);
 			}
-			
+
 			return Boolean.TRUE;
 		}
-		
+
 		/**
 		 * 如果用户相同，session不相同，则该用户在其他地方登录
 		 * 1、获取到原来的session，并且标记为踢出
@@ -150,11 +150,11 @@ public class KickoutSessionFilter extends AccessControlFilter {
 					EhcacheShiroCache ehCache = (EhcacheShiroCache)cache;
 					ehCache.put(ShiroUtils.ONLINE_USER, infoMap);
 				}
-				
+
 			}
 			return  Boolean.TRUE;
 		}
-		
+
 		if(!infoMap.containsKey(userId) && !infoMap.containsValue(sessionId)){
 			infoMap.put(userId, sessionId);
 			//存储到缓存1个小时（这个时间最好和session的有效期一致或者大于session的有效期）

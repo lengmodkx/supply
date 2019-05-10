@@ -224,4 +224,18 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return 日程集合
 	 */
 	List<Schedule> findByMonth(String month);
+
+	/**
+	 * 获取一个项目的日历日程信息 (version 2.0)
+	 * @param projectId 项目id
+	 * @return 日历日程信息
+	 */
+    List<Schedule> getCalendarSchedule(String projectId);
+
+	/**
+	 * 获取一个用户的日历日程信息
+	 * @param userId 用户id
+ 	 * @return 日程信息
+	 */
+	List<Schedule> relevant(String userId);
 }

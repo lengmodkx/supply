@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ *
  * @ClassName URLFilter
  * @Description 校验用户是否直接通过浏览器输入url进行操作
  *
@@ -22,7 +22,7 @@ import java.util.Map;
  * @data 2016年12月17日 上午12:48:01
  */
 public class URLFilter extends AccessControlFilter {
-	
+
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request,
                                       ServletResponse response, Object mappedValue) throws Exception {
@@ -47,7 +47,7 @@ public class URLFilter extends AccessControlFilter {
 				return Boolean.TRUE;
 			}
 		}
-		
+
 		return Boolean.FALSE;
 	}
 
@@ -66,7 +66,7 @@ public class URLFilter extends AccessControlFilter {
 	                WebUtils.issueRedirect(request, response, ShiroUtils.INDEX_URL);
 	            } else {//否则返回401未授权状态码
 	                WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-	            } 
+	            }
     		}
 		return Boolean.FALSE;
 	}

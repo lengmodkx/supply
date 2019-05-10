@@ -1356,4 +1356,41 @@
 			</foreach>
 			AND t.task_del = 0 ORDER by t.create_time ,f.create_time DESC
 	</select>
+
+	<!-- 获取项目中的日历任务信息 (version2.0) -->
+    <select id="selectCalendarTask" resultType="com.art1001.supply.entity.task.Task">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			u.user_id AS executor,
+			u.user_name AS executorName,
+			u.image AS executorImg
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			project_id = #{projectId}
+			AND t.task_del = 0
+	</select>
+
+	<!-- 获取和当前用户相关的任务信息 (version2.0) -->
+	<select id="relevant" resultType="com.art1001.supply.entity.task.Task">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			u.user_id AS executor,
+			u.user_name AS executorName,
+			u.image AS executorImg
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			t.executor = #{userId}
+			OR t.member_id = #{userId}
+			OR find_in_set( #{userId}, t.task_uids )
+	</select>
 </mapper>

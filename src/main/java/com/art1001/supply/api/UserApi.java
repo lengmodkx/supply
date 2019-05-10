@@ -96,7 +96,7 @@ public class UserApi {
                                @RequestParam String userName,
                                HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
-        if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
+        if(!captcha.equalsIgnoreCase(String.valueOf(ShiroAuthenticationManager.getKaptcha("captcha")))){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
             return jsonObject;
@@ -139,7 +139,7 @@ public class UserApi {
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
             //将验证码存入shiro 登录用户的session
-            request.getSession().setAttribute("captcha", capText);
+            ShiroAuthenticationManager.setSessionAttribute("captcha", capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
@@ -168,7 +168,7 @@ public class UserApi {
      */
     @GetMapping("/code")
     public JSONObject code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
-        String kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
+        String kaptcha = ShiroAuthenticationManager.getKaptcha("captcha");
         JSONObject jsonObject = new JSONObject();
         if(!kaptcha.equalsIgnoreCase(captcha)){
             jsonObject.put("result",0);
@@ -191,7 +191,7 @@ public class UserApi {
         if(RegexUtils.checkMobile(accountName)){
             SendSmsUtils sendSmsUtils = new SendSmsUtils();
             sendSmsUtils.sendSms(accountName,"您的手机验证码为:"+String.valueOf(valid));
-            ShiroAuthenticationManager.setSessionAttribute(request.getSession().getId(),String.valueOf(valid));
+            ShiroAuthenticationManager.setSessionAttribute("phoneCode",String.valueOf(valid));
         }
         jsonObject.put("result",1);
         jsonObject.put("msg","发送成功");
@@ -212,8 +212,8 @@ public class UserApi {
                              @RequestParam String code,HttpServletRequest request){
         JSONObject jsonObject = new JSONObject();
         try {
-            String  kaptcha = ShiroAuthenticationManager.getKaptcha(request.getSession().getId());
-            if(!kaptcha.equalsIgnoreCase(code)){
+            String phoneCode = ShiroAuthenticationManager.getKaptcha("phoneCode");
+            if(!phoneCode.equalsIgnoreCase(code)){
                 jsonObject.put("result",0);
                 jsonObject.put("msg","手机验证码输入错误！");
                 return jsonObject;
@@ -239,6 +239,11 @@ public class UserApi {
         }
 
         return jsonObject;
+    }
+
+    @GetMapping("test")
+    public String test1(){
+        return "1";
     }
     /**
      * 用户退出

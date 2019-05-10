@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ *
  * @ClassName RoleFilter
  * @Description 角色判断校验
  *
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class RoleFilter extends AccessControlFilter {
 
-	
+
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request,
                                       ServletResponse response, Object mappedValue) throws Exception {
@@ -38,12 +38,12 @@ public class RoleFilter extends AccessControlFilter {
 	@Override
 	protected boolean onAccessDenied(ServletRequest request,
 			ServletResponse response) throws Exception {
-		
+
 			Subject subject = getSubject(request, response);
-	        if (subject.getPrincipal() == null) {//表示没有登录，重定向到登录页面  
-	            saveRequest(request);  
+	        if (subject.getPrincipal() == null) {//表示没有登录，重定向到登录页面
+	            saveRequest(request);
 	            WebUtils.issueRedirect(request, response, ShiroUtils.LOGIN_URL);
-	        } else {  
+	        } else {
 	        	if(ShiroUtils.isAjax(request)){
 	    			Map<String, Object> result = new HashMap<String, Object>();
 	    			result.put("status", "401");
@@ -54,11 +54,11 @@ public class RoleFilter extends AccessControlFilter {
 	    		{
 	    			if (StringUtils.hasText(ShiroUtils.UNAUTHORIZED)) {//如果有未授权页面跳转过去
 		                WebUtils.issueRedirect(request, response, ShiroUtils.UNAUTHORIZED);
-		            } else {//否则返回401未授权状态码  
+		            } else {//否则返回401未授权状态码
 		                WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		            } 
+		            }
 	    		}
-	        }  
+	        }
 		return false;
 	}
 

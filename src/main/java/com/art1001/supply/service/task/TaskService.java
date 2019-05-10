@@ -15,6 +15,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.quartz.SchedulerException;
 
 import java.util.List;
@@ -593,4 +594,18 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务数据
 	 */
     List<Task> getTaskPanel(String projectId);
+
+	/**
+	 * 获取项目中的日历任务信息
+	 * @param projectId 项目id
+	 * @return 项目日历的任务信息
+	 */
+	List<Task> getCalendarTask(String projectId);
+
+	/**
+	 * 获取和当前用户相关的任务信息 (version2.0)
+	 * @param userId 用户id
+	 * @return 任务信息
+	 */
+	List<Task> relevant(String userId);
 }

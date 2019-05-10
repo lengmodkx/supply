@@ -1808,5 +1808,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //设置关联信息
         bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
     }
+
+    /**
+     * 获取项目中的日历任务信息 (version2.0)
+     * @param projectId 项目id
+     * @return 项目日历的任务信息
+     */
+    @Override
+    public List<Task> getCalendarTask(String projectId) {
+        return taskMapper.selectCalendarTask(projectId);
+    }
+
+    /**
+     * 获取和当前用户相关的任务信息 (version2.0)
+     * @param userId 用户id
+     * @return 任务信息
+     */
+    @Override
+    public List<Task> relevant(String userId) {
+        return taskMapper.relevant(userId);
+    }
 }
 

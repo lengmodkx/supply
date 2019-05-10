@@ -17,7 +17,7 @@ import java.util.Map;
 
 
 /**
- * 
+ *
  * @ClassName SimpleAuthFilter
  * @Description 判断用户是否踢出
  *
@@ -25,9 +25,9 @@ import java.util.Map;
  * @data 2016年12月13日 下午12:46:55
  */
 public class KickoutAuthFilter extends AccessControlFilter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(KickoutAuthFilter.class);
-	
+
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request,
                                       ServletResponse response, Object mappedValue) throws Exception {

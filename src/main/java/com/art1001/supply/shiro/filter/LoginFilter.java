@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ *
  * @ClassName LoginFilter
  * @Description 判断登录
  *
@@ -21,14 +21,14 @@ public class LoginFilter extends AccessControlFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.apache.shiro.web.filter.AccessControlFilter#isAccessAllowed(javax
 	 * .servlet.ServletRequest, javax.servlet.ServletResponse, java.lang.Object)
 	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-		
+
 		UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
 
 		if (null != userEntity || isLoginRequest(request, response)) {
@@ -40,13 +40,13 @@ public class LoginFilter extends AccessControlFilter {
 			}
 			return Boolean.TRUE;
 		}
-		
+
 		return Boolean.FALSE;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.apache.shiro.web.filter.AccessControlFilter#onAccessDenied(javax.
 	 * servlet.ServletRequest, javax.servlet.ServletResponse)
