@@ -697,7 +697,11 @@
 	<select id="findSubLevelTask" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List"/>
-		from prm_task where parent_id = #{taskId}
+		,
+		u.user_id,
+		u.user_name as executor_name,
+		u.image as executor_img
+		from prm_task left join tb_user as u on prm_task.executor = u.user_id  where parent_id = #{taskId}
 	</select>
 
 	<select id="findSubTaskCount" resultType="java.lang.Integer" >

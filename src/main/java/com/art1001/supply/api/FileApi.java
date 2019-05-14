@@ -461,6 +461,7 @@ public class FileApi extends BaseController {
             File file = new File();
             file.setFileId(fileId);
             file.setFileDel(0);
+            file.setUpdateTime(System.currentTimeMillis());
             fileService.updateById(file);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId+"/recyclebin");

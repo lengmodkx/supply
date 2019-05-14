@@ -315,6 +315,7 @@ public class TagApi {
             Tag tag = new Tag();
             tag.setTagId(tagId);
             tag.setIsDel(1);
+            tag.setUpdateTime(System.currentTimeMillis());
             tagService.updateTag(tag);
             jsonObject.put("result",1);
         }catch (Exception e){

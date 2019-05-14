@@ -314,12 +314,14 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setExecutor(userId);
             taskService.updateById(task);
-            if(taskService.getOne(new QueryWrapper<Task>().lambda().select(Task::getParentId).eq(Task::getTaskId, taskId)).getParentId().equals("0")){
+            Task one = taskService.getOne(new QueryWrapper<Task>().lambda().select(Task::getParentId, Task::getTaskId).eq(Task::getTaskId, taskId));
+            if(one.getParentId().equals("0")){
                 object.put("msgId",this.getTaskProjectId(taskId));
+                object.put("data",taskId);
             } else{
                 object.put("msgId", taskService.findChildTaskProject(taskId));
+                object.put("data", one.getParentId());
             }
-            object.put("data", taskId);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("id",taskId);
@@ -779,6 +781,7 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskDel(1);
+            task.setUpdateTime(System.currentTimeMillis());
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");
