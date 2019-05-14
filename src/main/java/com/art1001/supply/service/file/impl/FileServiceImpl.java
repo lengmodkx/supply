@@ -678,4 +678,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> seachByName(String fileName, String projectId) {
         return fileMapper.seachByName(fileName,projectId);
     }
+
+    /**
+     * 获取一个文件的链接地址
+     * @param fileId 文件id
+     * @return 链接地址
+     */
+    @Override
+    public String getFileUrl(String fileId) {
+        return fileService.getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
+
+    }
 }

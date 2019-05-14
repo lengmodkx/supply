@@ -224,6 +224,7 @@
 		<if test="isRead == false">
 			AND news_handle = 0
 		</if>
+		order by update_time desc
 
 	</select>
 

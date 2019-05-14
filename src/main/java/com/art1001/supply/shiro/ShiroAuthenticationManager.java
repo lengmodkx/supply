@@ -65,7 +65,7 @@ public class ShiroAuthenticationManager {
 	 * @return
 	 */
 	public static String getUserId() {
-		return "ec17c776f8bf44489b17743caf6b3141";
+		return getUserEntity().getUserId();
 	}
 	
 	/**

@@ -50,6 +50,8 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
@@ -1440,7 +1442,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`","parent_id").eq("task_id", taskId));
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId));
         //这里判断是否有子任务未完成
         List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId));
         subTask.forEach(t -> {
@@ -1454,6 +1456,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         completeTask.setTaskId(taskId);
         completeTask.setUpdateTime(System.currentTimeMillis());
         taskMapper.updateById(completeTask);
+
+        //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且遍历是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
+        if(!task.getParentId().equals("0")) {
+            int flag = 1;
+            for (Task t : taskMapper.selectList(new QueryWrapper<Task>().select("task_id", "task_status").eq("parent_id", task.getParentId()))) {
+                if(!t.getTaskStatus()){
+                    flag = 0;
+                }
+            }
+            if(flag == 1){
+                Task pTask = new Task();
+                pTask.setTaskId(task.getParentId());
+                pTask.setUpdateTime(System.currentTimeMillis());
+                pTask.setSubIsAllComplete(true);
+                taskMapper.updateById(pTask);
+            }
+        }
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;

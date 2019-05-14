@@ -915,6 +915,18 @@ public class FileApi extends BaseController {
         }
     }
 
+    @GetMapping("/{fileId}/url")
+    public JSONObject getFileUrl(@PathVariable String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1 );
+            jsonObject.put("data",fileService.getFileUrl(fileId));
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取地址失败!",e);
+        }
+    }
+
 
     /**
      * 校验传入的参数是文件的id还是项目的id

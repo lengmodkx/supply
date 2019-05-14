@@ -32,6 +32,7 @@
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 		<result column="progress" property="progress"/>
+		<result column="sub_is_all_complete" property="subIsAllComplete"/>
 
 		<!-- 查询父级任务信息 -->
 		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
@@ -300,6 +301,7 @@
 		t.task_group_id,
 		t.task_status,
 		t.task_code,
+		t.sub_is_all_complete,
 		t.task_del,
 		t.create_time,
 		t.update_time,
