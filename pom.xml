@@ -266,35 +266,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>tag-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tag</goal>
-                        </goals>
-                        <configuration>
-                            <image>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</image>
-                            <newName>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</newName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>push-image</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <imageName>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</imageName>
-                        </configuration>
-                    </execution>
-                </executions>
+
                 <configuration>
                     <serverId>docker-aliyun</serverId>
                     <registryUrl>${docker.repository}</registryUrl>
@@ -303,10 +275,10 @@
                     <imageName>
                         ${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}
                     </imageName>
-                    <imageTags>
-                        <!--docker的tag为项目版本号、latest-->
-                        <imageTag>latest</imageTag>
-                    </imageTags>
+                    <!--<imageTags>-->
+                        <!--&lt;!&ndash;docker的tag为项目版本号、latest&ndash;&gt;-->
+                        <!--<imageTag>latest</imageTag>-->
+                    <!--</imageTags>-->
                     <resources>
                         <rescource>
                             <targetPath>/</targetPath>
