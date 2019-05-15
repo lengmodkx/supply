@@ -28,6 +28,8 @@
         <pagehelper.version>5.0.3</pagehelper.version>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
         <docker.image.prefix>supply</docker.image.prefix>
+        <docker.repository>registry-vpc.cn-beijing.aliyuncs.com</docker.repository>
+        <docker.registry.name>/aldbim/aldbim</docker.registry.name>
     </properties>
 
     <dependencies>
@@ -254,17 +256,63 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>tag-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <image>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</image>
+                            <newName>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</newName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <imageName>${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}</imageName>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <serverId>docker-aliyun</serverId>
+                    <registryUrl>${docker.repository}</registryUrl>
+                    <pushImage>true</pushImage>
+                    <dockerDirectory>/</dockerDirectory>
+                    <imageName>
+                        ${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}
+                    </imageName>
+                    <imageTags>
+                        <!--docker的tag为项目版本号、latest-->
+                        <imageTag>latest</imageTag>
+                    </imageTags>
                     <resources>
-                        <resource>
+                        <rescource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
                             <include>${project.build.finalName}.jar</include>
-                        </resource>
+                        </rescource>
                     </resources>
                 </configuration>
             </plugin>
