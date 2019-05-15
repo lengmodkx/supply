@@ -609,4 +609,11 @@ public interface TaskService extends IService<Task> {
 	 */
 	List<Task> relevant(String userId);
 
+	/**
+	 * 查询任务的 (id,projectid,子任务的taskId)
+	 * 注意此接口  仅用于移动列表下所有任务时提供数据
+	 * @param menuId 列表id
+	 * @return 任务集合信息
+	 */
+	List<Task> getMoveData(String menuId);
 }

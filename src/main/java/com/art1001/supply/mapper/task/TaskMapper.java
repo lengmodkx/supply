@@ -712,4 +712,11 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 任务信息
 	 */
 	List<Task> relevant(@Param("userId") String userId);
+
+	/**
+	 *  查询任务的 (id,projectid,子任务的taskId)
+	 * @param menuId 菜单id
+	 * @return 任务信息
+	 */
+	List<Task> selectMoveData(@Param("menuId") String menuId);
 }

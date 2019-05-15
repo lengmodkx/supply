@@ -11,6 +11,7 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.binding.BindingService;
@@ -24,7 +25,9 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -207,7 +210,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public int editMenu(Relation relation) {
-		return relationMapper.updateRelation(relation);
+		return relationMapper.updateById(relation);
 	}
 
 	/**
@@ -241,7 +244,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	}
 
 	/**
-	 * 执行此菜单所有的执行者
+	 * 执行此菜单所有的执行者 (version 1.0)
 	 * 步骤
 	 * 1.获取到菜单里的所有任务
 	 * 2.给每个任务设置新的执行者
@@ -267,28 +270,28 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		}
 	}
 
-	/**
-	 * 设置此菜单下的所有的任务截止时间
-	 * @param relationId 菜单id
-	 * @param endTime 截止时间
-	 */
-	@Override
-	public void setMenuAllTaskEndTime(String relationId, Long endTime) {
-		List<Task> tasks = taskService.simpleTaskMenu(relationId);
-		if (tasks != null && tasks.size() > 0) {
-			for (Task task : tasks) {
-				Task newTask = new Task();
-				//设置新的截止时间
-				newTask.setEndTime(endTime);
-				newTask.setTaskId(task.getTaskId());
-				newTask.setUpdateTime(System.currentTimeMillis());
-				//保存到数据库
-				taskService.updateById(newTask);
-			}
-		}
-	}
+    /**
+     * 设置此菜单下的所有的任务的截止时间
+     * @param relationId 菜单id
+     * @param endTime 截止时间
+     * @return 结果
+     */
+    @Override
+    public int setAllTaskEndTime(String relationId, Long endTime) {
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().lambda().eq(Task::getTaskMenuId, relationId).select(Task::getTaskId));
+        if(CollectionUtils.isEmpty(tasks)){
+            throw new ServiceException("此列表任务数为0,无法设置截止时间");
+        }
+        //循环设置任务的截止时间
+        tasks.forEach(task -> {
+            task.setEndTime(endTime);
+            task.setUpdateTime(System.currentTimeMillis());
+        });
+        return taskService.updateBatchById(tasks) ? 1:0;
 
-	/**
+    }
+
+    /**
 	 * 移动菜单下的所有任务
 	 * @param oldTaskMenuVO 旧的任务位置信息
 	 * @param newTaskMenuVO 新的任务位置信息
@@ -461,7 +464,21 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
 		relation.setLable(1);
 		//设置菜单排序编号
-		relation.setOrder(relationMapper.findMaxOrder(relation.getParentId(),1) + 1);
+		if(relation.getOrder() == null){
+			relation.setOrder(relationMapper.findMaxOrder(relation.getParentId(),1) + 1);
+		} else {
+			relation.setOrder(relation.getOrder() + 1);
+			//改分组下的每个列表都要为信列表让出位置
+			List<Relation> relations = relationMapper.selectList(new QueryWrapper<Relation>().lambda().select(Relation::getOrder, Relation::getRelationId).eq(Relation::getParentId, relation.getParentId()).ge(Relation::getOrder, relation.getOrder()));
+			if(!CollectionUtils.isEmpty(relations)){
+				relations.forEach(r ->{
+					if(r.getOrder() >= relation.getOrder()){
+						r.setOrder(r.getOrder()+1);
+					}
+				});
+                this.updateBatchById(relations);
+            }
+		}
 		relation.setCreateTime(System.currentTimeMillis());
 		relation.setUpdateTime(System.currentTimeMillis());
 		relationMapper.saveRelation(relation);
@@ -547,6 +564,154 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			g.setTasks(null);
 		});
 		return groupsInfo;
+	}
+
+    /**
+	 * (version 2.0)
+     * 移动列表下的所有任务
+     * @param menuId    列表id
+     * @param projectId 项目id
+     * @param groupId   分组id
+     * @param toMenuId  移动到的列表id
+     * @return 结果
+     */
+    @Override
+    public boolean moveAllTask(String menuId, String projectId, String groupId, String toMenuId) {
+        List<Task> tasks = taskService.getMoveData(menuId);
+        if(CollectionUtils.isEmpty(tasks)){
+            throw new ServiceException("此列表下的任务为0,无法移动!");
+        }
+        int menuTaskMaxOrder = this.findMenuTaskMaxOrder(menuId);
+        tasks.forEach(task -> {
+            int i = 1;
+            task.setProjectId(projectId);
+            task.setTaskGroupId(groupId);
+            task.setTaskMenuId(toMenuId);
+            task.setOrder(menuTaskMaxOrder + i);
+            if(!task.getProjectId().equals(projectId)){
+                task.setTaskUIds("");
+                task.setExecutor("");
+            }
+            task.getTaskList().forEach(sub -> {
+				if(!task.getProjectId().equals(projectId)){
+					sub.setExecutor("");
+					sub.setTaskUIds("");
+				}
+			});
+			task.setUpdateTime(System.currentTimeMillis());
+			i++;
+        });
+        return taskService.updateBatchById(tasks);
+    }
+
+	/**
+	 * (version 2.0)
+	 * 复制列表下的所有任务
+	 * @param menuId    要复制的列表id
+	 * @param projectId 项目id
+	 * @param groupId   分组id
+	 * @param toMenuId  复制到的列表id
+	 * @return 是否成功
+	 */
+	@Override
+	public boolean copyAllTask(String menuId, String projectId, String groupId, String toMenuId) {
+		List<Task> taskByMenuId = taskService.findTaskByMenuId(menuId);
+		if(CollectionUtils.isEmpty(taskByMenuId)){
+			throw new ServiceException("此列表下的任务为0,无法复制!");
+		}
+		List<Task> subTasks = new ArrayList<>();
+		int menuTaskMaxOrder = this.findMenuTaskMaxOrder(menuId);
+		taskByMenuId.forEach(task -> {
+			int i = 1;
+			task.setTaskId(IdGen.uuid());
+			task.setCreateTime(System.currentTimeMillis());
+			task.setUpdateTime(System.currentTimeMillis());
+			task.setMemberId(ShiroAuthenticationManager.getUserId());
+			task.setOrder(menuTaskMaxOrder + i);
+			if(!task.getProjectId().equals(projectId)){
+				task.setTaskUIds("");
+				task.setExecutor("");
+			}
+			task.setTaskMenuId(toMenuId);
+			task.setProjectId(projectId);
+			task.setTaskGroupId(groupId);
+			task.setPrivacyPattern(1);
+			task.setFabulousCount(0);
+			task.setTaskStatus(false);
+			task.getTaskList().forEach(s -> {
+				s.setTaskId(IdGen.uuid());
+				s.setCreateTime(System.currentTimeMillis());
+				s.setUpdateTime(System.currentTimeMillis());
+				s.setPrivacyPattern(1);
+				s.setFabulousCount(0);
+				s.setTaskStatus(false);
+				s.setParentId(task.getTaskId());
+				if(!task.getProjectId().equals(projectId)){
+					s.setTaskUIds("");
+					s.setExecutor("");
+				}
+				subTasks.add(s);
+			});
+			i++;
+		});
+		if(taskByMenuId.addAll(subTasks)){
+			return taskService.saveBatch(taskByMenuId);
+		}
+		return false;
+	}
+
+	/**
+	 * (version 2.0)
+	 * 列表下所有任务移动到回收站
+	 * @param menuId 列表id
+	 * @return 是否成功
+	 */
+	@Override
+	public boolean allTaskMoveRecycleBin(String menuId) {
+		List<Task> list = taskService.list(new QueryWrapper<Task>().lambda().eq(Task::getTaskMenuId, menuId).select(Task::getTaskId));
+		if(CollectionUtils.isEmpty(list)){
+			throw new ServiceException("此列表下的任务为0,无法移动到回收站!");
+		}
+		list.forEach(t -> {
+			t.setTaskDel(1);
+			t.setUpdateTime(System.currentTimeMillis());
+		});
+		return taskService.updateBatchById(list);
+	}
+
+	/**
+	 * (version 2.0)
+	 * 设置该列表下的所有执行者
+	 * @param menuId   列表id
+	 * @param executor 执行者id
+	 * @return 是否成功
+	 */
+	@Override
+	public boolean setAllTaskExecutor(String menuId, String executor) {
+		List<Task> list = taskService.list(new QueryWrapper<Task>().lambda().eq(Task::getTaskMenuId, menuId).select(Task::getTaskId));
+		if(CollectionUtils.isEmpty(list)){
+			throw new ServiceException("此列表下的任务为0,无法设置执行者!");
+		}
+		list.forEach(t -> {
+			t.setExecutor(executor);
+			t.setUpdateTime(System.currentTimeMillis());
+		});
+		return taskService.updateBatchById(list);
+	}
+
+	/**
+	 * 删除此列表 (version2.0)
+	 * @param menuId 列表id
+	 * @return 是否成功
+	 */
+	@Override
+	public boolean removeMenu(String menuId) {
+		int count = taskService.count(new QueryWrapper<Task>().lambda().eq(Task::getTaskMenuId,menuId).eq(Task::getTaskDel, 0));
+		if(count > 0){
+			throw new ServiceException("此列表中存在任务,不能删除!");
+		}
+		return relationMapper.deleteById(menuId) > 0;
+
 	}
 }
 

@@ -6,7 +6,6 @@ import org.quartz.JobExecutionException;
 
 /**
  * @author heshaohua
- * @Title: Test
  * @Description: TODO
  * @date 2018/10/24 18:05
  **/

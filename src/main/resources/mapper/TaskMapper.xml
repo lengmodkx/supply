@@ -226,6 +226,15 @@
 		</collection>
 	</resultMap>
 
+	<!-- 仅用于移动列表所有任务前的数据提供 -->
+	<resultMap id="moveTaskData" type="com.art1001.supply.entity.task.Task">
+		<id column="task_id" property="taskId"/>
+		<result column="project_id" property="projectId"/>
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<id column="s_task_id" property="taskId"/>
+		</collection>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.progress,
@@ -1398,5 +1407,18 @@
 			t.executor = #{userId}
 			OR t.member_id = #{userId}
 			OR find_in_set( #{userId}, t.task_uids )
+	</select>
+
+	<!--  查询任务的 (id,projectid,子任务的taskId) -->
+	<select id="selectMoveData" resultMap="moveTaskData">
+		SELECT
+			t.task_id,
+			t.project_id,
+			s.task_id AS s_task_id
+		FROM
+			prm_task AS t
+			LEFT JOIN prm_task AS s ON s.parent_id = t.task_id
+		WHERE
+			t.task_menu_id = #{menuId}
 	</select>
 </mapper>

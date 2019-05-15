@@ -99,7 +99,7 @@ public interface RelationService extends IService<Relation> {
 	 * @param relationId 菜单id
 	 * @param endTime 截止时间
 	 */
-	void setMenuAllTaskEndTime(String relationId, Long endTime);
+	int setAllTaskEndTime(String relationId, Long endTime);
 
 	/**
 	 * 移动菜单下的所有任务信息
@@ -228,4 +228,46 @@ public interface RelationService extends IService<Relation> {
 	 * @return 分组详情信息
 	 */
     List<GroupVO> getGroupsInfo(String projectId);
+
+	/**
+	 * 移动列表下的所有任务
+	 * @param menuId 列表id
+	 * @param projectId 项目id
+	 * @param groupId 分组id
+	 * @param toMenuId 移动到的列表id
+	 * @return 结果
+	 */
+	boolean moveAllTask(String menuId, String projectId, String groupId, String toMenuId);
+
+	/**
+	 * 复制列表下的所有任务
+	 * @param menuId 要复制的列表id
+	 * @param projectId 项目id
+	 * @param groupId 分组id
+	 * @param toMenuId 复制到的列表id
+	 * @return 是否成功
+	 */
+	boolean copyAllTask(String menuId, String projectId, String groupId, String toMenuId);
+
+	/**
+	 * 列表下所有任务移动到回收站
+	 * @param menuId 列表id
+	 * @return 是否成功
+	 */
+	boolean allTaskMoveRecycleBin(String menuId);
+
+	/**
+	 * 设置该列表下的所有执行者
+	 * @param menuId 列表id
+	 * @param executor 执行者id
+	 * @return 是否成功
+	 */
+	boolean setAllTaskExecutor(String menuId, String executor);
+
+	/**
+	 * 删除此列表
+	 * @param menuId 列表id
+	 * @return 是否成功
+	 */
+	boolean removeMenu(String menuId);
 }
