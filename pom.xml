@@ -29,7 +29,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
         <docker.image.prefix>supply</docker.image.prefix>
         <docker.repository>registry-vpc.cn-beijing.aliyuncs.com</docker.repository>
-        <docker.registry.name>aldbim/aldbim</docker.registry.name>
+        <docker.registry.name>aldbim</docker.registry.name>
     </properties>
 
     <dependencies>
