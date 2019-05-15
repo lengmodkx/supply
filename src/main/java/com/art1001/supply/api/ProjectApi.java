@@ -17,6 +17,8 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -60,6 +62,12 @@ public class ProjectApi {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private TaskService taskService;
+
+    @Resource
+    private ScheduleService scheduleService;
 
     /**
      * 创建项目
@@ -445,6 +453,23 @@ public class ProjectApi {
             if(projectService.updateById(project)){
                 jsonObject.put("result",1);
             }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
+
+    /**
+     * 获取该日历上的任务信息
+     * @param projectId 项目id
+     * @return 日历任务信息
+     */
+    @GetMapping("/{projectId}/calendar")
+    public JSONObject getCalendarTaskInfo(@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",new JSONObject().fluentPut("tasks",taskService.getCalendarTask(projectId)).fluentPut("schedules", scheduleService.getCalendarSchedule(projectId)));
+            jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,更新失败!",e);

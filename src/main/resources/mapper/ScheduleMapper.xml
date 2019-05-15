@@ -120,6 +120,19 @@
  		</collection>
 	</resultMap>
 
+	<!-- 日历专用 -->
+	<resultMap id="scheduleCalendar" type="com.art1001.supply.entity.schedule.Schedule">
+		<id column="schedule_id" property="scheduleId"/>
+		<result column="schedule_name" property="scheduleName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
+			<id column="user_id" property="userId"/>
+			<result column="user_name" property="userName"/>
+			<result column="image" property="image"/>
+		</association>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 				schedule_id,
 				schedule_name,
@@ -600,6 +613,42 @@
 			( s.member_id = #{userId} OR s.member_ids = #{userId} )
 			AND FROM_UNIXTIME( s.start_time / 1000, '%Y-%m' ) = #{month}
 			AND s.end_time <![CDATA[<]]> #{currTime}
+	</select>
+
+	<!-- 获取一个项目的日历日程信息 (version 2.0) -->
+    <select id="selectCalendarSchedule" resultMap="scheduleCalendar">
+		SELECT
+			s.schedule_id,
+			s.schedule_name,
+			s.start_time,
+			s.end_time,
+			u.user_id,
+			u.user_name,
+			u.image
+		FROM
+			prm_schedule AS s
+			LEFT JOIN tb_user AS u ON s.member_id = u.user_id
+		WHERE
+			s.project_id = #{projectId}
+			AND s.is_del = 0
+	</select>
+
+	<!-- 获取一个用户的日历日程信息 -->
+	<select id="relevant" resultType="com.art1001.supply.entity.schedule.Schedule">
+		SELECT
+			s.schedule_id,
+			s.schedule_name,
+			s.start_time,
+			s.end_time,
+			u.user_id,
+			u.user_name,
+			u.image
+		FROM
+			prm_schedule AS s
+			LEFT JOIN tb_user AS u ON u.user_id = s.member_id
+		WHERE
+			s.member_id = #{userId}
+			OR find_in_set( #{userId}, s.member_ids )
 	</select>
 
 </mapper>

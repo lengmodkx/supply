@@ -470,7 +470,7 @@
 			g.create_time
 		FROM
 			prm_relation AS g
-			LEFT JOIN prm_task AS t ON t.task_group_id = g.relation_id
+			LEFT JOIN prm_task AS t ON t.task_group_id = g.relation_id AND t.task_del = '0'
 		WHERE
 			g.project_id = #{projectId}
 			AND lable = 0

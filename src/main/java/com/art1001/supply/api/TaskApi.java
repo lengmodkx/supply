@@ -196,7 +196,9 @@ public class TaskApi extends BaseController {
             if(!parentId.equals("0")){
                 Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId));
                 if(pTask.getTaskStatus()){
-                    throw new AjaxException("父任务已经完成");
+                    object.put("result",0);
+                    object.put("msg", "父任务已经完成不能重做子任务!");
+                    return object;
                 }
                 object.put("msgId",taskService.findChildProjectId(taskId));
             } else{
@@ -207,6 +209,11 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setTaskStatus(false);
             taskService.updateById(task);
+            Task pTask = new Task();
+            pTask.setTaskId(parentId);
+            pTask.setUpdateTime(System.currentTimeMillis());
+            pTask.setSubIsAllComplete(false);
+            taskService.updateById(pTask);
             object.put("result",1);
             object.put("msg","更新成功");
             if(label == 1){
@@ -241,7 +248,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",projectId);
-            object.put("data",taskIds.split(","));
+            object.put("data",projectId);
         }catch(Exception e){
             throw new AjaxException(e);
         }
@@ -307,10 +314,16 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setExecutor(userId);
             taskService.updateById(task);
-            object.put("data", taskId);
+            Task one = taskService.getOne(new QueryWrapper<Task>().lambda().select(Task::getParentId, Task::getTaskId).eq(Task::getTaskId, taskId));
+            if(one.getParentId().equals("0")){
+                object.put("msgId",this.getTaskProjectId(taskId));
+                object.put("data",taskId);
+            } else{
+                object.put("msgId", taskService.findChildTaskProject(taskId));
+                object.put("data", one.getParentId());
+            }
             object.put("result",1);
             object.put("msg","更新成功");
-            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,执行者更新失败:",e);
@@ -638,15 +651,15 @@ public class TaskApi extends BaseController {
             Integer pLevel = parentTask.getLevel();
             task.setLevel(pLevel + 1);
             taskService.saveTask(task);
+            Task pTask = new Task();
+            pTask.setTaskId(taskId);
+            pTask.setUpdateTime(System.currentTimeMillis());
+            pTask.setSubIsAllComplete(false);
+            taskService.updateById(pTask);
             object.put("result",1);
             object.put("msg","创建成功!");
-            object.put("data",taskId);
-            String taskProjectId = this.getTaskProjectId(taskId);
-            if(StringUtils.isNotEmpty(taskProjectId)){
-                object.put("msgId",taskProjectId);
-            } else{
-                object.put("msgId",taskService.findChildTaskProject(taskId));
-            }
+            object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId", taskService.findChildTaskProject(taskId)));
+            object.put("msgId",taskService.findChildTaskProject(taskId));
             object.put("id",taskId);
         }catch(Exception e){
             log.error("系统异常,子任务添加失败:",e);
@@ -768,6 +781,7 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskDel(1);
+            task.setUpdateTime(System.currentTimeMillis());
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","移入成功");

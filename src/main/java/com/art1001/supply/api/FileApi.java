@@ -461,6 +461,7 @@ public class FileApi extends BaseController {
             File file = new File();
             file.setFileId(fileId);
             file.setFileDel(0);
+            file.setUpdateTime(System.currentTimeMillis());
             fileService.updateById(file);
             jsonObject.put("result", 1);
             jsonObject.put("msgId",projectId+"/recyclebin");
@@ -912,6 +913,18 @@ public class FileApi extends BaseController {
              return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,文件绑定失败!",e);
+        }
+    }
+
+    @GetMapping("/{fileId}/url")
+    public JSONObject getFileUrl(@PathVariable String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1 );
+            jsonObject.put("data",fileService.getFileUrl(fileId));
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取地址失败!",e);
         }
     }
 

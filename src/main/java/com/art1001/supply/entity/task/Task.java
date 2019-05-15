@@ -305,6 +305,11 @@ public class Task extends Model<Task> {
 	private Integer progress;
 
 	/**
+	 * 子任务是否全部完成
+	 */
+	private Boolean subIsAllComplete;
+
+	/**
 	 * 关联信息的id
 	 */
 	@TableField(exist = false)

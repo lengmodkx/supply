@@ -1440,7 +1440,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().select("start_time","end_time","`repeat`","parent_id").eq("task_id", taskId));
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId));
         //这里判断是否有子任务未完成
         List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId));
         subTask.forEach(t -> {
@@ -1454,6 +1454,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         completeTask.setTaskId(taskId);
         completeTask.setUpdateTime(System.currentTimeMillis());
         taskMapper.updateById(completeTask);
+
+        //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且遍历是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
+        if(!task.getParentId().equals("0")) {
+            int flag = 1;
+            for (Task t : taskMapper.selectList(new QueryWrapper<Task>().select("task_id", "task_status").eq("parent_id", task.getParentId()))) {
+                if(!t.getTaskStatus()){
+                    flag = 0;
+                }
+            }
+            if(flag == 1){
+                Task pTask = new Task();
+                pTask.setTaskId(task.getParentId());
+                pTask.setUpdateTime(System.currentTimeMillis());
+                pTask.setSubIsAllComplete(true);
+                taskMapper.updateById(pTask);
+            }
+        }
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
         Long newStartTime = null;
@@ -1791,7 +1808,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
         //查询任务得赞数
         task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
-        if(task.getTaskGroupId() != null){
+        if(task.getTaskGroupId() != null &&  ! "undefined".equals(task.getTaskGroupId())){
             //获取任务名称
             task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
             task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
@@ -1807,6 +1824,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1)));
         //设置关联信息
         bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
+    }
+
+    /**
+     * 获取项目中的日历任务信息 (version2.0)
+     * @param projectId 项目id
+     * @return 项目日历的任务信息
+     */
+    @Override
+    public List<Task> getCalendarTask(String projectId) {
+        return taskMapper.selectCalendarTask(projectId);
+    }
+
+    /**
+     * 获取和当前用户相关的任务信息 (version2.0)
+     * @param userId 用户id
+     * @return 任务信息
+     */
+    @Override
+    public List<Task> relevant(String userId) {
+        return taskMapper.relevant(userId);
     }
 }
 

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ *
  * @ClassName PermissionFilter
  * @Description 权限校验 Filter
  *
@@ -21,11 +21,11 @@ import java.util.Map;
  * @data 2016年12月17日 上午12:48:01
  */
 public class PermissionFilter extends AccessControlFilter {
-	
+
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request,
                                       ServletResponse response, Object mappedValue) throws Exception {
-		
+
 		//先判断带参数的权限判断
 		Subject subject = getSubject(request, response);
 		if(null != mappedValue){
@@ -38,7 +38,7 @@ public class PermissionFilter extends AccessControlFilter {
 		}
 		//取到请求的uri ，进行权限判断
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		
+
 		String uri = httpRequest.getRequestURI();
 		String contextPath = httpRequest.getContextPath();
 		if(uri != null && uri.startsWith(contextPath))
@@ -59,9 +59,9 @@ public class PermissionFilter extends AccessControlFilter {
 	@Override
 	protected boolean onAccessDenied(ServletRequest request,
 			ServletResponse response) throws Exception {
-		
+
 			Subject subject = getSubject(request, response);
-	        if (null == subject.getPrincipal()) {//表示没有登录，重定向到登录页面  
+	        if (null == subject.getPrincipal()) {//表示没有登录，重定向到登录页面
 	            saveRequest(request);
 	            WebUtils.issueRedirect(request, response, ShiroUtils.LOGIN_URL);
 	        } else {
@@ -75,11 +75,11 @@ public class PermissionFilter extends AccessControlFilter {
 	    		{
 	    			if (StringUtils.hasText(ShiroUtils.UNAUTHORIZED)) {//如果有未授权页面跳转过去
 		                WebUtils.issueRedirect(request, response, ShiroUtils.UNAUTHORIZED);
-		            } else {//否则返回401未授权状态码  
+		            } else {//否则返回401未授权状态码
 		                WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		            } 
+		            }
 	    		}
-	        }  
+	        }
 		return Boolean.FALSE;
 	}
 

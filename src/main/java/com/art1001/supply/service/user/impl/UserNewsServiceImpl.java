@@ -195,7 +195,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 			int result = userNewsMapper.findUserNewsByPublicId(publicId,users[i]);
 			if(result == 0){
 				 userNews = new UserNews(IdGen.uuid(),name,content,publicId,0,ShiroAuthenticationManager.getUserId(),users[i],publicType,1,System.currentTimeMillis(),System.currentTimeMillis());
-				userNewsMapper.saveUserNews(userNews);
+				 userNewsMapper.saveUserNews(userNews);
 			} else{
 				userNews.setNewsContent(content);
 				userNews.setNewsPublicId(publicId);

@@ -65,7 +65,7 @@ public class ShiroAuthenticationManager {
 	 * @return
 	 */
 	public static String getUserId() {
-		return getUserEntity() == null ? null : getUserEntity().getUserId();
+		return getUserEntity().getUserId();
 	}
 	
 	/**

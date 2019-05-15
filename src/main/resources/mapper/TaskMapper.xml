@@ -32,6 +32,7 @@
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 		<result column="progress" property="progress"/>
+		<result column="sub_is_all_complete" property="subIsAllComplete"/>
 
 		<!-- 查询父级任务信息 -->
 		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
@@ -300,6 +301,7 @@
 		t.task_group_id,
 		t.task_status,
 		t.task_code,
+		t.sub_is_all_complete,
 		t.task_del,
 		t.create_time,
 		t.update_time,
@@ -695,7 +697,11 @@
 	<select id="findSubLevelTask" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List"/>
-		from prm_task where parent_id = #{taskId}
+		,
+		u.user_id,
+		u.user_name as executor_name,
+		u.image as executor_img
+		from prm_task left join tb_user as u on prm_task.executor = u.user_id  where parent_id = #{taskId}
 	</select>
 
 	<select id="findSubTaskCount" resultType="java.lang.Integer" >
@@ -1355,5 +1361,42 @@
 				#{id}
 			</foreach>
 			AND t.task_del = 0 ORDER by t.create_time ,f.create_time DESC
+	</select>
+
+	<!-- 获取项目中的日历任务信息 (version2.0) -->
+    <select id="selectCalendarTask" resultType="com.art1001.supply.entity.task.Task">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			u.user_id AS executor,
+			u.user_name AS executorName,
+			u.image AS executorImg
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			project_id = #{projectId}
+			AND t.task_del = 0
+	</select>
+
+	<!-- 获取和当前用户相关的任务信息 (version2.0) -->
+	<select id="relevant" resultType="com.art1001.supply.entity.task.Task">
+		SELECT
+			t.task_id,
+			t.task_name,
+			t.start_time,
+			t.end_time,
+			u.user_id AS executor,
+			u.user_name AS executorName,
+			u.image AS executorImg
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			t.executor = #{userId}
+			OR t.member_id = #{userId}
+			OR find_in_set( #{userId}, t.task_uids )
 	</select>
 </mapper>

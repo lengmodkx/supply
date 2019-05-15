@@ -32,38 +32,39 @@ public class ShiroSessionDAO extends AbstractSessionDAO {
     }
 
 
-	@Override  
+	@Override
     public void update(Session session) throws UnknownSessionException {
-    	shiroSessionRepository.saveSession(session);  
-    }  
-  
-    @Override  
+    	shiroSessionRepository.saveSession(session);
+    }
+
+    @Override
     public void delete(Session session) {
-        if (session == null) {  
+        if (session == null) {
         	logger.error("Session 不能为null");
-            return;  
-        }  
-        Serializable id = session.getId();  
-        if (id != null)  
+            return;
+        }
+        Serializable id = session.getId();
+        if (id != null)
         {
             shiroSessionRepository.deleteSession(id);
         }
-    }  
-  
-    @Override  
+    }
+
+    @Override
     public Collection<Session> getActiveSessions() {
-        return shiroSessionRepository.getAllSessions();  
-    }  
-  
-    @Override  
+        return shiroSessionRepository.getAllSessions();
+    }
+
+    @Override
     protected Serializable doCreate(Session session) {
-        Serializable sessionId = this.generateSessionId(session);  
-        this.assignSessionId(session, sessionId);  
-        shiroSessionRepository.saveSession(session);  
-        return sessionId;  
-    }  
-  
-    @Override  
+        Serializable sessionId = this.generateSessionId(session);
+        this.assignSessionId(session, sessionId);
+        shiroSessionRepository.saveSession(session);
+        return sessionId;
+    }
+
+    @Override
     protected Session doReadSession(Serializable sessionId) {
-        return shiroSessionRepository.getSession(sessionId);  
-    } }
+        return shiroSessionRepository.getSession(sessionId);
+    }
+}

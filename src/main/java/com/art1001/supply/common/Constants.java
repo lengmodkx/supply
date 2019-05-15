@@ -36,4 +36,16 @@ public class Constants {
     public static final String CREATED = "created";
 
     public static final String STAR ="star";
+
+    //标识 0,1
+    public static final String ZERO ="0";
+    public static final String ONE ="1";
+
+    //模块小写英文
+    public static final String TASK_EN = "task";
+    public static final String FILE_EN = "file";
+    public static final String SCHEDULE_EN = "schedule";
+    public static final String SHARE_EN = "share";
+    public static final String TAG_EN ="tag";
+    public static final String GROUP_EN ="group";
 }

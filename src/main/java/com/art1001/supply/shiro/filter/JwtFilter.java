@@ -116,7 +116,7 @@ public class JwtFilter extends AuthenticatingFilter {
         httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS,HEAD");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
-        httpServletResponse.setHeader("Access-Control-Allow-Credentials","true");
+        httpServletResponse.setHeader("Access0-Control-Allow-Credentials","true");
     }
 
     private String getAuthzHeader(ServletRequest request) {

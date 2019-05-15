@@ -228,4 +228,11 @@ import java.util.List;
 	 * @return
 	 */
 	List<File> seachByName(String fileName, String projectId);
+
+	/**
+	 * 获取一个文件的链接地址
+	 * @param fileId 文件id
+	 * @return 链接地址
+	 */
+    String getFileUrl(String fileId);
 }

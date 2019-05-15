@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 /**
- * 
+ *
  * @ClassName ShiroFilterUtils
  * @Description Shiro Filter
  *
@@ -21,7 +21,7 @@ import java.util.Map;
  * @data 2016年12月12日 下午5:14:09
  */
 public class ShiroUtils {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ShiroUtils.class);
 	/*
 	 * 登录地址：这里使用空的登录地址，是为了让程序根据contextPath自动跳转
@@ -51,7 +51,7 @@ public class ShiroUtils {
   	 * 踢出状态，true表示踢出
   	 */
 	public static final String KICKOUT_STATUS = "session_kickout_status";
-	
+
 	/**
 	 * 是否是Ajax请求
 	 * @param request
@@ -60,7 +60,7 @@ public class ShiroUtils {
 	public static boolean isAjax(ServletRequest request){
 		return "XMLHttpRequest".equalsIgnoreCase(((HttpServletRequest) request).getHeader("X-Requested-With"));
 	}
-	
+
 	/**
 	 * response 输出JSON
 	 * @param response

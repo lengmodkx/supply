@@ -138,7 +138,7 @@ public class QuartzServiceImpl implements QuartzService {
      * 使用CronTrigger类型添加任务
      *
      * @param scheduler        调度器
-     * @param cls              任务嘞
+     * @param cls              任务类
      * @param jobName          任务名
      * @param jobGroupName     任务组名（为空使用默认）
      * @param triggerGroupName 触发器组名（为空使用默认）
@@ -168,7 +168,6 @@ public class QuartzServiceImpl implements QuartzService {
     }
     /**
      * 获取CronTrigger
-     *
      * @param jobName          任务名
      * @param triggerGroupName 触发器组名（为空使用默认）
      * @param time             crond格式时间

@@ -27,6 +27,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -56,9 +57,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Resource
     private FileVersionService fileVersionService;
-
-    @Resource
-    private BindingService bindingService;
 
     @Resource
     private UserService userService;
@@ -197,6 +195,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setMemberId(userEntity.getUserId());
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
+        file.setFilePrivacy(1);
         file.setLevel(1);
         file.setCatalog(1);
         // 设置是否目录
@@ -225,6 +224,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setUpdateTime(System.currentTimeMillis());
         // 设置目录
         file.setCatalog(1);
+        file.setFilePrivacy(1);
         save(file);
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
@@ -241,7 +241,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public List<File> findChildFile(String parentId) {
-        return fileMapper.findChildFile(parentId);
+        List<File> childFile = fileMapper.findChildFile(parentId);
+        Iterator<File> iterator = childFile.iterator();
+        while(iterator.hasNext()){
+            File file = iterator.next();
+            if(file.getFilePrivacy() == 0){
+                if(!Stringer.isNullOrEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                    iterator.remove();
+                }
+            }
+        }
+        return childFile;
     }
 
     /**
@@ -677,5 +687,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> seachByName(String fileName, String projectId) {
         return fileMapper.seachByName(fileName,projectId);
+    }
+
+    /**
+     * 获取一个文件的链接地址
+     * @param fileId 文件id
+     * @return 链接地址
+     */
+    @Override
+    public String getFileUrl(String fileId) {
+        return fileService.getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
+
     }
 }
