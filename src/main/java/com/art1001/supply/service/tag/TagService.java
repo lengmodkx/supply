@@ -130,13 +130,6 @@ public interface TagService extends IService<Tag> {
 	List<Tag> classification(List<Tag> tagList);
 
 	/**
-	 * 查询出项目下的所有标签
-	 * @param projectId 项目id
-	 * @return
-	 */
-	List<Tag> findTagByProjectIdWithAllInfo(String projectId);
-
-	/**
 	 * 创建标签的同时绑定到某个信息上
 	 * @param tag 标签信息
 	 * @param publicId 绑定信息的id
@@ -144,4 +137,25 @@ public interface TagService extends IService<Tag> {
 	 * @return 是否创建并绑定成功
 	 */
 	Boolean addAndBind(Tag tag, String publicId, String publicType);
+
+	/**
+	 * 获取标签的绑定信息
+	 * @param tagId 标签id
+	 * @return 绑定信息
+	 */
+	Tag getTagBindInfo(Long tagId);
+
+	/**
+	 * 根据标签id检查标签存不存在
+	 * @param tagId 标签id
+	 * @return 是否存在
+	 */
+	Boolean checkIsExist(Long tagId);
+
+	/**
+	 * 根据项目id 查询出标签信息
+	 * @param projectId 项目id
+	 * @return 标签集合
+	 */
+	List<Tag> getByProjectId(String projectId);
 }

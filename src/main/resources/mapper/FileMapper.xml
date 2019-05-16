@@ -457,6 +457,22 @@
 		where public_id = #{publicId} and pfv.is_master = 1 and pf.file_del=0 and public_lable = 1
 	</select>
 
+	<!-- 获取绑定该标签的文件信息 (version2.0) -->
+    <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+			f.file_name,
+			f.ext,
+			f.file_id,
+			f.create_time
+		FROM
+			prm_file AS f
+			LEFT JOIN prm_tag_relation AS tr ON tr.file_id = f.file_id
+			LEFT JOIN prm_tag AS t ON tr.tag_id = f.tag_id
+		WHERE
+			t.tag_id = #{tagId}
+		AND f.file_del = '0'
+	</select>
+
     <!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file

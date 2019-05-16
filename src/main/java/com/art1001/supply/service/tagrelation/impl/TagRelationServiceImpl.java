@@ -1,12 +1,19 @@
 package com.art1001.supply.service.tagrelation.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.tag.TagRelation;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -82,5 +89,32 @@ public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRel
 	@Override
 	public void deleteManyItemTagRelation(List<String> publicId) {
 		tagRelationMapper.deleteManyItemTagRelation(publicId);
+	}
+
+	/**
+	 * 删除标签和指定类型的绑定关系
+	 * @param ids  绑定的信息id集合
+	 * @param type 信息类型
+	 * @return 是否成功
+	 */
+	@Override
+	public boolean removeBatchByType(Collection ids, String type) {
+		if(CollectionUtils.isEmpty(ids) || Stringer.isNullOrEmpty(type)){
+			throw new ServiceException("ids 或者 type 参数不合法!");
+		}
+		LambdaQueryWrapper<TagRelation> eq = new QueryWrapper<TagRelation>().lambda();
+		if(Constants.TASK.equals(type)){
+			eq.in(TagRelation::getTaskId, ids);
+		}
+		if(Constants.FILE.equals(type)){
+			eq.in(TagRelation::getFileId, ids);
+		}
+		if(Constants.SCHEDULE.equals(type)){
+			eq.in(TagRelation::getScheduleId, ids);
+		}
+		if(Constants.SHARE.equals(type)){
+			eq.in(TagRelation::getShareId, ids);
+		}
+		return tagRelationMapper.delete(eq) > 0;
 	}
 }

@@ -124,4 +124,21 @@
         select id,title from prm_share where project_id = #{projectId} and is_Del = 0
     </select>
 
+    <!-- 获取所有绑定到该标签的分享信息 -->
+    <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.share.Share">
+        SELECT
+            s.id,
+            s.title,
+            s.create_time,
+            u.user_name
+        FROM
+            prm_share s
+            LEFT JOIN prm_tag_relation AS tr ON tr.share_id = s.id
+            LEFT JOIN prm_tag AS t ON tr.tag_id = t.tag_id
+            LEFT JOIN tb_user AS u ON u.user_id = s.member_id
+            AND s.is_del = '0'
+        WHERE
+            t.tag_id = #{tagId}
+    </select>
+
 </mapper>

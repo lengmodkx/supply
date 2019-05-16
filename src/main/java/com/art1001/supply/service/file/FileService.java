@@ -235,4 +235,11 @@ import java.util.List;
 	 * @return 链接地址
 	 */
     String getFileUrl(String fileId);
+
+	/**
+	 * 获取绑定该标签的文件信息
+	 * @param tagId 标签id
+	 * @return 文件集合
+	 */
+	List<File> getBindTagInfo(Long tagId);
 }

@@ -651,4 +651,22 @@
 			OR find_in_set( #{userId}, s.member_ids )
 	</select>
 
+	<!-- 获取绑定该标签的所有日程信息 -->
+    <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.schedule.Schedule">
+		SELECT
+			s.schedule_id,
+			s.schedule_name,
+			s.start_time,
+			s.end_time
+		FROM
+			prm_schedule AS s
+			LEFT JOIN prm_tag_relation AS tr ON tr.schedule_id = s.schedule_id
+			LEFT JOIN prm_tag AS t ON tr.tag_id = t.tag_id
+
+		WHERE
+			t.tag_id = #{tagId}
+		AND
+			s.is_del = '0'
+	</select>
+
 </mapper>

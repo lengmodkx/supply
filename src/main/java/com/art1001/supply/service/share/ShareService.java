@@ -99,4 +99,11 @@ public interface ShareService extends IService<Share> {
 	 * @return 分享信息
 	 */
     List<Share> getBindInfo(String projectId);
+
+	/**
+	 * 获取所有绑定到该标签的分享信息
+	 * @param tagId 标签id
+	 * @return 分享集合
+	 */
+	List<Share> getBindTagInfo(Long tagId);
 }

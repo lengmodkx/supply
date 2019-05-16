@@ -113,11 +113,4 @@ public interface TagMapper extends BaseMapper<Tag> {
 	@Update("update prm_tag set is_del = 0 where tag_id = #{tagId}")
 	void recoveryTag(String tagId);
 
-	/**
-	 * 查询出项目下的所有标签
-	 * @param projectId 项目id
-	 * @param type 表示要联查的类型 (任务,文件,分享,日程)
-	 * @return
-	 */
-    List<Tag> findTagByProjectIdWithAllInfo(@Param("projectId")String projectId);
 }

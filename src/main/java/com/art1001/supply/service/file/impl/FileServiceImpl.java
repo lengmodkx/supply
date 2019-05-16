@@ -699,4 +699,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return fileService.getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
 
     }
+
+    /**
+     * 获取绑定该标签的文件信息 (version2.0)
+     * @param tagId 标签id
+     * @return 文件集合
+     */
+    @Override
+    public List<File> getBindTagInfo(Long tagId) {
+        return fileMapper.selectBindTagInfo(tagId);
+    }
 }

@@ -269,4 +269,12 @@ public interface FileMapper extends BaseMapper<File> {
     List<File> seachByName(@Param("fileName") String fileName, @Param("projectId") String projectId);
 
     List<File> publicFile(@Param("publicId")String publicId);
+
+	/**
+	 * 获取绑定该标签的文件信息 (version2.0)
+	 * @param tagId 标签id
+	 * @return 文件集合
+	 */
+	List<File> selectBindTagInfo(@Param("tagId") Long tagId);
+
 }

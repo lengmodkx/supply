@@ -1856,5 +1856,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public List<Task> getMoveData(String menuId) {
         return taskMapper.selectMoveData(menuId);
     }
+
+    /**
+     * 获取绑定该标签的任务信息
+     * @param tagId 标签id
+     * @return 任务集合
+     */
+    @Override
+    public List<Task> getBindTagInfo(Long tagId) {
+        return taskMapper.selectBindTagInfo(tagId);
+    }
 }
 

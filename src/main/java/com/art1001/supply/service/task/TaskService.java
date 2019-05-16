@@ -616,4 +616,11 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务集合信息
 	 */
 	List<Task> getMoveData(String menuId);
+
+	/**
+	 * 获取绑定该标签的任务信息
+	 * @param tagId 标签id
+	 * @return 任务集合
+	 */
+    List<Task> getBindTagInfo(Long tagId);
 }

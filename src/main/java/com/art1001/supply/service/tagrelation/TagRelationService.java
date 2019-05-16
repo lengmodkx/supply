@@ -2,7 +2,9 @@ package com.art1001.supply.service.tagrelation;
 
 import com.art1001.supply.entity.tag.TagRelation;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.shiro.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,4 +55,11 @@ public interface TagRelationService extends IService<TagRelation> {
 	 */
 	void deleteManyItemTagRelation(List<String> publicId);
 
+	/**
+	 * 删除标签和指定类型的绑定关系
+	 * @param ids 绑定的信息id集合
+	 * @param type 信息类型
+	 * @return 是否成功
+	 */
+    boolean removeBatchByType(Collection ids, String type);
 }

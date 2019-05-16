@@ -234,4 +234,11 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return 日程信息
 	 */
 	List<Schedule> relevant(@Param("userId") String userId);
+
+	/**
+	 * 获取绑定该标签的所有日程信息
+	 * @param tagId 标签id
+	 * @return 日程id
+	 */
+    List<Schedule> selectBindTagInfo(@Param("tagId") Long tagId);
 }

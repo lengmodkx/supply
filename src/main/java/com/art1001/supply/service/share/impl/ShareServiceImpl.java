@@ -192,4 +192,15 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	public List<Share> getBindInfo(String projectId) {
 		return shareMapper.getBindInfo(projectId);
 	}
+
+	/**
+	 * 获取所有绑定到该标签的分享信息
+	 * @param tagId 标签id
+	 * @return 分享集合
+	 */
+	@Override
+	public List<Share> getBindTagInfo(Long tagId) {
+
+		return shareMapper.selectBindTagInfo(tagId);
+	}
 }

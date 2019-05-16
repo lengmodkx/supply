@@ -238,4 +238,11 @@ public interface ScheduleService extends IService<Schedule> {
  	 * @return 日程信息
 	 */
 	List<Schedule> relevant(String userId);
+
+	/**
+	 * 获取绑定该标签的所有日程信息
+	 * @param tagId 标签id
+	 * @return 日程集合
+	 */
+    List<Schedule> getBindTagInfo(Long tagId);
 }

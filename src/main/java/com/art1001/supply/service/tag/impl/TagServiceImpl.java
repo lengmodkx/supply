@@ -5,14 +5,20 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -38,6 +44,19 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
 	@Resource
 	private TagRelationService tagRelationService;
+
+	@Resource
+	private TaskService taskService;
+
+	@Resource
+	private FileService fileService;
+
+	@Resource
+	private ShareService shareService;
+
+	@Resource
+	private ScheduleService scheduleServcie;
+
 
 	/**
 	 * 查询分页tag数据
@@ -226,17 +245,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	}
 
 	/**
-	 * 查询出项目下的所有标签
-	 * @param projectId 项目id
-	 * @return
-	 */
-	@Override
-	public List<Tag> findTagByProjectIdWithAllInfo(String projectId) {
-		//查询出项目下的所有标签
-		return tagMapper.findTagByProjectIdWithAllInfo(projectId);
-	}
-
-	/**
 	 * 创建标签的同时绑定到某个信息上
 	 * @param tag 标签信息
 	 * @param publicId 绑定信息的id
@@ -292,4 +300,43 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		}
 	}
 
+	/**
+	 * 获取标签的绑定信息 (version 2.0)
+	 * @param tagId 标签id
+	 * @return 绑定信息
+	 */
+	@Override
+	public Tag getTagBindInfo(Long tagId) {
+		if(!this.checkIsExist(tagId)){
+			throw new ServiceException("该标签不存在!");
+		}
+		Tag t = this.getById(tagId);
+		t.setTaskList(taskService.getBindTagInfo(tagId));
+		t.setFileList(fileService.getBindTagInfo(tagId));
+		t.setScheduleList(scheduleServcie.getBindTagInfo(tagId));
+		t.setShareList(shareService.getBindTagInfo(tagId));
+		return t;
+	}
+
+	/**
+	 * 根据标签id检查标签存不存在
+	 * @param tagId 标签id
+	 * @return 是否存在
+	 */
+	@Override
+	public Boolean checkIsExist(Long tagId) {
+		return tagMapper.selectCount(new QueryWrapper<Tag>().eq("tag_id", tagId)) > 0;
+	}
+
+	/**
+	 * 根据项目id 查询出标签信息
+	 * @param projectId 项目id
+	 * @return 标签集合
+	 */
+	@SuppressWarnings({"Unchecked", "unchecked"})
+	@Override
+	public List<Tag> getByProjectId(String projectId) {
+		LambdaQueryWrapper<Tag> eq = new QueryWrapper<Tag>().lambda().select(Tag::getTagId, Tag::getTagName, Tag::getBgColor).eq(Tag::getProjectId, projectId);
+		return tagMapper.selectList(eq.orderByDesc(Tag::getCreateTime));
+	}
 }

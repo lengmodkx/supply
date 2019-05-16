@@ -16,6 +16,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.util.CollectionUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -81,13 +83,15 @@ public class TagApi {
     /**
      * 查询标签列表，根据项目
      */
-    @GetMapping("/{projectId}/checkProjectTag")
+    @GetMapping("/{projectId}/bind")
     public JSONObject tags(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<Tag> tagList = tagService.findTagByProjectIdWithAllInfo(projectId);
+            List<Tag> tagList = tagService.getByProjectId(projectId);
+            if(!CollectionUtils.isEmpty(tagList)){
+                jsonObject.put("data", new JSONObject().fluentPut("tags", tagList).fluentPut("bindInfo", tagService.getTagBindInfo(tagList.get(0).getTagId())));
+            }
             jsonObject.put("result", 1);
-            jsonObject.put("tagList", tagList);
         } catch (Exception e) {
             log.error("获取标签异常:", e);
             throw new SystemException(e);
@@ -332,5 +336,22 @@ public class TagApi {
      */
     private String getProjectId(Long tagId){
         return tagService.getOne(new QueryWrapper<Tag>().select("project_id").eq("tag_id",tagId)).getProjectId();
+    }
+
+    /**
+     * 获取标签的所有绑定信息
+     * @param tagId 标签id
+     * @return 绑定信息
+     */
+    @GetMapping("/{tagId}/tag_bind_info")
+    public JSONObject getTagBindInfo(@PathVariable Long tagId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data", tagService.getTagBindInfo(tagId));
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,数据获取失败!");
+        }
     }
 }

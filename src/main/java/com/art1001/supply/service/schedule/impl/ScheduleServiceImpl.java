@@ -480,4 +480,14 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     public List<Schedule> relevant(String userId) {
         return scheduleMapper.relevant(userId);
     }
+
+    /**
+     * 获取绑定该标签的所有日程信息
+     * @param tagId 标签id
+     * @return 日程集合
+     */
+    @Override
+    public List<Schedule> getBindTagInfo(Long tagId) {
+        return scheduleMapper.selectBindTagInfo(tagId);
+    }
 }

@@ -719,4 +719,12 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return 任务信息
 	 */
 	List<Task> selectMoveData(@Param("menuId") String menuId);
+
+	/**
+	 * 获取绑定该标签的任务信息
+	 * @param tagId 标签id
+	 * @return 任务集合
+	 */
+    List<Task> selectBindTagInfo(@Param("tagId") Long tagId);
+
 }

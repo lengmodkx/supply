@@ -1,5 +1,6 @@
 package com.art1001.supply.service.relation.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
@@ -8,6 +9,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
@@ -27,6 +29,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.util.CollectionUtils;
@@ -581,27 +584,51 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
         if(CollectionUtils.isEmpty(tasks)){
             throw new ServiceException("此列表下的任务为0,无法移动!");
         }
-        int menuTaskMaxOrder = this.findMenuTaskMaxOrder(menuId);
-        tasks.forEach(task -> {
-            int i = 1;
-            task.setProjectId(projectId);
-            task.setTaskGroupId(groupId);
-            task.setTaskMenuId(toMenuId);
-            task.setOrder(menuTaskMaxOrder + i);
-            if(!task.getProjectId().equals(projectId)){
-                task.setTaskUIds("");
-                task.setExecutor("");
-            }
-            task.getTaskList().forEach(sub -> {
+        List<String> taskIds = new ArrayList<>();
+		int menuTaskMaxOrder = this.findMenuTaskMaxOrder(menuId);
+		tasks.forEach(task -> {
+			//生成父任务更新条件
+			LambdaUpdateWrapper<Task> taskSet = new UpdateWrapper<Task>().lambda()
+					.set(Task::getUpdateTime,System.currentTimeMillis())
+					.eq(Task::getTaskId, task.getTaskId());
+
+			//生成子任务更新条件
+			LambdaUpdateWrapper<Task> subTaskSet = new UpdateWrapper<Task>().lambda()
+					.set(Task::getUpdateTime,System.currentTimeMillis());
+
+			//设置任务序号
+			task.setOrder(menuTaskMaxOrder + 1);
+			task.getTaskList().forEach(sub -> {
 				if(!task.getProjectId().equals(projectId)){
-					sub.setExecutor("");
-					sub.setTaskUIds("");
+					subTaskSet.set(Task::getTaskUIds, "");
+					subTaskSet.set(Task::getMemberId,ShiroAuthenticationManager.getUserId());
+					subTaskSet.set(Task::getExecutor,"");
 				}
+				subTaskSet.eq(Task::getTaskId, sub.getTaskId());
+				//更新子任务
+				taskService.update(sub, subTaskSet);
+
 			});
-			task.setUpdateTime(System.currentTimeMillis());
-			i++;
-        });
-        return taskService.updateBatchById(tasks);
+			//如果移动到其他项目中则清除任务的执行者和参与者并且更新任务创建者id为当前操作用户
+			if(!task.getProjectId().equals(projectId)){
+				taskSet.set(Task::getTaskUIds, "");
+				taskSet.set(Task::getExecutor,"");
+				taskSet.set(Task::getMemberId, ShiroAuthenticationManager.getUserId());
+				//获取到父任务和子任务的id
+				taskIds.add(task.getTaskId());
+				taskIds.addAll(task.getTaskList().stream().map(Task::getTaskId).collect(Collectors.toList()));
+			}
+			task.setTaskGroupId(groupId);
+			task.setTaskMenuId(toMenuId);
+			task.setProjectId(projectId);
+			//删除绑定关系
+			if(!CollectionUtils.isEmpty(taskIds)){
+				tagRelationService.removeBatchByType(taskIds,Constants.TASK);
+			}
+			//更新父任务
+			taskService.update(task, taskSet);
+		});
+        return true;
     }
 
 	/**
@@ -654,10 +681,10 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			});
 			i++;
 		});
-		if(taskByMenuId.addAll(subTasks)){
-			return taskService.saveBatch(taskByMenuId);
+		if(!CollectionUtils.isEmpty(subTasks)){
+			taskByMenuId.addAll(subTasks);
 		}
-		return false;
+		return taskService.saveBatch(taskByMenuId);
 	}
 
 	/**

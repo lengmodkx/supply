@@ -1421,4 +1421,26 @@
 		WHERE
 			t.task_menu_id = #{menuId}
 	</select>
+
+	<!-- 获取绑定该标签的任务信息 -->
+    <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.task.Task">
+		SELECT
+			task.task_id,
+			task.task_name,
+			task.executor,
+			u.user_name as executor_name,
+			u.image as executorImage,
+			task.end_time,
+			task.task_status,
+			r.relation_name as groupName
+		FROM
+			prm_task AS task
+			LEFT JOIN prm_tag_relation AS tr ON tr.task_id = task.task_id
+			LEFT JOIN prm_tag AS t ON tr.tag_id = t.tag_id
+			LEFT JOIN tb_user AS u ON u.user_id = task.executor
+			LEFT JOIN prm_relation AS r ON r.relation_id = task.task_group_id
+		WHERE
+			t.tag_id = #{tagId}
+		AND task.task_del = '0'
+	</select>
 </mapper>

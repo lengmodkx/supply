@@ -338,7 +338,6 @@ public class  RelationApi {
                     maps.put(projectId,projectId);
                     maps.put(relationProjectId,relationProjectId);
                 }
-                jsonObject.put("msgId", relationProjectId);
                 jsonObject.put("data", maps);
             } else{
                 jsonObject.put("result", 0);
@@ -359,13 +358,13 @@ public class  RelationApi {
      * @param toMenuId 复制到的列表id
      * @return 结果
      */
-    @Push(type = 2,value = PushType.H5)
+    @Push(type = 1,value = PushType.H5)
     @PostMapping("/{menuId}/copy_all_task")
     public JSONObject copyAllTask(@PathVariable String menuId, String projectId, String groupId, String toMenuId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(relationService.copyAllTask(menuId,projectId,groupId,toMenuId)){
-                String relationProjectId = this.getRelationProjectId(menuId);
+                String relationProjectId = this.getRelationProjectId(toMenuId);
                 jsonObject.put("result", 1);
                 jsonObject.put("msgId", relationProjectId);
                 jsonObject.put("data", relationProjectId);
