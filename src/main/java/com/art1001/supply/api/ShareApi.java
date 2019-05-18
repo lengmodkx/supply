@@ -138,7 +138,7 @@ public class ShareApi {
             share.setUpdateTime(System.currentTimeMillis());
             shareService.save(share);
             object.put("result",1);
-            object.put("data",share);
+            object.put("data",projectId);
             object.put("msgId",projectId);
         } catch (Exception e){
             log.error("保存分享异常:",e);
@@ -152,12 +152,16 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
+    @Log(PushType.B9)
+    @Push(PushType.B9)
     @DeleteMapping("/{shareId}")
-    public JSONObject shareDelate(@PathVariable("shareId") String shareId){
+    public JSONObject shareDelate(@PathVariable("shareId") String shareId,@RequestParam(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try{
             shareService.removeById(shareId);
             jsonObject.put("result",1);
+            jsonObject.put("data",projectId);
+            jsonObject.put("msgId",projectId);
         }catch (Exception e){
             log.error("分享删除失败:",e);
             throw new AjaxException(e);
@@ -171,12 +175,15 @@ public class ShareApi {
      * @return
      */
     @Log
+    @Push(PushType.B6)
     @PutMapping("/{shareId}/recyclebin")
-    public JSONObject recyclebin(@PathVariable(value = "shareId") String shareId){
+    public JSONObject recyclebin(@PathVariable(value = "shareId") String shareId,@RequestParam(value = "projectId")String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.moveToRecycleBin(shareId);
             jsonObject.put("result",1);
+            jsonObject.put("data",projectId);
+            jsonObject.put("msgId",projectId);
         } catch (Exception e){
             log.error("系统异常,移入回收站失败:",e);
             throw new AjaxException(e);
@@ -189,12 +196,15 @@ public class ShareApi {
      * @param shareId 分享id
      * @return
      */
+    @Push(PushType.B7)
     @PutMapping("/{shareId}/recovery")
-    public JSONObject recovery(@PathVariable("shareId") String shareId){
+    public JSONObject recovery(@PathVariable("shareId") String shareId,@RequestParam(value = "projectId")String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             shareService.recoveryShare(shareId);
             jsonObject.put("result",1);
+            jsonObject.put("data",projectId);
+            jsonObject.put("msgId",projectId);
         } catch (Exception e){
             log.error("系统异常,恢复失败:",e);
             throw new AjaxException(e);
@@ -208,6 +218,8 @@ public class ShareApi {
      * @param projectId 项目id
      * @return
      */
+    @Log(PushType.B4)
+    @Push(PushType.B4)
     @PostMapping("/{shareId}/copy")
     public JSONObject copy(@PathVariable(value = "shareId")String shareId,
                                @RequestParam(value = "projectId")String projectId){
@@ -215,6 +227,8 @@ public class ShareApi {
         try{
             shareService.copyShare(shareId,projectId);
             jsonObject.put("result",1);
+            jsonObject.put("data",projectId);
+            jsonObject.put("msgId",projectId);
         }catch(Exception e){
             log.error("系统异常,复制失败:",e);
         }
@@ -227,13 +241,18 @@ public class ShareApi {
      * @param projectId 项目id
      * @return
      */
-    @PutMapping("/{shareId}/move")
+    @Log(PushType.B5)
+    @Push(PushType.B5)
+    @PostMapping("/{shareId}/move")
     public JSONObject move(@PathVariable(value = "shareId")String shareId,
-                            @RequestParam(value = "projectId")String projectId){
+                            @RequestParam(value = "projectId")String projectId,
+                           @RequestParam(value = "curProjectId")String curProjectId){
         JSONObject jsonObject = new JSONObject();
         try{
             shareService.moveShare(shareId,projectId);
             jsonObject.put("result",1);
+            jsonObject.put("data",curProjectId);
+            jsonObject.put("msgId",curProjectId);
         }catch(Exception e){
             log.error("系统异常,移动失败:",e);
         }
@@ -274,12 +293,15 @@ public class ShareApi {
      * @return
      */
     @Log
+    @Push(PushType.B8)
     @PutMapping("/{shareId}/privacy")
-    public JSONObject privacy(@PathVariable(value = "shareId")String shareId){
+    public JSONObject privacy(@PathVariable(value = "shareId")String shareId,@RequestParam(value = "projectId")String projectId){
         JSONObject jsonObject = new JSONObject();
         try{
             shareService.updatePrivacy(shareId);
             jsonObject.put("result",1);
+            jsonObject.put("data",shareId);
+            jsonObject.put("msgId",projectId);
         }catch(Exception e){
             log.error("系统异常:",e);
             throw new AjaxException(e);
@@ -306,18 +328,66 @@ public class ShareApi {
     /**
      * 置顶分享
      */
+    @Log(PushType.B3)
+    @Push(PushType.B3)
     @PostMapping("/{shareId}/top")
-    public JSONObject setTop(@PathVariable String shareId){
+    public JSONObject setTop(@PathVariable String shareId,
+                             @RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try{
             Share share = new Share();
             share.setId(shareId);
             share.setCreateTime(System.currentTimeMillis());
             shareService.updateById(share);
+            jsonObject.put("result",1);
+            jsonObject.put("data",projectId);
+            jsonObject.put("msgId",projectId);
             return jsonObject;
         }catch (Exception e){
             throw new AjaxException("置顶失败");
         }
+    }
+
+    /**
+     * 编辑分享
+     * @param shareId 分享id
+     * @param title 分享标题
+     * @param content 分享内容
+     * @param isPrivacy 是否是隐私模式
+     * @return
+     */
+    @Log(PushType.B2)
+    @Push(PushType.B2)
+    @PostMapping("/{shareId}")
+    public JSONObject editShare(
+            @RequestParam(value = "projectId") String projectId,
+            @PathVariable(value = "shareId") String shareId,
+            @RequestParam(value = "title") String title,
+            @RequestParam(value = "content") String content,
+            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
+    ){
+        JSONObject object = new JSONObject();
+        String  userId = ShiroAuthenticationManager.getUserId();
+        try {
+            Share share = new Share();
+            share.setTitle(title);
+            share.setContent(content);
+            share.setId(shareId);
+            share.setIsPrivacy(isPrivacy);
+            share.setMemberId(userId);
+            share.setUids(userId);
+            share.setProjectId(projectId);
+            share.setCreateTime(System.currentTimeMillis());
+            share.setUpdateTime(System.currentTimeMillis());
+            shareService.updateById(share);
+            object.put("result",1);
+            object.put("data",share);
+            object.put("msgId",projectId);
+        } catch (Exception e){
+            log.error("保存分享异常:",e);
+            throw new AjaxException(e);
+        }
+        return object;
     }
 
 

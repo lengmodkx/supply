@@ -66,7 +66,7 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	 * @param publicId
 	 * @return
 	 */
-	List<Binding> findBindingList(@Param("publicId")String publicId);
+	List<Binding> findBindingList(String publicId);
 
 	/**
 	 * 查询出该目标的所有关联信息

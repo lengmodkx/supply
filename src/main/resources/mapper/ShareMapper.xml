@@ -17,7 +17,6 @@
         <result column="uids" property="uids" jdbcType="CLOB" />
         <collection property="logs" javaType="java.util.ArrayList" column="id"
                     select="com.art1001.supply.mapper.log.LogMapper.initLog"/>
-        <collection property="bindings" javaType="java.util.ArrayList" column="id" select="com.art1001.supply.mapper.binding.BindingMapper.findBindingList"/>
         
         <!--查询标签-->
         <collection property="tagList" column="tag_id" ofType="com.art1001.supply.entity.tag.Tag">

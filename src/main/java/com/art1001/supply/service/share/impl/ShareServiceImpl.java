@@ -3,11 +3,14 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
+import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,11 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Resource
     private LogService logService;
 
+	@Resource
+	private TagRelationService tagRelationService;
+
+	@Resource
+	private BindingService bindingService;
 	/**
 	 * 查询分页share数据
 	 */
@@ -149,17 +157,28 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public void copyShare(String shareId, String projectId) {
-
+		Share share = shareMapper.findById(shareId);
+		share.setId("");
+		share.setProjectId(projectId);
+		save(share);
 	}
 
 	@Override
 	public void moveShare(String shareId, String projectId) {
-
+		Share share = shareMapper.findById(shareId);
+		share.setUids("");
+		share.setProjectId(projectId);
+		updateById(share);
+		tagRelationService.deleteItemTagRelation(shareId,"分享");
+		bindingService.deleteByPublicId(shareId);
 	}
 
 	@Override
 	public void updatePrivacy(String shareId) {
-
+		Share share = shareMapper.findById(shareId);
+		if(share.getIsPrivacy()==0) share.setIsPrivacy(1);
+		else share.setIsPrivacy(0);
+		updateById(share);
 	}
 
 	/**
@@ -169,8 +188,9 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public Share findByIdAllInfo(String shareId) {
-		Share byId = shareMapper.findById(shareId);
-		return byId;
+		Share share = shareMapper.findById(shareId);
+		bindingService.setBindingInfo(share.getId(),null,null,share,null);
+		return share;
 	}
 
 	/**
