@@ -93,13 +93,16 @@ public class ShareApi {
      * @param memberIds 多个成员id的字符串
      * @return
      */
-    @Log
-    @PutMapping("/{shareId}/update/members")
+    @Push(value = PushType.B10,type = 1)
+    @PutMapping("/{shareId}/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
         try {
-            shareService.updateMembers(shareId,memberIds);
-            jsonObject.put("result",1);
+            if(shareService.updateMembers(shareId,memberIds)){
+                jsonObject.put("result",1);
+                jsonObject.put("msgId", shareService.getProjectIdByShareId(shareId));
+                jsonObject.put("data", shareId);
+            }
         } catch (Exception e){
             log.error("系统异常,成员更新失败:",e.getMessage());
             throw new AjaxException(e);

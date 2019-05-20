@@ -12,6 +12,7 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.user.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -61,54 +62,16 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	}
 
 	/**
-	 * 添加或者移除掉 分享的参与者 然后将结果推送
+	 * 更新分享的参与者信息
 	 * @param shareId 分享的id
-	 * @param addUserEntity 要添加的成员id
+	 * @param ids 要添加的成员id
 	 */
 	@Override
-	public void updateMembers(String shareId, String addUserEntity) {
-		//查询出当前文件中的 参与者id
-        Share byId = shareMapper.findById(shareId);
-
-        //log日志
-		Log log = new Log();
-		StringBuilder logContent = new StringBuilder();
-
-		//将数组转换成集合
-		List<String> oldJoin = Arrays.asList(byId.getUids().split(","));
-		List<String> newJoin = Arrays.asList(addUserEntity.split(","));
-
-		//比较 oldJoin 和 newJoin 两个集合的差集  (移除)
-		List<String> reduce1 = oldJoin.stream().filter(item -> !newJoin.contains(item)).collect(Collectors.toList());
-		if(reduce1 != null && reduce1.size() > 0){
-			logContent.append(TaskLogFunction.B.getName()).append(" ");
-			for (String uId : reduce1) {
-				UserEntity userEntity = userService.findById(uId);
-				logContent.append(userEntity.getUserName()).append(" ");
-			}
-		}
-
-		//比较 newJoin  和 oldJoin 两个集合的差集  (添加)
-		List<String> reduce2 = newJoin.stream().filter(item -> !oldJoin.contains(item)).collect(Collectors.toList());
-		if(reduce2 != null && reduce2.size() > 0){
-			logContent.append(TaskLogFunction.C.getName()).append(" ");
-			for (String uId : reduce2) {
-				UserEntity userEntity = userService.findById(uId);
-				logContent.append(userEntity.getUserName()).append(" ");
-			}
-		}
-
-		//如果没有参与者变动直接返回
-		if((reduce1 == null && reduce1.size() == 0) && (reduce2 == null && reduce2.size() == 0)){
-			return;
-		} else{
-		    Share share = new Share();
-		    share.setId(shareId);
-		    share.setUids(addUserEntity);
-		    share.setUpdateTime(System.currentTimeMillis());
-		    updateById(share);
-			log = logService.saveLog(shareId,logContent.toString(),4);
-		}
+	public Boolean updateMembers(String shareId, String ids) {
+		Share share = new Share();
+		share.setId(shareId);
+		share.setUids(ids);
+		return shareMapper.updateById(share) > 0;
 	}
 
 	/**
@@ -220,7 +183,18 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public List<Share> getBindTagInfo(Long tagId) {
-
 		return shareMapper.selectBindTagInfo(tagId);
+	}
+
+	/**
+	 * 根据分享id 获取到分享的项目id
+	 *
+	 * @param shareId 分享id
+	 * @return 项目id
+	 */
+	@Override
+	public String getProjectIdByShareId(String shareId) {
+		Share share = shareMapper.selectOne(new QueryWrapper<Share>().lambda().eq(Share::getId, shareId).select(Share::getProjectId));
+		return  share == null ? null : share.getProjectId();
 	}
 }

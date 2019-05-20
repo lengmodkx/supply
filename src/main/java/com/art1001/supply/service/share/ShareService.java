@@ -30,7 +30,7 @@ public interface ShareService extends IService<Share> {
 	 * @param shareId 分享的id
 	 * @param addUserEntity 要添加的成员id
 	 */
-    void updateMembers(String shareId, String addUserEntity);
+    Boolean updateMembers(String shareId, String addUserEntity);
 
 	/**
 	 * 根据id 查询出该分享的标题
@@ -106,4 +106,11 @@ public interface ShareService extends IService<Share> {
 	 * @return 分享集合
 	 */
 	List<Share> getBindTagInfo(Long tagId);
+
+	/**
+	 * 根据分享id 获取到分享的项目id
+	 * @param shareId 分享id
+	 * @return 项目id
+	 */
+	String getProjectIdByShareId(String shareId);
 }
