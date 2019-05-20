@@ -2,14 +2,9 @@ package com.art1001.supply.service.relation.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.collect.PublicCollect;
-import com.art1001.supply.entity.fabulous.Fabulous;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
@@ -27,7 +22,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -739,6 +733,17 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		}
 		return relationMapper.deleteById(menuId) > 0;
 
+	}
+
+
+	/**
+	 * 通过relationId获取项目id
+	 * @param relationId 列表id
+	 * @return String
+	 */
+	@Override
+	public String getObject(String relationId) {
+		return relationMapper.relationMapper(relationId);
 	}
 }
 

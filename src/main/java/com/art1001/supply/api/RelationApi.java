@@ -4,22 +4,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.relation.RelationService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author heshaohua
@@ -129,7 +124,7 @@ public class  RelationApi {
             } else {
                 jsonObject.put("result", 0);
             }
-            jsonObject.put("result",1);
+            //jsonObject.put("result",1);
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
@@ -438,7 +433,9 @@ public class  RelationApi {
      * @return 项目id
      */
     private String getRelationProjectId(String relationId){
-        return relationService.getOne(new QueryWrapper<Relation>().lambda().eq(Relation::getRelationId,relationId ).select(Relation::getProjectId)).getProjectId();
+       /* Relation one = relationService.getOne(new QueryWrapper<Relation>().lambda().eq(Relation::getRelationId, relationId).select(Relation::getProjectId));
+        String projectId = one.getProjectId();*/
+        return relationService.getObject(relationId);
     }
 
 

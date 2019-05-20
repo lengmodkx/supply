@@ -270,4 +270,11 @@ public interface RelationService extends IService<Relation> {
 	 * @return 是否成功
 	 */
 	boolean removeMenu(String menuId);
+
+	/**
+	 * 通过列表id获取项目id
+	 * @param relationId 列表id
+	 * @return Obj
+	 */
+	String getObject(String relationId);
 }

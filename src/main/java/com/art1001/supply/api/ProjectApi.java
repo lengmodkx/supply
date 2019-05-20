@@ -3,7 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
-import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -21,9 +20,11 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -346,8 +347,14 @@ public class ProjectApi {
     public JSONObject seachByName(@RequestParam String projectName,@RequestParam String condition){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",projectService.seachByName(projectName,condition));
-            jsonObject.put("result", 1);
+            if (projectName == null || projectName == ""){
+                jsonObject.put("result", 0);
+                jsonObject.put("data","搜索失败");
+            }else{
+                jsonObject.put("data",projectService.seachByName(projectName,condition));
+                jsonObject.put("result", 1);
+            }
+
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,数据获取失败!",e);
@@ -475,4 +482,43 @@ public class ProjectApi {
             throw new AjaxException("系统异常,更新失败!",e);
         }
     }
+
+
+
+    /**
+     * 更新项目封面
+     * @param projectId 项目id
+     * @return obj
+     */
+    public JSONObject updateProjectPic(String projectId, MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            // 得到文件名
+            String originalFilename = file.getOriginalFilename();
+            // 重置文件名
+            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
+            //设置url
+            String parentUrl = projectId.concat("/upload/project/");
+            // 设置文件url
+            String fileUrl = parentUrl + fileName;
+
+            // 上传oss，相同的objectName会覆盖
+            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+            //修改数据库
+            Integer integer = projectService.updatePictureById(projectId, fileUrl);
+            if (integer==1){
+                jsonObject.put("result",1);
+                jsonObject.put("data",fileUrl);
+                jsonObject.put("msg","图片更改成功!");
+            }else{
+                jsonObject.put("result",0);
+                jsonObject.put("data","");
+                jsonObject.put("msg","图片更改失败!");
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
+
 }

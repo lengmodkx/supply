@@ -2,11 +2,9 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -15,16 +13,12 @@ import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.util.CollectionUtils;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -90,6 +84,8 @@ public class TagApi {
             List<Tag> tagList = tagService.getByProjectId(projectId);
             if(!CollectionUtils.isEmpty(tagList)){
                 jsonObject.put("data", new JSONObject().fluentPut("tags", tagList).fluentPut("bindInfo", tagService.getTagBindInfo(tagList.get(0).getTagId())));
+            }else{
+                jsonObject.put("data", new JSONObject().fluentPut("tags", tagList).fluentPut("bindInfo", "未查询到标签"));
             }
             jsonObject.put("result", 1);
         } catch (Exception e) {

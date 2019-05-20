@@ -149,4 +149,12 @@ public interface ProjectService extends IService<Project> {
 	 * @return id字符串
 	 */
 	String findProjectAllTask(String projectId);
+
+	/**
+	 * 修改项目封面图片
+	 * @param projectId 项目id
+	 * @param fileUrl  文件路径
+	 * @return int
+	 */
+	Integer updatePictureById(String projectId, String fileUrl);
 }

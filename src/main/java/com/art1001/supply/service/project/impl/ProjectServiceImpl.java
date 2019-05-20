@@ -33,9 +33,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.ConsoleHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -359,5 +360,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Override
 	public String findProjectAllTask(String projectId){
 		return projectMapper.selectProjectAllTask(projectId);
+	}
+
+	/**
+	 * 修改项目封面图片
+	 * @param projectId 项目id
+	 * @param fileUrl  文件路径
+	 * @return int
+	 */
+	@Override
+	public Integer updatePictureById(String projectId, String fileUrl) {
+		return projectMapper.updatePictureById(projectId,fileUrl);
 	}
 }

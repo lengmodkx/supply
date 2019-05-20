@@ -285,7 +285,7 @@
 			p.project_status,
 			p.func
 		from prm_project p right join prm_project_collect pc on p.project_id = pc.project_id
-		where pc.member_id = #{userId} and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pc.create_time desc
+		where pc.member_id = #{userId} and  p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pc.create_time desc
 	</select>
 
 	<!-- 查询出当前用户参与的项目  根据项目名称模糊查询 -->
@@ -301,7 +301,7 @@
 		    pm.default_group as group_id,
 			p.func
 		from prm_project p right join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId} and pm.member_label = 0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pm.create_time desc
+		where pm.member_id = #{userId}  and p.project_del=0 and pm.member_label = 0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pm.create_time desc
 	</select>
 
 	<!-- 查询当前用户创建的项目 并且 根据项目名称模糊查询 -->
@@ -314,7 +314,7 @@
 			p.project_status,
 			p.func
 		from prm_project p
-		where p.member_id = #{userId} and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
+		where p.member_id = #{userId}   and p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
 	</select>
 
 

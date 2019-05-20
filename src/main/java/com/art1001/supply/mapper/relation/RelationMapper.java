@@ -8,6 +8,7 @@ import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -174,4 +175,11 @@ public interface RelationMapper extends BaseMapper<Relation> {
 	 */
 	List<GroupVO> getGroupsInfo(@Param("projectId") String projectId);
 
+	/**
+	 *通过relationId 获取 项目id
+	 * @param  relationId 项目id
+	 * @return obj
+	 */
+	@Select("SELECT project_id FROM prm_relation  WHERE  relation_id = #{value}")
+    String relationMapper(String relationId);
 }

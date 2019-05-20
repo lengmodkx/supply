@@ -2,10 +2,10 @@ package com.art1001.supply.mapper.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -155,4 +155,12 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 */
 	List<Project> selectCreatedByName(@Param("userId")String userId, @Param("projectName")String projectName);
 
+	/**
+	 * 修改项目封面图片
+	 * @param projectId 项目id
+	 * @param fileUrl  文件路径
+	 * @return int
+	 */
+	@Update("UPDATE prm_project p SET p.project_cover = #{fileUrl} WHERE p.project_id = #{projectId}")
+	Integer updatePictureById(@Param("projectId")String projectId, @Param("fileUrl")String fileUrl);
 }
