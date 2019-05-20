@@ -90,6 +90,8 @@ public class TagApi {
             List<Tag> tagList = tagService.getByProjectId(projectId);
             if(!CollectionUtils.isEmpty(tagList)){
                 jsonObject.put("data", new JSONObject().fluentPut("tags", tagList).fluentPut("bindInfo", tagService.getTagBindInfo(tagList.get(0).getTagId())));
+            } else {
+                jsonObject.put("data", new JSONObject().fluentPut("tags", new ArrayList()));
             }
             jsonObject.put("result", 1);
         } catch (Exception e) {

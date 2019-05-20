@@ -75,7 +75,9 @@ public enum PushType {
     H5(5,"复制此列表下所有任务"),
     H6(6,"此列表所有任务移至回收站"),
     H7(7,"设置此列表所有任务的执行者"),
-    H8(8,"删除列表");
+    H8(8,"删除列表"),
+    I1(1,"项目移至回收站");
+
     PushType(int id,String name){
         this.name = name;
         this.id = id;

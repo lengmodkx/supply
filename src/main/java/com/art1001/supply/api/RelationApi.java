@@ -116,20 +116,19 @@ public class  RelationApi {
      * @param menuId 菜单id
      * @return 是否成功
      */
-    @Push(PushType.H8)
+    @Push(value = PushType.H8,type = 1)
     @DeleteMapping("/{menuId}/menu")
     public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
+            String relationProjectId = this.getRelationProjectId(menuId);
             if(relationService.removeMenu(menuId)){
-                String relationProjectId = this.getRelationProjectId(menuId);
                 jsonObject.put("result", 1);
-                jsonObject.put("data", relationProjectId);
-                jsonObject.put("msgId",relationProjectId);
             } else {
                 jsonObject.put("result", 0);
             }
-            jsonObject.put("result",1);
+            jsonObject.put("data", relationProjectId);
+            jsonObject.put("msgId",relationProjectId);
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){

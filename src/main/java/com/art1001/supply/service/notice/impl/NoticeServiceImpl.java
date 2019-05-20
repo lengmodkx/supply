@@ -29,7 +29,7 @@ public class NoticeServiceImpl implements NoticeService {
         Notice notice = new Notice();
         notice.setType(type);
         notice.setObject(payload);
-        messagingTemplate.convertAndSendToUser(userId, "/message",JSON.toJSONString(payload));
+        messagingTemplate.convertAndSendToUser(userId, "/message",JSON.toJSONString(notice));
     }
 
     @Override

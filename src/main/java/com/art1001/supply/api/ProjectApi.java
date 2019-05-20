@@ -3,6 +3,8 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
@@ -359,13 +361,19 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
+    @Push(value = PushType.I1,type = 3)
     @PutMapping("/{projectId}/recycle_bin")
     public JSONObject projectMoveRecycleBin(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             Project project = new Project();
             project.setProjectDel(1);
-            projectService.update(project,new QueryWrapper<Project>().eq("project_id",projectId));
+            project.setProjectId(projectId);
+            projectService.updateById(project);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("publicType", "project");
+            jsonObject.put("id", projectId);
+            jsonObject.put("data", projectId);
             jsonObject.put("result",1);
             jsonObject.put("msg","项目移入回收站成功!");
         } catch (Exception e){
