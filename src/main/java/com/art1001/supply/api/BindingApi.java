@@ -87,7 +87,11 @@ public class BindingApi {
             bindingService.saveBindBatch(publicId, bindId, publicType);
             jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType));
             jsonObject.put("result",1);
-            jsonObject.put("msgId", bindingService.getProjectId(publicId));
+            if(Constants.TASK.equals(publicType)){
+                jsonObject.put("msgId", bindingService.getProjectId(publicId));
+            } else{
+                jsonObject.put("msgId", publicId);
+            }
             jsonObject.put("id", publicId);
             jsonObject.put("publicType", publicType);
         }catch (Exception e){

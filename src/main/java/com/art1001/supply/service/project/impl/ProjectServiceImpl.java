@@ -317,7 +317,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
 			gants = taskService.buildFatherSon(tasks);
 		}
-		//查询出项目的部分信息并且映射近 GantChartVO
+		//查询出项目的部分信息并且映射进 GantChartVO
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
 		pro.setId(1);

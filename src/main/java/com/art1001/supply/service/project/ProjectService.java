@@ -97,6 +97,8 @@ public interface ProjectService extends IService<Project> {
 	List<Project> listProjectByUserCollect(String uId);
 
 
+
+
 	/**
 	 *  根据用户id查询我的项目
 	 * @param userId 用户id

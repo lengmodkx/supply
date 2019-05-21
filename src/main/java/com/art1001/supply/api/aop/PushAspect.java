@@ -3,16 +3,22 @@ package com.art1001.supply.api.aop;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserNews;
+import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,9 +27,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author shaohua
@@ -40,6 +44,12 @@ public class PushAspect extends BaseController {
 
     @Resource
     private UserNewsService userNewsService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
 
     @Resource
     private TaskService taskService;
@@ -81,9 +91,19 @@ public class PushAspect extends BaseController {
         } else if(push.type() == 3){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
             Log log = this.saveLog(object, push);
-            String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
-            if(ids != null && ids.length > 0){
-                userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent());
+            if(Constants.TASK.equals(object.getString("publicType"))){
+                String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
+                if(ids != null && ids.length > 0){
+                    userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent());
+                }
+            }
+            if(Constants.PROJECT.equals(object.getString("publicType"))){
+                List<String> ids = projectMemberService.getProjectAllMemberId(object.getString("id"));
+                if(!CollectionUtils.isEmpty(ids)){
+                    String[] arrIds = new String[ids.size()];
+                    noticeService.toUsers(ids.toArray(arrIds), push.value().name(), object.get("data"));
+                }
+
             }
         } else if(push.type() == 4){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get(push));

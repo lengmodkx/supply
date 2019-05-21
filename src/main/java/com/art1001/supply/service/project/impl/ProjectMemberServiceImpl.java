@@ -16,6 +16,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -149,6 +150,17 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		List<UserEntity> newUserList = users;
 		List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
 		return projectAllMember.stream().filter(item -> !newUserList.contains(item)).collect(Collectors.toList());
+	}
+
+	/**
+	 * 查询出一个项目中的所有成员id
+	 * @param projectId 项目id
+	 * @return 成员id集合
+	 */
+	@Override
+	public List<String> getProjectAllMemberId(String projectId) {
+		LambdaQueryWrapper<ProjectMember> eq = new QueryWrapper<ProjectMember>().lambda().select(ProjectMember::getMemberId).eq(ProjectMember::getProjectId, projectId);
+		return projectMemberMapper.selectList(eq).stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
 	}
 
 	/**

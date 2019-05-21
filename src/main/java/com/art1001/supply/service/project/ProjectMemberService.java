@@ -55,6 +55,13 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	List<UserEntity> getModelProjectMember(String type, String id, String projectId);
 
 	/**
+	 * 查询出一个项目中的所有成员id
+	 * @param projectId 项目id
+	 * @return 成员id集合
+	 */
+	List<String> getProjectAllMemberId(String projectId);
+
+	/**
 	 * 获取当前用户的星标项目
 	 * @param userId 用户id
 	 * @return 星标项目
