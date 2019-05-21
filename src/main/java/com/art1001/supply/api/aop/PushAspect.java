@@ -5,10 +5,6 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.user.UserNews;
-import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -16,8 +12,6 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -27,7 +21,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author shaohua
