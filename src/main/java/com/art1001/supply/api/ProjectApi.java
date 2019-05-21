@@ -9,6 +9,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -383,6 +384,36 @@ public class ProjectApi {
         return jsonObject;
     }
 
+
+    /**
+     * 甘特图移入项目至回收站
+     * @param projectId 项目id
+     * @return
+     */
+    @Push(value = PushType.I1,type = 3)
+    //@PutMapping("")
+    public JSONObject MoveRecycleBin(@PathVariable(value = "projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = new Project();
+            project.setProjectDel(1);
+            project.setProjectId(projectId);
+            projectService.updateById(project);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("publicType", "project");
+            jsonObject.put("id", projectId);
+            jsonObject.put("data", projectId);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","项目移入回收站成功!");
+        } catch (Exception e){
+            throw new AjaxException("项目移入回收站失败!",e);
+        }
+        return jsonObject;
+    }
+
+
+
+
     /**
      * 将向项目移出回收站
      * @param projectId 项目id
@@ -484,6 +515,51 @@ public class ProjectApi {
             throw new AjaxException("系统异常,更新失败!",e);
         }
     }
+
+
+
+    /**
+     * 甘特图修改
+     * @param projectId 项目id
+     * @return 成功信息
+     */
+    @PostMapping("/{projectId}/updateProInfo")
+    public JSONObject updateProjectInfo(@PathVariable String projectId,String projectName, Long startTime, Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Project project = projectService.findProjectByProjectId(projectId);
+            if (project!=null){
+                project.setProjectName(projectName);
+                project.setStartTime(startTime);
+                project.setEndTime(endTime);
+                boolean project_id = projectService.update(project, new QueryWrapper<Project>().eq("project_id", projectId));
+                if (project_id){
+                    jsonObject.put("msg" ,"修改项目信息成功");
+                    jsonObject.put("result", 1);
+                }else {
+                    jsonObject.put("msg" ,"修改项目信息失败");
+                    jsonObject.put("result", 0);
+                }
+            }else{
+                Task task = taskService.findTaskByTaskId(projectId);
+                task.setTaskName(projectName);
+                task.setStartTime(startTime);
+                task.setEndTime(endTime);
+                boolean task_id = taskService.update(task, new QueryWrapper<Task>().eq("task_id", projectId));
+                if (task_id){
+                    jsonObject.put("msg" ,"修改任务信息成功");
+                    jsonObject.put("result", 1);
+                }else {
+                    jsonObject.put("msg" ,"修改任务信息失败");
+                    jsonObject.put("result", 0);
+                }
+            }
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
+
 
 
 
