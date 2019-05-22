@@ -411,7 +411,7 @@
 	<!-- 根据项目id 查询出该项目下的所有日程信息 -->
 	<select id="findScheduleListByProjectId" resultType="java.lang.String" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
-		from prm_schedule where project_id = #{projectId}
+		from prm_schedule where project_id = #{projectId} and is_del = 0
 	</select>
 
 	<!-- 查询出未来的日程 或者 过去的日程 -->
@@ -570,7 +570,7 @@
 		FROM
 			prm_schedule AS s left join prm_project as p on s.project_id = p.project_id
 		WHERE
-				s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids)
+				(s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids))
 		AND
 			s.start_time <![CDATA[>]]> #{currTime}
 		AND

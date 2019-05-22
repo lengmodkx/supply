@@ -9,6 +9,7 @@ import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -17,6 +18,8 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -162,13 +166,22 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 数据:根据项目查询出该项目下的所有日程信息
-     *
      * @param projectId 项目id
      * @return 日程的实体集合
      */
     @Override
     public List<Schedule> findScheduleListByProjectId(String projectId) {
-        return scheduleMapper.findScheduleListByProjectId(projectId);
+        List<Schedule> scheduleListByProjectId = scheduleMapper.findScheduleListByProjectId(projectId);
+        Iterator<Schedule> iterator = scheduleListByProjectId.iterator();
+        while(iterator.hasNext()){
+            Schedule next = iterator.next();
+            if(next.getPrivacyPattern() == 1){
+                if(!Arrays.asList(next.getMemberIds().split(",")).contains(ShiroAuthenticationManager.getUserId())){
+                    iterator.remove();
+                }
+            }
+        }
+        return scheduleListByProjectId;
     }
 
     /**
@@ -489,5 +502,35 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     @Override
     public List<Schedule> getBindTagInfo(Long tagId) {
         return scheduleMapper.selectBindTagInfo(tagId);
+    }
+
+    /**
+     * 检查该日程存不存在
+     * @param scheduleId 日程id
+     * @return 是否存在
+     */
+    @Override
+    public Boolean checkIsExist(String scheduleId) {
+        return scheduleMapper.selectCount(new QueryWrapper<Schedule>().lambda().eq(Schedule::getScheduleId, scheduleId)) > 0;
+    }
+
+    /**
+     * 根据日程id查询出该日程的项目id
+     * 如果没有项目id 则返回null
+     * @param scheduleId 日程id
+     * @return 项目id
+     */
+    @Override
+    public String getProjectId(String scheduleId) {
+        if(Stringer.isNullOrEmpty(scheduleId)){
+            throw new ServiceException("scheduleId不能为空!");
+        }
+        if(!this.checkIsExist(scheduleId)){
+            throw new ServiceException("该日程不存在!");
+        }
+        //生成条件表达式对象
+        LambdaQueryWrapper<Schedule> select = new QueryWrapper<Schedule>().lambda().eq(Schedule::getScheduleId, scheduleId).select(Schedule::getProjectId);
+        String projectId = scheduleMapper.selectOne(select).getProjectId();
+        return Stringer.isNullOrEmpty(projectId) ? null : projectId;
     }
 }

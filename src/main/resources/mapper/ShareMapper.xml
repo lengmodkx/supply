@@ -81,10 +81,27 @@
     <!-- 根据id查询 -->
     <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List" />
+            s.id,
+            title,
+            content,
+            s.project_id,
+            s.member_id,
+            member_name,
+            member_img,
+            is_privacy,
+            s.is_del,
+            s.create_time,
+            s.update_time,
+            uids,
+            t.tag_id,
+            t.tag_name,
+            t.bg_color
         FROM
-            prm_share
-        where id = #{id}
+            prm_share AS s
+            LEFT JOIN prm_tag_relation AS tr ON s.id = tr.share_id
+            LEFT JOIN prm_tag AS t ON t.tag_id = tr.tag_id
+        WHERE
+            s.id = #{id}
     </select>
 
     <!-- 查询项目的分享 -->

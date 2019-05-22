@@ -29,6 +29,7 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -1002,6 +1003,24 @@ public class TaskApi extends BaseController {
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
+
+    /**
+     * 根据任务名称模糊搜索任务名称
+     * @param name 任务名称
+     * @param projectId 项目id
+     * @return 任务信息列表
+     */
+    @GetMapping("/{name}/like")
+    public JSONObject likeName(@PathVariable String name, @RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data", taskService.likeTaskName(name,projectId));
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,信息获取失败!",e);
         }
     }
 

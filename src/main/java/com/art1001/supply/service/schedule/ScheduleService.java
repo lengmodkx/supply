@@ -245,4 +245,18 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return 日程集合
 	 */
     List<Schedule> getBindTagInfo(Long tagId);
+
+	/**
+	 * 检查该日程存不存在
+	 * @param scheduleId  日程id
+	 * @return 是否存在
+	 */
+	Boolean checkIsExist(String scheduleId);
+
+	/**
+	 * 根据日程id查询出该日程的项目id
+	 * @param  scheduleId 日程id
+	 * @return 项目id
+	 */
+	String getProjectId(String scheduleId);
 }

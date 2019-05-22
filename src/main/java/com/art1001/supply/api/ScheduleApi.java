@@ -11,6 +11,7 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
@@ -24,7 +25,10 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.xml.ws.Service;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 日程
@@ -99,6 +103,7 @@ public class ScheduleApi extends BaseController {
      * @param privacy 隐私
      * @return
      */
+    @Push(value = PushType.D9,type = 1)
     @PostMapping
     public JSONObject addSchedule(@RequestParam String projectId,
                                     @RequestParam String scheduleName,
@@ -120,6 +125,8 @@ public class ScheduleApi extends BaseController {
             schedule.setMemberIds(memberIds);
             schedule.setPrivacyPattern(privacy);
             scheduleService.saveSchedule(schedule);
+            object.put("msgId", projectId);
+            object.put("data", projectId);
             object.put("result",1);
         }catch(Exception e){
             log.error("系统异常,创建失败:",e);
@@ -142,8 +149,10 @@ public class ScheduleApi extends BaseController {
             scheduleById.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", scheduleId).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
             //当前用户是否对该日程点过赞
             scheduleById.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", scheduleId)) > 0);
-            //该日程的关联信息
-            scheduleById.setBindings(bindingService.list(new QueryWrapper<Binding>().eq("public_id", scheduleId)));
+//            //该日程的关联信息
+//            scheduleById.setBindings(bindingService.list(new QueryWrapper<Binding>().eq("public_id", scheduleId)));
+            //设置关联信息
+            bindingService.setBindingInfo(scheduleId,null,null,null,scheduleById);
             //查询出该任务的日志信息
             scheduleById.setLogs(logService.initLog(scheduleId));
             //获取日程的未读消息数
@@ -195,9 +204,13 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
+            object.put("msgId",scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("msg","更新成功!");
             object.put("id",scheduleId);
-        }catch(Exception e){
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
+        } catch(Exception e){
             log.error("系统异常,名称更新失败:",e);
             throw new AjaxException(e);
         }
@@ -210,6 +223,7 @@ public class ScheduleApi extends BaseController {
      * @param startTime 日程开始时间
      * @return
      */
+    @Push(value = PushType.D2,type = 1)
     @PutMapping("/{scheduleId}/starttime")
     public JSONObject updateScheduleStartTime(@PathVariable String scheduleId,
                                          @RequestParam Long startTime){
@@ -221,6 +235,8 @@ public class ScheduleApi extends BaseController {
             schedule.setStartTime(startTime);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("result",1);
             object.put("msg","更新成功");
         }catch(Exception e){
@@ -236,6 +252,7 @@ public class ScheduleApi extends BaseController {
      * @param endTime 日程结束结束
      * @return
      */
+    @Push(value = PushType.D3,type = 1)
     @PutMapping("/{scheduleId}/endtime")
     public JSONObject updateScheduleEndtime(@PathVariable String scheduleId,
                                               @RequestParam Long endTime){
@@ -248,6 +265,8 @@ public class ScheduleApi extends BaseController {
             scheduleService.updateById(schedule);
             object.put("result",1);
             object.put("msg","更新成功!");
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
         }catch(Exception e){
             log.error("系统异常,结束时间更新失败:",e);
             throw new AjaxException(e);
@@ -261,6 +280,7 @@ public class ScheduleApi extends BaseController {
      * @param repeat 日程重复
      * @return
      */
+    @Push(value = PushType.D7,type = 1)
     @PutMapping("/{scheduleId}/repeat")
     public JSONObject updateRepeat(@PathVariable String scheduleId,
                                    @RequestParam String repeat){
@@ -272,6 +292,8 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("msg","更新成功!");
         }catch(Exception e){
             log.error("系统异常,重复性更新失败:",e);
@@ -311,6 +333,7 @@ public class ScheduleApi extends BaseController {
      * @param remarks 日程备注
      * @return
      */
+    @Push(value = PushType.D5,type = 1)
     @PutMapping("/{scheduleId}/remarks")
     public JSONObject updateRemarks(@PathVariable String scheduleId,
                                     @RequestParam String remarks){
@@ -322,6 +345,8 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("msg","更新成功!");
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
@@ -336,6 +361,7 @@ public class ScheduleApi extends BaseController {
      * @param address 日程地点
      * @return
      */
+    @Push(type = 1,value = PushType.D4)
     @PutMapping("/{scheduleId}/address")
     public JSONObject updateAddress(@PathVariable String scheduleId,
                                     @RequestParam String address){
@@ -347,6 +373,8 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("msg","更新成功!");
         }catch(Exception e){
             log.error("系统异常,地点更新失败:",e);
@@ -361,6 +389,7 @@ public class ScheduleApi extends BaseController {
      * @param memberIds 日程参与者
      * @return
      */
+    @Push(value = PushType.D6,type = 1)
     @PutMapping("/{scheduleId}/memberIds")
     public JSONObject updateMembers(@PathVariable String scheduleId,
                                     @RequestParam String memberIds){
@@ -372,6 +401,8 @@ public class ScheduleApi extends BaseController {
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
             object.put("result",1);
+            object.put("msgId", scheduleService.getProjectId(scheduleId));
+            object.put("data", scheduleId);
             object.put("msg","更新成功!");
         }catch(Exception e){
             log.error("系统异常,参与者更新失败:",e);
@@ -386,6 +417,7 @@ public class ScheduleApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
+    @Push(type = 1 ,value = PushType.D10)
     @PostMapping("/{scheduleId}/copy")
     public JSONObject copySchedule(@PathVariable String scheduleId,@RequestParam String projectId){
         JSONObject object = new JSONObject();
@@ -394,7 +426,9 @@ public class ScheduleApi extends BaseController {
             schedule.setProjectId(projectId);
             //清空参与者和评论
             scheduleService.saveSchedule(schedule);
+            object.put("msgId", projectId);
             object.put("result",1);
+            object.put("data", projectId);
         }catch(Exception e){
             log.error("系统异常,复制失败:",e);
             throw new AjaxException(e);
@@ -408,15 +442,25 @@ public class ScheduleApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
+    @Push(type = 2,value = PushType.D11)
     @PutMapping("/{scheduleId}/move")
     public JSONObject moveSchedule(@PathVariable String scheduleId,@RequestParam String projectId){
         JSONObject object = new JSONObject();
         try{
+            String pId = scheduleService.getProjectId(scheduleId);
             Schedule schedule = new Schedule();
             schedule.setScheduleId(scheduleId);
             schedule.setProjectId(projectId);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
+            Map<String,Object> maps = new HashMap<String,Object>(2);
+            if(projectId.equals(pId)){
+                maps.put(projectId,projectId);
+            } else{
+                maps.put(projectId,projectId);
+                maps.put(pId,pId);
+            }
+            object.put("data",maps);
             object.put("msg","移动成功!");
             object.put("result",1);
         }catch(Exception e){
@@ -431,6 +475,7 @@ public class ScheduleApi extends BaseController {
      * @param scheduleId 日程id
      * @return
      */
+    @Push(value = PushType.D12,type = 1)
     @PutMapping("/{scheduleId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable String scheduleId){
         JSONObject object = new JSONObject();
@@ -440,6 +485,9 @@ public class ScheduleApi extends BaseController {
             schedule.setIsDel(1);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
+            String projectId = scheduleService.getProjectId(scheduleId);
+            object.put("msgId",projectId);
+            object.put("data",projectId);
             object.put("msg","成功移至回收站!");
             object.put("result",1);
         }catch(Exception e){
@@ -455,6 +503,7 @@ public class ScheduleApi extends BaseController {
      * @param privacy 日程隐私
      * @return 是否成功
      */
+    @Push(type = 1,value = PushType.D13)
     @PutMapping("/{scheduleId}/privacy")
     public JSONObject upadtePrivacy(@PathVariable String scheduleId,@RequestParam Integer privacy){
         JSONObject object = new JSONObject();
@@ -464,6 +513,9 @@ public class ScheduleApi extends BaseController {
             schedule.setPrivacyPattern(privacy);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
+            String projectId = scheduleService.getProjectId(scheduleId);
+            object.put("msgId",projectId);
+            object.put("data",projectId);
             object.put("msg","更新成功!");
             object.put("result",1);
         }catch(Exception e){

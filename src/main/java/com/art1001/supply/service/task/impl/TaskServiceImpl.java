@@ -50,6 +50,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
@@ -1865,6 +1866,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<Task> getBindTagInfo(Long tagId) {
         return taskMapper.selectBindTagInfo(tagId);
+    }
+
+    /**
+     * 根据任务名称模糊搜索任务
+     * @param name 任务名称
+     * @param projectId 项目id
+     * @return 任务集合
+     */
+    @Override
+    public List<Task> likeTaskName(String name, String projectId) {
+        //生成sql条件表达式
+        LambdaQueryWrapper<Task> like = new QueryWrapper<Task>().lambda().eq(Task::getProjectId, projectId).like(Task::getTaskName, name);
+        return taskMapper.selectList(like);
     }
 }
 

@@ -153,6 +153,7 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	public Share findByIdAllInfo(String shareId) {
 		Share share = shareMapper.findById(shareId);
 		bindingService.setBindingInfo(share.getId(),null,null,share,null);
+
 		return share;
 	}
 

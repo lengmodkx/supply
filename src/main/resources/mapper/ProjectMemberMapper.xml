@@ -94,6 +94,7 @@
 			pc.project_id = p.project_id
 		WHERE
 			pc.member_id = #{userId}
+		AND project_del = 0
 	</select>
 
 	<!-- 获取当前用户的非星标项目 -->
@@ -108,6 +109,7 @@
 			pm.member_id = #{userId}
 		AND
 			pm.project_id not in (select project_id from prm_project_collect where member_id = #{userId})
+		AND project_del = 0
 	</select>
 
 

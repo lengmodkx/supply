@@ -1,17 +1,27 @@
 package com.art1001.supply.shiro;
 
+import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.mapper.resource.ResourceMapper;
+import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 自定义身份认证
@@ -21,7 +31,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JWTShiroRealm extends AuthorizingRealm {
 
     private UserMapper userMapper;
-    @Autowired
+
+    @Resource
+    private ResourceMapper resourceMapper;
+
+    public void setResourceMapper(ResourceMapper resourceMapper) {
+        this.resourceMapper = resourceMapper;
+    }
+
+    public void setRoleMapper(RoleMapper roleMapper) {
+        this.roleMapper = roleMapper;
+    }
+
+    @Resource
+    private RoleMapper roleMapper;
+
+    @Resource
     public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
@@ -56,6 +81,26 @@ public class JWTShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        String username = JwtUtil.getUsername(principals.toString());
+        UserEntity user = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, username));
+        List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getUserId());
+        Collection<String> roles = roleMapper.selectList(new QueryWrapper<>()).stream().map(Role::getRoleKey).collect(Collectors.toList());
+        // 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.addRoles(roles);
+//        info.getRoles().forEach(r - > {
+//
+//        });
+        //根据用户ID查询角色（role），放入到Authorization里。
+        // 单角色用户情况
+        //info.addRole(user.getRole().getKey());
+        // 多角色用户情况
+        // info.setRoles(user.getRolesName());
+        // 用户的角色对应的所有权限
+
+        //或者直接查询出所有权限set集合
+        //info.setStringPermissions(permissions);
+        //return info;
         return new SimpleAuthorizationInfo();
     }
 }

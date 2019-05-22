@@ -80,11 +80,7 @@ public class BindingApi {
             bindingService.saveBindBatch(publicId, bindId, publicType);
             jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType));
             jsonObject.put("result",1);
-            if(Constants.TASK.equals(publicType)){
-                jsonObject.put("msgId", bindingService.getProjectId(publicId));
-            } else{
-                jsonObject.put("msgId", publicId);
-            }
+            jsonObject.put("msgId", bindingService.getProjectId(publicId));
             jsonObject.put("id", publicId);
             jsonObject.put("publicType", publicType);
         }catch (Exception e){
@@ -148,9 +144,4 @@ public class BindingApi {
         }
         return jsonObject;
     }
-
-
-
-
-
 }

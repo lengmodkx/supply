@@ -623,4 +623,12 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务集合
 	 */
     List<Task> getBindTagInfo(Long tagId);
+
+	/**
+	 * 根据任务名称模糊搜索任务
+	 * @param name 任务名称
+	 * @param projectId 项目id
+	 * @return 任务集合
+	 */
+    List<Task> likeTaskName(String name, String projectId);
 }
