@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -56,23 +58,23 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	/**
-	 * 记录Ajax异常日志，并将错误Ajax错误信息传递(回写)给前台展示, 
+	 * 记录Ajax异常日志，并将错误Ajax错误信息传递(回写)给前台展示,
 	 * 前台的jQuery的Ajax请求error中，可以打印错误提示信息 --
 	 * data.responseText : 这里即是后台传递的错误提示
-	 * eg: $.ajax({ 
+	 * eg: $.ajax({
 	 * 	type : 'get',
-	 * 	dataType :"json", 
-	 * 	url : ctx + '/test/test', 
-	 * 	accept:"application/json", 
-	 * 	success :function(data) { 
-	 * 		console.log(data); 
-	 * 	}, 
+	 * 	dataType :"json",
+	 * 	url : ctx + '/test/test',
+	 * 	accept:"application/json",
+	 * 	success :function(data) {
+	 * 		console.log(data);
+	 * 	},
 	 * 	error : function(data,errorThrown) {
-	 * 		console.log(data); 
-	 * 		alert("error" + data.responseText); 
+	 * 		console.log(data);
+	 * 		alert("error" + data.responseText);
 	 * 	}
 	 * });
-	 * 
+	 *
 	 * @param ex	ajax异常对象
 	 * @throws IOException	异常信息
 	 */
@@ -84,6 +86,22 @@ public class GlobalDefaultExceptionHandler {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
+	/**
+	 * 记录授权失败异常
+	 * @param ex 无权限异常
+	 * @return 返回结果
+	 */
+	@ExceptionHandler(AuthorizationException.class)
+	@ResponseBody
+	public JSONObject operateAuthorizationException(HttpServletResponse response, AuthorizationException ex) {
+		log.error(ex.getMessage(), ex);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg","你没有权限执行此操作!");
+		jsonObject.put("result",0);
+		response.setStatus(203);
 		return jsonObject;
 	}
 

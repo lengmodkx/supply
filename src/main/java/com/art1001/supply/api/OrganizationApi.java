@@ -10,6 +10,7 @@ import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -125,6 +126,7 @@ public class OrganizationApi {
      * @param memberId 企业归属
      * @return
      */
+    @RequiresPermissions("update:org")
     @PutMapping("/{orgId}")
     public JSONObject updateOrg(@PathVariable(value = "orgId") String orgId,
                                 @RequestParam(value = "orgName",required = false) String orgName,

@@ -65,7 +65,7 @@ public class JwtFilter extends AuthenticatingFilter {
         HttpServletResponse httpResponse = WebUtils.toHttp(servletResponse);
         httpResponse.setCharacterEncoding("UTF-8");
         httpResponse.setContentType("application/json;charset=UTF-8");
-        httpResponse.setStatus(HttpStatus.SC_NON_AUTHORITATIVE_INFORMATION);
+        httpResponse.setStatus(HttpStatus.SC_UNAUTHORIZED);
         fillCorsHeader(WebUtils.toHttp(servletRequest), httpResponse);
         return false;
     }

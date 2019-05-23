@@ -24,7 +24,7 @@ import java.util.List;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "tb_resource")
+@TableName(value = "sys_resources")
 public class ResourceEntity extends Model<ResourceEntity> {
 
 	private static final long serialVersionUID = 1L;

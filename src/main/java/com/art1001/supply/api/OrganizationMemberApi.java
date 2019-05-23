@@ -12,6 +12,7 @@ import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -58,6 +59,7 @@ public class OrganizationMemberApi {
      * @param memberId 成员id
      * @return
      */
+    @RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,

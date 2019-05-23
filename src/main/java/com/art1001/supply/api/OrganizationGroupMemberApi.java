@@ -12,6 +12,7 @@ import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
@@ -51,6 +52,7 @@ public class OrganizationGroupMemberApi {
      * @param memberId 成员id
      * @return 结果
      */
+    @RequiresPermissions("create:group:member")
     @PostMapping("/{groupId}")
     public JSONObject addGroupMember(@PathVariable String groupId, @RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();

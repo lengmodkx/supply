@@ -22,7 +22,7 @@ import java.io.Serializable;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_resources_role")
+@TableName("sys_resources_role")
 public class ResourcesRole extends Model<ResourcesRole> {
 
     private static final long serialVersionUID = 1L;

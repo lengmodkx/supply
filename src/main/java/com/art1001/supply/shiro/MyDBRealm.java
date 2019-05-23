@@ -2,8 +2,10 @@ package com.art1001.supply.shiro;
 
 
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.resource.ResourceMapper;
+import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
@@ -17,7 +19,11 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -33,6 +39,13 @@ public class MyDBRealm extends AuthorizingRealm {
 	private UserMapper userMapper;
 
 	private ResourceMapper resourceMapper;
+
+	private RoleMapper roleMapper;
+
+	@Autowired
+	public void setRoleMapper(RoleMapper roleMapper) {
+		this.roleMapper = roleMapper;
+	}
 
 	@Autowired
 	public void setResourceMapper(ResourceMapper resourceMapper) {
@@ -51,29 +64,7 @@ public class MyDBRealm extends AuthorizingRealm {
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-		String username = JwtUtil.getUsername(principalCollection.toString());
-		UserEntity user = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("u_account_name",username));
-		if (user != null) {
-			List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getUserId());
-			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
-			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			//根据用户ID查询角色（role），放入到Authorization里。
-			// 单角色用户情况
-			//info.addRole(user.getRole().getKey());
-			// 多角色用户情况
-			// info.setRoles(user.getRolesName());
-			// 用户的角色对应的所有权限
-			for (ResourceEntity resourceEntity : resourceList) {
-				info.addStringPermission(resourceEntity.getResourceKey().trim());
-				if(StringUtils.isNotBlank(resourceEntity.getResourceUrl().trim())) {
-					info.addStringPermission(resourceEntity.getResourceUrl().trim());
-				}
-			}
-			//或者直接查询出所有权限set集合
-			//info.setStringPermissions(permissions);
-			return info;
-		}
-		return null;
+		return new SimpleAuthorizationInfo();
 	}
 
 	/**
