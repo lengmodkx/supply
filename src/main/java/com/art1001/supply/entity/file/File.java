@@ -124,7 +124,7 @@ public class File extends Model<File> {
     /**
      * 是否是模型文件(0:普通文件 1:模型文件)
      */
-    private int isModel;
+    private Integer isModel;
 
     /**
      * 文件的缩略图
@@ -134,17 +134,17 @@ public class File extends Model<File> {
     /**
      * 文件标识
      */
-    private int fileLabel;
+    private Integer fileLabel;
 
     /**
      * 是否是其他信息上传的文件(0.普通文件 1.其他文件)
      */
-    private int publicLable;
+    private Integer publicLable;
 
     /**
      * 文件层级
      */
-    private int level;
+    private Integer level;
 
     /** 创建时间
      *
@@ -183,7 +183,7 @@ public class File extends Model<File> {
     /**
      * 文件隐私模式 0所有成员可见，1参与者可见
      */
-    private int filePrivacy;
+    private Integer filePrivacy;
     @Override
     protected Serializable pkVal() {
         return this.fileId;
