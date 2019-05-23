@@ -1,10 +1,7 @@
 package com.art1001.supply.service.share.impl;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
-import com.art1001.supply.entity.tag.TagRelation;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.share.ShareMapper;
 import com.art1001.supply.service.binding.BindingService;
@@ -17,9 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * shareServiceImpl
@@ -153,7 +148,6 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	public Share findByIdAllInfo(String shareId) {
 		Share share = shareMapper.findById(shareId);
 		bindingService.setBindingInfo(share.getId(),null,null,share,null);
-
 		return share;
 	}
 

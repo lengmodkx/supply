@@ -23,11 +23,9 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -385,14 +383,14 @@ public class ProjectApi {
     }
 
 
-    /**
+     /**
      * 甘特图移入项目至回收站
      * @param projectId 项目id
      * @return
-     */
+     *//*
     @Push(value = PushType.I1,type = 3)
     //@PutMapping("")
-    public JSONObject MoveRecycleBin(@PathVariable(value = "projectId") String projectId){
+   /* public JSONObject MoveRecycleBin(@PathVariable(value = "projectId") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             Project project = new Project();
@@ -409,7 +407,7 @@ public class ProjectApi {
             throw new AjaxException("项目移入回收站失败!",e);
         }
         return jsonObject;
-    }
+    }*/
 
 
 
@@ -568,29 +566,22 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return obj
      */
-    public JSONObject updateProjectPic(String projectId, MultipartFile file){
+    @PostMapping("{projectId}/picture")
+    public JSONObject updateProjectPic(@PathVariable String projectId, String fileName){
         JSONObject jsonObject = new JSONObject();
         try {
-            // 得到文件名
-            String originalFilename = file.getOriginalFilename();
-            // 重置文件名
-            String fileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-            //设置url
-            String parentUrl = projectId.concat("/upload/project/");
-            // 设置文件url
-            String fileUrl = parentUrl + fileName;
-
-            // 上传oss，相同的objectName会覆盖
-            AliyunOss.uploadInputStream(fileUrl, file.getInputStream());
+            //根据项目id获取需要更改的项目信息
+            Project project = projectService.findProjectByProjectId(projectId);
+            //删除云端图片
+            //AliyunOss.deleteFile(project.getProjectCover());
             //修改数据库
-            Integer integer = projectService.updatePictureById(projectId, fileUrl);
+            Integer integer = projectService.updatePictureById(projectId,fileName);
+
             if (integer==1){
                 jsonObject.put("result",1);
-                jsonObject.put("data",fileUrl);
                 jsonObject.put("msg","图片更改成功!");
             }else{
                 jsonObject.put("result",0);
-                jsonObject.put("data","");
                 jsonObject.put("msg","图片更改失败!");
             }
             return jsonObject;
