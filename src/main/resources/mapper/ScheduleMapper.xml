@@ -640,9 +640,9 @@
 			s.schedule_name,
 			s.start_time,
 			s.end_time,
-			u.user_id,
-			u.user_name,
-			u.image
+			u.user_id as userId,
+			u.user_name as userName,
+			u.image as img
 		FROM
 			prm_schedule AS s
 			LEFT JOIN tb_user AS u ON u.user_id = s.member_id

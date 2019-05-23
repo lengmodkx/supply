@@ -45,7 +45,7 @@ public interface RelationService extends IService<Relation> {
 	 * 
 	 * @return
 	 */
-	List<Relation> findRelationAllList(Relation relation);
+	List<Relation> findRelationAllList(Relation relation, String name);
 
 	/**
 	 * 根据分组删除分组下的所有菜单

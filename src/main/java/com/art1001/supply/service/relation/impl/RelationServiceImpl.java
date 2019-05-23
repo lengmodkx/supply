@@ -22,6 +22,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -149,11 +150,10 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	/**
 	 * 获取所有relation数据
-	 * 
 	 * @return
 	 */
 	@Override
-	public List<Relation> findRelationAllList(Relation relation){
+	public List<Relation> findRelationAllList(Relation relation, String name){
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
 		relationAllList.forEach(r -> {
 			r.getTaskList().forEach(t -> {
@@ -168,6 +168,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 							iterator.remove();
 						}
 					}
+				}
+				if(!Stringer.isNullOrEmpty(name) && !task.getTaskName().contains(name)){
+					iterator.remove();
 				}
 			}
 

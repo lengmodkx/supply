@@ -195,6 +195,24 @@ public class Schedule extends Model<Schedule> {
 	@TableField(exist = false)
 	private int unReadMsg;
 
+	/**
+	 * 创建者id
+	 */
+	@TableField(exist = false)
+	private String userId;
+
+	/**
+	 * 创建者名称
+	 */
+	@TableField(exist = false)
+	private String userName;
+
+	/**
+	 * 创建者头像
+	 */
+	@TableField(exist = false)
+	private String img;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.scheduleId;

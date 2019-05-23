@@ -256,7 +256,7 @@ public class ProjectApi {
      * @return
      */
     @GetMapping("/{projectId}/tasks")
-    public JSONObject mainpage(@PathVariable String projectId) {
+    public JSONObject mainpage(@PathVariable String projectId, @RequestParam(required = false) String name) {
         JSONObject object = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
@@ -266,7 +266,7 @@ public class ProjectApi {
             Relation relation = new Relation();
             relation.setParentId(groupId);
             relation.setLable(1);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation,name);
             object.put("result", 1);
             object.put("menus",taskMenu);
             object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));
