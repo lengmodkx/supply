@@ -17,6 +17,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
@@ -28,6 +29,7 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import sun.plugin.javascript.navig.Array;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -179,7 +182,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public String initProjectFolder(String projectId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         File projectFile = new File();
-        projectFile.setFileName(DateUtils.getDateStr());
+        projectFile.setFileName("文件库");
         projectFile.setProjectId(projectId);
         projectFile.setMemberId(userEntity.getUserId());
         projectFile.setCatalog(1);
@@ -530,6 +533,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     /**
+     * 查看文件夹或者文件是否存在 (true:存在  false:不存在)
+     * @param fileId 文件
+     * @return 结果
+     */
+    @Override
+    public Boolean checkIsExist(String fileId) {
+        if(Stringer.isNullOrEmpty(fileId)){
+            throw new ServiceException("fileId 不能为空!");
+        }
+        return fileMapper.selectCount(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId)) > 0;
+    }
+
+    /**
      * 根据项目id获取该项目下的根文件夹
      * @param projectId 项目id
      * @return 文件树形图信息
@@ -595,10 +611,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setId(file.getFileId());
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVOS.add(fileTreeShowVO);
+            if(!Stringer.isNullOrEmpty(file.getParentId())){
+                fileTreeShowVO.setParentId(file.getParentId());
+            }
             if(!CollectionUtils.isEmpty(file.getFiles())){
                 fileTreeShowVO.setChild(new ArrayList<FileTreeShowVO>());
                 chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getChild());
             }
+        });
+    }
+
+    //文件向上递归的分层
+    private void upLevel(List<File> files){
+        files.forEach(f -> {
+            files.forEach((s) -> {
+                if(s.getParentId().equals(f.getFileId())){
+                    List<File> subs = new ArrayList<>();
+                    subs.add(s);
+                    f.setFiles(subs);
+                }
+            });
         });
     }
 
@@ -687,6 +719,24 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> seachByName(String fileName, String projectId) {
         return fileMapper.seachByName(fileName,projectId);
+    }
+
+    /**
+     * 获取某个文件或者目录的所有上级目录信息 (一直到顶端目录)
+     * @param fileId 文件id
+     * @return 目录集合
+     */
+    @Override
+    public List<FileTreeShowVO> getParentFolders(String fileId) {
+        List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
+        List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
+        //生成查询条件表达式
+        LambdaQueryWrapper<File> select = new QueryWrapper<File>().lambda().select(File::getFileId, File::getFileName, File::getCreateTime,File::getParentId).in(File::getFileId, fileIds);
+        List<File> fileList = fileMapper.selectList(select);
+        this.upLevel(fileList);
+        this.chanageToFileTreeVO(fileList, fileTreeShowVOS);
+        //过滤无用数据
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId())) .collect(Collectors.toList());
     }
 
     /**

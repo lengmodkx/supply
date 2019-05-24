@@ -5,6 +5,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.List;
 
@@ -178,11 +179,20 @@ import java.util.List;
     int checkChildFolder(String fileId);
 
 	/**
+	 * 查看文件夹或者文件是否存在 (true:存在  false:不存在)
+	 * @param fileId  文件
+	 * @return 结果
+	 */
+	Boolean checkIsExist(String fileId);
+
+	/**
 	 * 根据项目id获取该项目下的根文件夹
 	 * @param projectId 项目id
 	 * @return 文件树形图信息
 	 */
 	List<FileTreeShowVO> findTreeFolderByProjectId(String projectId);
+
+
 
 	/**
 	 * 根据父级id获取该项目下的根文件夹
@@ -242,4 +252,11 @@ import java.util.List;
 	 * @return 文件集合
 	 */
 	List<File> getBindTagInfo(Long tagId);
+
+	/**
+	 * 获取某个文件或者目录的所有上级目录信息 (一直到顶端目录)
+	 * @param fileId 文件id
+	 * @return 目录集合
+	 */
+	List<FileTreeShowVO> getParentFolders(String fileId);
 }

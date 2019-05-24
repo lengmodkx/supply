@@ -277,4 +277,10 @@ public interface FileMapper extends BaseMapper<File> {
 	 */
 	List<File> selectBindTagInfo(@Param("tagId") Long tagId);
 
+	/**
+	 * 获取某个文件或者目录的所有上级目录id (一直到顶端目录)
+	 * @param fileId 文件id
+	 * @return 目录集合
+	 */
+	String selectParentFolders(@Param("fileId") String fileId);
 }

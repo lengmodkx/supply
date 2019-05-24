@@ -473,7 +473,12 @@
 		AND f.file_del = '0'
 	</select>
 
-    <!-- 插入多条文件信息 -->
+	<!-- 获取某个文件或者目录的所有上级目录id (一直到顶端目录) -->
+	<select id="selectParentFolders" resultType="java.lang.String">
+		select getParentFolder(#{fileId})
+	</select>
+
+	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">

@@ -136,6 +136,30 @@ public class FileApi extends BaseController {
     }
 
     /**
+     * 获取该文件的所有上级目录的文件id和文件名称(一直到最顶端目录)
+     * @param fileId 文件id
+     * @return 文件数据结果集
+     */
+    @GetMapping("/{fileId}/parent/folders")
+    public JSONObject getParentFolders(@PathVariable String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if(!fileService.checkIsExist(fileId)){
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "该文件不存在!");
+            }
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileService.getParentFolders(fileId));
+            return jsonObject;
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,获取目录列表失败!");
+        }
+    }
+
+    /**
      * 设置文件的隐私模式
      * @param id 文件id
      * @param privacy 隐私模式
