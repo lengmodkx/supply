@@ -33,7 +33,7 @@ public class FileTreeShowVO {
     /**
      * 子目录集合
      */
-    private List<FileTreeShowVO> child;
+    private List<FileTreeShowVO> children;
 
     /**
      * 父级id
