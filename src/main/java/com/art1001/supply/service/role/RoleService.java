@@ -12,4 +12,15 @@ public interface RoleService extends IService<Role> {
      * @return
      */
     Page<Role> selectListPage(long current, long size, Role role);
+
+    /**
+     * 判断角色是否存在
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/5/27
+     * @return 结果 (存在返回true)
+     */
+    Boolean checkIsExist(String roleId);
 }

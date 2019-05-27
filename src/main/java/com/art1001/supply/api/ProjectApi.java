@@ -27,6 +27,7 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

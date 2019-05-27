@@ -32,17 +32,19 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	/**
 	 * 资源id
 	 */
-	@TableId(value = "resource_id",type = IdType.AUTO)
+	@TableId(value = "s_id",type = IdType.AUTO)
 	public Integer resourceId;
 
 	/**
 	 * 父节点ID
 	 */
+	@TableField("s_parent_id")
 	private Integer parentId;
 
 	/**
 	 * 权限名称
 	 */
+	@TableField("s_name")
 	private String resourceName;
 
 	/**

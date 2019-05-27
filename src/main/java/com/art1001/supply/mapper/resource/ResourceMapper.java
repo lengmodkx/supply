@@ -1,6 +1,7 @@
 package com.art1001.supply.mapper.resource;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -66,4 +67,28 @@ public interface ResourceMapper extends BaseMapper<ResourceEntity> {
 	 * @return
 	 */
     List<ResourceEntity> allList(String roleId);
+
+	/**
+	 * 获取该角色的所有资源信息
+	 * @param roleId 角色id
+	 * @return 资源集合
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/5/27
+	 */
+    List<ResourceEntity> selectResourceByRoleId(@Param("roleId") String roleId);
+
+	List<ResourceShowVO> selectAll();
+
+	/**
+	 * 获取该角色拥有的所有资源
+	 * @param roleId 角色id
+	 * @return 资源集合
+	 * @author heShaoHua
+	 * @describe 这个资源集合是以分组形式获取的(分组依据为parent资源, 然后一个parent资源对应一组sub资源)
+	 * @updateInfo 暂无
+	 * @date 2019/5/27
+	 */
+	List<ResourceEntity> selectRoleHaveResources(@Param("roleId") String roleId);
 }

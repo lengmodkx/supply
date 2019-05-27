@@ -1,9 +1,12 @@
 package com.art1001.supply.service.resource;
 
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 public interface ResourceService extends IService<ResourceEntity> {
@@ -30,4 +33,38 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 * @return
 	 */
 	List<ResourceEntity> allList(String roleId);
+
+	/**
+	 * 1.获取到所有权限信息
+	 * 2.根据传递的roleId在上一步查询到的所有权限信息中获取到该role对应的权限信息并且标记
+	 * @author heShaoHua
+	 * @describe 查询出当前角色所对应的权限信息
+	 * @param roleId 角色id
+	 * @updateInfo 暂无
+	 * @date 2019/5/27
+	 * @return 当前role所拥有的权限信息
+	 */
+	List<ResourceShowVO> getRoleResourceDetailsData(String roleId);
+
+    /**
+	 * 获取该角色的所有资源信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param  roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/5/27
+     * @return 资源集合
+     */
+	List<ResourceEntity> getResourcesByRoleId(String roleId);
+
+	/**
+	 * 获取该角色拥有的所有资源
+	 * @author heShaoHua
+	 * @describe 这个资源集合是以分组形式获取的(分组依据为parent资源,然后一个parent资源对应一组sub资源)
+	 * @param roleId 角色id
+	 * @updateInfo 暂无
+	 * @date 2019/5/27
+	 * @return 资源集合
+	 */
+	List<ResourceEntity> getRoleHaveResources(String roleId);
 }

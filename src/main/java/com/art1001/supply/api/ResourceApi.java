@@ -1,9 +1,13 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.resource.ResourceService;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +30,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("resources")
-public class ResourceApi {
+public class ResourceApi extends BaseController {
 
     @Resource
     private ResourceService resourceService;
@@ -192,30 +196,30 @@ public class ResourceApi {
     }
 
     /**
-     * 获取所有资源  (标识该角色已经拥有的资源)
+     * @author heShaoHua
+     * @describe 获取该角色已拥有的资源信息
      * @param roleId 角色id
-     * @return
+     * @updateInfo 暂无
+     * @date 2019/5/27
+     * @return 资源信息
      */
     @GetMapping("/{roleId}")
-    public JSONObject getResources(@PathVariable String roleId){
+    public JSONObject getResourcesByRoleId(@PathVariable String roleId){
         JSONObject jsonObject = new JSONObject();
         try {
-            List<ResourceEntity> resources = resourceService.allList(roleId);
-            resources.forEach(item -> {
-                item.getSubResource().forEach(subItem -> {
-                    if(subItem.getRsId() == null){
-                        subItem.setHave(false);
-                    } else{
-                        subItem.setHave(true);
-                    }
-                });
-            });
-            jsonObject.put("data",resources);
-            jsonObject.put("result",1);
-            jsonObject.put("msg","数据获取成功!");
-        } catch (Exception e){
-            throw new AjaxException(e);
+            if(Stringer.isNullOrEmpty(roleId)){
+                return paramsIsNullHandle(roleId);
+            }
+            List<ResourceShowVO> rsv = resourceService.getRoleResourceDetailsData(roleId);
+            if(rsv == null){
+                throw new AjaxException("系统异常!");
+            }
+            jsonObject.put("data",rsv);
+            jsonObject.put("result", 1);
+            return jsonObject;
+        } catch (ServiceException e){
+            log.error(e.getMessage() + roleId);
+            throw new AjaxException(e.getMessage(),e);
         }
-        return jsonObject;
     }
 }
