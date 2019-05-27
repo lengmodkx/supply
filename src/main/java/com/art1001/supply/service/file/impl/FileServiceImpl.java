@@ -5,21 +5,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.schedule.ScheduleApiBean;
-import com.art1001.supply.entity.share.ShareApiBean;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
-import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
@@ -37,7 +31,6 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import sun.plugin.javascript.navig.Array;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -480,6 +473,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                     myFile.setLevel(parentLevel+1);
                     myFile.setParentId(parentId);
                 }
+                myFile.setMemberImg(userEntity.getImage());
+                myFile.setMemberName(userEntity.getUserName());
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
