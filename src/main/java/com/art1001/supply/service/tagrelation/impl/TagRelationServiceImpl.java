@@ -57,10 +57,29 @@ public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRel
 		tagRelationMapper.updateTagRelation(tagRelation);
 	}
 
+	/*
+	* 查询是否有关联重复的tag
+	* */
 	@Override
-	public List<TagRelation> findTagRelationByTagId(long tagId) {
-		return tagRelationMapper.findTagRelationByTagId(tagId);
+	public int findCountById(Long tagId, String publicType, String publicId) {
+		TagRelation tagRelation=new TagRelation();
+        tagRelation.setTagId(tagId);
+		if(Constants.TASK.equals(publicType)){
+			tagRelation.setTaskId(publicId);
+		}
+		else if(Constants.FILE.equals(publicType)){
+			tagRelation.setFileId(publicId);
+		}
+		else if(Constants.SCHEDULE.equals(publicType)){
+			tagRelation.setScheduleId(publicId);
+		}
+		else if(Constants.SHARE.equals(publicType)){
+			tagRelation.setShareId(publicId);
+
+		}
+		return tagRelationMapper.findCountById(tagRelation);
 	}
+
 
 
 	/**

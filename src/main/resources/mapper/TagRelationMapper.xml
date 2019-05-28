@@ -177,5 +177,25 @@
 			</foreach>
 		)
 	</delete>
+
+
+	<select id="findCountById"  resultType="int">
+		select count(0) from prm_tag_relation
+		<where>
+				tag_id = #{tagId} and
+			<if test="taskId != null and taskId != ''">
+				task_id = #{taskId}
+			</if>
+			<if test="fileId != null and fileId != ''">
+				file_id = #{fileId}
+			</if>
+			<if test="scheduleId != null and scheduleId != ''">
+				schedule_id = #{scheduleId}
+			</if>
+			<if test="shareId != null and shareId != ''">
+				share_id = #{shareId}
+			</if>
+		</where>
+	</select>
 	
 </mapper>

@@ -889,7 +889,8 @@ public class FileApi extends BaseController {
             fileService.updateById(file);
             jsonObject.put("result",1);
             jsonObject.put("msgId",getProjectId(fileId));
-            jsonObject.put("data",fileName);
+            //jsonObject.put("data",fileName);
+            jsonObject.put("data",new JSONObject().fluentPut("fileName",fileName).fluentPut("fileId",fileId));
         }catch (Exception e){
             log.error("系统异常,文件名称更新失败:",e);
             throw new AjaxException(e);

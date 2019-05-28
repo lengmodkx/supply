@@ -64,4 +64,10 @@ public interface TagRelationMapper extends BaseMapper<TagRelation> {
 	 * @param publicId 项的id
 	 */
     void deleteManyItemTagRelation(List<String> publicId);
+
+
+    /*
+    * 查询是否有重复关联标签
+    * */
+	int findCountById(TagRelation tr);
 }

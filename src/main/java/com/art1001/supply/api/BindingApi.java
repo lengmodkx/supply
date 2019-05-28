@@ -81,8 +81,8 @@ public class BindingApi {
                 jsonObject.put("result",0);
                 jsonObject.put("msg", "绑定信息不能为空");
             }else{
-                bindingService.saveBindBatch(publicId, bindId, publicType);
-                jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType));
+                Object o = bindingService.saveBindBatch(publicId, bindId, publicType);
+                jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType).fluentPut("bind",o));
                 jsonObject.put("result",1);
                 jsonObject.put("msgId", bindingService.getProjectId(publicId));
                 jsonObject.put("id", publicId);

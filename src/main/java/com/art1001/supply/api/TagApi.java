@@ -9,6 +9,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,12 @@ public class TagApi {
      */
     @Resource
     private TagService tagService;
+
+    /**
+     * 关联表service
+     */
+    @Resource
+    private TagRelationService tagRelationService;
 
     /**
      * 标签初始化
@@ -252,18 +259,25 @@ public class TagApi {
     public JSONObject bindingInfo(@RequestParam("tagId")Long tagId, @RequestParam("publicId") String publicId, @RequestParam("publicType")String publicType){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(tagService.addItemTag(tagId,publicId,publicType)) {
-                Tag byId = tagService.getById(tagId);
-                jsonObject.put("result", 1);
-                jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType).fluentPut("tag",tagService.findById(Integer.valueOf(tagId+""))));
-                jsonObject.put("name", byId.getTagName());
-                jsonObject.put("msgId", this.getProjectId(tagId));
-                jsonObject.put("msg", "绑定成功!");
-                jsonObject.put("id", publicId);
-            } else{
+            int i = tagRelationService.findCountById(tagId,publicType,publicId);
+            if(i==0){
+                if(tagService.addItemTag(tagId,publicId,publicType)) {
+                    Tag byId = tagService.getById(tagId);
+                    jsonObject.put("result", 1);
+                    jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType).fluentPut("tag",tagService.findById(Integer.valueOf(tagId+""))));
+                    jsonObject.put("name", byId.getTagName());
+                    jsonObject.put("msgId", this.getProjectId(tagId));
+                    jsonObject.put("msg", "绑定成功!");
+                    jsonObject.put("id", publicId);
+                } else{
+                    jsonObject.put("result",0);
+                    jsonObject.put("msg","绑定失败!");
+                }
+            }else {
                 jsonObject.put("result",0);
-                jsonObject.put("msg","绑定失败!");
+                jsonObject.put("msg","不能重复绑定!");
             }
+
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,标签绑定失败!",e);

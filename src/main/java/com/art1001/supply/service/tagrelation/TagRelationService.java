@@ -2,7 +2,6 @@ package com.art1001.supply.service.tagrelation;
 
 import com.art1001.supply.entity.tag.TagRelation;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.shiro.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +33,14 @@ public interface TagRelationService extends IService<TagRelation> {
 	 */
 	public void updateTagRelation(TagRelation tagRelation);
 
-	List<TagRelation> findTagRelationByTagId(long tagId);
+	/**
+	 * 查询有无重复标签
+	 *
+	 * @param tagId
+	 * @param publicType
+	 * @param publicId
+	 */
+	 int findCountById(Long tagId, String publicType, String publicId);
 
 	/**
 	 * 插入多条消息
