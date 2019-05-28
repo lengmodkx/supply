@@ -1,15 +1,23 @@
 package com.art1001.supply.service.organization.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -28,6 +36,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 	@Resource
 	private OrganizationMemberService organizationMemberService;
+
+	@Resource
+	private RoleService roleService;
+
+	@Resource
+	private RoleUserService roleUserService;
 
 	/**
 	 * 查询分页organization数据
@@ -76,7 +90,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 * 
 	 * @param organization 企业信息
 	 */
-	@Transactional(rollbackFor = Exception.class)
+	//@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void saveOrganization(Organization organization){
 		String userId = ShiroAuthenticationManager.getUserId();
@@ -94,7 +108,17 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		organizationMember.setCreateTime(System.currentTimeMillis());
 		organizationMember.setUpdateTime(System.currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
+		organizationMember.setUserDefault(1);
 		organizationMemberService.save(organizationMember);
+
+		//初始化默认角色
+		roleService.saveOrgDefaultRole(organization.getOrganizationId());
+		Integer administrator = roleService.getOne(new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, organization.getOrganizationId()).eq(Role::getRoleKey, "administrator")).getRoleId();
+		RoleUser roleUser = new RoleUser();
+		roleUser.setTCreateTime(LocalDateTime.now());
+		roleUser.setUId(ShiroAuthenticationManager.getUserId());
+		roleUser.setRoleId(administrator);
+		roleUserService.save(roleUser);
 	}
 	/**
 	 * 获取所有organization数据
@@ -123,7 +147,16 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 */
 	@Override
 	public List<Organization> getMyOrg(Integer flag) {
-		return organizationMapper.getMyOrg(flag,ShiroAuthenticationManager.getUserId());
+		List<Organization> myOrg = organizationMapper.getMyOrg(flag, ShiroAuthenticationManager.getUserId());
+		String organizationId = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, ShiroAuthenticationManager.getUserId()).eq(OrganizationMember::getUserDefault, 1)).getOrganizationId();
+		myOrg.forEach(item -> {
+			if(item.getOrganizationId().equals(organizationId)){
+				item.setIsSelection(true);
+			} else {
+				item.setIsSelection(false);
+			}
+		});
+		return myOrg;
 	}
 
 	/**

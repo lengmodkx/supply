@@ -60,7 +60,7 @@ public class BaseController {
     protected JSONObject paramsIsNullHandle(String... paramsName) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",0);
-        jsonObject.put("msg",Arrays.toString(paramsName));
+        jsonObject.put("msg",Arrays.toString(paramsName) + "为空");
         String logMsg = "参数 " + Arrays.toString(paramsName) + " 为空!";
         log.error(logMsg);
         return jsonObject;

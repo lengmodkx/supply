@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -50,12 +52,13 @@ public class ResourceRoleApi {
                 jsonObject.put("msg","必须选择至少一个资源!");
             } else{
                 resourcesRoleService.remove(new QueryWrapper<ResourcesRole>().eq("r_id",roleId));
-                String[] sIds = resources.split(",");
+                String[] sNames = resources.split(",");
+                List<Integer> collect = resourceService.list(new QueryWrapper<ResourceEntity>().lambda().in(ResourceEntity::getResourceName, Arrays.asList(sNames))).stream().map(ResourceEntity::getResourceId).collect(Collectors.toList());
                 List<ResourcesRole> resourcesRoleList = new ArrayList<ResourcesRole>();
-                for (int i = 0;i < sIds.length;i++){
+                for (Integer integer : collect) {
                     ResourcesRole resourcesRole = new ResourcesRole();
                     resourcesRole.setRoleId(Integer.valueOf(roleId));
-                    resourcesRole.setResourceId(Integer.valueOf(sIds[i]));
+                    resourcesRole.setResourceId(integer);
                     resourcesRole.setCreateTime(LocalDateTime.now());
                     resourcesRoleList.add(resourcesRole);
                 }

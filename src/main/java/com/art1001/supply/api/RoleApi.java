@@ -4,11 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.util.BeanPropertiesUtil;
+import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatorUtils;
+import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
@@ -23,6 +31,7 @@ import java.sql.Timestamp;
 @Slf4j
 @RestController
 @RequestMapping("roles")
+@Validated
 public class RoleApi {
 
     @Resource
@@ -36,7 +45,7 @@ public class RoleApi {
      * @param roleKey 角色标识
      * @return
      */
-    @PostMapping("org")
+    @PostMapping("/org")
     public JSONObject addRole(@RequestParam(value = "orgId")String orgId,
                               @RequestParam(value = "roleName")String roleName,
                               @RequestParam(value = "roleDes")String roleDes,
@@ -54,6 +63,7 @@ public class RoleApi {
             role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             roleService.save(role);
             object.put("result",1);
+            object.put("data", role);
             return object;
         }catch(Exception e){
             throw new AjaxException("系统异常,角色添加失败!",e);
@@ -66,14 +76,11 @@ public class RoleApi {
      * @return
      */
     @DeleteMapping("/{roleId}/org")
-    public JSONObject deleteRole(@PathVariable(value = "roleId")Integer roleId){
+    public JSONObject deleteRole(@PathVariable(value = "roleId")Integer roleId,
+                                 @NotEmpty(message = "orgId不能为空") @RequestParam(required = false) String orgId){
         JSONObject object = new JSONObject();
-        try{
-            roleService.removeById(roleId);
-            object.put("result",1);
-        }catch(Exception e){
-            throw new AjaxException("系统异常,角色删除失败!",e);
-        }
+        int result = roleService.removeOrgRole(roleId,orgId);
+        object.put("result",1);
         return object;
     }
 

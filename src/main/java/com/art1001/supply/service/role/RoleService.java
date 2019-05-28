@@ -23,4 +23,26 @@ public interface RoleService extends IService<Role> {
      * @return 结果 (存在返回true)
      */
     Boolean checkIsExist(String roleId);
+
+    /**
+     * 移除企业角色
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/5/28 12:06
+     * @return 是否移除成功
+     */
+    int removeOrgRole(Integer roleId,String orgId);
+
+    /**
+     * 保存企业默认初始化的角色信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @updateInfo 暂无
+     * @date 2019/5/28 15:33
+     * @return 结果值
+     */
+    int saveOrgDefaultRole(String orgId);
 }

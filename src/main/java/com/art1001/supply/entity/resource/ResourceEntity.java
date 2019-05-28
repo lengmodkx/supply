@@ -33,6 +33,7 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	 * 资源id
 	 */
 	@TableId(value = "s_id",type = IdType.AUTO)
+	@TableField("s_id")
 	public Integer resourceId;
 
 	/**
@@ -50,41 +51,49 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	/**
 	 * 资源标识key
 	 */
+	@TableField("s_source_key")
 	private String resourceKey;
 
 	/**
 	 * 类型：0：菜单；1：按钮
 	 */
+	@TableField("s_type")
 	private Integer resourceType;
 
 	/**
 	 * 菜单URL
 	 */
+	@TableField("s_source_url")
 	private String resourceUrl;
 
 	/**
 	 * 菜单的展开层级(暂不用)
 	 */
+	@TableField("s_level")
 	private Integer resourceLevel;
 
 	/**
 	 * 是否隐藏
 	 */
+	@TableField("s_is_hide")
 	private Integer isHide;
 
 	/**
 	 * 资源描述
 	 */
+	@TableField("s_description")
 	private String description;
 
 	/**
 	 * 资源创建时间
 	 */
+	@TableField("s_create_time")
 	private Timestamp createTime;
 
 	/**
 	 * 资源更新时间
 	 */
+	@TableField("s_update_time")
 	private Timestamp updateTime;
 
 	/**

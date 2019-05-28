@@ -33,6 +33,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -339,6 +341,7 @@ public class TaskApi extends BaseController {
      * @param startTime 任务开始时间
      * @return JSONObject
      */
+    @NotEmpty
     @Log(PushType.A7)
     @Push(value = PushType.A7,type = 3)
     @PutMapping(value = "/{taskId}/starttime")

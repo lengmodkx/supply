@@ -4,6 +4,7 @@ import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,5 +44,4 @@ public class MybatisPlusConfig {
     public DataSource dataSource() {
         return DruidDataSourceBuilder.create().build();
     }
-
 }

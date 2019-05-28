@@ -48,4 +48,11 @@ public class Constants {
     public static final String SHARE_EN = "share";
     public static final String TAG_EN ="tag";
     public static final String GROUP_EN ="group";
+
+    public static final String MEMBER_EN = "member";
+
+    //角色中文名称
+    public static final String OWNER_CN = "拥有者";
+    public static final String ADMIN_CN = "管理员";
+    public static final String MEMBER_CN = "成员";
 }

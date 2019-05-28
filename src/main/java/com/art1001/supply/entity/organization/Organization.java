@@ -89,6 +89,12 @@ public class Organization extends Model<Organization> {
 	@TableField(exist = false)
 	private List<Project> joinProjects;
 
+	/**
+	 * 是否是当前用户所在的企业
+	 */
+	@TableField(exist = false)
+	private Boolean isSelection;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.organizationId;

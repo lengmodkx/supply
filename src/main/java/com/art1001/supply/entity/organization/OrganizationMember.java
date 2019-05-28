@@ -77,6 +77,11 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	private Long updateTime;
 
+	/**
+	 * 是否是当前用户所在的企业
+	 */
+	private Integer userDefault;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

@@ -18,7 +18,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         try {
-            String[] a = {"prm_organization_group","prm_organization_group_member"};
+            String[] a = {"sys_role_user"};
             AutoGenerator mpg = new AutoGenerator();
             // 全局配置
             GlobalConfig gc = new GlobalConfig();
@@ -28,11 +28,11 @@ public class CodeGenerator {
             gc.setEnableCache(false);// XML 二级缓存
             gc.setBaseResultMap(true);// XML ResultMap
             gc.setBaseColumnList(false);// XML columList
-            gc.setAuthor("DindDangMao");// 作者
+            gc.setAuthor("heshaohua");// 作者
 
 
             // 自定义文件命名，注意 %s 会自动填充表实体属性！
-            gc.setControllerName("%sController");
+            gc.setControllerName("%sApi");
             gc.setServiceName("%sService");
             gc.setServiceImplName("%sServiceImpl");
             gc.setMapperName("%sMapper");
@@ -42,15 +42,15 @@ public class CodeGenerator {
 
             // 数据源配置
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
-            dataSourceConfig.setUrl("jdbc:mysql://localhost:3306/supply?useUnicode=true&useSSL=false&characterEncoding=utf8");
+            dataSourceConfig.setUrl("jdbc:mysql://localhost/supply01?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf8&rewriteBatchedStatements=true");
             dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
             dataSourceConfig.setUsername("root");
-            dataSourceConfig.setPassword("123456");
+            dataSourceConfig.setPassword("root");
 
 
             // 策略配置
             StrategyConfig strategy = new StrategyConfig();
-            strategy.setTablePrefix(new String[] { "prm_" });// 此处可以修改为您的表前缀
+            strategy.setTablePrefix(new String[] { "sys_" });// 此处可以修改为您的表前缀
             strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
             strategy.setInclude(a); // 需要生成的表
 

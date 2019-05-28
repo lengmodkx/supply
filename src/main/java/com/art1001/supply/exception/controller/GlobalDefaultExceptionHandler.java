@@ -6,13 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * 
@@ -86,6 +92,24 @@ public class GlobalDefaultExceptionHandler {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
+	@ExceptionHandler
+	@ResponseBody
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public Object handle(ValidationException exception) {
+		JSONObject jsonObject = new JSONObject();
+		if(exception instanceof ConstraintViolationException){
+			ConstraintViolationException exs = (ConstraintViolationException) exception;
+			Set<ConstraintViolation<?>> violations = exs.getConstraintViolations();
+			StringBuilder sb = new StringBuilder();
+			for (ConstraintViolation<?> item : violations) {
+				sb.append(item.getMessage()).append("/n");
+			}
+			jsonObject.put("msg", sb);
+			jsonObject.put("result", 0);
+		}
 		return jsonObject;
 	}
 
