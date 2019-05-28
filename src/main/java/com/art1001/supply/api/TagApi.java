@@ -2,11 +2,9 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.tag.Tag;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
@@ -15,16 +13,13 @@ import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.util.CollectionUtils;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author heshaohua
@@ -260,7 +255,7 @@ public class TagApi {
             if(tagService.addItemTag(tagId,publicId,publicType)) {
                 Tag byId = tagService.getById(tagId);
                 jsonObject.put("result", 1);
-                jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+                jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType).fluentPut("tag",tagService.findById(Integer.valueOf(tagId+""))));
                 jsonObject.put("name", byId.getTagName());
                 jsonObject.put("msgId", this.getProjectId(tagId));
                 jsonObject.put("msg", "绑定成功!");

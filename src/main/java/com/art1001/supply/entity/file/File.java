@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,16 +24,16 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("prm_file")
-//@Document(indexName = "File",type = "docs", shards = 1, replicas = 0)
+//@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
 public class File extends Model<File> {
 
     private static final long serialVersionUID = 1L;
 
-    /*@Id
-    private Long id=111L;*/
-    /**
-     * file_id
-     */
+   /* @Id
+    private Long id= 111L;
+*/
+
+
 
     @TableId(value = "file_id",type = IdType.UUID)
     private String fileId;

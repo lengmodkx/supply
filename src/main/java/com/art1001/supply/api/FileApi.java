@@ -3,8 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.common.auth.HmacSHA1Signature;
-import com.aliyun.oss.common.auth.ServiceSignature;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
@@ -13,11 +11,8 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
-import com.art1001.supply.entity.file.Files;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -32,15 +27,11 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
-import com.art1001.supply.util.crypto.SHA1HMAC;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.sun.crypto.provider.HmacSHA1;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import sun.security.krb5.internal.crypto.dk.DkCrypto;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -53,6 +44,8 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+//import com.art1001.supply.service.ItemRepository;
 
 /**
  * @author heshaohua
@@ -104,6 +97,9 @@ public class FileApi extends BaseController {
     @Resource
     private UserService userService;
 
+
+  /*  @Autowired
+    private ItemRepository itemRepository;*/
     /**
      * 加载项目下文件列表数据
      * @param fileId 文件id
@@ -113,7 +109,14 @@ public class FileApi extends BaseController {
     public JSONObject fileList(@RequestParam(value = "fileId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
+
             List<File> fileList = fileService.findChildFile(fileId);
+           /* for (File o:fileList
+                 ) {
+                System.out.print("保存的数据是：：："+o);
+                itemRepository.save(o);
+
+            }*/
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
