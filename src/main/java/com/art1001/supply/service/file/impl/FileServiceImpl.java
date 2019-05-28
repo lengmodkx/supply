@@ -6,7 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.Binding;
-import com.art1001.supply.entity.file.*;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTreeShowVO;
+import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.ShareApiBean;
@@ -15,7 +18,6 @@ import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
-import com.art1001.supply.mapper.file.UserFileMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
@@ -62,8 +64,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Resource
     private LogService logService;
 
-    @Resource
-    private UserFileMapper userFileMapper;
     /**
      * 公共模型库 常量定义信息
      */
@@ -493,6 +493,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                     myFile.setLevel(parentLevel+1);
                     myFile.setParentId(parentId);
                 }
+                myFile.setMemberImg(userEntity.getImage());
+                myFile.setMemberName(userEntity.getUserName());
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
@@ -543,6 +545,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public int checkChildFolder(String fileId) {
         return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("catalog",1)) > 0 ? 1 : 0;
+    }
+
+    /**
+     * 查看文件夹或者文件是否存在 (true:存在  false:不存在)
+     * @param fileId 文件
+     * @return 结果
+     */
+    @Override
+    public Boolean checkIsExist(String fileId) {
+        if(Stringer.isNullOrEmpty(fileId)){
+            throw new ServiceException("fileId 不能为空!");
+        }
+        return fileMapper.selectCount(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId)) > 0;
     }
 
     /**
@@ -611,10 +626,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setId(file.getFileId());
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVOS.add(fileTreeShowVO);
-            if(!CollectionUtils.isEmpty(file.getFiles())){
-                fileTreeShowVO.setChild(new ArrayList<FileTreeShowVO>());
-                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getChild());
+            if(!Stringer.isNullOrEmpty(file.getParentId())){
+                fileTreeShowVO.setParentId(file.getParentId());
             }
+            if(!CollectionUtils.isEmpty(file.getFiles())){
+                fileTreeShowVO.setChildren(new ArrayList<FileTreeShowVO>());
+                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getChildren());
+            }
+        });
+    }
+
+    //文件向上递归的分层
+    private void upLevel(List<File> files){
+        files.forEach(f -> {
+            files.forEach((s) -> {
+                if(s.getParentId().equals(f.getFileId())){
+                    List<File> subs = new ArrayList<>();
+                    subs.add(s);
+                    f.setFiles(subs);
+                }
+            });
         });
     }
 

@@ -70,6 +70,15 @@ public class Stringer {
     }
 
     /**
+     * 判断某个对象是否为非空
+     * @param obj 判断的对象
+     * @return 结果
+     */
+    public static boolean isNotNullOrEmpty(Object obj){
+        return !Stringer.isNullOrEmpty(obj);
+    }
+
+    /**
      * @param in
      * @return 输出二进制数据
      * @throws IOException

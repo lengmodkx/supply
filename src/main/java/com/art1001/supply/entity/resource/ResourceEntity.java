@@ -24,7 +24,7 @@ import java.util.List;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "tb_resource")
+@TableName(value = "sys_resources")
 public class ResourceEntity extends Model<ResourceEntity> {
 
 	private static final long serialVersionUID = 1L;
@@ -32,17 +32,19 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	/**
 	 * 资源id
 	 */
-	@TableId(value = "resource_id",type = IdType.AUTO)
+	@TableId(value = "s_id",type = IdType.AUTO)
 	public Integer resourceId;
 
 	/**
 	 * 父节点ID
 	 */
+	@TableField("s_parent_id")
 	private Integer parentId;
 
 	/**
 	 * 权限名称
 	 */
+	@TableField("s_name")
 	private String resourceName;
 
 	/**

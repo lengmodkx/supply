@@ -1,7 +1,6 @@
 package com.art1001.supply.config;
 
 
-import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.shiro.JWTShiroRealm;
 
 import com.art1001.supply.shiro.MyDBRealm;
@@ -28,28 +27,51 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 
 
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 public class ShiroConfig {
 
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private int port;
+
+    /**
+     * 配置shiro redisManager
+     *
+     * @return
+     */
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(host);
+        redisManager.setPort(port);
+        redisManager.setExpire(1800);// 配置过期时间
+        // redisManager.setTimeout(timeout);
+        // redisManager.setPassword(password);
+        return redisManager;
+    }
+
     @Bean("redisManager")
-    public RedisManager redisManager(){
-        return new RedisManager();
+    public com.art1001.supply.redis.RedisManager redisManagera(){
+        return new com.art1001.supply.redis.RedisManager();
     }
 
 //
@@ -77,6 +99,10 @@ public class ShiroConfig {
         System.err.println("--------------shiro已经加载----------------");
         DefaultWebSecurityManager manager=new DefaultWebSecurityManager();
         manager.setAuthenticator(authenticator);
+        List<Realm> rs = new ArrayList<>();
+        rs.add(jwtShiroRealm());
+        rs.add(myDBRealm());
+        manager.setRealms(rs);
         return manager;
     }
 
@@ -100,13 +126,16 @@ public class ShiroConfig {
     }
     @Bean("jwtRealm")
     public Realm jwtShiroRealm() {
-        return new JWTShiroRealm();
+        JWTShiroRealm jwtShiroRealm = new JWTShiroRealm();
+        jwtShiroRealm.setCacheManager(cacheManager());
+        return jwtShiroRealm;
     }
 
     @Bean("dbRealm")
     public Realm myDBRealm(){
         MyDBRealm myDBRealm = new MyDBRealm();
         myDBRealm.setCredentialsMatcher(credentialsMatcher());
+        myDBRealm.setCacheManager(cacheManager());
         //开启缓存
         //myDBRealm.setCachingEnabled(true);
         //认证信息:这里不进行缓存
@@ -206,6 +235,17 @@ public class ShiroConfig {
         return filter;
     }
 
+
+    /**
+     * cacheManager 缓存 redis实现
+     *
+     * @return
+     */
+    public RedisCacheManager cacheManager() {
+        org.crazycake.shiro.RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        return redisCacheManager;
+    }
 //    @Bean(name = "lifecycleBeanPostProcessor")
 //    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
 //        return new LifecycleBeanPostProcessor();
@@ -242,7 +282,7 @@ public class ShiroConfig {
 //    }
 
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
     }
     @Bean

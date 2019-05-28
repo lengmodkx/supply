@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.role;
 
+import com.art1001.supply.entity.resource.ResourceEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -20,7 +22,7 @@ import java.sql.Timestamp;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "tb_role")
+@TableName(value = "sys_role")
 public class Role extends Model<Role> {
 
 
@@ -61,6 +63,9 @@ public class Role extends Model<Role> {
 	 * 企业id
 	 */
 	private String organizationId;
+
+	@TableField(exist = false)
+	private List<ResourceEntity> resources;
 
 	@Override
 	protected Serializable pkVal() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.art1001.supply.mapper.RoleMapper">
+<mapper namespace="com.art1001.supply.mapper.role.RoleMapper">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.role.Role">
@@ -13,11 +13,34 @@
 		<result column="create_time" property="createTime" />
 		<result column="update_time" property="updateTime" />
 		<result column="organization_id" property="organizationId" />
+		<collection property="resources" ofType="com.art1001.supply.entity.resource.ResourceEntity">
+			<id column="s_id" property="resourceId"/>
+			<result column="s_source_key" property="resourceKey"/>
+		</collection>
 	</resultMap>
 
 	<!-- 通用查询结果列 -->
 	<sql id="Base_Column_List">
 		role_id, role_name, role_key, role_status, role_des, create_time, update_time,organization_id
 	</sql>
+
+	<!-- 获取一个用户的所有角色以及角色下对应的权限信息 -->
+	<select id="selectUserRole" resultMap="BaseResultMap">
+		SELECT
+			r.role_id,
+			r.role_key,
+			r.role_name,
+			r.role_status,
+			sr.s_id,
+			sr.s_source_key
+		FROM
+			sys_role_user AS ru
+			LEFT JOIN sys_role AS r ON ru.role_id = r.role_id
+			LEFT JOIN sys_resources_role AS rr ON r.role_id = rr.r_id
+			LEFT JOIN sys_resources AS sr ON rr.s_id = sr.s_id
+		WHERE
+			ru.u_id = #{userId}
+	</select>
+
 
 </mapper>

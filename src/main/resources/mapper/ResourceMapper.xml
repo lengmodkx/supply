@@ -49,17 +49,25 @@
 	</sql>
 
 	<resultMap id="resourceMap" type="com.art1001.supply.entity.resource.ResourceEntity">
-		<id property="id" column="s_id"/>
+		<id property="resourceId" column="s_id"/>
 		<result property="parentId" column="s_parent_id"/>
-		<result property="name" column="s_name"/>
-		<result property="sourceKey" column="s_source_key"/>
-		<result property="type" column="s_type"/>
-		<result property="sourceUrl" column="s_source_url"/>
-		<result property="level" column="s_level"/>
+		<result property="resourceName" column="s_name"/>
+		<result property="resourceKey" column="s_source_key"/>
+		<result property="resourceType" column="s_type"/>
+		<result property="resourceUrl" column="s_source_url"/>
+		<result property="resourceLevel" column="s_level"/>
 		<result property="isHide" column="s_is_hide"/>
 		<result property="description" column="s_description"/>
 		<result property="createTime" column="s_create_time"/>
 		<result property="updateTime" column="s_update_time"/>
+	</resultMap>
+
+	<resultMap id="resourceMap2" type="com.art1001.supply.entity.resource.ResourceShowVO">
+		<id property="id" column="p_id"/>
+		<result property="group" column="p_name"/>
+		<collection property="resources" ofType="java.lang.String">
+			<result column="s_name"/>
+		</collection>
 	</resultMap>
 
 	<!-- 映射子资源 -->
@@ -176,7 +184,48 @@
 			) AS b ON b.b_s_id = tr.s_id
 	</select>
 
-    <delete id="deleteRolePerm" parameterType="Long">
+	<!-- 获取该角色的所有资源信息 -->
+    <select id="selectResourceByRoleId" resultType="com.art1001.supply.entity.resource.ResourceEntity">
+		SELECT
+			 s.s_id as resourceId,
+			 s.s_name as resourceName,
+			 s.s_source_key as resourceKey,
+			 s.s_parent_id as parentId
+		FROM
+			sys_role AS r
+			LEFT JOIN sys_resources_role AS sr ON r.role_id = sr.r_id
+			LEFT JOIN sys_resources AS s ON sr.s_id = s.s_id
+		WHERE
+			r.role_id = #{roleId}
+	</select>
+
+	<select id="selectAll" resultMap="resourceMap2">
+		SELECT
+			parent.s_id AS p_id,
+			parent.s_name AS p_name,
+			sub.s_id AS s_id,
+			sub.s_name AS s_name
+		FROM
+			sys_resources AS parent
+			LEFT JOIN sys_resources AS sub ON parent.s_id = sub.s_parent_id
+		WHERE parent.s_parent_id = 0
+	</select>
+
+	<!-- 获取该角色拥有的所有资源 -->
+	<select id="selectRoleHaveResources" resultMap="resourceMap">
+		SELECT
+			parent.s_id,
+			parent.s_name,
+			parent.s_parent_id
+		FROM
+			sys_resources_role AS sr
+			LEFT JOIN sys_role AS r ON r.role_id = sr.r_id
+			LEFT JOIN sys_resources AS parent ON sr.s_id = parent.s_id
+		WHERE
+			r.role_id = #{roleId}
+	</select>
+
+	<delete id="deleteRolePerm" parameterType="Long">
 		delete from tb_resources_role where s_id = ${id}
 	</delete>
 	

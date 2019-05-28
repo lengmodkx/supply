@@ -36,7 +36,7 @@ public class RoleApi {
      * @param roleKey 角色标识
      * @return
      */
-    @PostMapping
+    @PostMapping("org")
     public JSONObject addRole(@RequestParam(value = "orgId")String orgId,
                               @RequestParam(value = "roleName")String roleName,
                               @RequestParam(value = "roleDes")String roleDes,
@@ -54,12 +54,10 @@ public class RoleApi {
             role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             roleService.save(role);
             object.put("result",1);
-            object.put("msg","插入成功");
+            return object;
         }catch(Exception e){
-            log.error("插入失败，{}",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,角色添加失败!",e);
         }
-        return object;
     }
 
     /**
@@ -67,16 +65,14 @@ public class RoleApi {
      * @param roleId 角色id
      * @return
      */
-    @DeleteMapping("/{roleId}")
+    @DeleteMapping("/{roleId}/org")
     public JSONObject deleteRole(@PathVariable(value = "roleId")Integer roleId){
         JSONObject object = new JSONObject();
         try{
             roleService.removeById(roleId);
             object.put("result",1);
-            object.put("msg","删除成功");
         }catch(Exception e){
-            log.error("删除失败，{}",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,角色删除失败!",e);
         }
         return object;
     }
@@ -106,10 +102,8 @@ public class RoleApi {
             role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             roleService.updateById(role);
             object.put("result",1);
-            object.put("msg","更新成功");
         }catch(Exception e){
-            log.error("更新失败，{}",e);
-            throw new AjaxException(e);
+            throw new AjaxException("系统异常,角色更新失败!",e);
         }
         return object;
     }

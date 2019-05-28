@@ -4,17 +4,20 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.ResponseEntity;
 import com.art1001.supply.util.Stringer;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 /**
  * @Author: heshaohua
  * @Description: 基类Controller 封装基本操作
  */
+@Slf4j
 @Controller
 public class BaseController {
 
@@ -48,6 +51,22 @@ public class BaseController {
         jsonObject.put("msg",errorMessage);
         return jsonObject;
     }
+
+    /**
+     * 参数为空处理
+     * @param paramsName 参数名称
+     * @return 结果
+     */
+    protected JSONObject paramsIsNullHandle(String... paramsName) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",0);
+        jsonObject.put("msg",Arrays.toString(paramsName));
+        String logMsg = "参数 " + Arrays.toString(paramsName) + " 为空!";
+        log.error(logMsg);
+        return jsonObject;
+    }
+
+
 
     /**
      * @param data - 业务数据json

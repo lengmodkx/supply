@@ -9,6 +9,8 @@
 		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
 		<result column="catalog" property="catalog" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
@@ -74,6 +76,7 @@
 				file_url,
 				project_id,
 				member_id,
+				member_name,
 			    `catalog`,
 				`size`,
 				parent_id,
@@ -95,6 +98,7 @@
 				f.file_url,
 				f.project_id,
 				f.member_id,
+				f.member_name,
 				f.is_model,
 			    f.`catalog`,
 				f.`size`,
@@ -170,6 +174,7 @@
 			f.file_url,
 			f.project_id,
 			f.member_id,
+			f.member_name,
 			f.`catalog`,
 			f.is_model,
 			f.`size`,
@@ -246,6 +251,12 @@
 			</if>
 			<if test="memberId != null and memberId != ''">
 				and member_id = #{memberId}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				and member_name = #{memberName}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				and member_img = #{memberImg}
 			</if>
 			<if test="catalog != null ">
 				and catalog = #{catalog}
@@ -431,6 +442,7 @@
 			f.file_url,
 			f.project_id,
 			f.member_id,
+			f.member_name,
 			f.`catalog`,
 			f.is_model,
 			f.`size`,
@@ -473,7 +485,12 @@
 		AND f.file_del = '0'
 	</select>
 
-    <!-- 插入多条文件信息 -->
+	<!-- 获取某个文件或者目录的所有上级目录id (一直到顶端目录) -->
+	<select id="selectParentFolders" resultType="java.lang.String">
+		select getParentFolder(#{fileId})
+	</select>
+
+	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">

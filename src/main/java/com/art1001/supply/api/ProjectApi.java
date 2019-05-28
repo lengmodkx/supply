@@ -23,8 +23,11 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -79,6 +82,7 @@ public class ProjectApi {
      * @param orgId 企业id
      * @return
      */
+    @RequiresPermissions("create:project")
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
                                     @RequestParam(value = "projectName") String projectName,
@@ -122,6 +126,7 @@ public class ProjectApi {
      * @param projectStatus 是否归档
      * @return json
      */
+    @RequiresPermissions("update:project")
     @PutMapping("/{projectId}")
     public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
                                     @RequestParam(value = "projectName", required = false) String projectName,
@@ -142,7 +147,9 @@ public class ProjectApi {
             project.setIsPublic(isPublic);
             project.setStartTime(startTime);
             project.setEndTime(endTime);
-            project.setProjectCover(projectCover);
+            if(!Stringer.isNullOrEmpty(projectCover) || projectCover != ""){
+                project.setProjectCover(projectCover);
+            }
             project.setProjectDel(projectDel);
             project.setProjectStatus(projectStatus);
             projectService.updateProject(project);
@@ -204,6 +211,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
+    @RequiresPermissions("delete:project")
     @DeleteMapping("/{projectId}")
     public JSONObject deleteProject(@PathVariable String projectId) {
         JSONObject object = new JSONObject();

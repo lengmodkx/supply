@@ -10,6 +10,8 @@ import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
+import org.apache.catalina.User;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -19,7 +21,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,26 +85,20 @@ public class JWTShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        String username = JwtUtil.getUsername(principals.toString());
-        UserEntity user = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, username));
-        List<ResourceEntity> resourceList = resourceMapper.findResourcesByUserId(user.getUserId());
-        Collection<String> roles = roleMapper.selectList(new QueryWrapper<>()).stream().map(Role::getRoleKey).collect(Collectors.toList());
-        // 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        info.addRoles(roles);
-//        info.getRoles().forEach(r - > {
-//
-//        });
-        //根据用户ID查询角色（role），放入到Authorization里。
-        // 单角色用户情况
-        //info.addRole(user.getRole().getKey());
-        // 多角色用户情况
-        // info.setRoles(user.getRolesName());
-        // 用户的角色对应的所有权限
-
-        //或者直接查询出所有权限set集合
-        //info.setStringPermissions(permissions);
-        //return info;
-        return new SimpleAuthorizationInfo();
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        UserEntity userEntity = (UserEntity)principals.oneByType(UserEntity.class);
+        //查询出该用户的所有角色以及权限信息
+        List<Role> roles = roleMapper.selectUserRole(userEntity.getUserId());
+        //获取到用户角色key并且去重后的集合
+        List<String> roleKeys = roles.stream().map(Role::getRoleKey).distinct().collect(Collectors.toList());
+        simpleAuthorizationInfo.setRoles(new HashSet<>(roleKeys));
+        List<String> resources = new ArrayList<>();
+        roles.forEach(r -> {
+            r.getResources().forEach(s -> {
+                resources.add(s.getResourceKey());
+            });
+        });
+        simpleAuthorizationInfo.setStringPermissions(new HashSet<>(resources));
+        return simpleAuthorizationInfo;
     }
 }
