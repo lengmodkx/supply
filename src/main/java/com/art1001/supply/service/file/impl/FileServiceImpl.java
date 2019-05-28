@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.Binding;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FileApiBean;
-import com.art1001.supply.entity.file.FileTreeShowVO;
-import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.ShareApiBean;
@@ -18,6 +15,7 @@ import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.mapper.file.FileMapper;
+import com.art1001.supply.mapper.file.UserFileMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
@@ -64,6 +62,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Resource
     private LogService logService;
 
+    @Resource
+    private UserFileMapper userFileMapper;
     /**
      * 公共模型库 常量定义信息
      */
@@ -186,25 +186,32 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setCreateTime(System.currentTimeMillis());
         projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
-        File file = new File();
-        // 写库
-        file.setFileName("公共模型库");
-        // 项目id
-        file.setProjectId(projectId);
-        file.setParentId(projectFile.getFileId());
-        file.setMemberId(userEntity.getUserId());
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        file.setFilePrivacy(1);
-        file.setLevel(1);
-        file.setCatalog(1);
-        // 设置是否目录
-        save(file);
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(file.getFileId());
-        fileVersion.setIsMaster(1);
-        fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-        fileVersionService.save(fileVersion);
+        Arrays.asList("公共模型库","我的文件夹").forEach(name->{
+            File file = new File();
+            // 写库
+            file.setFileName(name);
+            // 项目id
+            file.setProjectId(projectId);
+            file.setParentId(projectFile.getFileId());
+            file.setMemberId(userEntity.getUserId());
+            file.setCreateTime(System.currentTimeMillis());
+            file.setUpdateTime(System.currentTimeMillis());
+            if(name.equals("我的文件夹")){
+                file.setFilePrivacy(2);
+            }else{
+                file.setFilePrivacy(1);
+            }
+
+            file.setLevel(1);
+            file.setCatalog(1);
+            // 设置是否目录
+            save(file);
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(file.getFileId());
+            fileVersion.setIsMaster(1);
+            fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+            fileVersionService.save(fileVersion);
+        });
         return projectFile.getFileId();
     }
 
@@ -242,11 +249,20 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> findChildFile(String parentId) {
         List<File> childFile = fileMapper.findChildFile(parentId);
+        String userId = ShiroAuthenticationManager.getUserId();
+
+
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
             if(file.getFilePrivacy() == 0){
                 if(!Stringer.isNullOrEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                    iterator.remove();
+                }
+            }
+
+            if(file.getFilePrivacy()==2){
+                if(!file.getMemberId().equals(userId)){
                     iterator.remove();
                 }
             }
