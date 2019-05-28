@@ -17,6 +17,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
@@ -28,6 +29,7 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -250,8 +252,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> findChildFile(String parentId) {
         List<File> childFile = fileMapper.findChildFile(parentId);
         String userId = ShiroAuthenticationManager.getUserId();
-
-
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
@@ -756,5 +756,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> getBindTagInfo(Long tagId) {
         return fileMapper.selectBindTagInfo(tagId);
+    }
+
+    @Override
+    public List<FileTreeShowVO> getParentFolders(String fileId) {
+        List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
+        List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
+        //生成查询条件表达式
+        LambdaQueryWrapper<File> select = new QueryWrapper<File>().lambda().select(File::getFileId, File::getFileName, File::getCreateTime,File::getParentId).in(File::getFileId, fileIds);
+        List<File> fileList = fileMapper.selectList(select);
+        this.upLevel(fileList);
+        this.chanageToFileTreeVO(fileList, fileTreeShowVOS);
+        //过滤无用数据
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId())) .collect(Collectors.toList());
+
     }
 }
