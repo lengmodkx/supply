@@ -126,7 +126,7 @@ public class ProjectApi {
      * @param projectStatus 是否归档
      * @return json
      */
-    @RequiresPermissions("update:project")
+    //@RequiresPermissions("update:project")
     @PutMapping("/{projectId}")
     public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
                                     @RequestParam(value = "projectName", required = false) String projectName,
