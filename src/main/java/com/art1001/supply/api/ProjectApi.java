@@ -82,7 +82,7 @@ public class ProjectApi {
      * @param orgId 企业id
      * @return
      */
-    @RequiresPermissions("create:project")
+    //@RequiresPermissions("create:project")
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
                                     @RequestParam(value = "projectName") String projectName,
