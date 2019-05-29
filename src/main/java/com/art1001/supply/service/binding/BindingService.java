@@ -117,4 +117,13 @@ public interface BindingService extends IService<Binding> {
 	 * @param id 更新的数据id
 	 */
     void updateJson(String id, Object obj, String type);
+
+
+    /*
+    * 查询是否有重复绑定
+    * @param publicId
+    * @param publicType
+    * @param bindId
+    * */
+	int findCountById(String bindId, String publicType, String publicId);
 }

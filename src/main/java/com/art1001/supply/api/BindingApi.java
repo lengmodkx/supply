@@ -81,12 +81,18 @@ public class BindingApi {
                 jsonObject.put("result",0);
                 jsonObject.put("msg", "绑定信息不能为空");
             }else{
-                Object o = bindingService.saveBindBatch(publicId, bindId, publicType);
-                jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType).fluentPut("bind",o));
-                jsonObject.put("result",1);
-                jsonObject.put("msgId", bindingService.getProjectId(publicId));
-                jsonObject.put("id", publicId);
-                jsonObject.put("publicType", publicType);
+                int i = bindingService.findCountById(bindId,publicType,publicId);
+                if (i == 0) {
+                    jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType).fluentPut("bind",taskService.findTaskApiBean(bindId)));
+                    jsonObject.put("result",1);
+                    jsonObject.put("msgId", bindingService.getProjectId(publicId));
+                    jsonObject.put("id", publicId);
+                    jsonObject.put("publicType", publicType);
+                }else {
+                    jsonObject.put("data",null);
+                    jsonObject.put("result",0);
+                    jsonObject.put("msg","不能重复绑定");
+                }
             }
         }catch (Exception e){
             log.error("系统异常,绑定失败:",e);
