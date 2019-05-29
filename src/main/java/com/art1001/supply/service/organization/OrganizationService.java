@@ -3,6 +3,7 @@ package com.art1001.supply.service.organization;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 
@@ -17,7 +18,7 @@ public interface OrganizationService extends IService<Organization> {
 	 * @param pager 分页对象
 	 * @return
 	 */
-	public List<Organization> findOrganizationPagerList(Pager pager);
+	List<Organization> findOrganizationPagerList(Pager pager);
 
 	/**
 	 * 通过organizationId获取单条organization数据
@@ -25,35 +26,35 @@ public interface OrganizationService extends IService<Organization> {
 	 * @param organizationId
 	 * @return
 	 */
-	public Organization findOrganizationByOrganizationId(String organizationId);
+	Organization findOrganizationByOrganizationId(String organizationId);
 
 	/**
 	 * 通过organizationId删除organization数据
 	 * 
 	 * @param organizationId
 	 */
-	public void deleteOrganizationByOrganizationId(String organizationId);
+	void deleteOrganizationByOrganizationId(String organizationId);
 
 	/**
 	 * 修改organization数据
 	 * 
 	 * @param organization
 	 */
-	public void updateOrganization(Organization organization);
+	void updateOrganization(Organization organization);
 
 	/**
 	 * 保存organization数据
 	 * 
 	 * @param organization
 	 */
-	public void saveOrganization(Organization organization);
+	void saveOrganization(Organization organization);
 
 	/**
 	 * 获取所有organization数据
 	 * 
 	 * @return
 	 */
-	public List<Organization> findOrganizationAllList();
+	List<Organization> findOrganizationAllList();
 
 	/**
 	 * 获取用户参与的所有企业 以及 企业项目
@@ -75,4 +76,16 @@ public interface OrganizationService extends IService<Organization> {
 	 * @return 结果
 	 */
     Boolean checkOrgIsExist(String organizationId);
+
+    /**
+	 * 获取企业下的项目信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @updateInfo 暂无
+     * @date 2019/5/29 10:37
+     * @return 项目信息集合
+     */
+    List<Project> getProject(String orgId);
+
 }

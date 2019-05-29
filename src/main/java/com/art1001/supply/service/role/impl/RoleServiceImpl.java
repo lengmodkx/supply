@@ -116,8 +116,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	 * @updateInfo 暂无
 	 * @date 2019/5/28 15:33
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public int saveOrgDefaultRole(String orgId) {
+	public Integer saveOrgDefaultRole(String orgId) {
 		if(Stringer.isNullOrEmpty(orgId)){
 			return -1;
 		}
@@ -149,8 +150,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 			role.setCreateTime(new Timestamp(System.currentTimeMillis()));
 			role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 			role.setIsSystemInit(true);
-			roles.add(role);
+			roleMapper.insert(role);
 		}
-		return this.saveBatch(roles) ? 1:0;
+		return 1;
 	}
 }

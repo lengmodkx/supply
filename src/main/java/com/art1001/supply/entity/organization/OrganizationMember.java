@@ -1,7 +1,9 @@
 package com.art1001.supply.entity.organization;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -25,6 +27,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	/**
 	 * id
 	 */
+	@TableId(value = "id",type = IdType.UUID)
 	private String id;
 
 
@@ -80,7 +83,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	/**
 	 * 是否是当前用户所在的企业
 	 */
-	private Integer userDefault;
+	private Boolean userDefault;
 
 	@Override
 	protected Serializable pkVal() {

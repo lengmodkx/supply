@@ -5,10 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ApiParamsCheckException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ValidatorUtils;
+import com.art1001.supply.validation.organization.SaveOrg;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -32,28 +35,20 @@ public class OrganizationApi {
 
     /**
      * 新增企业
-     * @param orgName 企业名称
-     * @param orgDes 企业描述
-     * @param contact 企业联系人
-     * @param contactPhone 企业联系人联系方式
+     * @param organization 企业信息
      * @return
      */
     @PostMapping
-    public JSONObject addOrg(@RequestParam(value = "orgName") String orgName,
-                          @RequestParam(value = "orgDes") String orgDes,
-                          @RequestParam(value = "contact") String contact,
-                          @RequestParam(value = "contactPhone") String contactPhone){
+    public JSONObject addOrg(Organization organization){
         JSONObject jsonObject = new JSONObject();
         try {
-            Organization organization = new Organization();
-            organization.setOrganizationName(orgName);
-            organization.setOrganizationDes(orgDes);
-            organization.setContact(contact);
-            organization.setContactPhone(contactPhone);
+            ValidatorUtils.validateEntity(organization, SaveOrg.class);
             organizationService.saveOrganization(organization);
             jsonObject.put("result",1);
             jsonObject.put("data", organization.getOrganizationId());
-        }catch (Exception e){
+        } catch (ApiParamsCheckException e){
+            throw new AjaxException(e.getMessage(),e);
+        } catch (Exception e){
             log.error("企业添加失败:",e);
             throw new AjaxException(e);
         }

@@ -44,5 +44,5 @@ public interface RoleService extends IService<Role> {
      * @date 2019/5/28 15:33
      * @return 结果值
      */
-    int saveOrgDefaultRole(String orgId);
+    Integer saveOrgDefaultRole(String orgId);
 }

@@ -2,6 +2,8 @@ package com.art1001.supply.util;
 
 
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ApiParamsCheckException;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -37,7 +39,7 @@ public class ValidatorUtils {
             for (ConstraintViolation<Object> constraint : constraintViolations) {
                 msg.append(constraint.getMessage()).append("<br>");
             }
-            throw new AjaxException(msg.toString());
+            throw new ApiParamsCheckException(msg.toString());
         }
     }
 }

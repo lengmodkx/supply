@@ -8,10 +8,13 @@ import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * projectServiceImpl
@@ -96,5 +99,43 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Override
 	public int userOrgCount() {
 		return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id",ShiroAuthenticationManager.getUserId()));
+	}
+
+	/**
+	 * 修改一个用户的默认企业
+	 * @param orgId  企业id
+	 * @param userId 用户id
+	 * @return 结果
+	 * @author heShaoHua
+	 * @describe 失败返回-1
+	 * @updateInfo 暂无
+	 * @date 2019/5/29 11:08
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer updateUserDefaultOrg(String orgId, String userId) {
+		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(userId)){
+			return -1;
+		}
+
+		//构造修改数据信息
+		OrganizationMember organizationMember = new OrganizationMember();
+		organizationMember.setUserDefault(false);
+		organizationMember.setUpdateTime(System.currentTimeMillis());
+
+		//构造出条件对象(清除当前用户的企业记录)
+		LambdaQueryWrapper<OrganizationMember> clear = new QueryWrapper<OrganizationMember>().lambda()
+				.eq(OrganizationMember::getMemberId, userId)
+				.eq(OrganizationMember::getUserDefault, true);
+
+		//构造出条件对象(标记出新的用户企业记录)
+		LambdaQueryWrapper<OrganizationMember> sign = new QueryWrapper<OrganizationMember>().lambda()
+				.eq(OrganizationMember::getMemberId, userId)
+				.eq(OrganizationMember::getOrganizationId, orgId);
+
+		organizationMemberMapper.update(organizationMember,clear);
+		organizationMember.setUserDefault(true);
+		organizationMemberMapper.update(organizationMember,sign);
+		return 1;
 	}
 }

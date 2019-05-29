@@ -68,5 +68,17 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return 加入的企业数量
 	 */
 	int userOrgCount();
+
+	/**
+	 * 修改一个用户的默认企业
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param userId 用户id
+	 * @param orgId 企业id
+	 * @updateInfo 暂无
+	 * @date 2019/5/29 11:08
+	 * @return 结果
+	 */
+	Integer updateUserDefaultOrg(String orgId, String userId);
 	
 }

@@ -87,7 +87,6 @@
 	</delete>
 	
 	<insert id="saveOrganization" parameterType="com.art1001.supply.entity.organization.Organization">
-
 		insert into prm_organization
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 
@@ -228,6 +227,22 @@
 		<if test="flag != null and flag == 2">
 			AND partment_lable = 0
 		</if>
+	</select>
+
+	<!-- 获取企业下的项目信息 -->
+    <select id="selectProject" resultType="com.art1001.supply.entity.project.Project">
+		select p.project_id,
+		   p.project_name,
+		   p.project_cover,
+		   p.project_des,
+		   pm.collect as collect,
+		   p.project_del,
+		   p.project_status,
+		   pm.member_label as member_label,
+			pm.default_group as group_id,
+		   p.func
+		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
+		where p.organization_id = #{orgId} and p.project_del = 0 order by pm.create_time asc
 	</select>
 
 </mapper>
