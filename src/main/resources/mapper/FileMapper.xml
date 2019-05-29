@@ -191,7 +191,7 @@
 		from prm_file f
 		left join prm_file_version v on f.file_id = v.file_id
 		where (parent_id = #{parentId} and catalog=1) or (public_lable = 0 and catalog=0 and v.is_master=1 and parent_id = #{parentId}) and file_del = 0
-		or (user_id = #{userId} and `level`=(SELECT `level` from prm_file WHERE parent_id=#{parentId} LIMIT 0,1))
+		or (user_id = #{userId} and '0'=(SELECT `level` from prm_file WHERE file_id=#{parentId} LIMIT 0,1))
 		order by `catalog` desc,create_time desc
 	</select>
 
