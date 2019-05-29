@@ -68,6 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         // 写库
         file.setFileName("我的文件夹");
         file.setUserId(userEntity.getUserId());
+        file.setMemberId(userEntity.getUserId());
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         file.setLevel(1);
