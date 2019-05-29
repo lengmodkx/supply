@@ -1047,4 +1047,21 @@ public class FileApi extends BaseController {
     private String getProjectId(String fileId){
         return fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId).select("project_id")).getProjectId();
     }
+
+    /*
+    * 在文件系统创建标签并绑定文件
+    * */
+    //@Push(value = PushType.A30,type = 1)
+    @PostMapping("/addTagBindFile")
+    public JSONObject addTagBindFile(String fileId,Long tagId){
+        try {
+            File file = fileService.findFileById(fileId);
+            bindingService.setBindingInfo(fileId,file,null,null,null);
+            JSONObject o=fileService.addTagBindFile(fileId,tagId);
+            return success(file);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,获取任务信息失败!",e);
+        }
+    }
 }

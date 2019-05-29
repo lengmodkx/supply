@@ -1,11 +1,11 @@
 package com.art1001.supply.service.file;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.extension.service.IService;
-import sun.reflect.generics.tree.Tree;
 
 import java.util.List;
 
@@ -259,4 +259,10 @@ import java.util.List;
 	 * @return 目录集合
 	 */
 	List<FileTreeShowVO> getParentFolders(String fileId);
+
+
+	/*
+	 * 在文件系统创建标签并绑定文件
+	 * */
+	JSONObject addTagBindFile(String fileId, Long tagId);
 }

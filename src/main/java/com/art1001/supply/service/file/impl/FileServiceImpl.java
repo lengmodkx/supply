@@ -765,4 +765,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId())) .collect(Collectors.toList());
 
     }
+
+    /*
+     * 在文件系统创建标签并绑定文件
+     * */
+    @Override
+    public JSONObject addTagBindFile(String fileId, Long tagId) {
+        return null;
+    }
 }

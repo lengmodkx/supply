@@ -336,6 +336,6 @@
 
 	<!--查询是否有重复关联 -->
 	<select id="findCountById" resultType="int">
-		SELECT count(1) FROM prm_binding pb WHERE pb.public_id=#{publicId} AND pb.bind_id=#{bindId} AND pb.public_type=#{public_type}
+		SELECT count(1) FROM prm_binding pb WHERE pb.public_id=#{publicId} AND pb.bind_id=#{bindId}
 	</select>
 </mapper>

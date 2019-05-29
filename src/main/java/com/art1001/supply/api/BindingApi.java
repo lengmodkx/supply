@@ -83,6 +83,7 @@ public class BindingApi {
             }else{
                 int i = bindingService.findCountById(bindId,publicType,publicId);
                 if (i == 0) {
+                    bindingService.saveBindBatch(publicId,bindId,publicType);
                     jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType).fluentPut("bind",taskService.findTaskApiBean(bindId)));
                     jsonObject.put("result",1);
                     jsonObject.put("msgId", bindingService.getProjectId(publicId));
