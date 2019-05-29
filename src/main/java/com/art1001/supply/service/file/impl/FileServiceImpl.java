@@ -5,21 +5,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.schedule.ScheduleApiBean;
-import com.art1001.supply.entity.share.ShareApiBean;
-import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.task.TaskApiBean;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
-import com.art1001.supply.service.binding.BindingService;
+import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
@@ -65,6 +61,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private TagRelationMapper tagRelationMapper;
+
 
     /**
      * 公共模型库 常量定义信息
@@ -742,7 +742,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public List<File> getBindTagInfo(Long tagId) {
-        return fileMapper.selectBindTagInfo(tagId);
+        List<File> files=new ArrayList<File>();
+        List<TagRelation> tagRelation = tagRelationMapper.findTagRelationByTagId(tagId);
+        for (TagRelation t:tagRelation) {
+            if (t.getFileId()!=null){
+                files.add(fileMapper.findFileById(t.getFileId()));
+            }
+        }
+        return files;
     }
 
     @Override

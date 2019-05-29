@@ -158,7 +158,7 @@
 		<include refid="Base_Column_List2" />
 		from prm_file f left join prm_tag_relation tr on f.file_id = tr.file_id left join prm_tag tg on tr.tag_id = tg.tag_id
 		where
-		f.file_id = #{fileId}
+		f.file_id = #{fileId} and  f.file_del=0
 	</select>
 
 	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">

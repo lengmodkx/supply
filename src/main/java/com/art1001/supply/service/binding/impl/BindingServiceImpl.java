@@ -1,17 +1,9 @@
 package com.art1001.supply.service.binding.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.binding.BindingVo;
+import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -26,16 +18,16 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mchange.v1.identicator.IdList;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.binding.Binding;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * bindingServiceImpl
@@ -245,6 +237,18 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	@Override
 	public void updateJson(String id, Object obj, String type) {
 		bindingMapper.updateJson(id,obj,type);
+	}
+
+	/*
+	* 查询是否有重复绑定
+	* */
+	@Override
+	public int findCountById(String bindId, String publicType, String publicId) {
+		Binding binding=new Binding();
+		binding.setBindId(bindId);
+		binding.setPublicId(publicId);
+		binding.setPublicType(publicType);
+		return bindingMapper.findCountById(binding);
 	}
 
 	@Override

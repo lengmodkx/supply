@@ -1,14 +1,12 @@
 package com.art1001.supply.mapper.binding;
 
-import java.util.List;
-import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.binding.Binding;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.PatchMapping;
+
+import java.util.List;
 
 /**
  * bindingmapper接口
@@ -128,4 +126,9 @@ public interface BindingMapper extends BaseMapper<Binding> {
 	 * @param id 更新的数据id
 	 */
     void updateJson(@Param("id") String id, @Param("obj") Object object, @Param("type") String type);
- }
+
+    /*
+    * 查询是否有重复的绑定
+    * */
+    int findCountById(Binding binding);
+}
