@@ -96,7 +96,7 @@ public class UserApi {
                                @RequestParam String userName,
                                HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
-        if(!captcha.equalsIgnoreCase(String.valueOf(ShiroAuthenticationManager.getKaptcha("captcha")))){
+        if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
             jsonObject.put("result",0);
             jsonObject.put("msg","验证码填写错误");
             return jsonObject;
@@ -138,8 +138,8 @@ public class UserApi {
             response.setHeader("Pragma", "no-cache");
             response.setContentType("image/jpeg");
             String capText = captchaProducer.createText();
-            //将验证码存入shiro 登录用户的session
-            ShiroAuthenticationManager.setSessionAttribute("captcha", capText);
+            //将验证码存入httpSession
+            request.getSession().setAttribute("captcha", capText);
             BufferedImage image = captchaProducer.createImage(capText);
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
