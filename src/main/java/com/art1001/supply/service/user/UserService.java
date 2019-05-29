@@ -12,7 +12,7 @@ public interface UserService extends IService<UserEntity> {
 
 	public UserEntity findByName(String accountName);
 	
-	public int insert(UserEntity userEntity, String password);
+	public void insert(UserEntity userEntity, String password);
 	
 	public UserEntity findById(String id);
 	

@@ -181,39 +181,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public String initProjectFolder(String projectId) {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         File projectFile = new File();
-        projectFile.setFileName(DateUtils.getDateStr());
+        projectFile.setFileName("文件库");
         projectFile.setProjectId(projectId);
         projectFile.setMemberId(userEntity.getUserId());
         projectFile.setCatalog(1);
         projectFile.setCreateTime(System.currentTimeMillis());
         projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
-        Arrays.asList("公共模型库","我的文件夹").forEach(name->{
-            File file = new File();
-            // 写库
-            file.setFileName(name);
-            // 项目id
-            file.setProjectId(projectId);
-            file.setParentId(projectFile.getFileId());
-            file.setMemberId(userEntity.getUserId());
-            file.setCreateTime(System.currentTimeMillis());
-            file.setUpdateTime(System.currentTimeMillis());
-            if(name.equals("我的文件夹")){
-                file.setFilePrivacy(2);
-            }else{
-                file.setFilePrivacy(1);
-            }
-
-            file.setLevel(1);
-            file.setCatalog(1);
-            // 设置是否目录
-            save(file);
-            FileVersion fileVersion = new FileVersion();
-            fileVersion.setFileId(file.getFileId());
-            fileVersion.setIsMaster(1);
-            fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-            fileVersionService.save(fileVersion);
-        });
+        File file = new File();
+        // 写库
+        file.setFileName("公共模型库");
+        // 项目id
+        file.setProjectId(projectId);
+        file.setParentId(projectFile.getFileId());
+        file.setMemberId(userEntity.getUserId());
+        file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
+        file.setLevel(1);
+        file.setCatalog(1);
+        // 设置是否目录
+        save(file);
         return projectFile.getFileId();
     }
 
@@ -250,8 +237,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public List<File> findChildFile(String parentId) {
-        List<File> childFile = fileMapper.findChildFile(parentId);
         String userId = ShiroAuthenticationManager.getUserId();
+        List<File> childFile = fileMapper.findChildFile(parentId,userId);
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
