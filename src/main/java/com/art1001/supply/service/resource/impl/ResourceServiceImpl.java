@@ -3,21 +3,22 @@ package com.art1001.supply.service.resource.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.resource.ResourceShowVO;
+import com.art1001.supply.entity.role.ResourcesRole;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.service.resource.ResourceService;
+import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +27,9 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 
 	@Resource
 	private ResourceMapper resourceMapper;
+
+	@Resource
+    private ResourcesRoleService resourcesRoleService;
 
 	@Resource
 	private RoleService roleService;
@@ -67,7 +71,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		return resourceMapper.allList(roleId);
 	}
 
-
 	@Override
 	public List<ResourceShowVO> getRoleResourceDetailsData(String roleId) {
 		boolean roleNotExist = !roleService.checkIsExist(roleId);
@@ -79,8 +82,6 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		if(CollectionUtils.isEmpty(allResources)){
 			return null;
 		}
-
-
 
 		//查询出当前角色拥有的权限信息
 		List<ResourceEntity> resourcesByRoleId = this.getRoleHaveResources(roleId);
@@ -98,31 +99,27 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		return allResources;
 	}
 
-	/**
-	 * 获取该角色的所有资源信息
-	 * @param roleId 角色id
-	 * @return 资源集合
-	 * @author heShaoHua
-	 * @describe 暂无
-	 * @updateInfo 暂无
-	 * @date 2019/5/27
-	 */
-	@Override
-	public List<ResourceEntity> getResourcesByRoleId(String roleId) {
-		return resourceMapper.selectResourceByRoleId(roleId);
-	}
-
-	/**
-	 * 获取该角色拥有的所有资源
-	 * @param roleId 角色id
-	 * @return 资源集合
-	 * @author heShaoHua
-	 * @describe 这个资源集合是以分组形式获取的(分组依据为parent资源, 然后一个parent资源对应一组sub资源)
-	 * @updateInfo 暂无
-	 * @date 2019/5/27
-	 */
 	@Override
 	public List<ResourceEntity> getRoleHaveResources(String roleId) {
-		return resourceMapper.selectRoleHaveResources(roleId);
+        List<String> roleHaveResourceIds = this.getRoleHaveResourceIds(roleId);
+        if(CollectionUtils.isEmpty(roleHaveResourceIds)){
+            return new ArrayList<>();
+        }
+        return resourceMapper.selectRoleHaveResources(roleHaveResourceIds);
 	}
+
+    @Override
+    public List<String> getRoleHaveResourceIds(String roleId) {
+	    //构造出查询该角色资源id
+        QueryWrapper<ResourcesRole> selectRoleResourceIdsQw = new QueryWrapper<ResourcesRole>()
+                .eq("r_id", roleId)
+                .select("r_id as roleId","s_id as resourceId");
+
+        ResourcesRole one = resourcesRoleService.getOne(selectRoleResourceIdsQw);
+		List<ResourcesRole> list = resourcesRoleService.list(null);
+		if(one == null || one.getResourceId() == null){
+            return null;
+        }
+        return Arrays.asList(one.getResourceId().split(","));
+    }
 }

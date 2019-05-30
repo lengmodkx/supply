@@ -31,7 +31,7 @@ public class ResourceShowVO {
     /**
      * 全部资源名称集合
      */
-    private List<String> resources;
+    private List<SimpleResource> resources;
 
     /**
      * 检查是否全部拥有

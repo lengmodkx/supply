@@ -35,7 +35,7 @@ public class ResourcesRole extends Model<ResourcesRole> {
      * 资源id
      */
     @TableField("s_id")
-    private Integer resourceId;
+    private String resourceId;
 
     /**
      * 角色id

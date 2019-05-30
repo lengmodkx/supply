@@ -65,8 +65,9 @@
 	<resultMap id="resourceMap2" type="com.art1001.supply.entity.resource.ResourceShowVO">
 		<id property="id" column="p_id"/>
 		<result property="group" column="p_name"/>
-		<collection property="resources" ofType="java.lang.String">
-			<result column="s_name"/>
+		<collection property="resources" ofType="com.art1001.supply.entity.resource.SimpleResource">
+			<id property="id" column="s_id"/>
+			<result property="resourceName" column="s_name"/>
 		</collection>
 	</resultMap>
 
@@ -184,21 +185,6 @@
 			) AS b ON b.b_s_id = tr.s_id
 	</select>
 
-	<!-- 获取该角色的所有资源信息 -->
-    <select id="selectResourceByRoleId" resultType="com.art1001.supply.entity.resource.ResourceEntity">
-		SELECT
-			 s.s_id as resourceId,
-			 s.s_name as resourceName,
-			 s.s_source_key as resourceKey,
-			 s.s_parent_id as parentId
-		FROM
-			sys_role AS r
-			LEFT JOIN sys_resources_role AS sr ON r.role_id = sr.r_id
-			LEFT JOIN sys_resources AS s ON sr.s_id = s.s_id
-		WHERE
-			r.role_id = #{roleId}
-	</select>
-
 	<select id="selectAll" resultMap="resourceMap2">
 		SELECT
 			parent.s_id AS p_id,
@@ -214,15 +200,16 @@
 	<!-- 获取该角色拥有的所有资源 -->
 	<select id="selectRoleHaveResources" resultMap="resourceMap">
 		SELECT
-			parent.s_id,
-			parent.s_name,
-			parent.s_parent_id
+			s_id,
+			s_name,
+			s_parent_id
 		FROM
-			sys_resources_role AS sr
-			LEFT JOIN sys_role AS r ON r.role_id = sr.r_id
-			LEFT JOIN sys_resources AS parent ON sr.s_id = parent.s_id
+			sys_resources
 		WHERE
-			r.role_id = #{roleId}
+			s_id in
+			<foreach collection="ids" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
 	</select>
 
 	<delete id="deleteRolePerm" parameterType="Long">

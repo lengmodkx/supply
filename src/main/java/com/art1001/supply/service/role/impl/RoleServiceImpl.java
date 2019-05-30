@@ -42,13 +42,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	private ResourcesRoleService resourcesRoleService;
 
 	@Override
-	public Page<Role> selectListPage(long current, long size, Role role){
+	public Page<Role> selectListPage(long current, long size, Role role, String orgId){
 		Page<Role> rolePage = new Page<>(current,size);
 		QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
 		if(role.getRoleName() == null){
-			queryWrapper = new QueryWrapper<Role>().eq("organization_id","0").or(true).eq("organization_id",role.getOrganizationId());
+			queryWrapper = new QueryWrapper<Role>().eq("organization_id",role.getOrganizationId());
 		} else{
-			queryWrapper = new QueryWrapper<Role>().and(roleQueryWrapper -> roleQueryWrapper.eq("role_name",role.getRoleName()).or(true).eq("organization_id","0")).eq("organization_id",role.getOrganizationId());
+			queryWrapper = new QueryWrapper<Role>()
+					.and(roleQueryWrapper -> roleQueryWrapper
+							.eq("role_name",role.getRoleName())
+							.or(true).eq("organization_id","0"))
+					.eq("organization_id",role.getOrganizationId());
 		}
 		return (Page<Role>) page(rolePage, queryWrapper);
 	}
@@ -153,7 +157,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 			role.setIsSystemInit(true);
 			roleMapper.insert(role);
 		}
-		int a = resourcesRoleService.saveBatch(orgId);
+		resourcesRoleService.saveBatch(orgId);
 		return 1;
 	}
 

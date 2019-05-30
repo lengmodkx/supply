@@ -765,7 +765,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
         //查询到该目录的上级所有目录的id集合
-        List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
+            List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
 
         //生成目录查询条件表达式
         LambdaQueryWrapper<File> selectFileListQw = new QueryWrapper<File>().lambda()

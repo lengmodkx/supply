@@ -9,9 +9,11 @@ import com.art1001.supply.service.role.ResourcesRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  * @date 2018/9/26 15:34
  **/
 @RequestMapping("resource_role")
+@Validated
 @Slf4j
 @RestController
 public class ResourceRoleApi {
@@ -42,27 +45,14 @@ public class ResourceRoleApi {
      * 分配权限
      * @return
      */
-    @PostMapping("/{role}/edit_resource")
-    public JSONObject editResource(@PathVariable(value = "role") String roleId,
-                                   @RequestParam(value = "resources") String resources){
+    @PutMapping("/{role}/edit_resource")
+    public JSONObject editResource(@PathVariable(value = "role") Integer roleId,
+                                   @RequestParam(value = "resources") @NotEmpty(message = "必须选择至少一个资源!") String resources){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(StringUtils.isEmpty(resources)){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","必须选择至少一个资源!");
-            } else{
-                resourcesRoleService.remove(new QueryWrapper<ResourcesRole>().eq("r_id",roleId));
-                String[] sNames = resources.split(",");
-                List<Integer> collect = resourceService.list(new QueryWrapper<ResourceEntity>().lambda().in(ResourceEntity::getResourceName, Arrays.asList(sNames))).stream().map(ResourceEntity::getResourceId).collect(Collectors.toList());
-                List<ResourcesRole> resourcesRoleList = new ArrayList<ResourcesRole>();
-                for (Integer integer : collect) {
-                    ResourcesRole resourcesRole = new ResourcesRole();
-                    resourcesRole.setRoleId(Integer.valueOf(roleId));
-                    resourcesRole.setResourceId(integer);
-                    resourcesRole.setCreateTime(LocalDateTime.now());
-                    resourcesRoleList.add(resourcesRole);
-                }
-                resourcesRoleService.saveBatch(resourcesRoleList);
+            if(resourcesRoleService.distributionRoleResource(roleId,resources) <= 0){
+                jsonObject.put("result", 0);
+            } else {
                 jsonObject.put("result",1);
             }
         } catch (Exception e){

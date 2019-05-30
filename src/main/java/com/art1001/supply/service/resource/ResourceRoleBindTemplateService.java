@@ -17,13 +17,14 @@ public interface ResourceRoleBindTemplateService extends IService<ResourceRoleBi
 
     /**
      * 根据角色key获取到这个角色应有的资源id (根据模板获取)
+     * 如果roleKey为null则返回null
      * @author heShaoHua
      * @describe 暂无
      * @param roleKey 角色keu
      * @updateInfo 暂无
      * @date 2019/5/29 16:29
-     * @return 资源id集合
+     * @return 资源id(多个逗号隔开)
      */
-    List<String> getRoleBindResourceIds(String roleKey);
+    String getRoleBindResourceIds(String roleKey);
 
 }

@@ -129,7 +129,7 @@ public class RoleApi {
             Role role = new Role();
             role.setRoleName(roleName);
             role.setOrganizationId(orgId);
-            Page<Role> roleList = roleService.selectListPage(current, size, role);
+            Page<Role> roleList = roleService.selectListPage(current, size, role,orgId);
             object.put("data",roleList);
             object.put("result",1);
             object.put("msg","查询成功");

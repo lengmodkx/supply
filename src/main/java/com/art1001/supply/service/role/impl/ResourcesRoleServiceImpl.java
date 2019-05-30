@@ -13,6 +13,8 @@ import com.art1001.supply.util.Stringer;
 import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,19 +90,51 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
                 .eq(Role::getIsSystemInit, true)
                 .select(Role::getRoleId,Role::getRoleKey);
 
-        //查询并提起出系统默认角色的id集合
+        //查询并提取出系统默认角色的id集合
         List<Role> orgInitRoleIds = roleService.list(selectOrgInitRoleIdQw);
-        ResourcesRole resourcesRole = new ResourcesRole();
+
         orgInitRoleIds.forEach(r -> {
+            ResourcesRole resourcesRole = new ResourcesRole();
             resourcesRole.setRoleId(r.getRoleId());
             resourcesRole.setCreateTime(LocalDateTime.now());
             switch (r.getRoleKey()){
                 case Constants.OWNER_KEY:
-                    resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+                    String ownerResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+                    resourcesRole.setResourceId(ownerResources);
+                    break;
+                case Constants.ADMIN_KEY:
+                    String adminResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+                    resourcesRole.setResourceId(adminResources);
+                    break;
+                case Constants.MEMBER_KEY:
+                    String memberResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+                    resourcesRole.setResourceId(memberResources);
                     break;
                 default:
+                    break;
             }
+            resourcesRoleMapper.insert(resourcesRole);
         });
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public Integer distributionRoleResource(Integer roleId, String resourceIds) {
+        //构造出查询该角色在角色资源表中存不存在的查询表达式
+        LambdaQueryWrapper<ResourcesRole> resourceRoleCountQw = new QueryWrapper<ResourcesRole>().lambda().eq(ResourcesRole::getRoleId, roleId);
+        if (resourcesRoleMapper.selectCount(resourceRoleCountQw) > 0){
+            //构造出更新角色权限的表达式
+            LambdaUpdateWrapper<ResourcesRole> updateRoleResourceUw = new UpdateWrapper<ResourcesRole>().lambda().eq(ResourcesRole::getRoleId, roleId);
+            ResourcesRole resourcesRole = new ResourcesRole();
+            resourcesRole.setResourceId(resourceIds);
+            return resourcesRoleMapper.update(resourcesRole,updateRoleResourceUw);
+        } else {
+            //如果该角色没有分配过权限那么久新建一条资源和角色对应的记录
+            ResourcesRole resourcesRole = new ResourcesRole();
+            resourcesRole.setRoleId(roleId);
+            resourcesRole.setResourceId(resourceIds);
+            resourcesRole.setCreateTime(LocalDateTime.now());
+            return resourcesRoleMapper.insert(resourcesRole);
+        }
     }
 }

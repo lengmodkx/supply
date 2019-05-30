@@ -45,17 +45,6 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 */
 	List<ResourceShowVO> getRoleResourceDetailsData(String roleId);
 
-    /**
-	 * 获取该角色的所有资源信息
-     * @author heShaoHua
-     * @describe 暂无
-     * @param  roleId 角色id
-     * @updateInfo 暂无
-     * @date 2019/5/27
-     * @return 资源集合
-     */
-	List<ResourceEntity> getResourcesByRoleId(String roleId);
-
 	/**
 	 * 获取该角色拥有的所有资源
 	 * @author heShaoHua
@@ -66,6 +55,17 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 * @return 资源集合
 	 */
 	List<ResourceEntity> getRoleHaveResources(String roleId);
+
+	/**
+	 * 获取一个角色的资源id集合
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param roleId 角色
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 15:23
+	 * @return 资源id集合
+	 */
+	List<String> getRoleHaveResourceIds(String roleId);
 
 
 }

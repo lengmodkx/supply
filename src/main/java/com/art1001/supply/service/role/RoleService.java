@@ -11,7 +11,7 @@ public interface RoleService extends IService<Role> {
      * @param role 查询条件
      * @return
      */
-    Page<Role> selectListPage(long current, long size, Role role);
+    Page<Role> selectListPage(long current, long size, Role role, String orgId);
 
     /**
      * 判断角色是否存在

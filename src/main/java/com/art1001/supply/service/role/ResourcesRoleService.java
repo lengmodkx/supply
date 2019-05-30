@@ -33,4 +33,16 @@ public interface ResourcesRoleService extends IService<ResourcesRole> {
      * @return 结果
      */
     Integer saveBatch(String orgId);
+
+    /**
+     * 给一个角色分配权限
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @param resources 资源id (多个逗号隔开)
+     * @updateInfo 暂无
+     * @date 2019/5/30 17:18
+     * @return 结果
+     */
+    Integer distributionRoleResource(Integer roleId, String resources);
 }

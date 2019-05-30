@@ -27,17 +27,8 @@ public class ResourceRoleBindTemplateServiceImpl extends ServiceImpl<ResourceRol
     @Resource
     private ResourceRoleBindTemplateMapper resourceRoleBindTemplateMapper;
 
-    /**
-     * 根据角色key获取到这个角色应有的资源id (根据模板获取)
-     * @param roleKey 角色keu
-     * @return 资源id集合
-     * @author heShaoHua
-     * @describe 暂无
-     * @updateInfo 暂无
-     * @date 2019/5/29 16:29
-     */
     @Override
-    public List<String> getRoleBindResourceIds(String roleKey) {
+    public String getRoleBindResourceIds(String roleKey) {
         if(Stringer.isNullOrEmpty(roleKey)){
             return null;
         }
@@ -48,10 +39,6 @@ public class ResourceRoleBindTemplateServiceImpl extends ServiceImpl<ResourceRol
                 .select(ResourceRoleBindTemplate::getResourceId);
 
         //获取到该角色的对应资源id数组
-        String[] resourceIdsArr = resourceRoleBindTemplateMapper.selectOne(selectRoleBindResourceIdQw).getResourceId().split(",");
-        if(resourceIdsArr.length == 0){
-            return null;
-        }
-        return Arrays.asList(resourceIdsArr);
+        return resourceRoleBindTemplateMapper.selectOne(selectRoleBindResourceIdQw).getResourceId();
     }
 }
