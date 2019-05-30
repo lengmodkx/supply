@@ -48,7 +48,7 @@ public interface ProjectService extends IService<Project> {
 	 * 
 	 * @param project
 	 */
-	public void saveProject(Project project);
+	void saveProject(Project project);
 
 	/**
 	 * 获取所有project数据

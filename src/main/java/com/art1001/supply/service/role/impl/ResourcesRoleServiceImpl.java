@@ -1,21 +1,33 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.ResourcesRole;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.mapper.role.ResourcesRoleMapper;
+import com.art1001.supply.service.resource.ResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.ResourcesRoleService;
+import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.util.Stringer;
+import com.art1001.supply.validation.role.RoleIdValidation;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
  * 角色权限映射表 服务实现类
  * </p>
- *
  * @author 少华
  * @since 2018-09-26
  */
@@ -23,10 +35,16 @@ import java.util.List;
 public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, ResourcesRole> implements ResourcesRoleService {
 
     @Resource
-    ResourcesRoleMapper resourcesRoleMapper;
+    private ResourcesRoleMapper resourcesRoleMapper;
 
     @Resource
-    ResourceService resourceService;
+    private RoleService roleService;
+
+    @Resource
+    private ResourceService resourceService;
+
+    @Resource
+    private ResourceRoleBindTemplateService resourceRoleBindTemplateService;
 
     /**
      * 处理编辑角色资源数据
@@ -47,5 +65,42 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             }
         }
         return allResources;
+    }
+
+    /**
+     * 把该企业的默认角色和资源进行关系绑定
+     * @param orgId 企业id
+     * @return 结果
+     * @author heShaoHua
+     * @describe 暂无
+     * @updateInfo 暂无
+     * @date 2019/5/29 15:52
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Integer saveBatch(String orgId) {
+        if(Stringer.isNullOrEmpty(orgId)){
+            return -1;
+        }
+        //构造查询企业默认角色的条件查询器
+        LambdaQueryWrapper<Role> selectOrgInitRoleIdQw = new QueryWrapper<Role>().lambda()
+                .eq(Role::getOrganizationId, orgId)
+                .eq(Role::getIsSystemInit, true)
+                .select(Role::getRoleId,Role::getRoleKey);
+
+        //查询并提起出系统默认角色的id集合
+        List<Role> orgInitRoleIds = roleService.list(selectOrgInitRoleIdQw);
+        ResourcesRole resourcesRole = new ResourcesRole();
+        orgInitRoleIds.forEach(r -> {
+            resourcesRole.setRoleId(r.getRoleId());
+            resourcesRole.setCreateTime(LocalDateTime.now());
+            switch (r.getRoleKey()){
+                case Constants.OWNER_KEY:
+                    resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+                    break;
+                default:
+            }
+        });
+        return 0;
     }
 }

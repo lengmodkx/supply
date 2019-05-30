@@ -18,7 +18,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         try {
-            String[] a = {"sys_role_user"};
+            String[] a = {"sys_resource_role_bind_template"};
             AutoGenerator mpg = new AutoGenerator();
             // 全局配置
             GlobalConfig gc = new GlobalConfig();

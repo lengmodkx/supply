@@ -138,4 +138,32 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMemberMapper.update(organizationMember,sign);
 		return 1;
 	}
+
+	/**
+	 * 保存企业的创建人信息
+	 * @param orgId  企业id
+	 * @param userId 用户id
+	 * @return 结果
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/5/29 15:14
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer saveOrgOwnerInfo(String orgId, String userId) {
+		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(userId)){
+			return -1;
+		}
+		//添加当前用户为企业拥有者
+		OrganizationMember organizationMember = new OrganizationMember();
+		organizationMember.setOrganizationId(orgId);
+		organizationMember.setMemberId(userId);
+		organizationMember.setCreateTime(System.currentTimeMillis());
+		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setOrganizationLable(1);
+		organizationMember.setUserDefault(true);
+		organizationMemberMapper.insert(organizationMember);
+		return 1;
+	}
 }

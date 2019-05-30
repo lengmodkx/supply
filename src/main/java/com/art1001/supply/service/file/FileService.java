@@ -173,6 +173,17 @@ import java.util.List;
 	String findParentId(String projectId);
 
 	/**
+	 * 获取该项目下的根目录信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param projectId 项目id
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 10:00
+	 * @return 根目录信息
+	 */
+	File getProjectParentFolder(String projectId);
+
+	/**
 	 * 检查该目录下是否有子文件夹
 	 * @param fileId 目录id
 	 */
@@ -255,10 +266,26 @@ import java.util.List;
 
 	/**
 	 * 获取某个文件或者目录的所有上级目录信息 (一直到顶端目录)
-	 * @param fileId 文件id
-	 * @return 目录集合
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param fileId 目录id
+	 * @param projectId 项目id
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 9:52
+	 * @return 向上递归目录树
 	 */
-	List<FileTreeShowVO> getParentFolders(String fileId);
+	List<FileTreeShowVO> getParentFolders(String fileId, String projectId);
+
+	/**
+	 * 获取一个文件的在项目中最顶级的目录
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param fileId 文件/目录id
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 11:33
+	 * @return 根目录id
+	 */
+	File getProjectRootFolderId(String fileId);
 
 
 	/*

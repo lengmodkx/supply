@@ -17,6 +17,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -99,16 +100,37 @@ public class OrganizationApi {
      * @return
      */
     @GetMapping("/my_org")
-    public JSONObject getMyOrg(@RequestParam(required = false) Integer flag){
+    public JSONObject getMyOrg(@RequestParam(required = false) Integer flag) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",organizationService.getMyOrg(flag));
+            jsonObject.put("data", organizationService.getMyOrg(flag));
             jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new SystemException("系统异常,数据获取失败!",e);
+        } catch (Exception e) {
+            throw new SystemException("系统异常,数据获取失败!", e);
         }
+    }
 
+    /**
+     * 获取该企业下的项目信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @updateInfo 暂无
+     * @date 2019/5/29 10:13
+     * @return 企业下的项目信息列表
+     */
+    @GetMapping("/{orgId}")
+    public JSONObject getOrgProject(@NotEmpty(message = "orgId不能为空!") @PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Project> projects = organizationService.getProject(orgId);
+            jsonObject.put("data", projects);
+            jsonObject.put("result", 1);
+        } catch (Exception e){
+            throw new AjaxException("系统异常,信息获取失败!",e);
+        }
+        return jsonObject;
     }
 
     /**

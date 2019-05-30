@@ -283,4 +283,26 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return 目录集合
 	 */
 	String selectParentFolders(@Param("fileId") String fileId);
+
+	/**
+	 * 获取该项目下的根目录信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param projectId 项目id
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 10:00
+	 * @return 根目录信息
+	 */
+	File selectProjectParentFolder(String projectId);
+
+	/**
+	 * 获取一个文件的在项目中最顶级的目录信息
+	 * @param fileId 文件/目录id
+	 * @return 根目录id
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/5/30 11:33
+	 */
+	File selectProjectRootFolderId(@Param("fileId") String fileId);
 }

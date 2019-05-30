@@ -1,11 +1,11 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.util.Stringer;
@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import javafx.scene.layout.BackgroundRepeat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * @author heshaohua
  */
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements RoleService {
@@ -38,6 +37,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 
 	@Resource
 	private OrganizationService organizationService;
+
+	@Resource
+	private ResourcesRoleService resourcesRoleService;
 
 	@Override
 	public Page<Role> selectListPage(long current, long size, Role role){
@@ -84,7 +86,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda().eq(RoleUser::getRoleId, roleId);
 		List<String> userIds = roleUserService.list(eq).stream().map(RoleUser::getUId).collect(Collectors.toList());
 		Role role = roleMapper.selectById(roleId);
-		Integer defaultRoleId = 0;
+		Integer defaultRoleId;
 		if(role.getIsDefault()){
 			Role updateRole = new Role();
 			defaultRoleId = roleMapper.selectOne(new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId).eq(Role::getRoleKey, Constants.MEMBER_EN)).getRoleId();
@@ -127,7 +129,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		}
 		//这里手动添加默认角色信息,后期可以读取配置文件进行添加
 		String[] initRoles = {"拥有者","管理员","成员"};
-		List<Role> roles = new ArrayList<>();
 		for (String roleName : initRoles) {
 			Role role = new Role();
 			role.setRoleName(roleName);
@@ -152,6 +153,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 			role.setIsSystemInit(true);
 			roleMapper.insert(role);
 		}
+		int a = resourcesRoleService.saveBatch(orgId);
 		return 1;
+	}
+
+	/**
+	 * 根据角色key,查询出某个企业的对应角色
+	 * @param orgId   企业id
+	 * @param roleKey 角色key
+	 * @return 角色id
+	 * @author heShaoHua
+	 * @describe 企业默认角色key说明 拥有者:administrator  管理员:admin 成员:member
+	 * @updateInfo 暂无
+	 * @date 2019/5/29 15:25
+	 */
+	@Override
+	public Integer getOrgRoleIdByKey(String orgId, String roleKey) {
+		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(roleKey)){
+			return -1;
+		}
+		//构造出查询该企业超级管理员id的条件表达式
+		LambdaQueryWrapper<Role> selectAdministratorId = new QueryWrapper<Role>().lambda()
+				.eq(Role::getOrganizationId, orgId)
+				.eq(Role::getRoleKey, "administrator");
+		return roleMapper.selectOne(selectAdministratorId).getRoleId();
 	}
 }

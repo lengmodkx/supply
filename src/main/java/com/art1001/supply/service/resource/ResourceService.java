@@ -66,4 +66,6 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 * @return 资源集合
 	 */
 	List<ResourceEntity> getRoleHaveResources(String roleId);
+
+
 }

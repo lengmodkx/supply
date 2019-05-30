@@ -80,5 +80,17 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return 结果
 	 */
 	Integer updateUserDefaultOrg(String orgId, String userId);
+
+	/**
+	 * 保存企业的创建人信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param orgId 企业id
+	 * @param userId 用户id
+	 * @updateInfo 暂无
+	 * @date 2019/5/29 15:14
+	 * @return 结果
+	 */
+	Integer saveOrgOwnerInfo(String orgId, String userId);
 	
 }

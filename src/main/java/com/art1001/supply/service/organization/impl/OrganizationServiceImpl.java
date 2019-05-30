@@ -96,31 +96,36 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void saveOrganization(Organization organization){
+	public Integer saveOrganization(Organization organization){
 		organization.setOrganizationMember(ShiroAuthenticationManager.getUserId());
 		organization.setCreateTime(System.currentTimeMillis());
 		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.insert(organization);
 
 		//添加当前用户为企业拥有者
-		OrganizationMember organizationMember = new OrganizationMember();
-		organizationMember.setOrganizationId(organization.getOrganizationId());
-		organizationMember.setMemberId(ShiroAuthenticationManager.getUserId());
-		organizationMember.setCreateTime(System.currentTimeMillis());
-		organizationMember.setUpdateTime(System.currentTimeMillis());
-		organizationMember.setOrganizationLable(1);
-		organizationMember.setUserDefault(true);
-		organizationMemberService.save(organizationMember);
+		Integer saveOrgOwnerResult = organizationMemberService.saveOrgOwnerInfo(organization.getOrganizationId(), ShiroAuthenticationManager.getUserId());
+		if(saveOrgOwnerResult == -1){
+			return saveOrgOwnerResult;
+		}
 
 		//初始化默认角色
-		roleService.saveOrgDefaultRole(organization.getOrganizationId());
+		int saveOrgDefaultRoleResult = roleService.saveOrgDefaultRole(organization.getOrganizationId());
+		if(saveOrgDefaultRoleResult == -1){
+			return saveOrgDefaultRoleResult;
+		}
 
-		Integer administrator = roleService.getOne(new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, organization.getOrganizationId()).eq(Role::getRoleKey, "administrator")).getRoleId();
+		//获取到该企业的拥有者角色id
+		int administratorRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), "administrator");
+		if(administratorRoleId == -1){
+			return administratorRoleId;
+		}
+
 		RoleUser roleUser = new RoleUser();
 		roleUser.setTCreateTime(LocalDateTime.now());
 		roleUser.setUId(ShiroAuthenticationManager.getUserId());
-		roleUser.setRoleId(administrator);
+		roleUser.setRoleId(administratorRoleId);
 		roleUserService.save(roleUser);
+		return 1;
 	}
 	/**
 	 * 获取所有organization数据

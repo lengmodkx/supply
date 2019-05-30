@@ -525,6 +525,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return fileMapper.selectParentId(projectId);
     }
 
+    @Override
+    public File getProjectParentFolder(String projectId) {
+        if(Stringer.isNullOrEmpty(projectId)){
+            return null;
+        }
+        return fileMapper.selectProjectParentFolder(projectId);
+    }
+
     /**
      * 检查该目录下是否有子文件夹
      * @param fileId 目录id
@@ -627,7 +635,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     //文件向上递归的分层
     private void upLevel(List<File> files){
         files.forEach(f -> {
-            files.forEach((s) -> {
+            files.forEach(s -> {
                 if(s.getParentId().equals(f.getFileId())){
                     List<File> subs = new ArrayList<>();
                     subs.add(s);
@@ -753,17 +761,49 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public List<FileTreeShowVO> getParentFolders(String fileId) {
+    public List<FileTreeShowVO> getParentFolders(String fileId, String projectId) {
+
         List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
+        //查询到该目录的上级所有目录的id集合
         List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
-        //生成查询条件表达式
-        LambdaQueryWrapper<File> select = new QueryWrapper<File>().lambda().select(File::getFileId, File::getFileName, File::getCreateTime,File::getParentId).in(File::getFileId, fileIds);
-        List<File> fileList = fileMapper.selectList(select);
+
+        //生成目录查询条件表达式
+        LambdaQueryWrapper<File> selectFileListQw = new QueryWrapper<File>().lambda()
+                .select(File::getFileId, File::getFileName, File::getCreateTime,File::getParentId)
+                .in(File::getFileId, fileIds);
+
+        List<File> fileList = fileMapper.selectList(selectFileListQw);
+
+        File rootFolder = this.getProjectRootFolderId(fileId);
+        if(Stringer.isNotNullOrEmpty(rootFolder.getUserId())){
+            File parentFolder = this.getProjectParentFolder(projectId);
+            fileList.forEach(f -> {
+                if(f.getFileId().equals(rootFolder.getFileId())){
+                    f.setParentId(parentFolder.getFileId());
+                }
+            });
+            fileList.add(parentFolder);
+        }
+        //生成目录树
         this.upLevel(fileList);
         this.chanageToFileTreeVO(fileList, fileTreeShowVOS);
-        //过滤无用数据
+        //过滤出第一条数据(该集合除第一条外其他数据无用)
         return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId())) .collect(Collectors.toList());
 
+    }
+
+    /**
+     * 获取一个文件的在项目中最顶级的目录id
+     * @param fileId 文件/目录id
+     * @return 根目录id
+     * @author heShaoHua
+     * @describe 暂无
+     * @updateInfo 暂无
+     * @date 2019/5/30 11:33
+     */
+    @Override
+    public File getProjectRootFolderId(String fileId) {
+        return fileMapper.selectProjectRootFolderId(fileId);
     }
 
     /*

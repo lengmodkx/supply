@@ -31,11 +31,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotEmpty;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
  * @date 2018/9/17 14:34
  **/
 @Slf4j
+@Validated
 @RequestMapping("files")
 @RestController
 public class FileApi extends BaseController {
@@ -154,16 +157,17 @@ public class FileApi extends BaseController {
      * @return 文件数据结果集
      */
     @GetMapping("/{fileId}/parent/folders")
-    public JSONObject getParentFolders(@PathVariable String fileId){
+    public JSONObject getParentFolders(@PathVariable String fileId,
+                                       @NotEmpty(message = "projectId不能为空!") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(!fileService.checkIsExist(fileId)){
                 jsonObject.put("result", 0);
-                jsonObject.put("msg", "该文件不存在!");
+                jsonObject.put("msg", "目录不存在!");
                 return jsonObject;
             }
             jsonObject.put("result", 1);
-            jsonObject.put("data", fileService.getParentFolders(fileId));
+            jsonObject.put("data", fileService.getParentFolders(fileId,projectId));
             return jsonObject;
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);

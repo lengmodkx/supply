@@ -47,7 +47,7 @@ public interface OrganizationService extends IService<Organization> {
 	 * 
 	 * @param organization
 	 */
-	void saveOrganization(Organization organization);
+	Integer saveOrganization(Organization organization);
 
 	/**
 	 * 获取所有organization数据

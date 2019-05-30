@@ -5,6 +5,7 @@ import com.art1001.supply.mapper.role.RoleUserMapper;
 import com.art1001.supply.service.role.RoleUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>

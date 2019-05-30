@@ -22,4 +22,15 @@ public interface ResourcesRoleService extends IService<ResourcesRole> {
      * @return
      */
     List<ResourceEntity> showRoleResources(String roleId);
+
+    /**
+     * 把该企业的默认角色和资源进行关系绑定
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @updateInfo 暂无
+     * @date 2019/5/29 15:52
+     * @return 结果
+     */
+    Integer saveBatch(String orgId);
 }

@@ -67,14 +67,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		return resourceMapper.allList(roleId);
 	}
 
-	/**
-	 * @param roleId 角色id
-	 * @author heShaoHua
-	 * @describe 查询出当前角色所对应的权限信息
-	 * @updateInfo 暂无
-	 * @date 2019/5/27
-	 * @return 当前role所拥有的权限信息
-	 */
+
 	@Override
 	public List<ResourceShowVO> getRoleResourceDetailsData(String roleId) {
 		boolean roleNotExist = !roleService.checkIsExist(roleId);
@@ -86,6 +79,8 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		if(CollectionUtils.isEmpty(allResources)){
 			return null;
 		}
+
+
 
 		//查询出当前角色拥有的权限信息
 		List<ResourceEntity> resourcesByRoleId = this.getRoleHaveResources(roleId);

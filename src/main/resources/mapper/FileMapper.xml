@@ -24,6 +24,7 @@
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER"/>
 		<result column="is_model" property="isModel" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
@@ -94,6 +95,7 @@
 	<sql id="Base_Column_List2">
 				f.file_id,
 				f.file_name,
+				f.user_id
 				f.ext,
 				f.file_url,
 				f.project_id,
@@ -487,6 +489,21 @@
 	<!-- 获取某个文件或者目录的所有上级目录id (一直到顶端目录) -->
 	<select id="selectParentFolders" resultType="java.lang.String">
 		select getParentFolder(#{fileId})
+	</select>
+
+	<!-- 获取该项目下的根目录信息 -->
+    <select id="selectProjectParentFolder" resultType="com.art1001.supply.entity.file.File">
+		select file_id,file_name,parent_id,create_time from prm_file where project_id = #{projectId} and `level` = 0
+	</select>
+
+	<!-- 获取一个文件的在项目中最顶级的目录id -->
+	<select id="selectProjectRootFolderId" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+			file_id,file_name,parent_id,create_time,user_id
+		FROM
+			prm_file
+		WHERE
+			file_id = ( SELECT getRootFolder ( #{fileId} ) )
 	</select>
 
 	<!-- 插入多条文件信息 -->

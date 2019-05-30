@@ -45,4 +45,16 @@ public interface RoleService extends IService<Role> {
      * @return 结果值
      */
     Integer saveOrgDefaultRole(String orgId);
+
+    /**
+     * 根据角色key,查询出某个企业的对应角色
+     * @author heShaoHua
+     * @describe 企业默认角色key说明 拥有者:administrator  管理员:admin 成员:member
+     * @param orgId 企业id
+     * @param roleKey 角色key
+     * @updateInfo 暂无
+     * @date 2019/5/29 15:25
+     * @return 角色id
+     */
+    Integer getOrgRoleIdByKey(String orgId, String roleKey);
 }
