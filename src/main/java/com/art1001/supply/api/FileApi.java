@@ -14,6 +14,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -24,6 +25,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
@@ -31,7 +33,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -56,7 +57,6 @@ import java.util.stream.Collectors;
  * @date 2018/9/17 14:34
  **/
 @Slf4j
-@Validated
 @RequestMapping("files")
 @RestController
 public class FileApi extends BaseController {
@@ -100,6 +100,9 @@ public class FileApi extends BaseController {
     @Resource
     private UserService userService;
 
+
+    @Resource
+    private TagService tagService;
 
   /*  @Autowired
     private ItemRepository itemRepository;*/
@@ -1055,17 +1058,31 @@ public class FileApi extends BaseController {
     /*
     * 在文件系统创建标签并绑定文件
     * */
-    //@Push(value = PushType.A30,type = 1)
+    @Push(value = PushType.E3,type = 1)
     @PostMapping("/addTagBindFile")
-    public JSONObject addTagBindFile(String fileId,Long tagId){
+    public JSONObject addTagBindFile(@RequestParam(value = "tagName") String tagName,
+                                     @RequestParam(value = "bgColor") String bgColor,
+                                     @RequestParam(value = "publicId") String publicId,
+                                     @RequestParam(value = "publicType") String publicType,
+                                     @RequestParam(value = "projectId") String projectId
+    ){
+        JSONObject jsonObject = new JSONObject();
         try {
-            File file = fileService.findFileById(fileId);
-            bindingService.setBindingInfo(fileId,file,null,null,null);
-            JSONObject o=fileService.addTagBindFile(fileId,tagId);
-            return success(file);
+            Tag tag = new Tag();
+            tag.setTagName(tagName);
+            tag.setBgColor(bgColor);
+            tag.setProjectId(projectId);
+            if(tagService.addAndBind(tag,publicId,publicType)){
+                jsonObject.put("result", 1);
+                jsonObject.put("data", new JSONObject().fluentPut("publicType", publicType).fluentPut("publicId", publicId));
+                jsonObject.put("msgId", projectId);
+            }
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
-            e.printStackTrace();
-            throw new AjaxException("系统异常,获取任务信息失败!",e);
+            throw new AjaxException("系统异常,添加标签失败",e);
         }
+        return jsonObject;
     }
+
 }

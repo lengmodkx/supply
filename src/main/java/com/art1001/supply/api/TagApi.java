@@ -220,7 +220,7 @@ public class TagApi {
      * @param projectId 项目的id
      * @return 是否成功
      */
-    @Push(value = PushType.E1,type = 1)
+    @Push(value = PushType.E3,type = 1)
     @PostMapping("/add_and_bind")
     public JSONObject addItemTag(@RequestParam(value = "tagName") String tagName,
                                  @RequestParam(value = "bgColor") String bgColor,

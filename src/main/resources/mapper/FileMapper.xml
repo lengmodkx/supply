@@ -95,7 +95,7 @@
 	<sql id="Base_Column_List2">
 				f.file_id,
 				f.file_name,
-				f.user_id
+				f.user_id,
 				f.ext,
 				f.file_url,
 				f.project_id,
