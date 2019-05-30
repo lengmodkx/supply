@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -118,9 +119,11 @@ public class UserApi {
             userService.insert(userEntity, password);
             jsonObject.put("result", 1);
             jsonObject.put("msg", "注册成功");
+        } catch (ServiceException e){
+            throw new AjaxException(e.getMessage(),e);
         } catch (Exception e) {
             log.error("注册失败:", e);
-            throw new AjaxException(e);
+            throw new AjaxException("注册失败",e);
         }
         return jsonObject;
     }
