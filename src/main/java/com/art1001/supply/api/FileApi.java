@@ -171,6 +171,7 @@ public class FileApi extends BaseController {
             }
             jsonObject.put("result", 1);
             jsonObject.put("data", fileService.getParentFolders(fileId,projectId));
+            jsonObject.put("data2",fileService.getPathFolders(fileId));
             return jsonObject;
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);
@@ -1084,5 +1085,7 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
+
+
 
 }

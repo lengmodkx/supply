@@ -813,4 +813,44 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public JSONObject addTagBindFile(String fileId, Long tagId) {
         return null;
     }
+
+    /*
+    * 查询文件层级
+    * */
+    @Override
+    public List<File> getPathFolders(String fileId) {
+        File file = fileMapper.findFileById(fileId);
+        List<File> folderPathList=new ArrayList<>();
+
+        if (Stringer.isNullOrEmpty(file)){
+            return  null;
+        }else {
+            folderPathList.add(file);
+            if ("0".equals(file.getParentId())){
+                return folderPathList;
+            }else{
+                return this.getFolderPath(file,folderPathList);
+            }
+        }
+    }
+
+
+    /**
+     *
+     * 递归查找父级，一直查找到root为止，最终返回包含所有Folder的List，因为是递归，所以不能在方法里new 容器List，那样每次递归都会new一个List
+     * 所以容器List必须从外部传入, 终止条件(基础情况)parentId == -1
+     */
+    private List<File> getFolderPath( File file , List<File> folderPathList) {
+
+        if ("0".equals(file.getParentId())) {
+            //root
+            return folderPathList;
+        }else {
+            //找到父文件
+            File parentFile = fileMapper.findFileById(file.getParentId());
+            folderPathList.add(parentFile);
+            return getFolderPath(parentFile, folderPathList);
+        }
+    }
+
 }
