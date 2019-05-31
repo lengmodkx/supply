@@ -307,7 +307,7 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @Log(PushType.A6)
-    @Push(value = PushType.A6,type = 1)
+    @Push(value = PushType.A6,type = 3)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId")String taskId,
                                          @RequestParam(value = "executor")String userId){
@@ -328,6 +328,7 @@ public class TaskApi extends BaseController {
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("id",taskId);
+            object.put("publicType", Constants.TASK);
         }catch(Exception e){
             log.error("系统异常,执行者更新失败:",e);
             throw new AjaxException(e);

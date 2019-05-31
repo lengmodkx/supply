@@ -21,7 +21,9 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -184,8 +186,9 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 			name = shareService.findShareNameById(publicId);
 
 		}
-
-		for(int i = 0;i < users.length;i++){
+		List<String> collect = Arrays.asList(users).stream().distinct().collect(Collectors.toList());
+		users = collect.toArray(new String[collect.size()]);
+		for(int i = 0; i < users.length; i++){
 			UserNews userNews = new UserNews();
 			//如果本次循环的id  是当前操作的用户id 则跳过
 			if(users[i].equals(ShiroAuthenticationManager.getUserId())){
