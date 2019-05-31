@@ -292,4 +292,17 @@ import java.util.List;
 	 * 在文件系统创建标签并绑定文件
 	 * */
 	JSONObject addTagBindFile(String fileId, Long tagId);
+
+
+	/*
+	* 获取文件的路径
+	* @Param fileId  文件id
+	* */
+	List<File> getPathFolders(String fileId, String projectId);
+
+	/*
+	 * 获取root文件的路径
+	 * @Param projectId  项目id
+	 * */
+	File findFileTier(String projectId);
 }
