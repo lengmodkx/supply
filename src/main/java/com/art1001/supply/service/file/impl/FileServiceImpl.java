@@ -818,20 +818,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     * 查询文件层级
     * */
     @Override
-    public List<File> getPathFolders(String fileId) {
+    public List<File> getPathFolders(String fileId, String projectId) {
         File file = fileMapper.findFileById(fileId);
-        List<File> folderPathList=new ArrayList<>();
 
+        List<File> folderPathList=new ArrayList<>();
+        folderPathList.add(file);
+        //folderPathList.add(fileMapper.findFileTier(projectId));
         if (Stringer.isNullOrEmpty(file)){
-            return  null;
+            return  folderPathList;
         }else {
-            folderPathList.add(file);
-            if ("0".equals(file.getParentId())){
-                return folderPathList;
-            }else{
-                return this.getFolderPath(file,folderPathList);
-            }
+            return this.getFolderPath(file,folderPathList);
         }
+    }
+
+    /*
+    *  获取root文件的路径
+    * */
+    @Override
+    public File findFileTier(String projectId) {
+        return fileMapper.findFileTier(projectId);
     }
 
 
@@ -841,7 +846,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * 所以容器List必须从外部传入, 终止条件(基础情况)parentId == -1
      */
     private List<File> getFolderPath( File file , List<File> folderPathList) {
-
         if ("0".equals(file.getParentId())) {
             //root
             return folderPathList;

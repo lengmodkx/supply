@@ -298,5 +298,11 @@ import java.util.List;
 	* 获取文件的路径
 	* @Param fileId  文件id
 	* */
-	List<File> getPathFolders(String fileId);
+	List<File> getPathFolders(String fileId, String projectId);
+
+	/*
+	 * 获取root文件的路径
+	 * @Param projectId  项目id
+	 * */
+	File findFileTier(String projectId);
 }

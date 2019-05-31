@@ -506,7 +506,17 @@
 			file_id = ( SELECT getRootFolder ( #{fileId} ) )
 	</select>
 
-	<!-- 插入多条文件信息 -->
+	<!-- 获取文件层级 -->
+    <select id="findFileTier" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+			file_id,file_name,parent_id,create_time,user_id
+		FROM
+			prm_file
+		WHERE
+			file_name = '文件库'  AND   project_id = #{projectId}
+	</select>
+
+    <!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">

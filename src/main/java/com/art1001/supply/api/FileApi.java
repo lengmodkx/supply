@@ -171,7 +171,11 @@ public class FileApi extends BaseController {
             }
             jsonObject.put("result", 1);
             jsonObject.put("data", fileService.getParentFolders(fileId,projectId));
-            jsonObject.put("data2",fileService.getPathFolders(fileId));
+            List<File> pathFolders = fileService.getPathFolders(fileId, projectId);
+            if (pathFolders.size()>0 && !"文件库".equals(pathFolders.get(0).getFileName()) && !"公共模型库".equals(pathFolders.get(0).getFileName())){
+                pathFolders.add(fileService.findFileTier(projectId));
+            }
+            jsonObject.put("data2",pathFolders);
             return jsonObject;
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);

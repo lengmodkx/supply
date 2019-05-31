@@ -305,4 +305,10 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @date 2019/5/30 11:33
 	 */
 	File selectProjectRootFolderId(@Param("fileId") String fileId);
+
+	/*
+	* 通过文件id和项目id获取文件信息
+	* @Param
+	* */
+	File findFileTier(String projectId);
 }
