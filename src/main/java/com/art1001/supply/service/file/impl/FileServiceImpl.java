@@ -821,13 +821,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> getPathFolders(String fileId, String projectId) {
         File file = fileMapper.findFileById(fileId);
-
         List<File> folderPathList=new ArrayList<>();
-        folderPathList.add(file);
         //folderPathList.add(fileMapper.findFileTier(projectId));
         if (Stringer.isNullOrEmpty(file)){
-            return  folderPathList;
+            return  null;
         }else {
+            folderPathList.add(file);
             return this.getFolderPath(file,folderPathList);
         }
     }
