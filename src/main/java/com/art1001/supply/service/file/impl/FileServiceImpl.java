@@ -159,6 +159,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         modelFile.setFileThumbnail(array.getString("fileUrl"));
         modelFile.setMemberId(userEntity.getUserId());
         modelFile.setCreateTime(System.currentTimeMillis());
+        modelFile.setFileUids(ShiroAuthenticationManager.getUserId());
         if(StringUtils.isNotEmpty(publicId)){
             modelFile.setPublicId(publicId);
             modelFile.setPublicLable(1);
