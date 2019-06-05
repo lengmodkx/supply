@@ -130,7 +130,7 @@ import java.util.List;
 	 * 恢复文件
 	 * @param fileId 文件的id
 	 */
-	void recoveryFile(String fileId);
+	Integer recoveryFile(String fileId);
 
 	/**
 	 * 查询某个文件夹下的公开文件

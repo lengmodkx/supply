@@ -167,8 +167,8 @@ public interface FileMapper extends BaseMapper<File> {
 	 * 恢复文件
 	 * @param fileId 文件id
 	 */
-	@Update("update prm_file set parent_id = '0',file_del = 0 where file_id = #{fileId}")
-	void recoveryFile(String fileId);
+	@Update("update prm_file set parent_id = #{parentId},file_del = 0 ,update_time = #{currTime} where file_id = #{fileId}")
+	void recoveryFile(@Param("fileId") String fileId, @Param("parentId") String parentId, @Param("currTime") Long currTime);
 
 	/**
 	 * 查询某个文件夹下的公开文件

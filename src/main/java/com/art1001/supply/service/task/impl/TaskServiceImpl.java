@@ -52,6 +52,8 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
@@ -715,21 +717,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskMapper.findTaskByFatherTask(taskId);
     }
 
-    /**
-     * 恢复任务
-     * @param taskId 任务的id
-     * @param menuId 恢复后放到哪个菜单
-     */
     @Override
-    public void recoveryTask(String taskId, String menuId) {
-        taskMapper.recoverTask(taskId,menuId,System.currentTimeMillis());
+    public Integer recoveryTask(String taskId, String projectId, String groupId, String menuId) {
+        //构造出更新某条任务记录的表达式
         Task task = new Task();
         task.setTaskId(taskId);
-        logService.saveLog(task.getTaskId(),TaskLogFunction.O.getName(),1);
+        task.setProjectId(projectId);
+        task.setTaskGroupId(groupId);
+        task.setTaskMenuId(menuId);
+        task.setTaskDel(0);
+        task.setUpdateTime(System.currentTimeMillis());
+        return taskMapper.updateById(task);
     }
 
-
-//    /**
+    //    /**
 //     * 返回任务日志实体对象
 //     */
 //    @Override

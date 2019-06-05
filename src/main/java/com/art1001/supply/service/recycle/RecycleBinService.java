@@ -1,6 +1,7 @@
 package com.art1001.supply.service.recycle;
 
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.recycle.RecycleParams;
 
 import java.util.List;
 
@@ -19,4 +20,16 @@ public interface RecycleBinService {
      * @return 信息
      */
     List<RecycleBinVO> getRecycleBinItem(String projectId, String type, String fileType);
+
+    /**
+     * 恢复项目回收站中的信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param recycleParams 需要恢复的信息参数
+     * @updateInfo 暂无
+     * @date 2019/6/5 11:03
+     * @return 结果
+     */
+    Integer recovery(RecycleParams recycleParams);
+
 }
