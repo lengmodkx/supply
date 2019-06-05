@@ -11,8 +11,13 @@ import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.catalina.User;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +25,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,42 +92,39 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public int removeOrgRole(Integer roleId,String orgId) {
-		//创建条件表达式
+		//构造出查询当前roleId角色对用的用户id条件表达式
 		LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda().eq(RoleUser::getRoleId, roleId);
 		List<String> userIds = roleUserService.list(eq).stream().map(RoleUser::getUId).collect(Collectors.toList());
 		Role role = roleMapper.selectById(roleId);
 		Integer defaultRoleId;
+
+		//如果roleId是当前企业的默认角色,那么该角色被删除后就要把orgId的默认角色设为roleKey为 "member" 的角色
 		if(role.getIsDefault()){
 			Role updateRole = new Role();
-			defaultRoleId = roleMapper.selectOne(new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId).eq(Role::getRoleKey, Constants.MEMBER_EN)).getRoleId();
+			defaultRoleId = this.getOrgRoleIdByKey(orgId,Constants.MEMBER_KEY);
 			updateRole.setRoleId(defaultRoleId);
 			updateRole.setIsDefault(true);
 			roleMapper.updateById(updateRole);
 		} else {
-			defaultRoleId= roleMapper.selectOne(new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId).eq(Role::getIsDefault, true).select(Role::getRoleId)).getRoleId();
+			//获取到当前企业的默认角色id
+			defaultRoleId= this.getOrgDefaultRole(orgId).getRoleId();
 		}
-		List<RoleUser> roleUsers = new ArrayList<>();
+
+		//循环插入用户角色关系信息
 		for (String userId : userIds) {
 			RoleUser roleUser = new RoleUser();
 			roleUser.setRoleId(defaultRoleId);
 			roleUser.setUId(userId);
 			roleUser.setTCreateTime(LocalDateTime.now());
-			roleUsers.add(roleUser);
+			roleUserService.save(roleUser);
 		}
+
+		//移除原来的角色用户关系信息
 		roleUserService.remove(new QueryWrapper<RoleUser>().lambda().in(RoleUser::getUId,userIds));
-		roleUserService.saveBatch(roleUsers);
+		//删除角色
 		return roleMapper.deleteById(roleId);
 	}
 
-	/**
-	 * 保存企业默认初始化的角色信息
-	 * @param orgId 企业id
-	 * @return 结果值
-	 * @author heShaoHua
-	 * @describe 暂无
-	 * @updateInfo 暂无
-	 * @date 2019/5/28 15:33
-	 */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer saveOrgDefaultRole(String orgId) {
@@ -161,16 +164,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		return 1;
 	}
 
-	/**
-	 * 根据角色key,查询出某个企业的对应角色
-	 * @param orgId   企业id
-	 * @param roleKey 角色key
-	 * @return 角色id
-	 * @author heShaoHua
-	 * @describe 企业默认角色key说明 拥有者:administrator  管理员:admin 成员:member
-	 * @updateInfo 暂无
-	 * @date 2019/5/29 15:25
-	 */
 	@Override
 	public Integer getOrgRoleIdByKey(String orgId, String roleKey) {
 		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(roleKey)){
@@ -179,7 +172,85 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		//构造出查询该企业超级管理员id的条件表达式
 		LambdaQueryWrapper<Role> selectAdministratorId = new QueryWrapper<Role>().lambda()
 				.eq(Role::getOrganizationId, orgId)
-				.eq(Role::getRoleKey, "administrator");
+				.eq(Role::getRoleKey, roleKey);
 		return roleMapper.selectOne(selectAdministratorId).getRoleId();
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer updateOrgDefaultRole(String orgId, String roleId) {
+		//取消掉该企业下所有的默认企业
+		LambdaUpdateWrapper<Role> cancelAllDefaultRoleUw = new UpdateWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId);
+		Role canDefaultRole = new Role();
+		canDefaultRole.setIsDefault(false);
+		roleMapper.update(canDefaultRole,cancelAllDefaultRoleUw);
+
+		//设置roleId的角色为orgId企业的默认角色
+		Role setDefaultRole = new Role();
+		setDefaultRole.setIsDefault(true);
+		//追加设置该企业下默认角色的条件
+		cancelAllDefaultRoleUw.eq(Role::getRoleId, roleId);
+		roleMapper.update(setDefaultRole,cancelAllDefaultRoleUw);
+		return 1;
+	}
+
+	@Override
+	public Role getOrgDefaultRole(String orgId) {
+		if(Stringer.isNullOrEmpty(orgId)){
+			return null;
+		}
+		LambdaQueryWrapper<Role> selectOrgDefaultRoleQw = new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId).eq(Role::getIsDefault, true);
+		return roleMapper.selectOne(selectOrgDefaultRoleQw);
+	}
+
+	@Override
+	public List<Role> getUserRoles(String userId) {
+		if(Stringer.isNullOrEmpty(userId)){
+			return null;
+		}
+
+		List<Integer> userRoleIds = this.getUserRoleIds(userId);
+		if(CollectionUtils.isEmpty(userRoleIds)){
+			return null;
+		}
+
+		List<Role> userRoles = new ArrayList<>();
+		//依次查询出该角色信息以及该角色对应的权限信息
+		userRoleIds.forEach(roleId -> {
+			userRoles.add(this.getRoleAndResourcesInfo(roleId));
+		});
+		return userRoles;
+	}
+
+	@Override
+	public List<Integer> getUserRoleIds(String userId) {
+		if(Stringer.isNullOrEmpty(userId)){
+			return null;
+		}
+		//构造出查询该用户拥有的所有角色id的条件表达式
+		LambdaQueryWrapper<RoleUser> selectUserAllRoleIdsQw = new QueryWrapper<RoleUser>().lambda()
+				.eq(RoleUser::getUId, userId).select(RoleUser::getRoleId);
+
+		//获取到该用户对应的角色信息 , 提取出id 并且返回
+		List<RoleUser> roles = roleUserService.list(selectUserAllRoleIdsQw);
+		if(CollectionUtils.isEmpty(roles)){
+			return new ArrayList<>();
+		} else {
+			return roles.stream().map(RoleUser::getRoleId).collect(Collectors.toList());
+		}
+	}
+
+	/**
+	 * 根据角色id获取到该角色信息以及角色下的权限信息
+	 * @param roleId 角色id
+	 * @return 角色和角色下的权限信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/6/4 15:54
+	 */
+	@Override
+	public Role getRoleAndResourcesInfo(Integer roleId) {
+		return roleMapper.selectRoleAndResrouceInfo(roleId);
 	}
 }

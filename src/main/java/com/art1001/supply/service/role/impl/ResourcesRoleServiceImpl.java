@@ -9,6 +9,7 @@ import com.art1001.supply.service.resource.ResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.Stringer;
 import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -121,20 +122,25 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
     @Override
     public Integer distributionRoleResource(Integer roleId, String resourceIds) {
         //构造出查询该角色在角色资源表中存不存在的查询表达式
-        LambdaQueryWrapper<ResourcesRole> resourceRoleCountQw = new QueryWrapper<ResourcesRole>().lambda().eq(ResourcesRole::getRoleId, roleId);
+        LambdaQueryWrapper<ResourcesRole> resourceRoleCountQw = new QueryWrapper<ResourcesRole>().lambda()
+                .eq(ResourcesRole::getRoleId, roleId);
+
         if (resourcesRoleMapper.selectCount(resourceRoleCountQw) > 0){
             //构造出更新角色权限的表达式
-            LambdaUpdateWrapper<ResourcesRole> updateRoleResourceUw = new UpdateWrapper<ResourcesRole>().lambda().eq(ResourcesRole::getRoleId, roleId);
+            LambdaUpdateWrapper<ResourcesRole> updateRoleResourceUw = new UpdateWrapper<ResourcesRole>().lambda()
+                    .eq(ResourcesRole::getRoleId, roleId);
             ResourcesRole resourcesRole = new ResourcesRole();
             resourcesRole.setResourceId(resourceIds);
-            return resourcesRoleMapper.update(resourcesRole,updateRoleResourceUw);
+            resourcesRoleMapper.update(resourcesRole,updateRoleResourceUw);
         } else {
-            //如果该角色没有分配过权限那么久新建一条资源和角色对应的记录
+            //如果该角色没有分配过权限那么就新建一条资源和角色对应的记录
             ResourcesRole resourcesRole = new ResourcesRole();
             resourcesRole.setRoleId(roleId);
             resourcesRole.setResourceId(resourceIds);
             resourcesRole.setCreateTime(LocalDateTime.now());
-            return resourcesRoleMapper.insert(resourcesRole);
+            resourcesRoleMapper.insert(resourcesRole);
         }
+        ShiroAuthenticationManager.clearUserAuth();
+        return 1;
     }
 }

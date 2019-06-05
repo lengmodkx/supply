@@ -42,5 +42,22 @@
 			ru.u_id = #{userId}
 	</select>
 
-
+	<!-- 根据角色id获取到该角色信息以及角色下的权限信息 -->
+	<select id="selectRoleAndResrouceInfo" resultMap="BaseResultMap">
+		SELECT
+			s_id,
+			s_source_key,
+			r.role_id,
+			r.role_name,
+			r.role_des,
+			r.role_key,
+			r.create_time,
+			r.role_status
+		FROM
+			sys_resources,
+			sys_role AS r
+		WHERE
+			FIND_IN_SET( s_id, ( SELECT s_id FROM sys_resources_role WHERE r_id = #{roleId} ) )
+			AND r.role_id = #{roleId}
+	</select>
 </mapper>

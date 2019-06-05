@@ -153,4 +153,19 @@ public class RoleApi {
         return object;
     }
 
+    /**
+     * 更新企业的默认角色
+     * @param orgId 企业id
+     * @param roleId 角色id
+     * @return 是否成功
+     */
+    @PutMapping("/{orgId}/{roleId}/org_default_role")
+    public JSONObject updateOrgDefaultRole(@NotEmpty(message = "orgId 不能为空!")@PathVariable String orgId,
+                                           @NotEmpty(message = "roleId不能为空!")@PathVariable String roleId){
+        JSONObject jsonObject = new JSONObject();
+        int result = roleService.updateOrgDefaultRole(orgId,roleId);
+        jsonObject.put("result", result);
+        return jsonObject;
+    }
+
 }

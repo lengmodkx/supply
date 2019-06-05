@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.WeChatLoginUtils;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.redis.RedisManager;
@@ -257,5 +258,17 @@ public class UserApi {
         //这里执行退出系统之前需要清理数据的操作
         // 注销登录
         ShiroAuthenticationManager.logout();
+    }
+
+    /**
+     * 微信登录
+     */
+    @PostMapping("chat_login")
+    public void weChatLogin(HttpServletResponse response){
+        try {
+            response.sendRedirect(WeChatLoginUtils.genUrl());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

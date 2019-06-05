@@ -14,4 +14,15 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return 角色权限信息
      */
     List<Role> selectUserRole(@Param("userId") String userId);
+
+    /**
+     * 根据角色id获取到该角色信息以及角色下的权限信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/4 16:03
+     * @return 角色以及角色资源信息
+     */
+    Role selectRoleAndResrouceInfo(@Param("roleId") Integer roleId);
 }

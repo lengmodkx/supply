@@ -2,9 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.recycle.RecycleBinService;
 import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatorUtils;
+import com.art1001.supply.validation.organization.SaveOrg;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
@@ -13,6 +17,7 @@ import javax.annotation.Resource;
  * @Date:2019/5/14 10:37
  * @Author heshaohua
  **/
+@Validated
 @RestController
 @RequestMapping("/recycle_bin")
 public class RecycleBinApi {
@@ -56,6 +61,12 @@ public class RecycleBinApi {
         } catch (Exception e){
             throw new AjaxException("系统异常,数据获取失败!",e);
         }
+    }
 
+    @PutMapping("/recovery")
+    public JSONObject recovery(RecycleParams recycleParams){
+        JSONObject jsonObject = new JSONObject();
+        ValidatorUtils.validateEntity(recycleParams);
+        return jsonObject;
     }
 }

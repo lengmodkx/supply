@@ -12,6 +12,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import lombok.val;
 import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

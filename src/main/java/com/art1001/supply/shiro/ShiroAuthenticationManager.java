@@ -8,6 +8,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,10 @@ public class ShiroAuthenticationManager {
 	 * 用户权限管理
 	 */
 	public static final MyDBRealm myDBRealm = SpringContextUtil.getBean("dbRealm", MyDBRealm.class);
+
+
+	public static final JWTShiroRealm jWTShiroRealm = SpringContextUtil.getBean("jwtRealm", JWTShiroRealm.class);
+
 	/*
 	 * 用户session管理
 	 */
@@ -134,7 +139,7 @@ public class ShiroAuthenticationManager {
 	 * @data 2017年1月5日 下午6:09:55
 	 */
 	public static void clearUserAuth(){
-		myDBRealm.clearCachedAuthorizationInfo();
+		jWTShiroRealm.clearCachedAuthorizationInfo();
 	}
 	
 	

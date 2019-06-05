@@ -6,6 +6,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
@@ -13,12 +14,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import org.apache.catalina.User;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,7 +36,6 @@ import java.util.stream.Collectors;
  * 自定义身份认证
  * 基于HMAC（ 散列消息认证码）的控制域
  */
-
 public class JWTShiroRealm extends AuthorizingRealm {
 
     private UserMapper userMapper;
@@ -43,12 +47,13 @@ public class JWTShiroRealm extends AuthorizingRealm {
         this.resourceMapper = resourceMapper;
     }
 
-    public void setRoleMapper(RoleMapper roleMapper) {
-        this.roleMapper = roleMapper;
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
     }
 
+    @Lazy
     @Resource
-    private RoleMapper roleMapper;
+    private RoleService roleService;
 
     @Resource
     public void setUserMapper(UserMapper userMapper) {
@@ -88,7 +93,7 @@ public class JWTShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         UserEntity userEntity = (UserEntity)principals.oneByType(UserEntity.class);
         //查询出该用户的所有角色以及权限信息
-        List<Role> roles = roleMapper.selectUserRole(userEntity.getUserId());
+        List<Role> roles = roleService.getUserRoles(userEntity.getUserId());
         //获取到用户角色key并且去重后的集合
         List<String> roleKeys = roles.stream().map(Role::getRoleKey).distinct().collect(Collectors.toList());
         simpleAuthorizationInfo.setRoles(new HashSet<>(roleKeys));
@@ -100,5 +105,15 @@ public class JWTShiroRealm extends AuthorizingRealm {
         });
         simpleAuthorizationInfo.setStringPermissions(new HashSet<>(resources));
         return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 清除当前用户权限信息
+     */
+    public void clearCachedAuthorizationInfo() {
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        SimplePrincipalCollection principals = new SimplePrincipalCollection(
+                principal, getName());
+        clearCachedAuthorizationInfo(principals);
     }
 }

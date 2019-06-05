@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
@@ -115,7 +116,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		}
 
 		//获取到该企业的拥有者角色id
-		int administratorRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), "administrator");
+		int administratorRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), Constants.OWNER_KEY);
 		if(administratorRoleId == -1){
 			return administratorRoleId;
 		}
@@ -127,6 +128,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		roleUserService.save(roleUser);
 		return 1;
 	}
+
 	/**
 	 * 获取所有organization数据
 	 * 

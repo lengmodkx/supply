@@ -1,6 +1,7 @@
 package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.ApiParamsCheckException;
 import com.art1001.supply.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -112,6 +113,15 @@ public class GlobalDefaultExceptionHandler {
 		}
 		return jsonObject;
 	}
+
+
+	@ExceptionHandler(ApiParamsCheckException.class)
+	public JSONObject paramsExceptionHandle(ApiParamsCheckException exception){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", 0);
+        jsonObject.put("msg", exception.getMessage());
+        return jsonObject;
+    }
 
 	/**
 	 * 记录授权失败异常

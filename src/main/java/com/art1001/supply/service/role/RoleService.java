@@ -3,6 +3,8 @@ import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 public interface RoleService extends IService<Role> {
     /**
      * 分页查询
@@ -36,6 +38,18 @@ public interface RoleService extends IService<Role> {
     int removeOrgRole(Integer roleId,String orgId);
 
     /**
+     * 获取orgId企业的默认角色信息
+     * 如果orgId为空则返回null
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @updateInfo 暂无
+     * @date 2019/6/3 15:29
+     * @return 角色信息
+     */
+    Role getOrgDefaultRole(String orgId);
+
+    /**
      * 保存企业默认初始化的角色信息
      * @author heShaoHua
      * @describe 暂无
@@ -57,4 +71,51 @@ public interface RoleService extends IService<Role> {
      * @return 角色id
      */
     Integer getOrgRoleIdByKey(String orgId, String roleKey);
+
+    /**
+     * 更新企业的默认角色
+     * @author heShaoHua
+     * @describe 暂无
+     * @param orgId 企业id
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/3 14:48
+     * @return 结果
+     */
+    Integer updateOrgDefaultRole(String orgId, String roleId);
+
+    /**
+     * 获取某个用户的所有角色信息(角色信息中还包括该角色对应的权限信息)
+     * @author heShaoHua
+     * @describe 暂无
+     * @param userId 用户id
+     * @updateInfo 暂无
+     * @date 2019/6/4 15:05
+     * @return 角色信息集合
+     */
+    List<Role> getUserRoles(String userId);
+
+    /**
+     * 获取某个用户的所有角色id集合
+     * 如果该用户没有对应的角色那么久返回 size 为 0 的空集合
+     * 如果userId为null 则返回null
+     * @author heShaoHua
+     * @describe 暂无
+     * @param userId 用户id
+     * @updateInfo 暂无
+     * @date 2019/6/4 15:38
+     * @return id集合
+     */
+    List<Integer> getUserRoleIds(String userId);
+
+    /**
+     * 根据角色id获取到该角色信息以及角色下的权限信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/4 15:54
+     * @return 角色和角色下的权限信息
+     */
+    Role getRoleAndResourcesInfo(Integer roleId);
 }
