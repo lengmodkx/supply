@@ -2,21 +2,24 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.user.WeChatLoginUtils;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.redis.RedisManager;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.*;
-import com.art1001.supply.util.crypto.AesEncryptUtil;
+import com.art1001.supply.util.EmailUtil;
+import com.art1001.supply.util.NumberUtils;
+import com.art1001.supply.util.RegexUtils;
+import com.art1001.supply.util.SendSmsUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +53,10 @@ public class UserApi {
 
     @Resource
     private RedisManager redisManager;
+
+    @Resource
+    private UserNewsService userNewsService;
+
     /**
      * 用户登陆
      * @param accountName 账户名称
@@ -270,5 +277,42 @@ public class UserApi {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 获取用户信息
+     */
+    @PostMapping("/getUserInfo/{userId}")
+    public  JSONObject  getUserInfo(@PathVariable String userId){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            jsonObject.put("data",userNewsService.findUserNewsById(userId));
+            jsonObject.put("msg","用户信息获取成功");
+            jsonObject.put("result","1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("msg","信息获取失败,请稍后再试");
+            jsonObject.put("result","0");
+        }
+        return  jsonObject;
+    }
+
+
+    /**
+     * 修改用户信息
+     */
+    @PostMapping("/updateUserInfo")
+    public  JSONObject  updateUserInfo(@RequestParam UserNews userNews){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            userNewsService.updateUserNews(userNews);
+           jsonObject.put("msg","用户信息修改成功");
+           jsonObject.put("result","1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("msg","信息修改失败,请稍后再试");
+            jsonObject.put("result","0");
+        }
+        return  jsonObject;
     }
 }
