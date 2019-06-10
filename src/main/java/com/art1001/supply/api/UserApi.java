@@ -2,7 +2,6 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.user.WeChatLoginUtils;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -286,7 +286,7 @@ public class UserApi {
     public  JSONObject  getUserInfo(@PathVariable String userId){
         JSONObject jsonObject=new JSONObject();
         try {
-            jsonObject.put("data",userNewsService.findUserNewsById(userId));
+            jsonObject.put("data",userService.findById(userId));
             jsonObject.put("msg","用户信息获取成功");
             jsonObject.put("result","1");
         } catch (Exception e) {
@@ -302,10 +302,33 @@ public class UserApi {
      * 修改用户信息
      */
     @PostMapping("/updateUserInfo")
-    public  JSONObject  updateUserInfo(@RequestParam UserNews userNews){
+    public  JSONObject  updateUserInfo(@RequestParam(value = "userId") String userId,
+                                       @RequestParam(value = "defaultImage") String defaultImage,
+                                       @RequestParam(value = "userName") String userName,
+                                       @RequestParam(value = "job") String job,
+                                       @RequestParam(value = "telephone") String telephone,
+                                       @RequestParam(value = "birthday") String birthday,
+                                       @RequestParam(value = "address") String address,
+                                       @RequestParam(value = "email") String email
+                                       ){
         JSONObject jsonObject=new JSONObject();
         try {
-            userNewsService.updateUserNews(userNews);
+
+            SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date birthDay = myFmt2.parse(birthday);
+
+
+            UserEntity userEntity=new UserEntity();
+            userEntity.setUserId(userId);
+            userEntity.setDefaultImage(defaultImage);
+            userEntity.setUserName(userName);
+            userEntity.setJob(job);
+            userEntity.setTelephone(telephone);
+            userEntity.setBirthday(birthDay);
+            userEntity.setAddress(address);
+            userEntity.setEmail(email);
+            userEntity.setUpdateTime(new Date());
+            userService.updateById(userEntity);
            jsonObject.put("msg","用户信息修改成功");
            jsonObject.put("result","1");
         } catch (Exception e) {
