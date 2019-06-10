@@ -282,7 +282,7 @@ public class UserApi {
     /**
      * 获取用户信息
      */
-    @PostMapping("/getUserInfo/{userId}")
+    @GetMapping("/getUserInfo/{userId}")
     public  JSONObject  getUserInfo(@PathVariable String userId){
         JSONObject jsonObject=new JSONObject();
         try {
