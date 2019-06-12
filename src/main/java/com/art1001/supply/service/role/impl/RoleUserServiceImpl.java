@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  * <p>
  * 用户角色映射表 服务实现类
@@ -18,4 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> implements RoleUserService {
 
+    @Resource
+    private RoleUserMapper roleUserMapper;
+
+    @Override
+    public List<Integer> getUserOrgRoleIds(String userId, String orgId) {
+        return roleUserMapper.selectUserOrgRoleIds(userId,orgId);
+    }
 }

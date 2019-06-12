@@ -3,6 +3,8 @@ package com.art1001.supply.service.role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户角色映射表 服务类
@@ -13,4 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface RoleUserService extends IService<RoleUser> {
 
+    /**
+     * 获取到该用户默认企业下拥有的角色
+     * @param userId 用户id
+     * @param orgId 企业id
+     * @return 用户id
+     */
+    List<Integer> getUserOrgRoleIds(String userId, String orgId);
 }

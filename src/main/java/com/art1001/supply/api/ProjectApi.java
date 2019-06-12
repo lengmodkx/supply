@@ -83,7 +83,7 @@ public class ProjectApi {
      * @param orgId 企业id
      * @return
      */
-    @RequiresPermissions("create:project")
+//    @RequiresPermissions("create:project")
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
                                     @RequestParam(value = "projectName") String projectName,
@@ -127,7 +127,7 @@ public class ProjectApi {
      * @param projectStatus 是否归档
      * @return json
      */
-    @RequiresPermissions("update:project")
+//    @RequiresPermissions("update:project")
     @PutMapping("/{projectId}")
     public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
                                     @RequestParam(value = "projectName", required = false) String projectName,
@@ -212,7 +212,7 @@ public class ProjectApi {
      * @param projectId 项目id
      * @return
      */
-    @RequiresPermissions("delete:project")
+//    @RequiresPermissions("delete:project")
     @DeleteMapping("/{projectId}")
     public JSONObject deleteProject(@PathVariable String projectId) {
         JSONObject object = new JSONObject();

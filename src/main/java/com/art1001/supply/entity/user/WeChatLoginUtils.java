@@ -2,6 +2,9 @@ package com.art1001.supply.entity.user;
 
 import com.art1001.supply.util.IdGen;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * @Description
  * @Date:2019/6/3 12:46
@@ -10,16 +13,23 @@ import com.art1001.supply.util.IdGen;
 public class WeChatLoginUtils {
 
     public static String genUrl(){
-        StringBuilder wechatUrl = new StringBuilder("https://open.weixin.qq.com/connect/qrconnect?appid=")
-                .append(ConstansWeChat.APPID)
-                .append("&redirect_uri")
-                .append(ConstansWeChat.REDIRECT_URI)
-                .append("&response_type=code")
-                .append("&response_type=")
-                .append(ConstansWeChat.SCOPE)
-                .append("state=")
-                .append(IdGen.uuid())
-                .append("#wechat_redirect");
-        return wechatUrl.toString();
+        try {
+            String encode = URLEncoder.encode("http://192.168.1.101:8086", "utf-8");
+            StringBuilder wechatUrl = new StringBuilder("https://open.weixin.qq.com/connect/qrconnect?appid=")
+                    .append(ConstansWeChat.APPID)
+                    .append("&redirect_uri=")
+                    .append(encode)
+                    .append("&response_type=code")
+                    .append("&scope=")
+                    .append(ConstansWeChat.SCOPE)
+                    .append("&state=")
+                    .append(IdGen.uuid())
+                    .append("#wechat_redirect");
+            return wechatUrl.toString();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+        //wxb7b91f87460a9d90
     }
 }

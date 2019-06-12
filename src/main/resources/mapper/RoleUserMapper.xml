@@ -10,4 +10,17 @@
         <result column="t_create_time" property="tCreateTime" />
     </resultMap>
 
+
+    <!-- 获取到该用户默认企业下拥有的角色 -->
+    <select id="selectUserOrgRoleIds" resultType="java.lang.Integer">
+        SELECT
+            r.role_id
+        FROM
+            sys_role AS r
+            LEFT JOIN sys_role_user AS ru ON r.role_id = ru.role_id
+        WHERE
+            r.organization_id = #{orgId}
+            AND ru.u_id = #{userId}
+    </select>
+
 </mapper>

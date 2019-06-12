@@ -204,12 +204,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	}
 
 	@Override
-	public List<Role> getUserRoles(String userId) {
-		if(Stringer.isNullOrEmpty(userId)){
+	public List<Role> getUserOrgRoles(String userId, String orgId) {
+		if(Stringer.isNullOrEmpty(userId) || Stringer.isNullOrEmpty(orgId)){
 			return null;
 		}
 
-		List<Integer> userRoleIds = this.getUserRoleIds(userId);
+		List<Integer> userRoleIds = this.getUserOrgRoleIds(userId,orgId);
 		if(CollectionUtils.isEmpty(userRoleIds)){
 			return null;
 		}
@@ -223,20 +223,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	}
 
 	@Override
-	public List<Integer> getUserRoleIds(String userId) {
+	public List<Integer> getUserOrgRoleIds(String userId, String orgId) {
 		if(Stringer.isNullOrEmpty(userId)){
 			return null;
 		}
-		//构造出查询该用户拥有的所有角色id的条件表达式
-		LambdaQueryWrapper<RoleUser> selectUserAllRoleIdsQw = new QueryWrapper<RoleUser>().lambda()
-				.eq(RoleUser::getUId, userId).select(RoleUser::getRoleId);
-
-		//获取到该用户对应的角色信息 , 提取出id 并且返回
-		List<RoleUser> roles = roleUserService.list(selectUserAllRoleIdsQw);
+		List<Integer> roles = roleUserService.getUserOrgRoleIds(userId,orgId);
 		if(CollectionUtils.isEmpty(roles)){
 			return new ArrayList<>();
 		} else {
-			return roles.stream().map(RoleUser::getRoleId).collect(Collectors.toList());
+			return roles;
 		}
 	}
 

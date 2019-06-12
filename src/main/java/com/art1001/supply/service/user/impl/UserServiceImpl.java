@@ -3,16 +3,20 @@ package com.art1001.supply.service.user.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.util.AliyunOss;
-import com.art1001.supply.util.EmailUtil;
-import com.art1001.supply.util.ImageUtil;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.*;
+import com.art1001.supply.util.crypto.EndecryptUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,5 +134,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         List<UserEntity> projectMembers = userMapper.selectProjectMembers(projectId);
         //List<UserEntity> after = projectMembers.stream().filter(itme -> !itme.getUserId().equals(ShiroAuthenticationManager.getUserId())).collect(Collectors.toList());
         return projectMembers;
+    }
+
+    @Override
+    public UserEntity saveWeChatUserInfo(WeChatUser snsUserInfo) {
+        UserEntity userEntity = new UserEntity();
+        if(!this.checkUserIsExist(snsUserInfo.getOpenId())){
+            userEntity.setUserName(snsUserInfo.getNickname());
+            userEntity.setPassword("123456");
+            userEntity.setAccountName(snsUserInfo.getOpenId());
+            UserEntity md5UserEntity = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
+            userEntity.setCredentialsSalt(md5UserEntity.getCredentialsSalt());
+            userEntity.setPassword(md5UserEntity.getPassword());
+            userEntity.setUpdateTime(new Date());
+            userEntity.setCreateTime(new Date());
+            userEntity.setAddress(snsUserInfo.getCity());
+            userEntity.setUserId(snsUserInfo.getOpenId());
+            userEntity.setSex(snsUserInfo.getSex());
+            userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
+            userMapper.insert(userEntity);
+        } else {
+            userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,snsUserInfo.getOpenId()));
+        }
+        return userEntity;
+    }
+
+    @Override
+    public Boolean checkUserIsExist(String accountName) {
+        if(Stringer.isNullOrEmpty(accountName)){
+            return false;
+        }
+        //构造出查询用户是否存在的条件表达式
+        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountName);
+        return userMapper.selectCount(selectUserIsExistQw) > 0;
     }
 }

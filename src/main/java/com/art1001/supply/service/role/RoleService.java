@@ -85,15 +85,16 @@ public interface RoleService extends IService<Role> {
     Integer updateOrgDefaultRole(String orgId, String roleId);
 
     /**
-     * 获取某个用户的所有角色信息(角色信息中还包括该角色对应的权限信息)
+     * 获取某个用户的默认企业所有角色信息(角色信息中还包括该角色对应的权限信息)
      * @author heShaoHua
      * @describe 暂无
      * @param userId 用户id
+     * @param orgId 企业id
      * @updateInfo 暂无
      * @date 2019/6/4 15:05
      * @return 角色信息集合
      */
-    List<Role> getUserRoles(String userId);
+    List<Role> getUserOrgRoles(String userId, String orgId);
 
     /**
      * 获取某个用户的所有角色id集合
@@ -106,7 +107,7 @@ public interface RoleService extends IService<Role> {
      * @date 2019/6/4 15:38
      * @return id集合
      */
-    List<Integer> getUserRoleIds(String userId);
+    List<Integer> getUserOrgRoleIds(String userId, String orgId);
 
     /**
      * 根据角色id获取到该角色信息以及角色下的权限信息
