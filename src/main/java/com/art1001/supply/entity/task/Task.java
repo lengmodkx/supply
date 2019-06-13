@@ -1,19 +1,15 @@
 package com.art1001.supply.entity.task;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
-import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
