@@ -10,7 +10,10 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.EmailUtil;
+import com.art1001.supply.util.NumberUtils;
+import com.art1001.supply.util.RegexUtils;
+import com.art1001.supply.util.SendSmsUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +43,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户
@@ -467,6 +469,7 @@ public class UserApi {
             UserEntity userEntity=new UserEntity();
             userEntity.setUserId(userId);
             userEntity.setDefaultImage(defaultImage);
+            userEntity.setImage(defaultImage);
             userEntity.setUserName(userName);
             userEntity.setJob(job);
             userEntity.setTelephone(telephone);

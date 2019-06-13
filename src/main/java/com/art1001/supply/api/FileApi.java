@@ -12,6 +12,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileRepository;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -33,6 +34,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -104,8 +106,11 @@ public class FileApi extends BaseController {
     @Resource
     private TagService tagService;
 
-  /*  @Autowired
-    private ItemRepository itemRepository;*/
+    /**
+     * ElasticSearch 查询接口
+     */
+    @Autowired
+    private FileRepository fileRepository;
     /**
      * 加载项目下文件列表数据
      * @param fileId 文件id
@@ -117,13 +122,6 @@ public class FileApi extends BaseController {
         try {
 
             List<File> fileList = fileService.findChildFile(fileId);
-           /* for (File o:fileList
-                 ) {
-                System.out.print("保存的数据是：：："+o);
-                itemRepository.save(o);
-
-            }*/
-            //SearchRequestBuilder s=new
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
@@ -1090,6 +1088,8 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
+
+
 
 
 

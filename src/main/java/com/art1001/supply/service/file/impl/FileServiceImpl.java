@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FileApiBean;
-import com.art1001.supply.entity.file.FileTreeShowVO;
-import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
@@ -30,6 +27,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +63,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Resource
     private TagRelationMapper tagRelationMapper;
 
+    /**
+     * ElasticSearch 查询接口
+     */
+    @Autowired
+    private FileRepository fileRepository;
+
 
     /**
      * 公共模型库 常量定义信息
@@ -81,7 +85,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public File findFileById(String id) {
-        return fileMapper.findFileById(id);
+       /* //从elasticSearch查询数据
+        Optional<File> fileById = fileRepository.findById(id);
+        if (Stringer.isNotNullOrEmpty(fileById.get())){
+            return fileById.get();
+        }else{*/
+            return fileMapper.findFileById(id);
+        /*}*/
     }
 
     /**
@@ -93,6 +103,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public void deleteFileById(String fileId) {
         //删除文件
         removeById(fileId);
+        //删除elasticSearch
+        fileRepository.deleteById(fileId);
         //删除文件版本信息
         fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id",fileId));
     }
@@ -131,6 +143,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             myFile.setCreateTime(System.currentTimeMillis());
             myFile.setUpdateTime(System.currentTimeMillis());
             save(myFile);
+            //保存到ElasticSearch
+            fileRepository.save(myFile);
         }
     }
 
@@ -165,6 +179,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             modelFile.setPublicLable(1);
         }
         fileService.save(modelFile);
+        fileRepository.save(modelFile);
         //版本历史更新
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(modelFile.getFileId());
@@ -202,6 +217,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setCatalog(1);
         // 设置是否目录
         save(file);
+        //保存到ElasticSearch
+        fileRepository.save(file);
         return projectFile.getFileId();
     }
 
@@ -223,6 +240,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setCatalog(1);
         file.setFilePrivacy(1);
         save(file);
+        //保存到ElasticSearch
+        fileRepository.save(file);
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
@@ -271,6 +290,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         map.put("fileIds", fileIds);
         map.put("folderId", folderId);
         fileMapper.moveFile(map);
+        //将更改保存到elasticSearch
+        if (Stringer.isNotNullOrEmpty(fileIds)){
+            File file=new File();
+            for(int i = 0; i < fileIds.length;i++){
+               file.setFileId(fileIds[i]);
+               file.setParentId(folderId);
+               fileRepository.save(file);
+            }
+        }
     }
 
     /**
@@ -362,6 +390,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
             updateById(file);
+            fileRepository.save(file);
             logService.saveLog(fileId,logContent.toString(),2);
         }
     }
@@ -498,6 +527,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                     myFile.setPublicLable(1);
                 }
                 fileList.add(myFile);
+                fileRepository.save(myFile);
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
                 fileVersion.setIsMaster(1);

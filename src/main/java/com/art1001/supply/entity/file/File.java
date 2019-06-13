@@ -12,7 +12,10 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,17 +27,14 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("prm_file")
-//@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
+@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
 public class File extends Model<File> {
 
     private static final long serialVersionUID = 1L;
 
-   /* @Id
-    private Long id= 111L;
-*/
 
 
-
+    @Id
     @TableId(value = "file_id",type = IdType.UUID)
     private String fileId;
 
@@ -42,40 +42,46 @@ public class File extends Model<File> {
     /**
      * 文件名
      */
-    //@Field(type = FieldType.text, analyzer = "ik_max_word")
+    @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
     private String fileName;
 
     /**
      * 文件后缀名
      */
+    @Field(type = FieldType.text)
     private String ext;
 
 
     /**
      * 文件路径
      */
+    @Field(type = FieldType.text)
     private String fileUrl;
 
 
     /**
      * 关联的项目id
      */
+    @Field(type = FieldType.text)
     private String projectId;
 
     /**
      * 创建者
      */
+    @Field(type = FieldType.text)
     private String memberId;
 
 
     /**
      * 创建者姓名
      */
+    @Field(type = FieldType.text)
     private String memberName;
 
     /**
      * 创建者头像
      */
+    @Field(type = FieldType.text)
     private String memberImg;
 
     /**
@@ -86,12 +92,14 @@ public class File extends Model<File> {
     /**
      * 文件大小
      */
+    @Field(type = FieldType.text)
     private String size;
 
 
     /**
      * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
+    @Field(type = FieldType.text)
     private String parentId;
 
     /**
