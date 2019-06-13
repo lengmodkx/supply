@@ -262,11 +262,18 @@ public interface TaskService extends IService<Task> {
 	List<Task> findTaskByFatherTask(String taskId);
 
 	/**
-	 * 恢复任务的功能
-	 * @param taskId 任务的id
-	 * @param menuId 恢复后放到哪个菜单
+	 * 恢复任务
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param taskId 任务id
+	 * @param projectId 项目id
+	 * @param groupId 分组id
+	 * @param menuId 菜单id
+	 * @updateInfo 暂无
+	 * @date 2019/6/5 11:09
+	 * @return 结果
 	 */
-	void recoveryTask(String taskId, String menuId);
+	Integer recoveryTask(String taskId, String projectId, String groupId, String menuId);
 
 	/**
 	 * 查询此任务的关联

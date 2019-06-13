@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -42,4 +43,23 @@ public interface UserService extends IService<UserEntity> {
 	 * @return
 	 */
     List<UserEntity> getProjectMembers(String projectId);
+
+	/**
+	 * 注册微信用户到数据库
+	 * @param snsUserInfo
+	 * @return
+	 */
+	UserEntity saveWeChatUserInfo(WeChatUser snsUserInfo);
+
+	/**
+	 * 根据用户名查询该用户存不存在
+	 * 如果accountName为空,返回false
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param accountName 登录用户名
+	 * @updateInfo 暂无
+	 * @date 2019/6/11 11:01
+	 * @return 结果
+	 */
+	Boolean checkUserIsExist(String accountName);
 }

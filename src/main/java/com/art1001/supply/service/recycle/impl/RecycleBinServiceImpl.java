@@ -2,6 +2,7 @@ package com.art1001.supply.service.recycle.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.recycle.RecycleBinService;
@@ -62,7 +63,6 @@ public class RecycleBinServiceImpl implements RecycleBinService {
 
     /**
      * 获取项目中回收站的指定类型的信息
-     *
      * @param projectId 项目id
      * @param type 类型
      * @param fileType 0:文件 1:文件夹
@@ -86,5 +86,25 @@ public class RecycleBinServiceImpl implements RecycleBinService {
             return tagService.findRecycleBin(projectId);
         }
         return fileService.findRecycleBin(projectId, fileType);
+    }
+
+    @Override
+    public Integer recovery(RecycleParams recycleParams) {
+        if(Constants.TASK_EN.equals(recycleParams.getPublicType())){
+            taskService.recoveryTask(recycleParams.getPublicId(),
+                    recycleParams.getProjectId(),
+                    recycleParams.getGroupId(),
+                    recycleParams.getMenuId());
+        }
+        if(Constants.FILE_EN.equals(recycleParams.getPublicType())){
+            fileService.recoveryFile(recycleParams.getPublicId());
+        }
+        if(Constants.SHARE_EN.equals(recycleParams.getPublicType())){
+            shareService.recoveryShare(recycleParams.getPublicId());
+        }
+        if(Constants.SCHEDULE_EN.equals(recycleParams.getPublicType())){
+            scheduleService.recoverySchedule(recycleParams.getPublicId());
+        }
+        return 1;
     }
 }

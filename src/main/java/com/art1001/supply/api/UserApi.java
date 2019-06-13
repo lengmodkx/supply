@@ -1,22 +1,33 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.WeChatLoginUtils;
+import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.redis.RedisManager;
+import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.*;
-import com.art1001.supply.util.crypto.AesEncryptUtil;
+import com.art1001.supply.util.EmailUtil;
+import com.art1001.supply.util.NumberUtils;
+import com.art1001.supply.util.RegexUtils;
+import com.art1001.supply.util.SendSmsUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +38,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户
@@ -50,6 +65,10 @@ public class UserApi {
 
     @Resource
     private RedisManager redisManager;
+
+    @Resource
+    private UserNewsService userNewsService;
+
     /**
      * 用户登陆
      * @param accountName 账户名称
@@ -59,7 +78,7 @@ public class UserApi {
     @PostMapping("/login")
      public JSONObject login(@RequestParam String accountName,
                              @RequestParam String password,
-                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
+                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe,HttpServletRequest request){
          JSONObject object = new JSONObject();
          try {
              Subject subject = SecurityUtils.getSubject();
@@ -263,12 +282,209 @@ public class UserApi {
     /**
      * 微信登录
      */
-    @PostMapping("chat_login")
-    public void weChatLogin(HttpServletResponse response){
+    @GetMapping("wechat_code")
+    public JSONObject weChatLogin(HttpServletResponse response){
         try {
-            response.sendRedirect(WeChatLoginUtils.genUrl());
-        } catch (IOException e) {
-            e.printStackTrace();
+            JSONObject object = new JSONObject();
+            object.put("url", WeChatLoginUtils.genUrl());
+            object.put("result", 1);
+            return object;
+        } catch (Exception e) {
+            throw new AjaxException(e);
         }
+    }
+
+    @RequestMapping("wechat_token")
+    public JSONObject getWeChatToken(HttpServletRequest request, HttpServletResponse response,@RequestParam String code){
+        JSONObject jsonObject = new JSONObject();
+        log.info(code);
+        Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
+        WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
+        UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
+        if(null != userEntity){
+            String requestUrl = "http://192.168.1.101:8080/login";
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            HttpPost httpPost = new HttpPost(requestUrl);
+            List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
+            BasicNameValuePair acc = new BasicNameValuePair("accountName", userEntity.getAccountName());
+            BasicNameValuePair pwd = new BasicNameValuePair("password", "123456");
+            nameValuePairs.add(acc);
+            nameValuePairs.add(pwd);
+            try {
+                UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairs,"utf-8");
+                httpPost.setEntity(urlEncodedFormEntity);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            CloseableHttpResponse execute = null;
+            try {
+                execute = httpClient.execute(httpPost);
+                HttpEntity entity = execute.getEntity();
+                jsonObject = JSONObject.parseObject(EntityUtils.toString(entity));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取网页授权凭证
+     * @param appId 公众账号的唯一标识
+     * @param appSecret 公众账号的密钥
+     * @param code
+     * @return WeixinAouth2Token
+     */
+     public static Oauth2Token getOauth2AccessToken(String appId, String appSecret, String code) {
+        Oauth2Token wat = null;
+        // 拼接请求地址
+        String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+        requestUrl = requestUrl.replace("APPID", appId);
+        requestUrl = requestUrl.replace("SECRET", appSecret);
+        requestUrl = requestUrl.replace("CODE", code);
+       // 获取网页授权凭证
+         JSONObject jsonObject = null;
+         try {
+             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+             HttpGet httpGet = new HttpGet(requestUrl);
+             CloseableHttpResponse execute = httpClient.execute(httpGet);
+             HttpEntity entity = execute.getEntity();
+             jsonObject = JSONObject.parseObject(EntityUtils.toString(entity));
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         if (null != jsonObject) {
+             try {
+                 wat = new Oauth2Token();
+                 wat.setAccessToken(jsonObject.getString("access_token"));
+                 wat.setExpiresIn(jsonObject.getInteger("expires_in"));
+                 wat.setRefreshToken(jsonObject.getString("refresh_token"));
+                 wat.setOpenId(jsonObject.getString("openid"));
+                 wat.setScope(jsonObject.getString("scope"));
+              } catch (Exception e) {
+                  wat = null;
+                  int errorCode = jsonObject.getInteger("errcode");
+                  String errorMsg = jsonObject.getString("errmsg");
+                  log.error("获取网页授权凭证失败 errcode:{} errmsg:{}", errorCode, errorMsg);
+              }
+         }
+         return wat;
+     }
+
+      /**
+        * 通过网页授权获取用户信息
+        *
+        * @param accessToken 网页授权接口调用凭证
+        * @param openId 用户标识
+        * @return SNSUserInfo
+        */
+     public static WeChatUser getSNSUserInfo(String accessToken, String openId) {
+         WeChatUser snsUserInfo = null;
+         // 拼接请求地址
+         String requestUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID";
+         requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+         // 通过网页授权获取用户信息
+         JSONObject jsonObject = null;
+         try {
+             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+             HttpGet httpGet = new HttpGet(requestUrl);
+             CloseableHttpResponse execute = null;
+             execute = httpClient.execute(httpGet);
+             HttpEntity entity = execute.getEntity();
+             jsonObject = JSONObject.parseObject(new String(EntityUtils.toString(entity).getBytes(),"utf-8"));
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         if (null != jsonObject) {
+             try {
+                 snsUserInfo = new WeChatUser();
+                 // 用户的标识
+                 snsUserInfo.setOpenId(jsonObject.getString("openid"));
+                 // 昵称
+                 snsUserInfo.setNickname(new String(jsonObject.getString("nickname").getBytes("ISO-8859-1"),"utf-8"));
+                 // 性别（1是男性，2是女性，0是未知）
+                 snsUserInfo.setSex(jsonObject.getInteger("sex"));
+                 // 用户所在国家
+                 snsUserInfo.setCountry(jsonObject.getString("country"));
+                 // 用户所在省份
+                 snsUserInfo.setProvince(jsonObject.getString("province"));
+                 // 用户所在城市
+                 snsUserInfo.setCity(jsonObject.getString("city"));
+                 // 用户头像
+                 snsUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
+                 // 用户特权信息
+                 List<String> list = JSON.parseArray(jsonObject.getString("privilege"),String.class);
+                 snsUserInfo.setPrivilegeList(list);
+                 //与开放平台共用的唯一标识，只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
+                 snsUserInfo.setUnionid(jsonObject.getString("unionid"));
+             } catch (Exception e) {
+                 snsUserInfo = null;
+                 int errorCode = jsonObject.getInteger("errcode");
+                String errorMsg = jsonObject.getString("errmsg");
+                log.error("获取用户信息失败 errcode:{} errmsg:{}", errorCode, errorMsg);
+             }
+         }
+         return snsUserInfo;
+     }
+
+    /**
+     * 获取用户信息
+     */
+    @GetMapping("/getUserInfo/{userId}")
+    public  JSONObject  getUserInfo(@PathVariable String userId){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            jsonObject.put("data",userService.findById(userId));
+            jsonObject.put("msg","用户信息获取成功");
+            jsonObject.put("result","1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("msg","信息获取失败,请稍后再试");
+            jsonObject.put("result","0");
+        }
+        return  jsonObject;
+    }
+
+
+    /**
+     * 修改用户信息
+     */
+    @PostMapping("/updateUserInfo")
+    public  JSONObject  updateUserInfo(@RequestParam(value = "userId") String userId,
+                                       @RequestParam(value = "defaultImage") String defaultImage,
+                                       @RequestParam(value = "userName") String userName,
+                                       @RequestParam(value = "job") String job,
+                                       @RequestParam(value = "telephone") String telephone,
+                                       @RequestParam(value = "birthday") String birthday,
+                                       @RequestParam(value = "address") String address,
+                                       @RequestParam(value = "email") String email
+                                       ){
+        JSONObject jsonObject=new JSONObject();
+        try {
+
+            SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date birthDay = myFmt2.parse(birthday);
+
+
+            UserEntity userEntity=new UserEntity();
+            userEntity.setUserId(userId);
+            userEntity.setDefaultImage(defaultImage);
+            userEntity.setImage(defaultImage);
+            userEntity.setUserName(userName);
+            userEntity.setJob(job);
+            userEntity.setTelephone(telephone);
+            userEntity.setBirthday(birthDay);
+            userEntity.setAddress(address);
+            userEntity.setEmail(email);
+            userEntity.setUpdateTime(new Date());
+            userService.updateById(userEntity);
+           jsonObject.put("msg","用户信息修改成功");
+           jsonObject.put("result","1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("msg","信息修改失败,请稍后再试");
+            jsonObject.put("result","0");
+        }
+        return  jsonObject;
     }
 }

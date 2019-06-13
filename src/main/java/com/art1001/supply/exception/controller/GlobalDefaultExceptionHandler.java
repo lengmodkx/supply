@@ -116,6 +116,7 @@ public class GlobalDefaultExceptionHandler {
 
 
 	@ExceptionHandler(ApiParamsCheckException.class)
+    @ResponseBody
 	public JSONObject paramsExceptionHandle(ApiParamsCheckException exception){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 0);

@@ -5,6 +5,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.recycle.RecycleBinService;
+import com.art1001.supply.util.BeanPropertiesUtil;
 import com.art1001.supply.util.Stringer;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
@@ -63,10 +64,23 @@ public class RecycleBinApi {
         }
     }
 
+    /**
+     * 恢复回收站中的内容
+     * @param recycleParams 参数对象
+     * @return 结果
+     */
     @PutMapping("/recovery")
     public JSONObject recovery(RecycleParams recycleParams){
         JSONObject jsonObject = new JSONObject();
         ValidatorUtils.validateEntity(recycleParams);
+        if(Constants.TASK_EN.equals(recycleParams.getPublicType())){
+            try {
+                BeanPropertiesUtil.fieldsNotNullOrEmpty(recycleParams, new String[]{"projectId","groupId","menuId"});
+            } catch (IllegalAccessException e) {
+                throw new AjaxException("系统异常!",e);
+            }
+        }
+        jsonObject.put("result", recycleBinService.recovery(recycleParams));
         return jsonObject;
     }
 }

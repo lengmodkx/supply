@@ -1,17 +1,23 @@
 package com.art1001.supply.shiro;
 
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.resource.ResourceMapper;
 import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
+import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -36,12 +42,16 @@ import java.util.stream.Collectors;
  * 自定义身份认证
  * 基于HMAC（ 散列消息认证码）的控制域
  */
+@Slf4j
 public class JWTShiroRealm extends AuthorizingRealm {
 
     private UserMapper userMapper;
 
     @Resource
     private ResourceMapper resourceMapper;
+
+    @Resource
+    private OrganizationMemberMapper organizationMemberMapper;
 
     public void setResourceMapper(ResourceMapper resourceMapper) {
         this.resourceMapper = resourceMapper;
@@ -92,8 +102,14 @@ public class JWTShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         UserEntity userEntity = (UserEntity)principals.oneByType(UserEntity.class);
+        LambdaQueryWrapper<OrganizationMember> eq = new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, userEntity.getUserId()).eq(OrganizationMember::getUserDefault, 1);
+        String organizationId = organizationMemberMapper.selectOne(eq).getOrganizationId();
+        if(Stringer.isNullOrEmpty(organizationId)){
+            log.error("用户:" + userEntity.getUserId() + "默认企业为空");
+            throw new NullPointerException("用户:"  + userEntity.getUserId() + "/n默认企业为空!");
+        }
         //查询出该用户的所有角色以及权限信息
-        List<Role> roles = roleService.getUserRoles(userEntity.getUserId());
+        List<Role> roles = roleService.getUserOrgRoles(userEntity.getUserId(),organizationId);
         //获取到用户角色key并且去重后的集合
         List<String> roleKeys = roles.stream().map(Role::getRoleKey).distinct().collect(Collectors.toList());
         simpleAuthorizationInfo.setRoles(new HashSet<>(roleKeys));
