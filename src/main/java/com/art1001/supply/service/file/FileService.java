@@ -305,4 +305,12 @@ import java.util.List;
 	 * @Param projectId  项目id
 	 * */
 	File findFileTier(String projectId);
+
+	/**
+	 * 从搜索引擎来获取文件信息
+	 * @param fileName 文件名称
+	 * @param projectId 项目id
+	 * @return 文件信息集合
+	 */
+	List<File> searchFile(String fileName, String projectId);
 }

@@ -25,9 +25,13 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -430,6 +434,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public Integer recoveryFile(String fileId) {
+
         String projectId = fileMapper.selectOne(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId).select(File::getProjectId)).getProjectId();
         String parentId = this.findParentId(projectId);
         fileMapper.recoveryFile(fileId,parentId,System.currentTimeMillis());
@@ -890,4 +895,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         }
     }
 
+    @Override
+    public List<File> searchFile(String fileName, String projectId) {
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
+                .withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
+                .withFilter(QueryBuilders.termQuery("projectId", projectId)).build();
+        Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+        return Lists.newArrayList(byFileNameOrTagNameFiles);
+    }
 }
