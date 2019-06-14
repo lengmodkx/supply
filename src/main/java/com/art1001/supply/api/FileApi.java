@@ -34,12 +34,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -59,6 +64,7 @@ import java.util.stream.Collectors;
  * @date 2018/9/17 14:34
  **/
 @Slf4j
+@Validated
 @RequestMapping("files")
 @RestController
 public class FileApi extends BaseController {
@@ -111,6 +117,7 @@ public class FileApi extends BaseController {
      */
     @Autowired
     private FileRepository fileRepository;
+
     /**
      * 加载项目下文件列表数据
      * @param fileId 文件id
@@ -1089,8 +1096,11 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
-
-
-
-
+    @GetMapping("/{fileName}/search_file")
+    public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName, @RequestParam @NotBlank(message = "projectId不能为空!") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",1);
+        jsonObject.put("data", fileService.searchFile(fileName,projectId));
+        return jsonObject;
+    }
 }
