@@ -897,7 +897,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public List<File> searchFile(String fileName, String projectId) {
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName")).withFilter(QueryBuilders.termQuery("projectId", projectId)).build();
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
+                .withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
+                .withFilter(QueryBuilders.termQuery("projectId", projectId)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
