@@ -434,6 +434,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public Integer recoveryFile(String fileId) {
+
         String projectId = fileMapper.selectOne(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId).select(File::getProjectId)).getProjectId();
         String parentId = this.findParentId(projectId);
         fileMapper.recoveryFile(fileId,parentId,System.currentTimeMillis());
