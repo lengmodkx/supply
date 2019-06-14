@@ -302,7 +302,7 @@ public class UserApi {
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
         if(null != userEntity){
-            String requestUrl = "https://www.aldbim.com/login";
+            String requestUrl = "http://47.93.237.225/login";
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(requestUrl);
             List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
