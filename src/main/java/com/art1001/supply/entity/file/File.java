@@ -45,6 +45,14 @@ public class File extends Model<File> {
     @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
     private String fileName;
 
+
+    /**
+     * 以逗号分隔的标签名
+     */
+    @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
+    private String tagsName;
+
+
     /**
      * 文件后缀名
      */
