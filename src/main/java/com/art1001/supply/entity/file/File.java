@@ -49,6 +49,7 @@ public class File extends Model<File> {
     /**
      * 以逗号分隔的标签名
      */
+    @TableField(exist = false)
     @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
     private String tagsName;
 
