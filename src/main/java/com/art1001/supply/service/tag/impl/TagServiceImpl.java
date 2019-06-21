@@ -3,9 +3,10 @@ package com.art1001.supply.service.tag.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileRepository;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
@@ -21,6 +22,7 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * tagServiceImpl
@@ -56,6 +59,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
 	@Resource
 	private ScheduleService scheduleServcie;
+
+    /**
+     * ElasticSearch 查询接口
+     */
+    @Autowired
+    private FileRepository fileRepository;
 
 
 	/**
@@ -270,7 +279,15 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 			tr.setTaskId(publicId);
 		}
 		if(Constants.FILE.equals(publicType)){
-			tr.setFileId(publicId);
+            Optional<File> file = fileRepository.findById(publicId);
+            if (Stringer.isNullOrEmpty(file.get().getTagsName())){
+                file.get().setTagsName(tag.getTagName());
+            }else {
+                file.get().setTagsName(file.get().getTagsName()+","+tag.getTagName());
+            }
+            fileRepository.save(file.get());
+
+            tr.setFileId(publicId);
 		}if(Constants.SHARE.equals(publicType)){
 			tr.setShareId(publicId);
 		}

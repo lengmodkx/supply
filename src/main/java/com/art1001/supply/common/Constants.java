@@ -60,4 +60,7 @@ public class Constants {
     public static final String OWNER_KEY = "administrator";
     public static final String ADMIN_KEY = "admin";
     public static final String MEMBER_KEY = "member";
+
+    //redis资源前缀
+    public static final String PRO_SOURCES_PREFIX = "proResources::";
 }

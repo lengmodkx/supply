@@ -71,7 +71,7 @@ public class MemberInvitationApi {
      * @param memberId 用户id
      * @return
      */
-    //@RequiresPermissions("create:member")
+    @RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
@@ -82,20 +82,7 @@ public class MemberInvitationApi {
                 object.put("msg","项目成员已存在，请勿重复添加");
                 return  object;
             }
-
-            //查询出当前项目的默认分组
-            String groupId = projectService.findDefaultGroup(projectId);
-            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","成员"));
-            ProjectMember member = new ProjectMember();
-            member.setDefaultGroup(groupId);
-            member.setProjectId(projectId);
-            member.setMemberId(memberId);
-            member.setRoleId(roleEntity.getRoleId());
-            member.setCreateTime(System.currentTimeMillis());
-            member.setUpdateTime(System.currentTimeMillis());
-            member.setMemberLabel(0);
-            projectMemberService.save(member);
-            object.put("result",1);
+            object.put("result",projectMemberService.saveMember(projectId,memberId));
             object.put("msg","添加成功");
         }catch(Exception e){
             log.error("系统异常,成员添加失败:",e);

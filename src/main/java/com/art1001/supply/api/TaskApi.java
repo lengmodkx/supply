@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
@@ -95,6 +96,7 @@ public class TaskApi extends BaseController {
      * 创建任务
      * @return object
      */
+    @ProAuthentization("create:task")
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping

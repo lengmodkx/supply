@@ -3,8 +3,10 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -19,10 +21,12 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +68,13 @@ public class ProjectApi {
     private UserService userService;
 
     @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
     private OrganizationService organizationService;
+
+    @Resource
+    private ProResourcesService proResourcesService;
 
     @Resource
     private OrganizationMemberService organizationMemberService;
@@ -81,9 +91,9 @@ public class ProjectApi {
      * @param projectName 项目名称
      * @param projectDes  项目描述
      * @param orgId 企业id
-     * @return
+     * @return 是否成功
      */
-//    @RequiresPermissions("create:project")
+    @RequiresPermissions("create:project")
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
                                     @RequestParam(value = "projectName") String projectName,
@@ -92,15 +102,12 @@ public class ProjectApi {
                                     @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
         try {
-//            if(organizationMemberService.userOrgCount() <= 0){
-//                object.put("result", 0);
-//                object.put("msg","必须加入企业才能创建项目!" );
-//                return object;
-//            }
             Project project = new Project();
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
             project.setStartTime(startTime);
+            project.setCreateTime(System.currentTimeMillis());
+            project.setUpdateTime(System.currentTimeMillis());
             project.setEndTime(endTime);
             project.setMemberId(ShiroAuthenticationManager.getUserId());
             projectService.saveProject(project);
@@ -274,6 +281,10 @@ public class ProjectApi {
             relation.setParentId(groupId);
             relation.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation,name);
+            List<String> memberResourceKey = proResourcesService.getMemberResourceKey(projectId, ShiroAuthenticationManager.getUserId());
+            redisUtil.remove(Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId());
+            redisUtil.lset(Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId(),memberResourceKey);
+            projectMemberService.updateUserCurrentProject(projectId);
             object.put("result", 1);
             object.put("menus",taskMenu);
             object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));

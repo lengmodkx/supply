@@ -19,6 +19,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -27,6 +28,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Resource
 	private RoleService roleService;
+
+	@Resource
+	private ProRoleService proRoleService;
 
 	@Resource
 	private ProjectMemberService projectMemberService;
@@ -162,6 +167,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		//初始化菜单
 		String[] menus  = new String[]{"待处理","进行中","已完成"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
+		Integer integer = proRoleService.initProRole(project.getProjectId());
 
 		//往项目用户关联表插入数据
 //		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","拥有者"));
@@ -172,8 +178,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setUpdateTime(System.currentTimeMillis());
 		projectMember.setMemberLabel(1);
 		projectMember.setDefaultGroup(relation.getRelationId());
+		projectMember.setRoleId(proRoleService.getRoleIdByRoleKey(Constants.OWNER_KEY, project.getProjectId()));
 //		projectMember.setRoleId(roleEntity.getRoleId());
 		projectMemberService.save(projectMember);
+
+		Integer userProjectCount = projectMemberService.getUserProjectCount();
+		if(userProjectCount == 1){
+			projectMemberService.updateTargetProjectCurrent(project.getProjectId(),ShiroAuthenticationManager.getUserId());
+		}
 	}
 
 	/**
@@ -372,5 +384,26 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Override
 	public Integer updatePictureById(String projectId, String fileUrl) {
 		return projectMapper.updatePictureById(projectId,fileUrl);
+	}
+
+	@Override
+	public Boolean checkIsExist(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			return false;
+		}
+		//构造出根据projectId查询某条信息的sql表达式
+		LambdaQueryWrapper<Project> selectByProjectIdQw = new QueryWrapper<Project>().lambda()
+				.eq(Project::getProjectId, projectId);
+
+		Integer proCount = projectMapper.selectCount(selectByProjectIdQw);
+		return proCount > 0;
+	}
+
+	@Override
+	public Boolean notExist(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			return null;
+		}
+		return !this.checkIsExist(projectId);
 	}
 }

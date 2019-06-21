@@ -4,6 +4,8 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
@@ -12,17 +14,26 @@ import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,10 +55,25 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	private TaskService taskService;
 
 	/**
+	 * 项目逻辑层Bean 注入
+	 */
+	@Resource
+	private ProjectService projectService;
+
+	/**
 	 * 文件层逻辑层Bean
 	 */
 	@Resource
 	private FileService fileService;
+
+	@Resource
+	private ProRoleService proRoleService;
+
+	/**
+	 * 角色逻辑层Bean 注入
+	 */
+	@Resource
+	private RoleService roleService;
 
 	/**
 	 * 分享逻辑层Bean
@@ -173,6 +199,172 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		return projectMemberMapper.getStarProject(userId);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer saveMember(String projectId, String memberId) {
+		//查询出当前项目的默认分组
+		String groupId = projectService.findDefaultGroup(projectId);
+		ProjectMember member = new ProjectMember();
+		member.setDefaultGroup(groupId);
+		member.setProjectId(projectId);
+		member.setMemberId(memberId);
+		member.setRoleId(proRoleService.getDefaultProRoleId(projectId));
+		member.setCreateTime(System.currentTimeMillis());
+		member.setUpdateTime(System.currentTimeMillis());
+		member.setMemberLabel(0);
+		projectMemberMapper.insert(member);
+		return 1;
+	}
+
+	@Override
+	public String getUserCurrentProjectId() {
+		//构造出查询用户所在项目id的sql表达式
+		LambdaQueryWrapper<ProjectMember> selectUserCurrentProjectIdQw = new QueryWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getMemberId, ShiroAuthenticationManager.getUserId())
+				.eq(ProjectMember::getCurrent, true)
+				.select(ProjectMember::getProjectId);
+
+		ProjectMember projectMember = projectMemberMapper.selectOne(selectUserCurrentProjectIdQw);
+		if(projectMember != null && Stringer.isNotNullOrEmpty(projectMember.getProjectId())){
+			return projectMember.getProjectId();
+		}
+		return null;
+	}
+
+	/**
+	 * 1.查询原来的所在项目和要修改的项目id是否一致,如果一致则不需要修改
+	 * 2.如果不一致,则先把原先的所在项目记录标记去除,然后在给新的项目标记为所在项目
+	 * @param projectId 要更新为所在项目的项目id
+	 * @return 结果
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer updateUserCurrentProject(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			return -1;
+		}
+
+		if(projectService.notExist(projectId)){
+			return -1;
+		}
+
+		boolean userProjectExist = this.checkUserProjectBindIsExist(projectId);
+		if(userProjectExist){
+			//获取到修改前用户所在的项目id
+			String userCurrentProjectId = this.getUserCurrentProjectId();
+			boolean newPidEqualOldPid = Stringer.isNotNullOrEmpty(userCurrentProjectId) && projectId.equals(userCurrentProjectId);
+			if(newPidEqualOldPid){
+				return 1;
+			}
+
+			String proIdCondition = userCurrentProjectId;
+
+			//构造出查询用户和要更新的项目对应关系的sql表达式
+			LambdaUpdateWrapper<ProjectMember> updateUserProjectCurrentUw = new UpdateWrapper<ProjectMember>().lambda()
+					.eq(ProjectMember::getProjectId, proIdCondition)
+					.eq(ProjectMember::getMemberId, ShiroAuthenticationManager.getUserId());
+
+			//要更新的字段信息,current首先设置为false等同于 取消原先用户所在项目的标记
+			ProjectMember projectMember = new ProjectMember();
+			projectMember.setCurrent(false);
+			projectMember.setUpdateTime(System.currentTimeMillis());
+			projectMemberMapper.update(projectMember,updateUserProjectCurrentUw);
+
+			//更新projectId条件,标记新的用户所在项目
+			proIdCondition = projectId;
+			projectMember.setCurrent(true);
+			projectMember.setUpdateTime(System.currentTimeMillis());
+			projectMemberMapper.update(projectMember,updateUserProjectCurrentUw);
+			return 1;
+		}
+		return -1;
+
+	}
+
+	@Override
+	public Integer updateTargetProjectCurrent(String projectId, String userId) {
+		if(Stringer.isNullOrEmpty(projectId) || Stringer.isNullOrEmpty(userId)){
+			return -1;
+		}
+
+		if(projectService.notExist(projectId)){
+			return -1;
+		}
+
+		//构造出更新记录的sql表达式
+		LambdaUpdateWrapper<ProjectMember> upUserProjectUw = new UpdateWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getProjectId, projectId)
+				.eq(ProjectMember::getMemberId, userId);
+
+		//给要更新的字段信息赋值
+		ProjectMember projectMember = new ProjectMember();
+		projectMember.setCurrent(true);
+		projectMember.setUpdateTime(System.currentTimeMillis());
+		return projectMemberMapper.update(projectMember, upUserProjectUw);
+	}
+
+	@Override
+	public Boolean checkUserProjectBindIsExist(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			return false;
+		}
+		//构造出查询用户和projectId的关系是否存在的条件表达式
+		LambdaQueryWrapper<ProjectMember> selectUserProjectIsExistQw = new QueryWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getMemberId, ShiroAuthenticationManager.getUserId());
+
+		return projectMemberMapper.selectCount(selectUserProjectIsExistQw) > 0;
+	}
+
+	@Override
+	public Integer getUserProjectCount() {
+		String userId = ShiroAuthenticationManager.getUserId();
+		//构造出查询用户相关项目数的sql表达式
+		LambdaQueryWrapper<ProjectMember> selectUserProjectCountQw = new QueryWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getMemberId, userId);
+		return projectMemberMapper.selectCount(selectUserProjectCountQw);
+	}
+
+	@Override
+	public List<String> getProRoleUsers(Integer proRoleId) {
+		if(Stringer.isNullOrEmpty(proRoleId)){
+			return new ArrayList<>();
+		}
+
+		//构造出sql表达式
+		LambdaQueryWrapper<ProjectMember> selectMemberByRoleQw = new QueryWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getRoleId, proRoleId)
+				.select(ProjectMember::getMemberId);
+
+		return projectMemberMapper.selectList(selectMemberByRoleQw).stream()
+				.map(ProjectMember::getMemberId)
+				.collect(Collectors.toList());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String projectId) {
+		if(Stringer.isNullOrEmpty(roleId) || Stringer.isNullOrEmpty(projectId)){
+			return -1;
+		}
+
+		if(CollectionUtils.isEmpty(userIds)){
+			return -1;
+		}
+
+		userIds.forEach(userId -> {
+			ProjectMember projectMember = new ProjectMember();
+			projectMember.setUpdateTime(System.currentTimeMillis());
+			projectMember.setRoleId(roleId);
+
+			//生成sql表达式
+			LambdaUpdateWrapper<ProjectMember> upToNewDefaultRoleUw = new UpdateWrapper<ProjectMember>().lambda()
+					.eq(ProjectMember::getProjectId, projectId)
+					.eq(ProjectMember::getMemberId, userId);
+			projectMemberMapper.update(projectMember, upToNewDefaultRoleUw);
+		});
+		return 1;
+	}
+
 	/**
 	 * 获取当前用户的非星标项目
 	 * @param userId 用户id
@@ -182,4 +374,5 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	public List<Project> getNotStarProject(String userId) {
 		return projectMemberMapper.getNotStarProject(userId);
 	}
+
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.resource.ProResourcesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.resource.ProResources">
+        <id column="s_id" property="sId" />
+        <result column="s_parent_id" property="sParentId" />
+        <result column="s_name" property="sName" />
+        <result column="s_source_key" property="sSourceKey" />
+        <result column="s_type" property="sType" />
+        <result column="s_source_url" property="sSourceUrl" />
+        <result column="s_level" property="sLevel" />
+        <result column="s_icon" property="sIcon" />
+        <result column="s_is_hide" property="sIsHide" />
+        <result column="s_description" property="sDescription" />
+        <result column="s_create_time" property="sCreateTime" />
+        <result column="s_update_time" property="sUpdateTime" />
+    </resultMap>
+
+</mapper>
