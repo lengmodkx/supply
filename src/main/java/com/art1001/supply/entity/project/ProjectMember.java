@@ -123,6 +123,11 @@ public class ProjectMember extends Model<ProjectMember> {
 	 */
 	private int defaultView;
 
+	/**
+	 * 是否是用当前所在项目
+	 */
+	private Boolean current;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

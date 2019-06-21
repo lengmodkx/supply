@@ -115,6 +115,12 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private String email;
 
+	/**
+	 * 用户默认所在的企业
+	 */
+	@TableField(exist = false)
+	private String defaultOrgId;
+
 	@TableField(exist = false)
 	private List<Role> roles;
 

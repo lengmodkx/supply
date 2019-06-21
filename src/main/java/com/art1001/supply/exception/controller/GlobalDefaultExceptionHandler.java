@@ -140,4 +140,15 @@ public class GlobalDefaultExceptionHandler {
 		return jsonObject;
 	}
 
+	@ExceptionHandler(Exception.class)
+	@ResponseBody
+	public JSONObject operateExp(Exception ex) {
+		log.error(ex.getMessage(), ex);
+		// 将Ajax异常信息回写到前台,用于页面的提示
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg","系统异常!");
+		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
 }

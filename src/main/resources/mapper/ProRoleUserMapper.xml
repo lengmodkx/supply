@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.role.ProRoleUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.role.ProRoleUser">
+        <id column="id" property="id" />
+        <result column="role_id" property="roleId" />
+        <result column="u_id" property="uId" />
+        <result column="o_id" property="oId" />
+        <result column="t_create_time" property="tCreateTime" />
+    </resultMap>
+
+</mapper>

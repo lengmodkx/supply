@@ -159,4 +159,27 @@ public interface ProjectService extends IService<Project> {
 	 * @return int
 	 */
 	Integer updatePictureById(String projectId, String fileUrl);
+
+	/**
+	 * 根据项目id查询此项目是否存在
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param projectId 项目id
+	 * @updateInfo 暂无
+	 * @date 2019/6/19 15:49
+	 * @return 是否存在
+	 */
+	Boolean checkIsExist(String projectId);
+
+	/**
+	 * 判断该项目是否不存在
+	 * 如果projectId不存在则返回null
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param projectId 项目id
+	 * @updateInfo 暂无
+	 * @date 2019/6/21 11:06
+	 * @return 是否不存在
+	 */
+	Boolean notExist(String projectId);
 }

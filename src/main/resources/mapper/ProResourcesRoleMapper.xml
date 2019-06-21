@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.resource.ProResourcesRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.resource.ProResourcesRole">
+        <id column="id" property="id" />
+        <result column="s_id" property="sId" />
+        <result column="r_id" property="rId" />
+        <result column="t_create_time" property="tCreateTime" />
+    </resultMap>
+
+    <!-- 获取到 某个项目成员的权限信息 -->
+    <select id="selectRoleResourceByProjectMember" resultType="java.lang.String">
+        SELECT
+            s_id
+        FROM
+            prm_project_member AS pm
+            LEFT JOIN sys_pro_role AS r ON pm.role_id = r.role_id
+
+            LEFT JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
+        WHERE
+            pm.project_id = #{projectId}
+            AND pm.member_id = #{memberId}
+    </select>
+
+</mapper>
