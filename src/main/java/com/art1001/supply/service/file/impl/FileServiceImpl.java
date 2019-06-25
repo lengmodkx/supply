@@ -244,8 +244,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setCatalog(1);
         file.setFilePrivacy(1);
         save(file);
+
         //保存到ElasticSearch
         fileRepository.save(file);
+
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
@@ -591,6 +593,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         if(Stringer.isNullOrEmpty(fileId)){
             throw new ServiceException("fileId 不能为空!");
         }
+
+        //从elasticSearch查询
+        //Optional<File> file = fileRepository.findById(fileId);
+        //Stringer.isNullOrEmpty(file);
         return fileMapper.selectCount(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId)) > 0;
     }
 

@@ -3,7 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
-import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
@@ -30,9 +29,7 @@ import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -135,6 +132,7 @@ public class ProjectApi {
      * @return json
      */
 //    @RequiresPermissions("update:project")
+    @Push(value = PushType.I2,type = 2)
     @PutMapping("/{projectId}")
     public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
                                     @RequestParam(value = "projectName", required = false) String projectName,
