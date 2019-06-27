@@ -10,11 +10,9 @@ import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
-import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -112,14 +110,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	}
 
 	/**
+	 * 修改project
+	 */
+	@Override
+	public void updateProject(Project project) {
+		projectMapper.updateProject(project);
+	}
+
+	/**
 	 * 修改project数据
 	 * 
 	 * @param project
 	 */
+/*
 	@Override
 	public void updateProject(Project project){
 		projectMapper.updateProject(project);
 	}
+*/
 
 	/**
 	 * 获取所有project数据

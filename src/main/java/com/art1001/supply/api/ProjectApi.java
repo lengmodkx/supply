@@ -25,6 +25,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -33,6 +34,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -132,12 +134,12 @@ public class ProjectApi {
      * @return json
      */
 //    @RequiresPermissions("update:project")
-    @Push(value = PushType.I2,type = 2)
-    @PutMapping("/{projectId}")
-    public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
-                                    @RequestParam(value = "projectName", required = false) String projectName,
-                                    @RequestParam(value = "projectDes", required = false) String projectDes,
-                                    @RequestParam(value = "isPublic", required = false) Integer isPublic,
+
+        @PutMapping("/{projectId}")
+        public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
+                                        @RequestParam(value = "projectName", required = false) String projectName,
+                                        @RequestParam(value = "projectDes", required = false) String projectDes,
+                                        @RequestParam(value = "isPublic", required = false) Integer isPublic,
                                     @RequestParam(value = "projectCover", required = false) String projectCover,
                                     @RequestParam(value = "projectDel", required = false) Integer projectDel,
                                     @RequestParam(value = "projectStatus", required = false) Integer projectStatus,
@@ -154,6 +156,12 @@ public class ProjectApi {
             project.setStartTime(startTime);
             project.setEndTime(endTime);
             if(!Stringer.isNullOrEmpty(projectCover) || projectCover != ""){
+                //删除Oss上的图片
+                Project projectById = projectService.findProjectByProjectId(projectId);
+                if (!Stringer.isNullOrEmpty(projectById.getProjectCover()) || projectById.getProjectCover() != ""){
+                    AliyunOss.deleteFile(projectById.getProjectCover());
+                }
+                //将新的图片路径写入项目
                 project.setProjectCover(projectCover);
             }
             project.setProjectDel(projectDel);
@@ -161,6 +169,7 @@ public class ProjectApi {
             projectService.updateProject(project);
             object.put("result", 1);
             object.put("msg", "更新成功");
+            object.put("data",new HashMap<>().put("project",project));
         } catch (Exception e) {
             log.error("保存失败:", e);
             throw new AjaxException(e);
@@ -173,6 +182,7 @@ public class ProjectApi {
      * @return
      */
     @Log
+   // @Push(value = PushType.I2,type = 2)
     @GetMapping
     public JSONObject projects() {
         JSONObject object = new JSONObject();

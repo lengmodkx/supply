@@ -235,7 +235,7 @@ public class TagApi {
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
             tag.setProjectId(projectId);
-            if(tagService.addAndBind(tag,publicId,publicType)){
+            if(tagService.addAndBind(tag,projectId,publicType)){
                 jsonObject.put("result", 1);
                 jsonObject.put("data", new JSONObject().fluentPut("publicType", publicType).fluentPut("publicId", publicId));
                 jsonObject.put("msgId", projectId);

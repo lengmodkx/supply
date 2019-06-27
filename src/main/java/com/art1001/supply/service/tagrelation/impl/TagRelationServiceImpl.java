@@ -136,4 +136,11 @@ public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRel
 		}
 		return tagRelationMapper.delete(eq) > 0;
 	}
+
+
+	@Override
+	public List<TagRelation> findTagRelationByScheduleId(String id) {
+
+		return tagRelationMapper.findTagRelationByScheduleId(id);
+	}
 }
