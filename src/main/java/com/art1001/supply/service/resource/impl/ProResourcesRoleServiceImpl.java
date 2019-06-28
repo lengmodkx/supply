@@ -3,11 +3,17 @@ package com.art1001.supply.service.resource.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.resource.ProResourcesRole;
 import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.ResourcesRole;
 import com.art1001.supply.mapper.resource.ProResourcesRoleMapper;
 import com.art1001.supply.service.resource.ProResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -78,4 +84,28 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
         return 1;
     }
 
+    @Override
+    public Integer distributionRoleResource(Integer roleId, String resources) {
+        //构造出查询该角色在角色资源表中存不存在的查询表达式
+        LambdaQueryWrapper<ProResourcesRole> resourceRoleCountQw = new QueryWrapper<ProResourcesRole>().lambda()
+                .eq(ProResourcesRole::getRId, roleId);
+
+        if (proResourcesRoleMapper.selectCount(resourceRoleCountQw) > 0){
+            //构造出更新角色权限的表达式
+            LambdaUpdateWrapper<ProResourcesRole> updateRoleResourceUw = new UpdateWrapper<ProResourcesRole>().lambda()
+                    .eq(ProResourcesRole::getRId, roleId);
+            ProResourcesRole resourcesRole = new ProResourcesRole();
+            resourcesRole.setSId(resources);
+            proResourcesRoleMapper.update(resourcesRole,updateRoleResourceUw);
+        } else {
+            //如果该角色没有分配过权限那么就新建一条资源和角色对应的记录
+            ProResourcesRole resourcesRole = new ProResourcesRole();
+            resourcesRole.setRId(roleId);
+            resourcesRole.setSId(resources);
+            resourcesRole.setTCreateTime(LocalDateTime.now());
+            proResourcesRoleMapper.insert(resourcesRole);
+        }
+        ShiroAuthenticationManager.clearUserAuth();
+        return 1;
+    }
 }

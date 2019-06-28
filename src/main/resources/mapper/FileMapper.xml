@@ -516,7 +516,39 @@
 			file_name = '文件库'  AND   project_id = #{projectId}
 	</select>
 
-    <!-- 插入多条文件信息 -->
+	<select id="findMateriaBaseFile" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+			f.file_id,
+			f.file_name,
+			f.ext,
+			f.file_url,
+			f.project_id,
+			f.member_id,
+			f.member_name,
+			f.`catalog`,
+			f.is_model,
+			f.`size`,
+			f.parent_id,
+			f.file_del,
+			f.create_time,
+			f.update_time,
+			f.file_uids,
+			f.file_label,
+			f.file_thumbnail,
+			f.file_privacy,
+			f.public_id,
+			f.`level`
+		FROM
+			prm_file f
+			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
+		WHERE
+			parent_id = #{folderId}
+		ORDER BY
+			`catalog`,
+			create_time DESC
+	</select>
+
+	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">

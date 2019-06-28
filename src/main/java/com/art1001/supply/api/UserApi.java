@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -101,6 +102,38 @@ public class UserApi {
          }
          return object;
      }
+
+
+    /**
+     * 管理员登陆
+     * @param accountName 账户名称
+     * @param password 密码
+     */
+    @PostMapping("/admin_login")
+    public JSONObject adminLogin(@RequestParam String accountName,
+                            @RequestParam String password){
+        JSONObject object = new JSONObject();
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(accountName,password);
+            subject.login(token);
+            if(subject.isAuthenticated()) {
+                object.put("fileId", Constants.MATERIAL_BASE);
+                object.put("result", 1);
+                object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
+                object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
+            } else {
+                object.put("result", 0);
+                object.put("msg", "账号或密码错误");
+            }
+        } catch (Exception e) {
+            // 登录异常，请联系管理员！
+            log.error("登录异常，请联系管理员！, {}", e);
+            object.put("result", 0);
+            object.put("msg", "登录异常，用户名或密码错误！");
+        }
+        return object;
+    }
 
     /**
      * 用户注册

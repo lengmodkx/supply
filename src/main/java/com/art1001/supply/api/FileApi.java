@@ -1103,4 +1103,14 @@ public class FileApi extends BaseController {
         jsonObject.put("data", fileService.searchFile(fileName,projectId));
         return jsonObject;
     }
+
+    /**
+     * 获取素材库
+     * @param folderId 目录id
+     * @return 信息
+     */
+    @GetMapping("{folderId}/material")
+    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Integer current, Integer size){
+        return success(fileService.getMateriaBaseFile(folderId,current,size));
+    }
 }

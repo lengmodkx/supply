@@ -159,5 +159,37 @@ public interface ProRoleService extends IService<ProRole> {
      */
     Boolean checkRoleIsSystemInit(Integer roleId);
 
+    /**
+     * 修改项目角色名称
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @param roleName 要修改的角色名称
+     * @updateInfo 暂无
+     * @date 2019/6/26 11:34
+     * @return 是否成功
+     */
+    Integer updateRoleName(Integer roleId, String roleName);
 
+    /**
+     * 检查角色是否不存在
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/26 11:52
+     * @return  结果
+     */
+    Boolean checkRoleIsNotExistByRoleId(Integer roleId);
+
+    /**
+     * 获取项目下的角色列表
+     * @author heShaoHua
+     * @describe 暂无
+     * @param projectId 项目id
+     * @updateInfo 暂无
+     * @date 2019/6/26 14:36
+     * @return 角色信息集合
+     */
+    List<ProRole> getProRoles(String projectId);
 }

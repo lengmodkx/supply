@@ -43,5 +43,15 @@ public interface ProResourcesRoleService extends IService<ProResourcesRole> {
      */
     Integer saveBatchBind(String projectId);
 
-
+    /**
+     * 给项目角色分配资源
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @param resources 资源id
+     * @updateInfo 暂无
+     * @date 2019/6/26 11:00
+     * @return 是否成功
+     */
+    Integer distributionRoleResource(Integer roleId, String resources);
 }

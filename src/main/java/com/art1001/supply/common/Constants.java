@@ -63,4 +63,10 @@ public class Constants {
 
     //redis资源前缀
     public static final String PRO_SOURCES_PREFIX = "proResources::";
+
+    //字符串分隔符
+    public static final String SPLIST_COMMA = ",";
+
+    //文件素材库id
+    public static final String MATERIAL_BASE = "ef6ba5f0e3584e58a8cc0b2d28286c93";
 }

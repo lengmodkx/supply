@@ -223,14 +223,27 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
             return -1;
         }
 
-        //生成sql表达式
-        LambdaUpdateWrapper<ProRole> upProDefaultRoleUw = new UpdateWrapper<ProRole>().lambda()
-                .eq(ProRole::getProjectId, projectId)
-                .eq(ProRole::getRoleKey, roleKey);
+        Integer proDefaultRoleId = this.getProDefaultRoleId(projectId);
+        if(proDefaultRoleId == -1){
+            return proDefaultRoleId;
+        }
 
         ProRole proRole = new ProRole();
         proRole.setUpdateTime(LocalDateTime.now());
         proRole.setIsDefault(true);
+
+        //生成sql表达式
+        LambdaUpdateWrapper<ProRole> cacelDefaultUw = new UpdateWrapper<ProRole>().lambda()
+                .eq(ProRole::getRoleId, proDefaultRoleId);
+        proRole.setIsDefault(false);
+        proRoleMapper.update(proRole, cacelDefaultUw);
+
+        //生成sql表达式
+        LambdaUpdateWrapper<ProRole> upProDefaultRoleUw = new UpdateWrapper<ProRole>().lambda()
+                .eq(ProRole::getProjectId, projectId)
+                .eq(ProRole::getRoleKey, roleKey);
+        proRole.setIsDefault(true);
+
         return proRoleMapper.update(proRole, upProDefaultRoleUw);
     }
 
@@ -272,5 +285,24 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
             return proRole.getIsSystemInit();
         }
         return false;
+    }
+
+    @Override
+    public Integer updateRoleName(Integer roleId, String roleName) {
+        ProRole proRole = new ProRole();
+        proRole.setRoleId(roleId);
+        proRole.setRoleName(roleName);
+        proRole.setUpdateTime(LocalDateTime.now());
+        return proRoleMapper.updateById(proRole);
+    }
+
+    @Override
+    public Boolean checkRoleIsNotExistByRoleId(Integer roleId) {
+        return !this.checkRoleIsExistByRoleId(roleId);
+    }
+
+    @Override
+    public List<ProRole> getProRoles(String projectId) {
+        return proRoleMapper.selectProRoles(projectId);
     }
 }

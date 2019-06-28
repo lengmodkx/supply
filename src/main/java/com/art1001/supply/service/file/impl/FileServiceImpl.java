@@ -24,6 +24,7 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -280,12 +281,21 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 }
             }
         }
+//        //此处判断parentId代表的文件夹是否是该项目的根目录如果是根目录则需要在childFile中添加一条素材库的数据
+//        String currFileIdParentId = this.getFileParentId(parentId);
+//        if(Stringer.isNotNullOrEmpty(currFileIdParentId)){
+//            //校验是否是项目文件根目录
+//            boolean isProjectRootFolder = currFileIdParentId.equals(Constants.ZERO);
+//            if(isProjectRootFolder){
+//                File materialBase = this.getMaterialBase();
+//                childFile.add(0, materialBase);
+//            }
+//        }
         return childFile;
     }
 
     /**
      * 移动文件
-     *
      * @param fileIds   源文件id数组
      * @param folderId 目标目录id
      */
@@ -909,5 +919,37 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 .withFilter(QueryBuilders.termQuery("projectId", projectId)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         return Lists.newArrayList(byFileNameOrTagNameFiles);
+    }
+
+    @Override
+    public String getFileParentId(String fileId) {
+        if(Stringer.isNullOrEmpty(fileId)){
+            return null;
+        }
+
+        //构造sql表达式
+        LambdaQueryWrapper<File> selectParentIdQw = new QueryWrapper<File>().lambda()
+                .select(File::getParentId)
+                .eq(File::getFileId, fileId);
+
+        File file = fileMapper.selectOne(selectParentIdQw);
+        if(file != null && Stringer.isNotNullOrEmpty(file.getParentId())){
+            return file.getParentId();
+        }
+        return null;
+    }
+
+    @Override
+    public File getMaterialBase() {
+        String materialBaseId = Constants.MATERIAL_BASE;
+        return fileMapper.selectById(materialBaseId);
+    }
+
+    @Override
+    public Page<File> getMateriaBaseFile(String folderId, Integer current, Integer size) {
+        Page<File> page = new Page<>();
+        page.setCurrent(current);
+        page.setSize(size);
+        return fileMapper.findMateriaBaseFile(page,folderId);
     }
 }

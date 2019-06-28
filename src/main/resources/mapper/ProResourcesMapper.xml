@@ -18,4 +18,55 @@
         <result column="s_update_time" property="sUpdateTime" />
     </resultMap>
 
+    <resultMap id="resourceMap" type="com.art1001.supply.entity.resource.ProResources">
+        <id property="sId" column="s_id"/>
+        <result property="sParentId" column="s_parent_id"/>
+        <result property="sName" column="s_name"/>
+        <result property="sResourceKey" column="s_source_key"/>
+        <result property="sResourceType" column="s_type"/>
+        <result property="sResourceUrl" column="s_source_url"/>
+        <result property="sResourceLevel" column="s_level"/>
+        <result property="sIsHide" column="s_is_hide"/>
+        <result property="sDescription" column="s_description"/>
+        <result property="sCreateTime" column="s_create_time"/>
+        <result property="sUpdateTime" column="s_update_time"/>
+    </resultMap>
+
+    <resultMap id="resourceMap2" type="com.art1001.supply.entity.resource.ResourceShowVO">
+        <id property="id" column="p_id"/>
+        <result property="group" column="p_name"/>
+        <collection property="resources" ofType="com.art1001.supply.entity.resource.SimpleResource">
+            <id property="id" column="s_id"/>
+            <result property="resourceName" column="s_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAll" resultMap="resourceMap2">
+		SELECT
+            parent.s_id AS p_id,
+            parent.s_name AS p_name,
+            sub.s_id AS s_id,
+            sub.s_name AS s_name
+        FROM
+            sys_pro_resources AS parent
+            LEFT JOIN sys_pro_resources AS sub ON parent.s_id = sub.s_parent_id
+        WHERE
+            parent.s_parent_id = 0
+	</select>
+
+    <select id="selectRoleHaveResources" resultMap="resourceMap">
+        SELECT
+        s_id,
+        s_name,
+        s_parent_id
+        FROM
+        sys_pro_resources
+        WHERE
+        s_id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+
 </mapper>
