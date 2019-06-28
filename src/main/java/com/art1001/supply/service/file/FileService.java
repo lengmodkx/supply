@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -313,4 +314,29 @@ import java.util.List;
 	 * @return 文件信息集合
 	 */
 	List<File> searchFile(String fileName, String projectId);
+
+	/**
+	 * 获取fileId的上级目录的id
+     * 如果fileId为空则返回null
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param fileId 需要获取此文件上级目录的此文件id
+	 * @updateInfo 暂无
+	 * @date 2019/6/27 15:10
+	 * @return 上级文件或者目录的id
+	 */
+	String getFileParentId(String fileId);
+
+	/**
+	 * 获取文件素材库的目录信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/6/27 15:19
+	 * @return 文件素材库信息
+	 */
+	File getMaterialBase();
+
+
+    Page<File> getMateriaBaseFile(String folderId, Integer current, Integer size);
 }

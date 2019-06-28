@@ -280,13 +280,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		}
 		if(Constants.FILE.equals(publicType)){
             Optional<File> file = fileRepository.findById(publicId);
-            if (Stringer.isNullOrEmpty(file.get().getTagsName())){
-                file.get().setTagsName(tag.getTagName());
-            }else {
-                file.get().setTagsName(file.get().getTagsName()+","+tag.getTagName());
-            }
-            fileRepository.save(file.get());
-
+           /* if (Stringer.isNotNullOrEmpty(file)){
+				if (Stringer.isNullOrEmpty(file.get().getTagsName())){
+					file.get().setTagsName(tag.getTagName());
+				}else {
+					file.get().setTagsName(file.get().getTagsName()+","+tag.getTagName());
+				}
+				fileRepository.save(file.get());
+			}*/
             tr.setFileId(publicId);
 		}if(Constants.SHARE.equals(publicType)){
 			tr.setShareId(publicId);

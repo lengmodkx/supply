@@ -6,6 +6,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -311,4 +312,7 @@ public interface FileMapper extends BaseMapper<File> {
 	* @Param
 	* */
 	File findFileTier(String projectId);
+
+
+	Page<File> findMateriaBaseFile(@Param("page")Page page, @Param("folderId") String folderId);
 }

@@ -16,4 +16,23 @@
         <result column="is_system_init" property="isSystemInit" />
     </resultMap>
 
+    <!-- 获取项目下的角色列表 -->
+    <select id="selectProRoles" resultType="com.art1001.supply.entity.role.ProRole">
+        SELECT
+            role_id,
+            role_name,
+            role_key,
+            role_des,
+            create_time,
+            is_default,
+            is_system_init
+        FROM
+            sys_pro_role
+        WHERE
+            project_id = #{projectId}
+            AND role_status = 0
+        ORDER BY
+            create_time
+    </select>
+
 </mapper>

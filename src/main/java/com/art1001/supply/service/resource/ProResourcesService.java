@@ -1,6 +1,8 @@
 package com.art1001.supply.service.resource;
 
 import com.art1001.supply.entity.resource.ProResources;
+import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -38,4 +40,41 @@ public interface ProResourcesService extends IService<ProResources> {
      * @return 资源key集合
      */
     List<String> getResourceKeyByRIds(List<String> rIds);
+
+    /**
+     * 获取所有资源和角色拥有的资源信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/25 14:59
+     * @return 资源信息集合
+     */
+    List<ResourceShowVO> getResourceVO(String roleId);
+
+    /**
+     * 获取到该角色拥有的资源信息
+     * 如果roleId为空 则返回null
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/25 16:36
+     * @return 角色拥有的资源id
+     */
+    List<ProResources> getRoleHaveResources(String roleId);
+
+    /**
+     * 获取到该角色对应的所有资源id
+     * 如果roleId 为null 则返回null
+     * 如果数据库中不存在对应记录则返回size为0 的List<Integer>
+     * @author heShaoHua
+     * @describe 暂无
+     * @param roleId 角色id
+     * @updateInfo 暂无
+     * @date 2019/6/25 16:40
+     * @return id
+     * 资源id集合
+     */
+    List<String> getRoleHaveResourceIds(String roleId);
 }

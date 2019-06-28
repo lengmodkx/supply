@@ -34,10 +34,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -1102,5 +1099,15 @@ public class FileApi extends BaseController {
         jsonObject.put("result",1);
         jsonObject.put("data", fileService.searchFile(fileName,projectId));
         return jsonObject;
+    }
+
+    /**
+     * 获取素材库
+     * @param folderId 目录id
+     * @return 信息
+     */
+    @GetMapping("{folderId}/material")
+    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Integer current, Integer size){
+        return success(fileService.getMateriaBaseFile(folderId,current,size));
     }
 }

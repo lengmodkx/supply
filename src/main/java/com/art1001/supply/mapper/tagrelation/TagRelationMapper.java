@@ -70,4 +70,11 @@ public interface TagRelationMapper extends BaseMapper<TagRelation> {
     * 查询是否有重复关联标签
     * */
 	int findCountById(TagRelation tr);
+
+
+	/*
+	 * 查询日程有多少关联标签
+	 *
+	 * */
+    List<TagRelation> findTagRelationByScheduleId(String id);
 }
