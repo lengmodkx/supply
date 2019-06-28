@@ -91,7 +91,7 @@ public class TaskApi extends BaseController {
      * 创建任务
      * @return object
      */
-    @ProAuthentization("create:task")
+//    @ProAuthentization("create:task")
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
