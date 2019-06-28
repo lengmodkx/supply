@@ -225,9 +225,9 @@ public class TagApi {
     @PostMapping("/add_and_bind")
     public JSONObject addItemTag(@RequestParam(value = "tagName") String tagName,
                                  @RequestParam(value = "bgColor") String bgColor,
-                                 @RequestParam(value = "publicId") String publicId,
+                                 @RequestParam(value = "publicId") String  publicId,
                                  @RequestParam(value = "publicType") String publicType,
-                                 @RequestParam(value = "projectId") String projectId
+                                 @RequestParam(value = "projectId") String  projectId
     ){
         JSONObject jsonObject = new JSONObject();
         try {
