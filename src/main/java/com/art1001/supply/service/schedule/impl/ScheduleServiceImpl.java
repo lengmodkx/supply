@@ -7,12 +7,15 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.schedule.ScheduleLogFunction;
 import com.art1001.supply.entity.schedule.ScheduleVo;
+import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.schedule.ScheduleMapper;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -53,6 +56,9 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     @Resource
     private TagRelationService tagRelationService;
 
+    @Resource
+    private TagService tagService;
+
     /**
      * 查询分页schedule数据
      *
@@ -72,7 +78,16 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
      */
     @Override
     public Schedule findScheduleById(String id) {
-        return scheduleMapper.findScheduleById(id);
+        Schedule scheduleById = scheduleMapper.findScheduleById(id);
+        List<Tag> tags =new ArrayList<>();
+        List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(id);
+        if (Stringer.isNotNullOrEmpty(tagRelations)){
+            for (TagRelation tagr: tagRelations) {
+                tags.add(tagService.findById((int) tagr.getTagId()));
+            }
+        }
+        scheduleById.setTagList(tags);
+        return scheduleById;
     }
 
     /**

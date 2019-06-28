@@ -197,5 +197,12 @@
 			</if>
 		</where>
 	</select>
+
+
+	<select id="findTagRelationByScheduleId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from prm_tag_relation where schedule_id = #{id}
+	</select>
 	
 </mapper>

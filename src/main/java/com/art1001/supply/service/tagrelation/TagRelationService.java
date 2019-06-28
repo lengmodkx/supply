@@ -68,4 +68,12 @@ public interface TagRelationService extends IService<TagRelation> {
 	 * @return 是否成功
 	 */
     boolean removeBatchByType(Collection ids, String type);
+
+
+	/**
+	 * 根据日程id  查询列表
+	 * @param id 日程id
+	 * @return list
+	 */
+	List<TagRelation> findTagRelationByScheduleId(String id);
 }
