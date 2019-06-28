@@ -187,9 +187,21 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     @Override
     public List<Schedule> findScheduleListByProjectId(String projectId) {
         List<Schedule> scheduleListByProjectId = scheduleMapper.findScheduleListByProjectId(projectId);
+
         Iterator<Schedule> iterator = scheduleListByProjectId.iterator();
         while(iterator.hasNext()){
             Schedule next = iterator.next();
+
+            //查询日程的标签
+            List<Tag> tags =new ArrayList<>();
+            List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(next.getScheduleId());
+            if (Stringer.isNotNullOrEmpty(tagRelations)){
+                for (TagRelation tagr: tagRelations) {
+                    tags.add(tagService.findById((int) tagr.getTagId()));
+                }
+            }
+            next.setTagList(tags);
+
             if(next.getPrivacyPattern() == 1){
                 if(!Arrays.asList(next.getMemberIds().split(",")).contains(ShiroAuthenticationManager.getUserId())){
                     iterator.remove();
@@ -416,7 +428,21 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
      */
     @Override
     public List<Schedule> findScheduleGroup(String projectId) {
-        return scheduleMapper.findScheduleGroup(System.currentTimeMillis(),projectId);
+        List<Schedule> scheduleGroup = scheduleMapper.findScheduleGroup(System.currentTimeMillis(), projectId);
+
+
+       /* for (Schedule s: scheduleGroup) {
+            //查询日程的标签
+            List<Tag> tags =new ArrayList<>();
+            List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(s.getScheduleId());
+            if (Stringer.isNotNullOrEmpty(tagRelations)){
+                for (TagRelation tagr: tagRelations) {
+                    tags.add(tagService.findById((int) tagr.getTagId()));
+                }
+            }
+            s.setTagList(tags);
+        }*/
+        return scheduleGroup;
     }
 
     /**
