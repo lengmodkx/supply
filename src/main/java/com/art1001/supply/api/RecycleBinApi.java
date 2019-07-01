@@ -1,6 +1,8 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.exception.AjaxException;
@@ -8,9 +10,9 @@ import com.art1001.supply.service.recycle.RecycleBinService;
 import com.art1001.supply.util.BeanPropertiesUtil;
 import com.art1001.supply.util.Stringer;
 import com.art1001.supply.util.ValidatorUtils;
-import com.art1001.supply.validation.organization.SaveOrg;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 
 /**
@@ -69,7 +71,9 @@ public class RecycleBinApi {
      * @param recycleParams 参数对象
      * @return 结果
      */
+
     @PutMapping("/recovery")
+    @Push(type = 1,value = PushType.D14)
     public JSONObject recovery(RecycleParams recycleParams){
         JSONObject jsonObject = new JSONObject();
         ValidatorUtils.validateEntity(recycleParams);
@@ -81,6 +85,8 @@ public class RecycleBinApi {
             }
         }
         jsonObject.put("result", recycleBinService.recovery(recycleParams));
+        jsonObject.put("msgId",recycleParams.getProjectId());
+        jsonObject.put("data",recycleParams.getProjectId());
         return jsonObject;
     }
 }
