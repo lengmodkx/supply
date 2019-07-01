@@ -107,8 +107,8 @@ public class Timer {
         taskService.remove(new QueryWrapper<Task>().notInSql("project_id", PROJECT_SQL));
         log.info("删除没有项目的任务信息");
 
-        fileService.remove(new QueryWrapper<File>().notInSql("project_id", PROJECT_SQL));
-        log.info("删除没有项目的文件信息");
+//        fileService.remove(new QueryWrapper<File>().notInSql("project_id", PROJECT_SQL));
+//        log.info("删除没有项目的文件信息");
 
         scheduleService.remove(new QueryWrapper<Schedule>().notInSql("project_id", PROJECT_SQL));
         log.info("删除没有项目的日程信息");
