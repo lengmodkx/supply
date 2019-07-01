@@ -29,6 +29,7 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
@@ -79,8 +80,12 @@ public class TaskApi extends BaseController {
      */
     @GetMapping("/{taskId}")
     public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
+        JSONObject jsonObject = new JSONObject();
         try {
-            return success(taskService.taskInfoShow(taskId));
+            Task task = taskService.taskInfoShow(taskId);
+            jsonObject.put("data",task);
+            jsonObject.put("result",1);
+            return jsonObject;
         } catch (Exception e){
             e.printStackTrace();
             throw new AjaxException("系统异常,获取任务信息失败!",e);

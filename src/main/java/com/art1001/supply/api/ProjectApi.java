@@ -289,9 +289,6 @@ public class ProjectApi {
             relation.setParentId(groupId);
             relation.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation,name);
-//            List<String> memberResourceKey = proResourcesService.getMemberResourceKey(projectId, ShiroAuthenticationManager.getUserId());
-//            redisUtil.remove(Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId());
-//            redisUtil.lset(Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId(),memberResourceKey);
             projectMemberService.updateUserCurrentProject(projectId);
             object.put("result", 1);
             object.put("menus",taskMenu);
