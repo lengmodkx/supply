@@ -541,7 +541,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 }
                 if(StringUtils.isNotEmpty(publicId)){
                     myFile.setPublicId(publicId);
-                    myFile.setPublicLable(1);
+                    myFile.setPublicLable(0);
                 }
                 fileList.add(myFile);
                 fileRepository.save(myFile);

@@ -2,20 +2,16 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
-import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
@@ -26,18 +22,16 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 任务增删改查，复制，移动
@@ -79,7 +73,7 @@ public class TaskApi extends BaseController {
      * @return object
      */
     @GetMapping("/{taskId}")
-    public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
+        public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
             Task task = taskService.taskInfoShow(taskId);
@@ -593,10 +587,12 @@ public class TaskApi extends BaseController {
             }
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msg","更新成功");
+                object.put("remarks",remarks);
             object.put("msgId",getTaskProjectId(taskId));
             object.put("data",taskId);
+            //object.put("data",new JSONObject().fluentPut("type","任务").fluentPut("id", taskId));
             object.put("id",taskId);
+            object.put("msg","更新成功");
         }catch(Exception e){
             log.error("系统异常,备注更新失败:",e);
             throw new AjaxException(e);
@@ -622,7 +618,7 @@ public class TaskApi extends BaseController {
             task.setPriority(priority);
             taskService.updateById(task);
             object.put("result",1);
-            object.put("msgId",getTaskProjectId(taskId));
+            object.put("msgId",this.getTaskProjectId(taskId));
             object.put("data",taskId);
             object.put("id",taskId);
             object.put("publicType", Constants.TASK);

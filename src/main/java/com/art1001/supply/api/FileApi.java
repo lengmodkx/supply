@@ -354,7 +354,7 @@ public class FileApi extends BaseController {
      * @return
      */
     @Log(PushType.C4)
-    @Push(value = PushType.C4,type = 2)
+    @Push(value = PushType.C4,type = 1)
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
             @PathVariable(value = "fileId") String fileId,
@@ -365,7 +365,11 @@ public class FileApi extends BaseController {
             UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
             fileVersionService.update(new FileVersion(),new UpdateWrapper<FileVersion>().set("is_master","0").eq("file_id",fileId));
             File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
-            JSONObject object = JSON.parseObject(fileObj);
+
+            JSONObject object1 = JSON.parseObject(fileObj);
+            String files = object1.getString("files");
+
+            JSONObject object = JSON.parseObject(files.substring(1,files.length()-1));
             String fileName = object.getString("fileName");
             String fileUrl = object.getString("fileUrl");
             String size = object.getString("size");
@@ -383,6 +387,23 @@ public class FileApi extends BaseController {
                 myFile.setFileThumbnail(fileUrl);
             }
 
+            //文件的层级
+            if(StringUtils.isNotEmpty(file.getParentId())){
+                //查询出当前文件夹的level
+                int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",file.getParentId())).getLevel();
+                myFile.setLevel(parentLevel+1);
+            }
+            myFile.setMemberImg(userEntity.getImage());
+            myFile.setMemberName(userEntity.getUserName());
+            myFile.setMemberId(ShiroAuthenticationManager.getUserId());
+            myFile.setFileUids(ShiroAuthenticationManager.getUserId());
+            myFile.setCreateTime(System.currentTimeMillis());
+            myFile.setUpdateTime(System.currentTimeMillis());
+            //区分普通文件还是模型文件
+            myFile.setPublicLable(0);
+            if(FileExt.extMap.get("images").contains(ext)){
+                myFile.setFileThumbnail(fileUrl);
+            }
             fileService.save(myFile);
             //版本历史更新
             FileVersion fileVersion = new FileVersion();
@@ -393,6 +414,8 @@ public class FileApi extends BaseController {
             // 设置返回数据
             jsonObject.put("msg","更新成功");
             jsonObject.put("result", 1);
+            jsonObject.put("msgId",file.getProjectId());
+            jsonObject.put("data",myFile);
         } catch (ServiceException e){
             log.error("文件版本更新失败:",e);
             throw new AjaxException(e);
@@ -415,7 +438,7 @@ public class FileApi extends BaseController {
             @RequestParam(value = "fileCommon") String fileCommon,
             @RequestParam(value = "fileModel") String fileModel,
             @RequestParam(value = "filename") String filename,
-            @RequestParam(value = "publicId",required = false) String publicId
+                @RequestParam(value = "publicId",required = false) String publicId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {

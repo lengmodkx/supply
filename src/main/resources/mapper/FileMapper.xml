@@ -22,6 +22,7 @@
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
 		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
 		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
+		<result column="public_lable" property="publicLable" jdbcType="VARCHAR" />
 		<result column="level" property="level" jdbcType="INTEGER"/>
 		<result column="is_model" property="isModel" jdbcType="INTEGER"/>
 		<result column="user_id" property="userId" jdbcType="INTEGER"/>
@@ -76,6 +77,7 @@
 				ext,
 				file_url,
 				project_id,
+				public_lable,
 				member_id,
 				member_name,
 			    `catalog`,
@@ -113,6 +115,7 @@
 				f.file_thumbnail,
 				f.file_privacy,
 				f.public_id,
+				f.public_lable,
 				f.level,
 				tg.tag_id,
 				tg.tag_name,
