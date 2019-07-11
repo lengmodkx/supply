@@ -138,6 +138,11 @@ public class Project extends Model<Project> {
     private String organizationId;
 
     /**
+     * 父级项目id
+     */
+    private String parentId;
+
+    /**
      * 默认组
      * @return
      */

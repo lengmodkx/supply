@@ -11,6 +11,7 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
 		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
+		<result column="important" property="important" jdbcType="INTEGER" />
 		<result column="catalog" property="catalog" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
@@ -177,6 +178,7 @@
 			f.file_name,
 			f.ext,
 			f.file_url,
+			f.important,
 			f.project_id,
 			f.member_id,
 			f.member_name,

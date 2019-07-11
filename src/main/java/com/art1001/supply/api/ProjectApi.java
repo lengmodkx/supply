@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -31,9 +33,11 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,7 +53,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("projects")
-public class ProjectApi {
+public class ProjectApi extends BaseController {
 
     @Resource
     private ProjectService projectService;
@@ -98,6 +102,7 @@ public class ProjectApi {
                                     @RequestParam(value = "projectName") String projectName,
                                     @RequestParam(value = "projectDes") String projectDes,
                                     @RequestParam(value = "startTime") Long startTime,
+                                    @RequestParam(required = false) @Length(max = 32,message = "parentId参数不正确!") String parentId,
                                     @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
         try {
@@ -105,6 +110,9 @@ public class ProjectApi {
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
             project.setStartTime(startTime);
+            if(Stringer.isNotNullOrEmpty(parentId)){
+                project.setParentId(parentId);
+            }
             project.setCreateTime(System.currentTimeMillis());
             project.setUpdateTime(System.currentTimeMillis());
             project.setEndTime(endTime);
@@ -615,4 +623,12 @@ public class ProjectApi {
         }
     }
 
+    /**
+     * 获取到项目的树形图数据
+     * @return
+     */
+    @GetMapping("/tree")
+    public JSONObject getProjectTreeData(@RequestParam(required = false) @Length(max = 32) String projectId){
+        return success(projectService.getTreeData(projectId));
+    }
 }

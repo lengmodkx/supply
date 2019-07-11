@@ -110,6 +110,18 @@ public class BaseController {
         return jsonObject;
     }
 
+
+    /**
+     * @param data - 业务数据json
+     * @return 返回值信息
+     * @author by chippy
+     */
+    protected JSONObject success() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",1);
+        return jsonObject;
+    }
+
     /**
      * @param obj
      * @return

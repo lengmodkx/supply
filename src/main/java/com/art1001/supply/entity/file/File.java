@@ -200,6 +200,11 @@ public class File extends Model<File> {
 
     private String userId;
 
+    /**
+     * 标记是否是重要文件  0:否 1:是
+     */
+    private Integer important;
+
     @TableField(exist = false)
     private List<TaskApiBean> bindTasks;
 

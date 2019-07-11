@@ -99,6 +99,18 @@ public class ProjectMember extends Model<ProjectMember> {
 	private Integer roleId;
 
 	/**
+	 * 成员职位
+	 */
+	@TableField(exist = false)
+	private String job;
+
+	/**
+	 * 成员用户名
+	 */
+	@TableField(exist = false)
+	private String accountName;
+
+	/**
 	 * 创建时间
 	 */
 	@TableField(value = "create_time",fill = FieldFill.INSERT)

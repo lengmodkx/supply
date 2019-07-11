@@ -30,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -54,6 +56,7 @@ import java.util.List;
  * [PUT]    // 覆盖，全部更新
  * [DELETE] // 删除
  */
+@Validated
 @Slf4j
 @RestController
 public class UserApi {
@@ -148,6 +151,7 @@ public class UserApi {
                                @RequestParam String accountName,
                                @RequestParam String password,
                                @RequestParam String userName,
+                               @NotBlank(message = "job不能为空!") @RequestParam String job,
                                HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
@@ -161,6 +165,7 @@ public class UserApi {
         userEntity.setCreatorName(accountName);
         userEntity.setAccountName(accountName);
         userEntity.setUserName(userName);
+        userEntity.setJob(job);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
         UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);

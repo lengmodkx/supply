@@ -55,6 +55,7 @@
 		<result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
 		<result column="project_des" property="projectDes" jdbcType="VARCHAR" />
 		<result column="collect" property="collect" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="project_del" property="projectDel" jdbcType="INTEGER" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
 	</resultMap>
@@ -200,6 +201,7 @@
 			p.project_des,
 			pm.collect as collect,
 			p.project_del,
+			p.parent_id,
 			p.project_status,
 			pm.member_label as member_label,
 		    pm.default_group as group_id,

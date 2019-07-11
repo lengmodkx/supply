@@ -1014,4 +1014,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 .withPageable(PageRequest.of(current, size,new Sort(Sort.Direction.DESC, "createTime"))).build();
         return fileRepository.search(searchQuery);
     }
+
+    @Override
+    public Integer signImportant(String fileId, Integer label) {
+        File file = new File();
+        file.setUpdateTime(System.currentTimeMillis());
+        file.setFileId(fileId);
+        file.setImportant(label);
+
+        //更新库
+        this.updateById(file);
+        return 1;
+    }
 }

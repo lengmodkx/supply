@@ -36,6 +36,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -1172,6 +1175,19 @@ public class FileApi extends BaseController {
     @GetMapping("/folder_tree_admin")
     public JSONObject getAdminTree(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
         return success(fileService.getAllFolderTree(fileId));
+    }
+
+    /**
+     * 标记或者取消 重要文件标识
+     * @param fileId 文件id
+     * @param label 标识(1.标记   0.取消)
+     * @return 是否成功
+     */
+    @PutMapping("/sing_cancel/important_label")
+    public JSONObject signOrCancelImportantLabel(@RequestParam @NotBlank(message = "fileId不能为空!") String fileId,
+                                                 @RequestParam @Range(max = 1,message = "参数值范围错误!") Integer label){
+        fileService.signImportant(fileId,label);
+        return success();
     }
 
 }

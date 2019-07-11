@@ -375,4 +375,17 @@ import java.util.List;
 	 * @return 素材库文件数据
 	 */
 	org.springframework.data.domain.Page<File> searchMaterialBaseFile(String fileName, Integer current, Integer size);
+
+	/**
+	 * 标记或者取消重要文件
+	 * 如果 fileId为空则返回-1 , 如果label为空则返回-1
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param fileId 文件id
+	 * @param label 标识(1.标记   0.取消)
+	 * @updateInfo 暂无
+	 * @date 2019/7/11 17:01
+	 * @return 是否成功
+	 */
+    Integer signImportant(String fileId, Integer label);
 }

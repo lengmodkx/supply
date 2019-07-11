@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -182,4 +183,28 @@ public interface ProjectService extends IService<Project> {
 	 * @return 是否不存在
 	 */
 	Boolean notExist(String projectId);
+
+	/**
+	 * 获取到项目的树节点数据
+	 * @author heShaoHua
+	 * @param projectId 父项目id
+	 * @describe 暂无
+	 * @updateInfo 暂无
+	 * @date 2019/7/11 10:43
+	 * @return 树节点集合数据
+	 */
+    List<ProjectTreeVO> getTreeData(String projectId);
+
+    /**
+     * 获取到某个项目的子项目信息集合
+	 * 如果projectId 为空 返回size为0的ArrayList
+     * @author heShaoHua
+     * @describe 暂无
+     * @param projectId 父级项目id
+     * @updateInfo 暂无
+     * @date 2019/7/11 11:15
+     * @return 子项目信息集合
+     */
+    List<Project> getSubProject(String projectId);
+
 }

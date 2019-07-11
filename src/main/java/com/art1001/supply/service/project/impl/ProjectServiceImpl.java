@@ -9,6 +9,7 @@ import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.ServiceException;
@@ -29,6 +30,7 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -413,5 +415,62 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			return null;
 		}
 		return !this.checkIsExist(projectId);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Project> getSubProject(String projectId) {
+		if(Stringer.isNullOrEmpty(projectId)){
+			return new ArrayList<>();
+		}
+
+		//构造sql表达式
+		LambdaQueryWrapper<Project> selectSubProjectByParentIdQw = new QueryWrapper<Project>().lambda()
+				.eq(Project::getParentId, projectId)
+				.orderByDesc(Project::getCreateTime);
+		return this.list(selectSubProjectByParentIdQw);
+		//把查询出来的项目信息 按照时间进项
+	}
+
+	@Override
+	public List<ProjectTreeVO> getTreeData(String projectId) {
+		String userId = ShiroAuthenticationManager.getUserId();
+
+		List<Project> pros;
+
+		//如果项目id不为空  则查询该项目的子项目,并且包装成目录树类型返回.
+		if(Stringer.isNotNullOrEmpty(projectId)){
+			pros = this.getSubProject(projectId);
+		} else {
+			pros = this.findProjectByUserId(userId);
+			//过滤出根项目集合
+			pros = pros.stream()
+					.filter(p -> Constants.ZERO.equals(p.getParentId()))
+					.collect(Collectors.toList());
+
+		}
+		return projectChangeToTreeData(pros);
+	}
+
+	/**
+	 * 改变项目信息集合到 项目树集合信息
+	 * @param projects 原projects 集合信息
+	 * @return 项目树信息集合
+	 */
+	private List<ProjectTreeVO> projectChangeToTreeData(List<Project> projects){
+		if(CollectionUtils.isEmpty(projects)){
+			return new ArrayList<>();
+		}
+		List<ProjectTreeVO> projectTreeVOS = new ArrayList<>();
+		projects.forEach(pro -> {
+			ProjectTreeVO tree = new ProjectTreeVO();
+			tree.setTitle(pro.getProjectName());
+			tree.setId(pro.getProjectId());
+			tree.setExpand(false);
+			tree.setSelected(false);
+			tree.setChecked(false);
+			projectTreeVOS.add(tree);
+		});
+		return projectTreeVOS;
 	}
 }
