@@ -1,5 +1,6 @@
 package com.art1001.supply.api;
 
+import com.alibaba.druid.util.DaemonThreadFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSClient;
@@ -13,6 +14,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileRepository;
+import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -164,7 +166,7 @@ public class FileApi extends BaseController {
      */
     @GetMapping("/{fileId}/parent/folders")
     public JSONObject getParentFolders(@PathVariable String fileId,
-                                       @NotEmpty(message = "projectId不能为空!") String projectId){
+                                       @NotBlank(message = "projectId不能为空!") String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(!fileService.checkIsExist(fileId)){
@@ -278,7 +280,7 @@ public class FileApi extends BaseController {
      *
      * @param projectId 项目id
      */
-    @Log(PushType.C2)
+//    @Log(PushType.C2)
     @Push(value = PushType.C2,type = 1)
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
@@ -936,7 +938,7 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
      /**
-     * 根据父文件夹id获取子文件夹的树形图数据
+     * 获取项目中的所有文件夹树形图数据
      * @param fileId 父文件夹id
      * @return 子文件夹数据
      */
@@ -1124,6 +1126,16 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
+    @GetMapping("/{fileName}/material_base_search")
+    public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName
+            ,Integer current
+            ,Integer size){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result",1);
+        jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,current,size));
+        return jsonObject;
+    }
+
     /**
      * 获取素材库
      * @param folderId 目录id
@@ -1133,4 +1145,33 @@ public class FileApi extends BaseController {
     public JSONObject getMaterialBaseFile(@PathVariable String folderId,Integer current, Integer size){
         return success(fileService.getMateriaBaseFile(folderId,current,size));
     }
+
+    /**
+     * 获取一个项目的所有文件夹树信息（向下递归）
+     * @param projectId 项目id
+     * @return 目录树信息
+     */
+    @GetMapping("/folder_all_tree")
+    public JSONObject getAllFolderTree(@NotBlank(message = "项目id不能为空！") @RequestParam String projectId){
+        boolean projectNotExist = !projectService.checkIsExist(projectId);
+        if(projectNotExist){
+            return error("参数错误!");
+        }
+        String parentId = fileService.findParentId(projectId);
+        if(Stringer.isNullOrEmpty(parentId)){
+            return error("目录id错误!");
+        }
+        return success(fileService.getAllFolderTree(parentId));
+    }
+
+    /**
+     * 获取管理员素材库的树形数据
+     * @param fileId 顶级目录id
+     * @return 目录数据
+     */
+    @GetMapping("/folder_tree_admin")
+    public JSONObject getAdminTree(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
+        return success(fileService.getAllFolderTree(fileId));
+    }
+
 }

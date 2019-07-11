@@ -551,6 +551,12 @@
 			create_time DESC
 	</select>
 
+	<!-- 某个目录下的所有子级目录id字符串（逗号隔开） -->
+	<select id="selectChildFolderIds" resultType="java.lang.String">
+		SELECT
+			getChildFolder ( #{folderId} )
+	</select>
+
 	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file

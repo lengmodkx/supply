@@ -315,4 +315,11 @@ public interface FileMapper extends BaseMapper<File> {
 
 
 	Page<File> findMateriaBaseFile(@Param("page")Page page, @Param("folderId") String folderId);
+
+	/**
+	 * 获取 某个目录下的所有子级目录id字符串（逗号隔开）
+	 * @param folderId 当前目录id
+	 * @return id字符串
+	 */
+    String selectChildFolderIds(@Param("folderId") String folderId);
 }

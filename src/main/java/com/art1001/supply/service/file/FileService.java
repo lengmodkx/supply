@@ -339,4 +339,40 @@ import java.util.List;
 
 
     Page<File> getMateriaBaseFile(String folderId, Integer current, Integer size);
+
+    /**
+     * 获取项目的文件目录树
+     * @author heShaoHua
+     * @describe 暂无
+     * @param parentId 目录id
+     * @updateInfo 暂无
+     * @date 2019/7/5 11:02
+     * @return 项目文件目录树
+     */
+	List<FileTreeShowVO> getAllFolderTree(String parentId);
+
+	/**
+	 * 获取一个文件夹的所有子级目录id数组（递归到最底端）
+	 * 如果parentId为空则返回null
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param parentId 起始目录id
+	 * @updateInfo 暂无
+	 * @date 2019/7/5 11:17
+	 * @return 子级目录id数组
+	 */
+	String[] getChildFolderIds(String parentId);
+
+	/**
+	 * 在搜索引擎中搜索文件库中的文件
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param fileName 文件名称
+	 * @param current 当前页
+	 * @param size 每页数
+	 * @updateInfo 暂无
+	 * @date 2019/7/10 13:45
+	 * @return 素材库文件数据
+	 */
+	org.springframework.data.domain.Page<File> searchMaterialBaseFile(String fileName, Integer current, Integer size);
 }

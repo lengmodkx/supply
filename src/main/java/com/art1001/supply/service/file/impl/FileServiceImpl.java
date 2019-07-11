@@ -31,6 +31,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -700,6 +702,21 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         });
     }
 
+    //文件向下递归的分层
+    private void downLevel(List<File> files){
+        files.forEach(f -> {
+            List<File> subs = new ArrayList<>();
+            files.forEach(s -> {
+                if(s.getParentId().equals(f.getFileId())){
+                    subs.add(s);
+                }
+            });
+            f.setFiles(subs);
+        });
+    }
+
+
+
     /**
      * 获取文件的绑定信息
      * @param id 父id
@@ -951,5 +968,50 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         page.setCurrent(current);
         page.setSize(size);
         return fileMapper.findMateriaBaseFile(page,folderId);
+    }
+
+    @Override
+    public List<FileTreeShowVO> getAllFolderTree(String parentId) {
+
+        //获取一个目录的所有子级目录id
+        String[] childFolderIds = this.getChildFolderIds(parentId);
+        if(childFolderIds.length == 0){
+            return new ArrayList<>();
+        }
+
+        //构造sql表达式
+        LambdaQueryWrapper<File> selectFolderQw = new QueryWrapper<File>().lambda()
+                .select(File::getFileId, File::getFileName, File::getParentId, File::getLevel,File::getCreateTime)
+                .in(File::getFileId, Arrays.asList(childFolderIds));
+
+        List<File> childFolders = this.list(selectFolderQw);
+        List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
+        //生成目录树
+        this.downLevel(childFolders);
+        this.chanageToFileTreeVO(childFolders, fileTreeShowVOS);
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId()) || f.getId().equals(Constants.MATERIAL_BASE)).collect(Collectors.toList());
+    }
+
+    @Override
+    public String[] getChildFolderIds(String folderId) {
+        if(Stringer.isNullOrEmpty(folderId)){
+            return null;
+        }
+
+        String subIds = fileMapper.selectChildFolderIds(folderId);
+        if(Stringer.isNullOrEmpty(subIds)){
+            return new String[0];
+        }
+        return subIds.split(",");
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<File> searchMaterialBaseFile(String fileName, Integer current, Integer size) {
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
+                //.withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
+                .withFilter(QueryBuilders.termQuery("parentId",Constants.MATERIAL_BASE))
+                .withPageable(PageRequest.of(current, size,new Sort(Sort.Direction.DESC, "createTime"))).build();
+        return fileRepository.search(searchQuery);
     }
 }
