@@ -140,6 +140,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
             myFile.setLevel(1);
+            myFile.setIsModel(1);
             // 得到上传文件的大小
             myFile.setSize(size);
             myFile.setMemberId(ShiroAuthenticationManager.getUserId());
@@ -525,6 +526,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setCatalog(0);
                 // 得到上传文件的大小
                 myFile.setSize(size);
+                myFile.setIsModel(0);
                 //文件的层级
                 if(StringUtils.isNotEmpty(parentId)){
                     //查询出当前文件夹的level

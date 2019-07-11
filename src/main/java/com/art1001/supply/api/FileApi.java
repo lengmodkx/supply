@@ -1,6 +1,5 @@
 package com.art1001.supply.api;
 
-import com.alibaba.druid.util.DaemonThreadFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSClient;
@@ -14,7 +13,6 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileRepository;
-import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -44,10 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -388,6 +383,7 @@ public class FileApi extends BaseController {
             myFile.setParentId(file.getParentId());
             myFile.setProjectId(file.getProjectId());
             myFile.setExt(ext);
+            myFile.setIsModel(0);
             if(FileExt.extMap.get("images").contains(ext)){
                 myFile.setFileThumbnail(fileUrl);
             }
@@ -404,8 +400,7 @@ public class FileApi extends BaseController {
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             myFile.setCreateTime(System.currentTimeMillis());
             myFile.setUpdateTime(System.currentTimeMillis());
-            //区分普通文件还是模型文件
-            myFile.setPublicLable(0);
+            myFile.setIsModel(0);
             if(FileExt.extMap.get("images").contains(ext)){
                 myFile.setFileThumbnail(fileUrl);
             }
@@ -413,7 +408,8 @@ public class FileApi extends BaseController {
             //版本历史更新
             FileVersion fileVersion = new FileVersion();
             fileVersion.setFileId(myFile.getFileId());
-            fileVersion.setIsMaster(1);
+            //区分普通文件还是模型文件
+            fileVersion.setIsMaster(0);
             fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
             fileVersionService.save(fileVersion);
             // 设置返回数据
@@ -436,14 +432,13 @@ public class FileApi extends BaseController {
      * @param fileId 文件id
      */
     @Log(PushType.C5)
-    @Push(value = PushType.C5,type = 2)
-    @PostMapping("/{fileId}/update_model")
+    @Push(value = PushType.C5,type = 1)
+    @PostMapping("/{parentId}/update_model")
     public JSONObject updateModel(
-            @PathVariable(value = "fileId") String fileId,
+            @PathVariable(value = "parentId") String fileId,
             @RequestParam(value = "fileCommon") String fileCommon,
             @RequestParam(value = "fileModel") String fileModel,
-            @RequestParam(value = "filename") String filename,
-                @RequestParam(value = "publicId",required = false) String publicId
+            @RequestParam(value = "filename") String filename
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -467,10 +462,7 @@ public class FileApi extends BaseController {
             modelFile.setExt(fileName.substring(fileName.lastIndexOf(".")).toLowerCase());
             modelFile.setProjectId(file.getProjectId());
             modelFile.setFileThumbnail(array.getString("fileUrl"));
-            if(StringUtils.isNotEmpty(publicId)){
-                modelFile.setPublicId(publicId);
-                modelFile.setPublicLable(1);
-            }
+            modelFile.setIsModel(1);
             fileService.save(modelFile);
             //版本历史更新
             FileVersion fileVersion = new FileVersion();

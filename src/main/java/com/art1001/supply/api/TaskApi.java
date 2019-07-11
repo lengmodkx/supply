@@ -30,6 +30,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -1043,6 +1047,33 @@ public class TaskApi extends BaseController {
     private String getTaskName(String taskId){
         return taskService.getTaskNameById(taskId);
     }
+
+
+
+
+
+    /**
+     * 将字符串复制到剪切板。
+     * @param url  端口/任务 日程  文件  分享 / id
+     */
+    @PostMapping("/setSysClip")
+    public  JSONObject setSysClipboardText(@RequestParam String url) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //System.setProperty("java.awt.headless", "true");
+            Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable tText = new StringSelection(url);
+            clip.setContents(tText, null);
+
+            jsonObject.put("result",1);
+            jsonObject.put("msg","复制到剪贴板成功!");
+            return jsonObject;
+
+        } catch (Exception e){
+            throw new AjaxException("系统异常,更新失败!",e);
+        }
+    }
+
 
 
 }
