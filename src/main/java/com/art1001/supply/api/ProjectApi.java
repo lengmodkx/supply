@@ -6,11 +6,9 @@ import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -27,7 +25,6 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,7 +34,6 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 
@@ -163,12 +159,12 @@ public class ProjectApi extends BaseController {
             project.setIsPublic(isPublic);
             project.setStartTime(startTime);
             project.setEndTime(endTime);
-            if(!Stringer.isNullOrEmpty(projectCover) || projectCover != ""){
+            if(!Stringer.isNullOrEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
                 //删除Oss上的图片
-                Project projectById = projectService.findProjectByProjectId(projectId);
+                /*Project projectById = projectService.findProjectByProjectId(projectId);
                 if (!Stringer.isNullOrEmpty(projectById.getProjectCover()) || projectById.getProjectCover() != ""){
                     AliyunOss.deleteFile(projectById.getProjectCover());
-                }
+                }*/
                 //将新的图片路径写入项目
                 project.setProjectCover(projectCover);
             }
