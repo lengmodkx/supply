@@ -591,7 +591,7 @@ public class TaskApi extends BaseController {
             }
             taskService.updateById(task);
             object.put("result",1);
-                object.put("remarks",remarks);
+            object.put("remarks",remarks);
             object.put("msgId",getTaskProjectId(taskId));
             object.put("data",taskId);
             //object.put("data",new JSONObject().fluentPut("type","任务").fluentPut("id", taskId));
