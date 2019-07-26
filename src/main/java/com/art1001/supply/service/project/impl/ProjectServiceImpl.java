@@ -12,7 +12,6 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -36,10 +35,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +59,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Resource
 	private TagService tagService;
+
 
 	@Resource
 	private FileService fileService;
@@ -318,29 +315,34 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		return projectMapper.selectDefaultGroup(projectId);
 	}
 
-	/**
-	 * 获取项目的甘特图数据
-	 * @param projectId 项目id
-	 * @return
-	 */
 	@Override
-	public List<GantChartVO> getGanttChart(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			throw new ServiceException("项目id不能为空!");
+	public List<GantChartVO> getGanttChart(String projectId, String groupId) {
+		final List<GantChartVO> gants = new ArrayList<GantChartVO>();
+		if(Stringer.isNullOrEmpty(groupId)){
+			//获取到默认分组id
+			groupId = projectMemberService.findDefaultGroup(projectId, ShiroAuthenticationManager.getUserId());
 		}
-		if(projectMapper.selectById(projectId) == null){
-			throw new ServiceException("该项目不存在!");
-		}
-		List<GantChartVO> gants = new ArrayList<GantChartVO>();
-		//获取到该项目的所有任务id字符串(逗号隔开)
-		String taskIds = projectMapper.selectProjectAllTask(projectId);
-		if(!Stringer.isNullOrEmpty(taskIds)){
-			List<String> idList = Arrays.asList(taskIds.split(","));
-			List<Task> tasks = taskService.listById(idList).stream().sorted(Comparator.comparing(Task::getLevel)).collect(Collectors.toList());
-			//构建任务和子任务的parent 和 id  (更换id字符串为 数字类型)
-			gants = taskService.buildFatherSon(tasks);
-		}
-		//查询出项目的部分信息并且映射进 GantChartVO
+
+		//获取分组下的所有列表信息
+        List<Relation> menuList = relationService.findAllMenuInfoByGroupId(groupId).stream()
+                .sorted(Comparator.comparing(Relation::getOrder))
+                .collect(Collectors.toList());
+		if(CollectionUtils.isEmpty(menuList)){
+			return gants;
+        }
+
+        //将分组下的所有列表任务存储到tasks中
+        List<Task> tasks = new ArrayList<>();
+        menuList.forEach(menu -> {
+            List<Task> taskByMenuId = taskService.findTaskByMenuId(menu.getRelationId()).stream()
+                    .sorted(Comparator.comparing(Task::getCreateTime).reversed())
+                    .collect(Collectors.toList());
+            tasks.addAll(taskByMenuId);
+        });
+
+        //构建任务为gants类型(更换id字符串为 数字类型)
+        gants.addAll(taskService.buildFatherSon(tasks,menuList));
+
 		Project projectGanttChart = projectMapper.getProjectGanttChart(projectId);
 		GantChartVO pro = new GantChartVO();
 		pro.setId(1);

@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
@@ -285,6 +286,7 @@ public class ProjectApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
+    @ProAuthentization("tasks")
     @GetMapping("/{projectId}/tasks")
     public JSONObject mainpage(@PathVariable String projectId, @RequestParam(required = false) String name) {
         JSONObject object = new JSONObject();
@@ -488,17 +490,20 @@ public class ProjectApi extends BaseController {
      * @return
      */
     @GetMapping("/gantt_chart/{projectId}")
-    public JSONObject ganttChart(@PathVariable String projectId){
+    public JSONObject ganttChart(@PathVariable String projectId, @RequestParam(required = false) String groupId){
         JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("data",projectService.getGanttChart(projectId));
-            jsonObject.put("result", 1);
-            return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常，获取失败！",e);
+        if(Stringer.isNullOrEmpty(projectId)){
+            return error("projectId不能为空!");
         }
+
+        boolean projectNotExist = !projectService.checkIsExist(projectId);
+        if(projectNotExist){
+            return error("项目不存在!");
+        }
+
+        jsonObject.put("data",projectService.getGanttChart(projectId,groupId));
+        jsonObject.put("result", 1);
+        return jsonObject;
     }
 
     /**

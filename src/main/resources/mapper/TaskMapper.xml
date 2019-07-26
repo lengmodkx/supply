@@ -1443,4 +1443,11 @@
 			t.tag_id = #{tagId}
 		AND task.task_del = '0'
 	</select>
+
+	<select id="selectChildTaskId" resultType="java.lang.String">
+		SELECT
+		getSubTaskById (
+		#{taskId}
+		)
+	</select>
 </mapper>

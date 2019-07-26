@@ -87,8 +87,16 @@ public class Relation extends Model<Relation> {
 	@TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
 	private Long updateTime;
 
+	/**
+	 * 是否有任务
+	 */
+	@TableField(exist = false)
+	private Boolean subIsExist;
+
+
 	@Override
 	protected Serializable pkVal() {
 		return this.relationId;
 	}
+
 }

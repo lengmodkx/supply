@@ -134,7 +134,7 @@ public interface ProjectService extends IService<Project> {
 	 * @param projectId 项目id
 	 * @return
 	 */
-	List<GantChartVO> getGanttChart(String projectId);
+	List<GantChartVO> getGanttChart(String projectId, String groupId);
 
 	/**
 	 * 根据项目名称搜索项目

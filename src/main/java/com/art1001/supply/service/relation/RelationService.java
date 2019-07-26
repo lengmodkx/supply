@@ -6,6 +6,7 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.quartz.SimpleTrigger;
 
 import java.util.List;
 
@@ -277,4 +278,16 @@ public interface RelationService extends IService<Relation> {
 	 * @return Obj
 	 */
 	String getObject(String relationId);
+
+	/**
+	 * 获取分组下的任务id集合
+	 * 如果groupId为空的话则返回空集合
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param groupId 分组id
+	 * @updateInfo 暂无
+	 * @date 2019/7/15 9:50
+	 * @return id集合信息
+	 */
+	List<String> getGroupTaskId(String groupId);
 }

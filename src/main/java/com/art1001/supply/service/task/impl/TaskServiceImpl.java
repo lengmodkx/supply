@@ -52,8 +52,6 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
@@ -1729,6 +1727,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     /**
+     * 根据id集合 查询出对应的任务信息 以及执行者信息
+     * @param idList id集合
+     * @return
+     */
+    @Override
+    public List<Task> listById(List<String> idList) {
+        return taskMapper.listById(idList);
+    }
+
+    /**
      * 把该子任务向上递归直到获取到顶级父任务的项目id
      * @param id 子任务id
      * @return 项目id
@@ -1757,49 +1765,41 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskMapper.getTaskPanel(taskIds);
     }
 
-    /**
-     * 根据id集合 查询出对应的任务信息 以及执行者信息
-     * @param idList id集合
-     * @return
-     */
     @Override
-    public List<Task> listById(List<String> idList) {
-        return taskMapper.listById(idList);
-    }
-
-    @Override
-    public List<GantChartVO> buildFatherSon(List<Task> tasks){
+    public List<GantChartVO> buildFatherSon(List<Task> tasks, List<Relation> relations){
         List<GantChartVO> gants = new ArrayList<>();
         int order = 2;
-        for (Task f : tasks) {
-            String taskId = f.getTaskId();
-            for (Task s : tasks) {
-                if(s.getParentId().equals(taskId)) {
-                    s.setParentId(String.valueOf(order));
-                    f.setIsExistSub(true);
+        int index = relations.size() + 2;
+        for (Relation r : relations){
+            String rId = r.getRelationId();
+            for (Task t : tasks) {
+                if(t.getTaskMenuId().equals(r.getRelationId())){
+                    //将任务信息循环映射进GantChartsVO
+                    GantChartVO gantChartVO = new GantChartVO();
+                    gantChartVO.setPublicId(t.getTaskId());
+                    gantChartVO.setStart_date(t.getStartTime());
+                    gantChartVO.setEnd_date(t.getEndTime());
+                    gantChartVO.setType("gantt.config.types.task");
+                    gantChartVO.setOpen(t.getIsExistSub());
+                    gantChartVO.setText(t.getTaskName());
+                    gantChartVO.setParent(order);
+                    gantChartVO.setId(index);
+                    gants.add(gantChartVO);
+                    index++;
                 }
             }
-            if(f.getIsExistSub() == null){
-                f.setIsExistSub(false);
-            }
-            //将任务信息循环映射进GantChartsVO
             GantChartVO gantChartVO = new GantChartVO();
-            gantChartVO.setPublicId(taskId);
-            gantChartVO.setStart_date(f.getStartTime());
-            gantChartVO.setEnd_date(f.getEndTime());
+            gantChartVO.setPublicId(rId);
+            gantChartVO.setStart_date(r.getCreateTime());
+            gantChartVO.setEnd_date(System.currentTimeMillis());
             gantChartVO.setType("gantt.config.types.task");
-            gantChartVO.setOpen(f.getIsExistSub());
-            gantChartVO.setText(f.getTaskName());
-            gantChartVO.setParent(Integer.valueOf(f.getParentId()));
-            f.setTaskId(String.valueOf(order));
-            gantChartVO.setId(Integer.valueOf(f.getTaskId()));
+            gantChartVO.setOpen(r.getSubIsExist());
+            gantChartVO.setText(r.getRelationName());
+            gantChartVO.setParent(1);
+            gantChartVO.setId(order);
             gants.add(gantChartVO);
+            gantChartVO.setOpen(r.getSubIsExist());
             order++;
-        }
-        for (GantChartVO f : gants) {
-           if(f.getParent() == 0){
-               f.setParent(1);
-           }
         }
         return gants;
     }
@@ -1880,6 +1880,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //生成sql条件表达式
         LambdaQueryWrapper<Task> like = new QueryWrapper<Task>().lambda().eq(Task::getProjectId, projectId).like(Task::getTaskName, name);
         return taskMapper.selectList(like);
+    }
+
+    @Override
+    public List<String> getChildTaskId(String taskId) {
+        if(Stringer.isNullOrEmpty(taskId)){
+            return new ArrayList<>();
+        }
+
+        return Arrays.asList(taskMapper.selectChildTaskId(taskId).split(","));
     }
 }
 

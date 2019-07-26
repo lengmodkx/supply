@@ -339,7 +339,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from prm_relation
-		where parent_id = #{groupId}
+		where parent_id = #{groupId} and relation_del = 0
 	</select>
 
 	<!-- 根据菜单id 查询出该菜单的id 及菜单下的所有任务信息 -->

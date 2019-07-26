@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.Task;
@@ -37,7 +38,7 @@ public interface TaskService extends IService<Task> {
 	 */
 	Task findTaskByTaskId(String taskId);
 
-	List<GantChartVO> buildFatherSon(List<Task> tasks);
+	List<GantChartVO> buildFatherSon(List<Task> tasks, List<Relation> relations);
 
 	/**
 	 * 获取子任务的项目id
@@ -638,4 +639,15 @@ public interface TaskService extends IService<Task> {
 	 * @return 任务集合
 	 */
     List<Task> likeTaskName(String name, String projectId);
+
+    /**
+     * 根据taskId集合查询出该集合id对应的子任务id集合
+     * @author heShaoHua
+     * @describe 暂无
+     * @param taskId 任务id
+     * @updateInfo 暂无
+     * @date 2019/7/15 10:25
+     * @return 任务和子任务id集合
+     */
+    List<String> getChildTaskId(String taskId);
 }
