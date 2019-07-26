@@ -173,6 +173,8 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 				}
 				if(!Stringer.isNullOrEmpty(name) && !task.getTaskName().contains(name)){
 					iterator.remove();
+				}else if(task.getTaskDel()==1){
+					iterator.remove();
 				}
 			}
 

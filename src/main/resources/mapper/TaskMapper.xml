@@ -1404,9 +1404,11 @@
 			prm_task AS t
 			LEFT JOIN tb_user AS u ON t.executor = u.user_id
 		WHERE
-			t.executor = #{userId}
+		    t.task_del=0  AND
+			(t.executor = #{userId}
 			OR t.member_id = #{userId}
-			OR find_in_set( #{userId}, t.task_uids )
+			OR find_in_set( #{userId}, t.task_uids ))
+
 	</select>
 
 	<!--  查询任务的 (id,projectid,子任务的taskId) -->
