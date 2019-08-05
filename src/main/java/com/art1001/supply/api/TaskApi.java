@@ -77,7 +77,7 @@ public class TaskApi extends BaseController {
      * @return object
      */
     @GetMapping("/{taskId}")
-        public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
+    public JSONObject getTask(@PathVariable(value = "taskId") String taskId){
         JSONObject jsonObject = new JSONObject();
         try {
             Task task = taskService.taskInfoShow(taskId);
@@ -105,6 +105,7 @@ public class TaskApi extends BaseController {
             jsonObject.put("msgId",task.getProjectId());
             jsonObject.put("data",task.getProjectId());
             jsonObject.put("result",1);
+            jsonObject.put("task", taskService.getById(task.getTaskId()));
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常任务创建失败!",e);
