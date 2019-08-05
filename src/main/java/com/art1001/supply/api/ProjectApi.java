@@ -282,7 +282,7 @@ public class ProjectApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
-    @ProAuthentization("tasks")
+//    @ProAuthentization("tasks")
     @GetMapping("/{projectId}/tasks")
     public JSONObject mainpage(@PathVariable String projectId, @RequestParam(required = false) String name) {
         JSONObject object = new JSONObject();
