@@ -388,4 +388,15 @@ import java.util.List;
 	 * @return 是否成功
 	 */
     Integer signImportant(String fileId, Integer label);
+
+    /**
+     * 获取我的文件夹
+     * @author heShaoHua
+     * @describe 如果userId为空则返回 null
+     * @param userId 用户id
+     * @updateInfo 暂无
+     * @date 2019/8/6 16:06
+     * @return 我的文件夹信息
+     */
+    File getMyFolder(String userId);
 }

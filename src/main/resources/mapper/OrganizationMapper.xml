@@ -222,10 +222,10 @@
 		WHERE
 			om.member_id = #{userId}
 		<if test="flag != null and flag == 1">
-			AND partment_lable = 1
+			AND organization_lable = 1
 		</if>
 		<if test="flag != null and flag == 2">
-			AND partment_lable = 0
+			AND organization_lable = 0
 		</if>
 	</select>
 

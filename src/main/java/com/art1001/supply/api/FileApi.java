@@ -24,10 +24,12 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.impl.FileServiceImpl;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.service.user.impl.UserServiceImpl;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -1180,6 +1182,28 @@ public class FileApi extends BaseController {
                                                  @RequestParam @Range(max = 1,message = "参数值范围错误!") Integer label){
         fileService.signImportant(fileId,label);
         return success();
+    }
+
+
+    @GetMapping("/aaa")
+    public JSONObject main11() {
+        List<String> collect = fileService.list(new QueryWrapper<File>().lambda().isNotNull(File::getUserId).select(File::getUserId)).stream().map(File::getUserId).collect(Collectors.toList());
+        List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().lambda().notIn(UserEntity::getUserId, collect));
+        list.forEach(u -> {
+            File file = new File();
+            file.setMemberId(u.getUserId());
+            file.setCatalog(1);
+            file.setCreateTime(System.currentTimeMillis());
+            file.setUpdateTime(System.currentTimeMillis());
+            file.setParentId("0");
+            file.setFileName("我的文件夹");
+            file.setFileLabel(1);
+            file.setFilePrivacy(2);
+            file.setLevel(1);
+            file.setUserId(u.getUserId());
+            fileService.save(file);
+        });
+        return error("1");
     }
 
 }

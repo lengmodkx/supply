@@ -173,7 +173,7 @@
 
 	<!-- 查询子文件 -->
 	<select id="findChildFile" resultMap="BaseResultMap">
-		select
+		SELECT
 			f.file_id,
 			f.file_name,
 			f.ext,
@@ -195,11 +195,17 @@
 			f.file_privacy,
 			f.public_id,
 			f.`level`
-		from prm_file f
-		left join prm_file_version v on f.file_id = v.file_id
-		where (parent_id = #{parentId} and catalog=1) or (public_lable = 0 and catalog=0 and v.is_master=1 and parent_id = #{parentId}) and file_del = 0
-		or (user_id = #{userId} and '0'=(SELECT `level` from prm_file WHERE file_id=#{parentId} LIMIT 0,1))
-		order by `catalog` desc,create_time desc
+		FROM
+			prm_file f
+			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
+			AND v.is_master = 1
+		WHERE
+			f.file_del = 0
+			AND public_lable = 0
+			AND parent_id = #{parentId}
+		ORDER BY
+			`catalog` DESC,
+			create_time DESC
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
