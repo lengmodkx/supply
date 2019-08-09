@@ -21,7 +21,8 @@
         <result column="condition_name" property="conditionName" />
         <result column="condition_value" property="conditionValue" />
         <association property="defaultAssign" javaType="com.art1001.supply.entity.user.UserEntity">
-            <id property="image" column="image"/>
+            <id property="userId" column="user_id"/>
+            <result property="image" column="image"/>
             <result property="userName" column="user_name"/>
         </association>
         <association property="object" javaType="com.art1001.supply.entity.relation.Relation">
@@ -29,6 +30,7 @@
             <result property="relationName" column="relation_name"/>
         </association>
         <association property="automaticJump" javaType="com.art1001.supply.entity.relation.Relation">
+            <result property="relationId" column="jump_id"/>
             <result property="relationName" column="jump_name"/>
         </association>
     </resultMap>
@@ -45,14 +47,18 @@
             a.default_assign,
             r.relation_id,
             r.relation_name,
+            u.user_id,
             u.image,
             u.user_name,
+            j.relation_id AS jump_id,
             j.relation_name AS jump_name
         FROM
             prm_automation_rules AS a
             LEFT JOIN tb_user AS u ON a.default_assign = u.user_id
             LEFT JOIN prm_relation AS r ON a.object = r.relation_id
-            LEFT JOIN prm_relation AS j ON a.automatic_jump = j.relation_id WHERE a.id = #{id}
+            LEFT JOIN prm_relation AS j ON a.automatic_jump = j.relation_id
+        WHERE
+            a.id = #{id}
     </select>
 
 </mapper>
