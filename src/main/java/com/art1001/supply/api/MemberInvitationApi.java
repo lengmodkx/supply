@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.Role;
@@ -11,6 +12,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
 
 /**
  * 项目成员邀请
@@ -31,7 +35,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("members")
-public class MemberInvitationApi {
+public class MemberInvitationApi extends BaseController {
 
     @Resource
     private UserService userService;
@@ -199,5 +203,18 @@ public class MemberInvitationApi {
         } catch (Exception e){
             throw new AjaxException(e);
         }
+    }
+
+    /**
+     * 获取当前用户参加或者创建的项目中的所有成员信息
+     * @return 项目成员信息
+     */
+    @GetMapping
+    public JSONObject getMembers(){
+        String userId = ShiroAuthenticationManager.getUserId();
+        if(Stringer.isNullOrEmpty(userId)){
+            return error("用户id不能为空!");
+        }
+        return success(projectMemberService.getMembers(userId));
     }
 }

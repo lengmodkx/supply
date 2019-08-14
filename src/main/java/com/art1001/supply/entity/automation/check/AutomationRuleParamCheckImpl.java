@@ -6,7 +6,6 @@ import com.art1001.supply.exception.AutomationRuleParamException;
 import com.art1001.supply.util.Stringer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 

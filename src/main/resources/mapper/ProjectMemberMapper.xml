@@ -114,5 +114,20 @@
 		AND project_del = 0
 	</select>
 
+	<!-- 根据项目id集合查询出这些项目下的所有成员id -->
+    <select id="selectMemberIdListByProjectIdList" resultType="java.lang.String">
+		SELECT DISTINCT
+			m.member_id
+		FROM
+			prm_project AS p
+			LEFT JOIN prm_project_member AS m ON p.project_id = m.project_id
+		WHERE
+			p.project_id IN (
+				<foreach collection="proIdList" separator="," item="proId">
+					#{proId}
+				</foreach>
+			)
+	</select>
+
 
 </mapper>

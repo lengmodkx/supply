@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,4 +45,11 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 * @return 非星标项目
 	 */
 	List<Project> getNotStarProject(@Param("userId") String userId);
+
+	/**
+	 * 根据项目id集合查询出这些项目下的所有成员id
+	 * @param projectIdList 项目id集合
+	 * @return 返回项目成员id集合
+	 */
+    List<String> selectMemberIdListByProjectIdList(@Param("proIdList") Collection<String> projectIdList);
 }

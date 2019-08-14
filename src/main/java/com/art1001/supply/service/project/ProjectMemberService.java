@@ -5,6 +5,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -88,7 +89,7 @@ public interface ProjectMemberService extends IService<ProjectMember> {
     Integer saveMember(String projectId, String memberId);
 
     /**
-     * 获取到用当前所在的项目
+     * 获取到用户当前所在的项目
 	 * 如果没有默认项目则返回null
      * @author heShaoHua
      * @describe 暂无
@@ -175,4 +176,27 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @return 结果
 	 */
 	Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String projectId);
+
+	/**
+	 * 获取和当前用户有关的项目中的所有成员信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param userId 当前用户id
+	 * @updateInfo 暂无
+	 * @date 2019/8/14 14:02
+	 * @return 项目成员信息
+	 */
+    List<UserEntity> getMembers(String userId);
+
+    /**
+     * 根据项目id集合查询出这些项目下的所有成员id并且去重
+     * @author heShaoHua
+     * @describe 如果 projectIdList集合为空，则返回List的空实例
+     * @param projectIdList 项目id集合
+     * @updateInfo 暂无
+     * @date 2019/8/14 14:14
+     * @return 项目成员id集合
+     */
+	List<String> getMemberIdListByProjectIdList(Collection<String> projectIdList);
+
 }

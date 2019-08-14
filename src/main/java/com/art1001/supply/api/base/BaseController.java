@@ -47,6 +47,7 @@ public class BaseController {
      * @desc 构造错误的返回信息（不带errorCode）.
      */
     protected JSONObject error(String errorMessage) {
+        log.error(errorMessage);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",0);
         jsonObject.put("msg",errorMessage);
