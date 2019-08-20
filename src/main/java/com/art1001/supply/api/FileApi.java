@@ -1183,27 +1183,4 @@ public class FileApi extends BaseController {
         fileService.signImportant(fileId,label);
         return success();
     }
-
-
-    @GetMapping("/aaa")
-    public JSONObject main11() {
-        List<String> collect = fileService.list(new QueryWrapper<File>().lambda().isNotNull(File::getUserId).select(File::getUserId)).stream().map(File::getUserId).collect(Collectors.toList());
-        List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().lambda().notIn(UserEntity::getUserId, collect));
-        list.forEach(u -> {
-            File file = new File();
-            file.setMemberId(u.getUserId());
-            file.setCatalog(1);
-            file.setCreateTime(System.currentTimeMillis());
-            file.setUpdateTime(System.currentTimeMillis());
-            file.setParentId("0");
-            file.setFileName("我的文件夹");
-            file.setFileLabel(1);
-            file.setFilePrivacy(2);
-            file.setLevel(1);
-            file.setUserId(u.getUserId());
-            fileService.save(file);
-        });
-        return error("1");
-    }
-
 }

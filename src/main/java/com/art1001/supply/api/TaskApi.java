@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.AutomationRule;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
@@ -154,6 +155,7 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
+    @AutomationRule(value = "#taskId",trigger = "completed",objectValue = "#label")
     @Push(value = PushType.A3,type = 3)
     @PutMapping("/{taskId}/finish")
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
