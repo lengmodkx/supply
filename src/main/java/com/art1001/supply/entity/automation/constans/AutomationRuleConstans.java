@@ -59,6 +59,21 @@ public class AutomationRuleConstans {
     public static final String VERY_URGENT = "veryUrgent";
 
     /**
+     * 普通
+     */
+    public static final String ORDINARY_CN = "普通";
+
+    /**
+     * 紧急
+     */
+    public static final String URGENT_CN = "紧急";
+
+    /**
+     * 非常紧急
+     */
+    public static final String VERY_URGENT_CN = "非常紧急";
+
+    /**
      * 默认指派人
      */
     public static final String DEFAULT_ASSIGN = "defaultAssign";
@@ -77,4 +92,9 @@ public class AutomationRuleConstans {
      * false
      */
     public static final String FALSE = "false";
+
+    /**
+     * 不重复
+     */
+    public static final String NO_REPEAT = "不重复";
 }

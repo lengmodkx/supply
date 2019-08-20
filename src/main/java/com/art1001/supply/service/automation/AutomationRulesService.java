@@ -60,4 +60,28 @@ public interface AutomationRulesService extends IService<AutomationRule> {
      * @return 是否成功
      */
     Integer updateAutoRuleName(String id, String name);
+
+    /**
+     * 查询该列表id是否是自动化规则对象
+     * @author heShaoHua
+     * @describe 如果menuId为空返回-1 ， 如果projectId为空则继续进行查询，如果两者全部为空 则返回-1
+     * @param menuId 列表id
+     * @param projectId 项目id
+     * @updateInfo 暂无
+     * @date 2019/8/20 10:21
+     * @return 如果是 返回 1 ，否则返回0
+     */
+    Integer checkTaskMenuObjectCount(String menuId, String projectId);
+
+    /**
+     * 根据menuId和projectId查询出该menuId下最新创建的自动化规则对象
+     * @author heShaoHua
+     * @describe 如果menuId为空返回null ， 如果projectId为空则继续进行查询，如果两者全部为空 则返回null
+     * @param menuId 列表id
+     * @param projectId 项目id
+     * @updateInfo 暂无
+     * @date 2019/8/20 10:21
+     * @return 最新的自动化规则对象信息
+     */
+    AutomationRule getNewestRuleByCreateTime(String menuId, String projectId);
 }

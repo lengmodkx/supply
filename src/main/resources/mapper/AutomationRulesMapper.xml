@@ -61,4 +61,18 @@
             a.id = #{id}
     </select>
 
+    <!-- 根据menuId和projectId查询出该menuId下最新创建的自动化规则对象 -->
+    <select id="selectNewestRuleByCreateTime" resultMap="BaseResultMap">
+        SELECT
+	      *
+        FROM
+            prm_automation_rules
+        WHERE
+            project_id = #{projectId}
+            AND object = #{menuId}
+        ORDER BY
+            create_time DESC
+            LIMIT 0,1
+    </select>
+
 </mapper>

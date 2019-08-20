@@ -6,6 +6,8 @@ import com.art1001.supply.mapper.automation.AutomationRulesMapper;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.Stringer;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -62,5 +64,46 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
         automationRule.setName(name);
         automationRule.setCreateTime(System.currentTimeMillis());
         return updateById(automationRule) ? 1:0;
+    }
+
+    @Override
+    public Integer checkTaskMenuObjectCount(String menuId, String projectId) {
+        //参数校验
+        boolean paramIncorrect = (Stringer.isNullOrEmpty(menuId) && Stringer.isNullOrEmpty(projectId))
+                || Stringer.isNullOrEmpty(menuId);
+        if(paramIncorrect){
+            return -1;
+        }
+
+        Wrapper<AutomationRule> selectMenuIdIsObjectQw = createMenuObjectQueryWrapper(menuId, projectId);
+        //返回该menuId的自动化规则的条数
+        return automationRulesMapper.selectCount(selectMenuIdIsObjectQw);
+    }
+
+    @Override
+    public AutomationRule getNewestRuleByCreateTime(String menuId, String projectId) {
+        //参数校验
+        boolean paramIncorrect = (Stringer.isNullOrEmpty(menuId) && Stringer.isNullOrEmpty(projectId))
+                || Stringer.isNullOrEmpty(menuId);
+        if(paramIncorrect){
+            return null;
+        }
+        return automationRulesMapper.selectNewestRuleByCreateTime(menuId,projectId);
+    }
+
+    /**
+     * 构建查询sql表达式（仅供 menuId 和 projectId 查询条件的sql表达式使用）
+     * @param menuId 列表id
+     * @param projectId  项目id
+     * @return sql表达式
+     */
+    private Wrapper<AutomationRule> createMenuObjectQueryWrapper(String menuId, String projectId){
+        //构造出sql表达式,如果projectId不为空就在sql中加上projectId筛选条件。
+        LambdaQueryWrapper<AutomationRule> selectMenuIdIsObjectQw = new QueryWrapper<AutomationRule>().lambda();
+        if(Stringer.isNotNullOrEmpty(projectId)){
+            selectMenuIdIsObjectQw.eq(AutomationRule::getProjectId, projectId);
+        }
+        selectMenuIdIsObjectQw.eq(AutomationRule::getObject, menuId);
+        return selectMenuIdIsObjectQw;
     }
 }

@@ -4,20 +4,17 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.automation.AutomationRule;
-import com.art1001.supply.entity.automation.AutomationRuleCheck;
-import com.art1001.supply.entity.automation.check.AutomationRuleParamCheckImpl;
+import com.art1001.supply.entity.automation.check.AutomationRuleParamCheck;
 import com.art1001.supply.exception.AutomationRuleParamException;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ValidatorUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 /**
  * <p>
@@ -43,7 +40,7 @@ public class AutomationRulesApi extends BaseController {
      * 注入automation验证Bean
      */
     @Resource
-    private AutomationRuleCheck automationRuleCheck;
+    private AutomationRuleParamCheck automationRuleCheck;
 
     /**
      * 创建一个自动化规则

@@ -1,5 +1,6 @@
-package com.art1001.supply.entity.automation;
+package com.art1001.supply.entity.automation.check;
 
+import com.art1001.supply.entity.automation.AutomationRule;
 import com.art1001.supply.exception.AutomationRuleParamException;
 
 /**
@@ -8,7 +9,7 @@ import com.art1001.supply.exception.AutomationRuleParamException;
  * @Author ddm
  **/
 @FunctionalInterface
-public interface AutomationRuleCheck {
+public interface AutomationRuleParamCheck {
 
     /**
      * 校验自动化规则参数的正确性

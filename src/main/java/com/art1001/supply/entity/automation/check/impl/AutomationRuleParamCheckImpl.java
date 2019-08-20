@@ -1,12 +1,12 @@
-package com.art1001.supply.entity.automation.check;
+package com.art1001.supply.entity.automation.check.impl;
 
-import com.art1001.supply.entity.automation.AutomationRuleCheck;
+import com.art1001.supply.entity.automation.check.AutomationRuleParamCheck;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.exception.AutomationRuleParamException;
 import com.art1001.supply.util.Stringer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 
 /**
@@ -14,12 +14,17 @@ import java.math.BigDecimal;
  * @Date:2019/8/7 11:41
  * @Author shaohua
  **/
-@Component
+@Configuration
 public class AutomationRuleParamCheckImpl {
 
 
+    /**
+     * 自动化规则的参数校验 ---- 快速失败模式
+     * 如果需要其他校验模式，请在此类下面添加方法，并且返回AutomationRuleParamCheck 实例即可
+     * @return AutomationRuleParamCheck 接口实现实例
+     */
     @Bean
-    public AutomationRuleCheck fastFail(){
+    public AutomationRuleParamCheck fastFail(){
         return check -> {
             boolean incorrect;
             Object newValue;

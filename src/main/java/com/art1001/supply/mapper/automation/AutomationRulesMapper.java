@@ -23,4 +23,12 @@ public interface AutomationRulesMapper extends BaseMapper<AutomationRule> {
      * @return 自动化规则数据
      */
     AutomationRuleDTO selectRuleById(@Param("id") String id);
+
+    /**
+     * 根据menuId和projectId查询出该menuId下最新创建的自动化规则对象
+     * @param menuId 列表id
+     * @param projectId 项目id
+     * @return 最早一条自动化规则信息
+     */
+    AutomationRule selectNewestRuleByCreateTime(@Param("menuId") String menuId, @Param("projectId") String projectId);
 }
