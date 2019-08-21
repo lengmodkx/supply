@@ -89,6 +89,7 @@ public class AutomationRuleTriggerCheckImpl {
                     if(AutomationRuleConstans.FALSE.equals(conditionValue)){
                         valueEqual = AutomationRuleConstans.NO_REPEAT.equals(objValue);
                     }
+
                     if(AutomationRuleConstans.TRUE.equals(conditionValue)){
                         valueEqual = !AutomationRuleConstans.NO_REPEAT.equals(objValue);
                     }
