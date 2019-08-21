@@ -6,10 +6,8 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,7 +31,7 @@ public class NewsApi {
      * 初始化用户消息的列表
      * @return
      */
-    @GetMapping
+    @RequestMapping
     public JSONObject userNewsList(@RequestParam(required = false) Boolean isRead){
         JSONObject jsonObject = new JSONObject();
         try {

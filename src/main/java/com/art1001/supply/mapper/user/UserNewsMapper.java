@@ -1,10 +1,14 @@
 package com.art1001.supply.mapper.user;
 
-import java.util.List;
-import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.user.UserNews;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * mapper接口
@@ -86,7 +90,7 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<UserNews> findAllUserNewsByUserId(String userId, Boolean isRead);
+	List<UserNews> findAllUserNewsByUserId(@Param("userId")String userId, @Param("isRead")Boolean isRead);
 
 	/**
 	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0
