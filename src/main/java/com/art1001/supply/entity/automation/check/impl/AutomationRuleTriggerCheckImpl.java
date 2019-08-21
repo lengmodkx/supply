@@ -62,9 +62,10 @@ public class AutomationRuleTriggerCheckImpl {
 
             //判断当前触发条件是否可以出发工作流
             String conditionName = newestRuleByCreateTime.getConditionName();
-            boolean isTrigger = conditionName.equals(tr)
-                    || AutomationRuleConstans.ALL.equals(newestRuleByCreateTime.getConditionName());
-            if(isTrigger){
+            if(AutomationRuleConstans.ALL.equals(newestRuleByCreateTime.getConditionName())){
+                return 1;
+            }
+            if(conditionName.equals(tr)){
                 boolean valueEqual = true;
                 //库中保存的值
                 String conditionValue = newestRuleByCreateTime.getConditionValue();
