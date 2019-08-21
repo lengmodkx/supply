@@ -60,12 +60,12 @@ public class AutomationRuleTriggerCheckImpl {
                 return -1;
             }
 
-            boolean valueEqual = true;
             //判断当前触发条件是否可以出发工作流
             String conditionName = newestRuleByCreateTime.getConditionName();
             boolean isTrigger = conditionName.equals(tr)
                     || AutomationRuleConstans.ALL.equals(newestRuleByCreateTime.getConditionName());
             if(isTrigger){
+                boolean valueEqual = true;
                 //库中保存的值
                 String conditionValue = newestRuleByCreateTime.getConditionValue();
                 //接口传进的值
@@ -99,8 +99,9 @@ public class AutomationRuleTriggerCheckImpl {
                 if(AutomationRuleConstans.SETTING_EXECUTORS.equals(conditionName) || AutomationRuleConstans.END_TIME.equals(conditionName)){
                     valueEqual = conditionValue.equals(objValue);
                 }
+                return valueEqual ? 1 : 0;
             }
-            return valueEqual ? 1 : 0;
+            return 0;
         };
     }
 
