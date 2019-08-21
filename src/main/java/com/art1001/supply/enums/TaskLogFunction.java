@@ -6,6 +6,7 @@ package com.art1001.supply.enums;
  * @date 2018/6/11 16:36
  */
 public enum TaskLogFunction {
+
     A(1,"移除了执行者"),
     B(2,"移除了参与者"),
     C(3,"添加了参与者"),
@@ -70,6 +71,9 @@ public enum TaskLogFunction {
         this.id = id;
     }
     private int id;
+
+    public int aaa(){return 1;}
+
     public int getId(){
         return this.id;
     }

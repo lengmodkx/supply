@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.automation.AutomationRulesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.automation.AutomationRule">
+        <id column="id" property="id" />
+        <result column="object" property="object" />
+        <result column="condition_name" property="conditionName" />
+        <result column="condition_value" property="conditionValue" />
+        <result column="default_assign" property="defaultAssign" />
+        <result column="automatic_jump" property="automaticJump" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+    </resultMap>
+
+    <resultMap id="byId" type="com.art1001.supply.entity.automation.dto.AutomationRuleDTO">
+        <id column="id" property="id" />
+        <result column="name" property="name"/>
+        <result column="condition_name" property="conditionName" />
+        <result column="condition_value" property="conditionValue" />
+        <association property="defaultAssign" javaType="com.art1001.supply.entity.user.UserEntity">
+            <id property="userId" column="user_id"/>
+            <result property="image" column="image"/>
+            <result property="userName" column="user_name"/>
+        </association>
+        <association property="object" javaType="com.art1001.supply.entity.relation.Relation">
+            <id property="relationId" column="relation_id"/>
+            <result property="relationName" column="relation_name"/>
+        </association>
+        <association property="automaticJump" javaType="com.art1001.supply.entity.relation.Relation">
+            <result property="relationId" column="jump_id"/>
+            <result property="relationName" column="jump_name"/>
+        </association>
+    </resultMap>
+
+    <!-- 根据id获取自动化规则信息 -->
+    <select id="selectRuleById" resultMap="byId">
+        SELECT
+            a.id,
+            a.`name`,
+            a.object,
+            a.condition_name,
+            a.condition_value,
+            a.automatic_jump,
+            a.default_assign,
+            r.relation_id,
+            r.relation_name,
+            u.user_id,
+            u.image,
+            u.user_name,
+            j.relation_id AS jump_id,
+            j.relation_name AS jump_name
+        FROM
+            prm_automation_rules AS a
+            LEFT JOIN tb_user AS u ON a.default_assign = u.user_id
+            LEFT JOIN prm_relation AS r ON a.object = r.relation_id
+            LEFT JOIN prm_relation AS j ON a.automatic_jump = j.relation_id
+        WHERE
+            a.id = #{id}
+    </select>
+
+    <!-- 根据menuId和projectId查询出该menuId下最新创建的自动化规则对象 -->
+    <select id="selectNewestRuleByCreateTime" resultMap="BaseResultMap">
+        SELECT
+	      *
+        FROM
+            prm_automation_rules
+        WHERE
+            project_id = #{projectId}
+            AND object = #{menuId}
+        ORDER BY
+            create_time DESC
+            LIMIT 0,1
+    </select>
+
+</mapper>

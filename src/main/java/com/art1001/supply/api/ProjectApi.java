@@ -218,7 +218,6 @@ public class ProjectApi extends BaseController {
             Project project = projectService.findProjectByProjectId(projectId);
             object.put("result", 1);
             object.put("data", project);
-            object.put("msg", "获取成功");
             return object;
         } catch (Exception e) {
             log.error("系统异常,信息获取失败:", e);

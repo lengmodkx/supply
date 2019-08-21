@@ -15,15 +15,15 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {
@@ -167,5 +167,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         //构造出查询用户是否存在的条件表达式
         LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountName);
         return userMapper.selectCount(selectUserIsExistQw) > 0;
+    }
+
+    @Override
+    public List<UserEntity> getUserListByIdList(Collection<String> idList) {
+        if(CollectionUtils.isEmpty(idList)){
+            return new ArrayList();
+        }
+
+        //构造出sql表达式
+        LambdaQueryWrapper<UserEntity> selectUserByUserIdList = new QueryWrapper<UserEntity>().lambda()
+                .in(UserEntity::getUserId, idList)
+                .select(UserEntity::getUserId, UserEntity::getUserName, UserEntity::getImage, UserEntity::getAccountName);
+        return userMapper.selectList(selectUserByUserIdList);
     }
 }

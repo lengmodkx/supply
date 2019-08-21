@@ -18,7 +18,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         try {
-            String[] a = {"sys_pro_resource_role_bind_template","sys_pro_resources","sys_pro_resources_role","sys_pro_role","sys_pro_role_user"};
+            String[] a = {"prm_automation_rules"};
             AutoGenerator mpg = new AutoGenerator();
             // 全局配置
             GlobalConfig gc = new GlobalConfig();
@@ -50,7 +50,7 @@ public class CodeGenerator {
 
             // 策略配置
             StrategyConfig strategy = new StrategyConfig();
-            strategy.setTablePrefix(new String[] { "sys_" });// 此处可以修改为您的表前缀
+            strategy.setTablePrefix(new String[] { "prm_" });// 此处可以修改为您的表前缀
             strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
             strategy.setInclude(a); // 需要生成的表
 
@@ -66,7 +66,7 @@ public class CodeGenerator {
 
             // 包配置
             PackageConfig pc = new PackageConfig();
-            pc.setParent("com.ddm.vblog");
+            pc.setParent("com.art1001.supply");
             pc.setController("controller");
             pc.setService("service");
             pc.setServiceImpl("serviceImpl");

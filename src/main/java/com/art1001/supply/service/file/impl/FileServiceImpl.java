@@ -246,7 +246,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setUpdateTime(System.currentTimeMillis());
         // 设置目录
         file.setCatalog(1);
-        file.setFilePrivacy(1);
         save(file);
 
         //保存到ElasticSearch
@@ -272,7 +271,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
-            if(file.getFilePrivacy() == 0){
+            if(file.getFilePrivacy() == 1){
                 if(!Stringer.isNullOrEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
                     iterator.remove();
                 }
@@ -904,6 +903,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         }
     }
 
+    @Override
+    public File getMyFolder(String userId) {
+        if(Stringer.isNullOrEmpty(userId)){
+            return null;
+        }
+
+        //构造出查询我的文件夹的sql表达式
+        LambdaQueryWrapper<File> getMyFolderQw = new QueryWrapper<File>().lambda().eq(File::getUserId, userId);
+        return this.getOne(getMyFolderQw);
+    }
+
     /*
     *  获取root文件的路径
     * */
@@ -974,7 +984,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public List<FileTreeShowVO> getAllFolderTree(String parentId) {
-
         //获取一个目录的所有子级目录id
         String[] childFolderIds = this.getChildFolderIds(parentId);
         if(childFolderIds.length == 0){
@@ -983,10 +992,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         //构造sql表达式
         LambdaQueryWrapper<File> selectFolderQw = new QueryWrapper<File>().lambda()
+                .eq(File::getCatalog,1)
                 .select(File::getFileId, File::getFileName, File::getParentId, File::getLevel,File::getCreateTime)
                 .in(File::getFileId, Arrays.asList(childFolderIds));
 
+        File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
+        myFolder.setParentId(parentId);
         List<File> childFolders = this.list(selectFolderQw);
+        childFolders.add(myFolder);
         List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
         //生成目录树
         this.downLevel(childFolders);
@@ -1028,4 +1041,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         this.updateById(file);
         return 1;
     }
+
+
+
 }

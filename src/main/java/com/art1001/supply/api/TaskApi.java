@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.AutomationRule;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
@@ -154,6 +155,7 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
+    @AutomationRule(value = "#taskId",trigger = "completed",objectValue = "#label")
     @Push(value = PushType.A3,type = 3)
     @PutMapping("/{taskId}/finish")
     public JSONObject finishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
@@ -194,6 +196,7 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return JSONObject
      */
+    @AutomationRule(value = "#taskId",trigger = "redone",objectValue = "#label")
     @Log(PushType.A4)
     @Push(value = PushType.A4,type = 3)
     @PutMapping("/{taskId}/unFinish")
@@ -312,6 +315,7 @@ public class TaskApi extends BaseController {
      * @param userId 执行者id
      * @return JSONObject
      */
+    @AutomationRule(value = "#taskId",trigger = "settingExecutors",objectValue = "#userId")
     @Log(PushType.A6)
     @Push(value = PushType.A6,type = 3)
     @PutMapping("/{taskId}/executor")
@@ -378,6 +382,7 @@ public class TaskApi extends BaseController {
      * @param endTime 任务结束时间
      * @return JSONObject
      */
+    @AutomationRule(value = "#taskId",trigger = "endTime",objectValue = "#endTime")
     @Log(PushType.A8)
     @Push(value = PushType.A8,type = 3)
     @PutMapping("/{taskId}/endtime")
@@ -408,6 +413,7 @@ public class TaskApi extends BaseController {
      * @param repeat 任务结束时间
      * @return JSONObject
      */
+    @AutomationRule(value = "#taskId",trigger = "repeat",objectValue = "#repeat")
     @Log(PushType.A9)
     @Push(value = PushType.A9,type = 3)
     @PutMapping("/{taskId}/repeat")
@@ -611,6 +617,7 @@ public class TaskApi extends BaseController {
      * @param priority 任务优先级
      * @return JSONObject
      */
+    @AutomationRule(value = "#taskId",trigger = "priority",objectValue = "#priority")
     @Log(PushType.A12)
     @Push(value = PushType.A12,type = 3)
     @PutMapping("/{taskId}/priority")

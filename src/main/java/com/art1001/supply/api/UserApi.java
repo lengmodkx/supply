@@ -91,6 +91,7 @@ public class UserApi {
              if(subject.isAuthenticated()) {
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
+                 object.put("fileId", Constants.MATERIAL_BASE);
                  object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
                  object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
             } else {

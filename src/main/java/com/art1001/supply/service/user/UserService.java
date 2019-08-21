@@ -4,6 +4,7 @@ import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -62,4 +63,15 @@ public interface UserService extends IService<UserEntity> {
 	 * @return 结果
 	 */
 	Boolean checkUserIsExist(String accountName);
+
+	/**
+	 * 根据id集合信息查询出用户信息
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param idList 用户id集合
+	 * @updateInfo 暂无
+	 * @date 2019/8/14 15:19
+	 * @return 用户信息集合
+	 */
+	List<UserEntity> getUserListByIdList(Collection<String> idList);
 }

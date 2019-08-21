@@ -29,12 +29,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.tomcat.jni.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -375,4 +377,27 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		return projectMemberMapper.getNotStarProject(userId);
 	}
 
+	@Override
+	public List<UserEntity> getMembers(String userId) {
+		//获取到和当前用户有关的项目信息
+		List<Project> userProjects = projectService.listProjectByUid(userId);
+		if(CollectionUtils.isEmpty(userProjects)){
+			return new ArrayList<>();
+		}
+
+		//userProjects中包含了项目的所有的信息，因为这里需要根据项目id集合查询项目成员，所以只需要提取出项目id集合。
+		List<String> projectIds = userProjects.stream().map(Project::getProjectId).collect(Collectors.toList());
+		List<String> memberIdListByProIdList = this.getMemberIdListByProjectIdList(projectIds);
+
+		//根据多个项目中成员id的集合，获取到成员信息返回
+		return userService.getUserListByIdList(memberIdListByProIdList);
+	}
+
+	@Override
+	public List<String> getMemberIdListByProjectIdList(Collection<String> projectIdList) {
+		if(CollectionUtils.isEmpty(projectIdList)){
+			return new ArrayList<>();
+		}
+		return projectMemberMapper.selectMemberIdListByProjectIdList(projectIdList);
+	}
 }

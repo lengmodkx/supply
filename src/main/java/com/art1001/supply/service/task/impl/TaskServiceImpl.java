@@ -1,6 +1,7 @@
 package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.AutomationRule;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;

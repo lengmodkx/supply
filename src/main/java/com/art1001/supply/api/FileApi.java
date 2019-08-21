@@ -24,10 +24,12 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.impl.FileServiceImpl;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.service.user.impl.UserServiceImpl;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -1181,5 +1183,4 @@ public class FileApi extends BaseController {
         fileService.signImportant(fileId,label);
         return success();
     }
-
 }
