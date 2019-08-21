@@ -1185,7 +1185,7 @@ public class FileApi extends BaseController {
     /**
      * 更新ElasticSearch
      */
-    @GetMapping("/findElc")
+    @GetMapping("/saveElc")
     public void getFileToElastic(){
         try {
             List<File> allFile = fileService.list(new QueryWrapper<File>().isNotNull("ext").isNotNull("file_url"));
