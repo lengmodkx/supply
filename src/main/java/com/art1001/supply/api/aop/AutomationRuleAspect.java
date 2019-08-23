@@ -89,12 +89,14 @@ public class AutomationRuleAspect {
                 }
             }
         }
-        Object value = expression.getValue(context);
-        Expression expressionObjVal = parser.parseExpression(annotation.objectValue());
-        Object objValue = expressionObjVal.getValue(context);
         AutomationAnnotationValue automationAnnotationValue = new AutomationAnnotationValue();
+        Object value = expression.getValue(context);
+        if(Stringer.isNotNullOrEmpty(annotation.objectValue())){
+            Expression expressionObjVal = parser.parseExpression(annotation.objectValue());
+            Object objValue = expressionObjVal.getValue(context);
+            automationAnnotationValue.setObjectValue(String.valueOf(objValue));
+        }
         automationAnnotationValue.setTaskId(String.valueOf(value));
-        automationAnnotationValue.setObjectValue(String.valueOf(objValue));
         return automationAnnotationValue;
     }
 }

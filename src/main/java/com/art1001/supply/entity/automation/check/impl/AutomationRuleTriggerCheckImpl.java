@@ -62,8 +62,15 @@ public class AutomationRuleTriggerCheckImpl {
 
             //判断当前触发条件是否可以出发工作流
             String conditionName = newestRuleByCreateTime.getConditionName();
+
+            //如果触发条件是任何条件（移动，拖拽，新建任务）
             if(AutomationRuleConstans.ALL.equals(newestRuleByCreateTime.getConditionName())){
-                return 1;
+                boolean isAll = tr.equals(AutomationRuleConstans.ADD_TASK)
+                        || tr.equals(AutomationRuleConstans.DRAG_TASK)
+                        || tr.equals(AutomationRuleConstans.MOVE_TASK);
+                if(isAll){
+                    return 1;
+                }
             }
             if(conditionName.equals(tr)){
                 boolean valueEqual = true;
