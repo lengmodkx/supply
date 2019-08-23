@@ -84,6 +84,21 @@ public class AutomationRuleConstans {
     public static final String AUTOMATIC_JUMP = "automaticJump";
 
     /**
+     * 新建任务
+     */
+    public static final String ADD_TASK = "addTask";
+
+    /**
+     * 移动任务
+     */
+    public static final String MOVE_TASK = "moveTask";
+
+    /**
+     * 拖拽任务
+     */
+    public static final String DRAG_TASK = "dragTask";
+
+    /**
      * true
      */
     public static final String TRUE = "true";

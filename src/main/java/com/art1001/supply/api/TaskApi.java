@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.task.Task;
@@ -95,7 +96,7 @@ public class TaskApi extends BaseController {
      * 创建任务
      * @return object
      */
-//    @ProAuthentization("create:task")
+    @AutomationRule(value = "#task.taskId",trigger = AutomationRuleConstans.ADD_TASK)
     @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
@@ -248,6 +249,7 @@ public class TaskApi extends BaseController {
      * @return
      */
     @Log
+    @AutomationRule(value = "#taskId",trigger = AutomationRuleConstans.DRAG_TASK)
     @Push(value = PushType.A27,type = 1)
     @PutMapping("/order")
     public JSONObject order(@RequestParam(value = "projectId") String projectId,
@@ -755,6 +757,7 @@ public class TaskApi extends BaseController {
      * @param menuId 菜单id
      * @return
      */
+    @AutomationRule(value = "#taskId",trigger = AutomationRuleConstans.MOVE_TASK)
     @Log(PushType.A16)
     @Push(value = PushType.A16,type = 2 )
     @PutMapping("/{taskId}/move")
