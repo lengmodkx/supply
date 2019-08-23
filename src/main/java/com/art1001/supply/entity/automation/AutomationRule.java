@@ -1,5 +1,7 @@
 package com.art1001.supply.entity.automation;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,6 +26,7 @@ public class AutomationRule implements Serializable {
     /**
      * id
      */
+    @TableId(type = IdType.UUID)
     private String id;
 
     /**

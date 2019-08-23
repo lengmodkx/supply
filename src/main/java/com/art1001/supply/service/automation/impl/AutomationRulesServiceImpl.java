@@ -35,11 +35,10 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
 
     @Override
     public int saveAutomationRule(AutomationRule automationRule) {
-        automationRule.setId(IdGen.uuid());
         automationRule.setCreateTime(System.currentTimeMillis());
         automationRule.setUpdateTime(System.currentTimeMillis());
         automationRule.setCreateUser(ShiroAuthenticationManager.getUserId());
-        return this.save(automationRule) ? 1:0;
+        return this.saveOrUpdate(automationRule) ? 1:0;
     }
 
     @Override
