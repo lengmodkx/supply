@@ -399,4 +399,16 @@ import java.util.List;
      * @return 我的文件夹信息
      */
     File getMyFolder(String userId);
+
+    /**
+     * 更新文件名称
+     * @author heShaoHua
+     * @describe 如果文件不存在返回-1
+     * @param fileId 文件id
+	 * @param fileName 文件名称
+     * @updateInfo 暂无
+     * @date 2019/8/28 10:48
+     * @return 是否更新成功
+     */
+    Integer updateFileName(String fileId, String fileName);
 }

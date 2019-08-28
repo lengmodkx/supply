@@ -813,7 +813,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public String getFileUrl(String fileId) {
         return fileService.getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
+    }
 
+    @Override
+    public Integer updateFileName(String fileId, String fileName) {
+        if(this.checkIsExist(fileId)){
+            File file = new File();
+            file.setFileId(fileId);
+            file.setFileName(fileName);
+            file.setUpdateTime(System.currentTimeMillis());
+            return updateById(file) ? 1:0;
+        }
+        return -1;
     }
 
     /**

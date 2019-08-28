@@ -915,16 +915,16 @@ public class FileApi extends BaseController {
      */
     @Push(value = PushType.C11)
     @PutMapping("/{fileId}/name")
-    public JSONObject changeFileName(@RequestParam(value = "fileName") String fileName, @PathVariable(value = "fileId") String fileId){
+    public JSONObject changeFileName(@RequestParam(value = "fileName") @NotBlank(message = "文件名称不能为空！") String fileName,
+                                     @PathVariable(value = "fileId") @NotBlank(message = "fileId不能为空！")String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            File file = new File();
-            file.setFileId(fileId);
-            file.setFileName(fileName);
-            fileService.updateById(file);
-            jsonObject.put("result",1);
+            Integer result = fileService.updateFileName(fileId,fileName);
+            if(result == -1){
+                return error("文件不存在！");
+            }
+            jsonObject.put("result",result);
             jsonObject.put("msgId",getProjectId(fileId));
-            //jsonObject.put("data",fileName);
             jsonObject.put("data",new JSONObject().fluentPut("fileName",fileName).fluentPut("fileId",fileId));
         }catch (Exception e){
             log.error("系统异常,文件名称更新失败:",e);
@@ -932,6 +932,7 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
+
      /**
      * 获取项目中的所有文件夹树形图数据
      * @param fileId 父文件夹id
