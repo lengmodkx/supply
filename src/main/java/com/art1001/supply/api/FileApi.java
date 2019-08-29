@@ -118,14 +118,17 @@ public class FileApi extends BaseController {
     /**
      * 加载项目下文件列表数据
      * @param fileId 文件id
-     * @return
+     * @param orderType 排序规则 1：创建时间-降序  2：下载量-降序
      */
     @GetMapping
-    public JSONObject fileList(@RequestParam(value = "fileId") String fileId) {
+    public JSONObject fileList(@RequestParam(value = "fileId") String fileId,
+                               @RequestParam(defaultValue = "1",required = false) Integer orderType) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-            List<File> fileList = fileService.findChildFile(fileId);
+            if(orderType != 1 && orderType != 2){
+                return error("orderType参数错误！");
+            }
+            List<File> fileList = fileService.findChildFile(fileId,orderType);
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
             jsonObject.put("result",1);
@@ -262,7 +265,7 @@ public class FileApi extends BaseController {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",fileService.findChildFile(parentId));
+            jsonObject.put("data",fileService.findChildFile(parentId,1));
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -555,6 +558,7 @@ public class FileApi extends BaseController {
         try {
             File file = fileService.findFileById(fileId);
             String fileName = file.getFileName();
+            fileService.updateDownloadCount(fileId);
             InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
             // 设置响应类型
             //response.setContentType("multipart/form-data");
@@ -680,7 +684,7 @@ public class FileApi extends BaseController {
                     file.setParentId(folderId);
                     String fId = file.getFileId();
                     fileService.save(file);
-                    List<File> childFile = fileService.findChildFile(fId);
+                    List<File> childFile = fileService.findChildFile(fId,1);
                     if (childFile.size() > 0) {
                         Map<String, List<File>> map = new HashMap<>(10);
                         map.put(file.getFileId(), childFile);
@@ -718,7 +722,7 @@ public class FileApi extends BaseController {
                     // 存库
                     fileService.save(file);
                     // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(fId);
+                    List<File> childFile = fileService.findChildFile(fId,1);
                     fileMap.put(file.getFileId(), childFile);
                 } else { //文件
                     this.copyFileSave(file, parentId);

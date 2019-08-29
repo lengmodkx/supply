@@ -204,8 +204,13 @@
 			AND public_lable = 0
 			AND parent_id = #{parentId}
 		ORDER BY
-			`catalog` DESC,
+		<if test="orderType != null and orderType == 1">
 			create_time DESC
+		</if>
+		<if test="orderType != null and orderType == 2">
+			file_download_count DESC
+		</if>
+
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">

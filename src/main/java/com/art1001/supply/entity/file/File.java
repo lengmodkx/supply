@@ -188,6 +188,11 @@ public class File extends Model<File> {
     private Long updateTime;
 
     /**
+     * 文件的下载量
+     */
+    private Integer fileDownloadCount;
+
+    /**
      * 子文件
      */
     @TableField(exist = false)

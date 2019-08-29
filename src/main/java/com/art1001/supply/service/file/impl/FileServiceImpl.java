@@ -265,9 +265,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * @return
      */
     @Override
-    public List<File> findChildFile(String parentId) {
+    public List<File> findChildFile(String parentId,Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
-        List<File> childFile = fileMapper.findChildFile(parentId,userId);
+        List<File> childFile = fileMapper.findChildFile(parentId,userId,orderType);
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
@@ -487,7 +487,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> findProjectFile(String projectId, String fileId) {
         List<File> fileList = new ArrayList<>();
         if("0".equals(fileId)){
-            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId));
+            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId),1);
         } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
             //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
             fileList = fileService.findPublicFile(fileService.findFileId());
@@ -845,6 +845,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
+    public Integer updateDownloadCount(String fileId) {
+        Integer checkResult = this.checkFile(fileId);
+        if(checkResult == 1){
+            //获取到该文件的当前下载数量
+            Integer currentDownloadCount = this.getDownloadCountByFileId(fileId);
+            File file = new File();
+            file.setFileId(fileId);
+            file.setFileDownloadCount(currentDownloadCount + 1);
+            file.setUpdateTime(System.currentTimeMillis());
+            return this.updateById(file) ? 1 : 0;
+        }
+        return checkResult;
+    }
+
+    @Override
+    public Integer getDownloadCountByFileId(String fileId) {
+        Integer checkResult = this.checkFile(fileId);
+        if(checkResult == 1){
+            //构造sql表达式
+            LambdaQueryWrapper<File> selectFileDownloadCountQw = new QueryWrapper<File>().lambda()
+                    .eq(File::getFileId, fileId)
+                    .select(File::getFileDownloadCount);
+            return this.getOne(selectFileDownloadCountQw).getFileDownloadCount();
+        }
+        return checkResult;
+    }
+
+    @Override
     public List<FileTreeShowVO> getParentFolders(String fileId, String projectId) {
 
         List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
@@ -1050,6 +1078,24 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         //更新库
         this.updateById(file);
+        return 1;
+    }
+
+    /**
+     * 校验fileId是否合法 fileId为空返回-1  fileId文件不存在返回-2, 正确返回1
+     * @param fileId 文件id
+     * @return
+     */
+    private Integer checkFile(String fileId){
+        if(Stringer.isNullOrEmpty(fileId)){
+            return -1;
+        }
+
+        //文件不存在返回-2
+        boolean fileNotExist = !this.checkIsExist(fileId);
+        if(fileNotExist){
+            return -2;
+        }
         return 1;
     }
 

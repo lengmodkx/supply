@@ -50,9 +50,10 @@ import java.util.List;
     /**
      * 查询当前文件目录下的文件夹及文件
      * @param parentId 父级id，顶级目录为 0
+	 * @param orderType 排序规则
      * @return List<File> 返回的文件集合
      */
-	List<File> findChildFile(String parentId);
+	List<File> findChildFile(String parentId,Integer orderType);
 
 	/**
 	 * 移动文件
@@ -411,4 +412,17 @@ import java.util.List;
      * @return 是否更新成功
      */
     Integer updateFileName(String fileId, String fileName);
+
+    Integer updateDownloadCount(String fileId);
+
+    /**
+     * 根据文件id获取该文件的下载量
+     * @author heShaoHua
+     * @describe 如果fileId为空返回-1，如果该文件不存在返回-2
+     * @param fileId 文件id
+     * @updateInfo 暂无
+     * @date 2019/8/28 11:31
+     * @return 当前文件的下载量
+     */
+    Integer getDownloadCountByFileId(String fileId);
 }
