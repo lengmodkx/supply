@@ -116,6 +116,16 @@ public class UserEntity extends Model<UserEntity> {
 	private String email;
 
 	/**
+	 * 用户vip类型
+	 * 0.普通会员
+	 * 1.专业版会员
+	 * 2.建筑版会员
+	 * 3.装饰板会员
+	 * 4.mep版本会员
+	 */
+	private int vip;
+
+	/**
 	 * 用户默认所在的企业
 	 */
 	@TableField(exist = false)
