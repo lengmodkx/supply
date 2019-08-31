@@ -18,7 +18,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         try {
-            String[] a = {"prm_automation_rules"};
+            String[] a = {"prm_order"};
             AutoGenerator mpg = new AutoGenerator();
             // 全局配置
             GlobalConfig gc = new GlobalConfig();

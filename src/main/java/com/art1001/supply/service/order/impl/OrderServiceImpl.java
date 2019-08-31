@@ -1,0 +1,20 @@
+package com.art1001.supply.service.order.impl;
+
+import com.art1001.supply.entity.order.Order;
+import com.art1001.supply.mapper.order.OrderMapper;
+import com.art1001.supply.service.order.OrderService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ *  服务实现类
+ * </p>
+ *
+ * @author heshaohua
+ * @since 2019-08-31
+ */
+@Service
+public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
+
+}
