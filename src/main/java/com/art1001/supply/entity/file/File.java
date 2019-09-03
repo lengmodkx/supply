@@ -198,6 +198,10 @@ public class File extends Model<File> {
     @TableField(exist = false)
     private List<File> files;
 
+
+    @TableField(exist = false)
+    private boolean show;
+
     /**
      * 从(文件,任务,分享,日程) 评论区上传的文件 或者 项目群聊上传的文件时候 的项目id 或者 文件,任务,分享,日程 的id
      */
