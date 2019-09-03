@@ -425,4 +425,15 @@ import java.util.List;
      * @return 当前文件的下载量
      */
     Integer getDownloadCountByFileId(String fileId);
+
+    /**
+     * 查询文件是否是该项目文件的根目录
+     * @author heShaoHua
+     * @describe 如果文件id 为空 则返回 false
+     * @param fileId 文件id
+     * @updateInfo 暂无
+     * @date 2019/9/3 16:47
+     * @return 结果
+     */
+    boolean isRootFolder(String fileId);
 }

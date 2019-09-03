@@ -268,7 +268,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public List<File> findChildFile(String parentId,Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
         List<File> childFile = fileMapper.findChildFile(parentId,userId,orderType);
-        childFile.add(this.getMyFolder(ShiroAuthenticationManager.getUserId()));
+        if(fileService.isRootFolder(parentId)){
+            childFile.add(this.getMyFolder(ShiroAuthenticationManager.getUserId()));
+        }
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();
@@ -925,6 +927,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public JSONObject addTagBindFile(String fileId, Long tagId) {
         return null;
+    }
+
+    @Override
+    public boolean isRootFolder(String fileId) {
+        if(Stringer.isNullOrEmpty(fileId)){
+            return false;
+        }
+        File byId = fileService.getById(fileId);
+        if(byId.getLevel() == 0){
+            return true;
+        }
+        return false;
     }
 
     /*
