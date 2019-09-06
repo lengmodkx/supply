@@ -1,5 +1,7 @@
 package com.art1001.supply.entity.order;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 
@@ -19,6 +21,7 @@ public class Order implements Serializable {
     /**
      * id
      */
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**

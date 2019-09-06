@@ -67,11 +67,11 @@ public class WeixinPay {
         packageParams.put("spbill_create_ip", PayForUtil.localIp());//客户端主机
         packageParams.put("notify_url", notify_url);
         packageParams.put("trade_type", trade_type);
-        packageParams.put("product_id",ps.getProductId());
-        packageParams.put("attach", ps.getAttach());//额外的参数【业务类型+会员ID+支付类型】
+        packageParams.put("product_id",String.valueOf(ps.getProductId()));
+        packageParams.put("attach", ps.getMemberid()+","+ps.getProductId());//额外的参数【业务类型+会员ID+支付类型】
 
 
-        String sign = PayForUtil.createSign("UTF-8", packageParams,key);  //获取签名
+        String sign = PayForUtil.createSign("UTF-8",packageParams,key);  //获取签名
         packageParams.put("sign", sign);
 
         String requestXML = PayForUtil.getRequestXml(packageParams);//将请求参数转换成String类型
