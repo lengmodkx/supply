@@ -7,6 +7,7 @@ import com.google.zxing.WriterException;
 import lombok.extern.log4j.Log4j;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class WeixinPay {
         packageParams.put("mch_id", mch_id);
         packageParams.put("nonce_str", nonce_str);//随机字符串
         packageParams.put("body", ps.getBody());//支付的商品名称
-        packageParams.put("out_trade_no", ps.getOutTradeNo()+nonce_str);//商户订单号【备注：每次发起请求都需要随机的字符串，否则失败。】
+        packageParams.put("out_trade_no", ps.getOutTradeNo());
         packageParams.put("total_fee", ps.getTotalFee());//支付金额
         packageParams.put("spbill_create_ip", PayForUtil.localIp());//客户端主机
         packageParams.put("notify_url", notify_url);
@@ -93,9 +94,8 @@ public class WeixinPay {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void encodeQrcode(String content, HttpServletResponse response){
-
-        if(StringUtils.isBlank(content))
-            return;
+        response.setContentType("image/png");
+        ServletOutputStream outputStream;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         Map hints = new HashMap();
         BitMatrix bitMatrix = null;
@@ -104,7 +104,8 @@ public class WeixinPay {
             BufferedImage image = toBufferedImage(bitMatrix);
             //输出二维码图片流
             try {
-                ImageIO.write(image, "png", response.getOutputStream());
+                outputStream = response.getOutputStream();
+                ImageIO.write(image, "png", outputStream);
             } catch (IOException e) {
                 e.printStackTrace();
             }

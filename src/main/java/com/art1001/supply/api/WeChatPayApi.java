@@ -5,10 +5,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.wechat.WechatParam;
 import com.art1001.supply.service.order.OrderService;
 import com.art1001.supply.service.product.ProductService;
-import com.art1001.supply.util.PayForUtil;
-import com.art1001.supply.util.WeChatConfig;
-import com.art1001.supply.util.WeixinPay;
-import com.art1001.supply.util.XMLUtil;
+import com.art1001.supply.util.*;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -16,6 +13,7 @@ import com.google.zxing.common.BitMatrix;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,13 +43,12 @@ public class WeChatPayApi extends BaseController {
     @Resource
     private OrderService orderService;
 
-    @RequestMapping("/wxPay")
-    public String wxPay(WechatParam ps,HttpServletResponse response) throws Exception {
+    @GetMapping("/wxPay")
+    public void wxPay(WechatParam ps,HttpServletResponse response) throws Exception {
         ps.setTotalFee("1");
-        ps.setOutTradeNo("hw5409550792199899");
+        ps.setOutTradeNo(IdGen.uuid());
         String urlCode = WeixinPay.getCodeUrl(ps);
-        WeixinPay.encodeQrcode(urlCode, response);
-        return "";
+        WeixinPay.encodeQrcode(urlCode,response);
     }
 
     @RequestMapping("rollback")
