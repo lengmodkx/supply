@@ -1076,11 +1076,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
         /*TermQueryBuilder fileName1 = QueryBuilders.termQuery("fileName",fileName);
-        Iterable<File> search1 = fileRepository.search(fileName1,pageable);*/
-        /*Iterator it = search1.iterator();
-        while (it.hasNext()) {
-            System.out.println("查询到的数据是=="+it.next());
-        }*/
+        Iterable<File> search1 = fileRepository.search(fileName1,pageable);
+        return Lists.newArrayList(byFileNameOrTagNameFiles);*/
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
                 .withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
