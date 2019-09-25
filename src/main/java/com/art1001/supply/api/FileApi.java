@@ -36,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -1113,7 +1114,7 @@ public class FileApi extends BaseController {
         } catch (ServiceException e){
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
-            throw new AjaxException("系统异常,添加标签失败",e);
+            throw new AjaxException("系统异常,添加标签失败!",e);
         }
         return jsonObject;
     }
@@ -1126,13 +1127,17 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
+
+    /**
+     * 搜索素材库
+     * @param fileName 文件名
+     * @return 信息
+     */
     @GetMapping("/{fileName}/material_base_search")
-    public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName
-            ,Integer current
-            ,Integer size){
+    public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,Pageable pageable){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
-        jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,current,size));
+        jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,pageable));
         return jsonObject;
     }
 
@@ -1197,12 +1202,13 @@ public class FileApi extends BaseController {
             if(allFile == null){
                 System.out.print("文件不存在!");
             }
-            System.out.print("条数==="+allFile.size());
+            System.out.print("条数=="+allFile.size());
             for (int i=0;i<allFile.size();i++){
                 File file = allFile.get(i);
                 //保存到ElasticSearch
                 fileRepository.save(file);
             }
+            System.out.print(allFile.size()+"条数据更新成功");
             // return success(fileService.getProjectAllFolder(one.getFileId()));
         } catch (Exception e){
             e.printStackTrace();

@@ -7,7 +7,9 @@ import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -369,13 +371,12 @@ import java.util.List;
 	 * @author heShaoHua
 	 * @describe 暂无
 	 * @param fileName 文件名称
-	 * @param current 当前页
-	 * @param size 每页数
-	 * @updateInfo 暂无
+	 * @param pageable
+     * @updateInfo 暂无
 	 * @date 2019/7/10 13:45
 	 * @return 素材库文件数据
 	 */
-	org.springframework.data.domain.Page<File> searchMaterialBaseFile(String fileName, Integer current, Integer size);
+	ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable);
 
 	/**
 	 * 标记或者取消重要文件

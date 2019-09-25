@@ -31,8 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -1075,13 +1074,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public org.springframework.data.domain.Page<File> searchMaterialBaseFile(String fileName, Integer current, Integer size) {
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
-                //.withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
-                .withFilter(QueryBuilders.termQuery("parentId",Constants.MATERIAL_BASE))
-                .withPageable(PageRequest.of(current, size,new Sort(Sort.Direction.DESC, "createTime"))).build();
-        return fileRepository.search(searchQuery);
+    public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
+        /*TermQueryBuilder fileName1 = QueryBuilders.termQuery("fileName",fileName);
+        Iterable<File> search1 = fileRepository.search(fileName1,pageable);*/
+        /*Iterator it = search1.iterator();
+        while (it.hasNext()) {
+            System.out.println("查询到的数据是=="+it.next());
+        }*/
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
+                //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
+                .withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
+        Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+        return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
 
     @Override

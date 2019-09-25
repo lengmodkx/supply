@@ -92,7 +92,9 @@ public enum PushType {
     H7(7,"设置此列表所有任务的执行者"),
     H8(8,"删除列表"),
     I1(1,"项目移至回收站"),
-    I2(2,"局部更新项目");
+    I2(2,"局部更新项目"),
+
+    W2(1,"文件详情推送");
 
     PushType(int id,String name){
         this.name = name;

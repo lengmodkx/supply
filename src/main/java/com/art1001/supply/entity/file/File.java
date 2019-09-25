@@ -42,7 +42,7 @@ public class File extends Model<File> {
     /**
      * 文件名
      */
-    @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
+    @Field(type = FieldType.text, analyzer = "ik_max_word"  )
     private String fileName;
 
 
@@ -50,7 +50,7 @@ public class File extends Model<File> {
      * 以逗号分隔的标签名
      */
     @TableField(exist = false)
-    @Field(type = FieldType.text, analyzer = "ik_smart", searchAnalyzer="ik_max_word" )
+    @Field(type = FieldType.text, analyzer = "ik_max_word" )
     private String tagsName;
 
 

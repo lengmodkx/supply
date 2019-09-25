@@ -18,4 +18,6 @@ public interface FileRepository extends ElasticsearchRepository<File,String> {
      */
     List<File>  findByFileName(String fileName);
 
+    //List<File>  findByFileNamePage(String fileName, Pageable page);
+
 }
