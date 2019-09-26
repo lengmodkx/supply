@@ -29,8 +29,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -1083,7 +1083,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public Integer getSucaiTotle(String fileName) {
-          TermQueryBuilder fileName1 = QueryBuilders.termQuery("fileName",fileName);
+        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName",fileName);
         Iterable<File> search1 = fileRepository.search(fileName1);
         Iterator it = search1.iterator();
         int count=0;
