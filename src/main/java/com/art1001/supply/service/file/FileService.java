@@ -437,4 +437,6 @@ import java.util.List;
      * @return 结果
      */
     boolean isRootFolder(String fileId);
+
+    Integer getSucaiTotle(String fileName);
 }

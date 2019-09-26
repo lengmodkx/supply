@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -940,6 +941,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return false;
     }
 
+
+
     /*
     * 查询文件层级
     * */
@@ -1073,14 +1076,37 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return subIds.split(",");
     }
 
+    /**
+     * 素材库查询总条数
+     * @param fileName
+     * @return
+     */
+    @Override
+    public Integer getSucaiTotle(String fileName) {
+          TermQueryBuilder fileName1 = QueryBuilders.termQuery("fileName",fileName);
+        Iterable<File> search1 = fileRepository.search(fileName1);
+        Iterator it = search1.iterator();
+        int count=0;
+        while (it.hasNext()) {
+            it.next();
+            count++;
+        }
+        return count;
+    }
+
+    /**
+     * 查询素材库
+     * @param fileName 文件名称
+     * @param pageable
+     * @return
+     */
     @Override
     public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
-        /*TermQueryBuilder fileName1 = QueryBuilders.termQuery("fileName",fileName);
-        Iterable<File> search1 = fileRepository.search(fileName1,pageable);
-        return Lists.newArrayList(byFileNameOrTagNameFiles);*/
+
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
-                .withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName)).build();
+                //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }

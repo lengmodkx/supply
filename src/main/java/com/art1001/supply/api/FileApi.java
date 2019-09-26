@@ -1135,8 +1135,13 @@ public class FileApi extends BaseController {
      */
     @GetMapping("/{fileName}/material_base_search")
     public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,Pageable pageable){
+
+
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
+        jsonObject.put("totle",fileService.getSucaiTotle(fileName));
+        //new JSONObject().fluentPut("file", fileService.searchMaterialBaseFile(fileName,pageable)).fluentPut("totle", fileService.getSucaiTotle(fileName))
         jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,pageable));
         return jsonObject;
     }
