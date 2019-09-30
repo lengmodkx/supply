@@ -290,4 +290,15 @@ public interface RelationService extends IService<Relation> {
 	 * @return id集合信息
 	 */
 	List<String> getGroupTaskId(String groupId);
+
+	/**
+	 * 检查用户是否具有访问该分组的权限
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param groupId 分组id
+	 * @updateInfo 暂无
+	 * @date 2019/9/25 13:38
+	 * @return 结果
+	 */
+    int checkUserIsExistGroup(String groupId);
 }

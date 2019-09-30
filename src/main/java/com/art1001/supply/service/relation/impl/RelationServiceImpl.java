@@ -742,6 +742,11 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	}
 
+	@Override
+	public int checkUserIsExistGroup(String groupId) {
+		return taskMapper.checkUserIsExistGroup(groupId,ShiroAuthenticationManager.getUserId());
+	}
+
 	/**
 	 * 通过relationId获取项目id
 	 * @param relationId 列表id

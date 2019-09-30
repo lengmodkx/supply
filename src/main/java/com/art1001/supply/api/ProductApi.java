@@ -25,7 +25,7 @@ public class ProductApi {
     @Resource
     private ProductService productService;
 
-    @RequestMapping("list")
+    @RequestMapping("/list")
     public JSONObject getList(){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", productService.list(null));

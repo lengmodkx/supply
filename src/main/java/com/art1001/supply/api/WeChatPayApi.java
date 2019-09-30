@@ -1,10 +1,14 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.wechat.WechatParam;
 import com.art1001.supply.service.order.OrderService;
 import com.art1001.supply.service.product.ProductService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -43,12 +47,17 @@ public class WeChatPayApi extends BaseController {
     @Resource
     private OrderService orderService;
 
+    @Push(value = PushType.X1,type = 1)
     @GetMapping("/wxPay")
-    public void wxPay(WechatParam ps,HttpServletResponse response) throws Exception {
+    public JSONObject wxPay(WechatParam ps,HttpServletResponse response) throws Exception {
+        JSONObject jsonObject = new JSONObject();
         ps.setTotalFee("1");
         ps.setOutTradeNo(IdGen.uuid());
         String urlCode = WeixinPay.getCodeUrl(ps);
         WeixinPay.encodeQrcode(urlCode,response);
+        jsonObject.put("msgId", ShiroAuthenticationManager.getUserId());
+        jsonObject.put("data", 1);
+        return jsonObject;
     }
 
     @RequestMapping("rollback")

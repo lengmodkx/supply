@@ -94,7 +94,9 @@ public enum PushType {
     I1(1,"项目移至回收站"),
     I2(2,"局部更新项目"),
 
-    W2(1,"文件详情推送");
+    W2(1,"文件详情推送"),
+
+    X1(1,"支付完成");
 
     PushType(int id,String name){
         this.name = name;

@@ -12,8 +12,10 @@ import com.art1001.supply.service.relation.RelationService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -429,6 +431,21 @@ public class  RelationApi {
         } catch (Exception e){
             throw new AjaxException("系统异常,复制失败!",e);
         }
+    }
+
+    /**
+     * 检查是否有访问分组的权限
+     * @return 结果
+     */
+    @GetMapping("/check_access/permissions")
+    public JSONObject checkUserIsExistGroup(@RequestParam
+                                                @Validated
+                                                @NotBlank(message = "分组id不能为空！") String groupId){
+        log.info("Check user is exist permissions.");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", relationService.checkUserIsExistGroup(groupId));
+        jsonObject.put("result", 0);
+        return jsonObject;
     }
 
     /**

@@ -728,4 +728,6 @@ public interface TaskMapper extends BaseMapper<Task> {
     List<Task> selectBindTagInfo(@Param("tagId") Long tagId);
 
 	String selectChildTaskId(@Param("taskId") String taskId);
+
+    int checkUserIsExistGroup(@Param("groupId") String groupId, @Param("userId") String userId);
 }

@@ -1452,4 +1452,14 @@
 		#{taskId}
 		)
 	</select>
+
+	<!--  -->
+	<select id="checkUserIsExistGroup" resultType="java.lang.Integer">
+		SELECT
+			count( 1 )
+		FROM
+			prm_task
+		WHERE
+			task_group_id = #{groupId} and (executor = #{userId} or FIND_IN_SET(#{userId},task_uids))
+	</select>
 </mapper>
