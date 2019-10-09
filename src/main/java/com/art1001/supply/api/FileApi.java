@@ -1135,9 +1135,6 @@ public class FileApi extends BaseController {
      */
     @GetMapping("/{fileName}/material_base_search")
     public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,Pageable pageable){
-
-
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
         jsonObject.put("totle",fileService.getSucaiTotle(fileName));
@@ -1182,6 +1179,29 @@ public class FileApi extends BaseController {
     @GetMapping("/folder_tree_admin")
     public JSONObject getAdminTree(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
         return success(fileService.getAllFolderTree(fileId));
+    }
+
+    /**
+     * 点击素材库显示数据
+     * @param fileId 文件夹Id
+     * @return 目录数据
+     */
+    @GetMapping("/folder_tree_data")
+    public JSONObject getTreeData(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+                List<File> fileList = fileService.list(new QueryWrapper<File>().eq("parent_id", fileId));
+                    jsonObject.put("data", fileList);
+                    jsonObject.put("totle", fileList.size());
+                    jsonObject.put("size",50);
+                    jsonObject.put("result",1);
+                    return jsonObject;
+
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new AjaxException("系统异常,查询失败!",e);
+        }
+
     }
 
     /**
