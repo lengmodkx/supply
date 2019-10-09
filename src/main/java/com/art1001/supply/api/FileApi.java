@@ -32,11 +32,15 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -1140,6 +1144,7 @@ public class FileApi extends BaseController {
         jsonObject.put("totle",fileService.getSucaiTotle(fileName));
         //new JSONObject().fluentPut("file", fileService.searchMaterialBaseFile(fileName,pageable)).fluentPut("totle", fileService.getSucaiTotle(fileName))
         jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,pageable));
+        jsonObject.put("page",pageable.getPageNumber());
         return jsonObject;
     }
 
@@ -1187,15 +1192,26 @@ public class FileApi extends BaseController {
      * @return 目录数据
      */
     @GetMapping("/folder_tree_data")
-    public JSONObject getTreeData(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
+    public JSONObject getTreeData(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId,Pageable pageable){
         JSONObject jsonObject = new JSONObject();
         try {
                 List<File> fileList = fileService.list(new QueryWrapper<File>().eq("parent_id", fileId));
+                if (fileList.get(0).getCatalog()==1){
                     jsonObject.put("data", fileList);
                     jsonObject.put("totle", fileList.size());
-                    jsonObject.put("size",50);
+                    jsonObject.put("page",pageable.getPageNumber());
                     jsonObject.put("result",1);
                     return jsonObject;
+                }else {
+                    SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
+                            .withQuery(QueryBuilders.matchPhraseQuery("parentId", fileId)).build();
+                    Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+                    jsonObject.put("totle", fileService.list(new QueryWrapper<File>().eq("parent_id", fileId)).size());
+                    jsonObject.put("result",1);
+                    jsonObject.put("page",pageable.getPageNumber());
+                    jsonObject.put("data", Lists.newArrayList(byFileNameOrTagNameFiles));
+                    return  jsonObject;
+                }
 
         } catch (Exception e){
             e.printStackTrace();
