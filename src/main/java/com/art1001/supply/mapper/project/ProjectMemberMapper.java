@@ -2,6 +2,7 @@ package com.art1001.supply.mapper.project;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -52,4 +53,12 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 * @return 返回项目成员id集合
 	 */
     List<String> selectMemberIdListByProjectIdList(@Param("proIdList") Collection<String> projectIdList);
+
+	/**
+	 * 查询项目用户信息
+	 * @param projectId 项目id
+	 * @param accountName 用户名
+	 * @return
+	 */
+    UserEntity selectProjectUserInfo(@Param("projectId") String projectId, @Param("accountName") String accountName);
 }

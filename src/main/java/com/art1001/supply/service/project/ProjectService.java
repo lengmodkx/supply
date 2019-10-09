@@ -207,4 +207,15 @@ public interface ProjectService extends IService<Project> {
      */
     List<Project> getSubProject(String projectId);
 
+    /**
+     * 检查该项目是不是子项目
+     * @author heShaoHua
+     * @describe 暂无
+     * @param projectId 项目id
+     * @updateInfo 暂无
+     * @date 2019/10/9 14:18
+     * @return 结果
+     */
+    Boolean checkIsSubProject(String projectId);
+
 }

@@ -12,6 +12,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -30,6 +31,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,6 +147,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
 	@Override
 	public void saveProject(Project project){
+
+		if(!StringUtils.isEmpty(project.getParentId())){
+			if(this.checkIsSubProject(project.getParentId())){
+				throw new ServiceException("子项目不能再拥有子项目！");
+			}
+		}
+
 		project.setProjectId(IdGen.uuid());
 		project.setProjectCover("upload/project/bj.png");
 
@@ -474,5 +483,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 			projectTreeVOS.add(tree);
 		});
 		return projectTreeVOS;
+	}
+
+	@Override
+	public Boolean checkIsSubProject(String projectId) {
+		Project byId = this.getById(projectId);
+		return !byId.getParentId().equals(Constants.ZERO);
 	}
 }

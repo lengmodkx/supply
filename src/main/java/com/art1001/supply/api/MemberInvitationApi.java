@@ -16,9 +16,11 @@ import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
@@ -216,5 +218,23 @@ public class MemberInvitationApi extends BaseController {
             return error("用户id不能为空!");
         }
         return success(projectMemberService.getMembers(userId));
+    }
+
+    /**
+     * 获取项目中的某个成员信息
+     * @param projectId 项目id
+     * @param accountName 用户名
+     * @return 用户信息
+     */
+    @GetMapping("/project/{projectId}")
+    public JSONObject getProjectUser(@Validated @PathVariable
+                                     @NotNull(message = "项目id不能为空！") String projectId,
+
+                                     @Validated @RequestParam
+                                     @NotNull(message = "用户名不能为空") String accountName){
+
+        log.info("Get project user Info. [{},{}]",projectId, accountName);
+
+        return success(projectMemberService.getProjectUserInfo(projectId, accountName));
     }
 }

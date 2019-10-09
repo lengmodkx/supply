@@ -2,6 +2,7 @@ package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ApiParamsCheckException;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -137,6 +138,17 @@ public class GlobalDefaultExceptionHandler {
 		jsonObject.put("msg","你没有权限执行此操作!");
 		jsonObject.put("result",0);
 		response.setStatus(203);
+		return jsonObject;
+	}
+
+	@ExceptionHandler(ServiceException.class)
+	@ResponseBody
+	public JSONObject operateExp(ServiceException ex) {
+		log.error(ex.getMessage(), ex);
+		// 将Ajax异常信息回写到前台,用于页面的提示
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg",ex.getMessage());
+		jsonObject.put("result",0);
 		return jsonObject;
 	}
 

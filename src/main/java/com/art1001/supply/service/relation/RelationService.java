@@ -301,4 +301,15 @@ public interface RelationService extends IService<Relation> {
 	 * @return 结果
 	 */
     int checkUserIsExistGroup(String groupId);
+
+    /**
+     * 获取一个分组或者 列表的项目id
+     * @author heShaoHua
+     * @describe 暂无
+     * @param relationId 分组或者列表id
+     * @updateInfo 暂无
+     * @date 2019/10/9 11:29
+     * @return 项目id
+     */
+    String getProjectId(String relationId);
 }

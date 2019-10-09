@@ -199,4 +199,27 @@ public interface ProjectMemberService extends IService<ProjectMember> {
      */
 	List<String> getMemberIdListByProjectIdList(Collection<String> projectIdList);
 
+	/**
+	 * 获取用户的所用项目id
+	 * @author heShaoHua
+	 * @describe 暂无
+	 * @param userId 用户id
+	 * @updateInfo 暂无
+	 * @date 2019/10/9 11:35
+	 * @return 项目id列表
+	 */
+    List<String> getUserProjectIdList(String userId);
+
+    /**
+     * 获取某个项目下的单个成员信息
+     * @author heShaoHua
+     * @describe 暂无
+     * @param projectId 项目id
+	 * @param accountName 要获取信息的用户名
+     * @updateInfo 暂无
+     * @date 2019/10/9 15:10
+     * @return 用户信息
+     */
+    UserEntity getProjectUserInfo(String projectId, String accountName);
+
 }

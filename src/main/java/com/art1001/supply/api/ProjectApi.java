@@ -102,26 +102,22 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(required = false) @Length(max = 32,message = "parentId参数不正确!") String parentId,
                                     @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
-        try {
-            Project project = new Project();
-            project.setProjectName(projectName);
-            project.setProjectDes(projectDes);
-            project.setStartTime(startTime);
-            if(Stringer.isNotNullOrEmpty(parentId)){
-                project.setParentId(parentId);
-            }
-            project.setCreateTime(System.currentTimeMillis());
-            project.setUpdateTime(System.currentTimeMillis());
-            project.setEndTime(endTime);
-            project.setMemberId(ShiroAuthenticationManager.getUserId());
-            projectService.saveProject(project);
-            //写资源表
-            object.put("result", 1);
-            object.put("data", project.getProjectId());
-            object.put("msg", "创建成功");
-        } catch (Exception e) {
-            throw new AjaxException("系统异常,项目创建失败",e);
+        Project project = new Project();
+        project.setProjectName(projectName);
+        project.setProjectDes(projectDes);
+        project.setStartTime(startTime);
+        if(Stringer.isNotNullOrEmpty(parentId)){
+            project.setParentId(parentId);
         }
+        project.setCreateTime(System.currentTimeMillis());
+        project.setUpdateTime(System.currentTimeMillis());
+        project.setEndTime(endTime);
+        project.setMemberId(ShiroAuthenticationManager.getUserId());
+        projectService.saveProject(project);
+        //写资源表
+        object.put("result", 1);
+        object.put("data", project.getProjectId());
+        object.put("msg", "创建成功");
         return object;
     }
 

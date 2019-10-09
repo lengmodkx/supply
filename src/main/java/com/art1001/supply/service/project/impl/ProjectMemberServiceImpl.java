@@ -23,6 +23,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -399,5 +400,32 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 			return new ArrayList<>();
 		}
 		return projectMemberMapper.selectMemberIdListByProjectIdList(projectIdList);
+	}
+
+	@Override
+	public List<String> getUserProjectIdList(String userId) {
+		ValidatedUtil.filterNullParam(userId);
+
+		LambdaQueryWrapper<ProjectMember> selectUserProjectIdListQw = new QueryWrapper<ProjectMember>().lambda()
+				.eq(ProjectMember::getMemberId, userId)
+				.select(ProjectMember::getProjectId);
+
+		List<ProjectMember> projectMemberList = this.list(selectUserProjectIdListQw);
+
+		//提取出项目id列表
+		List<String> userProjectIdList = projectMemberList.stream()
+				.map(ProjectMember::getProjectId)
+				.collect(Collectors.toList());
+
+		if(CollectionUtils.isEmpty(userProjectIdList)){
+			return new ArrayList();
+		}
+
+		return userProjectIdList;
+	}
+
+	@Override
+	public UserEntity getProjectUserInfo(String projectId, String accountName) {
+		return projectMemberMapper.selectProjectUserInfo(projectId, accountName);
 	}
 }

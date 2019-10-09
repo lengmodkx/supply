@@ -23,6 +23,7 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -774,6 +775,23 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		}
 
 		return groupTask.stream().map(Task::getTaskId).collect(Collectors.toList());
+	}
+
+	@Override
+	public String getProjectId(String relationId) {
+		ValidatedUtil.filterNullParam(relationId);
+
+		LambdaQueryWrapper<Relation> selectProjectIdQw = new QueryWrapper<Relation>().lambda()
+				.eq(Relation::getRelationId, relationId)
+				.select(Relation::getProjectId);
+
+		Relation one = this.getOne(selectProjectIdQw);
+
+		if(one.getProjectId() == null){
+			throw new ServiceException("该记录不属于任何项目！");
+		}
+
+		return one.getProjectId();
 	}
 }
 
