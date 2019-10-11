@@ -3,7 +3,7 @@
 <mapper namespace="com.art1001.supply.mapper.GroupUserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.GroupUser">
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.relation.GroupUser">
         <id column="id" property="id" />
         <result column="group_id" property="groupId" />
         <result column="user_id" property="userId" />
