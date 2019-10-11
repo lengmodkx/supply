@@ -31,6 +31,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -1108,6 +1110,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
                 //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);

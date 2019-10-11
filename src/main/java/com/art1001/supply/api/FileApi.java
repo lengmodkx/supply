@@ -36,6 +36,8 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -1201,7 +1203,9 @@ public class FileApi extends BaseController {
                     jsonObject.put("totle", fileList.size());
                 }else {
                     SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
-                            .withQuery(QueryBuilders.matchPhraseQuery("parentId", fileId)).build();
+                            .withQuery(QueryBuilders.matchPhraseQuery("parentId", fileId))
+                            .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+                            .build();
                     Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
                     jsonObject.put("totle", fileService.list(new QueryWrapper<File>().eq("parent_id", fileId)).size());
                     jsonObject.put("data", Lists.newArrayList(byFileNameOrTagNameFiles));
