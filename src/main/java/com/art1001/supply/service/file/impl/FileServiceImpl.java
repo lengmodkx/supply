@@ -1031,11 +1031,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public Page<File> getMateriaBaseFile(String folderId, Integer current, Integer size) {
+    public JSONObject getMateriaBaseFile(String folderId, Pageable pageable) {
+        JSONObject jsonObject = new JSONObject();
         Page<File> page = new Page<>();
-        page.setCurrent(current);
-        page.setSize(size);
-        return fileMapper.findMateriaBaseFile(page,folderId);
+        page.setCurrent(pageable.getPageNumber());
+        page.setSize(pageable.getPageSize());
+        jsonObject.put("data",fileMapper.findMateriaBaseFile(page, folderId));
+        jsonObject.put("parentId",folderId);
+        jsonObject.put("result",1);
+        return jsonObject;
     }
 
     @Override
@@ -1105,7 +1109,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName)).build();
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .build();
                 //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         return Lists.newArrayList(byFileNameOrTagNameFiles);

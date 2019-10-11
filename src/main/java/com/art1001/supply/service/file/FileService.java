@@ -5,7 +5,6 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTreeShowVO;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
 
@@ -341,7 +340,7 @@ import java.util.List;
 	File getMaterialBase();
 
 
-    Page<File> getMateriaBaseFile(String folderId, Integer current, Integer size);
+    JSONObject getMateriaBaseFile(String folderId, Pageable pageable);
 
     /**
      * 获取项目的文件目录树
@@ -439,4 +438,6 @@ import java.util.List;
     boolean isRootFolder(String fileId);
 
     Integer getSucaiTotle(String fileName);
+
+
 }
