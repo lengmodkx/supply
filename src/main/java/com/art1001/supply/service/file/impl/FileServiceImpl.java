@@ -683,7 +683,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             FileTreeShowVO fileTreeShowVO = new FileTreeShowVO();
             fileTreeShowVO.setId(file.getFileId());
             fileTreeShowVO.setText(file.getFileName());
-            fileTreeShowVO.setOpened(true);
+            fileTreeShowVO.setOpened(false);
             fileTreeShowVOS.add(fileTreeShowVO);
             if(!Stringer.isNullOrEmpty(file.getParentId())){
                 fileTreeShowVO.setParentId(file.getParentId());
