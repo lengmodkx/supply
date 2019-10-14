@@ -425,7 +425,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	}
 
 	@Override
-	public UserEntity getProjectUserInfo(String projectId, String accountName) {
-		return projectMemberMapper.selectProjectUserInfo(projectId, accountName);
+	public List<UserEntity> getProjectUserInfo(String projectId, String keyWord) {
+		return projectMemberMapper.selectProjectUserInfo(projectId, keyWord);
 	}
 }

@@ -223,7 +223,7 @@ public class MemberInvitationApi extends BaseController {
     /**
      * 获取项目中的某个成员信息
      * @param projectId 项目id
-     * @param accountName 用户名
+     * @param keyWord 用户名
      * @return 用户信息
      */
     @GetMapping("/project/{projectId}")
@@ -231,10 +231,10 @@ public class MemberInvitationApi extends BaseController {
                                      @NotNull(message = "项目id不能为空！") String projectId,
 
                                      @Validated @RequestParam
-                                     @NotNull(message = "用户名不能为空") String accountName){
+                                     @NotNull(message = "用户名不能为空") String keyWord){
 
-        log.info("Get project user Info. [{},{}]",projectId, accountName);
+        log.info("Get project user Info. [{},{}]",projectId, keyWord);
 
-        return success(projectMemberService.getProjectUserInfo(projectId, accountName));
+        return success(projectMemberService.getProjectUserInfo(projectId, keyWord));
     }
 }

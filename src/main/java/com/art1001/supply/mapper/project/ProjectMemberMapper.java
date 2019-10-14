@@ -57,8 +57,7 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	/**
 	 * 查询项目用户信息
 	 * @param projectId 项目id
-	 * @param accountName 用户名
-	 * @return
+	 * @param keyWord 用户名或者名称
 	 */
-    UserEntity selectProjectUserInfo(@Param("projectId") String projectId, @Param("accountName") String accountName);
+    List<UserEntity> selectProjectUserInfo(@Param("projectId") String projectId, @Param("keyWord") String keyWord);
 }

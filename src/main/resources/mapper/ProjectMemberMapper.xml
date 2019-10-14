@@ -132,15 +132,16 @@
 	<!-- 查询项目用户信息 -->
     <select id="selectProjectUserInfo" resultType="com.art1001.supply.entity.user.UserEntity">
 		SELECT
-			u.account_name as accountName,
-			u.user_id as userId,
-			u.image
+			u.account_name AS accountName,
+			u.user_id AS userId,
+			u.image,
+			u.user_name as userName
 		FROM
 			prm_project_member AS pm
 			LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
 		WHERE
 			pm.project_id = #{projectId}
-			AND u.account_name = #{accountName}
+			AND ( u.account_name LIKE CONCAT('%',#{keyWord},'%') OR u.user_name LIKE CONCAT('%',#{keyWord},'%'))
 	</select>
 
 

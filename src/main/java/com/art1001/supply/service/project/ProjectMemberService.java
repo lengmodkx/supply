@@ -213,13 +213,11 @@ public interface ProjectMemberService extends IService<ProjectMember> {
     /**
      * 获取某个项目下的单个成员信息
      * @author heShaoHua
-     * @describe 暂无
      * @param projectId 项目id
-	 * @param accountName 要获取信息的用户名
-     * @updateInfo 暂无
+	 * @param keyWord 要获取信息的用户名或者名称
      * @date 2019/10/9 15:10
      * @return 用户信息
      */
-    UserEntity getProjectUserInfo(String projectId, String accountName);
+	List<UserEntity> getProjectUserInfo(String projectId, String keyWord);
 
 }
