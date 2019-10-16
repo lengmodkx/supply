@@ -96,7 +96,8 @@ public enum PushType {
 
     W2(1,"文件详情推送"),
 
-    X1(1,"支付完成");
+    X1(1,"支付完成"),
+    Y1(1,"其他通知");
 
     PushType(int id,String name){
         this.name = name;

@@ -77,7 +77,7 @@ public class MemberInvitationApi extends BaseController {
      * @param memberId 用户id
      * @return
      */
-    @RequiresPermissions("create:member")
+    //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();

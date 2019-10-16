@@ -47,7 +47,7 @@ public class InitializationListener implements ApplicationListener<ContextRefres
 				e.printStackTrace();
 			}
 
-			logger.info("系统初始化完成");
+			logger.info("system ");
 		}
 	}
 

@@ -1891,5 +1891,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
         return Arrays.asList(taskMapper.selectChildTaskId(taskId).split(","));
     }
+
+    @Override
+    public String getExecutorByTaskId(String taskId) {
+        LambdaQueryWrapper<Task> eq = new QueryWrapper<Task>().lambda().select(Task::getExecutor).eq(Task::getTaskId, taskId);
+        Task one = this.getOne(eq);
+        if(StringUtils.isNotEmpty(one.getExecutor())){
+            return one.getExecutor();
+        }
+        return "";
+    }
 }
 

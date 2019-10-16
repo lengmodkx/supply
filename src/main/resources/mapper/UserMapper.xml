@@ -162,7 +162,7 @@
 	<select id="findByKey" parameterType="java.lang.String" resultMap="userMap">
 		SELECT <include refid="userAttributes"/>
 		FROM tb_user
-		where account_name like CONCAT('%',#{keyword},'%')
+		where account_name like CONCAT('%',#{keyword},'%') or user_name LIKE CONCAT( '%',#{keyword}, '%' )
 	</select>
 
 	<!-- 查询出某个项目中的所有成员信息 -->

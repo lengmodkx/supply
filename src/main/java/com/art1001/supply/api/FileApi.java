@@ -25,8 +25,10 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.notice.impl.NoticeServiceImpl;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
@@ -78,6 +80,13 @@ public class FileApi extends BaseController {
      */
     @Resource
     private FileService fileService;
+
+    @Resource
+    private TaskService taskService;
+
+    /** 用于订阅推送消息 */
+    @Resource
+    private NoticeServiceImpl noticeService;
 
     /**
      * 文件版本的逻辑层接口
@@ -992,6 +1001,10 @@ public class FileApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
              fileService.bindFile(files);
+             String executorId = taskService.getExecutorByTaskId(publicId);
+             if(StringUtils.isNotEmpty(executorId)){
+                noticeService.toUser(executorId, PushType.Y1.getName(), taskService.getTaskNameById(publicId) + "中有人上传了新文件。");
+             }
              jsonObject.put("data", publicId);
              jsonObject.put("result", 1);
              jsonObject.put("id",publicId);

@@ -650,4 +650,13 @@ public interface TaskService extends IService<Task> {
      * @return 任务和子任务id集合
      */
     List<String> getChildTaskId(String taskId);
+
+    /**
+     * 获取一个任务的执行者id
+     * @author heShaoHua
+     * @param taskId 任务id
+     * @date 2019/10/15 17:03
+     * @return 执行者id
+     */
+	String getExecutorByTaskId(String taskId);
 }
