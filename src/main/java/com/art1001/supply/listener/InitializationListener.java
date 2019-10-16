@@ -47,7 +47,7 @@ public class InitializationListener implements ApplicationListener<ContextRefres
 				e.printStackTrace();
 			}
 
-			logger.info("system ");
+			logger.info("System initialization success.");
 		}
 	}
 
