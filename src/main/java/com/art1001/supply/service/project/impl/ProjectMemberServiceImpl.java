@@ -211,7 +211,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member.setDefaultGroup(groupId);
 		member.setProjectId(projectId);
 		member.setMemberId(memberId);
-		member.setRoleId(proRoleService.getDefaultProRoleId(projectId));
+		//member.setRoleId(proRoleService.getDefaultProRoleId(projectId));
 		member.setCreateTime(System.currentTimeMillis());
 		member.setUpdateTime(System.currentTimeMillis());
 		member.setMemberLabel(0);
