@@ -155,6 +155,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             save(myFile);
             //保存到ElasticSearch
             fileRepository.save(myFile);
+            System.out.println(myFile.getFileName()+" 文件ES上传成功");
         }
     }
 
@@ -190,6 +191,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         }
         fileService.save(modelFile);
         fileRepository.save(modelFile);
+        System.out.println(modelFile.getFileName()+" 文件ES上传成功");
         //版本历史更新
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(modelFile.getFileId());
@@ -229,6 +231,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         save(file);
         //保存到ElasticSearch
         fileRepository.save(file);
+        System.out.println(file.getFileName()+" 文件ES上传成功");
         return projectFile.getFileId();
     }
 
@@ -252,7 +255,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         //保存到ElasticSearch
         fileRepository.save(file);
-
+        System.out.println(file.getFileName()+" 文件ES上传成功");
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
@@ -320,6 +323,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                file.setFileId(fileIds[i]);
                file.setParentId(folderId);
                fileRepository.save(file);
+                System.out.println(file.getFileName()+" 文件ES上传成功");
             }
         }
     }
@@ -414,6 +418,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setUpdateTime(System.currentTimeMillis());
             updateById(file);
             fileRepository.save(file);
+            System.out.println(file.getFileName()+" 文件ES上传成功");
             logService.saveLog(fileId,logContent.toString(),2);
         }
     }
@@ -553,6 +558,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 }
                 fileList.add(myFile);
                 fileRepository.save(myFile);
+                System.out.println(myFile.getFileName()+" 文件ES上传成功");
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
                 fileVersion.setIsMaster(1);
@@ -1001,12 +1007,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> searchFile(String fileName, String projectId) {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
-                .withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
+                //.withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
+                //.withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withFilter(QueryBuilders.termQuery("projectId", projectId))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0){
+            List<File> files = fileService.seachByName(fileName, projectId);
+            return  Lists.newArrayList(files);
+        }
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
 
@@ -1116,6 +1127,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 .build();
                 //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
+            List<File> files = fileService.seachByName(fileName, null);
+            return  Lists.newArrayList(files);
+        }
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
 
