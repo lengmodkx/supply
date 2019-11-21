@@ -228,7 +228,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(ShiroAuthenticationManager.getUserId());
         userEntity.setUpdateTime(new Date());
-        userEntity.setAccountName(phone);
+        userEntity.setTelephone(phone);
 
         this.update(userEntity, eq);
 
