@@ -341,28 +341,7 @@ public class UserApi {
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
         if(null != userEntity){
-            String requestUrl = "https://47.93.237.225/login";
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPost httpPost = new HttpPost(requestUrl);
-            List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
-            BasicNameValuePair acc = new BasicNameValuePair("accountName", userEntity.getAccountName());
-            BasicNameValuePair pwd = new BasicNameValuePair("password", "123456");
-            nameValuePairs.add(acc);
-            nameValuePairs.add(pwd);
-            try {
-                UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairs,"utf-8");
-                httpPost.setEntity(urlEncodedFormEntity);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            CloseableHttpResponse execute = null;
-            try {
-                execute = httpClient.execute(httpPost);
-                HttpEntity entity = execute.getEntity();
-                jsonObject = JSONObject.parseObject(EntityUtils.toString(entity));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            this.login(userEntity.getAccountName(), userEntity.getPassword(), true, request);
         }
         return jsonObject;
     }
