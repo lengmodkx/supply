@@ -1,5 +1,8 @@
 package com.art1001.supply.service.user.impl;
 
+import com.art1001.supply.aliyun.message.enums.KeyWord;
+import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
+import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
@@ -17,6 +20,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +55,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     public UserEntity findById(String id) {
         return getById(id);
     }
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 重写用户插入
@@ -180,5 +188,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
                 .in(UserEntity::getUserId, idList)
                 .select(UserEntity::getUserId, UserEntity::getUserName, UserEntity::getImage, UserEntity::getAccountName);
         return userMapper.selectList(selectUserByUserIdList);
+    }
+
+    @Override
+    public void resetPassword(String accountname, String newPassword) {
+        if(!this.checkUserIsExist(accountname)){
+            throw new ServiceException("用户名不存在！");
+        }
+
+        LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountname);
+
+        UserEntity one = this.getOne(eq);
+
+        //组合username,两次迭代，对密码进行加密
+        String password_cryto = new Md5Hash(newPassword,accountname+one.getCredentialsSalt(),2).toBase64();
+        UserEntity user=new UserEntity();
+        user.setPassword(password_cryto);
+        user.setUserName(accountname);
+
+        this.update(user, eq);
+    }
+
+    @Override
+    public void bindPhone(String phone, String code) {
+
+        if(!redisUtil.exists(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId())){
+            throw new CodeNotFoundException("验证码已经失效");
+        }
+
+        String redisCode = redisUtil.get(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId());
+
+        if(!Objects.equals(code, redisCode)){
+            throw new CodeMismatchException("验证码错误！");
+        }
+
+        LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getUserId, ShiroAuthenticationManager.getUserId());
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(ShiroAuthenticationManager.getUserId());
+        userEntity.setUpdateTime(new Date());
+        userEntity.setAccountName(phone);
+
+        this.update(userEntity, eq);
+
     }
 }

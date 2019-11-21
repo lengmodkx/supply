@@ -207,7 +207,7 @@
 		    pm.default_group as group_id,
 			p.func
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId} and p.organization_id=0 order by pm.create_time asc
+		where pm.member_id = #{userId} and p.organization_id=0 and project_del = 0  order by pm.create_time asc
 	</select>
 
 	<!-- 查询出该用户执行的任务信息和所在项目信息 -->

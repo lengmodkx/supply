@@ -97,7 +97,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	 */
 	@Override 
 	public Project findProjectByProjectId(String projectId){
-		return projectMapper.findProjectByProjectId(projectId);
+		return Optional.ofNullable(projectMapper.findProjectByProjectId(projectId))
+				.orElseThrow(() -> new ServiceException("项目不存在"));
 	}
 
 	/**

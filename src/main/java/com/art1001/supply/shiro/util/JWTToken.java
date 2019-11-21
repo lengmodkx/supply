@@ -21,6 +21,7 @@ public class JWTToken implements HostAuthenticationToken {
         return this.token;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -37,6 +38,6 @@ public class JWTToken implements HostAuthenticationToken {
 
     @Override
     public String toString(){
-        return token + ':' + host;
+        return token;
     }
 }

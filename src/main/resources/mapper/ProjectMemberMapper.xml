@@ -11,10 +11,10 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
+		<result column="default_image" property="memberImg" jdbcType="INTEGER" />
 		<result column="account_name" property="accountName" jdbcType="VARCHAR" />
 		<result column="job" property="job" jdbcType="VARCHAR" />
 		<result column="default_view" property="defaultView"/>
-		<result column="default_image" property="defaultImage"/>
 		<result column="collect" property="collect" jdbcType="INTEGER" />
 		<result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER" />
 		<result column="role_id" property="roleId" jdbcType="INTEGER" />
@@ -68,7 +68,7 @@
 
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		SELECT p.id,p.project_id,p.member_id,p.member_label, u.user_name as member_name,u.image as member_img,u.job,u.account_name,u.default_image FROM prm_project_member p
+		SELECT p.id,p.project_id,p.member_id,p.member_label, u.user_name as member_name,u.image as member_img,u.default_image,u.job,u.account_name FROM prm_project_member p
 		LEFT JOIN tb_user u on p.member_id = u.user_id
 		where
 			project_id = #{projectId} order by p.member_label desc

@@ -74,4 +74,13 @@ public interface UserService extends IService<UserEntity> {
 	 * @return 用户信息集合
 	 */
 	List<UserEntity> getUserListByIdList(Collection<String> idList);
+
+    void resetPassword(String accountname, String newPassword);
+
+	/**
+	 * 绑定手机号
+	 * @param phone 手机号
+	 * @param code code码
+	 */
+	void bindPhone(String phone, String code);
 }

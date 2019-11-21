@@ -125,6 +125,8 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private int vip;
 
+	private String sessionKey;
+
 	/**
 	 * 用户默认所在的企业
 	 */

@@ -2,6 +2,8 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.aliyun.message.util.PhoneTest;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
@@ -19,13 +21,10 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -39,11 +38,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +57,7 @@ import java.util.List;
 @Validated
 @Slf4j
 @RestController
-public class UserApi {
+public class UserApi extends BaseController {
 
     @Resource
     private UserService userService;
@@ -341,7 +339,7 @@ public class UserApi {
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
         if(null != userEntity){
-            this.login(userEntity.getAccountName(), userEntity.getPassword(), true, request);
+            this.login(userEntity.getAccountName(), "123456", true, request);
         }
         return jsonObject;
     }
@@ -505,4 +503,30 @@ public class UserApi {
         }
         return  jsonObject;
     }
+
+    /**
+     * 用户绑定手机号码
+     * @param phone 手机号码
+     * @param code 验证码
+     * @return 结果
+     */
+    @PostMapping("/bind/phone")
+    public Object bindPhone(@Validated @NotNull(message = "手机号不能为空！") String phone,
+                                @NotNull(message = "code码不能为空！") String code){
+
+        PhoneTest.testPhone(phone);
+
+        userService.bindPhone(phone, code);
+
+        return success();
+    }
+
+    @GetMapping("/is_bind_phone")
+    public Object isBindPhone(){
+        JSONObject jsonObject = new JSONObject();
+        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        jsonObject.put("bindPhone", userEntity.getAccountName().length() > 11);
+        return jsonObject;
+    }
+
 }
