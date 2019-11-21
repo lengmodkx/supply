@@ -3,7 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
-import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
@@ -45,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static org.elasticsearch.cluster.ClusterStateTaskExecutor.TaskResult.success;
+
 /**
  * 用户
  * @author 汪亚锋
@@ -57,7 +58,7 @@ import java.util.List;
 @Validated
 @Slf4j
 @RestController
-public class UserApi extends BaseController {
+public class UserApi {
 
     @Resource
     private UserService userService;
@@ -339,7 +340,9 @@ public class UserApi extends BaseController {
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
         if(null != userEntity){
-            this.login(userEntity.getAccountName(), "123456", true, request);
+            jsonObject.put("result", 1);
+            jsonObject.put("userInfo",userEntity);
+            jsonObject.put("accessToken",JwtUtil.sign(userEntity.getAccountName(),userEntity.getCredentialsSalt()));
         }
         return jsonObject;
     }

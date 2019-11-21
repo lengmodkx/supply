@@ -146,8 +146,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public UserEntity saveWeChatUserInfo(WeChatUser snsUserInfo) {
-        UserEntity userEntity = new UserEntity();
-        if(!this.checkUserIsExist(snsUserInfo.getOpenId())){
+        UserEntity userEntity;
+        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getUserId, snsUserInfo.getOpenId());
+        userEntity = this.getOne(selectUserIsExistQw);
+        if(userEntity == null){
             userEntity.setUserName(snsUserInfo.getNickname());
             userEntity.setPassword("123456");
             userEntity.setAccountName(snsUserInfo.getOpenId());
@@ -161,8 +163,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setSex(snsUserInfo.getSex());
             userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
             userMapper.insert(userEntity);
-        } else {
-            userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,snsUserInfo.getOpenId()));
         }
         return userEntity;
     }
@@ -228,7 +228,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(ShiroAuthenticationManager.getUserId());
         userEntity.setUpdateTime(new Date());
-        userEntity.setTelephone(phone);
+        userEntity.setAccountName(phone);
 
         this.update(userEntity, eq);
 
