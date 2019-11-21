@@ -514,6 +514,7 @@ public class UserApi extends BaseController {
     public Object bindPhone(@Validated @NotNull(message = "手机号不能为空！") String phone,
                                 @NotNull(message = "code码不能为空！") String code){
 
+
         PhoneTest.testPhone(phone);
 
         userService.bindPhone(phone, code);
