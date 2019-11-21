@@ -475,8 +475,16 @@
 			f.`level`
 		from prm_file f
 		left join prm_file_version v on f.file_id = v.file_id
-		where project_id = #{projectId}
-		 and public_lable = 0 and v.is_master = 1
+		where
+        <choose>
+            <when test="projectId !=null and projectId != ''">
+                project_id = #{projectId}
+            </when>
+            <otherwise>
+                project_id = ''
+            </otherwise>
+        </choose>
+  		 and public_lable = 0 and v.is_master = 1
 		 and file_name like <![CDATA[ concat('%',#{fileName},'%') ]]>
 		order by `catalog` desc,create_time desc
 	</select>
