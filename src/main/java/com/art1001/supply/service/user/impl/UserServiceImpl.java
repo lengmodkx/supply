@@ -168,7 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public Boolean checkUserIsExist(String accountName) {
+    public Boolean checkUserIsExistByAccountName(String accountName) {
         if(Stringer.isNullOrEmpty(accountName)){
             return false;
         }
@@ -192,7 +192,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public void resetPassword(String accountname, String newPassword) {
-        if(!this.checkUserIsExist(accountname)){
+        if(!this.checkUserIsExistByAccountName(accountname)){
             throw new ServiceException("用户名不存在！");
         }
 
@@ -212,12 +212,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public void bindPhone(String phone, String code) {
 
+        int count = this.checkUserIsExist(phone);
+
+        if(count > 0){
+            throw new ServiceException("用户应绑定手机号，不能重复绑定");
+        }
+
         if(!redisUtil.exists(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId())){
             throw new CodeNotFoundException("验证码已经失效");
         }
 
         String redisCode = redisUtil.get(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId());
-
         if(!Objects.equals(code, redisCode)){
             throw new CodeMismatchException("验证码错误！");
         }
@@ -232,5 +237,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         this.update(userEntity, eq);
 
+
+    }
+
+    @Override
+    public int checkUserIsExist(String keyword) {
+        Optional.ofNullable(keyword).orElseThrow(() -> new ServiceException("keyword 不能为空！"));
+
+        LambdaQueryWrapper<UserEntity> selectUserEntityCountQw = new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getUserId, keyword)
+                .or()
+                .eq(UserEntity::getAccountName, keyword);
+
+        return this.count(selectUserEntityCountQw);
     }
 }

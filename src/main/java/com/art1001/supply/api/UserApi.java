@@ -514,14 +514,19 @@ public class UserApi {
      * @return 结果
      */
     @PostMapping("/bind/phone")
-    public Object bindPhone(@Validated @NotNull(message = "手机号不能为空！") String phone,
-                                @NotNull(message = "code码不能为空！") String code){
+    public Object bindPhone(@Validated
+                                @NotNull(message = "手机号不能为空！") String phone,
+                                @NotNull(message = "code码不能为空！") String code,
+                                HttpServletResponse response){
 
 
         PhoneTest.testPhone(phone);
 
         userService.bindPhone(phone, code);
 
+        response.setHeader("x-auth-token", JwtUtil.sign(
+                    phone, ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()
+        ));
         return success();
     }
 

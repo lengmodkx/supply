@@ -113,7 +113,6 @@ public class BaseController {
 
 
     /**
-     * @param data - 业务数据json
      * @return 返回值信息
      * @author by chippy
      */

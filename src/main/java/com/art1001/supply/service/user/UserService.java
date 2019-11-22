@@ -62,7 +62,7 @@ public interface UserService extends IService<UserEntity> {
 	 * @date 2019/6/11 11:01
 	 * @return 结果
 	 */
-	Boolean checkUserIsExist(String accountName);
+	Boolean checkUserIsExistByAccountName(String accountName);
 
 	/**
 	 * 根据id集合信息查询出用户信息
@@ -83,4 +83,11 @@ public interface UserService extends IService<UserEntity> {
 	 * @param code code码
 	 */
 	void bindPhone(String phone, String code);
+
+	/**
+	 * 根据 id accountName 去查询
+	 * @param keyword 关键字
+	 * @return 记录数
+	 */
+	int checkUserIsExist(String keyword);
 }

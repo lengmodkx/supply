@@ -1,10 +1,12 @@
 package com.art1001.supply.aliyun.message.exception;
 
+import com.art1001.supply.exception.BaseException;
+
 /**
  * @author heshaohua
  * @date 2019/11/21 15:46
  **/
-public class CodeMismatchException extends RuntimeException {
+public class CodeMismatchException extends BaseException {
 
     public CodeMismatchException() {
         super();
