@@ -60,4 +60,6 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 * @param keyWord 用户名或者名称
 	 */
     List<UserEntity> selectProjectUserInfo(@Param("projectId") String projectId, @Param("keyWord") String keyWord);
+
+    void updateAll(@Param("userId") String userId, @Param("id") String id);
 }

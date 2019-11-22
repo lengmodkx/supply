@@ -183,8 +183,12 @@
 
 	</update>
 
+    <update id="updateAllProject">
+		update prm_project set member_id = #{userId} where member_id = #{id}
+	</update>
 
-	<!-- 查询我创建的所有项目/我删除的全部项目 -->
+
+    <!-- 查询我创建的所有项目/我删除的全部项目 -->
 	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
 		SELECT
 		<include refid="Base_Column_List" />

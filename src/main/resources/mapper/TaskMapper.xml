@@ -999,8 +999,11 @@
 		</set>
 		where task_id = #{taskId}
 	</update>
+    <update id="updateAll">
+		update prm_task set member_id = #{userId} where member_id = #{id}
+	</update>
 
-	<!-- 根据用户查询出该用户执行的和创建的所有任务 -->
+    <!-- 根据用户查询出该用户执行的和创建的所有任务 -->
 	<select id="findTaskByCalendar" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_task where executor = #{uId} or member_id = #{uId}

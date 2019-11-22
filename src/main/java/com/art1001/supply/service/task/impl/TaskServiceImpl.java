@@ -1901,5 +1901,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         }
         return "";
     }
+
+    @Override
+    public void updateAll(String userId, String id) {
+        taskMapper.updateAll(userId,id);
+    }
 }
 

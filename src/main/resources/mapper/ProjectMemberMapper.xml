@@ -65,6 +65,9 @@
 			</if>
 		</where>
 	</sql>
+	<update id="updateAll">
+		update prm_project_member set member_id = #{userId} where member_id = #{id}
+	</update>
 
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">

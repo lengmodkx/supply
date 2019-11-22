@@ -90,4 +90,9 @@ public interface UserService extends IService<UserEntity> {
 	 * @return 记录数
 	 */
 	int checkUserIsExist(String keyword);
+
+    List<String> getAllUserId();
+
+	List<String> getPhoneList();
+
 }

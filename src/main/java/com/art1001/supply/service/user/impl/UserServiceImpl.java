@@ -251,4 +251,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         return this.count(selectUserEntityCountQw);
     }
+
+    @Override
+    public List<String> getAllUserId() {
+        return userMapper.getAllUserId();
+    }
+
+    @Override
+    public List<String> getPhoneList() {
+        return userMapper.getPhoneList();
+    }
 }

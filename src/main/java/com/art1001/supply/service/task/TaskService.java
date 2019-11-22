@@ -659,4 +659,6 @@ public interface TaskService extends IService<Task> {
      * @return 执行者id
      */
 	String getExecutorByTaskId(String taskId);
+
+    void updateAll(String userId, String id);
 }

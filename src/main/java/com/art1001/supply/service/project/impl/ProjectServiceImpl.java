@@ -491,4 +491,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		Project byId = this.getById(projectId);
 		return !byId.getParentId().equals(Constants.ZERO);
 	}
+
+	@Override
+	public void updateAllProject(String userId, String id) {
+		projectMapper.updateAllProject(userId,id);
+	}
 }

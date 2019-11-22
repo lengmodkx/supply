@@ -440,4 +440,7 @@ import java.util.List;
     Integer getSucaiTotle(String fileName);
 
 
+    void updateAll(String userId, String id);
+
+	void updateAllUser(String userId, String id);
 }

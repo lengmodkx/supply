@@ -343,8 +343,15 @@
 	<update id="updateTagId" parameterType="java.lang.String">
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
+    <update id="updateAll">
+		update prm_file set member_id = #{userId} where member_id = #{id}
+	</update>
+	<update id="updateAllUser">
 
-    <!-- 根据项目id 查询文件信息 -->
+update prm_file set user_id = #{userId} where user_id = #{id}
+	</update>
+
+	<!-- 根据项目id 查询文件信息 -->
 	<select id="findFileByProjectId" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List"/>
 		from prm_file where project_id = #{projectId}

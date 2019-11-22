@@ -322,4 +322,8 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @return id字符串
 	 */
     String selectChildFolderIds(@Param("folderId") String folderId);
+
+    void updateAll(@Param("userId")String userId,@Param("id") String id);
+
+	void updateAllUser(@Param("userId") String userId,@Param("id") String id);
 }

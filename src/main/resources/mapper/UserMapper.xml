@@ -170,4 +170,13 @@
 		select <include refid="users"/>
 		from tb_user AS u left join prm_project_member AS m on u.user_id = m.member_id where m.project_id = #{projectId}
 	</select>
+
+    <select id="getAllUserId" resultType="java.lang.String">
+		select user_id from tb_user_copy1
+	</select>
+
+
+	<select id="getPhoneList" resultType="java.lang.String">
+		select account_name from tb_user_copy1
+	</select>
 </mapper>

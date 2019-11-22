@@ -4,10 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.redis.RedisManager;
+import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -17,6 +22,8 @@ import com.art1001.supply.util.NumberUtils;
 import com.art1001.supply.util.RegexUtils;
 import com.art1001.supply.util.SendSmsUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -71,6 +78,18 @@ public class UserApi {
 
     @Resource
     private UserNewsService userNewsService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
+
+    @Resource
+    private FileService fileService;
+
+    @Resource
+    private TaskService taskService;
 
     /**
      * 用户登陆
@@ -339,6 +358,19 @@ public class UserApi {
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
+        File file = new File();
+        // 写库
+        file.setFileName("我的文件夹");
+        file.setUserId(userEntity.getUserId());
+        file.setMemberId(userEntity.getUserId());
+        file.setCreateTime(System.currentTimeMillis());
+        file.setUpdateTime(System.currentTimeMillis());
+        file.setLevel(1);
+        file.setCatalog(1);
+        file.setFilePrivacy(2);
+        file.setFileLabel(1);
+        // 设置是否目录
+        fileService.save(file);
         if(null != userEntity){
             jsonObject.put("result", 1);
             jsonObject.put("userInfo",userEntity);
@@ -536,6 +568,35 @@ public class UserApi {
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         jsonObject.put("bindPhone", userEntity.getAccountName().length() > 11);
         return jsonObject;
+    }
+
+//    @PutMapping("/wechat_info")
+//    public Object wechatInfo(){
+//
+//    }
+
+    @PostMapping("/qianyi")
+    public Object qianyi(){
+        List<String> userIds = userService.getAllUserId();
+
+        List<String> phoneList = userService.getPhoneList();
+
+
+        userIds.forEach(id -> {
+            phoneList.forEach(phone -> {
+                LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,phone);
+                UserEntity one = userService.getOne(eq);
+                if(one != null){
+//                    projectService.updateAllProject(one.getUserId(), id);
+//                    projectMemberService.updateAll(one.getUserId(),id);
+//                    taskService.updateAll(one.getUserId(),id);
+//                    fileService.updateAll(one.getUserId(),id);
+                    fileService.updateAllUser(one.getUserId(),id);
+                }
+
+            });
+        });
+        return null;
     }
 
 }

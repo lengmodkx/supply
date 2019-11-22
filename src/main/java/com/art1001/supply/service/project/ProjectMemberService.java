@@ -220,4 +220,5 @@ public interface ProjectMemberService extends IService<ProjectMember> {
      */
 	List<UserEntity> getProjectUserInfo(String projectId, String keyWord);
 
+    void updateAll(String userId, String id);
 }

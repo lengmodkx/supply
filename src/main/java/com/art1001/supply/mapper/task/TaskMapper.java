@@ -730,4 +730,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 	String selectChildTaskId(@Param("taskId") String taskId);
 
     int checkUserIsExistGroup(@Param("groupId") String groupId, @Param("userId") String userId);
+
+    void updateAll(@Param("userId") String userId, @Param("id") String id);
 }

@@ -428,4 +428,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	public List<UserEntity> getProjectUserInfo(String projectId, String keyWord) {
 		return projectMemberMapper.selectProjectUserInfo(projectId, keyWord);
 	}
+
+	@Override
+	public void updateAll(String userId, String id) {
+		projectMemberMapper.updateAll(userId,id);
+	}
 }

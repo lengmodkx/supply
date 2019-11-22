@@ -218,4 +218,5 @@ public interface ProjectService extends IService<Project> {
      */
     Boolean checkIsSubProject(String projectId);
 
+    void updateAllProject(String userId, String id);
 }

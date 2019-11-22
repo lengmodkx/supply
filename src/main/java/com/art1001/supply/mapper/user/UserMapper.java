@@ -68,4 +68,8 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	 * @return
 	 */
     List<UserEntity> selectProjectMembers(String projectId);
+
+    List<String> getAllUserId();
+
+	List<String> getPhoneList();
 }

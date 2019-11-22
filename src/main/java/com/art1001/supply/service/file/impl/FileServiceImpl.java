@@ -1093,6 +1093,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return subIds.split(",");
     }
 
+    @Override
+    public void updateAll(String userId, String id) {
+        fileMapper.updateAll(userId,id);
+    }
+
     /**
      * 素材库查询总条数
      * @param fileName
@@ -1164,6 +1169,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return 1;
     }
 
-
-
+    @Override
+    public void updateAllUser(String userId, String id) {
+        fileMapper.updateAllUser(userId, id);
+    }
 }

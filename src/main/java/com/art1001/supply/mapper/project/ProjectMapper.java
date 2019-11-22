@@ -163,4 +163,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 */
 	@Update("UPDATE prm_project p SET p.project_cover = #{fileUrl} WHERE p.project_id = #{projectId}")
 	Integer updatePictureById(@Param("projectId")String projectId, @Param("fileUrl")String fileUrl);
+
+    void updateAllProject(@Param("userId") String userId,@Param("id") String id);
 }
