@@ -358,19 +358,6 @@ public class UserApi {
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
-        File file = new File();
-        // 写库
-        file.setFileName("我的文件夹");
-        file.setUserId(userEntity.getUserId());
-        file.setMemberId(userEntity.getUserId());
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        file.setLevel(1);
-        file.setCatalog(1);
-        file.setFilePrivacy(2);
-        file.setFileLabel(1);
-        // 设置是否目录
-        fileService.save(file);
         if(null != userEntity){
             jsonObject.put("result", 1);
             jsonObject.put("userInfo",userEntity);
