@@ -1,0 +1,19 @@
+shiro-filter:
+  chain:
+    /logout: anon
+    /wx_app/**: anon
+    /product/**: anon
+    /register: anon
+    /wechat_pay/rollback: anon
+    /wechat_pay/wxPay: anon
+    /captcha: anon
+    /login: anon
+    /wechatcode: anon
+    /wechattoken: anon
+    /code: anon
+    /adminlogin: anon
+    /files/*/download: anon
+    /files/**/download: anon
+    /webSocketServer/**: anon
+    /groupchat/*: anon
+    /**: jwt

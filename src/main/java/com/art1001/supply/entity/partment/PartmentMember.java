@@ -3,7 +3,6 @@ package com.art1001.supply.entity.partment;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.io.Serializable;
 

@@ -28,12 +28,16 @@
         <pagehelper.version>5.0.3</pagehelper.version>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
         <docker.image.prefix>supply</docker.image.prefix>
-        <docker.repository>registry-vpc.cn-beijing.aliyuncs.com</docker.repository>
+        <docker.repository>registry.cn-beijing.aliyuncs.com</docker.repository>
         <docker.registry.name>aldbim</docker.registry.name>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -94,7 +98,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -297,15 +301,17 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!--mvn clean package docker:build -DpushImage-->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-
+                <version>1.2.1</version>
                 <configuration>
                     <serverId>docker-aliyun</serverId>
                     <registryUrl>${docker.repository}</registryUrl>
-                    <pushImage>true</pushImage>
                     <dockerDirectory>src/main/docker</dockerDirectory>
+                    <!--指定远程 docker api地址-->
+                    <dockerHost>http://localhost:2375</dockerHost>
                     <imageName>
                         ${docker.repository}/${docker.registry.name}/${project.artifactId}:${project.version}
                     </imageName>

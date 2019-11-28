@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
@@ -18,6 +19,7 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -29,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.*;
-
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {
 
@@ -150,6 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getUserId, snsUserInfo.getOpenId());
         userEntity = this.getOne(selectUserIsExistQw);
         if(userEntity == null){
+            userEntity = new UserEntity();
             userEntity.setUserName(snsUserInfo.getNickname());
             userEntity.setPassword("123456");
             userEntity.setAccountName(snsUserInfo.getOpenId());

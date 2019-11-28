@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
+import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.*;
@@ -65,7 +66,7 @@ import static org.elasticsearch.cluster.ClusterStateTaskExecutor.TaskResult.succ
 @Validated
 @Slf4j
 @RestController
-public class UserApi {
+public class UserApi extends BaseController {
 
     @Resource
     private UserService userService;
@@ -131,7 +132,7 @@ public class UserApi {
      * @param accountName 账户名称
      * @param password 密码
      */
-    @PostMapping("/admin_login")
+    @PostMapping("/adminlogin")
     public JSONObject adminLogin(@RequestParam String accountName,
                             @RequestParam String password){
         JSONObject object = new JSONObject();
@@ -339,7 +340,7 @@ public class UserApi {
     /**
      * 微信登录
      */
-    @GetMapping("wechat_code")
+    @GetMapping("wechatcode")
     public JSONObject weChatLogin(HttpServletResponse response){
         try {
             JSONObject object = new JSONObject();
@@ -351,7 +352,7 @@ public class UserApi {
         }
     }
 
-    @RequestMapping("wechat_token")
+    @RequestMapping("wechattoken")
     public JSONObject getWeChatToken(HttpServletRequest request, HttpServletResponse response,@RequestParam String code){
         JSONObject jsonObject = new JSONObject();
         log.info(code);

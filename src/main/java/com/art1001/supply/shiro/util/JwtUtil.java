@@ -17,7 +17,7 @@ import java.util.Date;
  **/
 public class JwtUtil {
 
-    private static final long EXPIRE_TIME = 60 * 60 * 1000;
+    private static final long EXPIRE_TIME = 7 * 24* 60 * 60 * 1000;
     /**
      * 获得token中的信息无需secret解密也能获得
      * @return token中包含的签发时间

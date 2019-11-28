@@ -44,7 +44,7 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 	@Override
 	public String initFilterChainDefinitions() {
 		StringBuffer chain = new StringBuffer();
-		Map<String, String> chainMap = initChainDefinitionsMap();
+		LinkedHashMap<String, String> chainMap = initChainDefinitionsMap();
 		chainMap.forEach((key, value) -> {
 			chain.append(key).append(" = ").append(value).append(CRLF);
 		});
@@ -85,8 +85,8 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 
 
 	@Override
-	public Map<String, String> initChainDefinitionsMap() {
-		Map<String, String> chainMap = new LinkedHashMap<String, String>();
+	public LinkedHashMap<String, String> initChainDefinitionsMap() {
+		LinkedHashMap<String, String> chainMap = new LinkedHashMap<>();
 		try {
 			Properties properties = new Properties();
 			InputStream stream = getClass().getClassLoader().getResourceAsStream("shiroauth.properties");

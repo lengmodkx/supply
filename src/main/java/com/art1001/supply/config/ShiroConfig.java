@@ -6,9 +6,9 @@ import com.art1001.supply.shiro.JWTShiroRealm;
 import com.art1001.supply.shiro.MyDBRealm;
 
 import com.art1001.supply.shiro.filter.*;
-import com.art1001.supply.shiro.service.ChainDefinitionService;
-import com.art1001.supply.shiro.service.impl.ChainDefinitionServiceImpl;
 
+import lombok.Data;
+import lombok.ToString;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -34,18 +34,20 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
 import java.util.*;
-
+@Data
+@ToString
 @Configuration
+@ConfigurationProperties(prefix = "shiro-filter")
 public class ShiroConfig {
 
     @Value("${spring.redis.host}")
@@ -54,6 +56,7 @@ public class ShiroConfig {
     @Value("${spring.redis.port}")
     private int port;
 
+    private LinkedHashMap<String,String> chain;
     /**
      * 配置shiro redisManager
      *
@@ -230,8 +233,9 @@ public class ShiroConfig {
 //        sslFilter.setPort(8443);
 //        filtersMap.put("ssl",sslFilter);
         filter.setFilters(filtersMap);
-        ChainDefinitionService chainDefinitionService = new ChainDefinitionServiceImpl();
-        filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());
+        //ChainDefinitionService chainDefinitionService = new ChainDefinitionServiceImpl();
+        //filter.setFilterChainDefinitions(chainDefinitionService.initFilterChainDefinitions());
+        filter.setFilterChainDefinitionMap(chain);
         return filter;
     }
 

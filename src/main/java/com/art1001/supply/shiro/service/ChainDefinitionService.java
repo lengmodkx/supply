@@ -3,7 +3,7 @@
  */
 package com.art1001.supply.shiro.service;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * 产生责任链，确定每个url的访问权限
@@ -116,7 +116,7 @@ public interface ChainDefinitionService {
 	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:34
 	 */
-	public Map<String, String> initChainDefinitionsMap();
+	LinkedHashMap<String, String> initChainDefinitionsMap();
 	
 	/**
 	 * 
@@ -126,7 +126,7 @@ public interface ChainDefinitionService {
 	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:34
 	 */
-	public String initFilterChainDefinitions();
+	String initFilterChainDefinitions();
 	
 	/**
 	 * 
@@ -136,6 +136,6 @@ public interface ChainDefinitionService {
 	 * @author wangyafeng
 	 * 2016年12月11日 下午10:47:39
 	 */
-	public void reloadFilterChainDefinitions();
+	void reloadFilterChainDefinitions();
 	
 }

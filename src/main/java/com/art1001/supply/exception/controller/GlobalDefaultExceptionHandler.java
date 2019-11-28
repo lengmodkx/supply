@@ -1,9 +1,6 @@
 package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.ApiParamsCheckException;
-import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
@@ -148,6 +145,17 @@ public class GlobalDefaultExceptionHandler {
 		// 将Ajax异常信息回写到前台,用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());
+		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
+	@ExceptionHandler(BaseException.class)
+	@ResponseBody
+	public JSONObject operateExp(BaseException ex) {
+		log.error(ex.getMessage(), ex);
+		// 将Ajax异常信息回写到前台,用于页面的提示
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg", ex.getMessage());
 		jsonObject.put("result",0);
 		return jsonObject;
 	}
