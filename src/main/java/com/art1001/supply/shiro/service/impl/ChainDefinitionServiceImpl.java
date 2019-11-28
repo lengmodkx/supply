@@ -4,6 +4,7 @@
 package com.art1001.supply.shiro.service.impl;
 
 import com.art1001.supply.shiro.service.ChainDefinitionService;
+import com.art1001.supply.util.OrderedProperties;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
@@ -88,8 +89,9 @@ public class ChainDefinitionServiceImpl implements ChainDefinitionService {
 	public LinkedHashMap<String, String> initChainDefinitionsMap() {
 		LinkedHashMap<String, String> chainMap = new LinkedHashMap<>();
 		try {
-			Properties properties = new Properties();
+			Properties properties = new OrderedProperties();
 			InputStream stream = getClass().getClassLoader().getResourceAsStream("shiroauth.properties");
+
 			properties.load(stream);
 			properties.stringPropertyNames().forEach(keyName->{
 				chainMap.put(keyName, properties.getProperty(keyName));

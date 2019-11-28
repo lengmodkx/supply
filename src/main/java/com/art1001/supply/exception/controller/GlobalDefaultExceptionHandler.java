@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -30,7 +32,7 @@ import java.util.Set;
  */
 //@EnableWebMvc
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
 	/*
@@ -48,19 +50,19 @@ public class GlobalDefaultExceptionHandler {
 	}
 	*/
 
-	/**
-	 * 全局异常控制，记录日志任何一个方法发生异常，一定会被这个方法拦截到。然后，输出日志。封装Map并返回给页面显示错误信息：
-	 * 特别注意：返回给页面错误信息只在开发时才使用，上线后，要把错误页面去掉，只打印log日志即可，防止信息外漏
-	 * @param: ex	自定义系统异常
-	 * @param: request	HttpServletRequest对象
-	 * @return: String	视图信息
-	 */
-	@ExceptionHandler(SystemException.class)
-	public String operateSystemException(SystemException ex, HttpServletRequest request) {
-		ex.getCause().printStackTrace();
-		log.error(ex.getMessage(), ex);
-		return "error/500";
-	}
+//	/**
+//	 * 全局异常控制，记录日志任何一个方法发生异常，一定会被这个方法拦截到。然后，输出日志。封装Map并返回给页面显示错误信息：
+//	 * 特别注意：返回给页面错误信息只在开发时才使用，上线后，要把错误页面去掉，只打印log日志即可，防止信息外漏
+//	 * @param: ex	自定义系统异常
+//	 * @param: request	HttpServletRequest对象
+//	 * @return: String	视图信息
+//	 */
+//	@ExceptionHandler(SystemException.class)
+//	public String operateSystemException(SystemException ex, HttpServletRequest request) {
+//		ex.getCause().printStackTrace();
+//		log.error(ex.getMessage(), ex);
+//		return "error/500";
+//	}
 
 	/**
 	 * 记录Ajax异常日志，并将错误Ajax错误信息传递(回写)给前台展示,
@@ -84,7 +86,6 @@ public class GlobalDefaultExceptionHandler {
 	 * @throws IOException	异常信息
 	 */
 	@ExceptionHandler(AjaxException.class)
-	@ResponseBody
 	public JSONObject operateExpAjax(AjaxException ex) {
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台,用于页面的提示
@@ -95,7 +96,6 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	@ExceptionHandler
-	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Object handle(ValidationException exception) {
 		JSONObject jsonObject = new JSONObject();
@@ -114,7 +114,6 @@ public class GlobalDefaultExceptionHandler {
 
 
 	@ExceptionHandler(ApiParamsCheckException.class)
-    @ResponseBody
 	public JSONObject paramsExceptionHandle(ApiParamsCheckException exception){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 0);
@@ -128,7 +127,6 @@ public class GlobalDefaultExceptionHandler {
 	 * @return 返回结果
 	 */
 	@ExceptionHandler(AuthorizationException.class)
-	@ResponseBody
 	public JSONObject operateAuthorizationException(HttpServletResponse response, AuthorizationException ex) {
 		log.error(ex.getMessage(), ex);
 		JSONObject jsonObject = new JSONObject();
@@ -139,7 +137,6 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	@ExceptionHandler(ServiceException.class)
-	@ResponseBody
 	public JSONObject operateExp(ServiceException ex) {
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台,用于页面的提示
@@ -161,13 +158,26 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
-	@ResponseBody
 	public JSONObject operateExp(Exception ex) {
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台,用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg","系统异常!");
 		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
+	@ExceptionHandler(BindException.class)
+	@ResponseStatus(HttpStatus.OK)
+	public JSONObject handleBindExceptionException(BindException e) {
+		log.error(e.getMessage(), e);
+		List<ObjectError> errors = e.getBindingResult().getAllErrors();
+		List<String> tips = errors.stream()
+				.map(DefaultMessageSourceResolvable::getDefaultMessage)
+				.collect(Collectors.toList());
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", 0);
+		jsonObject.put("msg",tips.toString());
 		return jsonObject;
 	}
 

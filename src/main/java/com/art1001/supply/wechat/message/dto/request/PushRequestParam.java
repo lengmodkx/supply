@@ -1,5 +1,6 @@
 package com.art1001.supply.wechat.message.dto.request;
 
+import com.art1001.supply.wechat.message.template.MessageToken;
 import com.art1001.supply.wechat.message.template.WeChatAppMessageTemplate;
 import lombok.Data;
 import lombok.ToString;
@@ -16,7 +17,7 @@ public class PushRequestParam {
     /**
      * 接口调用验证token
      */
-    private String access_token;
+    private MessageToken access_token;
 
     /**
      * 用户在小程序的openid
@@ -33,12 +34,17 @@ public class PushRequestParam {
      */
     private Object mp_template_msg;
 
-    public static PushRequestParam newInstance(String accessToken, String toUser, WeChatAppMessageTemplate weAppTemplateMsg, Object mpTemplateMsg){
+    /**
+     * token信息
+     */
+    private MessageToken tokenInfo;
+
+    public static PushRequestParam newInstance(MessageToken accessToken, String toUser, WeChatAppMessageTemplate weAppTemplateMsg, Object mpTemplateMsg){
         return new PushRequestParam(accessToken, toUser, weAppTemplateMsg, mpTemplateMsg);
     }
 
-    private PushRequestParam(String accessToken, String toUser, WeChatAppMessageTemplate weAppTemplateMsg, Object mpTemplateMsg){
-         this.access_token = accessToken;
+    private PushRequestParam(MessageToken accessToken, String toUser, WeChatAppMessageTemplate weAppTemplateMsg, Object mpTemplateMsg){
+         this.tokenInfo = accessToken;
          this.touser = toUser;
          this.weapp_template_msg = weAppTemplateMsg;
          this.mp_template_msg = mpTemplateMsg;

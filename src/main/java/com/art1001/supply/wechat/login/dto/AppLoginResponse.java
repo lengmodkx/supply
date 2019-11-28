@@ -6,6 +6,7 @@ import lombok.Data;
  * @author heshaohua
  * @date 2019/11/20 14:41
  **/
+@SuppressWarnings("all")
 @Data
 public class AppLoginResponse {
 

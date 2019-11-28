@@ -13,4 +13,11 @@ public class TemplateData {
      * 值
      */
     private String value;
+
+    public TemplateData(String value) {
+        this.value = value;
+    }
+
+    public TemplateData() {
+    }
 }

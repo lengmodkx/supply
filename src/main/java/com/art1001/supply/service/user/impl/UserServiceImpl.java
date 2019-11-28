@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
+import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
@@ -13,9 +14,14 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
+import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
+import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
+import com.art1001.supply.wechat.login.entity.WechatAppIdInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,6 +48,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     private EmailUtil emailUtil;
 
     @Resource
+    private WeChatUserInfoAssembler assembler;
+
+    @Resource
     FileMapper fileMapper;
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
@@ -60,6 +69,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private WechatAppIdInfoService wechatAppIdInfoService;
 
     /**
      * 重写用户插入
@@ -263,5 +275,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public List<String> getPhoneList() {
         return userMapper.getPhoneList();
+    }
+
+
+    @Override
+    public void updateWeChatUserInfo(UpdateUserInfoRequest param) {
+        UserEntity userEntity = assembler.weChatUserTransUserEntity(param);
+        this.updateById(userEntity);
+    }
+
+    @Override
+    public Map<String,Object> saveWeChatAppUserInfo(WeChatDecryptResponse res) {
+        UserEntity userEntity = assembler.weChatUserTransUserEntity(res);
+        userEntity.setUpdateTime(new Date());
+        userEntity.setCreateTime(new Date());
+        userEntity.setUserId(res.getUnionId());
+        userEntity.setAccountName(res.getUnionId());
+        userEntity.setCredentialsSalt(IdGen.uuid());
+        this.save(userEntity);
+
+         Map<String, Object> resultMap = new HashMap<>(2);
+        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
+
+        WechatAppIdInfo wechatAppIdInfo = new WechatAppIdInfo();
+        wechatAppIdInfo.setCreateTime(System.currentTimeMillis());
+        wechatAppIdInfo.setId(IdGen.uuid());
+        wechatAppIdInfo.setUpdateTime(System.currentTimeMillis());
+        wechatAppIdInfo.setOpenId(res.getOpenId());
+        wechatAppIdInfo.setUserId(res.getUnionId());
+        wechatAppIdInfo.setType(2);
+        wechatAppIdInfoService.save(wechatAppIdInfo);
+
+        return resultMap;
     }
 }

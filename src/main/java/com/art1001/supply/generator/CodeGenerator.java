@@ -18,7 +18,7 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         try {
-            String[] a = {"prm_group_user"};
+            String[] a = {"wechat_app_id_info"};
             AutoGenerator mpg = new AutoGenerator();
             // 全局配置
             GlobalConfig gc = new GlobalConfig();
@@ -42,7 +42,7 @@ public class CodeGenerator {
 
             // 数据源配置
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
-            dataSourceConfig.setUrl("jdbc:mysql://localhost/supply01?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf8&rewriteBatchedStatements=true");
+            dataSourceConfig.setUrl("jdbc:mysql://localhost/test_supply?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf8&rewriteBatchedStatements=true");
             dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
             dataSourceConfig.setUsername("root");
             dataSourceConfig.setPassword("root");

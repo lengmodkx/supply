@@ -69,4 +69,6 @@ public class Constants {
 
     //文件素材库id
     public static final String MATERIAL_BASE = "ef6ba5f0e3584e58a8cc0b2d28286c93";
+
+    public static final String WE_CHAT_SESSION_KEY_PRE = "weChatAppLogin:";
 }

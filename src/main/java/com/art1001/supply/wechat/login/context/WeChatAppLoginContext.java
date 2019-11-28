@@ -3,21 +3,22 @@ package com.art1001.supply.wechat.login.context;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * @author heshaohua
  * @date 2019/11/20 14:38
  **/
 @Data
-@Configuration
+@Component
 public class WeChatAppLoginContext {
 
-    @Value("${app-appId}")
+    @Value("${app.appId}")
     private String appId;
 
-    @Value("${app-secret}")
+    @Value("${app.secret}")
     private String secret;
 
-    @Value("${app-login-grantType}")
+    @Value("${app.login.grantType}")
     private String grantType;
 }

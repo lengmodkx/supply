@@ -1,22 +1,21 @@
 package com.art1001.supply.wechat.login.controller;
 
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.Constants;
+import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.RedisUtil;
+import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
+import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
+import com.art1001.supply.wechat.util.WeChatUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.codec.Base64;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.nio.charset.StandardCharsets;
-import java.security.spec.AlgorithmParameterSpec;
+import java.util.Map;
 
 /**
  * @author heshaohua
@@ -30,6 +29,11 @@ public class WeChatAppLoginController extends BaseController {
     @Resource
     private WeChatAppLogin weChatAppLogin;
 
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 微信小程序登录
@@ -41,35 +45,44 @@ public class WeChatAppLoginController extends BaseController {
         return success(weChatAppLogin.login(code));
     }
 
-
     /**
-     * 解密并且获取用户手机号码
-     * @param data 加密数据
-     * @param iv 偏移量
-     * @param key 用于解密
+     * 存储微信小程序登录用户的信息
+     * @param user 用户加密信息
      */
-    @RequestMapping(value = "deciphering", method = RequestMethod.GET)
-    public String deciphering(String data, String iv, String key) {
-        byte[] encrypData = Base64.decode(data);
-        byte[] ivData = Base64.decode(iv);
-        byte[] sessionKey = Base64.decode(key);
-        String str="";
-        try {
-            str = decrypt(sessionKey,ivData,encrypData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(str);
-        return str;
+    @PostMapping("/user/info")
+    public Object updateWeChatUserInfo(UpdateUserInfoRequest user, HttpServletResponse response) throws Exception{
+        log.info("Update we chat user info. [{}]", user);
+
+        WeChatDecryptResponse res = WeChatUtil.deciphering(
+                user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getId()), WeChatDecryptResponse.class
+        );
+
+        redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getId());
+
+        Map<String, Object> stringObjectMap = userService.saveWeChatAppUserInfo(res);
+        response.setHeader("accessToken", String.valueOf(stringObjectMap.get("accessToken")));
+        return success();
     }
 
-    private static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
-        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        //解析解密后的字符串  
-        return new String(cipher.doFinal(encData), StandardCharsets.UTF_8);
-}
+    /**
+     * 绑定小程序手机号
+     * @param data 加密数据
+     * @param iv 偏移量
+     */
+    @PostMapping("/bind/phone")
+    public Object getWeChatAppPhone(@Validated
+                                    @RequestParam @NotNull(message = "data不能为空") String data,
+                                    @Validated
+                                    @RequestParam @NotNull(message = "加密偏移量不能为空")String iv,
+                                    @Validated
+                                    @RequestParam @NotNull(message = "code不能为空")String code,
+                                    HttpServletResponse response
+    ) throws Exception
+    {
+        log.info("Get we chat login user phone. [{},{},{}]", data, iv, code);
 
+        Map result = weChatAppLogin.bindPhone(data, iv, code);
+
+        return success(result);
+    }
 }

@@ -14,4 +14,14 @@ public interface WeChatAppLogin {
      * @return 登录信息
      */
     Map<String, Object> login(String code);
+
+    /**
+     * 绑定小程序手机号
+     * @param data 加密数据
+     * @param iv 偏移量
+     * @param code 登录code
+     * @return 数据集
+     * @throws Exception 解密一样抛出
+     */
+    Map bindPhone(String data, String iv, String code) throws Exception;
 }
