@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AliyunMessgaeContext {
 
-    @Value("${acess-key-id}")
+    @Value("${aliyun.message.access-key-id}")
     private String accessKey;
 
-    @Value("${access-key-secret}")
+    @Value("${aliyun.message.access-key-secret}")
     private String accessKeySecret;
 
 

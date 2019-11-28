@@ -3,6 +3,7 @@ package com.art1001.supply.aliyun.message.controller;
 import com.art1001.supply.aliyun.message.service.MessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.wechat.message.configuration.WeChatAppMessageConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

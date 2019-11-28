@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class WeChatAppMessageConfig {
 
-    @Value("${app-appId}")
+    @Value("${app.appId}")
     private String appId;
 
-    @Value("${app-secret}")
+    @Value("${app.secret}")
     private String secret;
 
-    @Value("${app-message-grantType}")
+    @Value("${app.message.grantType}")
     private String grantType;
 
-    @Value("${app-message-token-root-url}")
+    @Value("${app.message.token-root-url}")
     private String getAccessTokenRootUrl;
 
-    @Value("${app-message-sendMessage-root-url}")
+    @Value("${app.message.sendMessage-root-url}")
     private String sendMessageRootUrl;
 
 }

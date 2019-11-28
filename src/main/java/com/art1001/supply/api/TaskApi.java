@@ -24,6 +24,10 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.IdGen;
+import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
+import com.art1001.supply.wechat.message.template.TemplateData;
+import com.art1001.supply.wechat.message.template.WeChatAppMessageTemplate;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +68,9 @@ public class TaskApi extends BaseController {
 
     @Resource
     private RelationService relationService;
+
+    @Resource
+    private WeChatAppMessageService weChatAppMessageService;
 
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
@@ -707,6 +714,20 @@ public class TaskApi extends BaseController {
             task.setTaskUIds(taskUids);
             taskService.updateById(task);
             userNewsService.saveUserNews(taskUids.split(","),taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName());
+            WeChatAppMessageTemplate weChatAppMessageTemplate = new WeChatAppMessageTemplate();
+            weChatAppMessageTemplate.setTemplate_id("5jlQyk_m4Vt7hSSijlwcsmXbLrWFxWiuqvTZJ9jk14k");
+            weChatAppMessageTemplate.setPage("/pages/index/index");
+            weChatAppMessageTemplate.setForm_id("4ae1938a5da44334825009d59ddec85d");
+            Map<String, TemplateData> map = new HashMap(5);
+            map.put("keyword1",new TemplateData("何少华"));
+            map.put("keyword2", new TemplateData("15712904437"));
+            map.put("keyword3", new TemplateData("2019-11-11"));
+            map.put("keyword4", new TemplateData("xiao-Tian"));
+            map.put("keyword5", new TemplateData("前端"));
+            weChatAppMessageTemplate.setData(map);
+            weChatAppMessageTemplate.setEmphasis_keyword("用户名");
+
+            weChatAppMessageService.pushToSingleUser("ogIc_5cGPAHBoSAtTOsn5rAj209U", weChatAppMessageTemplate);
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));

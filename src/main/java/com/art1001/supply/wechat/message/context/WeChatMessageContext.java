@@ -1,9 +1,12 @@
 package com.art1001.supply.wechat.message.context;
 
 import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.wechat.message.template.MessageToken;
 import com.art1001.supply.wechat.util.WeChatUtil;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author heshaohua
@@ -13,18 +16,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class WeChatMessageContext {
 
-    private WeChatUtil weChatUtil = new WeChatUtil();
+    @Resource
+    private WeChatUtil weChatUtil;
+
     private String accessToken;
 
     /**
      * 获取发送消息请求用的token
      * @return accessToken
      */
-    public String getAccessToken() {
-        if(ObjectsUtil.isNotEmpty(accessToken)){
-            return accessToken;
-        } else {
-            return (accessToken = weChatUtil.getAccessToken());
-        }
-    }
+//    public MessageToken getAccessToken() {
+//        if(ObjectsUtil.isNotEmpty(accessToken)){
+//            return accessToken;
+//        } else {
+//            return (accessToken = weChatUtil.getAccessToken());
+//        }
+//    }
 }

@@ -23,13 +23,10 @@ public class WeChatAppMessageServiceImpl implements WeChatAppMessageService {
     @Resource
     private WeChatUtil weChatUtil;
 
-    @Resource
-    private WeChatMessageContext weChatConfig;
-
     @Override
     public void pushToSingleUser(String appId, WeChatAppMessageTemplate weChatAppMessageTemplate) {
         PushRequestParam pushRequestParam = PushRequestParam.newInstance(
-                weChatConfig.getAccessToken(), appId, weChatAppMessageTemplate, null
+                weChatUtil.getAccessToken(), appId, weChatAppMessageTemplate, null
         );
 
         MessageResponseEntity res = weChatUtil.sendWeChatAppMessageRequest(pushRequestParam);
