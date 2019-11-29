@@ -534,20 +534,24 @@ public class UserApi extends BaseController {
      * @return 结果
      */
     @PostMapping("/bind/phone")
-    public Object bindPhone(@Validated
-                                @NotNull(message = "手机号不能为空！") String phone,
-                                @NotNull(message = "code码不能为空！") String code,
+    public Object bindPhone(
+                                @Validated @NotNull(message = "手机号不能为空！") String phone,
+                                @Validated @NotNull(message = "code码不能为空！") String code,
+                                @Validated @NotNull(message = "用户id不能为空！") String userId,
                                 HttpServletResponse response){
 
 
         PhoneTest.testPhone(phone);
 
-        userService.bindPhone(phone, code);
+        userService.bindPhone(phone, code,userId);
 
-        response.setHeader("x-auth-token", JwtUtil.sign(
-                    phone, ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()
-        ));
-        return success();
+        UserEntity byId = userService.getById(userId);
+
+        JSONObject json = new JSONObject();
+
+        json.put("accessToken", JwtUtil.sign(phone, byId.getCredentialsSalt()));
+
+        return success(json);
     }
 
     @GetMapping("/is_bind_phone")

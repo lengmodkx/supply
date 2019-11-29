@@ -1,9 +1,9 @@
 package com.art1001.supply.service.user.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
+import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
@@ -19,23 +19,17 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
-import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
-import com.art1001.supply.wechat.login.entity.WechatAppIdInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Field;
 import java.util.*;
 @Slf4j
 @Service
@@ -59,7 +53,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public UserEntity findByName(String accountName) {
-        return null;
+        Optional.ofNullable(accountName).orElseThrow(() -> new ServiceException("accountName 不能为空！"));
+
+        LambdaQueryWrapper<UserEntity> getSingleUserByAccountName = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountName);
+
+        return this.getOne(getSingleUserByAccountName);
     }
 
     @Override
@@ -225,7 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public void bindPhone(String phone, String code) {
+    public void bindPhone(String phone, String code, String userId) {
 
         int count = this.checkUserIsExist(phone);
 
@@ -233,26 +231,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             throw new ServiceException("用户应绑定手机号，不能重复绑定");
         }
 
-        if(!redisUtil.exists(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId())){
+        if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userId)){
             throw new CodeNotFoundException("验证码已经失效");
         }
 
-        String redisCode = redisUtil.get(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId());
+        String redisCode = redisUtil.get(KeyWord.PREFIX.getCodePrefix() + userId);
         if(!Objects.equals(code, redisCode)){
             throw new CodeMismatchException("验证码错误！");
         }
 
         LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserId, ShiroAuthenticationManager.getUserId());
+                .eq(UserEntity::getUserId, userId);
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(ShiroAuthenticationManager.getUserId());
+        userEntity.setUserId(userId);
         userEntity.setUpdateTime(new Date());
         userEntity.setAccountName(phone);
 
         this.update(userEntity, eq);
-
-
     }
 
     @Override
@@ -279,33 +275,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
 
     @Override
-    public void updateWeChatUserInfo(UpdateUserInfoRequest param) {
-        UserEntity userEntity = assembler.weChatUserTransUserEntity(param);
-        this.updateById(userEntity);
-    }
+    public UserEntity saveWeChatAppUserInfo(WeChatDecryptResponse res) {
 
-    @Override
-    public Map<String,Object> saveWeChatAppUserInfo(WeChatDecryptResponse res) {
+        LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getWxUnionid, res.getUnionId());
+
+        UserEntity one = this.getOne(getSingleUserByWxUnionId);
+
+        //如果pc微信已经注册
+        if(ObjectsUtil.isNotEmpty(one)){
+            UserEntity saveUserInfo = new UserEntity();
+            saveUserInfo.setUserId(one.getUserId());
+            saveUserInfo.setWxAppOpenid(res.getOpenId());
+            saveUserInfo.setUpdateTime(new Date());
+            this.updateById(saveUserInfo);
+            return one;
+        }
+
         UserEntity userEntity = assembler.weChatUserTransUserEntity(res);
-        userEntity.setUpdateTime(new Date());
-        userEntity.setCreateTime(new Date());
-        userEntity.setUserId(res.getUnionId());
-        userEntity.setAccountName(res.getUnionId());
-        userEntity.setCredentialsSalt(IdGen.uuid());
         this.save(userEntity);
-
-         Map<String, Object> resultMap = new HashMap<>(2);
-        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
-
-        WechatAppIdInfo wechatAppIdInfo = new WechatAppIdInfo();
-        wechatAppIdInfo.setCreateTime(System.currentTimeMillis());
-        wechatAppIdInfo.setId(IdGen.uuid());
-        wechatAppIdInfo.setUpdateTime(System.currentTimeMillis());
-        wechatAppIdInfo.setOpenId(res.getOpenId());
-        wechatAppIdInfo.setUserId(res.getUnionId());
-        wechatAppIdInfo.setType(2);
-        wechatAppIdInfoService.save(wechatAppIdInfo);
-
-        return resultMap;
+        userEntity.setWxUnionid(null);
+        return userEntity;
     }
 }

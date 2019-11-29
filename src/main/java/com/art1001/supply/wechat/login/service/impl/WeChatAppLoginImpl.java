@@ -8,6 +8,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.AppLoginResponse;
@@ -46,43 +47,40 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
     @Resource
     private RedisUtil redisUtil;
 
-    @Resource
-    private WechatAppIdInfoService wechatAppIdInfoService;
-
-
     @Value("${app.login.secret}")
     private String secret;
 
 
     @Override
     public Map<String, Object> login(String code) {
-        Map<String,Object> resultMap = new HashMap<>(5);
 
         AppLoginResponse openIdAndSessionKey = weChatUtil.getOpenIdAndSessionKey(code);
+
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
-        LambdaQueryWrapper<WechatAppIdInfo> selectByOpenId = new QueryWrapper<WechatAppIdInfo>().lambda()
-                .eq(WechatAppIdInfo::getOpenId, openIdAndSessionKey.getOpenid());
+        LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getWxAppOpenid, openIdAndSessionKey.getOpenid());
 
-        WechatAppIdInfo wechatAppIdInfo = wechatAppIdInfoService.getOne(selectByOpenId);
+        UserEntity userEntity = userService.getOne(selectById);
 
-        if(ObjectsUtil.isNotEmpty(wechatAppIdInfo)){
-            UserEntity byId = userService.getById(wechatAppIdInfo.getUserId());
+        Map<String,Object> resultMap = new HashMap<>(5);
+        resultMap.put("openId", openIdAndSessionKey.getOpenid());
+
+        if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
+            resultMap.put("userInfo", userEntity);
 
             //验证手机号是否正确，如果不正确则需要通过小程序绑定手机号
             try {
-                PhoneTest.testPhone(byId.getAccountName());
+                PhoneTest.testPhone(userEntity.getAccountName());
             } catch (Exception e){
                 log.error("手机号码验证错误，需要重新绑定手机号。[{}]", e.getMessage());
                 resultMap.put("getPhone", true);
             }
-            resultMap.put("accessToken", JwtUtil.sign(byId.getAccountName(), byId.getCredentialsSalt()));
-
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());
             resultMap.put("updateInfo", true);
-            resultMap.put("id", openIdAndSessionKey.getOpenid());
+            resultMap.put("getPhone", true);
             return resultMap;
         }
         return resultMap;
@@ -93,13 +91,14 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         //请求微信服务器授权
         AppLoginResponse openIdAndSessionKey = weChatUtil.getOpenIdAndSessionKey(code);
 
-        WeChatPhoneResponse deciphering = WeChatUtil.deciphering(
+        WeChatPhoneResponse phoneInfo = WeChatUtil.deciphering(
                 data, iv, openIdAndSessionKey.getSession_key(), WeChatPhoneResponse.class);
+
         //绑定手机号
         String userId = ShiroAuthenticationManager.getUserId();
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(userId);
-        userEntity.setAccountName(deciphering.getPhoneNumber());
+        userEntity.setAccountName(phoneInfo.getPhoneNumber());
         userEntity.setUpdateTime(new Date());
         userService.updateById(userEntity);
 

@@ -10,5 +10,5 @@ public interface MessageService {
      * 生成code发送短信验证码
      * @param phone 移动手机号码
      */
-    void sendCode(String phone);
+    void sendCode(String userId, String phone);
 }

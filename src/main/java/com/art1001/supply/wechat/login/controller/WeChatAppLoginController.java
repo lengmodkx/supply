@@ -2,6 +2,7 @@ package com.art1001.supply.wechat.login.controller;
 
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
@@ -50,18 +51,18 @@ public class WeChatAppLoginController extends BaseController {
      * @param user 用户加密信息
      */
     @PostMapping("/user/info")
-    public Object updateWeChatUserInfo(UpdateUserInfoRequest user, HttpServletResponse response) throws Exception{
-        log.info("Update we chat user info. [{}]", user);
+    public Object updateWeChatUserInfo(@Validated UpdateUserInfoRequest user) throws Exception{
+        log.info("save weChat user info. [{}]", user);
 
         WeChatDecryptResponse res = WeChatUtil.deciphering(
-                user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getId()), WeChatDecryptResponse.class
+                user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId()), WeChatDecryptResponse.class
         );
 
-        redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getId());
+        redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId());
 
-        Map<String, Object> stringObjectMap = userService.saveWeChatAppUserInfo(res);
-        response.setHeader("accessToken", String.valueOf(stringObjectMap.get("accessToken")));
-        return success();
+        UserEntity userEntity = userService.saveWeChatAppUserInfo(res);
+
+        return success(userEntity);
     }
 
     /**
@@ -79,7 +80,7 @@ public class WeChatAppLoginController extends BaseController {
                                     HttpServletResponse response
     ) throws Exception
     {
-        log.info("Get we chat login user phone. [{},{},{}]", data, iv, code);
+        log.info("Get wCchat login user phone. [{},{},{}]", data, iv, code);
 
         Map result = weChatAppLogin.bindPhone(data, iv, code);
 

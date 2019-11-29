@@ -127,6 +127,12 @@ public class UserEntity extends Model<UserEntity> {
 
 	private String sessionKey;
 
+	private String wxAppOpenid;
+
+	private String wxUnionid;
+
+	private String wxOpenid;
+
 	/**
 	 * 用户默认所在的企业
 	 */

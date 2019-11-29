@@ -65,9 +65,9 @@ public class AliyunMessageServiceImpl implements AliyunMessageService {
     }
 
     @Override
-    public void sendCode(String phone) {
+    public void sendCode(String userId, String phone) {
         String code = CodeGen.getCode();
         this.sendMessage(code, phone);
-        redisUtil.set(KeyWord.PREFIX + ShiroAuthenticationManager.getUserId(), code,1000*60*5L);
+        redisUtil.set(KeyWord.PREFIX.getCodePrefix() + userId, code,60*5L);
     }
 }

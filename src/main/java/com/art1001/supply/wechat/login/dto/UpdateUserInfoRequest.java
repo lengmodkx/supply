@@ -11,14 +11,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UpdateUserInfoRequest {
 
-    @NotNull(message = "用户id不能为空！")
-    private String id;
-
-
+    @NotNull(message = "openId不能为空！")
+    private String openId;
 
     private String iv;
-
-
 
     private String encryptedData;
 
@@ -35,5 +31,7 @@ public class UpdateUserInfoRequest {
     private String nickName;
 
     private String province;
+
+    private String phone;
 
 }

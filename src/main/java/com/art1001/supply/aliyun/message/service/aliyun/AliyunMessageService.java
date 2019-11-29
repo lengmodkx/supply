@@ -17,6 +17,6 @@ public interface AliyunMessageService extends MessageService {
     void sendMessage(String code, String phoneNumbers);
 
 
-    void sendCode(String phone);
+    void sendCode(String userId, String phone);
 
 }

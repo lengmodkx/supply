@@ -6,6 +6,9 @@ public enum KeyWord {
 
     private String codePrefix;
 
+    public String getCodePrefix() {
+        return codePrefix;
+    }
 
     KeyWord(String codePrefix) {
         this.codePrefix = codePrefix;

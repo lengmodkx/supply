@@ -84,7 +84,7 @@ public interface UserService extends IService<UserEntity> {
 	 * @param phone 手机号
 	 * @param code code码
 	 */
-	void bindPhone(String phone, String code);
+	void bindPhone(String phone, String code, String userId);
 
 	/**
 	 * 根据 id accountName 去查询
@@ -97,7 +97,10 @@ public interface UserService extends IService<UserEntity> {
 
 	List<String> getPhoneList();
 
-    void updateWeChatUserInfo(UpdateUserInfoRequest param);
-
-	Map<String,Object> saveWeChatAppUserInfo(WeChatDecryptResponse res);
+	/**
+	 * 保存小程序用户信息
+	 * @param res 解密后的小程序用户信息
+	 * @return 存储后的用户信息
+	 */
+	UserEntity saveWeChatAppUserInfo(WeChatDecryptResponse res);
 }
