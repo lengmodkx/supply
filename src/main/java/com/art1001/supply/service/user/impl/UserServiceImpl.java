@@ -159,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public Map saveWeChatUserInfo(WeChatUser snsUserInfo) {
         UserEntity userEntity;
-        Map<String, Object> resultMap = new HashMap<>(2);
+        Map<String, Object> resultMap = new HashMap<>(4);
 
         LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxOpenid, snsUserInfo.getOpenId());
         userEntity = this.getOne(selectUserIsExistQw);
@@ -179,6 +179,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             resultMap.put("bindPhone", true);
         } else {
             resultMap.put("bindPhone", false);
+            resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
         }
 
         resultMap.put("userInfo", userEntity);
