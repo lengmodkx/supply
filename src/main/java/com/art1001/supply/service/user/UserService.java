@@ -52,7 +52,7 @@ public interface UserService extends IService<UserEntity> {
 	 * @param snsUserInfo
 	 * @return
 	 */
-	UserEntity saveWeChatUserInfo(WeChatUser snsUserInfo);
+	Map saveWeChatUserInfo(WeChatUser snsUserInfo);
 
 	/**
 	 * 根据用户名查询该用户存不存在
@@ -83,8 +83,9 @@ public interface UserService extends IService<UserEntity> {
 	 * 绑定手机号
 	 * @param phone 手机号
 	 * @param code code码
+	 * @param nickName 用户昵称
 	 */
-	void bindPhone(String phone, String code, String userId);
+	void bindPhone(String phone, String code, String userId, String nickName);
 
 	/**
 	 * 根据 id accountName 去查询

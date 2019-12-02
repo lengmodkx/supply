@@ -76,8 +76,7 @@ public class WeChatAppLoginController extends BaseController {
                                     @Validated
                                     @RequestParam @NotNull(message = "加密偏移量不能为空")String iv,
                                     @Validated
-                                    @RequestParam @NotNull(message = "code不能为空")String code,
-                                    HttpServletResponse response
+                                    @RequestParam @NotNull(message = "code不能为空")String code
     ) throws Exception
     {
         log.info("Get wCchat login user phone. [{},{},{}]", data, iv, code);

@@ -157,27 +157,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public UserEntity saveWeChatUserInfo(WeChatUser snsUserInfo) {
+    public Map saveWeChatUserInfo(WeChatUser snsUserInfo) {
         UserEntity userEntity;
-        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getUserId, snsUserInfo.getOpenId());
+        Map<String, Object> resultMap = new HashMap<>(2);
+
+        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxOpenid, snsUserInfo.getOpenId());
         userEntity = this.getOne(selectUserIsExistQw);
+
         if(userEntity == null){
             userEntity = new UserEntity();
             userEntity.setUserName(snsUserInfo.getNickname());
-            userEntity.setPassword("123456");
-            userEntity.setAccountName(snsUserInfo.getOpenId());
+            userEntity.setWxOpenid(snsUserInfo.getOpenId());
             UserEntity md5UserEntity = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
             userEntity.setCredentialsSalt(md5UserEntity.getCredentialsSalt());
-            userEntity.setPassword(md5UserEntity.getPassword());
             userEntity.setUpdateTime(new Date());
             userEntity.setCreateTime(new Date());
             userEntity.setAddress(snsUserInfo.getCity());
-            userEntity.setUserId(snsUserInfo.getOpenId());
+            userEntity.setUserId(IdGen.uuid());
             userEntity.setSex(snsUserInfo.getSex());
             userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
             userMapper.insert(userEntity);
+            resultMap.put("bindPhone", true);
         }
-        return userEntity;
+
+        resultMap.put("userInfo", userEntity);
+        resultMap.put("bindPhone", true);
+        return resultMap;
     }
 
     @Override
@@ -223,12 +228,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public void bindPhone(String phone, String code, String userId) {
+    public void bindPhone(String phone, String code, String userId, String nickName) {
 
         int count = this.checkUserIsExist(phone);
 
         if(count > 0){
-            throw new ServiceException("用户应绑定手机号，不能重复绑定");
+            throw new ServiceException("用户已绑定手机号，不能重复绑定");
         }
 
         if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userId)){
@@ -247,6 +252,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         userEntity.setUserId(userId);
         userEntity.setUpdateTime(new Date());
         userEntity.setAccountName(phone);
+        if(ObjectsUtil.isNotEmpty(nickName)){
+            userEntity.setUserName(nickName);
+        }
 
         this.update(userEntity, eq);
     }

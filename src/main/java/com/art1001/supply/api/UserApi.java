@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.cluster.ClusterStateTaskExecutor.TaskResult.success;
 
@@ -353,18 +354,13 @@ public class UserApi extends BaseController {
     }
 
     @RequestMapping("wechattoken")
-    public JSONObject getWeChatToken(HttpServletRequest request, HttpServletResponse response,@RequestParam String code){
-        JSONObject jsonObject = new JSONObject();
-        log.info(code);
+    public Object getWeChatToken(@RequestParam String code){
+        log.info("weChat token code is [{}]",code);
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
-        UserEntity userEntity = userService.saveWeChatUserInfo(snsUserInfo);
-        if(null != userEntity){
-            jsonObject.put("result", 1);
-            jsonObject.put("userInfo",userEntity);
-            jsonObject.put("accessToken",JwtUtil.sign(userEntity.getAccountName(),userEntity.getCredentialsSalt()));
-        }
-        return jsonObject;
+        Map map = userService.saveWeChatUserInfo(snsUserInfo);
+        map.put("result", 1);
+        return map;
     }
 
     /**
@@ -538,12 +534,12 @@ public class UserApi extends BaseController {
                                 @Validated @NotNull(message = "手机号不能为空！") String phone,
                                 @Validated @NotNull(message = "code码不能为空！") String code,
                                 @Validated @NotNull(message = "用户id不能为空！") String userId,
-                                HttpServletResponse response){
+                                                                                   String nickName){
 
 
         PhoneTest.testPhone(phone);
 
-        userService.bindPhone(phone, code,userId);
+        userService.bindPhone(phone, code,userId, nickName);
 
         UserEntity byId = userService.getById(userId);
 
