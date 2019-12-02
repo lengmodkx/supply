@@ -546,7 +546,7 @@ public class UserApi extends BaseController {
         JSONObject json = new JSONObject();
 
         json.put("accessToken", JwtUtil.sign(phone, byId.getCredentialsSalt()));
-
+        json.put("result",1);
         return success(json);
     }
 
