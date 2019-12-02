@@ -534,7 +534,7 @@ public class UserApi extends BaseController {
                                 @Validated @NotNull(message = "手机号不能为空！") String phone,
                                 @Validated @NotNull(message = "code码不能为空！") String code,
                                 @Validated @NotNull(message = "用户id不能为空！") String userId,
-                                                                                   String nickName){
+                                @RequestParam(required = false) String nickName){
 
 
         PhoneTest.testPhone(phone);
