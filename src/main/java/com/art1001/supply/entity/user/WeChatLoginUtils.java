@@ -14,7 +14,7 @@ public class WeChatLoginUtils {
 
     public static String genUrl(){
         try {
-            String encode = URLEncoder.encode("https://www.aldbim.com/login", "utf-8");
+            String encode = URLEncoder.encode("https://www.aldbim.com", "utf-8");
             StringBuilder wechatUrl = new StringBuilder("https://open.weixin.qq.com/connect/qrconnect?appid=")
                     .append(ConstansWeChat.APPID)
                     .append("&redirect_uri=")

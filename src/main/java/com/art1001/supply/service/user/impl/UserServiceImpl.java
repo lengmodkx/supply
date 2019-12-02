@@ -181,7 +181,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         }
 
         resultMap.put("userInfo", userEntity);
-        resultMap.put("bindPhone", true);
+        resultMap.put("bindPhone", false);
         return resultMap;
     }
 
