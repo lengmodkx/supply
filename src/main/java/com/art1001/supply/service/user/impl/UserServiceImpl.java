@@ -178,10 +178,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
             userMapper.insert(userEntity);
             resultMap.put("bindPhone", true);
+        } else {
+            resultMap.put("bindPhone", false);
         }
 
         resultMap.put("userInfo", userEntity);
-        resultMap.put("bindPhone", false);
         return resultMap;
     }
 
