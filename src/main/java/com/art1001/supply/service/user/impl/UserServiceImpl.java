@@ -168,8 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity = new UserEntity();
             userEntity.setUserName(snsUserInfo.getNickname());
             userEntity.setWxOpenid(snsUserInfo.getOpenId());
-            UserEntity md5UserEntity = EndecryptUtils.md5Password(userEntity.getAccountName(), userEntity.getPassword(), 2);
-            userEntity.setCredentialsSalt(md5UserEntity.getCredentialsSalt());
+            userEntity.setCredentialsSalt(IdGen.uuid());
             userEntity.setUpdateTime(new Date());
             userEntity.setCreateTime(new Date());
             userEntity.setAddress(snsUserInfo.getCity());
