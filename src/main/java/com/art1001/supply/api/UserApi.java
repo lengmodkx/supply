@@ -26,6 +26,7 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -530,7 +531,7 @@ public class UserApi extends BaseController {
      * @return 结果
      */
     @PostMapping("/bind/phone")
-    public Object bindPhone(
+    public JSONObject bindPhone(
                                 @Validated @NotNull(message = "手机号不能为空！") String phone,
                                 @Validated @NotNull(message = "code码不能为空！") String code,
                                 @Validated @NotNull(message = "用户id不能为空！") String userId,
@@ -538,7 +539,6 @@ public class UserApi extends BaseController {
 
 
         PhoneTest.testPhone(phone);
-
         userService.bindPhone(phone, code,userId, nickName);
 
         UserEntity byId = userService.getById(userId);
@@ -548,7 +548,7 @@ public class UserApi extends BaseController {
         json.put("userInfo", byId);
         json.put("accessToken", JwtUtil.sign(phone, byId.getCredentialsSalt()));
         json.put("result",1);
-        return success(json);
+        return json;
     }
 
     @GetMapping("/is_bind_phone")
