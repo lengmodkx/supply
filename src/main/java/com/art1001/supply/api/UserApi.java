@@ -342,7 +342,7 @@ public class UserApi extends BaseController {
      * 微信登录
      */
     @GetMapping("wechatcode")
-    public JSONObject weChatLogin(HttpServletResponse response){
+    public JSONObject weChatLogin(){
         try {
             JSONObject object = new JSONObject();
             object.put("url", WeChatLoginUtils.genUrl());
@@ -586,6 +586,26 @@ public class UserApi extends BaseController {
             });
         });
         return null;
+    }
+
+    /**
+     * 原有平台账号绑定微信号
+     * @param code 微信code码
+     * @param accountName 手机号
+     */
+    @PostMapping("/bind/wechat")
+    public JSONObject bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
+                                 @Validated @NotNull(message = "accountName不能为空！") String accountName){
+
+        log.info("bind weChat [{},{}]", code, accountName);
+
+        Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
+        WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
+        userService.bindWeChat(snsUserInfo,accountName);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", 1);
+        return jsonObject;
     }
 
 }

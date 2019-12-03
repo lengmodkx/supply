@@ -168,6 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity = new UserEntity();
             userEntity.setUserName(snsUserInfo.getNickname());
             userEntity.setWxOpenid(snsUserInfo.getOpenId());
+            userEntity.setWxUnionid(snsUserInfo.getUnionid());
             userEntity.setCredentialsSalt(IdGen.uuid());
             userEntity.setUpdateTime(new Date());
             userEntity.setCreateTime(new Date());
@@ -177,6 +178,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
             userEntity.setImage(snsUserInfo.getHeadImgUrl());
             userMapper.insert(userEntity);
+            resultMap.put("bindPhone", true);
+        } else if(userEntity.getAccountName() == null){
             resultMap.put("bindPhone", true);
         } else {
             resultMap.put("bindPhone", false);
@@ -232,12 +235,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public void bindPhone(String phone, String code, String userId, String nickName) {
 
-        int count = this.checkUserIsExist(phone);
-
-        if(count > 0){
-            throw new ServiceException("用户已绑定手机号，不能重复绑定");
-        }
-
         if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userId)){
             throw new CodeNotFoundException("验证码已经失效");
         }
@@ -247,18 +244,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             throw new CodeMismatchException("验证码错误！");
         }
 
-        LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserId, userId);
+        UserEntity byId = this.getById(userId);
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(userId);
-        userEntity.setUpdateTime(new Date());
-        userEntity.setAccountName(phone);
-        if(ObjectsUtil.isNotEmpty(nickName)){
-            userEntity.setUserName(nickName);
-        }
+        if(this.checkUserIsExistByAccountName(phone)){
+            UserEntity byAccountName = this.findByName(phone);
+            userEntity.setUserId(byAccountName.getUserId());
+            userEntity.setWxUnionid(byId.getWxUnionid());
+            userEntity.setWxOpenid(byId.getWxOpenid());
+            userEntity.setUpdateTime(new Date());
+            this.updateById(userEntity);
 
-        this.update(userEntity, eq);
+        } else {
+            userEntity.setUserId(userId);
+            userEntity.setUpdateTime(new Date());
+            userEntity.setAccountName(phone);
+            if(ObjectsUtil.isNotEmpty(nickName)){
+                userEntity.setUserName(nickName);
+            }
+        }
+        this.updateById(userEntity);
     }
 
     @Override
@@ -307,5 +312,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         this.save(userEntity);
         userEntity.setWxUnionid(null);
         return userEntity;
+    }
+
+    @Override
+    public void bindWeChat(WeChatUser snsUserInfo, String accountName) {
+        LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getWxUnionid, snsUserInfo.getUnionid());
+
+        if(this.getOne(getSingleUserByWxUnionId) != null){
+            throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
+        }
+
+        UserEntity updateEntity = new UserEntity();
+        updateEntity.setUpdateTime(new Date());
+        updateEntity.setWxOpenid(snsUserInfo.getOpenId());
+        updateEntity.setWxUnionid(snsUserInfo.getUnionid());
+
+        LambdaQueryWrapper<UserEntity> updateByAccountName = new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getAccountName, accountName);
+
+        this.update(updateEntity, updateByAccountName);
+
+
     }
 }

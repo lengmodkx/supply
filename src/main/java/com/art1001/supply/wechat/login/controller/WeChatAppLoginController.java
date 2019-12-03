@@ -1,5 +1,6 @@
 package com.art1001.supply.wechat.login.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.UserEntity;
@@ -51,8 +52,10 @@ public class WeChatAppLoginController extends BaseController {
      * @param user 用户加密信息
      */
     @PostMapping("/user/info")
-    public Object updateWeChatUserInfo(@Validated UpdateUserInfoRequest user) throws Exception{
+    public JSONObject updateWeChatUserInfo(@Validated UpdateUserInfoRequest user) throws Exception{
         log.info("save weChat user info. [{}]", user);
+
+        JSONObject jsonObject = new JSONObject();
 
         WeChatDecryptResponse res = WeChatUtil.deciphering(
                 user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId()), WeChatDecryptResponse.class
@@ -61,8 +64,9 @@ public class WeChatAppLoginController extends BaseController {
         redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId());
 
         UserEntity userEntity = userService.saveWeChatAppUserInfo(res);
-
-        return success(userEntity);
+        jsonObject.put("userInfo", userEntity);
+        jsonObject.put("result", 1);
+        return jsonObject;
     }
 
     /**

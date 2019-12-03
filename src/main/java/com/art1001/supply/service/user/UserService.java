@@ -104,4 +104,11 @@ public interface UserService extends IService<UserEntity> {
 	 * @return 存储后的用户信息
 	 */
 	UserEntity saveWeChatAppUserInfo(WeChatDecryptResponse res);
+
+	/**
+	 * 手机号绑定微信
+	 * @param snsUserInfo 微信用户信息
+	 * @param accountName 手机号或者邮箱
+	 */
+    void bindWeChat(WeChatUser snsUserInfo, String accountName);
 }

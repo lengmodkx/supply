@@ -17,6 +17,7 @@ import com.art1001.supply.wechat.login.dto.WeChatPhoneResponse;
 import com.art1001.supply.wechat.login.entity.WechatAppIdInfo;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
 import com.art1001.supply.wechat.util.WeChatUtil;
+import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
             //验证手机号是否正确，如果不正确则需要通过小程序绑定手机号
             try {
                 PhoneTest.testPhone(userEntity.getAccountName());
+                resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
             } catch (Exception e){
                 log.error("手机号码验证错误，需要重新绑定手机号。[{}]", e.getMessage());
                 resultMap.put("getPhone", true);
