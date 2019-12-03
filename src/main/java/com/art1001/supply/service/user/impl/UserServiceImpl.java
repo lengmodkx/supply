@@ -175,6 +175,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setUserId(IdGen.uuid());
             userEntity.setSex(snsUserInfo.getSex());
             userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
+            userEntity.setImage(snsUserInfo.getHeadImgUrl());
             userMapper.insert(userEntity);
             resultMap.put("bindPhone", true);
         } else {
