@@ -93,8 +93,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         // oss上传
         String fileName = System.currentTimeMillis() + ".jpg";
         AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
-        userEntity.setImage(Constants.MEMBER_IMAGE_URL + fileName);
-        userEntity.setDefaultImage(Constants.MEMBER_IMAGE_URL + fileName);
+        userEntity.setImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
+        userEntity.setDefaultImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
         //发送邮件
         //emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);
         userEntity.setCreateTime(new Date());
@@ -321,10 +321,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public void bindWeChat(WeChatUser snsUserInfo, String accountName) {
+    public void bindWeChat(WeChatUser snsUserInfo, String userId) {
         LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
-                .lambda()
-                .eq(UserEntity::getWxUnionid, snsUserInfo.getUnionid());
+                .lambda().eq(UserEntity::getWxOpenid, snsUserInfo.getOpenId());
 
         if(this.getOne(getSingleUserByWxUnionId) != null){
             throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
@@ -334,14 +333,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         updateEntity.setUpdateTime(new Date());
         updateEntity.setWxOpenid(snsUserInfo.getOpenId());
         updateEntity.setWxUnionid(snsUserInfo.getUnionid());
-
-        LambdaQueryWrapper<UserEntity> updateByAccountName = new QueryWrapper<UserEntity>()
-                .lambda()
-                .eq(UserEntity::getAccountName, accountName);
-
-        this.update(updateEntity, updateByAccountName);
-
-
+        updateEntity.setUserId(userId);
+        updateById(updateEntity);
     }
 
     @Override
