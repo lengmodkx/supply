@@ -16,8 +16,6 @@ public class WeChatAppMessageTemplate {
 
     private String page;
 
-    private String form_id;
-
     private Map<String,TemplateData> data;
 
     /**

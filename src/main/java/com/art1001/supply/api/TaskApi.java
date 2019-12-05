@@ -24,9 +24,9 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
+import com.art1001.supply.wechat.message.context.WeChatAppMessageTemplateBuild;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
-import com.art1001.supply.wechat.message.template.TemplateData;
+import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
 import com.art1001.supply.wechat.message.template.WeChatAppMessageTemplate;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("tasks")
-public class TaskApi extends BaseController {
+public class  TaskApi extends BaseController {
 
     @Resource
     private TaskService taskService;
@@ -80,6 +81,9 @@ public class TaskApi extends BaseController {
 
     @Resource
     private UserNewsService userNewsService;
+
+    @Resource
+    private WeChatAppMessageTemplateDataBuildService updateTaskJoinInfo;
 
     /**
      * 任务页面初始化
@@ -703,6 +707,7 @@ public class TaskApi extends BaseController {
      * @param taskUids 参与者id
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Push(value = PushType.A14,type = 1)
     @PutMapping("/{taskId}/members")
     public JSONObject addTaskUids(@PathVariable(value = "taskId")String taskId,
@@ -713,21 +718,19 @@ public class TaskApi extends BaseController {
             task.setTaskId(taskId);
             task.setTaskUIds(taskUids);
             taskService.updateById(task);
-            userNewsService.saveUserNews(taskUids.split(","),taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName());
-            WeChatAppMessageTemplate weChatAppMessageTemplate = new WeChatAppMessageTemplate();
-            weChatAppMessageTemplate.setTemplate_id("5jlQyk_m4Vt7hSSijlwcsmXbLrWFxWiuqvTZJ9jk14k");
-            weChatAppMessageTemplate.setPage("/pages/index/index");
-            weChatAppMessageTemplate.setForm_id("4ae1938a5da44334825009d59ddec85d");
-            Map<String, TemplateData> map = new HashMap(5);
-            map.put("keyword1",new TemplateData("何少华"));
-            map.put("keyword2", new TemplateData("15712904437"));
-            map.put("keyword3", new TemplateData("2019-11-11"));
-            map.put("keyword4", new TemplateData("xiao-Tian"));
-            map.put("keyword5", new TemplateData("前端"));
-            weChatAppMessageTemplate.setData(map);
-            weChatAppMessageTemplate.setEmphasis_keyword("用户名");
 
-            weChatAppMessageService.pushToSingleUser("ogIc_5cGPAHBoSAtTOsn5rAj209U", weChatAppMessageTemplate);
+            String[] taskIdList = taskUids.split(",");
+            userNewsService.saveUserNews(taskIdList ,taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName());
+
+            //推送微信小程序消息给多个用户
+            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.updateTaskJoin();
+            weChatAppMessageService.pushToMultipleUsers(
+                    Arrays.asList(taskIdList),
+                    weChatAppMessageTemplate,
+                    updateTaskJoinInfo
+            );
+
+
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));

@@ -123,7 +123,7 @@ public class UserEntity extends Model<UserEntity> {
 	 * 3.装饰板会员
 	 * 4.mep版本会员
 	 */
-	private int vip;
+	private Integer vip;
 
 	private String sessionKey;
 

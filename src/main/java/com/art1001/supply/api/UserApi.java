@@ -538,8 +538,10 @@ public class UserApi extends BaseController {
                                 @RequestParam(required = false) String nickName){
 
 
+        log.info("bind phone. [{},{},{},{}]", phone, code ,userId, nickName);
+
         PhoneTest.testPhone(phone);
-        userService.bindPhone(phone, code,userId, nickName);
+        userService.bindPhone(phone, code, userId, nickName);
 
         UserEntity byId = userService.getById(userId);
 

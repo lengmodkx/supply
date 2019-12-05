@@ -21,15 +21,4 @@ public class WeChatMessageContext {
 
     private String accessToken;
 
-    /**
-     * 获取发送消息请求用的token
-     * @return accessToken
-     */
-//    public MessageToken getAccessToken() {
-//        if(ObjectsUtil.isNotEmpty(accessToken)){
-//            return accessToken;
-//        } else {
-//            return (accessToken = weChatUtil.getAccessToken());
-//        }
-//    }
 }

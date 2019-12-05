@@ -51,6 +51,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -1905,6 +1906,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public void updateAll(String userId, String id) {
         taskMapper.updateAll(userId,id);
+    }
+
+    @Override
+    public String getAppOpenIdByUserId(String userId) {
+        ValidatedUtil.filterNullParam(userId);
+
+        final String wxAppOpenid = "wxAppOpenid";
+
+        LambdaQueryWrapper<UserEntity> getWxAppOpenIdByUserId = new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getUserId, userId)
+                .select(UserEntity::getWxAppOpenid);
+
+        Map<String, Object> map = userService.getMap(getWxAppOpenIdByUserId);
+
+        if(map.containsKey(wxAppOpenid)){
+            return String.valueOf(map.get(wxAppOpenid));
+        }
+
+        return null;
     }
 }
 
