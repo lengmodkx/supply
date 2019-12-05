@@ -113,7 +113,7 @@ public class UserApi extends BaseController {
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
                  object.put("fileId", Constants.MATERIAL_BASE);
-                 object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
+                 object.put("userInfo",userService.findInfo(accountName));
                  object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
             } else {
                  object.put("result", 0);
@@ -541,7 +541,7 @@ public class UserApi extends BaseController {
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code,userId, nickName);
 
-        UserEntity byId = userService.getById(userId);
+        UserEntity byId = userService.findByName(phone);
 
         JSONObject json = new JSONObject();
 

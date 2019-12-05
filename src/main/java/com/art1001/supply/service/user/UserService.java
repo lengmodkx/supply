@@ -1,5 +1,6 @@
 package com.art1001.supply.service.user;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
@@ -15,7 +16,10 @@ public interface UserService extends IService<UserEntity> {
 	public List<UserEntity> queryListByPage(Map<String, Object> parameter);
 
 	public UserEntity findByName(String accountName);
-	
+
+	//查询部分用户信息
+	UserInfo findInfo(String accountName);
+
 	public void insert(UserEntity userEntity, String password);
 	
 	public UserEntity findById(String id);
