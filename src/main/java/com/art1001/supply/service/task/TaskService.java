@@ -662,10 +662,5 @@ public interface TaskService extends IService<Task> {
 
     void updateAll(String userId, String id);
 
-	/**
-	 * 根据用户id查询出该用户对应的小程序openId
-	 * @param userId 用户id
-	 * @return 小程序openid
-	 */
-	String getAppOpenIdByUserId(String userId);
+
 }

@@ -12,10 +12,10 @@ public interface WeChatAppMessageService {
 
     /**
      * 给单个用户推送小程序消息
-     * @param appId 用户在小程序中的唯一标识
+     * @param userId 用户id
      * @param weChatAppMessageTemplate 小程序消息推送请求数据包装对象
      */
-    void pushToSingleUser(String appId, WeChatAppMessageTemplate weChatAppMessageTemplate);
+    void pushToSingleUser(String userId, WeChatAppMessageTemplate weChatAppMessageTemplate);
 
     /**
      * 推送多条消息到微信小程序用户

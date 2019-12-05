@@ -115,4 +115,11 @@ public interface UserService extends IService<UserEntity> {
 	 * @param accountName 手机号或者邮箱
 	 */
     void bindWeChat(WeChatUser snsUserInfo, String accountName);
+
+	/**
+	 * 根据用户id查询出该用户对应的小程序openId
+	 * @param userId 用户id
+	 * @return 小程序openid
+	 */
+	String getAppOpenIdByUserId(String userId);
 }

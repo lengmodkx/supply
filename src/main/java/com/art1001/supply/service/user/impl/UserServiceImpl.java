@@ -343,4 +343,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
 
     }
+
+    @Override
+    public String getAppOpenIdByUserId(String userId) {
+        ValidatedUtil.filterNullParam(userId);
+
+        final String wxAppOpenid = "wxAppOpenid";
+
+        LambdaQueryWrapper<UserEntity> getWxAppOpenIdByUserId = new QueryWrapper<UserEntity>()
+                .lambda()
+                .eq(UserEntity::getUserId, userId)
+                .select(UserEntity::getWxAppOpenid);
+
+        Map<String, Object> map = this.getMap(getWxAppOpenIdByUserId);
+
+        if(map.containsKey(wxAppOpenid)){
+            return String.valueOf(map.get(wxAppOpenid));
+        }
+
+        return null;
+    }
 }

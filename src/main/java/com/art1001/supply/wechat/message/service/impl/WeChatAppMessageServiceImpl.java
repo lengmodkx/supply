@@ -1,9 +1,13 @@
 package com.art1001.supply.wechat.message.service.impl;
 
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.util.ValidatedUtil;
 import com.art1001.supply.wechat.message.dto.request.PushRequestParam;
 import com.art1001.supply.wechat.message.dto.result.MessageResponseEntity;
+import com.art1001.supply.wechat.message.exception.UserIdIsEmpty;
 import com.art1001.supply.wechat.message.exception.UserIdListIsEmptyException;
+import com.art1001.supply.wechat.message.exception.WeChatAppMessageTemplateInvalid;
 import com.art1001.supply.wechat.message.exception.WeChatDataBuildIsEmpty;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
@@ -29,17 +33,30 @@ public class WeChatAppMessageServiceImpl implements WeChatAppMessageService {
     @Resource
     private WeChatUtil weChatUtil;
 
+    @Resource
+    private UserService userService;
+
     @Override
-    public void pushToSingleUser(String appId, WeChatAppMessageTemplate weChatAppMessageTemplate) {
+    public void pushToSingleUser(String userId, WeChatAppMessageTemplate weChatAppMessageTemplate) {
+        Optional.ofNullable(userId).orElseThrow(() -> new UserIdIsEmpty("用户id不能为空！"));
+
+        Optional.ofNullable(weChatAppMessageTemplate).orElseThrow(() -> new WeChatAppMessageTemplateInvalid("weChatAppMessageTemplate 不能为空！"));
+
+        //获取userId对应的app_openId
+        String openId = userService.getAppOpenIdByUserId(userId);
+
         PushRequestParam pushRequestParam = PushRequestParam.newInstance(
-                weChatUtil.getAccessToken(), appId, weChatAppMessageTemplate, null
+                weChatUtil.getAccessToken(), openId, weChatAppMessageTemplate, null
         );
 
+        //推送消息并且打印结果
         MessageResponseEntity res = weChatUtil.sendWeChatAppMessageRequest(pushRequestParam);
+
         if(ObjectsUtil.isNotEmpty(res.getErrcode())){
             log.error("错误码：[{}]，错误信息:[{}]", res.getErrcode(),res.getErrmsg());
+
         } else {
-            log.info("小程序消息推送成功.[{},{}]", appId, res);
+            log.info("小程序消息推送成功.[{},{}]", openId, res);
         }
     }
 

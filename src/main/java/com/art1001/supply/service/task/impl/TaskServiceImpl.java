@@ -1907,25 +1907,5 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public void updateAll(String userId, String id) {
         taskMapper.updateAll(userId,id);
     }
-
-    @Override
-    public String getAppOpenIdByUserId(String userId) {
-        ValidatedUtil.filterNullParam(userId);
-
-        final String wxAppOpenid = "wxAppOpenid";
-
-        LambdaQueryWrapper<UserEntity> getWxAppOpenIdByUserId = new QueryWrapper<UserEntity>()
-                .lambda()
-                .eq(UserEntity::getUserId, userId)
-                .select(UserEntity::getWxAppOpenid);
-
-        Map<String, Object> map = userService.getMap(getWxAppOpenIdByUserId);
-
-        if(map.containsKey(wxAppOpenid)){
-            return String.valueOf(map.get(wxAppOpenid));
-        }
-
-        return null;
-    }
 }
 
