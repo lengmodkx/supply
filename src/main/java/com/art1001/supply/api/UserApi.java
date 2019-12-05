@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -113,7 +114,7 @@ public class UserApi extends BaseController {
                  object.put("result", 1);
                  object.put("msg", "登陆成功");
                  object.put("fileId", Constants.MATERIAL_BASE);
-                 object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
+                 object.put("userInfo",userService.findInfo(accountName));
                  object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
             } else {
                  object.put("result", 0);
@@ -487,13 +488,13 @@ public class UserApi extends BaseController {
      */
     @PostMapping("/updateUserInfo")
     public  JSONObject  updateUserInfo(@RequestParam(value = "userId") String userId,
-                                       @RequestParam(value = "defaultImage") String defaultImage,
-                                       @RequestParam(value = "userName") String userName,
-                                       @RequestParam(value = "job") String job,
-                                       @RequestParam(value = "telephone") String telephone,
-                                       @RequestParam(value = "birthday") String birthday,
-                                       @RequestParam(value = "address") String address,
-                                       @RequestParam(value = "email") String email
+                                       @RequestParam(value = "image",required = false) String image,
+                                       @RequestParam(value = "userName",required = false) String userName,
+                                       @RequestParam(value = "job",required = false) String job,
+                                       @RequestParam(value = "telephone",required = false) String telephone,
+                                       @RequestParam(value = "birthday",required = false) String birthday,
+                                       @RequestParam(value = "address",required = false) String address,
+                                       @RequestParam(value = "email",required = false) String email
                                        ){
         JSONObject jsonObject=new JSONObject();
         try {
@@ -501,21 +502,38 @@ public class UserApi extends BaseController {
             SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date birthDay = myFmt2.parse(birthday);
 
-
             UserEntity userEntity=new UserEntity();
             userEntity.setUserId(userId);
-            userEntity.setDefaultImage(defaultImage);
-            userEntity.setImage(defaultImage);
-            userEntity.setUserName(userName);
-            userEntity.setJob(job);
-            userEntity.setTelephone(telephone);
-            userEntity.setBirthday(birthDay);
-            userEntity.setAddress(address);
-            userEntity.setEmail(email);
+            if(StringUtils.isNotEmpty(image)){
+                userEntity.setImage(image);
+            }
+
+            if(StringUtils.isNotEmpty(userName)){
+                userEntity.setUserName(userName);
+            }
+
+            if(StringUtils.isNotEmpty(job)){
+                userEntity.setJob(job);
+            }
+
+            if(StringUtils.isNotEmpty(telephone)){
+                userEntity.setTelephone(telephone);
+            }
+
+            if(StringUtils.isNotEmpty(birthday)){
+                userEntity.setBirthday(birthDay);
+            }
+            if(StringUtils.isNotEmpty(address)){
+                userEntity.setAddress(address);
+            }
+            if(StringUtils.isNotEmpty(email)){
+                userEntity.setEmail(email);
+            }
+
             userEntity.setUpdateTime(new Date());
             userService.updateById(userEntity);
-           jsonObject.put("msg","用户信息修改成功");
-           jsonObject.put("result","1");
+            jsonObject.put("msg","用户信息修改成功");
+            jsonObject.put("result","1");
         } catch (Exception e) {
             e.printStackTrace();
             jsonObject.put("msg","信息修改失败,请稍后再试");
@@ -543,7 +561,7 @@ public class UserApi extends BaseController {
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code, userId, nickName);
 
-        UserEntity byId = userService.getById(userId);
+        UserEntity byId = userService.findByName(phone);
 
         JSONObject json = new JSONObject();
 

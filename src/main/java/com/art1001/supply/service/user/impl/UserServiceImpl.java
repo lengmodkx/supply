@@ -8,6 +8,7 @@ import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -61,6 +62,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
+    public UserInfo findInfo(String accountName){
+        Optional.ofNullable(accountName).orElseThrow(() -> new ServiceException("accountName 不能为空！"));
+        return userMapper.findInfo(accountName);
+    }
+
+
+    @Override
     public UserEntity findById(String id) {
         return getById(id);
     }
@@ -83,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         // 图片byte数组
         byte[] bytes = ImageUtil.generateImg(userEntity.getUserName());
         // oss上传
-        String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+        String fileName = System.currentTimeMillis() + ".jpg";
         AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
         userEntity.setImage(Constants.MEMBER_IMAGE_URL + fileName);
         userEntity.setDefaultImage(Constants.MEMBER_IMAGE_URL + fileName);
@@ -254,16 +262,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userEntity.setWxOpenid(byId.getWxOpenid());
             userEntity.setUpdateTime(new Date());
             this.updateById(userEntity);
-
+            removeById(userId);
         } else {
             userEntity.setUserId(userId);
             userEntity.setUpdateTime(new Date());
             userEntity.setAccountName(phone);
-            if(ObjectsUtil.isNotEmpty(nickName)){
-                userEntity.setUserName(nickName);
-            }
+            userEntity.setUserName(nickName);
+            this.updateById(userEntity);
         }
-        this.updateById(userEntity);
     }
 
     @Override

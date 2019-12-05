@@ -1,6 +1,7 @@
 package com.art1001.supply.mapper.user;
 
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -72,4 +73,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     List<String> getAllUserId();
 
 	List<String> getPhoneList();
+
+	//查询部分用户信息
+	UserInfo findInfo(String accountName);
 }
