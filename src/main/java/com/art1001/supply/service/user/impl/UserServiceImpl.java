@@ -11,6 +11,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.WeChatUser;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -31,7 +32,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
+
 @Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {

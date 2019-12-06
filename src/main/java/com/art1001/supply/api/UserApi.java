@@ -2,10 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.aliyun.message.enums.KeyWord;
+import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
+import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
+import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -18,15 +21,11 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.EmailUtil;
-import com.art1001.supply.util.NumberUtils;
-import com.art1001.supply.util.RegexUtils;
-import com.art1001.supply.util.SendSmsUtils;
+import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
-import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -37,6 +36,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,11 +51,7 @@ import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.elasticsearch.cluster.ClusterStateTaskExecutor.TaskResult.success;
+import java.util.*;
 
 /**
  * 用户
@@ -93,7 +89,13 @@ public class UserApi extends BaseController {
     private FileService fileService;
 
     @Resource
+    private AliyunMessageService aliyunMessageService;
+
+    @Resource
     private TaskService taskService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 用户登陆
@@ -273,9 +275,7 @@ public class UserApi extends BaseController {
 
         //通过短信发送验证码
         if(RegexUtils.checkMobile(accountName)){
-            SendSmsUtils sendSmsUtils = new SendSmsUtils();
-            sendSmsUtils.sendSms(accountName,"您的手机验证码为:"+String.valueOf(valid));
-            ShiroAuthenticationManager.setSessionAttribute("phoneCode",String.valueOf(valid));
+            aliyunMessageService.sendCode(userService.findByName(accountName).getUserId(), accountName);
         }
         jsonObject.put("result",1);
         jsonObject.put("msg","发送成功");
@@ -296,19 +296,23 @@ public class UserApi extends BaseController {
                              @RequestParam String code,HttpServletRequest request){
         JSONObject jsonObject = new JSONObject();
         try {
-            String phoneCode = ShiroAuthenticationManager.getKaptcha("phoneCode");
-            if(!phoneCode.equalsIgnoreCase(code)){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","手机验证码输入错误！");
-                return jsonObject;
-            }
-
             UserEntity userEntity = userService.findByName(accountName);
             if(userEntity==null){
                 jsonObject.put("result",0);
                 jsonObject.put("msg","用户不存在，请检查");
                 return jsonObject;
             }
+
+            if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId())){
+                throw new CodeNotFoundException("验证码已经失效");
+            }
+
+            String redisCode = redisUtil.get(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId());
+            if(!Objects.equals(code, redisCode)){
+                throw new CodeMismatchException("验证码错误！");
+            }
+
+
             //加密用户输入的密码，得到密码和加密盐，保存到数据库
             UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
             //设置添加用户的密码和加密盐
@@ -344,10 +348,10 @@ public class UserApi extends BaseController {
      * 微信登录
      */
     @GetMapping("wechatcode")
-    public JSONObject weChatLogin(){
+    public JSONObject weChatLogin(@Validated @NotNull(message = "回调地址不能为空！")@RequestParam String redirectUri){
         try {
             JSONObject object = new JSONObject();
-            object.put("url", WeChatLoginUtils.genUrl());
+            object.put("url", WeChatLoginUtils.genUrl(redirectUri));
             object.put("result", 1);
             return object;
         } catch (Exception e) {
@@ -626,6 +630,21 @@ public class UserApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
         return jsonObject;
+    }
+
+    @PostMapping("reset_password")
+    public Object resetPassword(@Validated @NotNull(message = "密码不能为空") String password,String accountName){
+
+        UserEntity byName = userService.findByName(accountName);
+
+        String password_cryto = new Md5Hash(password,byName.getAccountName()+byName.getCredentialsSalt(),2).toBase64();
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(byName.getUserId());
+        userEntity.setUpdateTime(new Date());
+        userEntity.setPassword(password_cryto);
+        userService.updateById(userEntity);
+        return success();
     }
 
 }
