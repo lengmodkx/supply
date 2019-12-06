@@ -615,17 +615,17 @@ public class UserApi extends BaseController {
     /**
      * 原有平台账号绑定微信号
      * @param code 微信code码
-     * @param accountName 手机号
+     * @param useId 用户id
      */
     @PostMapping("/bind/wechat")
     public JSONObject bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
-                                 @Validated @NotNull(message = "accountName不能为空！") String accountName){
+                                 @Validated @NotNull(message = "useId不能为空！") String useId){
 
-        log.info("bind weChat [{},{}]", code, accountName);
+        log.info("bind weChat [{},{}]", code, useId);
 
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
         WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
-        userService.bindWeChat(snsUserInfo,accountName);
+        userService.bindWeChat(snsUserInfo,useId);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
