@@ -625,6 +625,21 @@ public class UserApi extends BaseController {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
+        jsonObject.put("msg","绑定成功！");
+        return jsonObject;
+    }
+
+    @PostMapping("/notbind/wechat")
+    public JSONObject notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId){
+
+        log.info("bind weChat [{}]", useId);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(useId);
+        userEntity.setWxOpenId("");
+        userService.updateById(userEntity);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg","解绑成功！");
+        jsonObject.put("result", 1);
         return jsonObject;
     }
 
