@@ -37,8 +37,8 @@ public class WeChatUserInfoAssembler {
         userEntity.setSex(param.getGender());
         userEntity.setUpdateTime(new Date());
         userEntity.setCreateTime(new Date());
-        userEntity.setWxUnionid(param.getUnionId());
-        userEntity.setWxAppOpenid(param.getOpenId());
+        userEntity.setWxUnionId(param.getUnionId());
+        userEntity.setWxAppOpenId(param.getOpenId());
         userEntity.setCredentialsSalt(IdGen.uuid());
         return userEntity;
     }

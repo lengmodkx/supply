@@ -8,7 +8,7 @@ import com.art1001.supply.wechat.message.template.WeChatAppMessageTemplate;
  **/
 public class WeChatAppMessageTemplateBuild {
 
-    public static WeChatAppMessageTemplate updateTaskJoin(){
+    public static WeChatAppMessageTemplate createTask(){
         WeChatAppMessageTemplate weChatAppMessageTemplate = new WeChatAppMessageTemplate();
         //模板id
         weChatAppMessageTemplate.setTemplate_id("5jlQyk_m4Vt7hSSijlwcsmXbLrWFxWiuqvTZJ9jk14k");

@@ -81,7 +81,7 @@ public class MyDBRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) {
 		UsernamePasswordToken token = (UsernamePasswordToken)auth;
 		String username = token.getUsername();
-		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",username));
+		UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,username));
 		if(userEntity == null)
 			throw new AuthenticationException("用户名或者密码错误");
 		return new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码

@@ -173,14 +173,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         UserEntity userEntity;
         Map<String, Object> resultMap = new HashMap<>(4);
 
-        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxOpenid, snsUserInfo.getOpenId());
+        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxOpenId, snsUserInfo.getOpenId());
         userEntity = this.getOne(selectUserIsExistQw);
 
         if(userEntity == null){
             userEntity = new UserEntity();
             userEntity.setUserName(snsUserInfo.getNickname());
-            userEntity.setWxOpenid(snsUserInfo.getOpenId());
-            userEntity.setWxUnionid(snsUserInfo.getUnionid());
+            userEntity.setWxOpenId(snsUserInfo.getOpenId());
+            userEntity.setWxUnionId(snsUserInfo.getUnionid());
             userEntity.setCredentialsSalt(IdGen.uuid());
             userEntity.setUpdateTime(new Date());
             userEntity.setCreateTime(new Date());
@@ -262,8 +262,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         if(this.checkUserIsExistByAccountName(phone)){
             UserEntity byAccountName = this.findByName(phone);
             userEntity.setUserId(byAccountName.getUserId());
-            userEntity.setWxUnionid(byId.getWxUnionid());
-            userEntity.setWxOpenid(byId.getWxOpenid());
+            userEntity.setWxUnionId(byId.getWxUnionId());
+            userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
             this.updateById(userEntity);
             removeById(userId);
@@ -304,7 +304,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
                 .lambda()
-                .eq(UserEntity::getWxUnionid, res.getUnionId());
+                .eq(UserEntity::getWxUnionId, res.getUnionId());
 
         UserEntity one = this.getOne(getSingleUserByWxUnionId);
 
@@ -312,7 +312,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         if(ObjectsUtil.isNotEmpty(one)){
             UserEntity saveUserInfo = new UserEntity();
             saveUserInfo.setUserId(one.getUserId());
-            saveUserInfo.setWxAppOpenid(res.getOpenId());
+            saveUserInfo.setWxOpenId(res.getOpenId());
             saveUserInfo.setUpdateTime(new Date());
             this.updateById(saveUserInfo);
             return one;
@@ -320,14 +320,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         UserEntity userEntity = assembler.weChatUserTransUserEntity(res);
         this.save(userEntity);
-        userEntity.setWxUnionid(null);
+        userEntity.setWxUnionId(null);
         return userEntity;
     }
 
     @Override
     public void bindWeChat(WeChatUser snsUserInfo, String userId) {
         LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
-                .lambda().eq(UserEntity::getWxOpenid, snsUserInfo.getOpenId());
+                .lambda().eq(UserEntity::getWxOpenId, snsUserInfo.getOpenId());
 
         if(this.getOne(getSingleUserByWxUnionId) != null){
             throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
@@ -335,8 +335,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         UserEntity updateEntity = new UserEntity();
         updateEntity.setUpdateTime(new Date());
-        updateEntity.setWxOpenid(snsUserInfo.getOpenId());
-        updateEntity.setWxUnionid(snsUserInfo.getUnionid());
+        updateEntity.setWxOpenId(snsUserInfo.getOpenId());
+        updateEntity.setWxUnionId(snsUserInfo.getUnionid());
         updateEntity.setUserId(userId);
         updateById(updateEntity);
     }
@@ -350,7 +350,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         LambdaQueryWrapper<UserEntity> getWxAppOpenIdByUserId = new QueryWrapper<UserEntity>()
                 .lambda()
                 .eq(UserEntity::getUserId, userId)
-                .select(UserEntity::getWxAppOpenid);
+                .select(UserEntity::getWxAppOpenId);
 
         Map<String, Object> map = this.getMap(getWxAppOpenIdByUserId);
 

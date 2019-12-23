@@ -59,7 +59,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
 
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
         LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getWxAppOpenid, openIdAndSessionKey.getOpenid());
+                .eq(UserEntity::getWxAppOpenId, openIdAndSessionKey.getOpenid());
 
         UserEntity userEntity = userService.getOne(selectById);
 

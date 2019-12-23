@@ -9,6 +9,7 @@ import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
+import com.art1001.supply.wechat.message.template.MessageToken;
 import com.art1001.supply.wechat.util.WeChatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,9 @@ public class WeChatAppLoginController extends BaseController {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private WeChatUtil weChatUtil;
 
     /**
      * 微信小程序登录
@@ -82,11 +86,19 @@ public class WeChatAppLoginController extends BaseController {
                                     @Validated
                                     @RequestParam @NotNull(message = "code不能为空")String code
     ) throws Exception
-    {
+     {
         log.info("Get wCchat login user phone. [{},{},{}]", data, iv, code);
 
         Map result = weChatAppLogin.bindPhone(data, iv, code);
 
         return success(result);
+    }
+
+    @GetMapping("access_token")
+    public JSONObject getAccessToken(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data",weChatUtil.getAccessToken());
+        jsonObject.put("result", 1);
+        return jsonObject;
     }
 }

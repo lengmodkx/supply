@@ -1,6 +1,8 @@
 package com.art1001.supply.wechat.message.service.impl;
 
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.ValidatedUtil;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
