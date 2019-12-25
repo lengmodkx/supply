@@ -662,4 +662,14 @@ public class UserApi extends BaseController {
         return success();
     }
 
+    @PostMapping("change_password")
+    public Object changePassword(@Validated @NotNull(message = "原密码不能为空") String oldPassword,
+                                 @Validated @NotNull(message = "新密码不能为空") String newPassword){
+        log.info("Change current user password. [{},{},{}]", oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
+
+        userService.changePasswordByUserId(oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
+
+        return success();
+    }
+
 }

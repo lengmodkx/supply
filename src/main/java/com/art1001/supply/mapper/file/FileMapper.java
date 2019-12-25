@@ -314,7 +314,7 @@ public interface FileMapper extends BaseMapper<File> {
 	File findFileTier(String projectId);
 
 
-	Page<File> findMateriaBaseFile(@Param("page")Page page, @Param("folderId") String folderId);
+	Page<File> findMateriaBaseFile(@Param("page")Page page, @Param("folderId") String folderId, @Param("downloadCount") Boolean downloadCount);
 
 	/**
 	 * 获取 某个目录下的所有子级目录id字符串（逗号隔开）

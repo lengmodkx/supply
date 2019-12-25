@@ -108,7 +108,7 @@ public class  TaskApi extends BaseController {
      * @return object
      */
     @AutomationRule(value = "#task.taskId",trigger = AutomationRuleConstans.ADD_TASK)
-    @Log(PushType.A1)
+//    @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
     public JSONObject addTask(Task task){

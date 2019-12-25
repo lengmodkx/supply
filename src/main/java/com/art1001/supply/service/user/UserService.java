@@ -122,4 +122,6 @@ public interface UserService extends IService<UserEntity> {
 	 * @return 小程序openid
 	 */
 	String getAppOpenIdByUserId(String userId);
+
+    void changePasswordByUserId(String oldPassword, String newPassword, String userId);
 }

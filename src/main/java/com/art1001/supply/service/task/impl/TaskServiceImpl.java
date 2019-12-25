@@ -48,16 +48,14 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
-import com.art1001.supply.util.ValidatedUtil;
+import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
@@ -1897,7 +1895,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public String getExecutorByTaskId(String taskId) {
         LambdaQueryWrapper<Task> eq = new QueryWrapper<Task>().lambda().select(Task::getExecutor).eq(Task::getTaskId, taskId);
         Task one = this.getOne(eq);
-        if(StringUtils.isNotEmpty(one.getExecutor())){
+        if(ObjectsUtil.isNotEmpty(one)){
             return one.getExecutor();
         }
         return "";

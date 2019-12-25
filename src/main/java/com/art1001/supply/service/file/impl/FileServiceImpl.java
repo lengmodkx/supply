@@ -1046,10 +1046,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public JSONObject getMateriaBaseFile(String folderId, Pageable pageable) {
+    public JSONObject getMateriaBaseFile(String folderId, Pageable pageable, Boolean downloadCount) {
         JSONObject jsonObject = new JSONObject();
         Page<File> page = new Page<>(pageable.getPageNumber(),pageable.getPageSize());
-        jsonObject.put("data",fileMapper.findMateriaBaseFile(page, folderId));
+        jsonObject.put("data",fileMapper.findMateriaBaseFile(page, folderId,downloadCount));
         jsonObject.put("parentId",folderId);
         jsonObject.put("result",1);
         return jsonObject;

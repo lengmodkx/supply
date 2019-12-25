@@ -340,7 +340,7 @@ import java.util.List;
 	File getMaterialBase();
 
 
-    JSONObject getMateriaBaseFile(String folderId, Pageable pageable);
+    JSONObject getMateriaBaseFile(String folderId, Pageable pageable, Boolean downloadCount);
 
     /**
      * 获取项目的文件目录树

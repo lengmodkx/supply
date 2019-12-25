@@ -1169,9 +1169,10 @@ public class FileApi extends BaseController {
      * @return 信息
      */
     @GetMapping("{folderId}/material")
-    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Pageable pageable){
-        return fileService.getMateriaBaseFile(folderId,pageable);
+    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Pageable pageable, @RequestParam(required = false) Boolean downloadCount){
+        return fileService.getMateriaBaseFile(folderId,pageable,downloadCount);
     }
+
 
     /**
      * 获取一个项目的所有文件夹树信息（向下递归）
