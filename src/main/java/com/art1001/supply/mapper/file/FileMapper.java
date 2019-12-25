@@ -53,7 +53,7 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @param parentId 父级id，顶级目录为 0
 	 * @return
 	 */
-	List<File> findChildFile(@Param("parentId") String parentId,@Param("userId")String userId,@Param("orderType") Integer orderType);
+	List<File> findChildFile(@Param("parentId") String parentId,@Param("orderType") Integer orderType);
 
 	/**
 	 * 查新该目录下的名称是否存在

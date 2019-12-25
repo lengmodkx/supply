@@ -197,8 +197,7 @@
 			f.`level`
 		FROM
 			prm_file f
-			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
-			AND v.is_master = 1
+			LEFT JOIN prm_file_version v ON (f.file_id = v.file_id AND v.is_master = 1)
 		WHERE
 			f.file_del = 0
 			AND public_lable = 0

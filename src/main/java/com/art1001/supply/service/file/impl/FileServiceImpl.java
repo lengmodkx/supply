@@ -272,10 +272,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> findChildFile(String parentId,Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
-        List<File> childFile = fileMapper.findChildFile(parentId,userId,orderType);
+        List<File> childFile = fileMapper.findChildFile(parentId,orderType);
         if(fileService.isRootFolder(parentId)){
             childFile.add(this.getMyFolder(ShiroAuthenticationManager.getUserId()));
         }
+
         Iterator<File> iterator = childFile.iterator();
         while(iterator.hasNext()){
             File file = iterator.next();

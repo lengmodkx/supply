@@ -2,7 +2,6 @@ package com.art1001.supply.wechat.message.service.impl;
 
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.ObjectsUtil;
-import com.art1001.supply.util.ValidatedUtil;
 import com.art1001.supply.wechat.message.dto.request.PushRequestParam;
 import com.art1001.supply.wechat.message.dto.result.MessageResponseEntity;
 import com.art1001.supply.wechat.message.exception.UserIdIsEmpty;

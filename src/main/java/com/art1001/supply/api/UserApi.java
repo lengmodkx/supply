@@ -640,6 +640,7 @@ public class UserApi extends BaseController {
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(useId);
         userEntity.setWxOpenId("");
+        userEntity.setWxUnionId("");
         userService.updateById(userEntity);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("msg","解绑成功！");

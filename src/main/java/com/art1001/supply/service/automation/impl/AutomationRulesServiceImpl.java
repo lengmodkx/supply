@@ -5,7 +5,6 @@ import com.art1001.supply.entity.automation.dto.AutomationRuleDTO;
 import com.art1001.supply.mapper.automation.AutomationRulesMapper;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
