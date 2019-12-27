@@ -53,7 +53,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Resource
     private WeChatUserInfoAssembler assembler;
 
+    @Resource
     private OrganizationMemberService organizationMemberService;
+
     @Resource
     FileMapper fileMapper;
     @Override
@@ -371,13 +373,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     public void changePasswordByUserId(String oldPassword, String newPassword, String userId) {
         Optional.ofNullable(userId).orElseThrow(() -> new ServiceException("用户id不能为空！"));
 
-        UserEntity byId = this.getById(userId);
+        UserEntity byId = Optional.ofNullable(this.getById(userId)).orElseThrow(() -> new ServiceException("用户不存在!"));
 
-        SecureRandomNumberGenerator secureRandomNumberGenerator=new SecureRandomNumberGenerator();
-        //组合username,两次迭代，对密码进行加密
-        String password_cryto = new Md5Hash(oldPassword,byId.getAccountName()+byId.getCredentialsSalt(),2).toBase64();
+        String oldEncryptionPassword = new Md5Hash(oldPassword,byId.getAccountName() + byId.getCredentialsSalt(),2).toBase64();
 
-        if(!password_cryto.equals(byId.getPassword())){
+        if(!oldEncryptionPassword.equals(byId.getPassword())){
             throw new ServiceException("原密码错误！");
         }
         UserEntity upd = new UserEntity();

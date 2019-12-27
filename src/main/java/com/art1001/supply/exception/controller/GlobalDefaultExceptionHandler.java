@@ -1,5 +1,6 @@
 package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -137,13 +138,13 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	@ExceptionHandler(ServiceException.class)
-	public JSONObject operateExp(ServiceException ex) {
+	public Result operateExp(ServiceException ex) {
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台,用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg",ex.getMessage());
 		jsonObject.put("result",0);
-		return jsonObject;
+		return Result.success(jsonObject);
 	}
 
 	@ExceptionHandler(BaseException.class)
@@ -153,16 +154,6 @@ public class GlobalDefaultExceptionHandler {
 		// 将Ajax异常信息回写到前台,用于页面的提示
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("msg", ex.getMessage());
-		jsonObject.put("result",0);
-		return jsonObject;
-	}
-
-	@ExceptionHandler(Exception.class)
-	public JSONObject operateExp(Exception ex) {
-		log.error(ex.getMessage(), ex);
-		// 将Ajax异常信息回写到前台,用于页面的提示
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msg","系统异常!");
 		jsonObject.put("result",0);
 		return jsonObject;
 	}
@@ -180,5 +171,17 @@ public class GlobalDefaultExceptionHandler {
 		jsonObject.put("msg",tips.toString());
 		return jsonObject;
 	}
+
+	@ExceptionHandler(Exception.class)
+	public JSONObject operateExp(Exception ex) {
+		log.error(ex.getMessage(), ex);
+		// 将Ajax异常信息回写到前台,用于页面的提示
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg","系统异常!");
+		jsonObject.put("result",0);
+		return jsonObject;
+	}
+
+
 
 }

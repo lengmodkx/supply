@@ -98,7 +98,7 @@ public class UserEntity extends Model<UserEntity> {
 	/**
 	 * 用户性别
 	 */
-	private int sex;
+	private Integer sex;
 
 	/**
 	 * 用户出生日期

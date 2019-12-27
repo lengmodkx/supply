@@ -313,7 +313,7 @@ public class UserApi extends BaseController {
             //设置添加用户的密码和加密盐
             userEntity.setPassword(user.getPassword());
             userEntity.setCredentialsSalt(user.getCredentialsSalt());
-            userService.updatePassword(userEntity, password);
+            userService.update(userEntity, new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, userEntity.getAccountName()));
             jsonObject.put("result", 1);
             jsonObject.put("msg", "密码修改成功,请重新登录");
         }catch (Exception e){
