@@ -196,7 +196,7 @@
         AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
         AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
         <include refid="Base_Column_QBC"/>
-		GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+		 GROUP BY FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d')
 
 	</select>
 
