@@ -2,6 +2,8 @@ package com.art1001.supply.util;
 
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -154,6 +156,45 @@ public class DateUtil {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(today);
     }
+
+
+    //获取明天的日期
+    public static String getNextDay(String Day) {
+     DateFormat dft = new SimpleDateFormat("yyyy-MM-dd");
+     try {
+         Date temp = dft.parse(Day);
+         Calendar cld = Calendar.getInstance();
+         cld.setTime(temp);
+         cld.add(Calendar.DATE, 1);
+         temp = cld.getTime();
+         //获得下一天日期字符串
+         String nextDay = dft.format(temp);
+         return  nextDay;
+     } catch (ParseException e) {
+         e.printStackTrace();
+     }
+       return null;
+    }
+
+ //获取昨天的日期
+    public static String getYesterday(String Day) {
+     DateFormat dft = new SimpleDateFormat("yyyy-MM-dd");
+     try {
+         Date temp = dft.parse(Day);
+         Calendar cld = Calendar.getInstance();
+         cld.setTime(temp);
+         cld.add(Calendar.DATE, -1);
+         temp = cld.getTime();
+         //获得昨天日期字符串
+         String yesterday = dft.format(temp);
+         return  yesterday;
+     } catch (ParseException e) {
+         e.printStackTrace();
+     }
+       return null;
+    }
+
+
 
 
 }
