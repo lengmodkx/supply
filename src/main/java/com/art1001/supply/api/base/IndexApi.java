@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexApi {
 
     @RequestMapping("test")
-    public Result<UserEntity> testIndex(){
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserName("wangayfeng");
-        return Result.success(userEntity);
+    public Result ResulttestIndex(){
+
+        return Result.success();
     }
 }

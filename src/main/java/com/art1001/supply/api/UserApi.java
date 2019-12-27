@@ -42,7 +42,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -95,9 +94,9 @@ public class UserApi {
              if(subject.isAuthenticated()) {
                  UserInfo userInfo = userService.findInfo(accountName);
                  return Result.success(userInfo);
-            } else {
+             } else {
                  return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
-            }
+             }
          } catch (Exception e) {
             // 登录异常，请联系管理员！
             log.error("登录异常，请联系管理员！", e);
@@ -105,58 +104,24 @@ public class UserApi {
          }
      }
 
-
-    /**
-     * 管理员登陆
-     * @param accountName 账户名称
-     * @param password 密码
-     */
-    @PostMapping("/adminlogin")
-    public JSONObject adminLogin(@RequestParam String accountName,
-                                 @RequestParam String password){
-        JSONObject object = new JSONObject();
-        try {
-            Subject subject = SecurityUtils.getSubject();
-            UsernamePasswordToken token = new UsernamePasswordToken(accountName,password);
-            subject.login(token);
-            if(subject.isAuthenticated()) {
-                object.put("fileId", Constants.MATERIAL_BASE);
-                object.put("result", 1);
-                object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
-                object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
-            } else {
-                object.put("result", 0);
-                object.put("msg", "账号或密码错误");
-            }
-        } catch (Exception e) {
-            // 登录异常，请联系管理员！
-            log.error("登录异常，请联系管理员！", e);
-            object.put("result", 0);
-            object.put("msg", "登录异常，用户名或密码错误！");
-        }
-        return object;
-    }
-
     /**
      * 用户注册
      * @param captcha 推行验证码
      * @param accountName 用户名
      * @param password 密码
      * @param userName 昵称
+     * @param job 职务
      * @return
      */
     @PostMapping("/register")
-    public JSONObject register(@RequestParam String captcha,
+    public Result register(@RequestParam String captcha,
                                @RequestParam String accountName,
                                @RequestParam String password,
                                @RequestParam String userName,
-                               @NotBlank(message = "job不能为空!") @RequestParam String job,
+                               @RequestParam String job,
                                HttpServletRequest request) {
-        JSONObject jsonObject = new JSONObject();
         if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","验证码填写错误");
-            return jsonObject;
+            return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
 
         //设置创建者姓名
@@ -174,15 +139,11 @@ public class UserApi {
         try {
             // 保存用户注册信息
             userService.insert(userEntity, password);
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "注册成功");
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
+            return Result.success();
         } catch (Exception e) {
             log.error("注册失败:", e);
-            throw new AjaxException("注册失败",e);
+            return Result.fail(CodeMsg.REGISTER_FAIL);
         }
-        return jsonObject;
     }
 
     /**
@@ -223,37 +184,20 @@ public class UserApi {
      * 获取验证码
      * @param accountName 用户名
      * @param captcha 图形验证码
-     * @param request
      * @return
      */
     @GetMapping("/code")
-    public JSONObject code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
+    public Result code(@RequestParam String accountName,@RequestParam String captcha){
         String kaptcha = ShiroAuthenticationManager.getKaptcha("captcha");
-        JSONObject jsonObject = new JSONObject();
         if(!kaptcha.equalsIgnoreCase(captcha)){
-            jsonObject.put("result",0);
-            jsonObject.put("msg","验证码输入错误！");
-            return jsonObject;
+            return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
-
-        Integer valid = NumberUtils.getRandomInt(99999);
-        //通过邮箱发送验证码
-        if(RegexUtils.checkEmail(accountName)){
-            try {
-                EmailUtil emailUtil = new EmailUtil();
-                emailUtil.send126Mail("","",String.valueOf(valid));
-            }catch (Exception e){
-                throw new AjaxException(e);
-            }
-        }
-
         //通过短信发送验证码
         if(RegexUtils.checkMobile(accountName)){
             aliyunMessageService.sendCode(userService.findByName(accountName).getUserId(), accountName);
         }
-        jsonObject.put("result",1);
-        jsonObject.put("msg","发送成功");
-        return jsonObject;
+        return Result.success();
+
     }
 
     /**
@@ -261,51 +205,38 @@ public class UserApi {
      * @param accountName 用户名
      * @param password 密码
      * @param code 验证码
-     * @param request
      * @return
      */
     @PutMapping("/forget")
-    public JSONObject forget(@RequestParam String accountName,
+    public Result forget(@RequestParam String accountName,
                              @RequestParam String password,
-                             @RequestParam String code,HttpServletRequest request){
-        JSONObject jsonObject = new JSONObject();
+                             @RequestParam String code){
         try {
             UserEntity userEntity = userService.findByName(accountName);
             if(userEntity==null){
-                jsonObject.put("result",0);
-                jsonObject.put("msg","用户不存在，请检查");
-                return jsonObject;
+                return Result.fail(CodeMsg.USER_NO);
             }
 
             if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId())){
-                throw new CodeNotFoundException("验证码已经失效");
+                return Result.fail(CodeMsg.CAPTCHA_NO_USE);
             }
 
             String redisCode = redisUtil.get(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId());
             if(!Objects.equals(code, redisCode)){
-                throw new CodeMismatchException("验证码错误！");
+                return Result.fail(CodeMsg.CAPTCHA_ERROR);
             }
-
 
             //加密用户输入的密码，得到密码和加密盐，保存到数据库
             UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
             //设置添加用户的密码和加密盐
             userEntity.setPassword(user.getPassword());
             userEntity.setCredentialsSalt(user.getCredentialsSalt());
-            userService.update(userEntity, new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, userEntity.getAccountName()));
-            jsonObject.put("result", 1);
-            jsonObject.put("msg", "密码修改成功,请重新登录");
+            userService.updateById(userEntity);
+            return Result.success();
         }catch (Exception e){
             log.error("系统异常,密码修改失败:",e);
-            throw new AjaxException(e);
+            return Result.fail(CodeMsg.SERVER_ERROR);
         }
-
-        return jsonObject;
-    }
-
-    @GetMapping("test")
-    public String test1(){
-        return "1";
     }
     /**
      * 用户退出
@@ -322,12 +253,9 @@ public class UserApi {
      * 微信登录
      */
     @GetMapping("wechatcode")
-    public JSONObject weChatLogin(@Validated @NotNull(message = "回调地址不能为空！")@RequestParam String redirectUri){
+    public Result<String> weChatLogin(@Validated @NotNull(message = "回调地址不能为空！")@RequestParam String redirectUri){
         try {
-            JSONObject object = new JSONObject();
-            object.put("url", WeChatLoginUtils.genUrl(redirectUri));
-            object.put("result", 1);
-            return object;
+            return Result.success(WeChatLoginUtils.genUrl(redirectUri));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -646,5 +574,34 @@ public class UserApi {
 
         return jsonObject;
     }
-
+    /**
+     * 管理员登陆
+     * @param accountName 账户名称
+     * @param password 密码
+     */
+    @PostMapping("/adminlogin")
+    public JSONObject adminLogin(@RequestParam String accountName,
+                                 @RequestParam String password){
+        JSONObject object = new JSONObject();
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(accountName,password);
+            subject.login(token);
+            if(subject.isAuthenticated()) {
+                object.put("fileId", Constants.MATERIAL_BASE);
+                object.put("result", 1);
+                object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
+                object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
+            } else {
+                object.put("result", 0);
+                object.put("msg", "账号或密码错误");
+            }
+        } catch (Exception e) {
+            // 登录异常，请联系管理员！
+            log.error("登录异常，请联系管理员！", e);
+            object.put("result", 0);
+            object.put("msg", "登录异常，用户名或密码错误！");
+        }
+        return object;
+    }
 }

@@ -13,6 +13,11 @@ public class CodeMsg {
     public static CodeMsg SERVER_ERROR=new CodeMsg(0,"服务端异常");
     public static CodeMsg ACCOUNT_OR_PASSWORD_ERROR = new CodeMsg(0,"账号或密码错误");
 
+    public static CodeMsg CAPTCHA_ERROR = new CodeMsg(0,"验证码错误");
+    public static CodeMsg REGISTER_FAIL = new CodeMsg(0,"注册失败");
+    public static CodeMsg USER_NO = new CodeMsg(0,"用户不存在，请检查");
+    public static CodeMsg CAPTCHA_NO_USE = new CodeMsg(0,"验证码已经失效");
+
 
     public CodeMsg fillArgs(Object...args){
         int result = this.result;
