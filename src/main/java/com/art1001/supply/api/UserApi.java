@@ -7,19 +7,13 @@ import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
-import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.project.ProjectMemberService;
-import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
@@ -67,7 +61,7 @@ import java.util.*;
 @Validated
 @Slf4j
 @RestController
-public class UserApi extends BaseController {
+public class UserApi {
 
     @Resource
     private UserService userService;
@@ -76,25 +70,10 @@ public class UserApi extends BaseController {
     private Producer captchaProducer;
 
     @Resource
-    private RedisManager redisManager;
-
-    @Resource
-    private UserNewsService userNewsService;
-
-    @Resource
-    private ProjectService projectService;
-
-    @Resource
-    private ProjectMemberService projectMemberService;
-
-    @Resource
     private FileService fileService;
 
     @Resource
     private AliyunMessageService aliyunMessageService;
-
-    @Resource
-    private TaskService taskService;
 
     @Resource
     private RedisUtil redisUtil;
@@ -121,8 +100,8 @@ public class UserApi extends BaseController {
             }
          } catch (Exception e) {
             // 登录异常，请联系管理员！
-            log.error("登录异常，请联系管理员！, {}", e);
-            return Result.fail(CodeMsg.SERVER_ERROR);
+            log.error("登录异常，请联系管理员！", e);
+            return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
          }
      }
 
@@ -134,7 +113,7 @@ public class UserApi extends BaseController {
      */
     @PostMapping("/adminlogin")
     public JSONObject adminLogin(@RequestParam String accountName,
-                            @RequestParam String password){
+                                 @RequestParam String password){
         JSONObject object = new JSONObject();
         try {
             Subject subject = SecurityUtils.getSubject();
@@ -151,7 +130,7 @@ public class UserApi extends BaseController {
             }
         } catch (Exception e) {
             // 登录异常，请联系管理员！
-            log.error("登录异常，请联系管理员！, {}", e);
+            log.error("登录异常，请联系管理员！", e);
             object.put("result", 0);
             object.put("msg", "登录异常，用户名或密码错误！");
         }
@@ -645,7 +624,7 @@ public class UserApi extends BaseController {
 
     @PostMapping("reset_password")
     public Object resetPassword(@Validated @NotNull(message = "密码不能为空") String password,String accountName){
-
+        JSONObject jsonObject = new JSONObject();
         UserEntity byName = userService.findByName(accountName);
 
         String password_cryto = new Md5Hash(password,byName.getAccountName()+byName.getCredentialsSalt(),2).toBase64();
@@ -655,17 +634,17 @@ public class UserApi extends BaseController {
         userEntity.setUpdateTime(new Date());
         userEntity.setPassword(password_cryto);
         userService.updateById(userEntity);
-        return success();
+        return jsonObject;
     }
 
     @PostMapping("change_password")
     public Object changePassword(@Validated @NotNull(message = "原密码不能为空") String oldPassword,
                                  @Validated @NotNull(message = "新密码不能为空") String newPassword){
         log.info("Change current user password. [{},{},{}]", oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
-
+        JSONObject jsonObject = new JSONObject();
         userService.changePasswordByUserId(oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
 
-        return success();
+        return jsonObject;
     }
 
 }

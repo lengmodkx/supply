@@ -40,8 +40,8 @@ public class JwtUtil {
         try {
             //根据密码生成JWT效验器
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String username = getUsername(token);
-            JWTVerifier verifier = JWT.require(algorithm).withClaim("username", username).build();
+            String userId = getUserId(token);
+            JWTVerifier verifier = JWT.require(algorithm).withClaim("userId", userId).build();
             //效验TOKEN
             verifier.verify(token);
             return true;
@@ -55,10 +55,10 @@ public class JwtUtil {
      *
      * @return token中包含的用户名
      */
-    public static String getUsername(String token) {
+    public static String getUserId(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("username").asString();
+            return jwt.getClaim("userId").asString();
         } catch (JWTDecodeException e) {
             return null;
         }
@@ -67,14 +67,14 @@ public class JwtUtil {
     /**
      * 生成签名,5min后过期
      *
-     * @param username 用户名
+     * @param userId 用户名
      * @return 加密的token
      */
-    public static String sign(String username,String secret) {
+    public static String sign(String userId,String secret) {
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         Algorithm algorithm = Algorithm.HMAC256(secret);
         // 附带username信息
-        return JWT.create().withClaim("username", username).withExpiresAt(date).withIssuedAt(new Date()).sign(algorithm);
+        return JWT.create().withClaim("userId", userId).withExpiresAt(date).withIssuedAt(new Date()).sign(algorithm);
     }
 
     /**
@@ -85,15 +85,5 @@ public class JwtUtil {
         Date now = Calendar.getInstance().getTime();
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getExpiresAt().before(now);
-    }
-
-    /**
-     * 生成随机盐,长度32位
-     * @return
-     */
-    public static String generateSalt(){
-        SecureRandomNumberGenerator secureRandom = new SecureRandomNumberGenerator();
-        String hex = secureRandom.nextBytes(16).toHex();
-        return hex;
     }
 }

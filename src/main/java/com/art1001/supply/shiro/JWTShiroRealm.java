@@ -11,21 +11,12 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import javax.annotation.Resource;
-
 /**
  * 自定义身份认证
  * 基于HMAC（ 散列消息认证码）的控制域
  */
 @Slf4j
 public class JWTShiroRealm extends AuthorizingRealm {
-
-    private UserMapper userMapper;
-
-    @Resource
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     public JWTShiroRealm(){
         this.setCredentialsMatcher(new JWTCredentialsMatcher());
@@ -38,19 +29,18 @@ public class JWTShiroRealm extends AuthorizingRealm {
 
     /**
      * 认证信息.(身份验证) : Authentication 是用来验证用户身份
-     * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
         JWTToken jwtToken = (JWTToken) authToken;
         String token = jwtToken.getToken();
-        String accountName = JwtUtil.getUsername(token);
-        if(accountName == null){
+        String userId = JwtUtil.getUserId(token);
+        if(userId == null){
             throw new AuthenticationException("token过期，请重新登录");
         }
         UserEntity userEntity = new UserEntity();
-        userEntity.setAccountName(accountName);
-        return new SimpleAuthenticationInfo(userEntity, accountName, "jwtRealm");
+        userEntity.setUserId(userId);
+        return new SimpleAuthenticationInfo(userEntity, userId, "jwtRealm");
     }
 
     @Override

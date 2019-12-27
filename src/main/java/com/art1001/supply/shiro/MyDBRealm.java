@@ -59,7 +59,7 @@ public class MyDBRealm extends AuthorizingRealm {
 		if(userEntity == null)
 			throw new AuthenticationException("用户名或者密码错误");
 		return new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码
-				new MyByteSource(username+userEntity.getCredentialsSalt()),
+				new MyByteSource(username + userEntity.getCredentialsSalt()),
 				"dbRealm");
 	}
 
