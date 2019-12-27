@@ -54,8 +54,10 @@ public class JwtFilter extends AuthenticatingFilter {
             allowed = executeLogin(request, response);
         }catch(IllegalStateException e){ //not found any token
             log.error("Not found any token");
+            throw new AuthenticationException("not found any token");
         }catch (Exception e) {
             log.error("Error occurs when login", e);
+            throw new AuthenticationException("登录错误");
         }
         return allowed || super.isPermissive(mappedValue);
     }

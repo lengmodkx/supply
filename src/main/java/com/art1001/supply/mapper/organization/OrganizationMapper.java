@@ -83,4 +83,5 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
      * @return 企业项目集合
      */
     List<Project> selectProject(@Param("orgId") String orgId);
+
 }

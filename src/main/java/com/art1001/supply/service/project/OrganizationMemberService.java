@@ -92,5 +92,11 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return 结果
 	 */
 	Integer saveOrgOwnerInfo(String orgId, String userId);
-	
+
+	/**
+	 * 查询默认企业id
+	 * @param memberId
+	 * @return
+	 */
+	String findOrgByUserId(String memberId);
 }

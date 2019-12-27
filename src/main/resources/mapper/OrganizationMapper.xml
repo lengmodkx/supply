@@ -244,5 +244,4 @@
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
 		where p.organization_id = #{orgId} and p.project_del = 0 order by pm.create_time asc
 	</select>
-
 </mapper>

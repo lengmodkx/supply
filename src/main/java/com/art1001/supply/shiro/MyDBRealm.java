@@ -1,16 +1,9 @@
 package com.art1001.supply.shiro;
 
-
-import com.art1001.supply.entity.resource.ResourceEntity;
-import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.mapper.resource.ResourceMapper;
-import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.shiro.util.MyByteSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -19,11 +12,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -37,20 +25,6 @@ import java.util.stream.Collectors;
 public class MyDBRealm extends AuthorizingRealm {
 
 	private UserMapper userMapper;
-
-	private ResourceMapper resourceMapper;
-
-	private RoleMapper roleMapper;
-
-	@Autowired
-	public void setRoleMapper(RoleMapper roleMapper) {
-		this.roleMapper = roleMapper;
-	}
-
-	@Autowired
-	public void setResourceMapper(ResourceMapper resourceMapper) {
-		this.resourceMapper = resourceMapper;
-	}
 
 	@Autowired
 	public void setUserMapper(UserMapper userMapper) {
@@ -85,20 +59,10 @@ public class MyDBRealm extends AuthorizingRealm {
 		if(userEntity == null)
 			throw new AuthenticationException("用户名或者密码错误");
 		return new SimpleAuthenticationInfo(userEntity, userEntity.getPassword(), // 密码
-				new MyByteSource(username + userEntity.getCredentialsSalt()),
+				new MyByteSource(username+userEntity.getCredentialsSalt()),
 				"dbRealm");
 	}
-	
-	/**
-     * 清除当前用户权限信息
-     */
-	public void clearCachedAuthorizationInfo() {
-		PrincipalCollection principalCollection = SecurityUtils.getSubject().getPrincipals();
-		SimplePrincipalCollection principals = new SimplePrincipalCollection(
-				principalCollection, getName());
-		super.clearCachedAuthorizationInfo(principals);
-	}
-	
+
 	/**
      * 清除当前用户认证信息
      */
@@ -108,17 +72,7 @@ public class MyDBRealm extends AuthorizingRealm {
 				principalCollection, getName());
 		super.clearCachedAuthenticationInfo(principals);
 	}
-	
-	/**
-	 * 清除指定 principalCollection 的权限信息
-	 */
-	@Override
-	public void clearCachedAuthorizationInfo(PrincipalCollection principalCollection) {
-		SimplePrincipalCollection principals = new SimplePrincipalCollection(
-				principalCollection, getName());
-		super.clearCachedAuthorizationInfo(principals);
-	}
-	
+
 	/**
      * 清除用户认证信息
      */
@@ -128,14 +82,4 @@ public class MyDBRealm extends AuthorizingRealm {
 				principalCollection, getName());
 		super.clearCachedAuthenticationInfo(principals);
 	}
-
-
-	/**
-	 * 清除当前用户的认证和授权缓存信息
-	 */
-	public void clearAllCache() {
-		clearCachedAuthorizationInfo();
-		clearCachedAuthenticationInfo();
-	}
-
 }

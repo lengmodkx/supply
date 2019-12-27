@@ -25,7 +25,7 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.notice.impl.NoticeServiceImpl;
+import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
@@ -86,7 +86,7 @@ public class FileApi extends BaseController {
 
     /** 用于订阅推送消息 */
     @Resource
-    private NoticeServiceImpl noticeService;
+    private NoticeService noticeService;
 
     /**
      * 文件版本的逻辑层接口

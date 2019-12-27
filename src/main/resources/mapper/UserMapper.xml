@@ -180,6 +180,6 @@
 		select account_name from tb_user_copy1
 	</select>
     <select id="findInfo" resultType="com.art1001.supply.entity.user.UserInfo">
-		select user_id , user_name, image from tb_user where account_name=#{accountName}
+		select user_id , user_name, account_name,image from tb_user where account_name=#{accountName}
 	</select>
 </mapper>

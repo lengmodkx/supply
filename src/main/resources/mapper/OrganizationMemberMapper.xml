@@ -206,8 +206,9 @@
 		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id where m.member_id = #{memberId} and organization_id = #{orgId}
 
 	</select>
-
-
+	<select id="findOrgByUserId" resultType="java.lang.String">
+		select organization_id from prm_organization_member where member_id = #{memberId} and user_default = 1
+	</select>
 
 
 </mapper>

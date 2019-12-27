@@ -128,20 +128,7 @@ public class ShiroAuthenticationManager {
 		getSession().removeAttribute(key);
 		return kaptcha;
 	}
-	
-	
-	/**
-	 * 
-	 * @Description	清空当前用户权限信息
-	 * </br>目的：为了在判断权限的时候，系统会再次调用 <code>doGetAuthorizationInfo(...)  </code>方法加载权限信息。
-	 *
-	 * @author wjggwm
-	 * @data 2017年1月5日 下午6:09:55
-	 */
-	public static void clearUserAuth(){
-		jWTShiroRealm.clearCachedAuthorizationInfo();
-	}
-	
+
 	
 	/**
 	 * 

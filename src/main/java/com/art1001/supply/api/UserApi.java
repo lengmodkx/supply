@@ -9,6 +9,8 @@ import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.CodeMsg;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -104,31 +106,24 @@ public class UserApi extends BaseController {
      * @param rememberMe 记住我
      */
     @PostMapping("/login")
-     public JSONObject login(@RequestParam String accountName,
-                             @RequestParam String password,
-                             @RequestParam(required = false, defaultValue = "true") Boolean rememberMe,HttpServletRequest request){
-         JSONObject object = new JSONObject();
+     public Result<UserInfo> login(@RequestParam String accountName,
+                                   @RequestParam String password,
+                                   @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
          try {
              Subject subject = SecurityUtils.getSubject();
              UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
              subject.login(token);
              if(subject.isAuthenticated()) {
-                 object.put("result", 1);
-                 object.put("msg", "登陆成功");
-                 object.put("fileId", Constants.MATERIAL_BASE);
-                 object.put("userInfo",userService.findInfo(accountName));
-                 object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
+                 UserInfo userInfo = userService.findInfo(accountName);
+                 return Result.success(userInfo);
             } else {
-                 object.put("result", 0);
-                 object.put("msg", "账号或密码错误");
+                 return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
             }
          } catch (Exception e) {
             // 登录异常，请联系管理员！
             log.error("登录异常，请联系管理员！, {}", e);
-            object.put("result", 0);
-            object.put("msg", "登录异常，用户名或密码错误！");
+            return Result.fail(CodeMsg.SERVER_ERROR);
          }
-         return object;
      }
 
 

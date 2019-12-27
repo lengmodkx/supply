@@ -64,4 +64,6 @@ public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember>
 	 */
 	OrganizationMember findOrgByMemberId(@Param("memberId") String memberId,@Param("orgId") String orgId);
 
+	String findOrgByUserId(String memberId);
+
 }

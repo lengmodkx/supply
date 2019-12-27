@@ -105,7 +105,7 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
             resourcesRole.setTCreateTime(LocalDateTime.now());
             proResourcesRoleMapper.insert(resourcesRole);
         }
-        ShiroAuthenticationManager.clearUserAuth();
+
         return 1;
     }
 }

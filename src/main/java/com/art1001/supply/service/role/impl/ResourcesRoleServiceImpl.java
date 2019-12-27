@@ -140,7 +140,6 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             resourcesRole.setCreateTime(LocalDateTime.now());
             resourcesRoleMapper.insert(resourcesRole);
         }
-        ShiroAuthenticationManager.clearUserAuth();
         return 1;
     }
 }

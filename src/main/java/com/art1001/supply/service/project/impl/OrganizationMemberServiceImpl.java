@@ -166,4 +166,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMemberMapper.insert(organizationMember);
 		return 1;
 	}
+
+	@Override
+	public String findOrgByUserId(String memberId) {
+		return organizationMemberMapper.findOrgByUserId(memberId);
+	}
 }

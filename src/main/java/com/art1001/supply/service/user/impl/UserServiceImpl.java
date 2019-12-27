@@ -7,6 +7,7 @@ import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.WeChatUser;
@@ -14,7 +15,9 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -50,6 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Resource
     private WeChatUserInfoAssembler assembler;
 
+    private OrganizationMemberService organizationMemberService;
     @Resource
     FileMapper fileMapper;
     @Override
@@ -68,8 +72,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public UserInfo findInfo(String accountName){
-        Optional.ofNullable(accountName).orElseThrow(() -> new ServiceException("accountName 不能为空！"));
-        return userMapper.findInfo(accountName);
+        UserInfo info = userMapper.findInfo(accountName);
+        info.setOrgId(organizationMemberService.findOrgByUserId(info.getUserId()));
+        return info;
     }
 
 

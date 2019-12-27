@@ -11,11 +11,7 @@ public class CodeMsg {
     public static CodeMsg succss=new CodeMsg(1,"success");
 
     public static CodeMsg SERVER_ERROR=new CodeMsg(0,"服务端异常");
-    public static CodeMsg PASSWORD_EMPTY=new CodeMsg(0,"密码不能为空");
-    public static CodeMsg MOBILE_EMPTY=new CodeMsg(0,"手机号不能为空");
-    public static CodeMsg MOBILE_ERROR=new CodeMsg(0,"手机号格式错误");
-    public static CodeMsg NO_USER = new CodeMsg(0,"用户不存在");
-    public static CodeMsg PASSWORD_ERROR = new CodeMsg(0,"密码错误");
+    public static CodeMsg ACCOUNT_OR_PASSWORD_ERROR = new CodeMsg(0,"账号或密码错误");
 
 
     public CodeMsg fillArgs(Object...args){

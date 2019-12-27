@@ -1,11 +1,7 @@
 package com.art1001.supply.shiro;
 
-import com.art1001.supply.entity.user.UserEntity;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.art1001.supply.shiro.util.JwtUtil;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -19,14 +15,8 @@ public class JWTCredentialsMatcher implements CredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken authenticationToken, AuthenticationInfo authenticationInfo) {
         String token = (String) authenticationToken.getCredentials();
-        UserEntity user = (UserEntity)authenticationInfo.getPrincipals().getPrimaryPrincipal();
         try {
-            Algorithm algorithm = Algorithm.HMAC256(user.getCredentialsSalt());
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", user.getAccountName())
-                    .build();
-            verifier.verify(token);
-            return true;
+            return JwtUtil.verify(token,"1qaz2wsx#EDC");
         } catch (JWTVerificationException e) {
             log.error("Token Error:{}", e.getMessage());
         }
