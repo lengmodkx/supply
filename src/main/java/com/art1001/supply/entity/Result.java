@@ -17,6 +17,11 @@ public class Result<T> {
         this.data = data;
     }
 
+    private Result(){
+        this.result = 1;
+        this.msg = "success";
+    }
+
     private Result(CodeMsg msg){
         if(msg==null) {
             return;
@@ -24,6 +29,14 @@ public class Result<T> {
         this.result = msg.getResult();
         this.msg = msg.getMsg();
     }
+
+    /**
+     * 成功是调用
+     */
+    public static <T> Result<T> success(){
+        return new Result<>();
+    }
+
 
     /**
      * 成功是调用
