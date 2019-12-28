@@ -18,10 +18,7 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.FileExt;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -274,7 +271,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         String userId = ShiroAuthenticationManager.getUserId();
         List<File> childFile = fileMapper.findChildFile(parentId,orderType);
         if(fileService.isRootFolder(parentId)){
-            childFile.add(this.getMyFolder(ShiroAuthenticationManager.getUserId()));
+            File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
+            if(ObjectsUtil.isNotEmpty(myFolder)){
+                childFile.add(myFolder);
+            }
         }
 
         Iterator<File> iterator = childFile.iterator();

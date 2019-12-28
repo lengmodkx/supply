@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * ServiceImpl
+ * @author Administrator
  */
 @Service
 public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogService {
@@ -84,6 +85,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	 */
 	@Override
 	public List<Log> getSurplusMsg(String publicId, Integer surpluscount) {
-		return logMapper.selectSurplusMsg(publicId,surpluscount);
+		List<Log> logs = logMapper.selectSurplusMsg(publicId, surpluscount);
+		Collections.reverse(logs);
+		return logs;
 	}
 }

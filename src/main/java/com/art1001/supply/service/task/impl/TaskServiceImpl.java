@@ -1823,7 +1823,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //查询出  该任务的日志信息
         task.setLogs(logService.initLog(task.getTaskId()));
         //任务的附件
-        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1)));
+        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1).eq("file_del",0)));
         //设置关联信息
         bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
     }
