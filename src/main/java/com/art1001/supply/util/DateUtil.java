@@ -140,6 +140,22 @@ public class DateUtil {
         return map;
     }
 
+    //获取每天创建任务的集合
+    public  static Map<String, Integer> createTask(List<StatisticsResultVO> statisticsResultVOList,int dayNum) {
+        Map<String, Integer> dateMap = everyDate(dayNum);
+        for (Map.Entry map : dateMap.entrySet()) {
+            for (StatisticsResultVO svo : statisticsResultVOList) {
+                if (map.getKey().equals(svo.getCreateTime())){
+                    map.setValue(svo.getTaskCountInt());
+                }
+            }
+            if (map.getValue()==null){
+                map.setValue(0);
+            }
+        }
+        return dateMap;
+    }
+
 
     private static ArrayList<String> pastDaysList(int intervals) {
         ArrayList<String> pastDaysList = new ArrayList<>();

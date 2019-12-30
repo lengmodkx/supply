@@ -187,6 +187,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             Integer count = this.statisticsMapper.taskSevenDayAgo(projectId, currentDate, sto.getDayNum());
             //项目进展走势
             List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto);
+           //计算每天创建的任务量
+            Map<String, Integer> daysTaskMap = DateUtil.createTask(taskOfProgress,sto.getDayNum());
             //计算累计任务量
             Map<String, Integer> taskCountMap = DateUtil.dateComplement(taskOfProgress, count, sto.getDayNum());
             Map<String, Double> stringMap = DateUtil.taskBurnout(taskCountMap, sto.getDayNum());
@@ -198,7 +200,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             // type = 0 时包含所有数据  type = 1   燃尽图数据  type = 2  累计图数据
             if (type == 0){
 
-               statisticsBurnout=this.getStatisAllData(taskCountMap,projectId,sto,taskOfFinishProgress,stringMap);
+               statisticsBurnout=this.getStatisAllData(taskCountMap,daysTaskMap,projectId,sto,taskOfFinishProgress,stringMap);
+
 
             }else if(type == 1){
                statisticsBurnout.setSticResultVOS(statisticsResultVOList);
@@ -210,7 +213,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
 
 
-         return  statisticsBurnout;
+            return  statisticsBurnout;
 
 
         } catch (Exception e) {
@@ -671,7 +674,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     //获取进入统计页面的所有数据
-    private StatisticsBurnout  getStatisAllData(Map<String, Integer> taskCountMap,String projectId,StaticDto sto,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
+    private StatisticsBurnout  getStatisAllData(Map<String, Integer> taskCountMap,Map<String, Integer> createTaskMap,String projectId,StaticDto sto,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
@@ -723,7 +726,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         };
         Integer[] secondInt = new Integer[Map.size()];
         //将时间段内总任务与时间段内完成任务相减，获得剩余任务数
-        if (Map != null && Map.size() > 0) {
+     /*   if (Map != null && Map.size() > 0) {
             for (Map.Entry<String, Integer> entry : taskCountMap.entrySet()) {
                 if (taskCountMap != null && taskCountMap.size() > 0) {
                     for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
@@ -743,6 +746,22 @@ public class StatisticsServiceImpl implements StatisticsService {
                         }
                     }
                 }
+            }
+        }*/
+      if (Map != null && Map.size() > 0) {
+            for (Map.Entry<String, Integer> creatEentry : createTaskMap.entrySet()) {
+                    for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
+                        if (creatEentry.getKey().equals(everyEntry.getKey())) {
+                            if (everyEntry.getValue()==0 && creatEentry.getValue() ==0){
+                                secondInt[i]=0;
+                                i++;
+                            }else if (i<createTaskMap.size()){
+                                secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
+                                createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]);
+                                i++;
+                            }
+                        }
+                    }
             }
         }
         statisticsBurnout.setTrueTask(secondInt);
