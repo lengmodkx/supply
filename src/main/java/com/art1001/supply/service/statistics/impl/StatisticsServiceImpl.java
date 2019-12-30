@@ -755,11 +755,15 @@ public class StatisticsServiceImpl implements StatisticsService {
                             if (everyEntry.getValue()==0 && creatEentry.getValue() ==0){
                                 secondInt[i]=0;
                                 i++;
-                            }else if (i<createTaskMap.size()){
+                            }else if (i<createTaskMap.size()-1){
                                 secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
-                                createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]);
+                                createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]+createTaskMap.get(DateUtil.getNextDay(creatEentry.getKey())));
+                                i++;
+                            }else if(i==createTaskMap.size()-1){
+                                secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
                                 i++;
                             }
+
                         }
                     }
             }
