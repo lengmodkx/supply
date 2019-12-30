@@ -1,44 +1,43 @@
 package com.art1001.supply.service.user.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
-import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfo;
-import com.art1001.supply.entity.user.WeChatUser;
+import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.BaseException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
-import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
-import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Supplier;
 
 @Slf4j
 @Service
@@ -107,8 +106,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
         userEntity.setImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
         userEntity.setDefaultImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
-        //发送邮件
-        //emailUtil.send126Mail(userEntity.getAccountName(), "系统消息通知", "您好,您的账户已创建,账户名:" + userEntity.getAccountName() + " ,密码:" + password);
         userEntity.setCreateTime(new Date());
         userEntity.setUpdateTime(new Date());
         userMapper.insert(userEntity);
@@ -123,7 +120,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         file.setCatalog(1);
         file.setFilePrivacy(2);
         file.setFileLabel(1);
-        // 设置是否目录
         fileMapper.insert(file);
     }
 
@@ -177,37 +173,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public Map saveWeChatUserInfo(WeChatUser snsUserInfo) {
-        UserEntity userEntity;
-        Map<String, Object> resultMap = new HashMap<>(4);
-
-        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxOpenId, snsUserInfo.getOpenId());
-        userEntity = this.getOne(selectUserIsExistQw);
-
-        if(userEntity == null){
-            userEntity = new UserEntity();
-            userEntity.setUserName(snsUserInfo.getNickname());
-            userEntity.setWxOpenId(snsUserInfo.getOpenId());
-            userEntity.setWxUnionId(snsUserInfo.getUnionid());
-            userEntity.setCredentialsSalt(IdGen.uuid());
-            userEntity.setUpdateTime(new Date());
-            userEntity.setCreateTime(new Date());
-            userEntity.setAddress(snsUserInfo.getCity());
-            userEntity.setUserId(IdGen.uuid());
-            userEntity.setSex(snsUserInfo.getSex());
-            userEntity.setDefaultImage(snsUserInfo.getHeadImgUrl());
-            userEntity.setImage(snsUserInfo.getHeadImgUrl());
-            userMapper.insert(userEntity);
-            resultMap.put("bindPhone", true);
-        } else if(userEntity.getAccountName() == null){
-            resultMap.put("bindPhone", true);
+    public UserInfo saveWeChatUserInfo(String code) {
+        Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
+        WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
+        UserInfo userInfo = new UserInfo();
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id",info.getOpenId()));
+        if(userEntity == null){//微信用户不存在，保存微信返回的信息
+            UserEntity user = new UserEntity();
+            user.setUserName(info.getNickname());
+            user.setWxOpenId(info.getOpenId());
+            user.setWxUnionId(info.getUnionid());
+            user.setCredentialsSalt(IdGen.uuid());
+            user.setUpdateTime(new Date());
+            user.setCreateTime(new Date());
+            user.setAddress(info.getCity());
+            user.setUserId(IdGen.uuid());
+            user.setSex(info.getSex());
+            user.setDefaultImage(info.getHeadImgUrl());
+            user.setImage(info.getHeadImgUrl());
+            userMapper.insert(user);
+            userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
         } else {
-            resultMap.put("bindPhone", false);
-            resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
+            BeanUtils.copyProperties(userEntity,userInfo);
+            userInfo.setBindPhone(false);
+            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         }
-
-        resultMap.put("userInfo", userEntity);
-        return resultMap;
+        return userInfo;
     }
 
     @Override
@@ -333,18 +324,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public void bindWeChat(WeChatUser snsUserInfo, String userId) {
-        LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
-                .lambda().eq(UserEntity::getWxOpenId, snsUserInfo.getOpenId());
-
-        if(this.getOne(getSingleUserByWxUnionId) != null){
+    public void bindWeChat(String code,String userId) {
+        Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
+        WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
+        LambdaQueryWrapper<UserEntity> queryWrapper = new QueryWrapper<UserEntity>()
+                .lambda().eq(UserEntity::getWxOpenId, info.getOpenId());
+        if(this.getOne(queryWrapper) != null){
             throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
         }
 
         UserEntity updateEntity = new UserEntity();
         updateEntity.setUpdateTime(new Date());
-        updateEntity.setWxOpenId(snsUserInfo.getOpenId());
-        updateEntity.setWxUnionId(snsUserInfo.getUnionid());
+        updateEntity.setWxOpenId(info.getOpenId());
+        updateEntity.setWxUnionId(info.getUnionid());
         updateEntity.setUserId(userId);
         updateById(updateEntity);
     }
@@ -387,5 +379,103 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         upd.setPassword(new Md5Hash(newPassword, byId.getAccountName() + byId.getCredentialsSalt(), 2).toBase64());
 
         this.updateById(upd);
+    }
+
+
+    /**
+     * 获取网页授权凭证
+     * @param code
+     * @return WeixinAouth2Token
+     */
+    private Oauth2Token getOauth2AccessToken(String code) {
+        Oauth2Token wat = null;
+        // 拼接请求地址
+        String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+        requestUrl = requestUrl.replace("APPID", ConstansWeChat.APPID);
+        requestUrl = requestUrl.replace("SECRET", ConstansWeChat.SECRET);
+        requestUrl = requestUrl.replace("CODE", code);
+        // 获取网页授权凭证
+        JSONObject jsonObject = null;
+        try {
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            HttpGet httpGet = new HttpGet(requestUrl);
+            CloseableHttpResponse execute = httpClient.execute(httpGet);
+            HttpEntity entity = execute.getEntity();
+            jsonObject = JSONObject.parseObject(EntityUtils.toString(entity));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (null != jsonObject) {
+            try {
+                wat = new Oauth2Token();
+                wat.setAccessToken(jsonObject.getString("access_token"));
+                wat.setExpiresIn(jsonObject.getInteger("expires_in"));
+                wat.setRefreshToken(jsonObject.getString("refresh_token"));
+                wat.setOpenId(jsonObject.getString("openid"));
+                wat.setScope(jsonObject.getString("scope"));
+            } catch (Exception e) {
+                wat = null;
+                int errorCode = jsonObject.getInteger("errcode");
+                String errorMsg = jsonObject.getString("errmsg");
+                log.error("获取网页授权凭证失败 errcode:{} errmsg:{}", errorCode, errorMsg);
+            }
+        }
+        return wat;
+    }
+
+    /**
+     * 通过网页授权获取用户信息
+     *
+     * @param accessToken 网页授权接口调用凭证
+     * @param openId 用户标识
+     * @return SNSUserInfo
+     */
+    private WeChatUser getSNSUserInfo(String accessToken, String openId) {
+        WeChatUser snsUserInfo = null;
+        // 拼接请求地址
+        String requestUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID";
+        requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+        // 通过网页授权获取用户信息
+        JSONObject jsonObject = null;
+        try {
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            HttpGet httpGet = new HttpGet(requestUrl);
+            CloseableHttpResponse execute = null;
+            execute = httpClient.execute(httpGet);
+            HttpEntity entity = execute.getEntity();
+            jsonObject = JSONObject.parseObject(new String(EntityUtils.toString(entity).getBytes(),"utf-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (null != jsonObject) {
+            try {
+                snsUserInfo = new WeChatUser();
+                // 用户的标识
+                snsUserInfo.setOpenId(jsonObject.getString("openid"));
+                // 昵称
+                snsUserInfo.setNickname(new String(jsonObject.getString("nickname").getBytes("ISO-8859-1"),"utf-8"));
+                // 性别（1是男性，2是女性，0是未知）
+                snsUserInfo.setSex(jsonObject.getInteger("sex"));
+                // 用户所在国家
+                snsUserInfo.setCountry(jsonObject.getString("country"));
+                // 用户所在省份
+                snsUserInfo.setProvince(jsonObject.getString("province"));
+                // 用户所在城市
+                snsUserInfo.setCity(jsonObject.getString("city"));
+                // 用户头像
+                snsUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
+                // 用户特权信息
+                List<String> list = JSON.parseArray(jsonObject.getString("privilege"),String.class);
+                snsUserInfo.setPrivilegeList(list);
+                //与开放平台共用的唯一标识，只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
+                snsUserInfo.setUnionid(jsonObject.getString("unionid"));
+            } catch (Exception e) {
+                snsUserInfo = null;
+                int errorCode = jsonObject.getInteger("errcode");
+                String errorMsg = jsonObject.getString("errmsg");
+                log.error("获取用户信息失败 errcode:{} errmsg:{}", errorCode, errorMsg);
+            }
+        }
+        return snsUserInfo;
     }
 }

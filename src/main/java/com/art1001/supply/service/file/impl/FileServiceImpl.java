@@ -158,7 +158,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public File saveModel(String fileModel, String fileCommon, String publicId, String filename, String parentId) {
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
         JSONObject array = JSON.parseObject(fileCommon);
         JSONObject object = JSON.parseObject(fileModel);
         String fileName = object.getString("fileName");
@@ -514,7 +514,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public void saveFileBatch(String projectId, String files, String parentId,String publicId) {
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
         List<File> fileList = new ArrayList<>();
         List<FileVersion> versionList = new ArrayList<>();
         if(StringUtils.isNotEmpty(files)){

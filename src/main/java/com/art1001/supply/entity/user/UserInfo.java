@@ -50,6 +50,11 @@ public class UserInfo extends Model<UserInfo> {
      */
     @TableField(exist = false)
     private String accessToken;
+    /**
+     * 是否绑定手机号，微信登录需要用到
+     */
+    @TableField(exist = false)
+    private Boolean bindPhone;
 
     public String getAccessToken() {
         return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");

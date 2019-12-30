@@ -53,10 +53,9 @@ public interface UserService extends IService<UserEntity> {
 
 	/**
 	 * 注册微信用户到数据库
-	 * @param snsUserInfo
 	 * @return
 	 */
-	Map saveWeChatUserInfo(WeChatUser snsUserInfo);
+	UserInfo saveWeChatUserInfo(String code);
 
 	/**
 	 * 根据用户名查询该用户存不存在
@@ -111,10 +110,10 @@ public interface UserService extends IService<UserEntity> {
 
 	/**
 	 * 手机号绑定微信
-	 * @param snsUserInfo 微信用户信息
-	 * @param accountName 手机号或者邮箱
+	 * @param userId 用户id
+	 * @param code 用户code
 	 */
-    void bindWeChat(WeChatUser snsUserInfo, String accountName);
+    void bindWeChat(String code,String userId);
 
 	/**
 	 * 根据用户id查询出该用户对应的小程序openId

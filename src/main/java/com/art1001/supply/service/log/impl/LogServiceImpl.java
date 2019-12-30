@@ -68,7 +68,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	@Override
 	public List<Log> initLog(String publicId) {
 		List<Log> logs = logMapper.initLog(publicId);
-		Collections.reverse(logs);
+		//Collections.reverse(logs);
 		return logs;
 	}
 

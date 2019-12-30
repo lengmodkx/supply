@@ -154,11 +154,6 @@ public class ProjectApi extends BaseController {
             project.setStartTime(startTime);
             project.setEndTime(endTime);
             if(!Stringer.isNullOrEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
-                //删除Oss上的图片
-                /*Project projectById = projectService.findProjectByProjectId(projectId);
-                if (!Stringer.isNullOrEmpty(projectById.getProjectCover()) || projectById.getProjectCover() != ""){
-                    AliyunOss.deleteFile(projectById.getProjectCover());
-                }*/
                 //将新的图片路径写入项目
                 project.setProjectCover(projectCover);
             }

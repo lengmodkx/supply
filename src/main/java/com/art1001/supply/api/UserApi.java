@@ -117,11 +117,11 @@ public class UserApi {
      */
     @PostMapping("/register")
     public Result register(@RequestParam String captcha,
-                               @RequestParam String accountName,
-                               @RequestParam String password,
-                               @RequestParam String userName,
-                               @RequestParam String job,
-                               HttpServletRequest request) {
+                           @RequestParam String accountName,
+                           @RequestParam String password,
+                           @RequestParam String userName,
+                           @RequestParam String job,
+                           HttpServletRequest request) {
         if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
@@ -189,8 +189,8 @@ public class UserApi {
      * @return
      */
     @GetMapping("/code")
-    public Result code(@RequestParam String accountName,@RequestParam String captcha){
-        String kaptcha = ShiroAuthenticationManager.getKaptcha("captcha");
+    public Result code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
+        String kaptcha = String.valueOf(request.getSession().getAttribute("captcha"));
         if(!kaptcha.equalsIgnoreCase(captcha)){
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
@@ -213,8 +213,8 @@ public class UserApi {
      */
     @PutMapping("/forget")
     public Result forget(@RequestParam String accountName,
-                             @RequestParam String password,
-                             @RequestParam String code){
+                         @RequestParam String password,
+                         @RequestParam String code){
         try {
             UserEntity userEntity = userService.findByName(accountName);
             if(userEntity==null){
@@ -265,114 +265,17 @@ public class UserApi {
         }
     }
 
-    @RequestMapping("wechattoken")
-    public Object getWeChatToken(@RequestParam String code){
-        log.info("weChat token code is [{}]",code);
-        Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
-        WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
-        Map map = userService.saveWeChatUserInfo(snsUserInfo);
-        map.put("result", 1);
-        return map;
-    }
-
     /**
-     * 获取网页授权凭证
-     * @param appId 公众账号的唯一标识
-     * @param appSecret 公众账号的密钥
+     * 微信登录保存用户信息
      * @param code
-     * @return WeixinAouth2Token
+     * @return
      */
-     public static Oauth2Token getOauth2AccessToken(String appId, String appSecret, String code) {
-        Oauth2Token wat = null;
-        // 拼接请求地址
-        String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
-        requestUrl = requestUrl.replace("APPID", appId);
-        requestUrl = requestUrl.replace("SECRET", appSecret);
-        requestUrl = requestUrl.replace("CODE", code);
-       // 获取网页授权凭证
-         JSONObject jsonObject = null;
-         try {
-             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-             HttpGet httpGet = new HttpGet(requestUrl);
-             CloseableHttpResponse execute = httpClient.execute(httpGet);
-             HttpEntity entity = execute.getEntity();
-             jsonObject = JSONObject.parseObject(EntityUtils.toString(entity));
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         if (null != jsonObject) {
-             try {
-                 wat = new Oauth2Token();
-                 wat.setAccessToken(jsonObject.getString("access_token"));
-                 wat.setExpiresIn(jsonObject.getInteger("expires_in"));
-                 wat.setRefreshToken(jsonObject.getString("refresh_token"));
-                 wat.setOpenId(jsonObject.getString("openid"));
-                 wat.setScope(jsonObject.getString("scope"));
-              } catch (Exception e) {
-                  wat = null;
-                  int errorCode = jsonObject.getInteger("errcode");
-                  String errorMsg = jsonObject.getString("errmsg");
-                  log.error("获取网页授权凭证失败 errcode:{} errmsg:{}", errorCode, errorMsg);
-              }
-         }
-         return wat;
-     }
-
-      /**
-        * 通过网页授权获取用户信息
-        *
-        * @param accessToken 网页授权接口调用凭证
-        * @param openId 用户标识
-        * @return SNSUserInfo
-        */
-     public static WeChatUser getSNSUserInfo(String accessToken, String openId) {
-         WeChatUser snsUserInfo = null;
-         // 拼接请求地址
-         String requestUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID";
-         requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
-         // 通过网页授权获取用户信息
-         JSONObject jsonObject = null;
-         try {
-             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-             HttpGet httpGet = new HttpGet(requestUrl);
-             CloseableHttpResponse execute = null;
-             execute = httpClient.execute(httpGet);
-             HttpEntity entity = execute.getEntity();
-             jsonObject = JSONObject.parseObject(new String(EntityUtils.toString(entity).getBytes(),"utf-8"));
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         if (null != jsonObject) {
-             try {
-                 snsUserInfo = new WeChatUser();
-                 // 用户的标识
-                 snsUserInfo.setOpenId(jsonObject.getString("openid"));
-                 // 昵称
-                 snsUserInfo.setNickname(new String(jsonObject.getString("nickname").getBytes("ISO-8859-1"),"utf-8"));
-                 // 性别（1是男性，2是女性，0是未知）
-                 snsUserInfo.setSex(jsonObject.getInteger("sex"));
-                 // 用户所在国家
-                 snsUserInfo.setCountry(jsonObject.getString("country"));
-                 // 用户所在省份
-                 snsUserInfo.setProvince(jsonObject.getString("province"));
-                 // 用户所在城市
-                 snsUserInfo.setCity(jsonObject.getString("city"));
-                 // 用户头像
-                 snsUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
-                 // 用户特权信息
-                 List<String> list = JSON.parseArray(jsonObject.getString("privilege"),String.class);
-                 snsUserInfo.setPrivilegeList(list);
-                 //与开放平台共用的唯一标识，只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
-                 snsUserInfo.setUnionid(jsonObject.getString("unionid"));
-             } catch (Exception e) {
-                 snsUserInfo = null;
-                 int errorCode = jsonObject.getInteger("errcode");
-                String errorMsg = jsonObject.getString("errmsg");
-                log.error("获取用户信息失败 errcode:{} errmsg:{}", errorCode, errorMsg);
-             }
-         }
-         return snsUserInfo;
-     }
+    @RequestMapping("wechattoken")
+    public Result<UserInfo> getWeChatToken(@RequestParam String code){
+        log.info("weChat token code is [{}]",code);
+        UserInfo userInfo = userService.saveWeChatUserInfo(code);
+        return Result.success(userInfo);
+    }
 
     /**
      * 获取用户信息
@@ -416,6 +319,7 @@ public class UserApi {
             userEntity.setUserId(userId);
             if(StringUtils.isNotEmpty(image)){
                 userEntity.setImage(image);
+                userEntity.setDefaultImage(image);
             }
 
             if(StringUtils.isNotEmpty(userName)){
@@ -524,23 +428,16 @@ public class UserApi {
      * @param useId 用户id
      */
     @PostMapping("/bind/wechat")
-    public JSONObject bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
+    public Result bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
                                  @Validated @NotNull(message = "useId不能为空！") String useId){
 
         log.info("bind weChat [{},{}]", code, useId);
-
-        Oauth2Token oauth2AccessToken = getOauth2AccessToken(ConstansWeChat.APPID, ConstansWeChat.SECRET, code);
-        WeChatUser snsUserInfo = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
-        userService.bindWeChat(snsUserInfo,useId);
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("result", 1);
-        jsonObject.put("msg","绑定成功！");
-        return jsonObject;
+        userService.bindWeChat(code,useId);
+        return Result.success();
     }
 
     @PostMapping("/notbind/wechat")
-    public JSONObject notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId){
+    public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId){
 
         log.info("bind weChat [{}]", useId);
         UserEntity userEntity = new UserEntity();
@@ -548,10 +445,7 @@ public class UserApi {
         userEntity.setWxOpenId("");
         userEntity.setWxUnionId("");
         userService.updateById(userEntity);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("msg","解绑成功！");
-        jsonObject.put("result", 1);
-        return jsonObject;
+        return Result.success();
     }
 
     @PostMapping("reset_password")

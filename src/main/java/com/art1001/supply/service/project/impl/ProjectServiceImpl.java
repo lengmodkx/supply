@@ -116,7 +116,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	 */
 	@Override
 	public void updateProject(Project project) {
-		projectMapper.updateProject(project);
+		projectMapper.updateById(project);
 	}
 
 	/**
