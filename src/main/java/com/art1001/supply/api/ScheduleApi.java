@@ -108,7 +108,8 @@ public class ScheduleApi extends BaseController {
                                     @RequestParam(defaultValue = "不重复",required = false) String repeat,
                                     @RequestParam(defaultValue = "不提醒",required = false) String remind,
                                     @RequestParam(value = "memberIds",required = false) String memberIds,
-                                    @RequestParam(defaultValue = "0",required = false) Integer privacy){
+                                    @RequestParam(defaultValue = "0",required = false) Integer privacy,
+                                    @RequestParam(defaultValue = "0",required = false) Integer isAllday){
         JSONObject object = new JSONObject();
         try{
             Schedule schedule = new Schedule();
@@ -116,6 +117,7 @@ public class ScheduleApi extends BaseController {
             schedule.setScheduleName(scheduleName);
             schedule.setStartTime(startTime);
             schedule.setEndTime(endTime);
+            schedule.setIsAllday(isAllday);
             schedule.setRepeat(repeat);
             schedule.setRemind(remind);
             schedule.setMemberIds(memberIds);

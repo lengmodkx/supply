@@ -39,6 +39,14 @@ public interface AutomationRulesService extends IService<AutomationRule> {
     AutomationRuleDTO getRuleById(String id);
 
     /**
+     * 根据自动化规则名称查询项目下是否已经存在该名称的自动化规则信息
+     * @param projectId 项目id
+     * @param ruleName 规则名称
+     * @return 是否存在
+     */
+    Boolean checkAutomationRuleIsExistByName(String projectId, String ruleName);
+
+    /**
      * 获取自动化规则
      * @author heShaoHua
      * @describe 暂无

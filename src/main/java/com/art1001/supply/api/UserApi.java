@@ -21,6 +21,7 @@ import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.mustachejava.Code;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -196,6 +197,8 @@ public class UserApi {
         //通过短信发送验证码
         if(RegexUtils.checkMobile(accountName)){
             aliyunMessageService.sendCode(userService.findByName(accountName).getUserId(), accountName);
+        } else {
+            return Result.fail(CodeMsg.PHONE_ERROR);
         }
         return Result.success();
 

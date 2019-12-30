@@ -311,7 +311,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * @param folderId 目标目录id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void moveFile(String[] fileIds, String folderId) {
         Map<String, Object> map = new HashMap<>();
         map.put("fileIds", fileIds);

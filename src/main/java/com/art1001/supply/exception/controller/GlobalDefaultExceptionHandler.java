@@ -1,5 +1,6 @@
 package com.art1001.supply.exception.controller;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.exception.*;
 import lombok.extern.slf4j.Slf4j;
@@ -141,10 +142,7 @@ public class GlobalDefaultExceptionHandler {
 	public Result operateExp(ServiceException ex) {
 		log.error(ex.getMessage(), ex);
 		// 将Ajax异常信息回写到前台,用于页面的提示
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msg",ex.getMessage());
-		jsonObject.put("result",0);
-		return Result.success(jsonObject);
+		return Result.fail(ex.getMessage());
 	}
 
 	@ExceptionHandler(BaseException.class)

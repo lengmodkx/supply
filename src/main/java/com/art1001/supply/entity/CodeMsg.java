@@ -17,6 +17,9 @@ public class CodeMsg {
     public static CodeMsg REGISTER_FAIL = new CodeMsg(0,"注册失败");
     public static CodeMsg USER_NO = new CodeMsg(0,"用户不存在，请检查");
     public static CodeMsg CAPTCHA_NO_USE = new CodeMsg(0,"验证码已经失效");
+    public static CodeMsg TASK_NAME_IS_NULL = new CodeMsg(0,"任务名称不能为空");
+    public static CodeMsg PHONE_ERROR = new CodeMsg(0,"手机号格式不正确");
+
 
 
     public CodeMsg fillArgs(Object...args){

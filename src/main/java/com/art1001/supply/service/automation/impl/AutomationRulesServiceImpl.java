@@ -2,10 +2,12 @@ package com.art1001.supply.service.automation.impl;
 
 import com.art1001.supply.entity.automation.AutomationRule;
 import com.art1001.supply.entity.automation.dto.AutomationRuleDTO;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.automation.AutomationRulesMapper;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.Stringer;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -34,6 +36,9 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
 
     @Override
     public int saveAutomationRule(AutomationRule automationRule) {
+        if(this.checkAutomationRuleIsExistByName(automationRule.getProjectId(), automationRule.getName())){
+            throw new ServiceException("该项目中的规则已经存在,请更换规则名称。");
+        }
         automationRule.setCreateTime(System.currentTimeMillis());
         automationRule.setUpdateTime(System.currentTimeMillis());
         automationRule.setCreateUser(ShiroAuthenticationManager.getUserId());
@@ -43,6 +48,17 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
     @Override
     public AutomationRuleDTO getRuleById(String id) {
         return automationRulesMapper.selectRuleById(id);
+    }
+
+    @Override
+    public Boolean checkAutomationRuleIsExistByName(String projectId, String ruleName) {
+        ValidatedUtil.filterNullParam(projectId, ruleName);
+
+        LambdaQueryWrapper<AutomationRule> selectRuleIsExistByName = new QueryWrapper<AutomationRule>().lambda()
+                .eq(AutomationRule::getProjectId, projectId)
+                .eq(AutomationRule::getName, ruleName);
+
+        return this.count(selectRuleIsExistByName) > 0;
     }
 
     @Override

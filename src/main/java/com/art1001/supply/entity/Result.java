@@ -29,6 +29,13 @@ public class Result<T> {
         this.result = msg.getResult();
         this.msg = msg.getMsg();
     }
+    private Result(String msg){
+        if(msg==null) {
+            return;
+        }
+        this.result = 0;
+        this.msg = msg;
+    }
 
     /**
      * 成功是调用
@@ -49,6 +56,13 @@ public class Result<T> {
      * 失败时调用
      */
     public static <T> Result<T> fail(CodeMsg msg){
+        return new Result<>(msg);
+    }
+
+    /**
+     * 失败时调用
+     */
+    public static <T> Result<T> fail(String msg){
         return new Result<>(msg);
     }
 

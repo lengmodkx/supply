@@ -1242,11 +1242,15 @@ public class FileApi extends BaseController {
      * @param label 标识(1.标记   0.取消)
      * @return 是否成功
      */
+    @Push(value = PushType.C14)
     @PutMapping("/sing_cancel/important_label")
     public JSONObject signOrCancelImportantLabel(@RequestParam @NotBlank(message = "fileId不能为空!") String fileId,
                                                  @RequestParam @Range(max = 1,message = "参数值范围错误!") Integer label){
+        JSONObject jsonObject = new JSONObject();
         fileService.signImportant(fileId,label);
-        return success();
+        jsonObject.put("result", 1);
+        jsonObject.put("msgId", fileService.findFileById(fileId).getProjectId());
+        return jsonObject;
     }
 
     /**

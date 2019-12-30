@@ -108,7 +108,6 @@ public class  TaskApi extends BaseController {
      * @return object
      */
     @AutomationRule(value = "#task.taskId",trigger = AutomationRuleConstans.ADD_TASK)
-//    @Log(PushType.A1)
     @Push(value = PushType.A1,type = 1)
     @PostMapping
     public JSONObject addTask(Task task){
@@ -679,6 +678,11 @@ public class  TaskApi extends BaseController {
                                    @RequestParam(value = "startTime",required = false)String startTime){
         JSONObject object = new JSONObject();
         try{
+            if(StringUtils.isEmpty(taskName)){
+                object.put("result",0);
+                object.put("msg", "任务名称不能为空！");
+                return object;
+            }
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);

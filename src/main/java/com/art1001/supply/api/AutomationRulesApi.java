@@ -10,6 +10,7 @@ import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ValidatorUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +51,9 @@ public class AutomationRulesApi extends BaseController {
     public JSONObject addAutoRule(@RequestBody AutomationRule automationRule){
         ValidatorUtils.validateEntity(automationRule);
         try {
+            if(StringUtils.isEmpty(automationRule.getProjectId())){
+                return error("项目ID不能为空！");
+            }
             //验证参数
             int params = automationRuleCheck.checkAutomationRule(automationRule);
             if(params == 1){

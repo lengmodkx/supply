@@ -1,5 +1,9 @@
 package com.art1001.supply.annotation;
 
+/**
+ * @author 少华
+ * @date 2019/12/30
+ */
 public enum PushType {
     Default(0,""),
     B1(1,"添加分享"),
@@ -74,6 +78,7 @@ public enum PushType {
     C11(11,"修改文件名称"),
     C12(12,"移动了文件"),
     C13(13,"将文件移入回收站"),
+    C14(14, "标记了文件"),
 
     E1(1,"添加了标签"),
     E2(2,"移除了标签"),
