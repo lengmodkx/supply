@@ -1,11 +1,17 @@
 package com.art1001.supply.service.log.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.locationtech.spatial4j.io.ShapeIO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +28,13 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	/** Mapper接口*/
 	@Resource
 	private LogMapper logMapper;
+
+	@Resource
+	private RedisUtil redisUtil;
+
+	@Resource
+	private UserService userService;
+
 	/**
 	 * 保存数据
 	 *

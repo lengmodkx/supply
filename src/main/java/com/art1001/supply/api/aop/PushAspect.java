@@ -5,13 +5,18 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.util.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
@@ -36,6 +41,7 @@ import java.util.concurrent.locks.Lock;
 /**
  * @author shaohua
  */
+@Slf4j
 @Aspect
 @Component
 public class PushAspect extends BaseController {
@@ -57,6 +63,12 @@ public class PushAspect extends BaseController {
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     private final static String ID = "id";
     private final static String PROJECT_ID = "projectId";
@@ -130,15 +142,23 @@ public class PushAspect extends BaseController {
      * @param object 返回值信息
      */
     private Log saveLog(JSONObject object,Push push){
-        Log log = new Log();
-        log.setPublicId(object.getString(ID));
-        log.setProjectId(object.getString(PROJECT_ID));
-        log.setCreateTime(System.currentTimeMillis());
+        Log systemLog = new Log();
+        systemLog.setPublicId(object.getString(ID));
+        systemLog.setProjectId(object.getString(PROJECT_ID));
+        systemLog.setCreateTime(System.currentTimeMillis());
         String name = object.getString(NAME) != null ? object.getString(NAME):"";
-        log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + push.value().getName()+" "+ name);
-        log.setMemberId(ShiroAuthenticationManager.getUserId());
-        logService.save(log);
-        return log;
+        UserEntity userEntity;
+        try {
+            userEntity = JSONObject.parseObject(redisUtil.get(ShiroAuthenticationManager.getUserId()), UserEntity.class);
+        } catch (NullPointerException e){
+            log.info("redis中没有当前用户登录信息，需要从mysql中获取.[{}],",ShiroAuthenticationManager.getUserId());
+            userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
+            redisUtil.set(Constants.USER_INFO + ShiroAuthenticationManager.getUserId(),userEntity);
+        }
+        systemLog.setContent(userEntity.getUserName() + " " + push.value().getName()+" "+ name);
+        systemLog.setMemberId(ShiroAuthenticationManager.getUserId());
+        logService.save(systemLog);
+        return systemLog;
     }
 
 

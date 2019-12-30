@@ -93,6 +93,7 @@ public class UserApi {
              subject.login(token);
              if(subject.isAuthenticated()) {
                  UserInfo userInfo = userService.findInfo(accountName);
+                 redisUtil.set(Constants.USER_INFO + userInfo.getUserId(), userInfo);
                  return Result.success(userInfo);
              } else {
                  return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);

@@ -71,4 +71,9 @@ public class Constants {
     public static final String MATERIAL_BASE = "ef6ba5f0e3584e58a8cc0b2d28286c93";
 
     public static final String WE_CHAT_SESSION_KEY_PRE = "weChatAppLogin:";
+
+    //===================================================== Redis prefix ==============================================
+
+    public static final String USER_INFO = "userInfo:";
+
 }
