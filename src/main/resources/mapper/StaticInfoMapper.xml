@@ -176,7 +176,7 @@
 		 GROUP BY pt.executor
     </select>
 
-    <!-- 项目进展走势 总累计数据 -->
+    <!-- 项目进展走势 完成任务的总累计数据 -->
     <select id="taskOfProgress" resultMap="BaseResultMap">
 		SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') AS create_time,COUNT(1) AS task_count
 		FROM  prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor

@@ -205,7 +205,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
             }else if(type == 1){
                statisticsBurnout.setSticResultVOS(statisticsResultVOList);
-               statisticsBurnout=this.getBurnOut(taskCountMap,taskOfFinishProgress,stringMap);
+               statisticsBurnout=this.getBurnOut(daysTaskMap,taskOfFinishProgress,stringMap);
 
             }else if(type == 2){
 
@@ -775,7 +775,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-    private  StatisticsBurnout getBurnOut(Map<String, Integer> taskCountMap,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
+    private  StatisticsBurnout getBurnOut(Map<String, Integer> createTaskMap,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
 
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
         String[] everyDateName = new String[stringMap.size()];
@@ -791,7 +791,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         i = 0;
         //将时间段内每天完成的任务转换成Map格式  key对应时间，value对应任务数
-        Map<String, Integer> Map = DateUtil.everyDate(taskCountMap.size());
+        Map<String, Integer> Map = DateUtil.everyDate(createTaskMap.size());
         for (Map.Entry<String, Integer> entry : Map.entrySet()) {
             if (entry.getValue()==null){
                 entry.setValue(0);
@@ -805,23 +805,21 @@ public class StatisticsServiceImpl implements StatisticsService {
         Integer[] secondInt = new Integer[Map.size()];
         //将时间段内总任务与时间段内完成任务相减，获得剩余任务数
         if (Map != null && Map.size() > 0) {
-            for (Map.Entry<String, Integer> entry : taskCountMap.entrySet()) {
-                if (taskCountMap != null && taskCountMap.size() > 0) {
-                    for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
-                        if (everyEntry.getKey().equals(entry.getKey())) {
-                            if (everyEntry.getValue()==0 && entry.getValue() ==0){
-                                secondInt[i]=0;
-                                i++;
-                            }else if (i<taskCountMap.size()-1){
-                                secondInt[i]=entry.getValue()-everyEntry.getValue();
-                                taskCountMap.put(DateUtil.getNextDay(entry.getKey()),secondInt[i]);
-                                i++;
-                            }else {
-                                taskCountMap.put(entry.getKey(),taskCountMap.get(DateUtil.getYesterday(entry.getKey())));
-                                secondInt[i]=entry.getValue()-everyEntry.getValue();
-                                i++;
-                            }
+            for (Map.Entry<String, Integer> creatEentry : createTaskMap.entrySet()) {
+                for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
+                    if (creatEentry.getKey().equals(everyEntry.getKey())) {
+                        if (everyEntry.getValue()==0 && creatEentry.getValue() ==0){
+                            secondInt[i]=0;
+                            i++;
+                        }else if (i<createTaskMap.size()-1){
+                            secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
+                            createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]+createTaskMap.get(DateUtil.getNextDay(creatEentry.getKey())));
+                            i++;
+                        }else if(i==createTaskMap.size()-1){
+                            secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
+                            i++;
                         }
+
                     }
                 }
             }
