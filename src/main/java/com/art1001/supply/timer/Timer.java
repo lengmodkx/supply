@@ -211,7 +211,7 @@ public class Timer {
      */
     @Scheduled(cron = "0 0 0 * * ?")
     public void clearAliyunMessageCount(){
-        redisUtil.removePattern("aliyun:message:frequency:*");
+        redisUtil.removePattern("aliyun:message:frequency*");
     }
 
 }

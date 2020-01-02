@@ -15,6 +15,7 @@ import com.art1001.supply.aliyun.message.exception.MessageSendException;
 import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.CodeGen;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
@@ -36,6 +37,14 @@ public class AliyunMessageServiceImpl implements AliyunMessageService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    private Long mm = 60L;
+
+    private String flagPre = "aliyun:message:cooling:";
+
+    private String frequencyPre = "aliyun:message:frequency";
+
+    private Integer maxCount = 5;
 
     @Override
     public void sendMessage(String code, String phoneNumbers) {
@@ -66,8 +75,25 @@ public class AliyunMessageServiceImpl implements AliyunMessageService {
 
     @Override
     public void sendCode(String userId, String phone) {
+        if(redisUtil.exists(flagPre+userId)){
+            throw new ServiceException("60秒内不能重复发短信。");
+        }
+
+        if(redisUtil.exists(frequencyPre + userId) && Integer.valueOf(redisUtil.get(frequencyPre + userId)) >= maxCount){
+            throw new ServiceException("短信发送次数已经超出上限。");
+        }
+
         String code = CodeGen.getCode();
         this.sendMessage(code, phone);
         redisUtil.set(KeyWord.PREFIX.getCodePrefix() + userId, code,60*5L);
+
+        //设置短信冷却时间
+        redisUtil.set(flagPre + userId, 1, mm);
+
+        if(redisUtil.exists(frequencyPre + userId)){
+            redisUtil.set(frequencyPre + userId, Integer.valueOf(redisUtil.get(frequencyPre + userId)) + 1);
+        } else {
+            redisUtil.set(frequencyPre + userId, 1);
+        }
     }
 }

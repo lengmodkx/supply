@@ -464,13 +464,12 @@ public class UserApi {
     }
 
     @PostMapping("change_password")
-    public Object changePassword(@Validated @NotNull(message = "原密码不能为空") String oldPassword,
+    public Result changePassword(@Validated @NotNull(message = "原密码不能为空") String oldPassword,
                                  @Validated @NotNull(message = "新密码不能为空") String newPassword){
         log.info("Change current user password. [{},{},{}]", oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
-        JSONObject jsonObject = new JSONObject();
         userService.changePasswordByUserId(oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
 
-        return jsonObject;
+        return Result.success();
     }
     /**
      * 管理员登陆
