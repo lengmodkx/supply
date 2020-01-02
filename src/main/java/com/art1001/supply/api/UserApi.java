@@ -489,7 +489,7 @@ public class UserApi {
                 object.put("fileId", Constants.MATERIAL_BASE);
                 object.put("result", 1);
                 object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
-                object.put("accessToken",JwtUtil.sign(accountName,ShiroAuthenticationManager.getUserEntity().getCredentialsSalt()));
+                object.put("accessToken",JwtUtil.sign(ShiroAuthenticationManager.getUserId(),"1qaz2wsx#EDC"));
             } else {
                 object.put("result", 0);
                 object.put("msg", "账号或密码错误");

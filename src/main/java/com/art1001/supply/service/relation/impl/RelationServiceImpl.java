@@ -156,7 +156,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 * @return
 	 */
 	@Override
-	public List<Relation> findRelationAllList(Relation relation, String name){
+	public List<Relation> findRelationAllList(Relation relation){
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
 		relationAllList.forEach(r -> {
 			r.getTaskList().forEach(t -> {
@@ -171,11 +171,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 							iterator.remove();
 						}
 					}
-				}
-				if(!Stringer.isNullOrEmpty(name) && !task.getTaskName().contains(name)){
-					iterator.remove();
-				}else if(task.getTaskDel()==1){
-					iterator.remove();
 				}
 			}
 

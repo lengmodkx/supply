@@ -270,24 +270,17 @@ public class ProjectApi extends BaseController {
      * @return
      */
 //    @ProAuthentization("tasks")
-    @GetMapping("/{projectId}/tasks")
-    public JSONObject mainpage(@PathVariable String projectId, @RequestParam(required = false) String name) {
+    @GetMapping("/{projectId}/tasks/{groupId}")
+    public JSONObject taskIndex(@PathVariable String projectId,@PathVariable String groupId) {
         JSONObject object = new JSONObject();
         try {
-            String userId = ShiroAuthenticationManager.getUserId();
-            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
-            Project project = projectService.findProjectByProjectId(projectId);
             //查询项目默认分组
             Relation relation = new Relation();
             relation.setParentId(groupId);
             relation.setLable(1);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation,name);
-            projectMemberService.updateUserCurrentProject(projectId);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
             object.put("result", 1);
             object.put("menus",taskMenu);
-            object.put("user",userService.findById(ShiroAuthenticationManager.getUserId()));
-            object.put("project",project);
-            object.put("groupId",groupId);
         } catch (Exception e) {
             e.printStackTrace();
             throw new AjaxException(e);
