@@ -270,10 +270,12 @@ public class ProjectApi extends BaseController {
      * @return
      */
 //    @ProAuthentization("tasks")
-    @GetMapping("/{projectId}/tasks/{groupId}")
-    public JSONObject taskIndex(@PathVariable String projectId,@PathVariable String groupId) {
+    @GetMapping("/{projectId}/tasks")
+    public JSONObject taskIndex(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
             Relation relation = new Relation();
             relation.setParentId(groupId);
