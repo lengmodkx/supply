@@ -183,6 +183,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public void saveTask(Task task) {
         //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
+        task.setTaskUIds(ShiroAuthenticationManager.getUserId());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
