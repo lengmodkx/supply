@@ -99,6 +99,11 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(required = false) @Length(max = 32,message = "parentId参数不正确!") String parentId,
                                     @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
+        if(endTime < startTime){
+            object.put("result",1);
+            object.put("msg", "项目开始时间不能大于结束时间。");
+            return object;
+        }
         Project project = new Project();
         project.setProjectName(projectName);
         project.setProjectDes(projectDes);
