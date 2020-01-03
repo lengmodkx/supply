@@ -62,21 +62,6 @@ public class ProjectApi extends BaseController {
     private FileService fileService;
 
     @Resource
-    private UserService userService;
-
-    @Resource
-    private RedisUtil redisUtil;
-
-    @Resource
-    private OrganizationService organizationService;
-
-    @Resource
-    private ProResourcesService proResourcesService;
-
-    @Resource
-    private OrganizationMemberService organizationMemberService;
-
-    @Resource
     private TaskService taskService;
 
     @Resource
