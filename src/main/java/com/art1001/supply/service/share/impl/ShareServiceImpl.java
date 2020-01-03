@@ -1,5 +1,6 @@
 package com.art1001.supply.service.share.impl;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -147,6 +148,9 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	@Override
 	public Share findByIdAllInfo(String shareId) {
 		Share share = shareMapper.findById(shareId);
+		//获取该任务的未读消息数
+		int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", share.getId())) - 10;
+		share.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
 		bindingService.setBindingInfo(share.getId(),null,null,share,null);
 		return share;
 	}
