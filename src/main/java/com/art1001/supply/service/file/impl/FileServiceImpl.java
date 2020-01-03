@@ -282,7 +282,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         while(iterator.hasNext()){
             File file = iterator.next();
             if(file.getFilePrivacy() == 1){
-                if(!StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                if(StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
                     iterator.remove();
                 }
             }
@@ -686,7 +686,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVO.setOpened(false);
             fileTreeShowVOS.add(fileTreeShowVO);
-            if(!StringUtils.isNotEmpty(file.getParentId())){
+            if(StringUtils.isNotEmpty(file.getParentId())){
                 fileTreeShowVO.setParentId(file.getParentId());
             }
             if(!CollectionUtils.isEmpty(file.getFiles())){
@@ -951,7 +951,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         File file = fileMapper.findFileById(fileId);
         List<File> folderPathList=new ArrayList<>();
         //folderPathList.add(fileMapper.findFileTier(projectId));
-        if (ObjectUtils.allNotNull(file)){
+        if (!ObjectUtils.allNotNull(file)){
             return  null;
         }else {
             folderPathList.add(file);
@@ -1068,7 +1068,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public String[] getChildFolderIds(String folderId) {
 
         String subIds = fileMapper.selectChildFolderIds(folderId);
-        if(StringUtils.isNotEmpty(subIds)){
+        if(!StringUtils.isNotEmpty(subIds)){
             return new String[0];
         }
         return subIds.split(",");

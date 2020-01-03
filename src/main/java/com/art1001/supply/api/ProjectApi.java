@@ -25,6 +25,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -600,4 +601,42 @@ public class ProjectApi extends BaseController {
     public JSONObject getProjectTreeData(@RequestParam(required = false) @Length(max = 32) String projectId){
         return success(projectService.getTreeData(projectId));
     }
+
+    @GetMapping("/re")
+    public Object re(){
+        LambdaQueryWrapper<Project> eq = new QueryWrapper<Project>().lambda().select(Project::getProjectId).eq(Project::getMemberId, "74bf02c0299d4661b684c046fe2ad8f2");
+        List<Project> list = projectService.list(eq);
+        list.forEach(p -> {
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setMemberId("74bf02c0299d4661b684c046fe2ad8f2");
+            projectMember.setCreateTime(System.currentTimeMillis());
+            projectMember.setUpdateTime(System.currentTimeMillis());
+            projectMember.setMemberLabel(1);
+            projectMember.setProjectId(p.getProjectId());
+            projectMemberService.save(projectMember);
+        });
+        return 1;
+    }
+
+    @GetMapping("/re1")
+    public Object re1(){
+        LambdaQueryWrapper<Relation> eq = new QueryWrapper<Relation>().lambda().eq(Relation::getRelationName,"任务");
+        List<Relation> list = relationService.list(eq);
+        list.forEach(p -> {
+            LambdaQueryWrapper<ProjectMember> eq1 = new QueryWrapper<ProjectMember>().lambda().eq(ProjectMember::getMemberId,"74bf02c0299d4661b684c046fe2ad8f2");
+            List<ProjectMember> list1 = projectMemberService.list(eq1);
+            list1.forEach(p1 -> {
+                if(p1.getProjectId().equals(p.getProjectId())){
+                    ProjectMember projectMember = new ProjectMember();
+                    projectMember.setId(p1.getId());
+                    projectMember.setDefaultGroup(p.getRelationId());
+                    projectMemberService.updateById(projectMember);
+                }
+            });
+
+        });
+        return 1;
+    }
+
+
 }
