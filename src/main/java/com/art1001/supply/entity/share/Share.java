@@ -135,6 +135,9 @@ public class Share extends Model<Share> {
 	@TableField(exist = false)
 	private String createTimeStr;
 
+	@TableField(exist = false)
+	private Integer unReadMsg;
+
 //    private String getCreateTimeStr() {
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
 //        Date date = new Date(createTime);
