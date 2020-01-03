@@ -1,15 +1,11 @@
 package com.art1001.supply.api.aop;
 
 import com.art1001.supply.annotation.ProAuthentization;
-import com.art1001.supply.annotation.Push;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
-import com.art1001.supply.util.Stringer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.aspectj.lang.JoinPoint;
@@ -17,7 +13,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

@@ -11,17 +11,10 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 日志消息api
@@ -97,9 +90,6 @@ public class LogApi extends BaseController {
     public JSONObject getSurplusMsg(@PathVariable String publicId,@RequestParam Integer surpluscount){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(Stringer.isNullOrEmpty(surpluscount) || surpluscount == 0){
-                throw new AjaxException("当前消息的索引不正确!");
-            }
             jsonObject.put("data",logService.getSurplusMsg(publicId,surpluscount));
             jsonObject.put("result",1);
             return jsonObject;
@@ -112,9 +102,6 @@ public class LogApi extends BaseController {
      * 校验消息的类型 是否合法
      */
     private void msgTypeCheck(String publicType){
-        if(Stringer.isNullOrEmpty(publicType)){
-            throw new AjaxException("消息类型不能为空!");
-        }
         if(!(Constants.TASK.equals(publicType) || Constants.FILE.equals(publicType) || Constants.SHARE.equals(publicType) || Constants.SCHEDULE.equals(publicType))){
             throw new AjaxException("消息类型不合法!");
         }

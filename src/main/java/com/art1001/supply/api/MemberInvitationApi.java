@@ -11,10 +11,8 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -212,9 +210,6 @@ public class MemberInvitationApi extends BaseController {
     @GetMapping
     public JSONObject getMembers(){
         String userId = ShiroAuthenticationManager.getUserId();
-        if(Stringer.isNullOrEmpty(userId)){
-            return error("用户id不能为空!");
-        }
         return success(projectMemberService.getMembers(userId));
     }
 

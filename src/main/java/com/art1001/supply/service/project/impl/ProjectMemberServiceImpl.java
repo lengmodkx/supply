@@ -4,8 +4,6 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.role.ProRole;
-import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
@@ -22,7 +20,6 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.Stringer;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,12 +27,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.tomcat.jni.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -228,7 +224,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 				.select(ProjectMember::getProjectId);
 
 		ProjectMember projectMember = projectMemberMapper.selectOne(selectUserCurrentProjectIdQw);
-		if(projectMember != null && Stringer.isNotNullOrEmpty(projectMember.getProjectId())){
+		if(projectMember != null && StringUtils.isNotEmpty(projectMember.getProjectId())){
 			return projectMember.getProjectId();
 		}
 		return null;
@@ -243,10 +239,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer updateUserCurrentProject(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			return -1;
-		}
-
 		if(projectService.notExist(projectId)){
 			return -1;
 		}
@@ -255,7 +247,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		if(userProjectExist){
 			//获取到修改前用户所在的项目id
 			String userCurrentProjectId = this.getUserCurrentProjectId();
-			boolean newPidEqualOldPid = Stringer.isNotNullOrEmpty(userCurrentProjectId) && projectId.equals(userCurrentProjectId);
+			boolean newPidEqualOldPid = StringUtils.isNotEmpty(userCurrentProjectId) && projectId.equals(userCurrentProjectId);
 			if(newPidEqualOldPid){
 				return 1;
 			}
@@ -286,10 +278,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 	@Override
 	public Integer updateTargetProjectCurrent(String projectId, String userId) {
-		if(Stringer.isNullOrEmpty(projectId) || Stringer.isNullOrEmpty(userId)){
-			return -1;
-		}
-
 		if(projectService.notExist(projectId)){
 			return -1;
 		}
@@ -308,9 +296,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 	@Override
 	public Boolean checkUserProjectBindIsExist(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			return false;
-		}
 		//构造出查询用户和projectId的关系是否存在的条件表达式
 		LambdaQueryWrapper<ProjectMember> selectUserProjectIsExistQw = new QueryWrapper<ProjectMember>().lambda()
 				.eq(ProjectMember::getMemberId, ShiroAuthenticationManager.getUserId());
@@ -329,10 +314,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 	@Override
 	public List<String> getProRoleUsers(Integer proRoleId) {
-		if(Stringer.isNullOrEmpty(proRoleId)){
-			return new ArrayList<>();
-		}
-
 		//构造出sql表达式
 		LambdaQueryWrapper<ProjectMember> selectMemberByRoleQw = new QueryWrapper<ProjectMember>().lambda()
 				.eq(ProjectMember::getRoleId, proRoleId)
@@ -346,10 +327,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String projectId) {
-		if(Stringer.isNullOrEmpty(roleId) || Stringer.isNullOrEmpty(projectId)){
-			return -1;
-		}
-
 		if(CollectionUtils.isEmpty(userIds)){
 			return -1;
 		}

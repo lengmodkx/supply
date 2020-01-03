@@ -203,9 +203,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public Boolean checkUserIsExistByAccountName(String accountName) {
-        if(Stringer.isNullOrEmpty(accountName)){
-            return false;
-        }
         //构造出查询用户是否存在的条件表达式
         LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountName);
         return userMapper.selectCount(selectUserIsExistQw) > 0;

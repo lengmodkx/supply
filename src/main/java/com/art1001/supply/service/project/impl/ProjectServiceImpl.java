@@ -26,7 +26,6 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -328,7 +327,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	@Override
 	public List<GantChartVO> getGanttChart(String projectId, String groupId) {
 		final List<GantChartVO> gants = new ArrayList<GantChartVO>();
-		if(Stringer.isNullOrEmpty(groupId)){
+		if(StringUtils.isNotEmpty(groupId)){
 			//获取到默认分组id
 			groupId = projectMemberService.findDefaultGroup(projectId, ShiroAuthenticationManager.getUserId());
 		}
@@ -410,9 +409,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Override
 	public Boolean checkIsExist(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			return false;
-		}
 		//构造出根据projectId查询某条信息的sql表达式
 		LambdaQueryWrapper<Project> selectByProjectIdQw = new QueryWrapper<Project>().lambda()
 				.eq(Project::getProjectId, projectId);
@@ -423,19 +419,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Override
 	public Boolean notExist(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			return null;
-		}
 		return !this.checkIsExist(projectId);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Project> getSubProject(String projectId) {
-		if(Stringer.isNullOrEmpty(projectId)){
-			return new ArrayList<>();
-		}
-
 		//构造sql表达式
 		LambdaQueryWrapper<Project> selectSubProjectByParentIdQw = new QueryWrapper<Project>().lambda()
 				.eq(Project::getParentId, projectId)
@@ -451,7 +440,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		List<Project> pros;
 
 		//如果项目id不为空  则查询该项目的子项目,并且包装成目录树类型返回.
-		if(Stringer.isNotNullOrEmpty(projectId)){
+		if(StringUtils.isNotEmpty(projectId)){
 			pros = this.getSubProject(projectId);
 		} else {
 			pros = this.findProjectByUserId(userId);

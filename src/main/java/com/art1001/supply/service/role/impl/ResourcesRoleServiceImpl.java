@@ -9,9 +9,6 @@ import com.art1001.supply.service.resource.ResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.Stringer;
-import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -21,11 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -82,9 +76,6 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer saveBatch(String orgId) {
-        if(Stringer.isNullOrEmpty(orgId)){
-            return -1;
-        }
         //构造查询企业默认角色的条件查询器
         LambdaQueryWrapper<Role> selectOrgInitRoleIdQw = new QueryWrapper<Role>().lambda()
                 .eq(Role::getOrganizationId, orgId)

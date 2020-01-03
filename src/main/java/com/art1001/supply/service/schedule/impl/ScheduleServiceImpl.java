@@ -21,7 +21,6 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -81,7 +80,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         Schedule scheduleById = scheduleMapper.findScheduleById(id);
         List<Tag> tags =new ArrayList<>();
         List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(id);
-        if (Stringer.isNotNullOrEmpty(tagRelations)){
+        if (tagRelations!=null&&tagRelations.size()>0){
             for (TagRelation tagr: tagRelations) {
                 tags.add(tagService.findById((int) tagr.getTagId()));
             }
@@ -195,7 +194,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
             //查询日程的标签
             List<Tag> tags =new ArrayList<>();
             List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(next.getScheduleId());
-            if (Stringer.isNotNullOrEmpty(tagRelations)){
+            if (tagRelations!=null&&tagRelations.size()>0){
                 for (TagRelation tagr: tagRelations) {
                     tags.add(tagService.findById((int) tagr.getTagId()));
                 }
@@ -563,15 +562,12 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
      */
     @Override
     public String getProjectId(String scheduleId) {
-        if(Stringer.isNullOrEmpty(scheduleId)){
-            throw new ServiceException("scheduleId不能为空!");
-        }
         if(!this.checkIsExist(scheduleId)){
             throw new ServiceException("该日程不存在!");
         }
         //生成条件表达式对象
         LambdaQueryWrapper<Schedule> select = new QueryWrapper<Schedule>().lambda().eq(Schedule::getScheduleId, scheduleId).select(Schedule::getProjectId);
         String projectId = scheduleMapper.selectOne(select).getProjectId();
-        return Stringer.isNullOrEmpty(projectId) ? null : projectId;
+        return StringUtils.isNotEmpty(projectId) ? null : projectId;
     }
 }

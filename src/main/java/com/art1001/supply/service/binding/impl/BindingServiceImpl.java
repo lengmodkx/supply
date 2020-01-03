@@ -18,9 +18,9 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -206,23 +206,23 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		File file;
 		Schedule schedule;
 		Share share;
-		if(Stringer.isNullOrEmpty(projectId)){
+		if(StringUtils.isNotEmpty(projectId)){
 			if((task = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
 				return task.getProjectId();
 			}
 		}
 
-		if(Stringer.isNullOrEmpty(projectId)){
+		if(StringUtils.isNotEmpty(projectId)){
 			if((share = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
 				return share.getProjectId();
 			}
 		}
-		if(Stringer.isNullOrEmpty(projectId)){
+		if(StringUtils.isNotEmpty(projectId)){
 			if((file = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
 				return file.getProjectId();
 			}
 		}
-		if(Stringer.isNullOrEmpty(projectId)){
+		if(StringUtils.isNotEmpty(projectId)){
 			if((schedule = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
 				return schedule.getProjectId();
 			}

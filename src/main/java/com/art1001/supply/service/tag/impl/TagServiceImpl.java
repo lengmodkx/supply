@@ -18,10 +18,10 @@ import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -263,9 +263,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Boolean addAndBind(Tag tag, String publicId, String publicType) {
-		if(Stringer.isNullOrEmpty(tag) || tag.getTagName() == null || tag.getBgColor() == null || tag.getProjectId() == null){
-			throw new ServiceException("标签信息不完整无法进行添加!");
-		}
 		if(this.findCountByTagName(tag.getProjectId(),tag.getTagName()) > 0){
 			throw new ServiceException("该标签已经存在不能重复添加!");
 		}

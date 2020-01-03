@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -281,7 +282,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         while(iterator.hasNext()){
             File file = iterator.next();
             if(file.getFilePrivacy() == 1){
-                if(!Stringer.isNullOrEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                if(!StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
                     iterator.remove();
                 }
             }
@@ -318,7 +319,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         map.put("folderId", folderId);
         fileMapper.moveFile(map);
         //将更改保存到elasticSearch
-        if (Stringer.isNotNullOrEmpty(fileIds)){
+        if (fileIds!=null&&fileIds.length>0){
             File file=new File();
             for(int i = 0; i < fileIds.length;i++){
                file.setFileId(fileIds[i]);
@@ -593,9 +594,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public File getProjectParentFolder(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            return null;
-        }
         return fileMapper.selectProjectParentFolder(projectId);
     }
 
@@ -615,10 +613,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public Boolean checkIsExist(String fileId) {
-        if(Stringer.isNullOrEmpty(fileId)){
-            throw new ServiceException("fileId 不能为空!");
-        }
-
         //从elasticSearch查询
         //Optional<File> file = fileRepository.findById(fileId);
         //Stringer.isNullOrEmpty(file);
@@ -692,7 +686,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVO.setOpened(false);
             fileTreeShowVOS.add(fileTreeShowVO);
-            if(!Stringer.isNullOrEmpty(file.getParentId())){
+            if(!StringUtils.isNotEmpty(file.getParentId())){
                 fileTreeShowVO.setParentId(file.getParentId());
             }
             if(!CollectionUtils.isEmpty(file.getFiles())){
@@ -899,7 +893,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         List<File> fileList = fileMapper.selectList(selectFileListQw);
 
         File rootFolder = this.getProjectRootFolderId(fileId);
-        if(Stringer.isNotNullOrEmpty(rootFolder.getUserId())){
+        if(StringUtils.isNotEmpty(rootFolder.getUserId())){
             File parentFolder = this.getProjectParentFolder(projectId);
             fileList.forEach(f -> {
                 if(f.getFileId().equals(rootFolder.getFileId())){
@@ -940,9 +934,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public boolean isRootFolder(String fileId) {
-        if(Stringer.isNullOrEmpty(fileId)){
-            return false;
-        }
         File byId = fileService.getById(fileId);
         if(byId.getLevel() == 0){
             return true;
@@ -960,7 +951,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         File file = fileMapper.findFileById(fileId);
         List<File> folderPathList=new ArrayList<>();
         //folderPathList.add(fileMapper.findFileTier(projectId));
-        if (Stringer.isNullOrEmpty(file)){
+        if (ObjectUtils.allNotNull(file)){
             return  null;
         }else {
             folderPathList.add(file);
@@ -970,10 +961,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public File getMyFolder(String userId) {
-        if(Stringer.isNullOrEmpty(userId)){
-            return null;
-        }
-
         //构造出查询我的文件夹的sql表达式
         LambdaQueryWrapper<File> getMyFolderQw = new QueryWrapper<File>().lambda().eq(File::getUserId, userId);
         return this.getOne(getMyFolderQw);
@@ -1024,17 +1011,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public String getFileParentId(String fileId) {
-        if(Stringer.isNullOrEmpty(fileId)){
-            return null;
-        }
-
         //构造sql表达式
         LambdaQueryWrapper<File> selectParentIdQw = new QueryWrapper<File>().lambda()
                 .select(File::getParentId)
                 .eq(File::getFileId, fileId);
 
         File file = fileMapper.selectOne(selectParentIdQw);
-        if(file != null && Stringer.isNotNullOrEmpty(file.getParentId())){
+        if(file != null && StringUtils.isNotEmpty(file.getParentId())){
             return file.getParentId();
         }
         return null;
@@ -1083,12 +1066,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public String[] getChildFolderIds(String folderId) {
-        if(Stringer.isNullOrEmpty(folderId)){
-            return null;
-        }
 
         String subIds = fileMapper.selectChildFolderIds(folderId);
-        if(Stringer.isNullOrEmpty(subIds)){
+        if(StringUtils.isNotEmpty(subIds)){
             return new String[0];
         }
         return subIds.split(",");
@@ -1158,10 +1138,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      * @return
      */
     private Integer checkFile(String fileId){
-        if(Stringer.isNullOrEmpty(fileId)){
-            return -1;
-        }
-
         //文件不存在返回-2
         boolean fileNotExist = !this.checkIsExist(fileId);
         if(fileNotExist){

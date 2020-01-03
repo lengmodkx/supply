@@ -7,12 +7,11 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.service.automation.AutomationRuleStartup;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.util.Stringer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -82,7 +81,7 @@ public class AutomationRuleAspect {
         Object[] args = joinPoint.getArgs();
         if(paramNames != null && paramNames.length > 0){
             for(int i = 0 ; i < args.length ; i++) {
-                if(Stringer.isNotNullOrEmpty(paramNames[i])){
+                if(StringUtils.isNotEmpty(paramNames[i])){
                     context.setVariable(paramNames[i], args[i]);
                 } else {
                     context.setVariable(null, args[i]);
@@ -91,7 +90,7 @@ public class AutomationRuleAspect {
         }
         AutomationAnnotationValue automationAnnotationValue = new AutomationAnnotationValue();
         Object value = expression.getValue(context);
-        if(Stringer.isNotNullOrEmpty(annotation.objectValue())){
+        if(StringUtils.isNotEmpty(annotation.objectValue())){
             Expression expressionObjVal = parser.parseExpression(annotation.objectValue());
             Object objValue = expressionObjVal.getValue(context);
             automationAnnotationValue.setObjectValue(String.valueOf(objValue));

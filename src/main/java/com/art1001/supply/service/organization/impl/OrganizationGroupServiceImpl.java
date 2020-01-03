@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.exception.ServiceException;
@@ -13,7 +12,6 @@ import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -110,9 +108,6 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 */
 	@Override
 	public Boolean createGroup(OrganizationGroup organizationGroup, String[] memberIds) {
-		if(Stringer.isNullOrEmpty(organizationGroup)){
-			throw new ServiceException("企业id不能为空!");
-		}
 		if(!organizationService.checkOrgIsExist(organizationGroup.getOrganizationId())){
 			throw new ServiceException("该企业不能存在,不能创建群组!");
 		}
@@ -146,9 +141,6 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Boolean removeGroup(String groupId) {
-		if(Stringer.isNullOrEmpty(groupId)){
-			throw new ServiceException("群组id不能为空!");
-		}
 		organizationGroupMapper.deleteById(groupId);
 		organizationGroupMemberService.remove(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId));
 		return true;
@@ -161,9 +153,6 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 */
 	@Override
 	public List<OrganizationGroup> getOrgGroups(String orgId) {
-		if(Stringer.isNullOrEmpty(orgId)){
-			throw new ServiceException("orgId 不能为空!");
-		}
 		if(!organizationService.checkOrgIsExist(orgId)){
 			throw new ServiceException("该企业已经不存在!");
 		}
@@ -187,9 +176,6 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 */
 	@Override
 	public OrganizationGroupMember getGroupOwnerInfo(String groupId) {
-		if(Stringer.isNullOrEmpty(groupId)){
-			throw new ServiceException("groupId不能为空!");
-		}
 		if(!this.checkGroupIsExist(groupId)){
 			throw new ServiceException("该群组不存在!");
 		}

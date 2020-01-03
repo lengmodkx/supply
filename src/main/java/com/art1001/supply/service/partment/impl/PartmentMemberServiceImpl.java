@@ -5,7 +5,6 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.partment.PartmentMemberMapper;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -37,9 +36,6 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
      */
     @Override
     public Boolean addPartmentMember(PartmentMember partmentMember) {
-        if(Stringer.isNullOrEmpty(partmentMember.getPartmentId())){
-            throw new ServiceException("部门id不能为空!");
-        }
         if(!partmentService.checkPartmentIsExist(partmentMember.getPartmentId())){
             throw new ServiceException("该部门不存在!");
         }

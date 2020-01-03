@@ -3,7 +3,7 @@ package com.art1001.supply.service.automation.impl;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.service.automation.AutomationRuleStartup;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.util.Stringer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,10 +31,10 @@ public class AutomationRuleStartupImpl {
             String menuId = am.getAutomaticJump();
             Task task = new Task();
             task.setTaskId(taskId);
-            if(Stringer.isNotNullOrEmpty(executor)){
+            if(StringUtils.isNotEmpty(executor)){
                 task.setExecutor(executor);
             }
-            if(Stringer.isNotNullOrEmpty(menuId)){
+            if(StringUtils.isNotEmpty(menuId)){
                 task.setTaskMenuId(menuId);
             }
             task.setUpdateTime(System.currentTimeMillis());

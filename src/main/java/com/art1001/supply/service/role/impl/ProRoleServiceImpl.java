@@ -7,13 +7,13 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,9 +62,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer initProRole(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            return -1;
-        }
         if(!projectService.checkIsExist(projectId)){
             return -1;
         }
@@ -99,10 +96,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public List<ProRole> getProjectInitRoleId(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            return null;
-        }
-
         //构造出查询项目初始化角色id集合的sql表达式
         LambdaQueryWrapper<ProRole> selectProjectInitRoleId = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getProjectId, projectId)
@@ -118,10 +111,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer getDefaultProRoleId(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            return null;
-        }
-
         //生成根据projectId查询该项目下的默认角色id的sql表达式
         LambdaQueryWrapper<ProRole> selectDefaultRoleByProjectId = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getProjectId, projectId)
@@ -133,10 +122,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer getRoleIdByRoleKey(String key, String projectId) {
-        if(Stringer.isNullOrEmpty(key) || Stringer.isNullOrEmpty(projectId)){
-            return -1;
-        }
-
         //构造出查询项目中为key的角色id的sql表达式
         LambdaQueryWrapper<ProRole> selectRoleIdByKeyAndProjectIdQw = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getProjectId, projectId)
@@ -164,10 +149,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer checkIsExist(String projectId, String roleKey) {
-        if(Stringer.isNullOrEmpty(projectId) || Stringer.isNullOrEmpty(roleKey)){
-            return -1;
-        }
-
         //构造出查询当前项目中有没有存在roleKey记录的sql表达式
         LambdaQueryWrapper<ProRole> selectRoleCountByPidAndKeyQw = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getProjectId, projectId)
@@ -197,9 +178,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Boolean checkRoleIdIsDefault(Integer roleId) {
-        if(Stringer.isNullOrEmpty(roleId)){
-            return false;
-        }
         //构造出sql表达式
         LambdaQueryWrapper<ProRole> selectIsDefault = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getRoleId, roleId)
@@ -214,10 +192,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer setProDefaultRole(String projectId, String roleKey) {
-        if(Stringer.isNullOrEmpty(projectId) || Stringer.isNullOrEmpty(roleKey)){
-            return -1;
-        }
-
         boolean notExist = this.checkIsExist(projectId, roleKey) == 0;
         if(notExist){
             return -1;
@@ -249,10 +223,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Integer getProDefaultRoleId(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            return -1;
-        }
-
         //构造出sql表达式
         LambdaQueryWrapper<ProRole> selectProDefaultRoleIdQw = new QueryWrapper<ProRole>().lambda()
                 .eq(ProRole::getProjectId, projectId)
@@ -260,7 +230,7 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
                 .select(ProRole::getRoleId);
 
         ProRole proRole = proRoleMapper.selectOne(selectProDefaultRoleIdQw);
-        if(proRole != null && Stringer.isNotNullOrEmpty(proRole.getRoleId())){
+        if(proRole != null){
             return proRole.getRoleId();
         }
         return -1;
@@ -268,18 +238,11 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
     @Override
     public Boolean checkRoleIsExistByRoleId(Integer roleId) {
-        if(Stringer.isNullOrEmpty(roleId)){
-            return false;
-        }
         return proRoleMapper.selectById(roleId) != null;
     }
 
     @Override
     public Boolean checkRoleIsSystemInit(Integer roleId) {
-        if(Stringer.isNullOrEmpty(roleId)){
-            return false;
-        }
-
         ProRole proRole = proRoleMapper.selectById(roleId);
         if(proRole != null){
             return proRole.getIsSystemInit();

@@ -22,7 +22,6 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,7 +37,6 @@ import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * relationServiceImpl
@@ -755,9 +753,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	@Override
 	public List<String> getGroupTaskId(String groupId) {
-		if(Stringer.isNullOrEmpty(groupId)){
-			return new ArrayList<>();
-		}
 		//sql表达式
 		LambdaQueryWrapper<Task> selectTaskIdByGroupQw = new QueryWrapper<Task>().lambda()
 				.eq(Task::getTaskGroupId, groupId)

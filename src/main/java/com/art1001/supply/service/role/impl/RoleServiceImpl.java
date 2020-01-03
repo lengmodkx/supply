@@ -8,16 +8,13 @@ import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.catalina.User;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +22,6 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,9 +124,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer saveOrgDefaultRole(String orgId) {
-		if(Stringer.isNullOrEmpty(orgId)){
-			return -1;
-		}
+
 		if(!organizationService.checkOrgIsExist(orgId)){
 			return -1;
 		}
@@ -166,9 +160,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 
 	@Override
 	public Integer getOrgRoleIdByKey(String orgId, String roleKey) {
-		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(roleKey)){
-			return -1;
-		}
+
 		//构造出查询该企业超级管理员id的条件表达式
 		LambdaQueryWrapper<Role> selectAdministratorId = new QueryWrapper<Role>().lambda()
 				.eq(Role::getOrganizationId, orgId)
@@ -196,19 +188,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 
 	@Override
 	public Role getOrgDefaultRole(String orgId) {
-		if(Stringer.isNullOrEmpty(orgId)){
-			return null;
-		}
+
 		LambdaQueryWrapper<Role> selectOrgDefaultRoleQw = new QueryWrapper<Role>().lambda().eq(Role::getOrganizationId, orgId).eq(Role::getIsDefault, true);
 		return roleMapper.selectOne(selectOrgDefaultRoleQw);
 	}
 
 	@Override
 	public List<Role> getUserOrgRoles(String userId, String orgId) {
-		if(Stringer.isNullOrEmpty(userId) || Stringer.isNullOrEmpty(orgId)){
-			return null;
-		}
-
 		List<Integer> userRoleIds = this.getUserOrgRoleIds(userId,orgId);
 		if(CollectionUtils.isEmpty(userRoleIds)){
 			return null;
@@ -224,9 +210,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 
 	@Override
 	public List<Integer> getUserOrgRoleIds(String userId, String orgId) {
-		if(Stringer.isNullOrEmpty(userId)){
-			return null;
-		}
 		List<Integer> roles = roleUserService.getUserOrgRoleIds(userId,orgId);
 		if(CollectionUtils.isEmpty(roles)){
 			return new ArrayList<>();

@@ -1186,7 +1186,7 @@ public class FileApi extends BaseController {
             return error("参数错误!");
         }
         String parentId = fileService.findParentId(projectId);
-        if(Stringer.isNullOrEmpty(parentId)){
+        if(StringUtils.isNotEmpty(parentId)){
             return error("目录id错误!");
         }
         return success(fileService.getAllFolderTree(parentId));

@@ -3,11 +3,9 @@ package com.art1001.supply.service.organization.impl;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.util.CollectionUtils;
@@ -87,9 +85,6 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeMember(String memberId, String groupId) {
-        if(Stringer.isNullOrEmpty(memberId)){
-            throw new ServiceException("成员id不能为空!");
-        }
         organizationGroupMemberMapper.delete(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId).eq("member_id", memberId));
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
@@ -113,9 +108,6 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
      */
     @Override
     public List<OrganizationGroupMember> getGroupMembers(String groupId) {
-        if(Stringer.isNullOrEmpty(groupId)){
-            throw new ServiceException("groupId不能为空!");
-        }
         //获取该群组的拥有者
         OrganizationGroupMember groupOwnerInfo;
         groupOwnerInfo = organizationGroupService.getGroupOwnerInfo(groupId);

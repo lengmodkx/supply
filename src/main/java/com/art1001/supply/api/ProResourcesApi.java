@@ -4,16 +4,12 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.resource.ResourceShowVO;
-import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.resource.ProResourcesService;
-import com.art1001.supply.util.Stringer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;

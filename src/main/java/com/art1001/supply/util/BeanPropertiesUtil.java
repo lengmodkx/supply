@@ -2,6 +2,7 @@ package com.art1001.supply.util;
 
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.BaseException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 
@@ -28,9 +29,6 @@ public class BeanPropertiesUtil {
         for (String fieldName : fieldNames) {
             Field field = getBeanProperty(cls, fieldName);
             Object value = field.get(obj);
-            if (Stringer.isNullOrEmpty(value)) {
-                throw new AjaxException(fieldName + "不能为空!");
-            }
         }
 
         return true;

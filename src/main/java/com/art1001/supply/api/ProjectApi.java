@@ -25,9 +25,9 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,7 +108,7 @@ public class ProjectApi extends BaseController {
         project.setProjectName(projectName);
         project.setProjectDes(projectDes);
         project.setStartTime(startTime);
-        if(Stringer.isNotNullOrEmpty(parentId)){
+        if(StringUtils.isNotEmpty(parentId)){
             project.setParentId(parentId);
         }
         project.setCreateTime(System.currentTimeMillis());
@@ -158,7 +158,7 @@ public class ProjectApi extends BaseController {
             project.setIsPublic(isPublic);
             project.setStartTime(startTime);
             project.setEndTime(endTime);
-            if(!Stringer.isNullOrEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
+            if(!StringUtils.isNotEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
                 //将新的图片路径写入项目
                 project.setProjectCover(projectCover);
             }
@@ -475,10 +475,6 @@ public class ProjectApi extends BaseController {
     @GetMapping("/gantt_chart/{projectId}")
     public JSONObject ganttChart(@PathVariable String projectId, @RequestParam(required = false) String groupId){
         JSONObject jsonObject = new JSONObject();
-        if(Stringer.isNullOrEmpty(projectId)){
-            return error("projectId不能为空!");
-        }
-
         boolean projectNotExist = !projectService.checkIsExist(projectId);
         if(projectNotExist){
             return error("项目不存在!");

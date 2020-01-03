@@ -11,10 +11,9 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
@@ -90,7 +89,7 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	 */
 	@Override
 	public void savePartment(Partment partment){
-	    if(Stringer.isNullOrEmpty(partment.getParentId())){
+	    if(StringUtils.isNotEmpty(partment.getParentId())){
 	        partment.setParentId("0");
         }
 		int maxOrder = partmentMapper.findMaxOrder(partment.getOrganizationId(),partment.getParentId());
@@ -117,9 +116,6 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	 */
 	@Override
 	public List<Partment> findOrgPartmentInfo(String orgId) {
-		if(Stringer.isNullOrEmpty(orgId)){
-			throw new ServiceException("orgId不能为空!");
-		}
 		List<Partment> partments = partmentMapper.selectOrgPartmentInfo(orgId);
 		partments.forEach(item -> {
 			if(!CollectionUtils.isEmpty(item.getSubPartments())){

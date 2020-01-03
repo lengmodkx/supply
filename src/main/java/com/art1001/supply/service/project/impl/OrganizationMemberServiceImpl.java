@@ -6,7 +6,6 @@ import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -114,10 +113,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer updateUserDefaultOrg(String orgId, String userId) {
-		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(userId)){
-			return -1;
-		}
-
 		//构造修改数据信息
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setUserDefault(false);
@@ -152,9 +147,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer saveOrgOwnerInfo(String orgId, String userId) {
-		if(Stringer.isNullOrEmpty(orgId) || Stringer.isNullOrEmpty(userId)){
-			return -1;
-		}
 		//添加当前用户为企业拥有者
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setOrganizationId(orgId);

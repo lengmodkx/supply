@@ -7,10 +7,10 @@ import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.resource.ResourceService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -207,7 +207,7 @@ public class ResourceApi extends BaseController {
     public JSONObject getResourcesByRoleId(@PathVariable String roleId){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(Stringer.isNullOrEmpty(roleId)){
+            if(StringUtils.isNotEmpty(roleId)){
                 return paramsIsNullHandle(roleId);
             }
             List<ResourceShowVO> rsv = resourceService.getRoleResourceDetailsData(roleId);

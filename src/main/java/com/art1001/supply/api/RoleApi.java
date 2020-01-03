@@ -4,19 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.role.RoleService;
-import com.art1001.supply.util.BeanPropertiesUtil;
-import com.art1001.supply.util.Stringer;
-import com.art1001.supply.util.ValidatorUtils;
-import com.art1001.supply.validation.role.RoleIdValidation;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**

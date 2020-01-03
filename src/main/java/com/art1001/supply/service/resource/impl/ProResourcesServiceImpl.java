@@ -6,11 +6,11 @@ import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.mapper.resource.ProResourcesMapper;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.resource.ProResourcesService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,9 +42,6 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
 
     @Override
     public List<String> getMemberResourceKey(String projectId, String memberId) {
-        if(Stringer.isNullOrEmpty(projectId) || Stringer.isNullOrEmpty(memberId)){
-            return null;
-        }
         String roleResourceByProjectMember = proResourcesRoleService.getRoleResourceByProjectMember(projectId, memberId);
         String[] rIds = roleResourceByProjectMember.split(",");
         return proResourcesService.getResourceKeyByRIds(Arrays.asList(rIds));
@@ -93,9 +90,7 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
 
     @Override
     public List<ProResources> getRoleHaveResources(String roleId) {
-        if(Stringer.isNullOrEmpty(roleId)){
-            return null;
-        }
+
         List<String> resourceIds = this.getRoleHaveResourceIds(roleId);
         if(CollectionUtils.isEmpty(resourceIds)){
             return null;
@@ -106,10 +101,6 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
 
     @Override
     public List<String> getRoleHaveResourceIds(String roleId) {
-        if(Stringer.isNullOrEmpty(roleId)){
-            return null;
-        }
-
         //生成sql表达式
         LambdaQueryWrapper<ProResourcesRole> selectResourceIdsByRoleId = new QueryWrapper<ProResourcesRole>().lambda()
                 .eq(ProResourcesRole::getRId, roleId)
@@ -118,7 +109,7 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
         if(roleResourceByRoleId == null){
             return new ArrayList<>();
         }
-        if(Stringer.isNotNullOrEmpty(roleResourceByRoleId.getSId())){
+        if(StringUtils.isNotEmpty(roleResourceByRoleId.getSId())){
             return Arrays.asList(roleResourceByRoleId.getSId().split(","));
         }
         return null;

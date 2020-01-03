@@ -11,7 +11,6 @@ import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.util.CommonUtils;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -377,11 +376,6 @@ public class TagApi {
     public JSONObject searchByName(@RequestParam(value = "key") String key){
         JSONObject jsonObject = new JSONObject();
         try {
-            if (Stringer.isNullOrEmpty(key)){
-                jsonObject.put("msg", "查询条件为空！");
-                jsonObject.put("result", 0);
-                return jsonObject;
-            }
             jsonObject.put("data", tagService.searchTag(key));
             jsonObject.put("result", 1);
             return  jsonObject;

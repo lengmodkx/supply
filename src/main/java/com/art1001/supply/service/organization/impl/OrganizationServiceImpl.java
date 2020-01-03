@@ -12,11 +12,11 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -163,7 +163,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 				.select(OrganizationMember::getOrganizationId);
 
 		String userDefaultOrganizationId = organizationMemberService.getOne(selectDefaultOrgIdQw).getOrganizationId();
-		if(Stringer.isNotNullOrEmpty(userDefaultOrganizationId)){
+		if(StringUtils.isNotEmpty(userDefaultOrganizationId)){
 			myOrg.forEach(item -> {
 				if(item.getOrganizationId().equals(userDefaultOrganizationId)){
 					item.setIsSelection(true);

@@ -1754,11 +1754,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public List<Task> getTaskPanel(String projectId) {
-        if(Stringer.isNullOrEmpty(projectId)){
-            throw new ServiceException("项目id不能为空!");
-        }
         String projectAllTask = projectService.findProjectAllTask(projectId);
-        if(Stringer.isNullOrEmpty(projectAllTask)){
+        if(StringUtils.isNotEmpty(projectAllTask)){
             return new ArrayList<>();
         }
         List<String> taskIds = Arrays.asList(projectAllTask.split(","));
@@ -1885,10 +1882,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     @Override
     public List<String> getChildTaskId(String taskId) {
-        if(Stringer.isNullOrEmpty(taskId)){
-            return new ArrayList<>();
-        }
-
         return Arrays.asList(taskMapper.selectChildTaskId(taskId).split(","));
     }
 

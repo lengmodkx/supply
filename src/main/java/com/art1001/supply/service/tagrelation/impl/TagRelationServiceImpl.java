@@ -5,10 +5,10 @@ import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.tagrelation.TagRelationService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -118,7 +118,7 @@ public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRel
 	 */
 	@Override
 	public boolean removeBatchByType(Collection ids, String type) {
-		if(CollectionUtils.isEmpty(ids) || Stringer.isNullOrEmpty(type)){
+		if(CollectionUtils.isEmpty(ids) || StringUtils.isNotEmpty(type)){
 			throw new ServiceException("ids 或者 type 参数不合法!");
 		}
 		LambdaQueryWrapper<TagRelation> eq = new QueryWrapper<TagRelation>().lambda();

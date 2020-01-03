@@ -4,10 +4,10 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.resource.ProResourceRoleBindTemplate;
 import com.art1001.supply.mapper.resource.ProResourceRoleBindTemplateMapper;
 import com.art1001.supply.service.resource.ProResourceRoleBindTemplateService;
-import com.art1001.supply.util.Stringer;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,7 +45,7 @@ public class ProResourceRoleBindTemplateServiceImpl extends ServiceImpl<ProResou
                     .select(ProResourceRoleBindTemplate::getResourceId);
             String resourceIds = proResourceRoleBindTemplateMapper.selectOne(selectRoleResourceTemplateQw).getResourceId();
 
-            if(Stringer.isNotNullOrEmpty(resourceIds)){
+            if(StringUtils.isNotEmpty(resourceIds)){
                 templateData.put(key, resourceIds);
             }
         });

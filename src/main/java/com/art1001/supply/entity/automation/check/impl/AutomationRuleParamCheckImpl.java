@@ -3,7 +3,7 @@ package com.art1001.supply.entity.automation.check.impl;
 import com.art1001.supply.entity.automation.check.AutomationRuleParamCheck;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.exception.AutomationRuleParamException;
-import com.art1001.supply.util.Stringer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +35,7 @@ public class AutomationRuleParamCheckImpl {
                         || AutomationRuleConstans.PRIORITY.equals(check.getConditionName())
                         || AutomationRuleConstans.SETTING_EXECUTORS.equals(check.getConditionName());
             if(valueNotNull){
-                if(Stringer.isNullOrEmpty(check.getConditionValue())){
+                if(StringUtils.isNotEmpty(check.getConditionValue())){
                     throw new AutomationRuleParamException("值不能为空！");
                 }
             }
@@ -80,16 +80,16 @@ public class AutomationRuleParamCheckImpl {
             }
 
             //验证结果是否合法
-            if(Stringer.isNotNullOrEmpty(check.getDefaultAssign()) || Stringer.isNotNullOrEmpty(check.getAutomaticJump())){
+            if(StringUtils.isNotEmpty(check.getDefaultAssign()) || StringUtils.isNotEmpty(check.getAutomaticJump())){
                 int assignLength;
                 int jumpLength;
                 boolean assignIsTrue = false;
                 boolean jumpIsTrue = false;
-                if(Stringer.isNotNullOrEmpty(check.getDefaultAssign())){
+                if(StringUtils.isNotEmpty(check.getDefaultAssign())){
                     assignLength = check.getDefaultAssign().length();
                     assignIsTrue = assignLength > 32 || assignLength < 32;
                 }
-                if(Stringer.isNotNullOrEmpty(check.getAutomaticJump())){
+                if(StringUtils.isNotEmpty(check.getAutomaticJump())){
                     jumpLength = check.getAutomaticJump().length();
                     jumpIsTrue = jumpLength > 32 || jumpLength < 32;
                 }

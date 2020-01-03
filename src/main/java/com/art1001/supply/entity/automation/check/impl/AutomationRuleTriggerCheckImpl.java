@@ -1,13 +1,12 @@
 package com.art1001.supply.entity.automation.check.impl;
 
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.automation.AutomationRule;
 import com.art1001.supply.entity.automation.check.AutomationRuleTriggerCheck;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.service.automation.AutomationRulesService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.util.Stringer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,9 +39,11 @@ public class AutomationRuleTriggerCheckImpl {
     @Bean
     public AutomationRuleTriggerCheck checkAutomationRuleTrigger(){
         return (annotationValue,tr) -> {
-            if(Stringer.isNullOrEmpty(annotationValue.getTaskId()) || Stringer.isNullOrEmpty(tr)){
+
+            if(StringUtils.isNotEmpty(annotationValue.getTaskId())||StringUtils.isNotEmpty(tr)){
                 return -1;
             }
+
 
             Task task = taskService.getById(annotationValue.getTaskId());
             if(task == null){

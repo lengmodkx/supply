@@ -8,7 +8,6 @@ import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.recycle.RecycleBinService;
 import com.art1001.supply.util.BeanPropertiesUtil;
-import com.art1001.supply.util.Stringer;
 import com.art1001.supply.util.ValidatorUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,22 +41,6 @@ public class RecycleBinApi {
     public JSONObject getRecycleBinItem(@PathVariable String projectId, @PathVariable String type, @RequestParam(required = false) String fileType){
         JSONObject jsonObject = new JSONObject();
         try {
-            //校验typeCorrect是否合法
-            boolean typeCorrect = (!Stringer.isNullOrEmpty(type)) && (Constants.TASK_EN.equals(type) || Constants.FILE_EN.equals(type) || Constants.SCHEDULE_EN.equals(type) || Constants.SHARE_EN.equals(type) || Constants.TAG_EN.equals(type) || Constants.GROUP_EN.equals(type));
-            if(!typeCorrect){
-                jsonObject.put("result", 0);
-                jsonObject.put("msg", "type参数不合法!");
-                return jsonObject;
-            }
-            //判断fileType参数不能为空,并且参数值只能为 0 和 1. 否则抛出异常
-            if(Constants.FILE_EN.equals(type)){
-                boolean fileCorrect = (!Stringer.isNullOrEmpty(fileType)) && (Constants.ZERO.equals(fileType) || Constants.ONE.equals(fileType));
-                if(!fileCorrect){
-                    jsonObject.put("result", 0);
-                    jsonObject.put("msg", "fileType参数不合法!");
-                    return jsonObject;
-                }
-            }
             jsonObject.put("data",recycleBinService.getRecycleBinItem(projectId, type,fileType));
             jsonObject.put("result", 1);
             return jsonObject;

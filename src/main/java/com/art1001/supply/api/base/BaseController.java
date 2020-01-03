@@ -2,9 +2,6 @@ package com.art1001.supply.api.base;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.ResponseEntity;
-import com.art1001.supply.util.NumberUtils;
-import com.art1001.supply.util.Stringer;
-import io.netty.handler.codec.json.JsonObjectDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -12,7 +9,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Enumeration;
 
 /**
  * @Author: heshaohua
@@ -120,15 +116,5 @@ public class BaseController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
         return jsonObject;
-    }
-
-    /**
-     * @param obj
-     * @return
-     * @author chippy
-     * @desc 判断某对象是否为空..
-     */
-    protected boolean isNullOrEmpty(Object obj) {
-        return Stringer.isNullOrEmpty(obj);
     }
 }
