@@ -103,6 +103,7 @@ public class UserEntity extends Model<UserEntity> {
 	/**
 	 * 用户出生日期
 	 */
+
 	private Date birthday;
 
 	/**

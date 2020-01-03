@@ -311,10 +311,6 @@ public class UserApi {
                                        ){
         JSONObject jsonObject=new JSONObject();
         try {
-
-            SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date birthDay = myFmt2.parse(birthday);
-
             UserEntity userEntity=new UserEntity();
             userEntity.setUserId(userId);
             if(StringUtils.isNotEmpty(image)){
@@ -335,6 +331,8 @@ public class UserApi {
             }
 
             if(StringUtils.isNotEmpty(birthday)){
+                SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date birthDay = myFmt2.parse(birthday);
                 userEntity.setBirthday(birthDay);
             }
             if(StringUtils.isNotEmpty(address)){
@@ -347,7 +345,7 @@ public class UserApi {
             userEntity.setUpdateTime(new Date());
             userService.updateById(userEntity);
             jsonObject.put("msg","用户信息修改成功");
-            jsonObject.put("result","1");
+            jsonObject.put("result",1);
         } catch (Exception e) {
             e.printStackTrace();
             jsonObject.put("msg","信息修改失败,请稍后再试");

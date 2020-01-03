@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    #阿里巴巴数据源连接池配置
+    druid:
+#      db-type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://rm-2ze0z93hgk53405zn6o.mysql.rds.aliyuncs.com:3306/supply01?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+      username: supply
+      password: Wangyafeng123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 6000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall
+      connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      stat-view-servlet:
+        login-username: admin
+        login-password: 1qaz2wsx#EDC
+        reset-enable: false
+        url-pattern: /druid/*
+      web-stat-filter:
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+  #阿里云redis连接配置
+  redis:
+    database: 0
+    host: r-2zef2711285108e4pd.redis.rds.aliyuncs.com
+    port: 6379
+    password: 1qaz2wsx#ED
+  #配置JSON时区和空值处理
+  jackson:
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  #配置搜索引擎
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: 39.105.7.73:9300
+      repositories:
+        enabled: true
+#mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.art1001.supply.entity.*
+
+server:
+  port: 8080
