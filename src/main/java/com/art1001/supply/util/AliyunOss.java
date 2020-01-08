@@ -1,6 +1,7 @@
 package com.art1001.supply.util;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
@@ -8,13 +9,21 @@ import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
@@ -415,5 +424,112 @@ public class AliyunOss {
         ossClient.shutdown();
         // 删除临时文件
         zipFile.delete();
+    }
+
+    public static String getRequestBody(InputStream is, int contentLen) {
+        if (contentLen > 0) {
+            int readLen = 0;
+            int readLengthThisTime = 0;
+            byte[] message = new byte[contentLen];
+            try {
+                while (readLen != contentLen) {
+                    readLengthThisTime = is.read(message, readLen, contentLen - readLen);
+                    if (readLengthThisTime == -1) {// Should not happen.
+                        break;
+                    }
+                    readLen += readLengthThisTime;
+                }
+                return new String(message);
+            } catch (IOException e) {
+            }
+        }
+        return "";
+    }
+
+
+    public static  boolean verifyOSSCallbackRequest(HttpServletRequest request, String ossCallbackBody)
+            throws NumberFormatException, IOException {
+        String atomizationInput = request.getHeader("Authorization");
+        String pubKeyInput = request.getHeader("x-oss-pub-key-url");
+        byte[] authorization = BinaryUtil.fromBase64String(atomizationInput);
+        byte[] pubKey = BinaryUtil.fromBase64String(pubKeyInput);
+        String pubKeyAddr = new String(pubKey);
+        System.out.println(pubKeyAddr);
+        if (!pubKeyAddr.startsWith("http://gosspublic.alicdn.com/")&&!pubKeyAddr.startsWith("https://gosspublic.alicdn.com/")) {
+            System.out.println("pub key addr must be oss addrss");
+            return false;
+        }
+        String retString = executeGet(pubKeyAddr);
+        retString = retString.replace("-----BEGIN PUBLIC KEY-----", "");
+        retString = retString.replace("-----END PUBLIC KEY-----", "");
+        String queryString = request.getQueryString();
+        String uri = request.getRequestURI();
+        String authStr = java.net.URLDecoder.decode(uri, "UTF-8").replaceFirst("/","/api");;
+        if (StringUtils.isNotEmpty(queryString)) {
+            authStr += "?" + queryString;
+        }
+        authStr += "\n" + ossCallbackBody;
+        return doCheck(authStr, authorization, retString);
+    }
+
+    private static boolean doCheck(String content, byte[] sign, String publicKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] encodedKey = BinaryUtil.fromBase64String(publicKey);
+            PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
+            java.security.Signature signature = java.security.Signature.getInstance("MD5withRSA");
+            signature.initVerify(pubKey);
+            signature.update(content.getBytes());
+            return  signature.verify(sign);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    private static String executeGet(String url) {
+        BufferedReader in = null;
+
+        String content = null;
+        try {
+            // 定义HttpClient
+            @SuppressWarnings("resource")
+            DefaultHttpClient client = new DefaultHttpClient();
+            // 实例化HTTP方法
+            HttpGet request = new HttpGet();
+            request.setURI(new URI(url));
+            HttpResponse response = client.execute(request);
+
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            StringBuffer sb = new StringBuffer("");
+            String line = "";
+            String NL = System.getProperty("line.separator");
+            while ((line = in.readLine()) != null) {
+                sb.append(line + NL);
+            }
+            in.close();
+            content = sb.toString();
+        } catch (Exception e) {
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();// 最后要关闭BufferedReader
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return content;
+        }
+    }
+
+    public static void response(HttpServletRequest request, HttpServletResponse response, String results, int status) throws IOException {
+        String callbackFunName = request.getParameter("callback");
+        response.addHeader("Content-Length", String.valueOf(results.length()));
+        if (callbackFunName == null || callbackFunName.equalsIgnoreCase(""))
+            response.getWriter().println(results);
+        else
+            response.getWriter().println(callbackFunName + "( " + results + " )");
+        response.setStatus(status);
+        response.flushBuffer();
     }
 }

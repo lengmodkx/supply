@@ -15,7 +15,7 @@
 *.iws
 *.iml
 *.ipr
-
+*.log
 ### NetBeans ###
 /nbproject/private/
 /build/
@@ -23,7 +23,7 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-
+/logs
 /src/main/java/com/art1001/supply/SupplyApplication.java
 !/src/main/resources/application.properties
 /src/main/resources/application.properties

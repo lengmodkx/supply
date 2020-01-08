@@ -9,9 +9,7 @@ import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -87,12 +85,14 @@ public class File extends Model<File> {
      * 创建者姓名
      */
     @Field(type = FieldType.text)
+    @TableField(exist = false)
     private String memberName;
 
     /**
      * 创建者头像
      */
     @Field(type = FieldType.text)
+    @TableField(exist = false)
     private String memberImg;
 
     /**
