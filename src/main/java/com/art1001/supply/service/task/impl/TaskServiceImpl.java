@@ -1,7 +1,6 @@
 package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.AutomationRule;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
@@ -48,14 +47,15 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.ObjectsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
@@ -189,6 +189,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setOrder(++maxOrder);
         task.setCreateTime(System.currentTimeMillis());
         task.setUpdateTime(System.currentTimeMillis());
+        task.setFinishTime(null);
         //保存任务信息
         taskMapper.insert(task);
     }
@@ -1454,6 +1455,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         completeTask.setTaskStatus(true);
         completeTask.setTaskId(taskId);
         completeTask.setUpdateTime(System.currentTimeMillis());
+        completeTask.setFinishTime(System.currentTimeMillis());
         taskMapper.updateById(completeTask);
 
         //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且遍历是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
@@ -1468,6 +1470,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 Task pTask = new Task();
                 pTask.setTaskId(task.getParentId());
                 pTask.setUpdateTime(System.currentTimeMillis());
+                pTask.setFinishTime(System.currentTimeMillis());
                 pTask.setSubIsAllComplete(true);
                 taskMapper.updateById(pTask);
             }

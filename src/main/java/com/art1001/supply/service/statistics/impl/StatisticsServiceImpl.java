@@ -179,14 +179,14 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         sto =  resultStatic(sto);
 
-
+         Map<String, Integer> dayNumMap = DateUtil.everyDate(sto.getDayNum());
         try {
             //获取七天的总数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectTaskBurnOut(projectId,sto);
 
             Integer count = this.statisticsMapper.taskSevenDayAgo(projectId, currentDate, sto.getDayNum());
             //项目进展走势
-            List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto);
+            List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto,dayNumMap);
            //计算每天创建的任务量
             Map<String, Integer> daysTaskMap = DateUtil.createTask(taskOfProgress,sto.getDayNum());
             //计算累计任务量
@@ -200,7 +200,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             // type = 0 时包含所有数据  type = 1   燃尽图数据  type = 2  累计图数据
             if (type == 0){
 
-               statisticsBurnout=this.getStatisAllData(taskCountMap,daysTaskMap,projectId,sto,taskOfFinishProgress,stringMap);
+               statisticsBurnout=null;
+                       //this.getStatisAllData(taskCountMap,daysTaskMap,projectId,sto,taskOfFinishProgress,stringMap);
 
 
             }else if(type == 1){
@@ -719,7 +720,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 entry.setValue(0);
             }
             for (StatisticsResultVO svo : taskOfFinishProgress) {
-                if (svo.getFinishTime().equals(entry.getKey())){
+                if (svo.getFinishTime()!=null && svo.getFinishTime().equals(entry.getKey())){
                     entry.setValue(svo.getTaskCountInt());
                 }
             }
@@ -797,7 +798,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 entry.setValue(0);
             }
             for (StatisticsResultVO svo : taskOfFinishProgress) {
-                if (svo.getFinishTime().equals(entry.getKey())){
+                if (svo.getFinishTime()!=null && svo.getFinishTime().equals(entry.getKey())){
                     entry.setValue(svo.getTaskCountInt());
                 }
             }
