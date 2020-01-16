@@ -4,8 +4,10 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTree;
 import com.art1001.supply.entity.file.FileTreeShowVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
 
@@ -19,20 +21,12 @@ import java.util.Map;
 public interface FileMapper extends BaseMapper<File> {
 
 	/**
-	 * 查询分页file数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	List<File> findFilePagerList(Pager pager);
-
-	/**
 	 * 通过id获取单条file数据
 	 * 
-	 * @param id
+	 * @param fileId
 	 * @return
 	 */
-	File findFileById(String id);
+	File findFileById(String fileId);
 
 	/**
 	 * 通过id删除file数据
@@ -41,19 +35,16 @@ public interface FileMapper extends BaseMapper<File> {
 	 */
 	void deleteFileById(String id);
 
-	/**
-	 * 获取所有file数据
-	 * 
-	 * @return
-	 */
-	List<File> findFileAllList();
+	List<FileTree> querySubFileList(String fileId);
+
+	List<FileTree> queryFileListByUserId(String userId);
 
 	/**
 	 * 查询出该文件夹下的所有子文件夹及文件
-	 * @param parentId 父级id，顶级目录为 0
+	 * @param fileId 父级id，顶级目录为 0
 	 * @return
 	 */
-	List<File> findChildFile(@Param("parentId") String parentId,@Param("orderType") Integer orderType);
+	Page<File> findChildFile(IPage<File> page, @Param("fileId") String fileId);
 
 	/**
 	 * 查新该目录下的名称是否存在

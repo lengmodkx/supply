@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -50,26 +51,32 @@ public class UserEntity extends Model<UserEntity> {
 	/*
 	 * 密码
 	 */
+	@JsonIgnore
 	private String password;
 	/*
 	 * 逻辑删除状态：0：正常；1：删除
 	 */
+	@JsonIgnore
 	private Integer deleteStatus;
 	/*
 	 * 是否锁定：0：正常；1：锁定
 	 */
+	@JsonIgnore
 	private Integer locked;
 	/*
 	 * 描述
 	 */
+	@JsonIgnore
 	private String description;
 	/*
 	 * 加密盐
 	 */
+	@JsonIgnore
 	private String credentialsSalt;
 	/*
 	 * 这里使用accountName
 	 */
+	@JsonIgnore
 	private String creatorName;
 	/*
 	 * 创建时间
@@ -126,12 +133,17 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private Integer vip;
 
+	@JsonIgnore
+	@TableField(exist = false)
 	private String sessionKey;
-
+	@JsonIgnore
+	@TableField(exist = false)
 	private String wxAppOpenId;
-
+	@JsonIgnore
+	@TableField(exist = false)
 	private String wxUnionId;
-
+	@JsonIgnore
+	@TableField(exist = false)
 	private String wxOpenId;
 
 	/**
@@ -139,7 +151,7 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	@TableField(exist = false)
 	private String defaultOrgId;
-
+	@JsonIgnore
 	@TableField(exist = false)
 	private List<Role> roles;
 

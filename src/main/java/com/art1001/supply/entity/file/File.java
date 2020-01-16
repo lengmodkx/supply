@@ -128,7 +128,7 @@ public class File extends Model<File> {
      * 文件创建者信息
      */
     @TableField(exist = false)
-    private UserEntity userEntity;
+    private UserEntity user;
 
     /**
      * 标签的集合
@@ -140,7 +140,7 @@ public class File extends Model<File> {
      * 文件参与者信息
      */
     @TableField(exist = false)
-    private List<UserEntity> joinInfo;
+    private List<UserEntity> users;
 
     /**
      * 文件操作日志

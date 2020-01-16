@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
+import com.art1001.supply.entity.file.FileTree;
 import com.art1001.supply.entity.file.FileTreeShowVO;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +18,20 @@ import java.util.List;
  * fileService接口
  */
  public interface FileService extends IService<File> {
+
+
+ 	List<FileTree> querySubFileList(String fileId);
+
+ 	List<FileTree> queryFileListByUserId(String userId);
+
+	/**
+	 * 查询根目录文件夹和文件
+	 * @param fileId 根目录id
+	 * @param current 当前页
+	 * @param size 每页数据量
+	 * @return
+	 */
+	Page<File> queryFileList(String fileId, Integer current, Integer size);
 
 	/**
 	 * 通过id获取单条file数据
@@ -46,7 +62,7 @@ import java.util.List;
      * @param parentId 要创建的目录的父级id
      * @param fileName 创建的目录名称
      */
-	File createFolder(String projectId, String parentId, String fileName);
+	void createFolder(String projectId, String parentId, String fileName);
 
     /**
      * 查询当前文件目录下的文件夹及文件

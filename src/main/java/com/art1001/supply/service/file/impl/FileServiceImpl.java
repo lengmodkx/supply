@@ -84,6 +84,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     private final static String[] company =  {"GB","MB","KB"};
 
+    @Override
+    public List<FileTree> querySubFileList(String fileId) {
+        return fileMapper.querySubFileList(fileId);
+    }
+
+    @Override
+    public List<FileTree> queryFileListByUserId(String userId) {
+        return fileMapper.queryFileListByUserId(userId);
+    }
+
+    @Override
+    public Page<File> queryFileList(String fileId,Integer current,Integer size) {
+        Page<File> filePage = new Page<>(current,size);
+        return fileMapper.findChildFile(filePage,fileId);
+    }
+
     /**
      * 通过id获取单条file数据
      *
@@ -234,8 +250,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public File createFolder(String projectId, String parentId, String fileName) {
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+    public void createFolder(String projectId, String parentId, String fileName) {
+        String userId = ShiroAuthenticationManager.getUserId();
         // 存库
         File file = new File();
         file.setFileName(fileName);
@@ -244,22 +260,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setLevel(getOne(new QueryWrapper<File>().eq("file_id",parentId)).getLevel()+1);
         // 项目id
         file.setProjectId(projectId);
-        file.setMemberId(userEntity.getUserId());
+        file.setMemberId(userId);
         file.setCreateTime(System.currentTimeMillis());
         file.setUpdateTime(System.currentTimeMillis());
         // 设置目录
         file.setCatalog(1);
         save(file);
-
-        //保存到ElasticSearch
-        fileRepository.save(file);
-        System.out.println(file.getFileName()+" 文件ES上传成功");
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(file.getFileId());
-        fileVersion.setIsMaster(1);
-        fileVersion.setInfo(userEntity.getUserName() + " 创建于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-        fileVersionService.save(fileVersion);
-        return file;
     }
 
     /**
@@ -270,7 +276,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> findChildFile(String parentId,Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
-        List<File> childFile = fileMapper.findChildFile(parentId,orderType);
+        List<File> childFile = new ArrayList<>();//fileMapper.findChildFile(parentId,1,9999);
         if(fileService.isRootFolder(parentId)){
             File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
             if(ObjectsUtil.isNotEmpty(myFolder)){

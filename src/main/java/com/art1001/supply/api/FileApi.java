@@ -7,8 +7,10 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileRepository;
+import com.art1001.supply.entity.file.FileTree;
 import com.art1001.supply.entity.file.FileVersion;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
@@ -30,6 +32,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -134,9 +137,6 @@ public class FileApi extends BaseController {
                                @RequestParam(defaultValue = "1",required = false) Integer orderType) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(orderType != 1 && orderType != 2){
-                return error("orderType参数错误！");
-            }
             List<File> fileList = fileService.findChildFile(fileId,orderType);
             jsonObject.put("data", fileList);
             jsonObject.put("parentId",fileId);
@@ -145,6 +145,37 @@ public class FileApi extends BaseController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 改版之后使用
+     * @param fileId
+     * @return
+     */
+    @GetMapping("{fileId}")
+    public Result<Page<File>> fileList1(@PathVariable String fileId,
+                                        @RequestParam(defaultValue = "1") Integer current,
+                                        @RequestParam(defaultValue = "50") Integer size) {
+        try {
+            Page<File> fileList = fileService.queryFileList(fileId,current,size);
+            return Result.success(fileList);
+        } catch (Exception e){
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 获取文件树
+     * @param fileId
+     * @return
+     */
+    @GetMapping("tree/{fileId}")
+    public Result<Map<String,List<FileTree>>> getTree(@PathVariable String fileId){
+        String userId = ShiroAuthenticationManager.getUserId();
+        Map<String,List<FileTree>> map = new HashMap<>();
+        map.put("userTree",fileService.queryFileListByUserId(userId));
+        map.put("fileTree",fileService.querySubFileList(fileId));
+        return Result.success(map);
     }
 
     /**
@@ -228,7 +259,7 @@ public class FileApi extends BaseController {
      * 打开文件详情
      */
     @GetMapping("/{fileId}/details")
-    public JSONObject openDownloadFile(@PathVariable(value = "fileId") String fileId) {
+    public JSONObject fileDetail(@PathVariable(value = "fileId") String fileId) {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = fileService.findFileById(fileId);
@@ -274,7 +305,6 @@ public class FileApi extends BaseController {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data",fileService.findChildFile(parentId,1));
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);

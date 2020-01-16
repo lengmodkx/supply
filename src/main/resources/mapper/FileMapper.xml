@@ -29,9 +29,9 @@
 		<result column="user_id" property="userId" jdbcType="INTEGER"/>
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
-		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+		<collection property="users" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 		<!--查询标签-->
 		<collection property="tagList" column="file_id" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
@@ -71,7 +71,25 @@
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
 	</resultMap>
-    
+	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.file.File">
+		<id column="file_id" property="fileId"/>
+		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
+		<result column="ext" property="ext" jdbcType="VARCHAR" />
+		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="important" property="important" jdbcType="INTEGER" />
+		<result column="catalog" property="catalog" jdbcType="INTEGER" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
+		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
+<!--		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"-->
+<!--					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>-->
+		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
+	</resultMap>
 	<sql id="Base_Column_List">
 				file_id,
 				file_name,
@@ -131,34 +149,6 @@
 		</where>
 	</sql>
 	
-	<select id="findFilePagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-		
-		select * from prm_file
-		<include refid="whereStatement" />
-		
-		<if test="orderBy == 0">
-			order by file_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by file_id asc
-		</if>
-		
-	</select>
-	
-	<select id="findFileAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.file.File">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_file
-		<if test="orderBy == 0">
-			order by file_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by file_id asc
-		</if>
-	</select>
-	
 	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List2" />
@@ -172,7 +162,7 @@
 	</select>
 
 	<!-- 查询子文件 -->
-	<select id="findChildFile" resultMap="BaseResultMap">
+	<select id="findChildFile" resultMap="BaseResultMap3">
 		SELECT
 			f.file_id,
 			f.file_name,
@@ -181,35 +171,20 @@
 			f.important,
 			f.project_id,
 			f.member_id,
-			f.member_name,
 			f.`catalog`,
 			f.is_model,
 			f.`size`,
 			f.parent_id,
-			f.file_del,
 			f.create_time,
-			f.update_time,
-			f.file_uids,
-			f.file_label,
 			f.file_thumbnail,
-			f.file_privacy,
-			f.public_id,
-			f.`level`
+			f.file_privacy
 		FROM
 			prm_file f
 			LEFT JOIN prm_file_version v ON (f.file_id = v.file_id AND v.is_master = 1)
 		WHERE
 			f.file_del = 0
 			AND public_lable = 0
-			AND parent_id = #{parentId}
-		ORDER BY
-		<if test="orderType != null and orderType == 1">
-			create_time DESC
-		</if>
-		<if test="orderType != null and orderType == 2">
-			file_download_count DESC
-		</if>
-
+			AND parent_id = #{fileId}
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -582,6 +557,20 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 	<select id="selectChildFolderIds" resultType="java.lang.String">
 		SELECT
 			getChildFolder ( #{folderId} )
+	</select>
+	<select id="querySubFileList" resultType="com.art1001.supply.entity.file.FileTree">
+		select
+			f.file_id as id,
+		 	f.parent_id as pId,
+		 	f.file_name as `name`
+		from prm_file f where `catalog`=1 and file_del=0 and parent_id = #{fileId}
+	</select>
+	<select id="queryFileListByUserId" resultType="com.art1001.supply.entity.file.FileTree">
+		select
+			f.file_id as id,
+		 	f.parent_id as pId,
+		 	f.file_name as `name`
+		from prm_file f where `catalog`=1 and file_del=0 and parent_id =(select file_id from prm_file where user_id = #{userId})
 	</select>
 
 	<!-- 插入多条文件信息 -->
