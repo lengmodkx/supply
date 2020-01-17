@@ -178,13 +178,24 @@
 
     <!-- 项目进展走势 完成任务的总累计数据 -->
     <select id="taskOfProgress" resultMap="BaseResultMap">
-		SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') AS create_time,COUNT(1) AS task_count
-		FROM  prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
-		WHERE project_id = #{projectId}
-		AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
-		AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
-        <include refid="Base_Column_QBC"/>
-		GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+        SELECT
+        a.task_count,
+        a.create_time
+        FROM
+        (
+        SELECT COUNT(1) AS task_count,FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') AS create_time
+        FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
+        WHERE project_id = #{projectId}
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') BETWEEN DATE_SUB(FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T'),INTERVAL #{stDTO.DayNum} DAY)
+        AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
+        <include refid="Base_Column_QBC"/>GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+        <foreach collection="dayNum.keys" item="k" separator="">
+                UNION (SELECT 0, #{k})
+        </foreach>
+        )
+        a
+        GROUP BY a.create_time
+        ORDER BY a.create_time ASC
     </select>
 
     <!-- 每日完成任务数  每日数据 -->

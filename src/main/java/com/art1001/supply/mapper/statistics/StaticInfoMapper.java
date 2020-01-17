@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: yanglujing
@@ -58,9 +59,10 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param projectId 项目id
      * @param currentDate  当前日期
      * @param sto
+     * @param dayNumMap
      * @return list
      */
-    List<StatisticsResultVO> taskOfProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
+    List<StatisticsResultVO> taskOfProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO") StaticDto sto, @Param("dayNum")Map<String, Integer> dayNumMap);
 
     /**
      * 查询已完成项目进展走势

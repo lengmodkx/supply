@@ -25,6 +25,7 @@
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
@@ -80,6 +81,7 @@
 		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
 		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
 		<result column="other" property="other" jdbcType="VARCHAR"/>
@@ -256,6 +258,7 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
+		prm_task.finish_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
 		prm_task.other,
@@ -283,6 +286,7 @@
 		prm_task.task_del,
 		prm_task.create_time,
 		prm_task.update_time,
+		prm_task.finish_time,
 		prm_task.fabulous_count,
 		prm_task.privacy_pattern,
 		prm_task.other,
@@ -314,6 +318,7 @@
 		t.task_del,
 		t.create_time,
 		t.update_time,
+		t.finish_time,
 		t.fabulous_count,
 		t.privacy_pattern,
 		t.other,
@@ -451,6 +456,9 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="finishTime != null ">
+			finish_time,
+			</if>
 			<if test="fabulousCount != null">
 				fabulous_count,
 			</if>
@@ -531,6 +539,9 @@
 			<if test="updateTime != null ">
 				#{updateTime},
 			</if>
+			<if test="finishTime != null ">
+				#{finishTime},
+			</if>
 			<if test="fabulousCount != null">
 				#{fabulousCount},
 			</if>
@@ -607,6 +618,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="updateTime != null ">
+				finish_time = #{finishTime},
 			</if>
 			<if test="fabulousCount != null">
 				fabulous_count = #{fabulousCount},
@@ -760,6 +774,7 @@
 		t.task_del,
 		t.create_time,
 		t.update_time,
+		t.finish_time,
 		t.fabulous_count,
 		t.privacy_pattern,
 		t.other,

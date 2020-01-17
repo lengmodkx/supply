@@ -190,6 +190,12 @@ public class Task extends Model<Task> {
 	private Long updateTime;
 
 	/**
+	 * 完成时间
+	 */
+	@TableField("finish_time")
+	private Long finishTime;
+
+	/**
 	 * 任务的隐私模式
 	 */
 	private Integer privacyPattern;
