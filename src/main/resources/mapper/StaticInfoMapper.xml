@@ -127,7 +127,7 @@
         SELECT
         FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as  create_time
         <include refid="Base_Column_List"/>
-        WHERE pt.task_uids is NULL  AND pt.project_id=#{projectId}
+        WHERE pt.executor is NULL  AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
