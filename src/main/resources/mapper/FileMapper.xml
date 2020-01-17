@@ -572,8 +572,15 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		 	f.file_name as `name`
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id =(select file_id from prm_file where user_id = #{userId})
 	</select>
+    <select id="queryFileByUserId" resultType="com.art1001.supply.entity.file.FileTree">
+		select
+			f.file_id as id,
+		 	f.parent_id as pId,
+		 	f.file_name as `name`
+		from prm_file f where `catalog`=1 and file_del=0 and file_id =(select file_id from prm_file where user_id = #{userId})
+	</select>
 
-	<!-- 插入多条文件信息 -->
+    <!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">

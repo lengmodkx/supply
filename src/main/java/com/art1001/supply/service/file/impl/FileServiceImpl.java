@@ -95,6 +95,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
+    public List<FileTree> queryFileByUserId(String userId) {
+        return fileMapper.queryFileByUserId(userId);
+    }
+
+    @Override
     public Page<File> queryFileList(String fileId,Integer current,Integer size) {
         Page<File> filePage = new Page<>(current,size);
         return fileMapper.findChildFile(filePage,fileId);

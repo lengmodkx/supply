@@ -39,6 +39,7 @@ public interface FileMapper extends BaseMapper<File> {
 
 	List<FileTree> queryFileListByUserId(String userId);
 
+	List<FileTree> queryFileByUserId(String userId);
 	/**
 	 * 查询出该文件夹下的所有子文件夹及文件
 	 * @param fileId 父级id，顶级目录为 0

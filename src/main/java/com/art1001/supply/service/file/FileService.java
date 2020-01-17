@@ -24,6 +24,7 @@ import java.util.List;
 
  	List<FileTree> queryFileListByUserId(String userId);
 
+	List<FileTree> queryFileByUserId(String userId);
 	/**
 	 * 查询根目录文件夹和文件
 	 * @param fileId 根目录id

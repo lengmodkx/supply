@@ -173,8 +173,14 @@ public class FileApi extends BaseController {
     public Result<Map<String,List<FileTree>>> getTree(@PathVariable String fileId){
         String userId = ShiroAuthenticationManager.getUserId();
         Map<String,List<FileTree>> map = new HashMap<>();
-        map.put("userTree",fileService.queryFileListByUserId(userId));
-        map.put("fileTree",fileService.querySubFileList(fileId));
+        List<FileTree> fileTrees = new ArrayList<>();
+        fileTrees.add(new FileTree(fileId,"0","项目文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png"));
+        fileTrees.addAll(fileService.querySubFileList(fileId));
+
+        List<FileTree> userTrees= fileService.queryFileByUserId(userId);
+        userTrees.addAll(fileService.queryFileListByUserId(userId));
+        map.put("userTree",userTrees);
+        map.put("fileTree",fileTrees);
         return Result.success(map);
     }
 
