@@ -51,7 +51,7 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @return int
      * @param projectId 项目id
      */
-    @Select("SELECT COUNT(1) FROM prm_task pt WHERE  DATEDIFF(FROM_UNIXTIME(#{currDate},'%Y-%m-%d %T'),FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T'))>=#{dayNum} AND project_id = #{projectId} ")
+        @Select("SELECT COUNT(1) FROM prm_task pt WHERE  DATEDIFF(FROM_UNIXTIME(#{currDate},'%Y-%m-%d %T'),FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T'))>=#{dayNum} AND project_id = #{projectId} ")
     Integer taskSevenDayAgo(@Param("projectId")String projectId, @Param("currDate")Long currentDate,  @Param("dayNum")int dayNum);
 
     /**
@@ -69,9 +69,10 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * @param projectId 项目id
      * @param currentDate  当前日期
      * @param sto
+     * @param dayNumMap
      * @return list
      */
-    List<StatisticsResultVO> taskOfFinishProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO")StaticDto sto);
+    List<StatisticsResultVO> taskOfFinishProgress(@Param("projectId") String projectId, @Param("currDate") Long currentDate, @Param("stDTO") StaticDto sto, @Param("dayNum")Map<String, Integer> dayNumMap);
 
     /**
      * 查询七天前完成的任务数据

@@ -1,12 +1,15 @@
 package com.art1001.supply.entity.statistics;
 
 
+import lombok.Data;
+
 /**
  * 统计页面的总量概览详细数据实体类
  *
  * @author lujing
  * @date 2018-09-05 10:04
  */
+@Data
 public class StatisticsResultVO {
 
     /**
@@ -80,6 +83,21 @@ public class StatisticsResultVO {
     private int taskCountInt;
 
     /**
+     *平均任务数
+     */
+    private double taskCountDouble;
+
+    /**
+     *累计完成任务数
+     */
+    private int taskCountAdd;
+
+    /**
+     *剩余任务数
+     */
+    private int taskCountinus;
+
+    /**
      *完成天数
      */
     private String taskDayNum;
@@ -104,175 +122,4 @@ public class StatisticsResultVO {
      */
     private String taskPrecedence;
 
-
-
-
-    //封装
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(String finishTime) {
-        this.finishTime = finishTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getTaskCase() {
-        return taskCase;
-    }
-
-    public void setTaskCase(String taskCase) {
-        this.taskCase = taskCase;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-
-    public String getExecutor() {
-        return executor;
-    }
-
-    public void setExecutor(String executor) {
-        this.executor = executor;
-    }
-
-    public String getTaskGroup() {
-        return taskGroup;
-    }
-
-    public void setTaskGroup(String taskGroup) {
-        this.taskGroup = taskGroup;
-    }
-
-    public String getListView() {
-        return listView;
-    }
-
-    public void setListView(String listView) {
-        this.listView = listView;
-    }
-
-    public int getOverdueNum() {
-        return overdueNum;
-    }
-
-    public void setOverdueNum(int overdueNum) {
-        this.overdueNum = overdueNum;
-    }
-
-    public int getDynamicNum() {
-        return dynamicNum;
-    }
-
-    public void setDynamicNum(int dynamicNum) {
-        this.dynamicNum = dynamicNum;
-    }
-
-    public String getChangeType() {
-        return changeType;
-    }
-
-    public void setChangeType(String changeType) {
-        this.changeType = changeType;
-    }
-
-    public String getTaskCountString() {
-        return taskCountString;
-    }
-
-    public void setTaskCountString(String taskCountString) {
-        this.taskCountString = taskCountString;
-    }
-
-    public int getTaskCountInt() {
-        return taskCountInt;
-    }
-
-    public void setTaskCountInt(int taskCountInt) {
-        this.taskCountInt = taskCountInt;
-    }
-
-    public String getTaskDayNum() {
-        return taskDayNum;
-    }
-
-    public void setTaskDayNum(String taskDayNum) {
-        this.taskDayNum = taskDayNum;
-    }
-
-    public String getTaskDayGross() {
-        return taskDayGross;
-    }
-
-    public void setTaskDayGross(String taskDayGross) {
-        this.taskDayGross = taskDayGross;
-    }
-
-    public int getUnfinishTaskNum() {
-        return unfinishTaskNum;
-    }
-
-    public void setUnfinishTaskNum(int unfinishTaskNum) {
-        this.unfinishTaskNum = unfinishTaskNum;
-    }
-
-    public int getFinishTaskNum() {
-        return finishTaskNum;
-    }
-
-    public void setFinishTaskNum(int finishTaskNum) {
-        this.finishTaskNum = finishTaskNum;
-    }
-
-    public String getTaskPrecedence() {
-        return taskPrecedence;
-    }
-
-    public void setTaskPrecedence(String taskPrecedence) {
-        this.taskPrecedence = taskPrecedence;
-    }
-
-    @Override
-    public String toString() {
-        return "StatisticsResultVO{" +
-                "createTime='" + createTime + '\'' +
-                ", finishTime='" + finishTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", taskCase='" + taskCase + '\'' +
-                ", taskName='" + taskName + '\'' +
-                ", executor='" + executor + '\'' +
-                ", taskGroup='" + taskGroup + '\'' +
-                ", listView='" + listView + '\'' +
-                ", overdueNum=" + overdueNum +
-                ", dynamicNum=" + dynamicNum +
-                ", changeType='" + changeType + '\'' +
-                ", taskCountString=" + taskCountString +
-                ", taskCountInt=" + taskCountInt +
-                ", taskDayNum='" + taskDayNum + '\'' +
-                ", taskDayGross='" + taskDayGross + '\'' +
-                ", unfinishTaskNum=" + unfinishTaskNum +
-                ", finishTaskNum=" + finishTaskNum +
-                ", taskPrecedence='" + taskPrecedence + '\'' +
-                '}';
-    }
 }

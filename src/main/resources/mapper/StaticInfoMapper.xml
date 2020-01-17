@@ -40,7 +40,7 @@
         <result column="user_name" property="executor" jdbcType="VARCHAR" />
         <result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
         <result column="relation_name" property="listView" jdbcType="VARCHAR" />
-        <result column="end_time_isupdate" property="endTimeUpdate" jdbcType="VARCHAR" />
+        <!--<result column="end_time_isupdate" property="endTimeUpdate" jdbcType="VARCHAR" />-->
     </resultMap>
 
 
@@ -188,7 +188,8 @@
         WHERE project_id = #{projectId}
         AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') BETWEEN DATE_SUB(FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T'),INTERVAL #{stDTO.DayNum} DAY)
         AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
-        <include refid="Base_Column_QBC"/>GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
+        <include refid="Base_Column_QBC"/>
+        GROUP BY FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
         <foreach collection="dayNum.keys" item="k" separator="">
                 UNION (SELECT 0, #{k})
         </foreach>
@@ -200,14 +201,26 @@
 
     <!-- 每日完成任务数  每日数据 -->
     <select id="taskOfFinishProgress" resultMap="BaseResultMap">
-		SELECT FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d') AS finish_time,COUNT(1) AS task_count
+        SELECT
+        a.finish_time,
+        a.task_count
+        FROM
+        (
+            SELECT COUNT(1) AS task_count,FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d') AS finish_time
 		FROM  prm_task pt  LEFT JOIN tb_user tu ON tu.user_id=pt.executor
 		WHERE pt.task_status=1
 		AND project_id = #{projectId}
-        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY)
+        AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')  BETWEEN  DATE_SUB(FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T'),INTERVAL #{stDTO.DayNum} DAY)
         AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
         <include refid="Base_Column_QBC"/>
-		 GROUP BY FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d')
+		 GROUP BY FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d')
+        <foreach collection="dayNum.keys" item="k" separator="">
+            UNION (SELECT 0, #{k})
+        </foreach>
+        )
+        a
+        GROUP BY a.finish_time
+        ORDER BY a.finish_time ASC
 
 	</select>
 

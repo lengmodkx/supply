@@ -147,7 +147,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
-
         sto =  resultStatic(sto);
 
         //获取每个用户的数据
@@ -183,37 +182,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         try {
             //获取七天的总数据
             List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectTaskBurnOut(projectId,sto);
-
             Integer count = this.statisticsMapper.taskSevenDayAgo(projectId, currentDate, sto.getDayNum());
             //项目进展走势
             List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto,dayNumMap);
-           //计算每天创建的任务量
-            Map<String, Integer> daysTaskMap = DateUtil.createTask(taskOfProgress,sto.getDayNum());
-            //计算累计任务量
-            Map<String, Integer> taskCountMap = DateUtil.dateComplement(taskOfProgress, count, sto.getDayNum());
-            Map<String, Double> stringMap = DateUtil.taskBurnout(taskCountMap, sto.getDayNum());
+            //重写之后的list数据  累计总任务
+            List<StatisticsResultVO> taskCountList=DateUtil.getSticList(taskOfProgress, count);
+            taskCountList=DateUtil.getBurnoutList(taskCountList);
 
-            List<StatisticsResultVO> taskOfFinishProgress = this.statisticsMapper.taskOfFinishProgress(projectId, currentDate,sto);
-            //跟据上面查询的taskOfFinishedProgress列表计算每日完成任务量
-            Map<String, Integer> taskEveryDayMap = DateUtil.everyDayDateComplement(taskOfFinishProgress, sto.getDayNum());
+            List<StatisticsResultVO> taskOfFinishProgress = this.statisticsMapper.taskOfFinishProgress(projectId, currentDate,sto,dayNumMap);
+
 
             // type = 0 时包含所有数据  type = 1   燃尽图数据  type = 2  累计图数据
             if (type == 0){
-
-               statisticsBurnout=null;
-                       //this.getStatisAllData(taskCountMap,daysTaskMap,projectId,sto,taskOfFinishProgress,stringMap);
-
+                statisticsBurnout = this.getSticAllData(taskCountList, taskOfFinishProgress, projectId,sto);
 
             }else if(type == 1){
                statisticsBurnout.setSticResultVOS(statisticsResultVOList);
-               statisticsBurnout=this.getBurnOut(daysTaskMap,taskOfFinishProgress,stringMap);
+               statisticsBurnout=this.getBurnout(taskCountList,taskOfFinishProgress);
 
             }else if(type == 2){
-
-                statisticsBurnout=this.getCumulative(taskCountMap,taskOfFinishProgress,projectId,sto,stringMap);
+                statisticsBurnout=this.getCumulative(taskCountList,taskOfFinishProgress,projectId,sto);
             }
-
-
             return  statisticsBurnout;
 
 
@@ -222,6 +211,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return null;
     }
+
+
 
 
     /**
@@ -673,100 +664,77 @@ public class StatisticsServiceImpl implements StatisticsService {
         return cnt;
     }
 
-
     //获取进入统计页面的所有数据
-    private StatisticsBurnout  getStatisAllData(Map<String, Integer> taskCountMap,Map<String, Integer> createTaskMap,String projectId,StaticDto sto,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
+    private StatisticsBurnout  getSticAllData(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto){
+
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
+        int n=taskCountList.size();
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
-        //项目进展走势
-        Integer[] firstArray = new Integer[sto.getDayNum()];
-        int i = 0;
-        if (taskCountMap != null && taskCountMap.size() > 0) {
-            for (Map.Entry<String, Integer> entry : taskCountMap.entrySet()) {
-                firstArray[i] = entry.getValue();
-                i++;
-            }
+
+        for (int i=0;i<n;i++){
+            taskFinishList.get(i).getTaskCountInt();
         }
 
-        //获取七天前的完成任务量
-        int finishCount = this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,sto);
-        Map<String, Integer> finishMap = DateUtil.dateComplement(taskOfFinishProgress, finishCount, sto.getDayNum());
-        Integer[] secondArray = new Integer[sto.getDayNum()];
-        i = 0;
-        for (Map.Entry<String, Integer> entry : finishMap.entrySet()) {
-            secondArray[i] = entry.getValue();
-            i++;
+        int finishCount=this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,null);
+
+        //项目进展走势
+        Integer[] firstArray = new Integer[n];
+        Integer[] secondArray = new Integer[n];
+        String[] everyDateName = new String[n];
+        Double[] everyDateInt = new Double[n];
+        Integer[] secondInt = new Integer[n];
+
+        int min=taskCountList.get(0).getTaskCountInt();
+
+        for (int i=0;i<n;i++){
+            firstArray[i] = taskCountList.get(i).getTaskCountAdd();
+            secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
+            finishCount=secondArray[i];
+            everyDateName[i]=taskCountList.get(i).getCreateTime();
+            everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
+
+            if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
+                if (i<n-1){
+                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                    min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
+                }else{
+                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                }
+            }
         }
 
         statisticsBurnout.setCumulativeTask(firstArray);
         statisticsBurnout.setCompletionTask(secondArray);
-        String[] everyDateName = new String[sto.getDayNum()];
-        //燃尽图数据
-        i = 0;
-        Double[] everyDateInt = new Double[sto.getDayNum()];
-        if (stringMap != null && stringMap.size() > 0) {
-            for (Map.Entry<String, Double> entry : stringMap.entrySet()) {
-                everyDateInt[i] = entry.getValue();
-                everyDateName[i] = entry.getKey();
-                i++;
-            }
-        }
-        i = 0;
-        //将时间段内每天完成的任务转换成Map格式  key对应时间，value对应任务数
-        Map<String, Integer> Map = DateUtil.everyDate(sto.getDayNum());
-        for (Map.Entry<String, Integer> entry : Map.entrySet()) {
-            if (entry.getValue()==null){
-                entry.setValue(0);
-            }
-            for (StatisticsResultVO svo : taskOfFinishProgress) {
-                if (svo.getFinishTime()!=null && svo.getFinishTime().equals(entry.getKey())){
-                    entry.setValue(svo.getTaskCountInt());
-                }
-            }
-        };
-        Integer[] secondInt = new Integer[Map.size()];
-        //将时间段内总任务与时间段内完成任务相减，获得剩余任务数
-     /*   if (Map != null && Map.size() > 0) {
-            for (Map.Entry<String, Integer> entry : taskCountMap.entrySet()) {
-                if (taskCountMap != null && taskCountMap.size() > 0) {
-                    for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
-                        if (everyEntry.getKey().equals(entry.getKey())) {
-                            if (everyEntry.getValue()==0 && entry.getValue() ==0){
-                                secondInt[i]=0;
-                                i++;
-                            }else if (i<taskCountMap.size()-1){
-                                secondInt[i]=entry.getValue()-everyEntry.getValue();
-                                taskCountMap.put(DateUtil.getNextDay(entry.getKey()),secondInt[i]);
-                                i++;
-                            }else {
-                                taskCountMap.put(entry.getKey(),taskCountMap.get(DateUtil.getYesterday(entry.getKey())));
-                                secondInt[i]=entry.getValue()-everyEntry.getValue();
-                                i++;
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-      if (Map != null && Map.size() > 0) {
-            for (Map.Entry<String, Integer> creatEentry : createTaskMap.entrySet()) {
-                    for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
-                        if (creatEentry.getKey().equals(everyEntry.getKey())) {
-                            if (everyEntry.getValue()==0 && creatEentry.getValue() ==0){
-                                secondInt[i]=0;
-                                i++;
-                            }else if (i<createTaskMap.size()-1){
-                                secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
-                                createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]+createTaskMap.get(DateUtil.getNextDay(creatEentry.getKey())));
-                                i++;
-                            }else if(i==createTaskMap.size()-1){
-                                secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
-                                i++;
-                            }
 
-                        }
-                    }
+        statisticsBurnout.setTrueTask(secondInt);
+        statisticsBurnout.setIdealTask(everyDateInt);
+        statisticsBurnout.setEveryDate(everyDateName);
+
+        return statisticsBurnout;
+    }
+
+
+
+   //任务燃尽图
+    private StatisticsBurnout getBurnout(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList) {
+        int n=taskCountList.size();
+        StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
+        String[] everyDateName = new String[n];
+        Double[] everyDateInt = new Double[n];
+        Integer[] secondInt = new Integer[n];
+        int min=taskCountList.get(0).getTaskCountInt();
+
+        for (int i=0;i<n;i++){
+            everyDateName[i]=taskCountList.get(i).getCreateTime();
+            everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
+            if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
+                if (i<n-1){
+                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                    min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
+                }else{
+                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                }
             }
         }
         statisticsBurnout.setTrueTask(secondInt);
@@ -776,89 +744,28 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-    private  StatisticsBurnout getBurnOut(Map<String, Integer> createTaskMap,List<StatisticsResultVO> taskOfFinishProgress,Map<String, Double> stringMap){
+
+    private StatisticsBurnout getCumulative(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto) {
+
+        int n=taskCountList.size();
+        Long currentDate=System.currentTimeMillis()/1000;
 
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
-        String[] everyDateName = new String[stringMap.size()];
-        //燃尽图数据
-        int i = 0;
-        Double[] everyDateInt = new Double[stringMap.size()];
-        if (stringMap != null && stringMap.size() > 0) {
-            for (Map.Entry<String, Double> entry : stringMap.entrySet()) {
-                everyDateInt[i] = entry.getValue();
-                everyDateName[i] = entry.getKey();
-                i++;
-            }
-        }
-        i = 0;
-        //将时间段内每天完成的任务转换成Map格式  key对应时间，value对应任务数
-        Map<String, Integer> Map = DateUtil.everyDate(createTaskMap.size());
-        for (Map.Entry<String, Integer> entry : Map.entrySet()) {
-            if (entry.getValue()==null){
-                entry.setValue(0);
-            }
-            for (StatisticsResultVO svo : taskOfFinishProgress) {
-                if (svo.getFinishTime()!=null && svo.getFinishTime().equals(entry.getKey())){
-                    entry.setValue(svo.getTaskCountInt());
-                }
-            }
-        };
-        Integer[] secondInt = new Integer[Map.size()];
-        //将时间段内总任务与时间段内完成任务相减，获得剩余任务数
-        if (Map != null && Map.size() > 0) {
-            for (Map.Entry<String, Integer> creatEentry : createTaskMap.entrySet()) {
-                for (Map.Entry<String, Integer> everyEntry : Map.entrySet()) {
-                    if (creatEentry.getKey().equals(everyEntry.getKey())) {
-                        if (everyEntry.getValue()==0 && creatEentry.getValue() ==0){
-                            secondInt[i]=0;
-                            i++;
-                        }else if (i<createTaskMap.size()-1){
-                            secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
-                            createTaskMap.put(DateUtil.getNextDay(creatEentry.getKey()),secondInt[i]+createTaskMap.get(DateUtil.getNextDay(creatEentry.getKey())));
-                            i++;
-                        }else if(i==createTaskMap.size()-1){
-                            secondInt[i]=creatEentry.getValue()-everyEntry.getValue();
-                            i++;
-                        }
-
-                    }
-                }
-            }
-        }
-        statisticsBurnout.setTrueTask(secondInt);
-        statisticsBurnout.setIdealTask(everyDateInt);
-        statisticsBurnout.setEveryDate(everyDateName);
-        return statisticsBurnout;
-    }
-
-   //获取累计图数据
-    private  StatisticsBurnout  getCumulative(Map<String, Integer> taskCountMap,List<StatisticsResultVO> taskOfFinishProgress,String projectId,StaticDto sto,Map<String, Double> stringMap){
-
-        Long currentDate = System.currentTimeMillis() / 1000;
-        StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
-        String[] everyDateName = new String[stringMap.size()];
-        //项目进展走势
-        Integer[] firstArray = new Integer[taskCountMap.size()];
-        int i = 0;
-        if (taskCountMap != null && taskCountMap.size() > 0) {
-            for (Map.Entry<String, Integer> entry : taskCountMap.entrySet()) {
-                firstArray[i] = entry.getValue();
-                i++;
-            }
-        }
-
-        //获取七天前的完成任务量
-        int finishCount = this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate, sto);
-        Map<String, Integer> finishMap = DateUtil.dateComplement(taskOfFinishProgress, finishCount, sto.getDayNum());
-        Integer[] secondArray = new Integer[finishMap.size()];
-        i = 0;
-        for (Map.Entry<String, Integer> entry : finishMap.entrySet()) {
-            everyDateName[i] = entry.getKey();
-            secondArray[i] = entry.getValue();
-            i++;
-        }
-
         List<StatisticsResultVO> sticsResultVO = this.statisticsMapper.selectProjectProgress(projectId,sto);
+
+        int finishCount=this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,null);
+
+        Integer[] firstArray = new Integer[n];
+        Integer[] secondArray = new Integer[n];
+        String[] everyDateName = new String[n];
+
+        for (int i=0;i<n;i++){
+            firstArray[i] = taskCountList.get(i).getTaskCountAdd();
+            secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
+            finishCount=secondArray[i];
+            everyDateName[i]=taskCountList.get(i).getCreateTime();
+        }
+
 
         statisticsBurnout.setSticResultVOS(sticsResultVO);
         statisticsBurnout.setCumulativeTask(firstArray);
@@ -867,6 +774,5 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         return  statisticsBurnout;
     }
-
 
 }
