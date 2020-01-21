@@ -9,7 +9,10 @@ import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.util.NumberUtils;
+import com.mchange.v1.util.ListUtils;
+import jodd.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * <p>
@@ -50,20 +54,20 @@ public class ProResourcesRoleApi extends BaseController {
      */
     @PutMapping("/{role}/edit_resource")
     public JSONObject editResource(@PathVariable(value = "role") String roleId,
-                                   @RequestParam(value = "resources") @NotEmpty(message = "必须选择至少一个资源!") String resources){
+                                   @RequestParam(value = "resources") @NotEmpty(message = "必须选择至少一个资源!") List<String> resources){
         JSONObject jsonObject = new JSONObject();
-        if(resources.split(Constants.SPLIST_COMMA).length == 0){
-            return error("参数resources格式不正确!");
-        }
+
         if(!NumberUtils.isNumber(roleId)){
             return error("参数roleId必须为整数!");
         }
+
         if(proRoleService.checkRoleIsNotExistByRoleId(Integer.valueOf(roleId))){
+
             return error("roleId角色不存在!");
         }
 
 
-        if(proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId),resources) <= 0) {
+        if(proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), StringUtils.join(resources,",")) <= 0) {
             jsonObject.put("result", 0);
         } else {
             jsonObject.put("result",1);

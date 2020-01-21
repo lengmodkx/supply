@@ -39,6 +39,7 @@ public class PermissionFilter extends AccessControlFilter {
 		//取到请求的uri ，进行权限判断
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 
+
 		String uri = httpRequest.getRequestURI();
 		String contextPath = httpRequest.getContextPath();
 		if(uri != null && uri.startsWith(contextPath))

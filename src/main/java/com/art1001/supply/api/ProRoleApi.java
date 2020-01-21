@@ -3,17 +3,22 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.util.NumberUtils;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.role.AddProRoleValidation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.rmi.PortableRemoteObject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,7 +29,7 @@ import java.util.List;
  * @author heshaohua
  * @since 2019-06-18
  */
-@Validated
+@Slf4j
 @RestController
 @RequestMapping("/pro_role")
 public class ProRoleApi extends BaseController {
@@ -46,10 +51,11 @@ public class ProRoleApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         Integer result = proRoleService.addProRole(proRole);
         if(result > 0){
-            jsonObject.put("result", result);
+            jsonObject.put("result", 1);
             jsonObject.put("msg", "项目角色添加成功!");
+            jsonObject.put("data",proRole);
         } else {
-            jsonObject.put("result", result);
+            jsonObject.put("result", 0);
             jsonObject.put("msg", "添加失败,角色key在该项目中已存在!");
         }
         return jsonObject;
@@ -61,8 +67,8 @@ public class ProRoleApi extends BaseController {
      * @param projectId 项目id
      * @return 是否成功
      */
-    @DeleteMapping
-    public JSONObject removeProRole(@Min(value = 0,message = "参数错误!") String roleId,
+    @DeleteMapping("/{roleId}")
+    public JSONObject removeProRole(@PathVariable @Min(value = 0,message = "参数错误!") String roleId,
                                     @NotBlank(message = "项目id不能为空!") String projectId){
         JSONObject jsonObject = new JSONObject();
         if(!NumberUtils.isNumber(roleId)){
@@ -95,9 +101,11 @@ public class ProRoleApi extends BaseController {
      * @param roleName 角色名称
      * @return 是否成功
      */
-    @PutMapping("/{roleId}/name")
+    @PutMapping("/{roleId}")
     public JSONObject updateRole(@PathVariable(value = "roleId")String roleId,
-                                 @RequestParam(value = "roleName") @NotBlank(message = "角色名称不能为空!") String roleName){
+                                 String roleName,
+                                 String roleDes,
+                                 String roleKey){
         JSONObject jsonObject = new JSONObject();
         if(!NumberUtils.isNumber(roleId)){
             return error("roleId必须为整数!");
@@ -107,8 +115,15 @@ public class ProRoleApi extends BaseController {
            jsonObject.put("msg", "该角色不存在,无法修改!");
            jsonObject.put("result", 0);
         }
-        Integer result = proRoleService.updateRoleName(Integer.valueOf(roleId),roleName);
-        jsonObject.put("result", result);
+        ProRole proRole = new ProRole();
+        proRole.setRoleId(Integer.valueOf(roleId));
+        proRole.setRoleName(roleName);
+        proRole.setRoleDes(roleDes);
+        proRole.setRoleKey(roleKey);
+        proRole.setUpdateTime(LocalDateTime.now());
+
+        proRoleService.updateById(proRole);
+        jsonObject.put("result", 1);
         return success(jsonObject);
     }
 
@@ -116,6 +131,7 @@ public class ProRoleApi extends BaseController {
     public JSONObject updateDefaultRole(String projectId, String roleKey){
         JSONObject jsonObject = new JSONObject();
         proRoleService.setProDefaultRole(projectId, roleKey);
+        jsonObject.put("result",1);
         return jsonObject;
     }
 
@@ -131,6 +147,14 @@ public class ProRoleApi extends BaseController {
         jsonObject.put("result", 1);
         jsonObject.put("data", roles);
         return jsonObject;
+    }
+
+    @GetMapping("/for_member")
+    public Result roleForMember(@NotNull(message = "用户id不能为空！") String userId,
+                                @NotNull(message = "项目id不能为空！") String projectId){
+        log.info("Get role for member.[{}]", userId);
+
+        return Result.success(proRoleService.roleForMember(userId, projectId));
     }
 }
 

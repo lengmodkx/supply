@@ -224,10 +224,10 @@ public class ShiroConfig {
         //filtersMap.put("kickoutAuth",new KickoutAuthFilter());
         //filtersMap.put("login",new LoginFilter());
         //filtersMap.put("remember",new RememberMeFilter());
-        //filtersMap.put("perm",new PermissionFilter());
-       // filtersMap.put("roleFilter",new RoleFilter());
-        //filtersMap.put("baseUrl",new URLFilter());
         filtersMap.put("jwt", new JwtFilter());
+        filtersMap.put("perm",new PermissionFilter());
+        filtersMap.put("roleFilter",new RoleFilter());
+        //filtersMap.put("baseUrl",new URLFilter());
 //        SslFilter sslFilter = new SslFilter();
 //        sslFilter.setPort(8443);
 //        filtersMap.put("ssl",sslFilter);

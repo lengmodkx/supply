@@ -3,6 +3,8 @@ package com.art1001.supply.entity.role;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ import java.io.Serializable;
  * @author heshaohua
  * @since 2019-06-18
  */
+@Data
 @TableName("sys_pro_role_user")
 public class ProRoleUser implements Serializable {
 
@@ -35,7 +38,7 @@ public class ProRoleUser implements Serializable {
     /**
      * 企业id
      */
-    private String oId;
+    private String pId;
 
     /**
      * 创建时间

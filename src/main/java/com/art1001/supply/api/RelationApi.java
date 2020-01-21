@@ -120,7 +120,7 @@ public class  RelationApi {
      */
     @Push(value = PushType.H8,type = 1)
     @DeleteMapping("/{menuId}/menu")
-    public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId){
+        public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId){
         JSONObject jsonObject = new JSONObject();
         try {
             String relationProjectId = this.getRelationProjectId(menuId);
@@ -165,7 +165,7 @@ public class  RelationApi {
      */
     @Push(value = PushType.H1)
     @PutMapping("/{menuId}/menu")
-    public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName){
+        public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName){
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();

@@ -1,14 +1,20 @@
 package com.art1001.supply.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.Data;
+
 /**
  * 全部结果返回类
  * 2019/12/25
  * wangyafeng
  * @param <T>
  */
+@Data
 public class Result<T> {
     private int result;
     private String msg;
+
     private T data;
 
     private Result(T data){

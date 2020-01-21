@@ -88,11 +88,11 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 		if(CollectionUtils.isNotEmpty(resourcesByRoleId)){
 			//循环比较,构造出ResourceShowVO数据
 			allResources.forEach(item -> {
-				List<String> currSubResources = resourcesByRoleId.stream()
+				List<Integer> currSubResources = resourcesByRoleId.stream()
 						//过滤出属于当前资源分组的资源信息
 						.filter(resource -> resource.getParentId().equals(item.getId()))
 						//提取出上面过滤后的stream中的resourceName字段
-						.map(ResourceEntity::getResourceName).collect(Collectors.toList());
+						.map(ResourceEntity::getResourceId).collect(Collectors.toList());
 				item.setCheckAllGroup(currSubResources);
 			});
 		}

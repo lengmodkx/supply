@@ -153,12 +153,12 @@ public class FileApi extends BaseController {
      * @return
      */
     @GetMapping("{fileId}")
-    public Result<Page<File>> fileList1(@PathVariable String fileId,
+    public Result<List<File>> fileList1(@PathVariable String fileId,
                                         @RequestParam(defaultValue = "1") Integer current,
                                         @RequestParam(defaultValue = "50") Integer size) {
         try {
             Page<File> fileList = fileService.queryFileList(fileId,current,size);
-            return Result.success(fileList);
+            return Result.success(fileList.getRecords());
         } catch (Exception e){
             throw new AjaxException(e);
         }
@@ -311,6 +311,8 @@ public class FileApi extends BaseController {
             fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
+
+            jsonObject.put("data", fileService.queryFileList(parentId,1,9999).getRecords());
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -323,7 +325,6 @@ public class FileApi extends BaseController {
 
     /**
      * 上传文件
-     *
      * @param projectId 项目id
      */
 //    @Log(PushType.C2)
@@ -585,7 +586,7 @@ public class FileApi extends BaseController {
             file.setUpdateTime(System.currentTimeMillis());
             fileService.updateById(file);
             jsonObject.put("result", 1);
-            jsonObject.put("msgId",projectId+"/recyclebin");
+            jsonObject.put("msgId",projectId);
             jsonObject.put("data",new JSONObject().fluentPut("fileId",fileId));
         } catch (Exception e) {
             log.error("文件恢复失败:", e);

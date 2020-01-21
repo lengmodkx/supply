@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.exception.AjaxException;
@@ -167,5 +168,12 @@ public class OrganizationApi {
             throw  new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    @PutMapping("/personal_project")
+    public Result changePersonalProject(){
+        log.info("change to personal project.");
+        organizationService.personalProject(ShiroAuthenticationManager.getUserId());
+        return Result.success();
     }
 }

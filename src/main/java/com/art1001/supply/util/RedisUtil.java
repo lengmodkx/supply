@@ -2,6 +2,7 @@ package com.art1001.supply.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -244,7 +245,13 @@ public class RedisUtil {
     }
 
     public <T> List<T> getList(Class<T> c,Object key){
-        return JSONArray.parseArray(JSON.toJSONString(redisTemplate.opsForList().range(key, 0, -1)),c);
+        List range = redisTemplate.opsForList().range(key, 0, -1);
+        if(CollectionUtils.isNotEmpty(range)){
+            return JSONArray.parseArray(JSON.toJSONString(range),c);
+        }
+
+        return null;
+
     }
 
     public Long getListSize(String key){

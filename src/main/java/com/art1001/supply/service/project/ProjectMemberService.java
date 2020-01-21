@@ -138,7 +138,7 @@ public interface ProjectMemberService extends IService<ProjectMember> {
      * @date 2019/6/21 10:21
      * @return 是否存在
      */
-    Boolean checkUserProjectBindIsExist(String projectId);
+    Boolean checkUserProjectBindIsExist(String projectId, String userId);
 
     /**
      * 获取出和当前用户有关的项目数

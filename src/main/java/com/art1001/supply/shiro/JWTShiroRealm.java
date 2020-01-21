@@ -45,6 +45,7 @@ public class JWTShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+
         return new SimpleAuthorizationInfo();
     }
 }

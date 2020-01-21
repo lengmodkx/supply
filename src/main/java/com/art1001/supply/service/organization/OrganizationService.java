@@ -88,4 +88,9 @@ public interface OrganizationService extends IService<Organization> {
      */
     List<Project> getProject(String orgId);
 
+	/**
+	 * 修改默认企业为个人项目
+	 * @param userId 用户id
+	 */
+	void personalProject(String userId);
 }

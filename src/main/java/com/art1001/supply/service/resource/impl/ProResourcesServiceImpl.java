@@ -74,14 +74,15 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
         if(CollectionUtils.isEmpty(resourcesByRoleId)){
             return allResource;
         }
+
         if(CollectionUtils.isNotEmpty(resourcesByRoleId)){
             //循环比较,构造出ResourceShowVO数据
             allResource.forEach(item -> {
-                List<String> currSubResources = resourcesByRoleId.stream()
+                List<Integer> currSubResources = resourcesByRoleId.stream()
                         //过滤出属于当前资源分组的资源信息
                         .filter(resource -> resource.getSParentId().equals(item.getId()))
                         //提取出上面过滤后的stream中的resourceName字段
-                        .map(ProResources::getSName).collect(Collectors.toList());
+                        .map(ProResources::getSId).collect(Collectors.toList());
                 item.setCheckAllGroup(currSubResources);
             });
         }

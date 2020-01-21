@@ -694,11 +694,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         collect.forEach(file -> {
             FileTreeShowVO fileTreeShowVO = new FileTreeShowVO();
             fileTreeShowVO.setId(file.getFileId());
-            fileTreeShowVO.setText(file.getFileName());
-            fileTreeShowVO.setOpened(false);
+            fileTreeShowVO.setName(file.getFileName());
+            fileTreeShowVO.setOpen(false);
             fileTreeShowVOS.add(fileTreeShowVO);
             if(StringUtils.isNotEmpty(file.getParentId())){
-                fileTreeShowVO.setParentId(file.getParentId());
+                fileTreeShowVO.setPId(file.getParentId());
             }
             if(!CollectionUtils.isEmpty(file.getFiles())){
                 fileTreeShowVO.setChildren(new ArrayList<FileTreeShowVO>());
@@ -917,7 +917,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         this.upLevel(fileList);
         this.chanageToFileTreeVO(fileList, fileTreeShowVOS);
         //过滤出第一条数据(该集合除第一条外其他数据无用)
-        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId())) .collect(Collectors.toList());
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getPId())) .collect(Collectors.toList());
 
     }
 
@@ -1072,7 +1072,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         //生成目录树
         this.downLevel(childFolders);
         this.chanageToFileTreeVO(childFolders, fileTreeShowVOS);
-        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getParentId()) || f.getId().equals(Constants.MATERIAL_BASE)).collect(Collectors.toList());
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getPId()) || f.getId().equals(Constants.MATERIAL_BASE)).collect(Collectors.toList());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.art1001.supply.entity.role;
 
 import com.art1001.supply.validation.role.AddProRoleValidation;
 import com.art1001.supply.validation.role.RoleIdValidation;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -70,17 +71,23 @@ public class ProRole implements Serializable {
      * 项目id
      */
     @NotBlank(message = "项目id不能为空!",groups = AddProRoleValidation.class)
-    private String projectId;
+    private String publicId;
 
     /**
      * 是否是该企业的默认角色 0:不是 1:是
      */
     private Boolean isDefault;
 
+    @TableField(exist = false)
+    private Boolean _disabled;
+
     /**
      * 是否是系统初始化的角色 0:不是 1:是
      */
     private Boolean isSystemInit;
+
+    @TableField(exist = false)
+    private Boolean currentCheck;
 
 
 }

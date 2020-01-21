@@ -243,7 +243,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 			return -1;
 		}
 
-		boolean userProjectExist = this.checkUserProjectBindIsExist(projectId);
+		boolean userProjectExist = this.checkUserProjectBindIsExist(projectId, ShiroAuthenticationManager.getUserId());
 		if(userProjectExist){
 			//获取到修改前用户所在的项目id
 			String userCurrentProjectId = this.getUserCurrentProjectId();
@@ -295,10 +295,10 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	}
 
 	@Override
-	public Boolean checkUserProjectBindIsExist(String projectId) {
+	public Boolean checkUserProjectBindIsExist(String projectId, String userId) {
 		//构造出查询用户和projectId的关系是否存在的条件表达式
 		LambdaQueryWrapper<ProjectMember> selectUserProjectIsExistQw = new QueryWrapper<ProjectMember>().lambda()
-				.eq(ProjectMember::getMemberId, ShiroAuthenticationManager.getUserId());
+				.eq(ProjectMember::getMemberId, userId);
 
 		return projectMemberMapper.selectCount(selectUserProjectIsExistQw) > 0;
 	}

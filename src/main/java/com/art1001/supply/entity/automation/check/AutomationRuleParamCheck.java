@@ -8,7 +8,6 @@ import com.art1001.supply.exception.AutomationRuleParamException;
  * @Date:2019/8/7 11:32
  * @Author ddm
  **/
-@FunctionalInterface
 public interface AutomationRuleParamCheck {
 
     /**

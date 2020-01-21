@@ -9,6 +9,7 @@ import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -40,6 +41,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 	@Resource
 	private RoleService roleService;
+
+	@Resource
+	private ProRoleService proRoleService;
 
 	@Resource
 	private RoleUserService roleUserService;
@@ -98,6 +102,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.insert(organization);
 
+		proRoleService.initProRole(organization.getOrganizationId());
+
 		//添加当前用户为企业拥有者
 		Integer saveOrgOwnerResult = organizationMemberService.saveOrgOwnerInfo(organization.getOrganizationId(), ShiroAuthenticationManager.getUserId());
 		if(saveOrgOwnerResult == -1){
@@ -152,9 +158,14 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Override
 	public List<Organization> getMyOrg(Integer flag) {
 		List<Organization> myOrg = organizationMapper.getMyOrg(flag, ShiroAuthenticationManager.getUserId());
-		if(CollectionUtils.isEmpty(myOrg)){
-			return myOrg;
-		}
+		Organization organization = new Organization();
+		organization.setOrganizationId("0x");
+		organization.setOrganizationName("个人项目");
+		organization.setIsPublic(1);
+		organization.setOrganizationMember(ShiroAuthenticationManager.getUserId());
+		organization.setCreateTime(System.currentTimeMillis());
+
+		myOrg.add(0, organization);
 
 		//构造出 查询当前用户默认企业的企业id 的表达式
 		LambdaQueryWrapper<OrganizationMember> selectDefaultOrgIdQw = new QueryWrapper<OrganizationMember>().lambda()
@@ -162,17 +173,23 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 				.eq(OrganizationMember::getUserDefault, true)
 				.select(OrganizationMember::getOrganizationId);
 
-		String userDefaultOrganizationId = organizationMemberService.getOne(selectDefaultOrgIdQw).getOrganizationId();
-		if(StringUtils.isNotEmpty(userDefaultOrganizationId)){
-			myOrg.forEach(item -> {
+		String userDefaultOrganizationId = "";
+		OrganizationMember one = organizationMemberService.getOne(selectDefaultOrgIdQw);
+		if(one == null){
+			organization.setIsSelection(true);
+		} else {
+			organization.setIsSelection(false);
+			userDefaultOrganizationId = one.getOrganizationId();
+		}
+
+		for (Organization item : myOrg) {
+			if(!item.getOrganizationName().equals("个人项目")){
 				if(item.getOrganizationId().equals(userDefaultOrganizationId)){
 					item.setIsSelection(true);
 				} else {
 					item.setIsSelection(false);
 				}
-			});
-		} else {
-			myOrg.get(0).setIsSelection(true);
+			}
 		}
 		return myOrg;
 	}
@@ -207,6 +224,23 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		if(result == -1){
 			return new ArrayList<>();
 		}
+
 		return organizationMapper.selectProject(orgId);
+	}
+
+	@Override
+	public void personalProject(String userId) {
+		//构造出 查询当前用户默认企业的企业id 的表达式
+		LambdaQueryWrapper<OrganizationMember> selectDefaultOrgIdQw = new QueryWrapper<OrganizationMember>().lambda()
+				.eq(OrganizationMember::getMemberId, ShiroAuthenticationManager.getUserId())
+				.eq(OrganizationMember::getUserDefault, true)
+				.select(OrganizationMember::getOrganizationId);
+		OrganizationMember one = organizationMemberService.getOne(selectDefaultOrgIdQw);
+
+
+		one.setUserDefault(Boolean.FALSE);
+		one.setUpdateTime(System.currentTimeMillis());
+
+		organizationMemberService.update(one, new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, userId).eq(OrganizationMember::getOrganizationId,one.getOrganizationId()));
 	}
 }

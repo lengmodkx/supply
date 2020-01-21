@@ -24,11 +24,11 @@ public class FileTreeShowVO {
     /**
      * 文件的名称
      */
-    private String text;
+    private String name;
 
-    private boolean opened;
+    private Boolean open;
 
-    private boolean selected;
+    private Boolean selected;
 
     /**
      * 子目录集合
@@ -38,5 +38,5 @@ public class FileTreeShowVO {
     /**
      * 父级id
      */
-    private transient String parentId;
+    private transient String pId;
 }
