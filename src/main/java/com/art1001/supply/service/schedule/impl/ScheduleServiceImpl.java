@@ -138,7 +138,6 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 保存schedule数据
-     *
      * @param schedule
      */
     @Override
@@ -146,7 +145,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         schedule.setScheduleId(IdGen.uuid());
         schedule.setMemberId(ShiroAuthenticationManager.getUserId());
         schedule.setCreateTime(System.currentTimeMillis());
-        scheduleMapper.saveSchedule(schedule);
+        this.save(schedule);
     }
 
     /**

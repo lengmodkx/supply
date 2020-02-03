@@ -19,6 +19,7 @@
 		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER" />
 		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
 		<result column="is_del" property="isDel" jdbcType="INTEGER" />
+		<result column="isAllday" property="isAllday" jdbcType="INTEGER" />
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -164,6 +165,7 @@
 				s.remarks,
 				s.create_time,
 				s.update_time,
+				s.is_allday as isAllday,
 				s.member_id,
 				s.member_ids,
 				s.privacy_pattern,
