@@ -3,3 +3,18 @@ spring:
     active: @package.environment@
 server:
   port: 8080
+
+#项目权限拦截器需要排除的请求父路径
+excludePathPatterns: /login,/register,/users/**,/projects/**
+                    ,/news/**,/organizations/**,/relations/**
+                    ,/tasks/,/tags/**,/tasks/{taskId},/files/**
+                    ,/share/**,/schedule/**,/calendar/**,/collections/**
+                    ,/groupchat/**,/group_user/**,/logs/**,/members/**,/me/**
+                    ,/organization_group/**,/organization/members/**,/organization_group_member/**
+                    ,/oss/**,/partments/**,/partment_members/**,/product/**
+                    ,/pro_res/**,/pro_res_role/**,/pro_role/**,/proRoleUser/**
+                    ,/public/**,/recycle_bin/**,/resources/**,/resource_role/**
+                    ,/roles/**,/role_user/**,/captcha,/code,/forget,/wechatcode
+                    ,/wechattoken,/getUserInfo/{userId},/updateUserInfo,/bind/phone
+                    ,/is_bind_phone,/qianyi,/bind/wechat,/notbind/wechat,/reset_password
+                    ,/change_password,/adminlogin,/webSocketServer/**

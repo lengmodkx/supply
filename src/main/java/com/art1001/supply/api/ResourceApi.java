@@ -11,9 +11,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.List;
  * [DELETE] // 删除
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("resources")
 public class ResourceApi extends BaseController {
@@ -204,12 +207,11 @@ public class ResourceApi extends BaseController {
      * @return 资源信息
      */
     @GetMapping("/{roleId}")
-    public JSONObject getResourcesByRoleId(@PathVariable String roleId){
+    public JSONObject getResourcesByRoleId(@NotNull(message = "角色id不能为空!")
+                                               @PathVariable String roleId
+    ){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(StringUtils.isNotEmpty(roleId)){
-                return paramsIsNullHandle(roleId);
-            }
             List<ResourceShowVO> rsv = resourceService.getRoleResourceDetailsData(roleId);
             if(rsv == null){
                 throw new AjaxException("系统异常!");

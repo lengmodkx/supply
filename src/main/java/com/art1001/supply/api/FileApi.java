@@ -46,6 +46,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sun.reflect.generics.tree.Tree;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -153,10 +154,28 @@ public class FileApi extends BaseController {
      * @return
      */
     @GetMapping("{fileId}")
-    public Result<List<File>> fileList1(@PathVariable String fileId,
+    public Result fileList1(@PathVariable String fileId,
                                         @RequestParam(defaultValue = "1") Integer current,
                                         @RequestParam(defaultValue = "50") Integer size) {
         try {
+            if(fileId.equals("59e849ad88a94ff59cc3fd6bd8a2db87")){
+                FileTree root = new FileTree(fileId, "0", "项目文件夹", true, "https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+                List<FileTree> two = new ArrayList<>();
+                FileTree treeTwo = new FileTree("3","2","项目文件夹(1)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+                two.add(treeTwo);
+                root.setChildTree(two);
+
+                List<FileTree> three = new ArrayList<>();
+                FileTree treeThree = new FileTree("4","3","项目文件夹(2)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+                three.add(treeThree);
+                treeTwo.setChildTree(three);
+
+                List<FileTree> four = new ArrayList<>();
+                FileTree treeFour = new FileTree("5","4","项目文件夹(3)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+                four.add(treeFour);
+                treeThree.setChildTree(four);
+                return Result.success(root);
+            }
             Page<File> fileList = fileService.queryFileList(fileId,current,size);
             return Result.success(fileList.getRecords());
         } catch (Exception e){
@@ -170,18 +189,30 @@ public class FileApi extends BaseController {
      * @return
      */
     @GetMapping("tree/{fileId}")
-    public Result<Map<String,List<FileTree>>> getTree(@PathVariable String fileId){
+    public Result getTree(@PathVariable String fileId){
         String userId = ShiroAuthenticationManager.getUserId();
-        Map<String,List<FileTree>> map = new HashMap<>();
         List<FileTree> fileTrees = new ArrayList<>();
-        fileTrees.add(new FileTree(fileId,"0","项目文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png"));
+
+        FileTree root = new FileTree(fileId, "0", "项目文件夹", true, "https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+        List<FileTree> two = new ArrayList<>();
+        FileTree treeTwo = new FileTree("3","2","项目文件夹(1)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+        two.add(treeTwo);
+        root.setChildTree(two);
+
+        List<FileTree> three = new ArrayList<>();
+        FileTree treeThree = new FileTree("4","3","项目文件夹(2)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+        three.add(treeThree);
+        treeTwo.setChildTree(three);
+
+        List<FileTree> four = new ArrayList<>();
+        FileTree treeFour = new FileTree("5","4","项目文件夹(3)",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png");
+        four.add(treeFour);
+        treeThree.setChildTree(four);
         fileTrees.addAll(fileService.querySubFileList(fileId));
 
         List<FileTree> userTrees= fileService.queryFileByUserId(userId);
         userTrees.addAll(fileService.queryFileListByUserId(userId));
-        map.put("userTree",userTrees);
-        map.put("fileTree",fileTrees);
-        return Result.success(map);
+        return Result.success(root);
     }
 
     /**

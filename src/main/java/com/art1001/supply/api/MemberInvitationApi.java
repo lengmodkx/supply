@@ -77,19 +77,14 @@ public class MemberInvitationApi extends BaseController {
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
         JSONObject object = new JSONObject();
-        try{
-            int exist = projectMemberService.findMemberIsExist(projectId,memberId);
-            if(exist>0){
-                object.put("result",0);
-                object.put("msg","项目成员已存在，请勿重复添加");
-                return  object;
-            }
-            object.put("result",projectMemberService.saveMember(projectId,memberId));
-            object.put("msg","添加成功");
-        }catch(Exception e){
-            log.error("系统异常,成员添加失败:",e);
-            throw new AjaxException(e);
+        int exist = projectMemberService.findMemberIsExist(projectId,memberId);
+        if(exist>0){
+            object.put("result",0);
+            object.put("msg","项目成员已存在，请勿重复添加");
+            return  object;
         }
+        object.put("result",projectMemberService.saveMember(projectId,memberId));
+        object.put("msg","添加成功");
         return object;
     }
 

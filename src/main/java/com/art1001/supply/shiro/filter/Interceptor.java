@@ -1,5 +1,6 @@
 package com.art1001.supply.shiro.filter;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.List;
 
 @Slf4j
@@ -27,29 +29,38 @@ public class Interceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        if(!(handler instanceof HandlerMethod)){
-//            return true;
-//        }
-//
-//        List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
-//        if(CollectionUtils.isEmpty(keyList)){
-//            keyList = proResourcesService.getMemberResourceKey(request.getParameter("projectId"), ShiroAuthenticationManager.getUserId());
-//            redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
-//        }
-//
-//        HandlerMethod handlerMethod = (HandlerMethod)handler;
-//
-//        String name = handlerMethod.getMethod().getName();
-//
-//        String className = handlerMethod.getBeanType().getSimpleName();
-//
-//        StringBuilder key = new StringBuilder(className);
-//        key.append(":").append(name);
-//
-//        if(keyList.contains(key.toString())){
-//            log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
-//            return true;
-//        }
-        return true;
+        if(!(handler instanceof HandlerMethod)){
+            return true;
+        }
+
+        List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
+        if(CollectionUtils.isEmpty(keyList)){
+            keyList = proResourcesService.getMemberResourceKey(request.getParameter("projectId"), ShiroAuthenticationManager.getUserId());
+            redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
+        }
+
+        HandlerMethod handlerMethod = (HandlerMethod)handler;
+
+        String name = handlerMethod.getMethod().getName();
+
+        String className = handlerMethod.getBeanType().getSimpleName();
+
+        StringBuilder key = new StringBuilder(className);
+        key.append(":").append(name);
+
+        if(keyList.contains(key.toString())){
+            log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
+            return true;
+        }
+        log.info("用户：{} -- 无{}权限", ShiroAuthenticationManager.getUserId(), key);
+        response.setStatus(203);
+        response.setContentType("application/json; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("msg","您没有权限!");
+        PrintWriter writer = response.getWriter();
+        writer.print(jsonObject.toJSONString());
+        writer.flush();
+        return false;
     }
 }
