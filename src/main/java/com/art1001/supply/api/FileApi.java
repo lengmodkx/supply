@@ -46,7 +46,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.tree.Tree;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;

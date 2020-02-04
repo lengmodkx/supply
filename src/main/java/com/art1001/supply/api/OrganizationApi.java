@@ -45,6 +45,7 @@ public class OrganizationApi {
         JSONObject jsonObject = new JSONObject();
         try {
             ValidatorUtils.validateEntity(organization, SaveOrg.class);
+            organization.setOrganizationImage("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/org-img.jpg");
             organizationService.saveOrganization(organization);
             jsonObject.put("result",1);
             jsonObject.put("data", organization.getOrganizationId());

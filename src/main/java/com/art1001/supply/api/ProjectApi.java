@@ -78,7 +78,7 @@ public class ProjectApi extends BaseController {
      */
 //    @RequiresPermissions("create:project")
     @PostMapping
-    public JSONObject createProject(@RequestParam(value = "orgId",defaultValue = "0",required = false) String orgId,
+    public JSONObject createProject(@RequestParam(value = "orgId") String orgId,
                                     @RequestParam(value = "projectName") String projectName,
                                     @RequestParam(value = "projectDes") String projectDes,
                                     @RequestParam(value = "startTime") Long startTime,
@@ -91,6 +91,7 @@ public class ProjectApi extends BaseController {
             return object;
         }
         Project project = new Project();
+        project.setOrganizationId(orgId);
         project.setProjectName(projectName);
         project.setProjectDes(projectDes);
         project.setStartTime(startTime);
