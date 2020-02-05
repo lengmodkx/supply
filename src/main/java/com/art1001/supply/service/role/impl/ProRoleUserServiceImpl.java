@@ -103,4 +103,18 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         }
         return null;
     }
+
+    @Override
+    public ProRole getRoleOnOrgForUser(String orgId, String userId) {
+        ValidatedUtil.filterNullParam(orgId, userId);
+
+        LambdaQueryWrapper<ProRoleUser> getRoleOnOrgRoleInfo = new QueryWrapper<ProRoleUser>().lambda();
+        getRoleOnOrgRoleInfo.eq(ProRoleUser::getOrgId, orgId).eq(ProRoleUser::getUId, userId);
+
+        ProRoleUser proRoleUser = this.getOne(getRoleOnOrgRoleInfo);
+
+        Optional.ofNullable(proRoleUser).orElseThrow(() -> new ServiceException("用户在企业中没有角色!"));
+
+        return proRoleService.getById(proRoleUser.getRoleId());
+    }
 }

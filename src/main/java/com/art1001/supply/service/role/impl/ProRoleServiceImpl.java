@@ -3,6 +3,7 @@ package com.art1001.supply.service.role.impl;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleMapper;
 import com.art1001.supply.service.organization.OrganizationService;
@@ -12,6 +13,7 @@ import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -26,6 +28,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -37,12 +40,6 @@ import java.util.List;
  */
 @Service
 public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> implements ProRoleService {
-
-    /**
-     * 注入项目 业务层Bean
-     */
-    @Resource
-    private ProjectService projectService;
 
     @Resource
     private OrganizationService organizationService;

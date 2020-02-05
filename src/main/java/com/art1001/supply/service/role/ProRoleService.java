@@ -200,4 +200,6 @@ public interface ProRoleService extends IService<ProRole> {
      * @return 角色列表
      */
     List<ProRole> roleForMember(String userId, String orgId);
+
+
 }
