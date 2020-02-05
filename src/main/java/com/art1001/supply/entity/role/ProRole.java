@@ -52,6 +52,11 @@ public class ProRole implements Serializable {
     private Integer roleStatus;
 
     /**
+     * 企业id
+     */
+    private String orgId;
+
+    /**
      * 角色描述
      */
     @NotBlank(message = "角色描述不能为空!",groups = AddProRoleValidation.class)
@@ -66,12 +71,6 @@ public class ProRole implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
-
-    /**
-     * 项目id
-     */
-    @NotBlank(message = "项目id不能为空!",groups = AddProRoleValidation.class)
-    private String publicId;
 
     /**
      * 是否是该企业的默认角色 0:不是 1:是

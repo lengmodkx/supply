@@ -19,12 +19,12 @@ public interface ProRoleService extends IService<ProRole> {
      * 初始化项目角色
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @updateInfo 暂无
      * @date 2019/6/19 15:46
      * @return 是否成功
      */
-    Integer initProRole(String projectId);
+    void initProRole(String orgId);
 
     /**
      * 获取到项目初始化角色的id和key集合(如果projectId为空则返回null)
@@ -115,25 +115,25 @@ public interface ProRoleService extends IService<ProRole> {
      * 如果此条roleKey在项目中不存在则返回-1
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @param roleKey 角色key
      * @updateInfo 暂无
      * @date 2019/6/21 14:00
      * @return 结果
      */
-    Integer setProDefaultRole(String projectId, String roleKey);
+    Integer setProDefaultRole(String orgId, String roleKey);
 
     /**
      * 获取到该项目中默认的角色id
      * 如果projectId为空则返回-1
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @updateInfo 暂无
      * @date 2019/6/21 14:11
      * @return roleId
      */
-    Integer getProDefaultRoleId(String projectId);
+    Integer getProDefaultRoleId(String orgId);
 
     /**
      * 根据角色id查询该角色存不存在
@@ -183,15 +183,15 @@ public interface ProRoleService extends IService<ProRole> {
     Boolean checkRoleIsNotExistByRoleId(Integer roleId);
 
     /**
-     * 获取项目下的角色列表
+     * 获取企业下的项目角色列表
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @updateInfo 暂无
      * @date 2019/6/26 14:36
      * @return 角色信息集合
      */
-    List<ProRole> getProRoles(String projectId);
+    List<ProRole> getProRoles(String orgId);
 
     /**
      * 获取当前项目中的角色列表和用户当前角色

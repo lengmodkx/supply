@@ -53,7 +53,7 @@ public class OrganizationApi {
             throw new AjaxException(e.getMessage(),e);
         } catch (Exception e){
             log.error("企业添加失败:",e);
-            throw new AjaxException(e);
+            throw e;
         }
         return jsonObject;
     }

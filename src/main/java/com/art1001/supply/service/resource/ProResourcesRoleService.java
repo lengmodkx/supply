@@ -32,16 +32,14 @@ public interface ProResourcesRoleService extends IService<ProResourcesRole> {
 
     /**
      * 保存项目初始化的角色资源关系信息
-     * 如果projectId为空的话则返回-1
-     * 如果该项目没有初始化角色则返回-1
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @updateInfo 暂无
      * @date 2019/6/20 14:19
      * @return 结果
      */
-    Integer saveBatchBind(String projectId);
+    Integer saveBatchBind(String orgId);
 
     /**
      * 给项目角色分配资源

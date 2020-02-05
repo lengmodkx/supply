@@ -51,9 +51,9 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
     }
 
     @Override
-    public Integer saveBatchBind(String projectId) {
+    public Integer saveBatchBind(String orgId) {
         //获取到项目初始化角色的id集合
-        List<ProRole> projectInitRoleIds = proRoleService.getProjectInitRoleId(projectId);
+        List<ProRole> projectInitRoleIds = proRoleService.getProjectInitRoleId(orgId);
         if(CollectionUtils.isEmpty(projectInitRoleIds)){
             return -1;
         }

@@ -102,8 +102,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		organization.setUpdateTime(System.currentTimeMillis());
 		organizationMapper.insert(organization);
 
-		proRoleService.initProRole(organization.getOrganizationId());
-
 		//添加当前用户为企业拥有者
 		Integer saveOrgOwnerResult = organizationMemberService.saveOrgOwnerInfo(organization.getOrganizationId(), ShiroAuthenticationManager.getUserId());
 		if(saveOrgOwnerResult == -1){
@@ -115,6 +113,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		if(saveOrgDefaultRoleResult == -1){
 			return saveOrgDefaultRoleResult;
 		}
+
+		//初始化企业项目默认角色
+		proRoleService.initProRole(organization.getOrganizationId());
 
 		//获取到该企业的拥有者角色id
 		int administratorRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), Constants.OWNER_KEY);

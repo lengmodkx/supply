@@ -1,8 +1,11 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleMapper;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
@@ -41,6 +44,9 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     @Resource
     private ProjectService projectService;
 
+    @Resource
+    private OrganizationService organizationService;
+
     /**
      * 注入自己解决 事物this调用失效问题
      */
@@ -66,9 +72,9 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     private ProResourcesRoleService proResourcesRoleService;
 
     @Override
-    public Integer initProRole(String publicId) {
-        if(!projectService.checkIsExist(publicId)){
-            return -1;
+    public void initProRole(String orgId) {
+        if(!organizationService.checkOrgIsExist(orgId)){
+            throw new ServiceException("企业不存在.");
         }
         //这里手动添加默认角色信息,后期可以读取配置文件进行添加
         String[] initRoles = {"拥有者","管理员","成员"};
@@ -96,14 +102,14 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
             role.setIsSystemInit(true);
             proRoleMapper.insert(role);
         }
-        return proResourcesRoleService.saveBatchBind(publicId);
+        proResourcesRoleService.saveBatchBind(orgId);
     }
 
     @Override
-    public List<ProRole> getProjectInitRoleId(String publicId) {
+    public List<ProRole> getProjectInitRoleId(String orgId) {
         //构造出查询项目初始化角色id集合的sql表达式
         LambdaQueryWrapper<ProRole> selectProjectInitRoleId = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, publicId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getIsSystemInit, true)
                 .select(ProRole::getRoleId,ProRole::getRoleKey);
 
@@ -115,10 +121,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public Integer getDefaultProRoleId(String publicId) {
+    public Integer getDefaultProRoleId(String orgId) {
         //生成根据projectId查询该项目下的默认角色id的sql表达式
         LambdaQueryWrapper<ProRole> selectDefaultRoleByProjectId = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, publicId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getIsDefault, true)
                 .select(ProRole::getRoleId);
 
@@ -126,10 +132,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public Integer getRoleIdByRoleKey(String key, String publicId) {
+    public Integer getRoleIdByRoleKey(String key, String orgId) {
         //构造出查询项目中为key的角色id的sql表达式
         LambdaQueryWrapper<ProRole> selectRoleIdByKeyAndProjectIdQw = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, publicId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getRoleKey, key)
                 .select(ProRole::getRoleId);
         ProRole proRole = proRoleMapper.selectOne(selectRoleIdByKeyAndProjectIdQw);
@@ -144,7 +150,7 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     public Integer addProRole(ProRole proRole) {
         proRole.setCreateTime(LocalDateTime.now());
         //查询该角色的key在项目中是否存在
-        boolean roleNotExist = this.checkIsExist(proRole.getPublicId(),proRole.getRoleKey()) == 0;
+        boolean roleNotExist = this.checkIsExist(proRole.getOrgId(),proRole.getRoleKey()) == 0;
         if(roleNotExist){
             return proRoleMapper.insert(proRole);
         } else {
@@ -156,7 +162,7 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     public Integer checkIsExist(String projectId, String roleKey) {
         //构造出查询当前项目中有没有存在roleKey记录的sql表达式
         LambdaQueryWrapper<ProRole> selectRoleCountByPidAndKeyQw = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, projectId)
+                .eq(ProRole::getOrgId, projectId)
                 .eq(ProRole::getRoleKey, roleKey);
         return proRoleMapper.selectCount(selectRoleCountByPidAndKeyQw);
     }
@@ -196,13 +202,13 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public Integer setProDefaultRole(String projectId, String roleKey) {
-        boolean notExist = this.checkIsExist(projectId, roleKey) == 0;
+    public Integer setProDefaultRole(String orgId, String roleKey) {
+        boolean notExist = this.checkIsExist(orgId, roleKey) == 0;
         if(notExist){
             return -1;
         }
 
-        Integer proDefaultRoleId = this.getProDefaultRoleId(projectId);
+        Integer proDefaultRoleId = this.getProDefaultRoleId(orgId);
         if(proDefaultRoleId == -1){
             return proDefaultRoleId;
         }
@@ -219,7 +225,7 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
 
         //生成sql表达式
         LambdaUpdateWrapper<ProRole> upProDefaultRoleUw = new UpdateWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, projectId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getRoleKey, roleKey);
         proRole.setIsDefault(true);
 
@@ -227,10 +233,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public Integer getProDefaultRoleId(String projectId) {
+    public Integer getProDefaultRoleId(String orgId) {
         //构造出sql表达式
         LambdaQueryWrapper<ProRole> selectProDefaultRoleIdQw = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getPublicId, projectId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getIsDefault, true)
                 .select(ProRole::getRoleId);
 

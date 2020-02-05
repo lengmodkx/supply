@@ -51,7 +51,7 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
 
         ProRole roleById = proRoleService.getById(roleId);
 
-        if(!projectId.equals(roleById.getPublicId())){
+        if(!projectId.equals(roleById.getOrgId())){
             throw new ServiceException("角色不属于该项目！");
         }
 
