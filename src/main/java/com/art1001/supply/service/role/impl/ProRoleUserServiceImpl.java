@@ -1,5 +1,6 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.api.RoleApi;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
@@ -41,6 +42,8 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     @Resource
     private ProjectMemberService projectMemberService;
 
+    @Resource
+    private ProRoleUserService roleUserService;
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
         Optional.ofNullable(userService.getById(userId)).orElseThrow(() -> new ServiceException("用户不存在！"));
@@ -87,16 +90,16 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     }
 
     @Override
-    public ProRole getRoleIdForProjectUser(String projectId, String userId) {
-        ValidatedUtil.filterNullParam(projectId, userId);
+    public ProRole getRoleIdForProjectUser(String orgId, String userId) {
+        ValidatedUtil.filterNullParam(orgId, userId);
 
-        LambdaQueryWrapper<ProjectMember> eq = new QueryWrapper<ProjectMember>().lambda()
-                .eq(ProjectMember::getProjectId, projectId)
-                .eq(ProjectMember::getMemberId, userId);
+        LambdaQueryWrapper<ProRoleUser> eq = new QueryWrapper<ProRoleUser>().lambda()
+                .eq(ProRoleUser::getOrgId, orgId)
+                .eq(ProRoleUser::getUId, userId);
 
-        ProjectMember relation = projectMemberService.getOne(eq);
-        if(relation != null){
-            return proRoleService.getById(relation.getRoleId());
+        ProRoleUser one = roleUserService.getOne(eq);
+        if(one != null){
+            return proRoleService.getById(one.getRoleId());
         }
         return null;
     }

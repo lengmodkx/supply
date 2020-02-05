@@ -10,7 +10,6 @@ import com.art1001.supply.util.NumberUtils;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.role.AddProRoleValidation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -63,7 +62,7 @@ public class ProRoleApi extends BaseController {
     /**
      * 删除角色
      * @param roleId 角色id
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @return 是否成功
      */
     @DeleteMapping("/{roleId}")
@@ -127,22 +126,22 @@ public class ProRoleApi extends BaseController {
     }
 
     @PutMapping("/default")
-    public JSONObject updateDefaultRole(String projectId, String roleKey){
+    public JSONObject updateDefaultRole(String orgId, String roleKey){
         JSONObject jsonObject = new JSONObject();
-        proRoleService.setProDefaultRole(projectId, roleKey);
+        proRoleService.setProDefaultRole(orgId, roleKey);
         jsonObject.put("result",1);
         return jsonObject;
     }
 
     /**
      * 获取项目角色列表
-     * @param projectId 项目角色
+     * @param orgId 项目角色
      * @return 角色列表
      */
-    @GetMapping("/{projectId}")
-    public JSONObject getProRoles(@PathVariable String projectId){
+    @GetMapping("/{orgId}")
+    public JSONObject getProRoles(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
-        List<ProRole> roles = proRoleService.getProRoles(projectId);
+        List<ProRole> roles = proRoleService.getProRoles(orgId);
         jsonObject.put("result", 1);
         jsonObject.put("data", roles);
         return jsonObject;
@@ -150,10 +149,10 @@ public class ProRoleApi extends BaseController {
 
     @GetMapping("/for_member")
     public Result roleForMember(@NotNull(message = "用户id不能为空！") String userId,
-                                @NotNull(message = "项目id不能为空！") String projectId){
+                                @NotNull(message = "项目id不能为空！") String orgId){
         log.info("Get role for member.[{}]", userId);
 
-        return Result.success(proRoleService.roleForMember(userId, projectId));
+        return Result.success(proRoleService.roleForMember(userId, orgId));
     }
 }
 

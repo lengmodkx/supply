@@ -29,7 +29,7 @@
         FROM
             sys_pro_role
         WHERE
-            project_id = #{projectId}
+            org_id = #{orgId}
             AND role_status = 0
         ORDER BY
             create_time

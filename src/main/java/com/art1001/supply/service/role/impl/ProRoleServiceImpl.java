@@ -276,8 +276,8 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public List<ProRole> getProRoles(String projectId) {
-        List<ProRole> proRoles = proRoleMapper.selectProRoles(projectId);
+    public List<ProRole> getProRoles(String orgId) {
+        List<ProRole> proRoles = proRoleMapper.selectProRoles(orgId);
         proRoles.forEach(r -> {
             if(r.getIsSystemInit()){
                 r.set_disabled(true);
@@ -288,10 +288,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public List<ProRole> roleForMember(String userId, String projectId) {
-        List<ProRole> proRoles = this.getProRoles(projectId);
+    public List<ProRole> roleForMember(String userId, String orgId) {
+        List<ProRole> proRoles = this.getProRoles(orgId);
         proRoles.forEach(role -> {
-            ProRole roleIdForProjectUser = proRoleUserService.getRoleIdForProjectUser(projectId, userId);
+            ProRole roleIdForProjectUser = proRoleUserService.getRoleIdForProjectUser(orgId, userId);
             if(roleIdForProjectUser != null){
                 if(roleIdForProjectUser.getRoleId().equals(role.getRoleId())){
                     role.setCurrentCheck(true);
