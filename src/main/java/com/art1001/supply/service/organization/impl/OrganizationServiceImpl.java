@@ -160,37 +160,18 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Override
 	public List<Organization> getMyOrg(Integer flag) {
 		List<Organization> myOrg = organizationMapper.getMyOrg(flag, ShiroAuthenticationManager.getUserId());
-		Organization organization = new Organization();
-		organization.setOrganizationId("0x");
-		organization.setOrganizationName("个人项目");
-		organization.setIsPublic(1);
-		organization.setOrganizationMember(ShiroAuthenticationManager.getUserId());
-		organization.setCreateTime(System.currentTimeMillis());
-
-		myOrg.add(0, organization);
-
 		//构造出 查询当前用户默认企业的企业id 的表达式
 		LambdaQueryWrapper<OrganizationMember> selectDefaultOrgIdQw = new QueryWrapper<OrganizationMember>().lambda()
 				.eq(OrganizationMember::getMemberId, ShiroAuthenticationManager.getUserId())
 				.eq(OrganizationMember::getUserDefault, true)
 				.select(OrganizationMember::getOrganizationId);
 
-		String userDefaultOrganizationId = "";
 		OrganizationMember one = organizationMemberService.getOne(selectDefaultOrgIdQw);
-		if(one == null){
-			organization.setIsSelection(true);
-		} else {
-			organization.setIsSelection(false);
-			userDefaultOrganizationId = one.getOrganizationId();
-		}
+		String userDefaultOrganizationId = one.getOrganizationId();
 
 		for (Organization item : myOrg) {
-			if(!item.getOrganizationName().equals("个人项目")){
-				if(item.getOrganizationId().equals(userDefaultOrganizationId)){
-					item.setIsSelection(true);
-				} else {
-					item.setIsSelection(false);
-				}
+			if(item.getOrganizationId().equals(userDefaultOrganizationId)){
+				item.setIsSelection(true);
 			}
 		}
 		return myOrg;
