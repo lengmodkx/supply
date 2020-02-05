@@ -22,13 +22,13 @@ public interface ProResourcesRoleService extends IService<ProResourcesRole> {
      * 如果两个参数其中任何一个为空 则返回null
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @param memberId 用户id
      * @updateInfo 暂无
      * @date 2019/6/19 17:19
      * @return 资源id字符串
      */
-    String getRoleResourceByProjectMember(String projectId, String memberId);
+    String getRoleResourceByProjectMember(String orgId, String memberId);
 
     /**
      * 保存项目初始化的角色资源关系信息

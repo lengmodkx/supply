@@ -4,6 +4,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
@@ -15,6 +16,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
@@ -73,6 +75,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	 */
 	@Resource
 	private RoleService roleService;
+
+	@Resource
+	private RoleUserService roleUserService;
 
 	/**
 	 * 分享逻辑层Bean
@@ -326,21 +331,20 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String projectId) {
+	public Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String orgId) {
 		if(CollectionUtils.isEmpty(userIds)){
 			return -1;
 		}
 
 		userIds.forEach(userId -> {
-			ProjectMember projectMember = new ProjectMember();
-			projectMember.setUpdateTime(System.currentTimeMillis());
-			projectMember.setRoleId(roleId);
+			RoleUser roleUser = new RoleUser();
+			roleUser.setRoleId(roleId);
 
 			//生成sql表达式
-			LambdaUpdateWrapper<ProjectMember> upToNewDefaultRoleUw = new UpdateWrapper<ProjectMember>().lambda()
-					.eq(ProjectMember::getProjectId, projectId)
-					.eq(ProjectMember::getMemberId, userId);
-			projectMemberMapper.update(projectMember, upToNewDefaultRoleUw);
+			LambdaUpdateWrapper<RoleUser> upToNewDefaultRoleUw = new UpdateWrapper<RoleUser>().lambda()
+					.eq(RoleUser::getRoleId, roleId)
+					.eq(RoleUser::getOrgId, orgId);
+			roleUserService.update(roleUser, upToNewDefaultRoleUw);
 		});
 		return 1;
 	}

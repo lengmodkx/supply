@@ -170,12 +170,12 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @describe 暂无
 	 * @param roleId 新的默认角色id
 	 * @param userIds 用户id集合
-	 * @param projectId 项目id
+	 * @param orgId 项目id
 	 * @updateInfo 暂无
 	 * @date 2019/6/21 14:20
 	 * @return 结果
 	 */
-	Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String projectId);
+	Integer updateUserToNewDefaultRole(List<String> userIds,Integer roleId, String orgId);
 
 	/**
 	 * 获取和当前用户有关的项目中的所有成员信息

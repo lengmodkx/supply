@@ -22,13 +22,13 @@ public interface ProResourcesService extends IService<ProResources> {
      * 两个参数任一为空 则返回null
      * @author heShaoHua
      * @describe 暂无
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @param memberId 成员id
      * @updateInfo 暂无
      * @date 2019/6/19 17:29
      * @return key集合
      */
-    List<String> getMemberResourceKey(String projectId, String memberId);
+    List<String> getMemberResourceKey(String orgId, String memberId);
 
     /**
      * 根据Rid集合查询出一组资源key

@@ -175,15 +175,15 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer removeProRole(Integer roleId, String projectId) {
+    public Integer removeProRole(Integer roleId, String orgId) {
         List<String> proRoleUsers = projectMemberService.getProRoleUsers(roleId);
         Boolean isDefault = this.checkRoleIdIsDefault(roleId);
         if(isDefault){
-            proRoleService.setProDefaultRole(projectId, Constants.MEMBER_KEY);
+            proRoleService.setProDefaultRole(orgId, Constants.MEMBER_KEY);
         }
         proRoleMapper.deleteById(roleId);
-        Integer defaultProRoleId = this.getDefaultProRoleId(projectId);
-        projectMemberService.updateUserToNewDefaultRole(proRoleUsers, defaultProRoleId, projectId);
+        Integer defaultProRoleId = this.getDefaultProRoleId(orgId);
+        projectMemberService.updateUserToNewDefaultRole(proRoleUsers, defaultProRoleId, orgId);
         return 1;
     }
 

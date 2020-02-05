@@ -36,6 +36,11 @@ public class RoleUser implements Serializable {
     private String uId;
 
     /**
+     * 企业id
+     */
+    private String orgId;
+
+    /**
      * 创建时间
      */
     private LocalDateTime tCreateTime;

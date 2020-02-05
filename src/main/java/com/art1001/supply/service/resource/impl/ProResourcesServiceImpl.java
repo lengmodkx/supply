@@ -41,8 +41,8 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
 
 
     @Override
-    public List<String> getMemberResourceKey(String projectId, String memberId) {
-        String roleResourceByProjectMember = proResourcesRoleService.getRoleResourceByProjectMember(projectId, memberId);
+    public List<String> getMemberResourceKey(String orgId, String memberId) {
+        String roleResourceByProjectMember = proResourcesRoleService.getRoleResourceByProjectMember(orgId, memberId);
         String[] rIds = roleResourceByProjectMember.split(",");
         return proResourcesService.getResourceKeyByRIds(Arrays.asList(rIds));
     }

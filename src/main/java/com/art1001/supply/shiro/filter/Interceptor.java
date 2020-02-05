@@ -35,7 +35,7 @@ public class Interceptor implements HandlerInterceptor {
 
         List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
         if(CollectionUtils.isEmpty(keyList)){
-            keyList = proResourcesService.getMemberResourceKey(request.getParameter("projectId"), ShiroAuthenticationManager.getUserId());
+            keyList = proResourcesService.getMemberResourceKey(request.getParameter("orgId"), ShiroAuthenticationManager.getUserId());
             redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
         }
 

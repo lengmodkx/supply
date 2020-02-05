@@ -68,7 +68,7 @@ public class ProRoleApi extends BaseController {
      */
     @DeleteMapping("/{roleId}")
     public JSONObject removeProRole(@PathVariable @Min(value = 0,message = "参数错误!") String roleId,
-                                    @NotBlank(message = "项目id不能为空!") String projectId){
+                                    @NotBlank(message = "企业id不能为空!") String orgId){
         JSONObject jsonObject = new JSONObject();
         if(!NumberUtils.isNumber(roleId)){
             return error("roleId必须为整数!");
@@ -84,7 +84,7 @@ public class ProRoleApi extends BaseController {
             jsonObject.put("msg", "不能删除系统初始化的角色!");
             return jsonObject;
         }
-        Integer result = proRoleService.removeProRole(Integer.valueOf(roleId),projectId);
+        Integer result = proRoleService.removeProRole(Integer.valueOf(roleId),orgId);
         if(result > 0){
             jsonObject.put("result", result);
         } else {

@@ -127,6 +127,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		roleUser.setTCreateTime(LocalDateTime.now());
 		roleUser.setUId(ShiroAuthenticationManager.getUserId());
 		roleUser.setRoleId(administratorRoleId);
+		roleUser.setOrgId(organization.getOrganizationId());
 		roleUserService.save(roleUser);
 		return 1;
 	}

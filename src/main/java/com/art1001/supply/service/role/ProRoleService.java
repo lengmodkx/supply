@@ -95,7 +95,7 @@ public interface ProRoleService extends IService<ProRole> {
      * @date 2019/6/21 11:37
      * @return 结果
      */
-    Integer removeProRole(Integer roleId, String projectId);
+    Integer removeProRole(Integer roleId, String orgId);
 
     /**
      * 检查roleId的角色是否为该项目的默认角色
