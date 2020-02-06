@@ -183,7 +183,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		//初始化菜单
 		String[] menus  = new String[]{"待处理","进行中","已完成"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
-		proRoleService.initProRole(project.getProjectId());
 
 		//往项目用户关联表插入数据
 //		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","拥有者"));

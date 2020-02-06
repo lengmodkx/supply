@@ -11,7 +11,7 @@
         <result column="role_des" property="roleDes" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
-        <result column="organization_id" property="organizationId" />
+        <result column="organization_id" property="orgId" />
         <result column="is_default" property="isDefault" />
         <result column="is_system_init" property="isSystemInit" />
     </resultMap>

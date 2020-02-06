@@ -58,7 +58,7 @@ public class OrganizationMemberApi {
      * @param memberId 成员id
      * @return
      */
-    @RequiresPermissions("create:member")
+    //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,
@@ -157,7 +157,7 @@ public class OrganizationMemberApi {
     public JSONObject getUserByPhone(@PathVariable String phone,@RequestParam String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity one = userService.getOne(new QueryWrapper<UserEntity>().eq("account_name", phone).select("user_id", "user_name", "image", "telephone"));
+            UserEntity one = userService.getOne(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
             JSONObject res = new JSONObject();
             res.fluentPut("user", one);
             if(organizationMemberService.count(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", one.getUserId())) > 0){

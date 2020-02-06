@@ -18,7 +18,7 @@ public interface ProRoleMapper extends BaseMapper<ProRole> {
 
     /**
      * 获取项目下的角色列表
-     * @param projectId 项目id
+     * @param orgId 项目id
      * @return 角色信息集合
      */
     List<ProRole> selectProRoles(@Param("orgId") String orgId);

@@ -145,7 +145,7 @@ public class OrganizationApi {
      * @param memberId 企业归属
      * @return
      */
-    @RequiresPermissions("update:org")
+    //@RequiresPermissions("update:org")
     @PutMapping("/{orgId}")
     public JSONObject updateOrg(@PathVariable(value = "orgId") String orgId,
                                 @RequestParam(value = "orgName",required = false) String orgName,
@@ -177,4 +177,13 @@ public class OrganizationApi {
         organizationService.personalProject(ShiroAuthenticationManager.getUserId());
         return Result.success();
     }
+
+    //企业信息
+    @GetMapping
+    public Result<Organization> orgInfo(@RequestParam(value = "orgId") String orgId){
+        Organization organization = organizationService.getById(orgId);
+        return Result.success(organization);
+    }
+
+
 }

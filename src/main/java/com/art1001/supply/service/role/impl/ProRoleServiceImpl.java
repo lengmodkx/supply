@@ -97,6 +97,7 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
             role.setCreateTime(LocalDateTime.now());
             role.setUpdateTime(LocalDateTime.now());
             role.setIsSystemInit(true);
+            role.setOrgId(orgId);
             proRoleMapper.insert(role);
         }
         proResourcesRoleService.saveBatchBind(orgId);
