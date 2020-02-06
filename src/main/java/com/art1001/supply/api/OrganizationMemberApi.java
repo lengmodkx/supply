@@ -157,15 +157,8 @@ public class OrganizationMemberApi {
     public JSONObject getUserByPhone(@PathVariable String phone,@RequestParam String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity one = userService.getOne(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
-            JSONObject res = new JSONObject();
-            res.fluentPut("user", one);
-            if(organizationMemberService.count(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", one.getUserId())) > 0){
-                res.fluentPut("isExist",true);
-            } else{
-                res.fluentPut("isExist",false);
-            }
-            jsonObject.put("data",res);
+            List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
+            jsonObject.put("data",users);
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e){
