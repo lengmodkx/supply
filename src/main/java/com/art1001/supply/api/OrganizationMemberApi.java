@@ -150,11 +150,10 @@ public class OrganizationMemberApi {
     /**
      * 根据用户手机号,获取用户信息
      * @param phone 手机号
-     * @param orgId 企业id
      * @return 用户信息
      */
     @GetMapping("/{phone}/user")
-    public JSONObject getUserByPhone(@PathVariable String phone,@RequestParam String orgId){
+    public JSONObject getUserByPhone(@PathVariable String phone){
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
