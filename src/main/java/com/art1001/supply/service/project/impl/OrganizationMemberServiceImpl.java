@@ -2,8 +2,10 @@ package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,6 +27,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	/** projectMapper接口*/
 	@Resource
 	private OrganizationMemberMapper organizationMemberMapper;
+
+	@Resource
+	private ProRoleUserService proRoleUserService;
 	
 	/**
 	 * 查询分页project数据
@@ -73,8 +79,17 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
-		organizationMember.setId(IdGen.uuid());
 		organizationMemberMapper.saveOrganizationMember(organizationMember);
+
+		ProRoleUser proRoleUser = new ProRoleUser();
+
+		proRoleUser.setOrgId(organizationMember.getOrganizationId());
+		proRoleUser.setTCreateTime(LocalDateTime.now());
+		proRoleUser.setUId(organizationMember.getMemberId());
+
+		proRoleUserService.save(proRoleUser);
+
+
 	}
 	/**
 	 * 获取所有project数据

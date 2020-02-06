@@ -1,7 +1,11 @@
 package com.art1001.supply.shiro.filter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.api.OrganizationMemberApi;
+import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.resource.ProResourcesService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +28,11 @@ public class Interceptor implements HandlerInterceptor {
     private ProResourcesService proResourcesService;
 
     @Resource
-    private RedisUtil redisUtil;
+    private ProRoleUserService proRoleUserService;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
+
 
 
     @Override
@@ -33,11 +41,14 @@ public class Interceptor implements HandlerInterceptor {
             return true;
         }
 
-        List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
-        if(CollectionUtils.isEmpty(keyList)){
-            keyList = proResourcesService.getMemberResourceKey(request.getParameter("orgId"), ShiroAuthenticationManager.getUserId());
-            redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
-        }
+        //List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
+        //if(CollectionUtils.isEmpty(keyList)){
+            //keyList = proResourcesService.getMemberResourceKey(request.getParameter("orgId"), ShiroAuthenticationManager.getUserId());
+          //  redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
+        //}
+
+        String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
+        List<String> keyList = proResourcesService.getMemberResourceKey(defaultOrgId, ShiroAuthenticationManager.getUserId());
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
 
