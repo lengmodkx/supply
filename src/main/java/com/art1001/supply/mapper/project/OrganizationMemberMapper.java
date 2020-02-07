@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.project;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,6 +14,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember> {
 
+	List<UserEntity> getUserList(String orgId);
 	/**
 	 * 查询分页project数据
 	 * 

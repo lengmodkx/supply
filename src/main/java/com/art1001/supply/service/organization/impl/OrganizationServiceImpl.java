@@ -167,11 +167,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 				.select(OrganizationMember::getOrganizationId);
 
 		OrganizationMember one = organizationMemberService.getOne(selectDefaultOrgIdQw);
-		String userDefaultOrganizationId = one.getOrganizationId();
 
-		for (Organization item : myOrg) {
-			if(item.getOrganizationId().equals(userDefaultOrganizationId)){
-				item.setIsSelection(true);
+		if(myOrg!=null && one!=null){
+			String userDefaultOrganizationId = one.getOrganizationId();
+			for (Organization item : myOrg) {
+				if(item.getOrganizationId().equals(userDefaultOrganizationId)){
+					item.setIsSelection(true);
+				}
 			}
 		}
 		return myOrg;
@@ -207,8 +209,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		if(result == -1){
 			return new ArrayList<>();
 		}
-
-		return organizationMapper.selectProject(orgId);
+		String userId = ShiroAuthenticationManager.getUserId();
+		return organizationMapper.selectProject(orgId,userId);
 	}
 
 	@Override

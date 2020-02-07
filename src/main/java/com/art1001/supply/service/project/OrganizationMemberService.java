@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 
@@ -12,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface OrganizationMemberService extends IService<OrganizationMember> {
 
+	List<UserEntity> getUserList(String orgId);
 	/**
 	 * 查询分页project数据
 	 * 

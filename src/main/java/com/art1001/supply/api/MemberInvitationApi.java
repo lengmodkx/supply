@@ -2,10 +2,12 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.RoleService;
@@ -45,7 +47,7 @@ public class MemberInvitationApi extends BaseController {
     private RoleService roleService;
 
     @Resource
-    private ProjectService projectService;
+    private OrganizationMemberService organizationMemberService;
 
 
     /**
@@ -54,9 +56,11 @@ public class MemberInvitationApi extends BaseController {
      * @return
      */
     @GetMapping("/{keyword}")
-    public JSONObject searchMember(@PathVariable(value = "keyword") String keyword){
+    public JSONObject searchMember(@PathVariable(value = "keyword") String keyword,
+                                   @RequestParam(value = "orgId",required = false) String orgId){
         JSONObject object = new JSONObject();
         try{
+
             List<UserEntity> userEntityList = userService.findByKey(keyword);
             object.put("result",1);
             object.put("data",userEntityList);

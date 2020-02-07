@@ -3,6 +3,7 @@ package com.art1001.supply.service.project.impl;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.ProRoleUserService;
@@ -30,7 +31,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Resource
 	private ProRoleUserService proRoleUserService;
-	
+
+	@Override
+	public List<UserEntity> getUserList(String orgId) {
+		return organizationMemberMapper.getUserList(orgId);
+	}
+
 	/**
 	 * 查询分页project数据
 	 * 
