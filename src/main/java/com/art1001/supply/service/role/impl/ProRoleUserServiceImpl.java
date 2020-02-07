@@ -40,6 +40,9 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     private ProRoleService proRoleService;
 
     @Resource
+    private ProRoleUserService proRoleUserService;
+
+    @Resource
     private ProjectMemberService projectMemberService;
 
     @Resource
@@ -58,24 +61,26 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
             throw new ServiceException("角色不属于该项目！");
         }
 
-        if(!projectMemberService.checkUserProjectBindIsExist(projectId, userId)){
-            throw new ServiceException("用户不在该项目中。");
-        }
+//        if(!projectMemberService.checkUserProjectBindIsExist(projectId, userId)){
+//            throw new ServiceException("用户不在该项目中。");
+//        }
 
 //        if(this.checkRelationIsExist(roleId, userId)){
 //            throw new ServiceException("对应关系已经存在!");
 //        }
 
-        ProjectMember projectMember = new ProjectMember();
-        projectMember.setMemberId(userId);
-        projectMember.setRoleId(roleId);
-        projectMember.setUpdateTime(System.currentTimeMillis());
+//        ProjectMember projectMember = new ProjectMember();
+//        projectMember.setMemberId(userId);
+//        projectMember.setRoleId(roleId);
+//        projectMember.setUpdateTime(System.currentTimeMillis());
 
-        projectMemberService.update(projectMember,
-                new QueryWrapper<ProjectMember>().lambda()
-                .eq(ProjectMember::getMemberId, userId)
-                .eq(ProjectMember::getProjectId, projectId)
-        );
+        ProRoleUser proRoleUser = new ProRoleUser();
+        proRoleUser.setUId(userId);
+        proRoleUser.setTCreateTime(LocalDateTime.now());
+        proRoleUser.setOrgId(projectId);
+        proRoleUser.setRoleId(roleId);
+
+        proRoleUserService.save(proRoleUser);
     }
 
     @Override

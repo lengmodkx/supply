@@ -196,7 +196,11 @@ public class UserApi {
         }
         //通过短信发送验证码
         if(RegexUtils.checkMobile(accountName)){
-            aliyunMessageService.sendCode(userService.findByName(accountName).getUserId(), accountName);
+            UserEntity byName = userService.findByName(accountName);
+            if(byName == null){
+                return Result.fail("用户不存在");
+            }
+            aliyunMessageService.sendCode( byName.getUserId(), accountName);
         } else {
             return Result.fail(CodeMsg.PHONE_ERROR);
         }
