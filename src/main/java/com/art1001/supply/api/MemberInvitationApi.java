@@ -79,7 +79,9 @@ public class MemberInvitationApi extends BaseController {
      */
     //@RequiresPermissions("create:member")
     @PostMapping
-    public JSONObject addMember(@RequestParam(value = "projectId") String projectId,@RequestParam(value = "memberId") String memberId){
+    public JSONObject addMember(@RequestParam(value = "projectId") String projectId,
+                                @RequestParam(value = "memberId") String memberId,
+                                @RequestParam(value = "memberId") String orgId){
         JSONObject object = new JSONObject();
         int exist = projectMemberService.findMemberIsExist(projectId,memberId);
         if(exist>0){
@@ -87,7 +89,7 @@ public class MemberInvitationApi extends BaseController {
             object.put("msg","项目成员已存在，请勿重复添加");
             return  object;
         }
-        object.put("result",projectMemberService.saveMember(projectId,memberId));
+        object.put("result",projectMemberService.saveMember(projectId,memberId,orgId));
         object.put("msg","添加成功");
         return object;
     }

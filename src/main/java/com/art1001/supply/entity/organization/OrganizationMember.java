@@ -56,7 +56,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 
 
 	/**
-	 * 是否是企业拥有着，0是成员 1是拥有着
+	 * 是否是部门拥有着，0是成员 1是拥有着
 	 */
 	private Integer partmentLable;
 

@@ -86,7 +86,7 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @date 2019/6/19 15:29
 	 * @return 是否成功
 	 */
-    Integer saveMember(String projectId, String memberId);
+    Integer saveMember(String projectId, String memberId,String orgId);
 
     /**
      * 获取到用户当前所在的项目

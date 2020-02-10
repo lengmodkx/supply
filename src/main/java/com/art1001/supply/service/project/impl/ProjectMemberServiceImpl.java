@@ -2,6 +2,7 @@ package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.RoleUser;
@@ -12,6 +13,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
@@ -99,6 +101,10 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	 */
 	@Resource
 	private UserMapper userMapper;
+
+	@Resource
+	private OrganizationMemberService organizationMemberService;
+
 
 	@Override
 	public List<Project> findProjectByMemberId(String memberId,Integer projectDel) {
@@ -205,7 +211,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public Integer saveMember(String projectId, String memberId) {
+	public Integer saveMember(String projectId, String memberId,String orgId) {
 		//查询出当前项目的默认分组
 		String groupId = projectService.findDefaultGroup(projectId);
 		ProjectMember member = new ProjectMember();
@@ -216,6 +222,18 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member.setUpdateTime(System.currentTimeMillis());
 		member.setMemberLabel(0);
 		projectMemberMapper.insert(member);
+
+		//汪亚锋 2020-2-10 项目邀请的用户直接加入到企业中，并分配成员的权限
+		OrganizationMember member1 = new OrganizationMember();
+		member1.setOrganizationId(orgId);
+		member1.setMemberId(memberId);
+		member1.setOrganizationLable(0);
+		member1.setMemberLock(1);
+		member1.setCreateTime(System.currentTimeMillis());
+		member1.setUpdateTime(System.currentTimeMillis());
+		member1.setUserDefault(true);
+		organizationMemberService.saveOrganizationMember(member1);
+
 		return 1;
 	}
 

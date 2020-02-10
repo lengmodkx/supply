@@ -3,10 +3,14 @@ package com.art1001.supply.service.project.impl;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.ProRoleUserService;
+import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -30,7 +34,10 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	private OrganizationMemberMapper organizationMemberMapper;
 
 	@Resource
-	private ProRoleUserService proRoleUserService;
+	private RoleUserService roleUserService;
+
+	@Resource
+	private RoleService roleService;
 
 	@Override
 	public List<UserEntity> getUserList(String orgId) {
@@ -85,17 +92,15 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
-		organizationMemberMapper.saveOrganizationMember(organizationMember);
-
-		ProRoleUser proRoleUser = new ProRoleUser();
-
-		proRoleUser.setOrgId(organizationMember.getOrganizationId());
-		proRoleUser.setTCreateTime(LocalDateTime.now());
-		proRoleUser.setUId(organizationMember.getMemberId());
-
-		proRoleUserService.save(proRoleUser);
-
-
+		organizationMemberMapper.insert(organizationMember);
+		//修改企业成员默认权限，2020-20-10 汪亚锋
+		Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
+		RoleUser roleUser = new RoleUser();
+		roleUser.setOrgId(organizationMember.getOrganizationId());
+		roleUser.setRoleId(role.getRoleId());
+		roleUser.setUId(organizationMember.getMemberId());
+		roleUser.setTCreateTime(LocalDateTime.now());
+		roleUserService.save(roleUser);
 	}
 	/**
 	 * 获取所有project数据
