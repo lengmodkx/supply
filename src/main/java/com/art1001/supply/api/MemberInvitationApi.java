@@ -81,7 +81,7 @@ public class MemberInvitationApi extends BaseController {
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,
                                 @RequestParam(value = "memberId") String memberId,
-                                @RequestParam(value = "memberId") String orgId){
+                                @RequestParam(value = "orgId") String orgId){
         JSONObject object = new JSONObject();
         int exist = projectMemberService.findMemberIsExist(projectId,memberId);
         if(exist>0){
