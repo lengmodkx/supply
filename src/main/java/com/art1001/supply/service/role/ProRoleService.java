@@ -201,5 +201,13 @@ public interface ProRoleService extends IService<ProRole> {
      */
     List<ProRole> roleForMember(String userId, String orgId);
 
+    /**
+     * 根据key 获取企业中的角色信息
+     * @param orgId 企业id
+     * @param key 角色key
+     * @return 角色信息
+     */
+    ProRole getOrgProjectRoleByKey(String key, String orgId);
+
 
 }

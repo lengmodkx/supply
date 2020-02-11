@@ -1,18 +1,14 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.role.ProRole;
-import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectMemberService;
-import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,7 +16,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +23,6 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <p>
@@ -299,5 +293,15 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
             }
         });
         return proRoles;
+    }
+
+    @Override
+    public ProRole getOrgProjectRoleByKey(String key, String orgId) {
+        ValidatedUtil.filterNullParam(key, orgId);
+
+        LambdaQueryWrapper<ProRole> eq = new QueryWrapper<ProRole>().lambda().
+                eq(ProRole::getOrgId, orgId).eq(ProRole::getRoleKey, key);
+
+        return this.getOne(eq);
     }
 }

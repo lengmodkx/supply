@@ -11,6 +11,8 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
@@ -19,6 +21,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -36,6 +39,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,13 +73,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	private RelationService relationService;
 
 	@Resource
-	private RoleService roleService;
-
-	@Resource
 	private ProRoleService proRoleService;
 
 	@Resource
 	private ProjectMemberService projectMemberService;
+
+	@Resource
+	private ProRoleUserService proRoleUserService;
 
 	/**
 	 * 查询分页project数据
@@ -185,7 +189,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
 
 		//往项目用户关联表插入数据
-//		Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("role_name","拥有者"));
 		ProjectMember projectMember = new ProjectMember();
 		projectMember.setProjectId(project.getProjectId());
 		projectMember.setMemberId(ShiroAuthenticationManager.getUserId());
@@ -194,8 +197,18 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setMemberLabel(1);
 		projectMember.setDefaultGroup(relation.getRelationId());
 		projectMember.setRoleId(proRoleService.getRoleIdByRoleKey(Constants.OWNER_KEY, project.getProjectId()));
-//		projectMember.setRoleId(roleEntity.getRoleId());
 		projectMemberService.save(projectMember);
+
+		//企业中 项目拥有者的角色信息
+		ProRole orgAdminRole = proRoleService.getOrgProjectRoleByKey(Constants.OWNER_KEY, project.getOrganizationId());
+
+		ProRoleUser proRoleUser = new ProRoleUser();
+		proRoleUser.setRoleId(orgAdminRole.getRoleId());
+		proRoleUser.setUId(ShiroAuthenticationManager.getUserId());
+		proRoleUser.setOrgId(project.getOrganizationId());
+		proRoleUser.setTCreateTime(LocalDateTime.now());
+
+		proRoleUserService.save(proRoleUser);
 
 		Integer userProjectCount = projectMemberService.getUserProjectCount();
 		if(userProjectCount == 1){
