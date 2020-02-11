@@ -155,7 +155,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 	public Role getUserRoleInOrg(String userId, String orgId) {
 		ValidatedUtil.filterNullParam(userId, orgId);
 
-		if(organizationService.checkOrgIsExist(orgId)){
+		if(!organizationService.checkOrgIsExist(orgId)){
 			log.info("企业不存在. [{}]", orgId);
 //			throw new ServiceException("企业不存在.");
 		}

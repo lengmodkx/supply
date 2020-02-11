@@ -140,11 +140,11 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
     }
 
     @Override
-    public List<String> getResourceIdListByRoleId(Role roleId) {
-        Optional.ofNullable(roleId).orElseThrow(() -> new ServiceException("角色id不能为空!"));
+    public List<String> getResourceIdListByRoleId(Role role) {
+        Optional.ofNullable(role).orElseThrow(() -> new ServiceException("角色id不能为空!"));
 
         LambdaQueryWrapper<ResourcesRole> eq = new QueryWrapper<ResourcesRole>().
-                lambda().eq(ResourcesRole::getRoleId, roleId);
+                lambda().eq(ResourcesRole::getRoleId, role.getRoleId());
 
         ResourcesRole resourcesRole = this.getOne(eq);
 

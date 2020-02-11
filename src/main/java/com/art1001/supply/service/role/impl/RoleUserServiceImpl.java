@@ -36,7 +36,8 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
     }
 
     @Override
-    public Integer getUserOrgRoleId(String userId, String orgId) {
+    public Integer
+    getUserOrgRoleId(String userId, String orgId) {
         ValidatedUtil.filterNullParam(userId, orgId);
 
         LambdaQueryWrapper<RoleUser> getRoleIdByUserIdAndOrgId = new QueryWrapper<RoleUser>().lambda()
