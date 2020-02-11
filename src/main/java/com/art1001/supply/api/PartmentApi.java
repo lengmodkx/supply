@@ -15,7 +15,8 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("partments")
-public class PartmentApi {
+public class
+PartmentApi {
 
     @Resource
     private PartmentService partmentService;

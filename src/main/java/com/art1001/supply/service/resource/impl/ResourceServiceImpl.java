@@ -1,27 +1,37 @@
 package com.art1001.supply.service.resource.impl;
 
+import com.art1001.supply.api.RoleUserApi;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.entity.role.ResourcesRole;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.resource.ResourceMapper;
+import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEntity> implements ResourceService {
 
@@ -33,6 +43,15 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 
 	@Resource
 	private RoleService roleService;
+
+	@Resource
+	private OrganizationService organizationService;
+
+	@Resource
+	private OrganizationMemberService organizationMemberService;
+
+	@Resource
+	private RoleUserService roleUserService;
 
 	@Override
 	public int deleteResource(Integer resourceId){
@@ -122,4 +141,38 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
         }
         return Arrays.asList(one.getResourceId().split(","));
     }
+
+	@Override
+	public List<String> getMemberResourceKey(String userId, String orgId) {
+		Role userRoleInOrg = this.getUserRoleInOrg(userId, orgId);
+		List<String> resourceIdListByRoleId = resourcesRoleService.getResourceIdListByRoleId(userRoleInOrg);
+
+		return this.listByIds(resourceIdListByRoleId)
+				   .stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
+	}
+
+	@Override
+	public Role getUserRoleInOrg(String userId, String orgId) {
+		ValidatedUtil.filterNullParam(userId, orgId);
+
+		if(organizationService.checkOrgIsExist(orgId)){
+			log.info("企业不存在. [{}]", orgId);
+//			throw new ServiceException("企业不存在.");
+		}
+
+		Optional.ofNullable(organizationMemberService.findOrgByMemberId(userId, orgId))
+				.orElseThrow(() -> {
+					log.info("用户不在该企业中. [用户id：{}, 企业id：{}]", userId, orgId);
+					return new ServiceException("用户不在该企业中。");
+				});
+
+		Integer userOrgRoleId = roleUserService.getUserOrgRoleId(userId, orgId);
+		Optional.ofNullable(userOrgRoleId)
+				.orElseThrow(() -> {
+					log.info("用户在企业中没有角色。. [用户id：{}, 企业id：{}]", userId, orgId);
+					return new ServiceException("用户在企业中没有角色。");}
+				);
+
+		return roleService.getById(userOrgRoleId);
+	}
 }

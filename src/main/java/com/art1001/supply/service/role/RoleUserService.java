@@ -22,4 +22,12 @@ public interface RoleUserService extends IService<RoleUser> {
      * @return 用户id
      */
     List<Integer> getUserOrgRoleIds(String userId, String orgId);
+
+    /**
+     * 获取用户在企业下的角色id
+     * @param userId 用户id
+     * @param orgId 企业id
+     * @return 角色id
+     */
+    Integer getUserOrgRoleId(String userId, String orgId);
 }

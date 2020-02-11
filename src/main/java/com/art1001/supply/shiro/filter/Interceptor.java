@@ -1,15 +1,11 @@
 package com.art1001.supply.shiro.filter;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.api.OrganizationMemberApi;
-import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.List;
 
+/**
+ * @author shaohua
+ */
 @Slf4j
-@Component
+@Component("interceptor")
 public class Interceptor implements HandlerInterceptor {
 
     @Resource
@@ -40,12 +39,6 @@ public class Interceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
-
-        //List<String> keyList = redisUtil.getList(String.class, "resources:" + ShiroAuthenticationManager.getUserId());
-        //if(CollectionUtils.isEmpty(keyList)){
-            //keyList = proResourcesService.getMemberResourceKey(request.getParameter("orgId"), ShiroAuthenticationManager.getUserId());
-          //  redisUtil.lset("resources:" + ShiroAuthenticationManager.getUserId(), keyList);
-        //}
 
         String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
         List<String> keyList = proResourcesService.getMemberResourceKey(defaultOrgId, ShiroAuthenticationManager.getUserId());

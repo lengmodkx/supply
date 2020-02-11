@@ -2,6 +2,7 @@ package com.art1001.supply.service.role;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.ResourcesRole;
+import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -45,4 +46,11 @@ public interface ResourcesRoleService extends IService<ResourcesRole> {
      * @return 结果
      */
     Integer distributionRoleResource(Integer roleId, String resources);
+
+    /**
+     * 根据角色id获取资源id集合
+     * @param roleId 角色id
+     * @return 资源id集合
+     */
+    List<String> getResourceIdListByRoleId(Role roleId);
 }

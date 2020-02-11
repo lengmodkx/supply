@@ -4,6 +4,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.role.ResourcesRole;
 import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ResourcesRoleMapper;
 import com.art1001.supply.service.resource.ResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ResourceService;
@@ -14,12 +15,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -132,5 +137,20 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             resourcesRoleMapper.insert(resourcesRole);
         }
         return 1;
+    }
+
+    @Override
+    public List<String> getResourceIdListByRoleId(Role roleId) {
+        Optional.ofNullable(roleId).orElseThrow(() -> new ServiceException("角色id不能为空!"));
+
+        LambdaQueryWrapper<ResourcesRole> eq = new QueryWrapper<ResourcesRole>().
+                lambda().eq(ResourcesRole::getRoleId, roleId);
+
+        ResourcesRole resourcesRole = this.getOne(eq);
+
+        Optional<String> resources = Optional.ofNullable(resourcesRole).map(ResourcesRole::getResourceId);
+
+        return resources.map(s -> Arrays.asList(s.split(","))).orElseGet(LinkedList::new);
+
     }
 }

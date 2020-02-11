@@ -18,3 +18,6 @@ excludePathPatterns: /login,/register,/users/**,/projects/**
                     ,/wechattoken,/getUserInfo/{userId},/updateUserInfo,/bind/phone
                     ,/is_bind_phone,/qianyi,/bind/wechat,/notbind/wechat,/reset_password
                     ,/change_password,/adminlogin,/webSocketServer/**
+
+#企业权限拦截器需要拦截的action请求路径
+orgPathPatterns: /projects/**

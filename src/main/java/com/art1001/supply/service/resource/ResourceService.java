@@ -3,6 +3,7 @@ package com.art1001.supply.service.resource;
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.resource.ResourceShowVO;
+import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -66,6 +67,22 @@ public interface ResourceService extends IService<ResourceEntity> {
 	 * @return 资源id集合
 	 */
 	List<String> getRoleHaveResourceIds(String roleId);
+
+	/**
+	 * 查询用户拥有的资源key集合
+	 * @param userId 用户id
+	 * @param orgId 企业id
+	 * @return 资源key集合
+	 */
+	List<String> getMemberResourceKey(String userId, String orgId);
+
+	/**
+	 * 获取用户在该企业中的角色
+	 * @param userId 用户id
+	 * @param orgId 企业id
+	 * @return 角色信息
+	 */
+	Role getUserRoleInOrg(String userId, String orgId);
 
 
 }
