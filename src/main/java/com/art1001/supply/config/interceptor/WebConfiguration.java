@@ -33,7 +33,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localOrgInterceptor()).addPathPatterns(orgPathPatterns);
+//        registry.addInterceptor(localOrgInterceptor()).addPathPatterns(orgPathPatterns);
         registry.addInterceptor(localInterceptor()).addPathPatterns("/**").excludePathPatterns(exclude);
         super.addInterceptors(registry);
     }
