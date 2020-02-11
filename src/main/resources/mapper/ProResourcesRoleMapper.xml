@@ -15,13 +15,21 @@
         SELECT
             s_id
         FROM
-            prm_project_member AS pm
-            LEFT JOIN sys_pro_role AS r ON pm.role_id = r.role_id
-
+            sys_pro_role_user AS r
             LEFT JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
         WHERE
-            pm.project_id = #{projectId}
-            AND pm.member_id = #{memberId}
+            r.org_id = #{orgId}
+            AND r.u_id = #{userId}
+--         SELECT
+--             s_id
+--         FROM
+--             prm_project_member AS pm
+--             LEFT JOIN sys_pro_role AS r ON pm.role_id = r.role_id
+--
+--             LEFT JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
+--         WHERE
+--             pm.project_id = #{projectId}
+--             AND pm.member_id = #{memberId}
     </select>
 
 </mapper>
