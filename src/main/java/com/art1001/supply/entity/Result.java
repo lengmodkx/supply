@@ -1,7 +1,5 @@
 package com.art1001.supply.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Data;
 
 /**

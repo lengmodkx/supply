@@ -125,7 +125,10 @@ public class UserApi {
         if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
-
+        UserEntity entity = userService.findByName(accountName);
+        if(entity!=null){
+            return Result.fail("用户已存在");
+        }
         //设置创建者姓名
         UserEntity userEntity = new UserEntity();
         userEntity.setCreatorName(accountName);
