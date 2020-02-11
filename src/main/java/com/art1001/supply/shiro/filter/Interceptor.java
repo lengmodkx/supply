@@ -42,7 +42,11 @@ public class Interceptor implements HandlerInterceptor {
 
         String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
         List<String> keyList = proResourcesService.getMemberResourceKey(defaultOrgId, ShiroAuthenticationManager.getUserId());
-
+        keyList.add("ScheduleApi:initSchedule");
+        keyList.add("ShareApi:share");
+        keyList.add("StatisticsApi:projectStatistics");
+        keyList.add("ShareApi:getShare");
+        keyList.add("ScheduleApi:getSchedule");
         HandlerMethod handlerMethod = (HandlerMethod)handler;
 
         String name = handlerMethod.getMethod().getName();
