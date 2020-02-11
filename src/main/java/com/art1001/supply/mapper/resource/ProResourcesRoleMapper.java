@@ -21,5 +21,5 @@ public interface ProResourcesRoleMapper extends BaseMapper<ProResourcesRole> {
      * @param memberId 成员id
      * @return 资源id字符串 逗号隔开
      */
-    String selectRoleResourceByProjectMember(@Param("projectId") String projectId, @Param("memberId") String memberId);
+    String selectRoleResourceByProjectMember(@Param("orgId") String orgId, @Param("userId") String userId);
 }
