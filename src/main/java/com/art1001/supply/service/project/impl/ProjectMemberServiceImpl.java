@@ -231,7 +231,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member1.setMemberLock(1);
 		member1.setCreateTime(System.currentTimeMillis());
 		member1.setUpdateTime(System.currentTimeMillis());
-		member1.setUserDefault(true);
+		member1.setUserDefault(false);
 		organizationMemberService.saveOrganizationMember(member1);
 
 		return 1;
