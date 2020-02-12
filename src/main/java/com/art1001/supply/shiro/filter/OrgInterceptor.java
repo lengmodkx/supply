@@ -36,10 +36,6 @@ public class OrgInterceptor extends Interceptor{
             return true;
         }
 
-
-        String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
-        List<String> keyList = resourceService.getMemberResourceKey(ShiroAuthenticationManager.getUserId(), defaultOrgId);
-
         HandlerMethod handlerMethod = (HandlerMethod)handler;
 
         String name = handlerMethod.getMethod().getName();
@@ -57,6 +53,8 @@ public class OrgInterceptor extends Interceptor{
             return true;
         }
 
+        String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
+        List<String> keyList = resourceService.getMemberResourceKey(ShiroAuthenticationManager.getUserId(), defaultOrgId);
 
         if(keyList.contains(key.toString())){
             log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
