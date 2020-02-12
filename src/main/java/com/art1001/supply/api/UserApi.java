@@ -506,4 +506,14 @@ public class UserApi {
         }
         return object;
     }
+
+    /**
+     * 查询用户名是否已经存在
+     * @return 是否存在
+     */
+    @GetMapping("check_account_exist")
+    public Result checkAccountNameIsExist(@NotNull(message = "用户名不能为空") String accountName){
+        log.info("Check user accountName is exist. [{}]", accountName);
+        return Result.success(userService.checkUserIsExistByAccountName(accountName));
+    }
 }

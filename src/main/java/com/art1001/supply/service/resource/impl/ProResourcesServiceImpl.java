@@ -53,6 +53,9 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
 
         proResourcesService.getRoleHaveResources(String.valueOf(proRoleUserService.getRoleOnOrgForUser(orgId, memberId).getRoleId()));
         String roleResourceByProjectMember = proResourcesRoleService.getRoleResourceByProjectMember(orgId, memberId);
+        if(roleResourceByProjectMember == null){
+            return new ArrayList<>();
+        }
         String[] rIds = roleResourceByProjectMember.split(",");
         return proResourcesService.getResourceKeyByRIds(Arrays.asList(rIds));
     }
