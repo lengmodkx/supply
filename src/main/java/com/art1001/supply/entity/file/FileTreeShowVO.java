@@ -1,7 +1,5 @@
 package com.art1001.supply.entity.file;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Data;
 import lombok.ToString;
 
@@ -24,9 +22,9 @@ public class FileTreeShowVO {
     /**
      * 文件的名称
      */
-    private String name;
+    private String text;
 
-    private Boolean open;
+    private Boolean opened = true;
 
     private Boolean selected;
 

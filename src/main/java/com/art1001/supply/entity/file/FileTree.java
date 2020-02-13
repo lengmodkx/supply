@@ -23,4 +23,6 @@ public class FileTree {
 
     private String icon="https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png";
 
+    private int isParent=1;
+
 }

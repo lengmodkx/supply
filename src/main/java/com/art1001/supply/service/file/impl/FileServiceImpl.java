@@ -694,8 +694,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         collect.forEach(file -> {
             FileTreeShowVO fileTreeShowVO = new FileTreeShowVO();
             fileTreeShowVO.setId(file.getFileId());
-            fileTreeShowVO.setName(file.getFileName());
-            fileTreeShowVO.setOpen(false);
+            fileTreeShowVO.setText(file.getFileName());
+            fileTreeShowVO.setOpened(true);
             fileTreeShowVOS.add(fileTreeShowVO);
             if(StringUtils.isNotEmpty(file.getParentId())){
                 fileTreeShowVO.setPId(file.getParentId());
