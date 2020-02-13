@@ -173,7 +173,7 @@ public class FileApi extends BaseController {
     public Result<List<FileTree>> getTree(@PathVariable String fileId){
         String userId = ShiroAuthenticationManager.getUserId();
         List<FileTree> fileTrees = new ArrayList<>();
-        FileTree root = new FileTree(fileId,"0","项目文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",0);
+        FileTree root = new FileTree(fileId,"0","项目文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",1);
         fileTrees.add(0,root);
         //查询项目文件夹
         List<FileTree> trees = fileService.querySubFileList(fileId);
@@ -181,7 +181,7 @@ public class FileApi extends BaseController {
 
         File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
 
-        FileTree userRoot = new FileTree(file.getFileId(),"0","我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",0);
+        FileTree userRoot = new FileTree(file.getFileId(),"0","我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",1);
 
         fileTrees.add(trees.size()+1,userRoot);
         fileTrees.addAll(fileService.querySubFileList(file.getFileId()));
@@ -190,12 +190,11 @@ public class FileApi extends BaseController {
 
     /**
      * 获取文件树
-     * @param id
+     * @param
      * @return
      */
-    @GetMapping("treenode")
-    public Result<List<FileTree>> getTreeNode(@RequestParam String id){
-
+    @GetMapping("/treenode")
+    public Result<List<FileTree>> getTreeNode(@RequestParam(value = "id",required = false)String id){
         //查询项目文件夹
         List<FileTree> trees = fileService.querySubFileList(id);
         return Result.success(trees);

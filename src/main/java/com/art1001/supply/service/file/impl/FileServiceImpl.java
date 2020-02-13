@@ -86,7 +86,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public List<FileTree> querySubFileList(String fileId) {
-        return fileMapper.querySubFileList(fileId);
+        List<FileTree> trees = fileMapper.querySubFileList(fileId);
+        trees.forEach(item->{
+            if(checkChildFolder(item.getId())==1){
+                item.setIsParent(1);
+            }else{
+                item.setIsParent(0);
+            }
+        });
+        return trees;
     }
 
     @Override
