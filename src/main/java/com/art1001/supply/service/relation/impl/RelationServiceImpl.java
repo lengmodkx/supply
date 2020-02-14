@@ -157,8 +157,10 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	public List<Relation> findRelationAllList(Relation relation){
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
 		relationAllList.forEach(r -> {
+			r.getTaskList().forEach(t -> t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count()));
 			r.getTaskList().forEach(t -> {
-				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count());
+				t.setIsExistSub(t.getTaskList().size() > 0);
+				t.setChildCount(t.getTaskList().size());
 			});
 			Iterator<Task> iterator = r.getTaskList().iterator();
 			while(iterator.hasNext()){

@@ -24,7 +24,8 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("prm_task")
-public class Task extends Model<Task> {
+public class
+Task extends Model<Task> {
 	
 	private static final long serialVersionUID = 1L;
 

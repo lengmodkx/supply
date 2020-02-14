@@ -263,7 +263,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public void createFolder(String projectId, String parentId, String fileName) {
+    public FileTree createFolder(String projectId, String parentId, String fileName) {
         String userId = ShiroAuthenticationManager.getUserId();
         // 存库
         File file = new File();
@@ -279,6 +279,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         // 设置目录
         file.setCatalog(1);
         save(file);
+
+        FileTree fileTree = new FileTree();
+        fileTree.setPId(file.getParentId());
+        fileTree.setId(file.getFileId());
+        fileTree.setName(file.getFileName());
+        fileTree.setOpen(false);
+        fileTree.setIsParent(0);
+        return fileTree;
     }
 
     /**

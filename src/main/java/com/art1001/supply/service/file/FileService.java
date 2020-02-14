@@ -62,8 +62,9 @@ import java.util.List;
      * @param projectId 项目id
      * @param parentId 要创建的目录的父级id
      * @param fileName 创建的目录名称
+	 * @return 文件树数据类型
      */
-	void createFolder(String projectId, String parentId, String fileName);
+	FileTree createFolder(String projectId, String parentId, String fileName);
 
     /**
      * 查询当前文件目录下的文件夹及文件

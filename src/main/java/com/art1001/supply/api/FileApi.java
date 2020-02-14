@@ -316,16 +316,14 @@ public class FileApi extends BaseController {
     @Log(PushType.C1)
     @Push(value = PushType.C1)
     @PostMapping("/{parentId}/add")
-    public JSONObject createFolder(
+    public Result createFolder(
             @RequestParam String projectId,
             @PathVariable String parentId,
             @RequestParam String folderName
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.createFolder(projectId,parentId,folderName);
-            jsonObject.put("result",1);
-            jsonObject.put("msgId",projectId);
+            return Result.success(fileService.createFolder(projectId,parentId,folderName));
 
             jsonObject.put("data", fileService.queryFileList(parentId,1,9999).getRecords());
         } catch (ServiceException e){

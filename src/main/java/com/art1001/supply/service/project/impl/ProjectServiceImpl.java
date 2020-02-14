@@ -338,7 +338,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Override
 	public List<GantChartVO> getGanttChart(String projectId, String groupId) {
-		final List<GantChartVO> gants = new ArrayList<GantChartVO>();
+		final List<GantChartVO> gants = new ArrayList<>();
 		if(StringUtils.isNotEmpty(groupId)){
 			//获取到默认分组id
 			groupId = projectMemberService.findDefaultGroup(projectId, ShiroAuthenticationManager.getUserId());
