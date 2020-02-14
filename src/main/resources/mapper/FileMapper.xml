@@ -295,10 +295,7 @@
 
 	<update id="moveFile" parameterType="java.util.Map">
 		update prm_file set parent_id = #{folderId}
-		where file_id in
-		<foreach collection="fileIds" open="(" separator="," close=")" item="fileId">
-			#{fileId}
-		</foreach>
+		where file_id = #{fileId}
 	</update>
 
 	<update id="moveToRecycleBin" parameterType="java.lang.String">

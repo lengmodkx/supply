@@ -204,6 +204,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		if(!this.checkOrgIsExist(orgId)){
 			return new ArrayList<>();
 		}
+
 		//修改用户的默认企业
 		int result = organizationMemberService.updateUserDefaultOrg(orgId, ShiroAuthenticationManager.getUserId());
 		if(result == -1){

@@ -180,8 +180,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMember.setCreateTime(System.currentTimeMillis());
 		organizationMember.setUpdateTime(System.currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
-		organizationMember.setUserDefault(true);
 		organizationMemberMapper.insert(organizationMember);
+
+		this.updateUserDefaultOrg(orgId, userId);
 		return 1;
 	}
 

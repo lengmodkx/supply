@@ -35,7 +35,7 @@ public class AutomationRuleParamCheckImpl {
                         || AutomationRuleConstans.PRIORITY.equals(check.getConditionName())
                         || AutomationRuleConstans.SETTING_EXECUTORS.equals(check.getConditionName());
             if(valueNotNull){
-                if(StringUtils.isNotEmpty(check.getConditionValue())){
+                if(StringUtils.isEmpty(check.getConditionValue())){
                     throw new AutomationRuleParamException("值不能为空！");
                 }
             }

@@ -340,20 +340,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void moveFile(String[] fileIds, String folderId) {
+    public void moveFile(String fileId, String folderId) {
         Map<String, Object> map = new HashMap<>();
-        map.put("fileIds", fileIds);
+        map.put("fileId", fileId);
         map.put("folderId", folderId);
         fileMapper.moveFile(map);
         //将更改保存到elasticSearch
-        if (fileIds!=null&&fileIds.length>0){
+        if (fileId!=null){
             File file=new File();
-            for(int i = 0; i < fileIds.length;i++){
-               file.setFileId(fileIds[i]);
-               file.setParentId(folderId);
-               fileRepository.save(file);
-                System.out.println(file.getFileName()+" 文件ES上传成功");
-            }
+            file.setFileId(fileId);
+            file.setParentId(folderId);
+            fileRepository.save(file);
+            System.out.println(file.getFileName()+" 文件ES上传成功");
         }
     }
 

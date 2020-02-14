@@ -80,7 +80,7 @@ import java.util.List;
 	 * @param fileIds 源文件id数组
 	 * @param folderId 目标目录id
 	 */
-    void moveFile(String[] fileIds, String folderId);
+    void moveFile(String fileId, String folderId);
 
     /**
      * 获取上级文件路径

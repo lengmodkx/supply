@@ -308,7 +308,7 @@ public class FileApi extends BaseController {
     }
 
     /**
-     * 创建文件夹
+     * 新建文件夹
      * @param projectId  项目id
      * @param parentId   上一级目录id  默认为0
      * @param folderName 文件夹名称
@@ -316,16 +316,18 @@ public class FileApi extends BaseController {
     @Log(PushType.C1)
     @Push(value = PushType.C1)
     @PostMapping("/{parentId}/add")
-    public Result createFolder(
+    public JSONObject createFolder(
             @RequestParam String projectId,
             @PathVariable String parentId,
             @RequestParam String folderName
     ) {
-        //JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         try {
-            return Result.success(fileService.createFolder(projectId,parentId,folderName));
-
-            //jsonObject.put("data", fileService.queryFileList(parentId,1,9999).getRecords());
+           fileService.createFolder(projectId,parentId,folderName);
+            jsonObject.put("result",1);
+            jsonObject.put("msgId",projectId);
+            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999).getRecords());
+            return jsonObject;
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -365,7 +367,7 @@ public class FileApi extends BaseController {
     /**
      * 上传模型文件
      */
-    @Log(PushType.C3)
+    //@Log(PushType.C3)
     @Push(value = PushType.C3)
     @PostMapping("/{parentId}/model")
     public JSONObject uploadModel(
@@ -695,19 +697,19 @@ public class FileApi extends BaseController {
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
-            @RequestParam String[] fileIds,
+            @RequestParam String fileId,
             @RequestParam String toProjectId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.moveFile(fileIds, folderId);
+            fileService.moveFile(fileId, folderId);
             Map<String,Object> maps = new HashMap<>();
-            String projectId = getProjectId(fileIds[0]);
+            String projectId = getProjectId(fileId);
             if(Objects.equals(toProjectId,projectId)){
-                maps.put(toProjectId,fileService.listByIds(Arrays.asList(fileIds)));
+                maps.put(toProjectId,fileService.listByIds(Arrays.asList(fileId)));
             } else{
-                maps.put(projectId,fileIds);
-                maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileIds)));
+                maps.put(projectId,fileId);
+                maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileId)));
             }
             jsonObject.put("data",maps);
             jsonObject.put("result", 1);
@@ -726,31 +728,29 @@ public class FileApi extends BaseController {
     @Push(value = PushType.C10,type = 1)
     @PostMapping("/copy")
     public JSONObject copyFile(
-            @RequestParam(value = "fileIds") String[] fileIds,
+            @RequestParam(value = "fileIds") String fileId,
             @RequestParam(value = "folderId") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
         List<File> files = new ArrayList<File>();
         try {
-            for (String fileId : fileIds) {
-                // 获取源文件
-                File file = fileService.findFileById(fileId);
-                files.add(file);
-                jsonObject.put("msgId", file.getProjectId());
-                //文件夹处理
-                if (file.getCatalog() == 1) {
-                    file.setParentId(folderId);
-                    String fId = file.getFileId();
-                    fileService.save(file);
-                    List<File> childFile = fileService.findChildFile(fId,1);
-                    if (childFile.size() > 0) {
-                        Map<String, List<File>> map = new HashMap<>(10);
-                        map.put(file.getFileId(), childFile);
-                        this.copyFolder(map);
-                    }
-                } else {
-                    this.copyFileSave(file, folderId);
+            // 获取源文件
+            File file = fileService.findFileById(fileId);
+            files.add(file);
+            jsonObject.put("msgId", file.getProjectId());
+            //文件夹处理
+            if (file.getCatalog() == 1) {
+                file.setParentId(folderId);
+                String fId = file.getFileId();
+                fileService.save(file);
+                List<File> childFile = fileService.findChildFile(fId,1);
+                if (childFile.size() > 0) {
+                    Map<String, List<File>> map = new HashMap<>(10);
+                    map.put(file.getFileId(), childFile);
+                    this.copyFolder(map);
                 }
+            } else {
+                this.copyFileSave(file, folderId);
             }
         } catch (Exception e){
             log.error("系统异常:", e);
