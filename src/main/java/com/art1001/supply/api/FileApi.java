@@ -728,7 +728,7 @@ public class FileApi extends BaseController {
     @Push(value = PushType.C10,type = 1)
     @PostMapping("/copy")
     public JSONObject copyFile(
-            @RequestParam(value = "fileIds") String fileId,
+            @RequestParam(value = "fileId") String fileId,
             @RequestParam(value = "folderId") String folderId
     ) {
         JSONObject jsonObject = new JSONObject();
