@@ -321,11 +321,11 @@ public class FileApi extends BaseController {
             @PathVariable String parentId,
             @RequestParam String folderName
     ) {
-        JSONObject jsonObject = new JSONObject();
+        //JSONObject jsonObject = new JSONObject();
         try {
             return Result.success(fileService.createFolder(projectId,parentId,folderName));
 
-            jsonObject.put("data", fileService.queryFileList(parentId,1,9999).getRecords());
+            //jsonObject.put("data", fileService.queryFileList(parentId,1,9999).getRecords());
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
             throw new AjaxException(e);
@@ -333,7 +333,6 @@ public class FileApi extends BaseController {
             log.error("创建文件夹失败:", e);
             throw new AjaxException(e);
         }
-        return jsonObject;
     }
 
     /**
