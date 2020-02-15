@@ -54,7 +54,7 @@ public class ProResourcesRoleApi extends BaseController {
      */
     @PutMapping("/{role}/edit_resource")
     public JSONObject editResource(@PathVariable(value = "role") String roleId,
-                                   @RequestParam(value = "resources") @NotEmpty(message = "必须选择至少一个资源!") List<String> resources){
+                                   @RequestParam(value = "resources") @NotEmpty(message = "必须选择至少一个资源!") String resources){
         JSONObject jsonObject = new JSONObject();
 
         if(!NumberUtils.isNumber(roleId)){
@@ -67,7 +67,7 @@ public class ProResourcesRoleApi extends BaseController {
         }
 
 
-        if(proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), StringUtils.join(resources,",")) <= 0) {
+        if(proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), resources) <= 0) {
             jsonObject.put("result", 0);
         } else {
             jsonObject.put("result",1);

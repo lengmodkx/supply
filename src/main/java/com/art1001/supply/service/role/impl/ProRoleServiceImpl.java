@@ -1,6 +1,7 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.resource.ProResourcesRole;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleMapper;
@@ -56,9 +57,6 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     @Resource
     private ProRoleMapper proRoleMapper;
 
-    /**
-     * 注入角色资源关系业务层Bean
-     */
     @Resource
     private ProResourcesRoleService proResourcesRoleService;
 

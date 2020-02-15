@@ -38,9 +38,6 @@ public class ResourceRoleApi {
     @Resource
     private ResourcesRoleService resourcesRoleService;
 
-    @Resource
-    private ResourceService resourceService;
-
     /**
      * 分配权限
      * @return
