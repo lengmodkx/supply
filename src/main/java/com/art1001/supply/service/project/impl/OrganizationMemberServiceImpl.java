@@ -92,6 +92,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
+		organizationMember.setCreateTime(System.currentTimeMillis());
+		organizationMember.setUpdateTime(System.currentTimeMillis());
 		organizationMemberMapper.insert(organizationMember);
 		//修改企业成员默认权限，2020-20-10 汪亚锋
 		Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());

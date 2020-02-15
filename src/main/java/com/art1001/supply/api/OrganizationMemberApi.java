@@ -70,7 +70,6 @@ public class OrganizationMemberApi {
             organizationMember.setOrganizationId(orgId);
             organizationMember.setPartmentId(parmentId);
             organizationMember.setMemberId(memberId);
-            organizationMember.setOrganizationLable(1);
             if(member==null){
                 //新增成员的部门id统一为0
                 organizationMember.setPartmentId("0");
@@ -107,7 +106,7 @@ public class OrganizationMemberApi {
     @GetMapping("/{orgId}")
     public JSONObject members(@PathVariable(value = "orgId") String orgId,
                               @RequestParam(value = "pageNo",defaultValue = "1") Integer pageNo,
-                              @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
+                              @RequestParam(value = "pageSize", defaultValue = "999") Integer pageSize,
                               @RequestParam(value = "flag",required = false,defaultValue = "0") Integer flag,
                               @RequestParam(value = "parmentId",required = false,defaultValue = "0")String parmentId){
         JSONObject jsonObject = new JSONObject();
