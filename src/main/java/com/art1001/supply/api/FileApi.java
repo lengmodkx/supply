@@ -155,10 +155,10 @@ public class FileApi extends BaseController {
     @GetMapping("{fileId}")
     public Result fileList1(@PathVariable String fileId,
                                         @RequestParam(defaultValue = "1") Integer current,
-                                        @RequestParam(defaultValue = "50") Integer size) {
+                                        @RequestParam(defaultValue = "999") Integer size) {
         try {
-            Page<File> fileList = fileService.queryFileList(fileId,current,size);
-            return Result.success(fileList.getRecords());
+            List<File> fileList = fileService.queryFileList(fileId,current,size);
+            return Result.success(fileList);
         } catch (Exception e){
             throw new AjaxException(e);
         }
@@ -181,10 +181,15 @@ public class FileApi extends BaseController {
 
         File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
 
-        FileTree userRoot = new FileTree(file.getFileId(),"0","我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",1);
-
-        fileTrees.add(trees.size()+1,userRoot);
-        fileTrees.addAll(fileService.querySubFileList(file.getFileId()));
+        List<FileTree> fileList = fileService.querySubFileList(file.getFileId());
+        if(fileList!=null && fileList.size()>0){
+            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",1);
+            fileTrees.add(trees.size()+1,userRoot);
+            fileTrees.addAll(fileList);
+        }else{
+            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
+            fileTrees.add(trees.size()+1,userRoot);
+        }
         return Result.success(fileTrees);
     }
 
@@ -326,7 +331,7 @@ public class FileApi extends BaseController {
            fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999).getRecords());
+            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999));
             return jsonObject;
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);

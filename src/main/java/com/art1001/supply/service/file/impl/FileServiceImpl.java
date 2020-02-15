@@ -108,9 +108,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public Page<File> queryFileList(String fileId,Integer current,Integer size) {
-        Page<File> filePage = new Page<>(current,size);
-        return fileMapper.findChildFile(filePage,fileId);
+    public List<File> queryFileList(String fileId,Integer current,Integer size) {
+        //Page<File> filePage = new Page<>(current,size);
+        File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
+        List<File> childFile = fileMapper.findChildFile(fileId);
+        if(isRoot.getLevel()==0){
+            String userId = ShiroAuthenticationManager.getUserId();
+            File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
+            childFile.add(file);
+        }
+        return childFile;
     }
 
     /**
@@ -335,7 +342,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 移动文件
-     * @param fileIds   源文件id数组
+     * @param fileId   源文件id数组
      * @param folderId 目标目录id
      */
     @Override

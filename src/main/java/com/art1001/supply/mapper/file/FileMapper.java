@@ -45,8 +45,9 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @param fileId 父级id，顶级目录为 0
 	 * @return
 	 */
-	Page<File> findChildFile(IPage<File> page, @Param("fileId") String fileId);
+	//Page<File> findChildFile(IPage<File> page, @Param("fileId") String fileId);
 
+	List<File> findChildFile(@Param("fileId") String fileId);
 	/**
 	 * 查新该目录下的名称是否存在
 	 *

@@ -32,7 +32,7 @@ import java.util.List;
 	 * @param size 每页数据量
 	 * @return
 	 */
-	Page<File> queryFileList(String fileId, Integer current, Integer size);
+	List<File> queryFileList(String fileId, Integer current, Integer size);
 
 	/**
 	 * 通过id获取单条file数据
