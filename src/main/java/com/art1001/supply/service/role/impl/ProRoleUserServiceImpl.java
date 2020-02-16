@@ -74,13 +74,12 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
 //        projectMember.setRoleId(roleId);
 //        projectMember.setUpdateTime(System.currentTimeMillis());
 
-        ProRoleUser proRoleUser = new ProRoleUser();
-        proRoleUser.setUId(userId);
-        proRoleUser.setTCreateTime(LocalDateTime.now());
-        proRoleUser.setOrgId(projectId);
-        proRoleUser.setRoleId(roleId);
+        LambdaQueryWrapper<ProRoleUser> eq = new QueryWrapper<ProRoleUser>().lambda()
+                .eq(ProRoleUser::getOrgId, projectId).eq(ProRoleUser::getUId, userId);
 
-        proRoleUserService.save(proRoleUser);
+        ProRoleUser proRoleUser = new ProRoleUser();
+        proRoleUser.setRoleId(roleId);
+        this.update(proRoleUser, eq);
     }
 
     @Override
