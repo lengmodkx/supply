@@ -50,7 +50,7 @@ public class ProResourcesRoleApi extends BaseController {
 
     /**
      * 分配权限
-     * @return 结果
+     * @return 结果oRole
      */
     @PutMapping("/{role}/edit_resource")
     public JSONObject editResource(@PathVariable(value = "role") String roleId,

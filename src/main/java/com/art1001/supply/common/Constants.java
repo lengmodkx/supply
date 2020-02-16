@@ -55,6 +55,7 @@ public class Constants {
     public static final String OWNER_CN = "拥有者";
     public static final String ADMIN_CN = "管理员";
     public static final String MEMBER_CN = "成员";
+    public static final String EXTERNAL = "外部成员";
 
     //角色key
     public static final String OWNER_KEY = "administrator";

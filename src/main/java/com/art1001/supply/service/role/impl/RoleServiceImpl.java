@@ -130,7 +130,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 			return -1;
 		}
 		//这里手动添加默认角色信息,后期可以读取配置文件进行添加
-		String[] initRoles = {"拥有者","管理员","成员"};
+		String[] initRoles = {"拥有者","管理员","成员","外部成员"};
 		for (String roleName : initRoles) {
 			Role role = new Role();
 			role.setRoleName(roleName);
@@ -143,6 +143,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 					role.setRoleKey("admin");
 					role.setRoleDes("企业的管理者");
 					break;
+				case Constants.EXTERNAL:
+					role.setRoleKey("externalMember");
+					role.setRoleDes("企业外部成员");
 				default:
 					role.setRoleKey("member");
 					role.setIsDefault(true);
