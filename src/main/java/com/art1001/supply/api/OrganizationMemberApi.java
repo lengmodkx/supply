@@ -131,14 +131,8 @@ public class OrganizationMemberApi {
 
             pager.setCondition(organizationMember);
             List<OrganizationMember> memberList = organizationMemberService.findOrganizationMemberPagerList(pager);
-            if(CommonUtils.listIsEmpty(memberList)){
-                jsonObject.put("data","无数据");
-                jsonObject.put("result",1);
-                return jsonObject;
-            }
             jsonObject.put("result",1);
             jsonObject.put("data",memberList);
-
         }catch (Exception e){
             log.error("系统异常:",e);
             throw new SystemException(e);

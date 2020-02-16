@@ -119,4 +119,6 @@ public interface RoleService extends IService<Role> {
      * @return 角色和角色下的权限信息
      */
     Role getRoleAndResourcesInfo(Integer roleId);
+
+    List<Role> roleForMember(String userId, String orgId);
 }

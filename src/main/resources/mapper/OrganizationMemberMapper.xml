@@ -6,17 +6,17 @@
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
-		<result column="user_id" property="userEntity.userId" jdbcType="VARCHAR" />
-		<result column="user_name" property="userEntity.userName"/>
-		<result column="image" property="userEntity.image"/>
-		<result column="account_name" property="userEntity.accountName"/>
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 		<result column="organization_lable" property="organizationLable" jdbcType="INTEGER" />
 		<result column="partment_lable" property="partmentLable" jdbcType="INTEGER" />
 		<result column="member_lock" property="memberLock" jdbcType="INTEGER" />
-		<association property="userEntity" column="executor" javaType="com.art1001.supply.entity.user.UserEntity"
+		<result column="other" property="other" jdbcType="INTEGER" />
+		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
+		<association property="partment" column="partment_id" javaType="com.art1001.supply.entity.partment.Partment"
+					 select="com.art1001.supply.mapper.partment.PartmentMapper.findPartmentByPartmentId"/>
 	</resultMap>
     
 	<sql id="Base_Column_List">
@@ -48,25 +48,20 @@
 	<select id="findOrganizationMemberPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
 		select
-			m.create_time,
-			m.organization_lable,
-			m.partment_lable,
-			u.user_id,
-			u.account_name,
-			u.user_name,
-			u.image
-		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id where m.organization_id = #{condition.organizationId}
+		<include refid="Base_Column_List" />
+		from prm_organization_member where organization_id = #{condition.organizationId}
 		<if test="condition.createTime != null">
-			and m.create_time BETWEEN (#{condition.createTime} - 60 * 1000 * 60 * 24 * 7) and #{condition.createTime}
+			and create_time BETWEEN (#{condition.createTime} - 60 * 1000 * 60 * 24 * 7) and #{condition.createTime}
 		</if>
 
 		<if test="condition.partmentId != null and condition.partmentId != ''">
-			AND m.partment_id = #{condition.partmentId}
+			AND partment_id = #{condition.partmentId}
 		</if>
 
 		<if test="condition.memberLock != null">
-			AND m.member_lock = #{condition.memberLock}
+			AND member_lock = #{condition.memberLock}
 		</if>
+		order by create_time asc
 	</select>
 	
 	<select id="findOrganizationMemberAllList" resultMap="BaseResultMap"

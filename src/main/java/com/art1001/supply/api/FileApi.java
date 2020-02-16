@@ -183,11 +183,11 @@ public class FileApi extends BaseController {
 
         List<FileTree> fileList = fileService.querySubFileList(file.getFileId());
         if(fileList!=null && fileList.size()>0){
-            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",1);
+            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",1);
             fileTrees.add(trees.size()+1,userRoot);
             fileTrees.addAll(fileList);
         }else{
-            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
+            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
             fileTrees.add(trees.size()+1,userRoot);
         }
         return Result.success(fileTrees);

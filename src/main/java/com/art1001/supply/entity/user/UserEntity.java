@@ -146,6 +146,8 @@ public class UserEntity extends Model<UserEntity> {
 	@TableField(exist = false)
 	private String wxOpenId;
 
+	@TableField(exist = false)
+	private Boolean visible = false;
 	/**
 	 * 用户默认所在的企业
 	 */

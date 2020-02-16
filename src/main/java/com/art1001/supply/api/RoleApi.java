@@ -2,8 +2,11 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +34,8 @@ public class RoleApi {
     @Resource
     private RoleService roleService;
 
+    @Resource
+    private RoleUserService roleUserService;
     /**
      * 添加角色
      * @param orgId 企业id
@@ -110,21 +115,15 @@ public class RoleApi {
     }
 
     /**
-     * 角色列表
+     * 企业成员角色列表
      * @return
      */
-    @GetMapping("/{current}/{size}")
-    public JSONObject roleList(@RequestParam(value = "roleName",required = false)String roleName,
-                               @RequestParam(value = "orgId")String orgId,
-                               @PathVariable(value = "current")Long current,
-                               @PathVariable(value = "size")Long size){
+    @GetMapping
+    public JSONObject roleList(@RequestParam(value = "orgId")String orgId,
+                               @RequestParam(value = "userId")String userId){
         JSONObject object = new JSONObject();
         try{
-            Role role = new Role();
-            role.setRoleName(roleName);
-            role.setOrganizationId(orgId);
-            Page<Role> roleList = roleService.selectListPage(current, size, role,orgId);
-            object.put("data",roleList);
+            object.put("data",roleService.roleForMember(userId,orgId));
             object.put("result",1);
             object.put("msg","查询成功");
         }catch(Exception e){
@@ -134,11 +133,22 @@ public class RoleApi {
         return object;
     }
 
-    @GetMapping("/{roleId}")
-    public JSONObject roleUserList(@PathVariable Integer roleId){
+    /**
+     * 更新企业成员角色
+     * @param roleId
+     * @return
+     */
+    @PutMapping("/{roleId}/update")
+    public JSONObject updateUserRole(@PathVariable(value = "roleId") Integer roleId,
+                                     @RequestParam(value = "orgId")String orgId,
+                                     @RequestParam(value = "userId")String userId){
         JSONObject object = new JSONObject();
         try{
-
+            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id",userId).eq("org_id",orgId));
+            roleUser.setUId(userId);
+            roleUser.setOrgId(orgId);
+            roleUser.setRoleId(roleId);
+            roleUserService.updateById(roleUser);
             object.put("result",1);
             object.put("msg","");
         }catch(Exception e){

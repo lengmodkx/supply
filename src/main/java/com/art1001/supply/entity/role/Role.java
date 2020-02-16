@@ -81,6 +81,8 @@ public class Role extends Model<Role> {
 	 */
 	private Boolean isSystemInit;
 
+	@TableField(exist = false)
+	private Boolean currentCheck;
 	@Override
 	protected Serializable pkVal() {
 		return this.roleId;

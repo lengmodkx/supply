@@ -123,13 +123,11 @@ public class ProjectApi extends BaseController {
      * @param projectStatus 是否归档
      * @return json
      */
-//    @RequiresPermissions("update:project")
-
-        @PutMapping("/{projectId}")
-        public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
-                                        @RequestParam(value = "projectName", required = false) String projectName,
-                                        @RequestParam(value = "projectDes", required = false) String projectDes,
-                                        @RequestParam(value = "isPublic", required = false) Integer isPublic,
+    @PutMapping("/{projectId}")
+    public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
+                                    @RequestParam(value = "projectName", required = false) String projectName,
+                                    @RequestParam(value = "projectDes", required = false) String projectDes,
+                                    @RequestParam(value = "isPublic", required = false) Integer isPublic,
                                     @RequestParam(value = "projectCover", required = false) String projectCover,
                                     @RequestParam(value = "projectDel", required = false) Integer projectDel,
                                     @RequestParam(value = "projectStatus", required = false) Integer projectStatus,
@@ -145,16 +143,17 @@ public class ProjectApi extends BaseController {
             project.setIsPublic(isPublic);
             project.setStartTime(startTime);
             project.setEndTime(endTime);
-            if(!StringUtils.isNotEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
+            if(StringUtils.isNotEmpty(projectCover) && !"upload/project/bj.png".equals(projectCover) ){
                 //将新的图片路径写入项目
                 project.setProjectCover(projectCover);
             }
             project.setProjectDel(projectDel);
             project.setProjectStatus(projectStatus);
+            project.setUpdateTime(System.currentTimeMillis());
             projectService.updateProject(project);
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("data",new HashMap<>().put("project",project));
+            object.put("data",project);
         } catch (Exception e) {
             log.error("保存失败:", e);
             throw new AjaxException(e);

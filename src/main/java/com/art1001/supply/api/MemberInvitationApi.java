@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -47,9 +50,7 @@ public class MemberInvitationApi extends BaseController {
     private RoleService roleService;
 
     @Resource
-    private OrganizationMemberService organizationMemberService;
-
-
+    private ProRoleUserService proRoleUserService;
     /**
      * 通过用户账户查询用户
      * @param keyword 关键字
@@ -104,6 +105,7 @@ public class MemberInvitationApi extends BaseController {
         JSONObject object = new JSONObject();
         try{
             projectMemberService.remove(new QueryWrapper<ProjectMember>().eq("member_id",memberId));
+            proRoleUserService.remove(new QueryWrapper<ProRoleUser>().eq("u_id",memberId));
             object.put("result",1);
             object.put("msg","移除成功");
         }catch(Exception e){

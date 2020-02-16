@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.organization;
 
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -71,6 +72,8 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	@TableField(exist = false)
 	private UserEntity userEntity;
 
+	@TableField(exist = false)
+	private Partment partment;
 	/**
 	 * 创建时间
 	 */
@@ -85,6 +88,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	private Boolean userDefault;
 
+	private Integer other;
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

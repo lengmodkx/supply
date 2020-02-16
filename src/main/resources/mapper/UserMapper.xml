@@ -18,12 +18,7 @@
 		job,
 		default_image,
 		account_name,
-		delete_status,
-		locked,
-		description,
-		creator_name,
-		create_time,
-		update_time
+		description
 	</sql>
 
 	<sql id="join">
@@ -95,7 +90,7 @@
 		SELECT
 		<include refid="userAttributes"/>
 		FROM tb_user
-		where user_id = #{id}
+		where user_id = #{memberId}
 	</select>
 
 	<!-- 查询指定id的人员信息 -->

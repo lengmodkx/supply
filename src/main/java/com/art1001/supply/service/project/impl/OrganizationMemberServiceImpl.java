@@ -92,17 +92,19 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
-		organizationMember.setCreateTime(System.currentTimeMillis());
-		organizationMember.setUpdateTime(System.currentTimeMillis());
-		organizationMemberMapper.insert(organizationMember);
-		//修改企业成员默认权限，2020-20-10 汪亚锋
-		Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
-		RoleUser roleUser = new RoleUser();
-		roleUser.setOrgId(organizationMember.getOrganizationId());
-		roleUser.setRoleId(role.getRoleId());
-		roleUser.setUId(organizationMember.getMemberId());
-		roleUser.setTCreateTime(LocalDateTime.now());
-		roleUserService.save(roleUser);
+		if(getOne(new QueryWrapper<OrganizationMember>().eq("member_id",organizationMember.getMemberId()))==null){
+			organizationMember.setCreateTime(System.currentTimeMillis());
+			organizationMember.setUpdateTime(System.currentTimeMillis());
+			organizationMemberMapper.insert(organizationMember);
+			//修改企业成员默认权限，2020-20-10 汪亚锋
+			Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
+			RoleUser roleUser = new RoleUser();
+			roleUser.setOrgId(organizationMember.getOrganizationId());
+			roleUser.setRoleId(role.getRoleId());
+			roleUser.setUId(organizationMember.getMemberId());
+			roleUser.setTCreateTime(LocalDateTime.now());
+			roleUserService.save(roleUser);
+		}
 	}
 	/**
 	 * 获取所有project数据

@@ -16,10 +16,10 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
 	/**
 	 * 查询一个用户信息
-	 * @param userId 用户id
+	 * @param memberId 用户id
 	 * @return
 	 */
-	UserEntity findById(String userId);
+	UserEntity findById(String memberId);
 
 	int findCount();
 

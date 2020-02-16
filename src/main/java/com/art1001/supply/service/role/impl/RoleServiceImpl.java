@@ -1,6 +1,7 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.role.RoleMapper;
@@ -230,5 +231,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	@Override
 	public Role getRoleAndResourcesInfo(Integer roleId) {
 		return roleMapper.selectRoleAndResrouceInfo(roleId);
+	}
+
+	@Override
+	public List<Role> roleForMember(String userId, String orgId) {
+		List<Role> roles = list(new QueryWrapper<Role>().eq("organization_id",orgId));
+		roles.forEach(role -> {
+			RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id",userId).eq("org_id",orgId));
+			if(roleUser != null){
+				if(roleUser.getRoleId().equals(role.getRoleId())){
+					role.setCurrentCheck(true);
+				} else {
+					role.setCurrentCheck(false);
+				}
+			}
+		});
+		return roles;
 	}
 }

@@ -5,6 +5,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
@@ -17,6 +18,7 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -72,12 +75,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Resource
 	private ProRoleService proRoleService;
 
-	/**
-	 * 角色逻辑层Bean 注入
-	 */
-	@Resource
-	private RoleService roleService;
-
 	@Resource
 	private RoleUserService roleUserService;
 
@@ -105,6 +102,8 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Resource
 	private OrganizationMemberService organizationMemberService;
 
+	@Resource
+	private ProRoleUserService proRoleUserService;
 
 	@Override
 	public List<Project> findProjectByMemberId(String memberId,Integer projectDel) {
@@ -223,7 +222,15 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member.setMemberLabel(0);
 		projectMemberMapper.insert(member);
 
-		//汪亚锋 2020-2-10 项目邀请的用户直接加入到企业中，并分配成员的权限
+		Integer roleId = proRoleService.getProDefaultRoleId(orgId);
+		ProRoleUser proRoleUser = new ProRoleUser();
+		proRoleUser.setOrgId(orgId);
+		proRoleUser.setRoleId(roleId);
+		proRoleUser.setUId(memberId);
+		proRoleUser.setTCreateTime(LocalDateTime.now());
+		proRoleUserService.save(proRoleUser);
+
+		//汪亚锋 2020-2-10 项目邀请的用户直接加入到企业中，并分配企业成员的权限
 		OrganizationMember member1 = new OrganizationMember();
 		member1.setOrganizationId(orgId);
 		member1.setMemberId(memberId);
@@ -232,7 +239,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member1.setCreateTime(System.currentTimeMillis());
 		member1.setUpdateTime(System.currentTimeMillis());
 		member1.setUserDefault(false);
+		member1.setOther(0);//项目邀请得成员目前都是外部成员
 		organizationMemberService.saveOrganizationMember(member1);
+
 
 		return 1;
 	}
