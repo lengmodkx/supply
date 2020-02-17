@@ -146,6 +146,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 				case Constants.EXTERNAL:
 					role.setRoleKey("externalMember");
 					role.setRoleDes("企业外部成员");
+					break;
 				default:
 					role.setRoleKey("member");
 					role.setIsDefault(true);

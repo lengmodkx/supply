@@ -84,6 +84,31 @@ public class RoleApi {
     }
 
     /**
+     * 角色列表
+     * @return
+     */
+    @GetMapping("/{current}/{size}")
+    public JSONObject roleList(@RequestParam(value = "roleName",required = false)String roleName,
+                               @RequestParam(value = "orgId")String orgId,
+                               @PathVariable(value = "current")Long current,
+                               @PathVariable(value = "size")Long size){
+        JSONObject object = new JSONObject();
+        try{
+            Role role = new Role();
+            role.setRoleName(roleName);
+            role.setOrganizationId(orgId);
+            Page<Role> roleList = roleService.selectListPage(current, size, role,orgId);
+            object.put("data",roleList);
+            object.put("result",1);
+            object.put("msg","查询成功");
+        }catch(Exception e){
+            log.error("查询失败，{}",e);
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
      * 更新角色
      * @param roleId 角色id
      * @param roleName 角色名称
