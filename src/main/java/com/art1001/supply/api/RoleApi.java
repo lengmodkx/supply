@@ -132,7 +132,6 @@ public class RoleApi {
         }
         return object;
     }
-
     /**
      * 更新企业成员角色
      * @param roleId
