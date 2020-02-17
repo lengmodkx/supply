@@ -185,7 +185,7 @@ public class OrganizationMemberApi {
      * @param orgId 企业id
      * @return
      */
-    @GetMapping()
+    @GetMapping("/check/member_visible")
     public Result checkVisibleMember(String orgId){
         LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda().eq(RoleUser::getOrgId, orgId).eq(RoleUser::getUId, ShiroAuthenticationManager.getUserId());
         RoleUser one = roleUserService.getOne(eq);
