@@ -98,7 +98,13 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 			organizationMember.setUpdateTime(System.currentTimeMillis());
 			organizationMemberMapper.insert(organizationMember);
 			//修改企业成员默认权限，2020-20-10 汪亚锋
-			Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
+			Role role;
+			if(organizationMember.getOther()==0){
+				role = roleService.getOne(new QueryWrapper<Role>().eq("role_key","externalMember").eq("organization_id", organizationMember.getOrganizationId()));
+			}else{
+				role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
+			}
+
 			RoleUser roleUser = new RoleUser();
 			roleUser.setOrgId(organizationMember.getOrganizationId());
 			roleUser.setRoleId(role.getRoleId());
