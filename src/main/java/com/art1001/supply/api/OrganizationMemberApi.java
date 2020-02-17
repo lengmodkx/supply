@@ -1,17 +1,22 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,6 +42,9 @@ public class OrganizationMemberApi {
 
     @Resource
     private RoleUserService roleUserService;
+
+    @Resource
+    private RoleService roleService;
     /**
      * 未分配部门的员工
      */
@@ -170,5 +178,26 @@ public class OrganizationMemberApi {
         organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
         roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id",orgId).eq("u_id",userId));
         return Result.success();
+    }
+
+    /**
+     * 判断当前用户是否能够看到成员选项
+     * @param orgId 企业id
+     * @return
+     */
+    @GetMapping()
+    public Result checkVisibleMember(String orgId){
+        LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda().eq(RoleUser::getOrgId, orgId).eq(RoleUser::getUId, ShiroAuthenticationManager.getUserId());
+        RoleUser one = roleUserService.getOne(eq);
+        Integer roleId = one.getRoleId();
+        Role byId = roleService.getById(roleId);
+        Boolean result;
+        if(Constants.OWNER_KEY.equals(byId.getRoleKey()) || Constants.ADMIN_KEY.equals(byId.getRoleKey())){
+            result = Boolean.TRUE;
+        } else {
+            result = Boolean.FALSE;
+        }
+
+        return Result.success(result);
     }
 }

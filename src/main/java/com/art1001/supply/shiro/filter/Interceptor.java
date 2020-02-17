@@ -76,17 +76,6 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
 
         List<String> allResources = redisUtil.getList(String.class, "allResources");
-        if(CollectionUtils.isEmpty(allResources)){
-            //获取所有资源的kay
-            List<ResourceEntity> allResourceList = resourceService.list(new QueryWrapper<ResourceEntity>()
-                    .lambda().ne(ResourceEntity::getResourceLevel, 1));
-            allResources = allResourceList.stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
-            List<ProResources> proResourcesList = proResourcesService.list(new QueryWrapper<ProResources>()
-                    .lambda().ne(ProResources::getSLevel, 1));
-            List<String> proKeyList = proResourcesList.stream().map(ProResources::getSSourceKey).collect(Collectors.toList());
-            allResources.addAll(proKeyList);
-        }
-
         if(allResources.contains(key.toString())){
             if(keyList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
