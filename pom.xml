@@ -281,6 +281,11 @@
             <version>2.2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+
     </dependencies>
     <profiles>
         <profile>
