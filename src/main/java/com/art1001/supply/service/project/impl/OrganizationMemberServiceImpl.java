@@ -92,7 +92,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	 */
 	@Override
 	public void saveOrganizationMember(OrganizationMember organizationMember){
-		if(getOne(new QueryWrapper<OrganizationMember>().eq("member_id",organizationMember.getMemberId()))==null){
+		OrganizationMember organizationMember1 = getOne(new QueryWrapper<OrganizationMember>().eq("member_id", organizationMember.getMemberId()).eq("organization_id", organizationMember.getOrganizationId()));
+		if(organizationMember1==null){
 			organizationMember.setCreateTime(System.currentTimeMillis());
 			organizationMember.setUpdateTime(System.currentTimeMillis());
 			organizationMemberMapper.insert(organizationMember);
