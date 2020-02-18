@@ -64,8 +64,8 @@ public class Interceptor implements HandlerInterceptor {
         String userId = ShiroAuthenticationManager.getUserId();
         String projectId = request.getParameter("projectId");
         if(StringUtils.isNotEmpty(projectId)){
-            redisUtil.remove("projectId");
-            redisUtil.set("projectId",projectId);
+            int code = projectId.concat(userId).hashCode();
+            redisUtil.set("pId:"+code,projectId);
         }
 
         if("/projects/index".equals(request.getRequestURI())){
