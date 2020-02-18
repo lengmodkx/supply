@@ -77,8 +77,11 @@ public class RedisUtil {
      * @return
      */
     public String get(final Object key) {
-        Object result = null;
         return redisTemplate.opsForValue().get(key).toString();
+    }
+
+    public Object getObj(final Object key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
 //    public Object getObject(final Object key) {

@@ -68,11 +68,6 @@ public class ProjectApi extends BaseController {
     @Resource
     private ScheduleService scheduleService;
 
-    //初始化权限时候使用到
-    @PostMapping("index")
-    public void index(@RequestParam(value = "projectId") String projectId){
-        log.info(projectId);
-    }
     /**
      * 创建项目
      *

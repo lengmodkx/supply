@@ -1,11 +1,13 @@
 package com.art1001.supply.api.aop;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -147,15 +149,9 @@ public class PushAspect extends BaseController {
         systemLog.setProjectId(object.getString(PROJECT_ID));
         systemLog.setCreateTime(System.currentTimeMillis());
         String name = object.getString(NAME) != null ? object.getString(NAME):"";
-        UserEntity userEntity;
-        try {
-            userEntity = JSONObject.parseObject(redisUtil.get(ShiroAuthenticationManager.getUserId()), UserEntity.class);
-        } catch (NullPointerException e){
-            log.info("redis中没有当前用户登录信息，需要从mysql中获取.[{}],",ShiroAuthenticationManager.getUserId());
-            userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
-            redisUtil.set(Constants.USER_INFO + ShiroAuthenticationManager.getUserId(),userEntity);
-        }
-        systemLog.setContent(userEntity.getUserName() + " " + push.value().getName()+" "+ name);
+
+        UserInfo userInfo = (UserInfo) redisUtil.getObj(Constants.USER_INFO+ShiroAuthenticationManager.getUserId());
+        systemLog.setContent(userInfo.getUserName() + " " + push.value().getName()+" "+ name);
         systemLog.setMemberId(ShiroAuthenticationManager.getUserId());
         logService.save(systemLog);
         return systemLog;

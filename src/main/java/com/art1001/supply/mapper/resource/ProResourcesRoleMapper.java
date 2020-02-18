@@ -18,8 +18,8 @@ public interface ProResourcesRoleMapper extends BaseMapper<ProResourcesRole> {
      * 获取到 某个项目成员的权限信息
      * 权限信息:资源id字符串 逗号隔开
      * @param projectId 项目id
-     * @param memberId 成员id
+     * @param userId 成员id
      * @return 资源id字符串 逗号隔开
      */
-    String selectRoleResourceByProjectMember(@Param("orgId") String orgId, @Param("userId") String userId);
+    String selectRoleResourceByProjectMember(@Param("projectId") String projectId, @Param("userId") String userId);
 }

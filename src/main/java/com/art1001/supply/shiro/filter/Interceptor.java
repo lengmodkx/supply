@@ -14,11 +14,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jodd.util.HashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -62,20 +65,17 @@ public class Interceptor implements HandlerInterceptor {
         }
         List<String> keyList = new ArrayList<>();
         String userId = ShiroAuthenticationManager.getUserId();
-        String projectId = request.getParameter("projectId");
-
+        Map<String,String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        String projectId = map.get("projectId");
         if(StringUtils.isNotEmpty(projectId)){
-            if("/projects/index".equals(request.getRequestURI())){
-                keyList = proResourcesService.getMemberResourceKey(projectId, userId);
-                keyList.add("ScheduleApi:initSchedule");
-                keyList.add("ShareApi:share");
-                keyList.add("StatisticsApi:projectStatistics");
-                keyList.add("ShareApi:getShare");
-                keyList.add("ScheduleApi:getSchedule");
+            redisUtil.set(userId,projectId);
+            String prId = redisUtil.get(userId);
+            if(StringUtils.isNotEmpty(prId)){
+                if(!prId.equalsIgnoreCase(projectId)){
+                    redisUtil.set(userId,projectId);
+                }
             }
         }
-
-
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
         String name = handlerMethod.getMethod().getName();
@@ -84,6 +84,14 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
+            if(redisUtil.getObj(userId)!=null){
+                keyList = proResourcesService.getMemberResourceKey(redisUtil.get(userId), userId);
+                keyList.add("ScheduleApi:initSchedule");
+                keyList.add("ShareApi:share");
+                keyList.add("StatisticsApi:projectStatistics");
+                keyList.add("ShareApi:getShare");
+                keyList.add("ScheduleApi:getSchedule");
+            }
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
             List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
             keyList.addAll(memberResourceKey);

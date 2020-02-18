@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -145,9 +146,11 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 	@Override
 	public List<String> getMemberResourceKey(String userId, String orgId) {
 		Role userRoleInOrg = this.getUserRoleInOrg(userId, orgId);
-		List<String> resourceIdListByRoleId = resourcesRoleService.getResourceIdListByRoleId(userRoleInOrg);
-
-		return this.listByIds(resourceIdListByRoleId)
+		List<String> resId = resourcesRoleService.getResourceIdListByRoleId(userRoleInOrg);
+		if(resId==null || resId.size()==0){
+			return  new ArrayList<>();
+		}
+		return this.listByIds(resId)
 				   .stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
 	}
 
