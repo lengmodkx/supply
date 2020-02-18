@@ -46,8 +46,8 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
     private ProResourceRoleBindTemplateService proResourceRoleBindTemplateService;
 
     @Override
-    public String getRoleResourceByProjectMember(String orgId, String memberId) {
-        return proResourcesRoleMapper.selectRoleResourceByProjectMember(orgId,memberId);
+    public String getRoleResourceByProjectMember(String projectId, String memberId) {
+        return proResourcesRoleMapper.selectRoleResourceByProjectMember(projectId,memberId);
     }
 
     @Override

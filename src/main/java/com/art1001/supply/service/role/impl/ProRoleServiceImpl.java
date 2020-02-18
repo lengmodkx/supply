@@ -278,10 +278,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public List<ProRole> roleForMember(String userId, String orgId) {
+    public List<ProRole> roleForMember(String userId,String orgId, String projectId) {
         List<ProRole> proRoles = this.getProRoles(orgId);
         proRoles.forEach(role -> {
-            ProRole roleIdForProjectUser = proRoleUserService.getRoleIdForProjectUser(orgId, userId);
+            ProRole roleIdForProjectUser = proRoleUserService.getRoleIdForProjectUser(projectId, userId);
             if(roleIdForProjectUser != null){
                 if(roleIdForProjectUser.getRoleId().equals(role.getRoleId())){
                     role.setCurrentCheck(true);

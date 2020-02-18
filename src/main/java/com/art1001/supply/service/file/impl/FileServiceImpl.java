@@ -241,31 +241,31 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String initProjectFolder(String projectId) {
-        UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
+        String userId = ShiroAuthenticationManager.getUserId();
         File projectFile = new File();
         projectFile.setFileName("文件库");
         projectFile.setProjectId(projectId);
-        projectFile.setMemberId(userEntity.getUserId());
+        projectFile.setMemberId(userId);
         projectFile.setCatalog(1);
         projectFile.setCreateTime(System.currentTimeMillis());
         projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
-        File file = new File();
-        // 写库
-        file.setFileName("公共模型库");
-        // 项目id
-        file.setProjectId(projectId);
-        file.setParentId(projectFile.getFileId());
-        file.setMemberId(userEntity.getUserId());
-        file.setCreateTime(System.currentTimeMillis());
-        file.setUpdateTime(System.currentTimeMillis());
-        file.setLevel(1);
-        file.setCatalog(1);
+        List<File> files = new ArrayList<>();
+        Arrays.asList("图片","文档","音频","视频","模型").forEach(item->{
+            File file = new File();
+            file.setFileName(item);
+            file.setProjectId(projectId);
+            file.setParentId(projectFile.getFileId());
+            file.setMemberId(userId);
+            file.setCreateTime(System.currentTimeMillis());
+            file.setUpdateTime(System.currentTimeMillis());
+            file.setLevel(1);
+            file.setCatalog(1);
+            files.add(file);
+        });
+
         // 设置是否目录
-        save(file);
-        //保存到ElasticSearch
-        fileRepository.save(file);
-        System.out.println(file.getFileName()+" 文件ES上传成功");
+        saveBatch(files);
         return projectFile.getFileId();
     }
 

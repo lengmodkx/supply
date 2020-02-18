@@ -149,10 +149,11 @@ public class ProRoleApi extends BaseController {
 
     @GetMapping("/for_member")
     public Result roleForMember(@NotNull(message = "用户id不能为空！") String userId,
-                                @NotNull(message = "项目id不能为空！") String orgId){
+                                @NotNull(message = "企业id不能为空！") String orgId,
+                                @NotNull(message = "项目id不能为空！") String projectId){
         log.info("Get role for member.[{}]", userId);
 
-        return Result.success(proRoleService.roleForMember(userId, orgId));
+        return Result.success(proRoleService.roleForMember(userId, orgId,projectId));
     }
 }
 

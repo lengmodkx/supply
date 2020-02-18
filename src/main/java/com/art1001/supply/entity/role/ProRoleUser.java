@@ -36,9 +36,9 @@ public class ProRoleUser implements Serializable {
     private String uId;
 
     /**
-     * 企业id
+     * 项目id
      */
-    private String orgId;
+    private String projectId;
 
     /**
      * 创建时间

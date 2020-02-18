@@ -22,7 +22,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns("/login","/register","/users/**","/captcha","/code","/forget");
+        registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns(exclude);
         super.addInterceptors(registry);
     }
 }

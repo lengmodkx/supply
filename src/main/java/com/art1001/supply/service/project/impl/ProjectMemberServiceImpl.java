@@ -224,7 +224,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 
 		Integer roleId = proRoleService.getProDefaultRoleId(orgId);
 		ProRoleUser proRoleUser = new ProRoleUser();
-		proRoleUser.setOrgId(orgId);
+		proRoleUser.setProjectId(projectId);
 		proRoleUser.setRoleId(roleId);
 		proRoleUser.setUId(memberId);
 		proRoleUser.setTCreateTime(LocalDateTime.now());

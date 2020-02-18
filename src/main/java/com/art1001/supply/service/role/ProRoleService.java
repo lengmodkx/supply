@@ -194,12 +194,13 @@ public interface ProRoleService extends IService<ProRole> {
     List<ProRole> getProRoles(String orgId);
 
     /**
-     * 获取当前企业中的角色列表和用户当前角色
+     * 获取当前企业中的角色列表和用户当前在项目中的角色
      * @param userId 用户id
-     * @param orgId 项目id
+     * @param orgId 企业id
+     * @param projectId 项目id
      * @return 角色列表
      */
-    List<ProRole> roleForMember(String userId, String orgId);
+    List<ProRole> roleForMember(String userId, String orgId,String projectId);
 
     /**
      * 根据key 获取企业中的角色信息

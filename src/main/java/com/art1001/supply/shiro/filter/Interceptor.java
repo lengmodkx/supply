@@ -13,6 +13,7 @@ import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,25 +58,34 @@ public class Interceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
+        String projectId = request.getParameter("projectId");
+        List<String> keyList = redisUtil.getList(String.class, "projectId");
+        System.out.println(request.getRequestURI()+request.getParameter("projectId"));
+        String userId = ShiroAuthenticationManager.getUserId();
+        if("/projects/index".equals(request.getRequestURI())){
+            if(keyList==null){
+                keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+                keyList.add("ScheduleApi:initSchedule");
+                keyList.add("ShareApi:share");
+                keyList.add("StatisticsApi:projectStatistics");
+                keyList.add("ShareApi:getShare");
+                keyList.add("ScheduleApi:getSchedule");
+                redisUtil.lset(projectId,keyList);
+            }
+        }
 
-        String defaultOrgId = organizationMemberService.findOrgByUserId(ShiroAuthenticationManager.getUserId());
-        List<String> keyList = proResourcesService.getMemberResourceKey(defaultOrgId, ShiroAuthenticationManager.getUserId());
-        List<String> memberResourceKey = resourceService.getMemberResourceKey(ShiroAuthenticationManager.getUserId(), defaultOrgId);
-        keyList.addAll(memberResourceKey);
-        keyList.add("ScheduleApi:initSchedule");
-        keyList.add("ShareApi:share");
-        keyList.add("StatisticsApi:projectStatistics");
-        keyList.add("ShareApi:getShare");
-        keyList.add("ScheduleApi:getSchedule");
+
+        String orgByUserId = organizationMemberService.findOrgByUserId(userId);
+        if(StringUtils.isNotEmpty(orgByUserId)){
+            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
+            keyList.addAll(memberResourceKey);
+        }
+
         HandlerMethod handlerMethod = (HandlerMethod)handler;
-
         String name = handlerMethod.getMethod().getName();
-
         String className = handlerMethod.getBeanType().getSimpleName();
-
         StringBuilder key = new StringBuilder(className);
         key.append(":").append(name);
-
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
             if(keyList.contains(key.toString())){

@@ -18,7 +18,7 @@
             sys_pro_role_user AS r
             LEFT JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
         WHERE
-            r.org_id = #{orgId}
+            r.project_id = #{projectId}
             AND r.u_id = #{userId}
     </select>
 
