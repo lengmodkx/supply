@@ -11,9 +11,11 @@ import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import jodd.util.HashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -58,11 +60,17 @@ public class Interceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
-        String projectId = request.getParameter("projectId");
-        List<String> keyList = redisUtil.getList(String.class, "projectId");
-        System.out.println(request.getRequestURI()+request.getParameter("projectId"));
+        List<String> keyList = new ArrayList<>();
         String userId = ShiroAuthenticationManager.getUserId();
+        String projectId = request.getParameter("projectId");
+        if(StringUtils.isNotEmpty(projectId)){
+            redisUtil.remove("projectId");
+            redisUtil.set("projectId",projectId);
+        }
+
         if("/projects/index".equals(request.getRequestURI())){
+            int code = redisUtil.get("projectId").concat(userId).hashCode();
+            keyList= redisUtil.getList(String.class, "pro:"+code);
             if(keyList==null){
                 keyList = proResourcesService.getMemberResourceKey(projectId, userId);
                 keyList.add("ScheduleApi:initSchedule");
@@ -70,15 +78,8 @@ public class Interceptor implements HandlerInterceptor {
                 keyList.add("StatisticsApi:projectStatistics");
                 keyList.add("ShareApi:getShare");
                 keyList.add("ScheduleApi:getSchedule");
-                redisUtil.lset(projectId,keyList);
+                redisUtil.lset("pro:"+code,keyList);
             }
-        }
-
-
-        String orgByUserId = organizationMemberService.findOrgByUserId(userId);
-        if(StringUtils.isNotEmpty(orgByUserId)){
-            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
-            keyList.addAll(memberResourceKey);
         }
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
@@ -88,6 +89,9 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
+            String orgByUserId = organizationMemberService.findOrgByUserId(userId);
+            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
+            keyList.addAll(memberResourceKey);
             if(keyList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
                 return true;
