@@ -94,22 +94,8 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             ResourcesRole resourcesRole = new ResourcesRole();
             resourcesRole.setRoleId(r.getRoleId());
             resourcesRole.setCreateTime(LocalDateTime.now());
-            switch (r.getRoleKey()){
-                case Constants.OWNER_KEY:
-                    String ownerResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
-                    resourcesRole.setResourceId(ownerResources);
-                    break;
-                case Constants.ADMIN_KEY:
-                    String adminResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
-                    resourcesRole.setResourceId(adminResources);
-                    break;
-                case Constants.MEMBER_KEY:
-                    String memberResources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
-                    resourcesRole.setResourceId(memberResources);
-                    break;
-                default:
-                    break;
-            }
+            String resources = resourceRoleBindTemplateService.getRoleBindResourceIds(r.getRoleKey());
+            resourcesRole.setResourceId(resources);
             resourcesRoleMapper.insert(resourcesRole);
         });
         return 1;
