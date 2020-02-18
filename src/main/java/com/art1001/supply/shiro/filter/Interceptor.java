@@ -63,24 +63,19 @@ public class Interceptor implements HandlerInterceptor {
         List<String> keyList = new ArrayList<>();
         String userId = ShiroAuthenticationManager.getUserId();
         String projectId = request.getParameter("projectId");
-        if(StringUtils.isNotEmpty(projectId)){
-            int code = projectId.concat(userId).hashCode();
-            redisUtil.set("pId:"+code,projectId);
-        }
 
-        if("/projects/index".equals(request.getRequestURI())){
-            int code = redisUtil.get("projectId").concat(userId).hashCode();
-            keyList= redisUtil.getList(String.class, "pro:"+code);
-            if(keyList==null){
+        if(StringUtils.isNotEmpty(projectId)){
+            if("/projects/index".equals(request.getRequestURI())){
                 keyList = proResourcesService.getMemberResourceKey(projectId, userId);
                 keyList.add("ScheduleApi:initSchedule");
                 keyList.add("ShareApi:share");
                 keyList.add("StatisticsApi:projectStatistics");
                 keyList.add("ShareApi:getShare");
                 keyList.add("ScheduleApi:getSchedule");
-                redisUtil.lset("pro:"+code,keyList);
             }
         }
+
+
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
         String name = handlerMethod.getMethod().getName();

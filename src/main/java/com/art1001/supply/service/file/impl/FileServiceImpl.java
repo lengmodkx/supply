@@ -250,7 +250,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setCreateTime(System.currentTimeMillis());
         projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
-        List<File> files = new ArrayList<>();
         Arrays.asList("图片","文档","音频","视频","模型").forEach(item->{
             File file = new File();
             file.setFileName(item);
@@ -261,11 +260,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             file.setUpdateTime(System.currentTimeMillis());
             file.setLevel(1);
             file.setCatalog(1);
-            files.add(file);
+            save(file);
         });
 
-        // 设置是否目录
-        saveBatch(files);
         return projectFile.getFileId();
     }
 
