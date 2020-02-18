@@ -15,11 +15,9 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -164,8 +162,14 @@ public class OrganizationMemberApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
-            jsonObject.put("data",users);
-            jsonObject.put("result", 1);
+            if(users.isEmpty()){
+                jsonObject.put("data",null);
+                jsonObject.put("msg","未搜索到成员");
+                jsonObject.put("result",0);
+            }else {
+                jsonObject.put("data",users);
+                jsonObject.put("result", 1);
+            }
             return jsonObject;
         } catch (Exception e){
             e.printStackTrace();
@@ -200,4 +204,59 @@ public class OrganizationMemberApi {
 
         return Result.success(result);
     }
+
+    /**
+     * 获取企业所有成员
+     * @param orgId 企业id
+     * @return
+     */
+    @GetMapping("/getMemberCompanies/{orgId}")
+    public JSONObject getMemberCompanies(@PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<UserEntity> memberList = organizationMemberService.getUserList(orgId);
+            if (memberList.isEmpty()){
+                jsonObject.put("result",0);
+                jsonObject.put("data",null);
+                jsonObject.put("msg","还未添加员工");
+            }else{
+                jsonObject.put("result",1);
+                jsonObject.put("data",memberList);
+            }
+            return  jsonObject;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new SystemException("系统异常,获取用户信息失败!",e);
+        }
+    }
+
+
+    /**
+     * 移交企业权限
+     * @param orgId 企业id
+     * @param ownerId 企业拥有者id
+     * @param memberId 成员id
+     * @return
+     */
+    @PostMapping("/transferOwner")
+    public JSONObject transferPower(@RequestParam(value = "orgId") String orgId,
+                                    @RequestParam(value = "ownerId") String ownerId,
+                                    @RequestParam(value = "memberId") String memberId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Boolean update =organizationMemberService.transferOwner(orgId,ownerId,memberId);
+            if (update){
+                jsonObject.put("result",1);
+                jsonObject.put("msg","更改成功");
+            }else {
+                jsonObject.put("result",0);
+                jsonObject.put("msg","更改失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new SystemException("系统异常,获取用户信息失败!",e);
+        }
+        return jsonObject;
+    }
+
 }
