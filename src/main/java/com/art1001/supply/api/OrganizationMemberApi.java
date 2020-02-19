@@ -210,7 +210,7 @@ public class OrganizationMemberApi {
      * @param orgId 企业id
      * @return
      */
-    @GetMapping("/get/{orgId}")
+    @GetMapping("/getMembers/{orgId}")
     public JSONObject getMemberCompanies(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
