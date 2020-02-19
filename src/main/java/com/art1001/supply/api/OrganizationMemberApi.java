@@ -215,6 +215,10 @@ public class OrganizationMemberApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> memberList = organizationMemberService.getUserList(orgId);
+            UserEntity userEntity=new UserEntity();
+            userEntity.setUserName("张王李赵");
+            userEntity.setUserId("id");
+            memberList.add(userEntity);
             if (memberList.isEmpty()){
                 jsonObject.put("result",0);
                 jsonObject.put("data",null);
