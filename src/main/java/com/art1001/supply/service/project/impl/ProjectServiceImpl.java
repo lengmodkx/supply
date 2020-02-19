@@ -196,7 +196,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		projectMember.setUpdateTime(System.currentTimeMillis());
 		projectMember.setMemberLabel(1);
 		projectMember.setDefaultGroup(relation.getRelationId());
-		projectMember.setRoleId(proRoleService.getRoleIdByRoleKey(Constants.OWNER_KEY, project.getProjectId()));
+		projectMember.setRoleKey("administrator");
 		projectMemberService.save(projectMember);
 
 		//企业中 项目拥有者的角色信息
