@@ -1,11 +1,11 @@
 package com.art1001.supply.service.project;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 
 /**
@@ -13,6 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface OrganizationMemberService extends IService<OrganizationMember> {
 
+	/**
+	 * 查询企业员工
+	 * @param orgId 企业id
+	 * @return
+	 */
 	List<UserEntity> getUserList(String orgId);
 	/**
 	 * 查询分页project数据
@@ -101,4 +106,18 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return
 	 */
 	String findOrgByUserId(String memberId);
+
+
+
+	/**
+	 * 移交企业权限
+	 *
+	 * @param orgId 企业id
+	 * @param ownerId 企业拥有者id
+	 * @param memberId 员工id
+	 * @return
+	 */
+	public Boolean transferOwner(String orgId, String ownerId, String memberId);
+
+
 }

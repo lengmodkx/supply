@@ -1,36 +1,28 @@
 package com.art1001.supply.api;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
-import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
-import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.user.*;
+import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
+import com.art1001.supply.entity.user.WeChatLoginUtils;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.RedisUtil;
+import com.art1001.supply.util.RegexUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.mustachejava.Code;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -47,7 +39,9 @@ import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户

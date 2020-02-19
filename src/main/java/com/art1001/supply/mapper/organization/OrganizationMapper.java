@@ -1,12 +1,13 @@
 package com.art1001.supply.mapper.organization;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * organizationmapper接口
@@ -84,4 +85,11 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
      */
     List<Project> selectProject(@Param("orgId") String orgId,@Param("userId")String userId);
 
+	/**
+	 * 修改Organiza表的拥有者
+	 * @param orgId 企业id
+	 * @date 2020/2/19
+	 * @return 布尔值
+	 */
+	Boolean updatOorganization(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("memberId")String memberId);
 }

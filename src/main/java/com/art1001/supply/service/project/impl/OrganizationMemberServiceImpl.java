@@ -2,17 +2,15 @@ package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
-import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,12 +31,22 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Resource
 	private OrganizationMemberMapper organizationMemberMapper;
 
+	/** organizationMapper接口*/
+	@Resource
+	private OrganizationMapper organizationMapper;
+
+
 	@Resource
 	private RoleUserService roleUserService;
 
 	@Resource
 	private RoleService roleService;
 
+	/**
+	 * 根据企业id获取企业员工
+	 * @param orgId 企业id
+	 * @return 员工信息
+	 */
 	@Override
 	public List<UserEntity> getUserList(String orgId) {
 		return organizationMemberMapper.getUserList(orgId);
@@ -200,5 +208,30 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Override
 	public String findOrgByUserId(String memberId) {
 		return organizationMemberMapper.findOrgByUserId(memberId);
+	}
+
+
+	/**
+	 * 移交企业权限
+	 *
+	 * @param orgId 企业id
+	 * @param ownerId 企业拥有者id
+	 * @param memberId 员工id
+	 * @return
+	 */
+	@Override
+	public Boolean transferOwner(String orgId, String ownerId, String memberId){
+
+		try {
+			Boolean updateOwner= organizationMemberMapper.updateOwner(orgId,ownerId);
+			Boolean updateMember=organizationMemberMapper.updateMember(orgId,memberId);
+			Boolean updatOorganization = organizationMapper.updatOorganization(orgId,ownerId,memberId);
+			if (updateOwner && updateMember && updatOorganization){
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

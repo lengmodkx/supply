@@ -189,6 +189,7 @@
 
 	</update>
 
+
 	<select id="findOrgByMemberId" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		m.create_time,
@@ -204,6 +205,7 @@
 	<select id="findOrgByUserId" resultType="java.lang.String">
 		select organization_id from prm_organization_member where member_id = #{memberId} and user_default = 1
 	</select>
+
     <select id="getUserList" resultType="com.art1001.supply.entity.user.UserEntity">
 		select
 		u.user_id,
@@ -212,6 +214,27 @@
 		u.user_name
 		from prm_organization_member om left join tb_user u on om.member_id = u.user_id where om.organization_id = #{orgId}
 	</select>
+
+
+	<select id="findMemberCompanies" resultType="com.art1001.supply.entity.organization.OrganizationMember">
+		select
+		<include refid="Base_Column_List" />
+		from prm_organization_member om  where om.organization_id = #{orgId}
+	</select>
+
+	<!-- 移交企业权限 -->
+	<update id="updateOwner" >
+		update prm_organization_member
+		set organization_lable = 0
+		WHERE organization_id = #{orgId} and member_id = #{ownerId}
+	</update>
+
+	<!-- 移交企业权限 -->
+	<update id="updateMember">
+		update prm_organization_member
+		set organization_lable = 1
+		WHERE organization_id = #{orgId} and member_id = #{memberId}
+	</update>
 
 
 </mapper>
