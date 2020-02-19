@@ -6,8 +6,6 @@ import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.mapper.resource.ProResourcesMapper;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.resource.ProResourcesService;
-import com.art1001.supply.service.role.ProRoleService;
-import com.art1001.supply.service.role.ProRoleUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,17 +39,13 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
     @Resource
     private ProResourcesMapper proResourcesMapper;
 
-    @Resource
-    private ProRoleService proRoleService;
-
-    @Resource
-    private ProRoleUserService proRoleUserService;
-
-
     @Override
     public List<String> getMemberResourceKey(String projectId, String memberId) {
-        String roleResourceByProjectMember = proResourcesRoleService.getRoleResourceByProjectMember(projectId, memberId);
-        String[] rIds = roleResourceByProjectMember.split(",");
+        String roleResource = proResourcesRoleService.getRoleResourceByProjectMember(projectId, memberId);
+        if(StringUtils.isEmpty(roleResource)){
+            return new ArrayList<>();
+        }
+        String[] rIds = roleResource.split(",");
         return getResourceKeyByRIds(Arrays.asList(rIds));
     }
 

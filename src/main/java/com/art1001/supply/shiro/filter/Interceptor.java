@@ -69,12 +69,7 @@ public class Interceptor implements HandlerInterceptor {
         String projectId = map.get("projectId");
         if(StringUtils.isNotEmpty(projectId)){
             redisUtil.set(userId,projectId);
-            String prId = redisUtil.get(userId);
-            if(StringUtils.isNotEmpty(prId)){
-                if(!prId.equalsIgnoreCase(projectId)){
-                    redisUtil.set(userId,projectId);
-                }
-            }
+
         }
 
         HandlerMethod handlerMethod = (HandlerMethod)handler;
