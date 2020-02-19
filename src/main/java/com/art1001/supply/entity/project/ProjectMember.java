@@ -98,6 +98,11 @@ public class ProjectMember extends Model<ProjectMember> {
 	@TableField("role_id")
 	private Integer roleId;
 
+	/**
+	 * 角色key
+	 */
+	private String roleKey;
+
 	@TableField(exist=false)
 	private String defaultImage;
 

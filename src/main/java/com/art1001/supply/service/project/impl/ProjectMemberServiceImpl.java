@@ -5,6 +5,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -211,6 +212,14 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Integer saveMember(String projectId, String memberId,String orgId) {
+		Integer roleId = proRoleService.getProDefaultRoleId(orgId);
+		ProRoleUser proRoleUser = new ProRoleUser();
+		proRoleUser.setProjectId(projectId);
+		proRoleUser.setRoleId(roleId);
+		proRoleUser.setUId(memberId);
+		proRoleUser.setTCreateTime(LocalDateTime.now());
+		proRoleUserService.save(proRoleUser);
+
 		//查询出当前项目的默认分组
 		String groupId = projectService.findDefaultGroup(projectId);
 		ProjectMember member = new ProjectMember();
@@ -220,15 +229,12 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member.setCreateTime(System.currentTimeMillis());
 		member.setUpdateTime(System.currentTimeMillis());
 		member.setMemberLabel(0);
-		projectMemberMapper.insert(member);
 
-		Integer roleId = proRoleService.getProDefaultRoleId(orgId);
-		ProRoleUser proRoleUser = new ProRoleUser();
-		proRoleUser.setProjectId(projectId);
-		proRoleUser.setRoleId(roleId);
-		proRoleUser.setUId(memberId);
-		proRoleUser.setTCreateTime(LocalDateTime.now());
-		proRoleUserService.save(proRoleUser);
+		ProRole byId = proRoleService.getById(roleId);
+
+		member.setRoleKey(byId.getRoleKey());
+
+		projectMemberMapper.insert(member);
 
 		//汪亚锋 2020-2-10 项目邀请的用户直接加入到企业中，并分配企业成员的权限
 		OrganizationMember member1 = new OrganizationMember();
