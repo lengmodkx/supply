@@ -15,11 +15,9 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -212,7 +210,7 @@ public class OrganizationMemberApi {
      * @param orgId 企业id
      * @return
      */
-    @GetMapping("/getMemberCompanies/{orgId}")
+    @GetMapping("/get/{orgId}")
     public JSONObject getMemberCompanies(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -241,24 +239,22 @@ public class OrganizationMemberApi {
      * @return
      */
     @PostMapping("/transferOwner")
-    public JSONObject transferPower(@RequestParam(value = "orgId") String orgId,
+    public Result transferPower(@RequestParam(value = "orgId") String orgId,
                                     @RequestParam(value = "ownerId") String ownerId,
                                     @RequestParam(value = "memberId") String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
             Boolean update =organizationMemberService.transferOwner(orgId,ownerId,memberId);
             if (update){
-                jsonObject.put("result",1);
-                jsonObject.put("msg","更改成功");
+                return Result.success();
             }else {
-                jsonObject.put("result",0);
-                jsonObject.put("msg","更改失败");
+                return Result.fail("更新失败");
             }
         }catch (Exception e){
             e.printStackTrace();
             throw new SystemException("系统异常,获取用户信息失败!",e);
         }
-        return jsonObject;
+
     }
 
 
