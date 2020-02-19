@@ -68,7 +68,7 @@ public class Interceptor implements HandlerInterceptor {
         Map<String,String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String projectId = map.get("projectId");
         if(StringUtils.isNotEmpty(projectId)){
-            redisUtil.set(userId,projectId);
+            redisUtil.set("pId"+userId,projectId);
 
         }
 
@@ -79,8 +79,8 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
-            if(redisUtil.getObj(userId)!=null){
-                keyList = proResourcesService.getMemberResourceKey(redisUtil.get(userId), userId);
+            if(redisUtil.getObj("pId"+userId)!=null){
+                keyList = proResourcesService.getMemberResourceKey(redisUtil.get("pId"+userId), userId);
                 keyList.add("ScheduleApi:initSchedule");
                 keyList.add("ShareApi:share");
                 keyList.add("StatisticsApi:projectStatistics");
