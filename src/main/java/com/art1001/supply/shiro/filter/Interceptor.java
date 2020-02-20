@@ -97,7 +97,7 @@ public class Interceptor implements HandlerInterceptor {
             response.setCharacterEncoding("UTF-8");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("msg","您没有权限!");
-            jsonObject.put("result",0);
+            jsonObject.put("result",203);
             PrintWriter writer = response.getWriter();
             writer.print(jsonObject.toJSONString());
             writer.flush();
