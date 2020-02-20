@@ -7,6 +7,7 @@
         <id column="id" property="id" />
         <result column="role_id" property="roleId" />
         <result column="u_id" property="uId" />
+        <result column="org_id"  property="orgId" />
         <result column="t_create_time" property="tCreateTime" />
     </resultMap>
 
@@ -22,5 +23,20 @@
             r.organization_id = #{orgId}
             AND ru.u_id = #{userId}
     </select>
+
+    <!-- 将拥有者的权限变为成员 -->
+    <update id="updateRoleOwner">
+        update sys_role_user
+        set u_id=#{memberId}
+        where org_id=#{orgId} and u_id=#{ownerId}
+    </update>
+
+    <!-- 将成员的权限变为拥有者 -->
+    <update id="updateRoleMember">
+        update sys_role_user
+        set u_id=#{ownerId}
+        where org_id=#{orgId} and u_id=#{memberId}
+    </update>
+
 
 </mapper>

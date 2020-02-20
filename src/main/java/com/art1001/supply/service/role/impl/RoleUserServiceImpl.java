@@ -8,12 +8,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -45,5 +42,16 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
 
         return Optional.ofNullable(this.getOne(getRoleIdByUserIdAndOrgId))
                 .map(RoleUser::getRoleId).orElse(null);
+    }
+
+
+    @Override
+    public Boolean updateRoleTransfer(String orgId, String ownerId, String memberId) {
+        Boolean updateRoleOwner=roleUserMapper.updateRoleOwner(orgId,ownerId,memberId);
+        Boolean updateRoleMember= roleUserMapper.updateRoleMember(orgId,ownerId,memberId);
+       if (updateRoleMember && updateRoleOwner){
+           return true;
+       }
+        return  false;
     }
 }
