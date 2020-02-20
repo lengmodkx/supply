@@ -50,7 +50,7 @@
         pr.relation_name,
         <include refid="Base_Column_Group"/> AS task_group
         FROM prm_task pt
-        LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
+        LEFT JOIN prm_relation pr ON pt.task_group_id = pr.relation_id
         LEFT JOIN tb_user tu ON pt.executor=tu.user_id
     </sql>
 
@@ -58,25 +58,61 @@
     <sql id="Base_Column_QBC">
         <if test="stDTO!= null">
            <if test="stDTO.taskGroup != null and stDTO.taskGroup != ''">
-              AND (SELECT pr1.relation_id FROM prm_relation pr1 WHERE pr1.relation_id=pt.task_menu_id) IN (#{stDTO.taskGroup})
+              AND (SELECT pr1.relation_id FROM prm_relation pr1 WHERE pr1.relation_id=pt.task_group_id) IN (#{stDTO.taskGroup})
            </if>
            <if test="stDTO.taskMember != null and stDTO.taskMember != ''">
-              AND tu.user_id  IN (#{stDTO.taskMember})
+              AND pt.executor  IN (#{stDTO.taskMember})
            </if>
-           <if test="stDTO.taskCase != null and stDTO.taskCase != ''">
-               AND pt.task_status = #{stDTO.taskCase}
+           <if test="stDTO.taskCondition != null and stDTO.taskCondition != ''">
+               AND pt.task_status = #{stDTO.taskCondition}
            </if>
         </if>
     </sql>
 
     <sql id="Base_Column_Group">
-        (SELECT pr1.relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id)
+        (SELECT pr1.relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pt.task_group_id)
     </sql>
 
     <!--  查询总任务数 -->
     <select id="getCountTask" resultType="int">
-          SELECT COUNT(1) FROM prm_task pt  WHERE  pt.project_id=#{projectId}
+          SELECT COUNT(1) FROM prm_task pt   WHERE  pt.project_id=#{projectId} <include refid="Base_Column_QBC"/>
     </select>
+
+    <!-- 未完成任务量 -->
+    <select id="findHangInTheAirTaskCount" resultType="int">
+        select count(0) from prm_task pt where pt.project_id = #{projectId} and pt.task_status = 0 <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 已完成任务量 -->
+    <select id="findCompletedTaskCount" resultType="int">
+        select count(0) from prm_task  pt where pt.project_id = #{projectId} and pt.task_status = 1 <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 今日到期的任务量 -->
+    <select id="currDayTaskCount" resultType="int">
+        select count(0) from prm_task pt where pt.project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') = FROM_UNIXTIME(#{currDate}, '%Y-%m-%d'	) <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 已逾期的任务量 -->
+    <select id="findBeoberdueTaskCount" resultType="int">
+        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') &lt; FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') and task_status = 0 <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 待认领的任务量 -->
+    <select id="findTobeclaimedTaskCount" resultType="int">
+        select count(0) from prm_task pt where project_id = #{projectId} and (executor = '' or executor is null) <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 按时完成的任务量  -->
+    <select id="findFinishontTimeTaskCount" resultType="int">
+        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') &gt;= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1 <include refid="Base_Column_QBC"/>
+    </select>
+
+    <!-- 逾期完成的任务量  -->
+    <select id="findOverdueCompletion" resultType="int">
+        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') &lt; FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1 <include refid="Base_Column_QBC"/>
+    </select>
+
 
 
     <!-- 未完成任务数据 -->
@@ -168,8 +204,7 @@
 
     <select id="getHistogramsDate"  resultMap="resultHistograms">
          SELECT tu.user_name AS name , COUNT(1) AS data FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
-         WHERE pt.task_status=1 AND  project_id = #{projectId}
-
+         WHERE  project_id = #{projectId}
          AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
          BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T')
         <include refid="Base_Column_QBC"/>
@@ -259,7 +294,7 @@
     <!-- 任务分组数据  -->
     <select id="getTaskGroup" resultMap="resultTaskGroup">
         SELECT <include refid="Base_Column_Group"/> AS label,pr.relation_id as  value FROM  prm_relation pr
-        LEFT JOIN prm_task pt  ON  pr.relation_id = pt.task_menu_id
+        LEFT JOIN prm_task pt  ON  pr.relation_id = pt.task_group_id
         WHERE pt.project_id=#{value} GROUP BY  <include refid="Base_Column_Group"/>
     </select>
 

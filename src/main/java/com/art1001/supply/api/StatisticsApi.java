@@ -58,7 +58,7 @@ public class StatisticsApi {
             //根据项目id获取累计数据
             //StatisticsBurnout statisticsAdd=this.statisticsService.selectProjectProgress(projectId);
             //查询出该项目下的所有任务 状态数量概览
-            List<QueryVO> countList=this.statisticsService.findTaskCountOverView(projectId);
+            List<QueryVO> countList=this.statisticsService.findTaskCountOverView(projectId,sto);
 
             statistics.setCountData(countList);
             statistics.setPieData(staticPies);
@@ -83,11 +83,7 @@ public class StatisticsApi {
     @GetMapping(value = "getPieSource/{projectId}")
     public Statistics pieStatistics(@PathVariable("projectId") String projectId ,@RequestParam("data")String dto){
 
-        StaticDto sto=null;
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
-        }
+        StaticDto sto=this.getStaticDto(dto);
 
         try {
 
@@ -128,34 +124,26 @@ public class StatisticsApi {
     @GetMapping(value = "getHistogramSource/{projectId}")
     public Statistics histogramStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
-        StaticDto sto=new StaticDto();
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
-        }
-
+        StaticDto sto=this.getStaticDto(dto);
         try {
             Statistics statistics=this.getCondition(projectId);
-            //根据项目id获取折线图数据
+            //根据项目id获取柱状图数据
             List<StatisticsHistogram> staticHistograms=this.statisticsService.getHistogramsData(projectId,sto);
 
             statistics.setHisResultlist(staticHistograms);
 
 
-            String[] nameArray = new String[staticHistograms.size()];
-            Integer[] dataArray = new Integer[staticHistograms.size()];
+                String[] nameArray = new String[staticHistograms.size()];
+                Integer[] dataArray = new Integer[staticHistograms.size()];
 
-            for(int i=0;i<staticHistograms.size();i++){
-                nameArray[i] = staticHistograms.get(i).getName();
-                dataArray[i] = staticHistograms.get(i).getData();
-            }
-
-            StatisticsHistogram staticHistogram = new StatisticsHistogram();
-            staticHistogram.setNameArray(nameArray);
-            staticHistogram.setDataArray(dataArray);
-
-            statistics.setStaticHistogram(staticHistogram);
-
+                for(int i=0;i<staticHistograms.size();i++){
+                    nameArray[i] = staticHistograms.get(i).getName();
+                    dataArray[i] = staticHistograms.get(i).getData();
+                }
+                StatisticsHistogram staticHistogram = new StatisticsHistogram();
+                staticHistogram.setNameArray(nameArray);
+                staticHistogram.setDataArray(dataArray);
+                statistics.setStaticHistogram(staticHistogram);
 
             ArrayList<TitleVO> arrayList=new ArrayList<>();
             TitleVO title=new TitleVO("执行者","name");
@@ -183,11 +171,7 @@ public class StatisticsApi {
     @GetMapping(value = "getBurnoutSource/{projectId}")
     public Statistics burnoutStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
-        StaticDto sto=null;
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
-        }
+        StaticDto sto=this.getStaticDto(dto);
 
         try {
             Statistics statistics=this.getCondition(projectId);
@@ -224,11 +208,8 @@ public class StatisticsApi {
     @GetMapping(value = "getAddSource/{projectId}")
     public Statistics addStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
-        StaticDto sto=null;
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
-        }
+        StaticDto sto=this.getStaticDto(dto);
+
 
         try {
             Statistics statistics=this.getCondition(projectId);
@@ -262,7 +243,10 @@ public class StatisticsApi {
      */
     @GetMapping(value = "getCountData/{projectId}")
     public Statistics getCountData(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
-        List<QueryVO> taskCountOverView = this.statisticsService.findTaskCountOverView(projectId);
+
+        StaticDto sto=this.getStaticDto(dto);
+
+        List<QueryVO> taskCountOverView = this.statisticsService.findTaskCountOverView(projectId, sto);
         Statistics statistics=getCountTable(projectId,"已完成",dto);
         statistics.setCountData(taskCountOverView);
         return  statistics;
@@ -278,11 +262,8 @@ public class StatisticsApi {
     @GetMapping(value = "getCountTable/{projectId}/{divName}")
     public Statistics getCountTable(@PathVariable("projectId") String projectId,@PathVariable("divName")String divName,@RequestParam("data")String dto) {
 
-        StatisticsDTO sto=null;
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StatisticsDTO)JSONObject.toBean(jsonObject, StatisticsDTO.class);
-        }
+        StaticDto sto=this.getStaticDto(dto);
+
 
         Statistics condition = this.statisticsService.getCountTable(divName,projectId,sto);
 
@@ -296,4 +277,11 @@ public class StatisticsApi {
     private  Statistics getCondition( String projectId){
         return  this.statisticsService.getGroupData(projectId);
     }
+
+
+    private  StaticDto getStaticDto( String dto){
+            JSONObject jsonObject=JSONObject.fromObject(dto);
+            return (StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+    }
+
 }

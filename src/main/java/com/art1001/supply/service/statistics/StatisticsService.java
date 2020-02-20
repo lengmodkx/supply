@@ -51,12 +51,12 @@ public interface StatisticsService {
     /*
      *查询出该项目下的所有任务 状态数量概览
      */
-    List<QueryVO> findTaskCountOverView(String projectId);
+    List<QueryVO> findTaskCountOverView(String projectId, StaticDto sto);
 
     /*
      *查询概览图表数据
      */
-    Statistics getCountTable(String divName, String projectId, StatisticsDTO statisticsDTO);
+    Statistics getCountTable(String divName, String projectId, StaticDto sto);
 
 
     /*

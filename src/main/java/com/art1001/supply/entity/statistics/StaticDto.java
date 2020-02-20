@@ -1,11 +1,20 @@
 package com.art1001.supply.entity.statistics;
 
+import lombok.Data;
+
 /**
  * @Auther: Administrator
  * @Date: 2019/4/23 15:32
  * @Description:
  */
+@Data
 public class StaticDto {
+
+
+    /**
+     *根据任务数  \ 工时  \  Story Points
+     */
+    private String taskCount;
 
     /**
      *根据成员查询
@@ -18,9 +27,14 @@ public class StaticDto {
     private String taskGroup;
 
     /**
-     *根据是否成功
+     *根据是否是子任务
      */
-        private String taskCase;
+    private int taskChild;
+
+    /**
+     *根据是否是回收站
+     */
+    private int recycle;
 
     /**
      *根据天数，开始时天数和结束时天数
@@ -28,6 +42,16 @@ public class StaticDto {
     private String startDay;
 
     private String endDay;
+
+    /**
+     *根据是否成功
+     */
+    private String taskCase;
+
+    /**
+     *  0 未完成  1 已完成
+     */
+    private Integer taskCondition;
 
     /**
      *根据天数
@@ -41,68 +65,4 @@ public class StaticDto {
 
 
 
-    public String getTaskDay() {
-        return taskDay;
-    }
-
-    public void setTaskDay(String taskDay) {
-        this.taskDay = taskDay;
-    }
-
-    public int getDayNum() {
-        return DayNum;
-    }
-
-    public void setDayNum(int dayNum) {
-        DayNum = dayNum;
-    }
-
-    public String getStartDay() {
-        return startDay;
-    }
-
-    public void setStartDay(String startDay) {
-        this.startDay = startDay;
-    }
-
-    public String getEndDay() {
-        return endDay;
-    }
-
-    public void setEndDay(String endDay) {
-        this.endDay = endDay;
-    }
-
-    public String getTaskCase() {
-        return taskCase;
-    }
-
-    public void setTaskCase(String taskCase) {
-        this.taskCase = taskCase;
-    }
-
-    public String getTaskMember() {
-        return taskMember;
-    }
-
-    public void setTaskMember(String taskMember) {
-        this.taskMember = taskMember;
-    }
-
-    public String getTaskGroup() {
-        return taskGroup;
-    }
-
-    public void setTaskGroup(String taskGroup) {
-        this.taskGroup = taskGroup;
-    }
-
-    @Override
-    public String toString() {
-        return "StaticDto{" +
-                "taskMember='" + taskMember + '\'' +
-                ", taskGroup='" + taskGroup + '\'' +
-                ", taskCase='" + taskCase + '\'' +
-                '}';
-    }
 }

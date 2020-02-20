@@ -23,8 +23,9 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * 查询任务总数
      * @return integer
      * @param projectId
+     * @param sto
      */
-    Integer getCountTask(@Param("projectId") String projectId) ;
+    Integer getCountTask(@Param("projectId") String projectId,  @Param("stDTO")StaticDto sto) ;
 
 
 
@@ -126,96 +127,96 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
     /**
      * 查询某个项目下未完成的任务数量
      * @param projectId 项目id
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = 0")
-    int findHangInTheAirTaskCount(String projectId);
+    int findHangInTheAirTaskCount(@Param("projectId")String projectId, @Param("stDTO") StaticDto sto);
 
     /**
      * 查询某个项目下完成的任务数量
      * @param projectId 项目id
+     * @param sto
      * @return
      */
-        @Select("select count(0) from prm_task where project_id = #{projectId} and task_status = 1")
-    int findCompletedTaskCount(String projectId);
+    int findCompletedTaskCount(@Param("projectId")String projectId, @Param("stDTO") StaticDto sto);
 
     /**
      * 查询某个项目下 今日到期的任务
      * @param projectId 项目id
      * @param currDate  当前日期 格式为 yyyy-MM-dd
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') = FROM_UNIXTIME(#{currDate}, '%Y-%m-%d'	)")
-    int currDayTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+    int currDayTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate, @Param("stDTO") StaticDto sto);
 
     /**
      * 查询某个项目下 已逾期的任务
      * @param projectId 项目id
      * @param currDate  当前日期 格式为 yyyy-MM-dd
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T') and task_status = 0 ")
-    int findBeoberdueTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+    int findBeoberdueTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate, @Param("stDTO") StaticDto sto);
 
     /**
      * 查询出该项目下 的所有待认领的任务
      * @param projectId 项目id
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and (executor = '' or executor is null)")
-    int findTobeclaimedTaskCount(String projectId);
+    int findTobeclaimedTaskCount(@Param("projectId")String projectId, @Param("stDTO") StaticDto sto);
 
     /**
      * 查询出该项目下 按时完成的所有任务
      * @param projectId 项目id
      * @param currDate  当前日期 格式为 yyyy-MM-dd
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') >= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1")
-    int findFinishontTimeTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+    int findFinishontTimeTaskCount(@Param("projectId") String projectId, @Param("currDate") Long currDate, @Param("stDTO") StaticDto sto);
 
     /**
-     * 查询出该项目下 按时完成的所有任务
+     * 查询出该项目下 逾期完成的所有任务
      * @param projectId 项目id
      * @param currDate  当前日期 格式为 yyyy-MM-dd
+     * @param sto
      * @return
      */
-    @Select("select count(0) from prm_task where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') < FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1")
-    int findOverdueCompletion(@Param("projectId") String projectId, @Param("currDate") Long currDate);
+    int findOverdueCompletion(@Param("projectId") String projectId, @Param("currDate") Long currDate, @Param("stDTO") StaticDto sto);
 
 
     /**
      * 未完成数据
      */
-    List<StatisticsResultVO> selectUnfinishTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("unfinishTaskCase") String unfinishTaskCase, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectUnfinishTask(@Param("stDTO") StaticDto sto, @Param("unfinishTaskCase") String unfinishTaskCase, @Param("projectId") String projectId);
 
     /**
      * 已完成数据
      */
-    List<StatisticsResultVO> selectFinishTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("finishTaskCase") String finishTaskCase, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectFinishTask(@Param("stDTO") StaticDto sto, @Param("finishTaskCase") String finishTaskCase, @Param("projectId") String projectId);
 
     /**
      * 今日到期
      */
-    List<StatisticsResultVO> selectExpireTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectExpireTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
 
     /**
      * 已逾期
      */
-    List<StatisticsResultVO> selectOverdueTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectOverdueTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
 
     /**
      * 待认领
      */
-    List<StatisticsResultVO> selectWaitClaimTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectWaitClaimTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
 
     /**
      * 按时完成数据
      */
-    List<StatisticsResultVO> selectPunctualityTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectPunctualityTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
 
     /**
      * 逾期完成数据
      */
-    List<StatisticsResultVO> selectExpiredToCompleteTask(@Param("stDTO") StatisticsDTO statisticsDTO, @Param("projectId") String projectId);
+    List<StatisticsResultVO> selectExpiredToCompleteTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
 }
