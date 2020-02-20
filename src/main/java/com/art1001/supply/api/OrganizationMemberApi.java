@@ -235,16 +235,16 @@ public class OrganizationMemberApi {
      * 移交企业权限
      * @param orgId 企业id
      * @param ownerId 企业拥有者id
-     * @param memberId 成员id
+     * @param userId 成员id
      * @return
      */
     @PostMapping("/transferOwner")
     public Result transferPower(@RequestParam(value = "orgId") String orgId,
                                     @RequestParam(value = "ownerId") String ownerId,
-                                    @RequestParam(value = "memberId") String memberId) {
+                                    @RequestParam(value = "userId") String userId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            Boolean update =organizationMemberService.transferOwner(orgId,ownerId,memberId);
+            Boolean update =organizationMemberService.transferOwner(orgId,ownerId,userId);
             if (update){
                 return Result.success();
             }else {

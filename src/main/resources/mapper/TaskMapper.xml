@@ -724,7 +724,7 @@
 		u.user_id,
 		u.user_name as executor_name,
 		u.image as executor_img
-		from prm_task left join tb_user as u on prm_task.executor = u.user_id  where parent_id = #{taskId}
+		from prm_task left join tb_user as u on prm_task.executor = u.user_id  where parent_id = #{taskId} and task_del = 0
 	</select>
 
 	<select id="findSubTaskCount" resultType="java.lang.Integer" >

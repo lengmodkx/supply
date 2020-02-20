@@ -42,6 +42,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Resource
 	private RoleService roleService;
 
+
+
 	/**
 	 * 根据企业id获取企业员工
 	 * @param orgId 企业id
@@ -226,7 +228,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 			Boolean updateOwner= organizationMemberMapper.updateOwner(orgId,ownerId);
 			Boolean updateMember=organizationMemberMapper.updateMember(orgId,memberId);
 			Boolean updatOorganization = organizationMapper.updatOorganization(orgId,ownerId,memberId);
-			if (updateOwner && updateMember && updatOorganization){
+			//将userRole表权限互换
+			Boolean updateRoleTransfer=roleUserService.updateRoleTransfer(orgId,ownerId,memberId);
+			if (updateOwner && updateMember && updatOorganization && updateRoleTransfer){
 				return true;
 			}
 		} catch (Exception e) {

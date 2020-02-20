@@ -8,12 +8,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -45,5 +42,21 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
 
         return Optional.ofNullable(this.getOne(getRoleIdByUserIdAndOrgId))
                 .map(RoleUser::getRoleId).orElse(null);
+    }
+
+
+    @Override
+    public Boolean updateRoleTransfer(String orgId, String ownerId, String memberId) {
+
+        Integer RoleIdByOwner = this.getOne(new QueryWrapper<RoleUser>().lambda()
+                .select(RoleUser::getRoleId).eq(RoleUser::getUId, ownerId).eq(RoleUser::getOrgId, orgId)).getRoleId();
+        Integer RoleIdByMember = this.getOne( new QueryWrapper<RoleUser>().lambda()
+                .select(RoleUser::getRoleId).eq(RoleUser::getUId, memberId).eq(RoleUser::getOrgId, orgId)).getRoleId();
+        Boolean updateRoleMember= roleUserMapper.updateRoleOwner(orgId,ownerId,RoleIdByMember);
+        Boolean updateRoleOwner= roleUserMapper.updateRoleMember(orgId,memberId,RoleIdByOwner);
+       if (updateRoleMember && updateRoleOwner){
+           return true;
+       }
+        return  false;
     }
 }

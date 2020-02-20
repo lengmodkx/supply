@@ -212,7 +212,7 @@
 		u.account_name,
 		u.image,
 		u.user_name
-		from prm_organization_member om left join tb_user u on om.member_id = u.user_id where om.organization_id = #{orgId}
+		from prm_organization_member om left join tb_user u on om.member_id = u.user_id where om.organization_id = #{orgId} and organization_lable = 0
 	</select>
 
 

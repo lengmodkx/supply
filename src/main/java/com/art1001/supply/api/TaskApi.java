@@ -43,6 +43,7 @@ import java.awt.datatransfer.Transferable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 任务增删改查，复制，移动
@@ -373,7 +374,6 @@ public class  TaskApi extends BaseController {
      * @return JSONObject
      */
     @NotEmpty
-    @Log(PushType.A7)
     @Push(value = PushType.A7,type = 3)
     @PutMapping(value = "/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,  @RequestParam(value = "startTime")Long startTime){
@@ -403,7 +403,6 @@ public class  TaskApi extends BaseController {
      * @return JSONObject
      */
     @AutomationRule(value = "#taskId",trigger = "endTime",objectValue = "#endTime")
-    @Log(PushType.A8)
     @Push(value = PushType.A8,type = 3)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId")String taskId,
@@ -686,6 +685,7 @@ public class  TaskApi extends BaseController {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
+            task.setProjectId(this.getTaskProjectId(taskId));
             if(StringUtils.isNotEmpty(executor)){
                 task.setExecutor(executor);
             }
@@ -831,7 +831,6 @@ public class  TaskApi extends BaseController {
      * @param taskId 任务id
      * @return
      */
-    @Log(PushType.A17)
     @Push(value = PushType.A17,type = 3)
     @PutMapping("/{taskId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable(value = "taskId")String taskId){
@@ -1088,7 +1087,11 @@ public class  TaskApi extends BaseController {
      * @return 项目id
      */
     private String getTaskProjectId(String taskId){
-        return taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
+        Task one = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
+        if(one != null && StringUtils.isNotEmpty(one.getProjectId())){
+            return one.getProjectId();
+        }
+        return "";
     }
 
     private String getTaskName(String taskId){

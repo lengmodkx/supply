@@ -30,4 +30,13 @@ public interface RoleUserService extends IService<RoleUser> {
      * @return 角色id
      */
     Integer getUserOrgRoleId(String userId, String orgId);
+
+    /**
+     * 将拥有者的权限变为成员
+     * @param ownerId 拥有者id
+     * @param orgId 企业id
+     * @param  memberId 成员id
+     * @return 角色id
+     */
+    Boolean updateRoleTransfer(String orgId, String ownerId, String memberId);
 }
