@@ -18,6 +18,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -26,6 +27,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,16 +45,10 @@ public class Interceptor implements HandlerInterceptor {
     private ProResourcesService proResourcesService;
 
     @Resource
-    private ProRoleUserService proRoleUserService;
-
-    @Resource
     private ResourceService resourceService;
 
     @Resource
     private OrganizationMemberService organizationMemberService;
-
-    @Resource
-    private ResourcesRoleService resourcesRoleService;
 
     @Resource
     private RedisUtil redisUtil;
@@ -100,6 +97,7 @@ public class Interceptor implements HandlerInterceptor {
             response.setCharacterEncoding("UTF-8");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("msg","您没有权限!");
+            jsonObject.put("result",0);
             PrintWriter writer = response.getWriter();
             writer.print(jsonObject.toJSONString());
             writer.flush();
