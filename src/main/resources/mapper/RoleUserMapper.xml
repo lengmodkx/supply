@@ -27,14 +27,14 @@
     <!-- 将拥有者的权限变为成员 -->
     <update id="updateRoleOwner">
         update sys_role_user
-        set u_id=#{memberId}
+        set role_id=#{roleId}
         where org_id=#{orgId} and u_id=#{ownerId}
     </update>
 
     <!-- 将成员的权限变为拥有者 -->
     <update id="updateRoleMember">
         update sys_role_user
-        set u_id=#{ownerId}
+        set role_id=#{roleId}
         where org_id=#{orgId} and u_id=#{memberId}
     </update>
 

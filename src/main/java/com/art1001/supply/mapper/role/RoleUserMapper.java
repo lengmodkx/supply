@@ -28,16 +28,18 @@ public interface RoleUserMapper extends BaseMapper<RoleUser> {
      * 将拥有者的权限变为成员
      * @param ownerId 拥有者id
      * @param orgId 企业id
-     * @param  memberId 成员id
+     * @param  roleId 成员权限id
      * @return 角色id
      */
-    Boolean updateRoleOwner(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("memberId")String memberId);
+    Boolean updateRoleOwner(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("roleId")Integer roleId);
     /**
      * 将成员的权限变为拥有者
-     * @param ownerId 拥有者id
+     * @param roleId 拥有者权限id
      * @param orgId 企业id
      * @param  memberId 成员id
      * @return 角色id
      */
-    Boolean updateRoleMember(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("memberId")String memberId);
+    Boolean updateRoleMember(@Param("orgId")String orgId,  @Param("memberId")String memberId,@Param("roleId")Integer roleId);
+
+
 }

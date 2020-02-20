@@ -47,8 +47,13 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
 
     @Override
     public Boolean updateRoleTransfer(String orgId, String ownerId, String memberId) {
-        Boolean updateRoleOwner=roleUserMapper.updateRoleOwner(orgId,ownerId,memberId);
-        Boolean updateRoleMember= roleUserMapper.updateRoleMember(orgId,ownerId,memberId);
+
+        Integer RoleIdByOwner = this.getOne(new QueryWrapper<RoleUser>().lambda()
+                .select(RoleUser::getRoleId).eq(RoleUser::getUId, ownerId).eq(RoleUser::getOrgId, orgId)).getRoleId();
+        Integer RoleIdByMember = this.getOne( new QueryWrapper<RoleUser>().lambda()
+                .select(RoleUser::getRoleId).eq(RoleUser::getUId, memberId).eq(RoleUser::getOrgId, orgId)).getRoleId();
+        Boolean updateRoleMember= roleUserMapper.updateRoleOwner(orgId,ownerId,RoleIdByMember);
+        Boolean updateRoleOwner= roleUserMapper.updateRoleMember(orgId,memberId,RoleIdByOwner);
        if (updateRoleMember && updateRoleOwner){
            return true;
        }
