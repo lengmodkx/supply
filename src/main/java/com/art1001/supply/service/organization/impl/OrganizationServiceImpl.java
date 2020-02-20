@@ -103,30 +103,21 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		organizationMapper.insert(organization);
 
 		//添加当前用户为企业拥有者
-		Integer saveOrgOwnerResult = organizationMemberService.saveOrgOwnerInfo(organization.getOrganizationId(), ShiroAuthenticationManager.getUserId());
-		if(saveOrgOwnerResult == -1){
-			return saveOrgOwnerResult;
-		}
+		organizationMemberService.saveOrgOwnerInfo(organization.getOrganizationId(), ShiroAuthenticationManager.getUserId());
 
 		//初始化默认角色
-		int saveOrgDefaultRoleResult = roleService.saveOrgDefaultRole(organization.getOrganizationId());
-		if(saveOrgDefaultRoleResult == -1){
-			return saveOrgDefaultRoleResult;
-		}
+		roleService.saveOrgDefaultRole(organization.getOrganizationId());
 
 		//初始化企业项目默认角色
 		proRoleService.initProRole(organization.getOrganizationId());
 
 		//获取到该企业的拥有者角色id
-		int administratorRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), Constants.OWNER_KEY);
-		if(administratorRoleId == -1){
-			return administratorRoleId;
-		}
+		Integer orgRoleId = roleService.getOrgRoleIdByKey(organization.getOrganizationId(), Constants.OWNER_KEY);
 
 		RoleUser roleUser = new RoleUser();
 		roleUser.setTCreateTime(LocalDateTime.now());
 		roleUser.setUId(ShiroAuthenticationManager.getUserId());
-		roleUser.setRoleId(administratorRoleId);
+		roleUser.setRoleId(orgRoleId);
 		roleUser.setOrgId(organization.getOrganizationId());
 		roleUserService.save(roleUser);
 		return 1;

@@ -76,6 +76,7 @@
 		p.project_id,
 		p.member_id,
 		p.member_label,
+		p.role_key,
 		u.user_name as member_name,
 		u.image as member_img,
 		u.default_image,

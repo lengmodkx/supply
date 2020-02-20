@@ -185,7 +185,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 		project.setFunc(array.toString());
 		save(project);
 		//初始化菜单
-		String[] menus  = new String[]{"待处理","进行中","已完成","已审核","已验收"};
+		String[] menus  = new String[]{"待处理","进行中","已完成","已审核","已拒绝"};
 		relationService.saveRelationBatch(Arrays.asList(menus),project.getProjectId(),relation.getRelationId());
 
 		//往项目用户关联表插入数据

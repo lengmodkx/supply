@@ -80,8 +80,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getPieSource/{projectId}/{data}")
-    public Statistics pieStatistics(@PathVariable("projectId") String projectId ,@PathVariable("data")String dto){
+    @GetMapping(value = "getPieSource/{projectId}")
+    public Statistics pieStatistics(@PathVariable("projectId") String projectId ,@RequestParam("data")String dto){
 
         StaticDto sto=null;
         if(dto!=null){
@@ -125,8 +125,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getHistogramSource/{projectId}/{data}")
-    public Statistics histogramStatistics(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
+    @GetMapping(value = "getHistogramSource/{projectId}")
+    public Statistics histogramStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
         StaticDto sto=new StaticDto();
         if(dto!=null){
@@ -180,8 +180,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getBurnoutSource/{projectId}/{data}")
-    public Statistics burnoutStatistics(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
+    @GetMapping(value = "getBurnoutSource/{projectId}")
+    public Statistics burnoutStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
         StaticDto sto=null;
         if(dto!=null){
@@ -221,8 +221,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getAddSource/{projectId}/{data}")
-    public Statistics addStatistics(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
+    @GetMapping(value = "getAddSource/{projectId}")
+    public Statistics addStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
 
         StaticDto sto=null;
         if(dto!=null){
@@ -260,8 +260,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getCountData/{projectId}/{data}")
-    public Statistics getCountData(@PathVariable("projectId") String projectId,@PathVariable("data")String dto){
+    @GetMapping(value = "getCountData/{projectId}")
+    public Statistics getCountData(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
         List<QueryVO> taskCountOverView = this.statisticsService.findTaskCountOverView(projectId);
         Statistics statistics=getCountTable(projectId,"已完成",dto);
         statistics.setCountData(taskCountOverView);
@@ -275,8 +275,8 @@ public class StatisticsApi {
      * @param projectId 项目id
      * @return Statistics 对象
      */
-    @GetMapping(value = "getCountTable/{projectId}/{divName}/{data}")
-    public Statistics getCountTable(@PathVariable("projectId") String projectId,@PathVariable("divName")String divName,@PathVariable("data")String dto) {
+    @GetMapping(value = "getCountTable/{projectId}/{divName}")
+    public Statistics getCountTable(@PathVariable("projectId") String projectId,@PathVariable("divName")String divName,@RequestParam("data")String dto) {
 
         StatisticsDTO sto=null;
         if(dto!=null){

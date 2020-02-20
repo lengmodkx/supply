@@ -89,35 +89,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public int removeOrgRole(Integer roleId,String orgId) {
-		//构造出查询当前roleId角色对用的用户id条件表达式
-		LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda().eq(RoleUser::getRoleId, roleId);
-		List<String> userIds = roleUserService.list(eq).stream().map(RoleUser::getUId).collect(Collectors.toList());
-		Role role = roleMapper.selectById(roleId);
-		Integer defaultRoleId;
-
-		//如果roleId是当前企业的默认角色,那么该角色被删除后就要把orgId的默认角色设为roleKey为 "member" 的角色
-		if(role.getIsDefault()){
-			Role updateRole = new Role();
-			defaultRoleId = this.getOrgRoleIdByKey(orgId,Constants.MEMBER_KEY);
-			updateRole.setRoleId(defaultRoleId);
-			updateRole.setIsDefault(true);
-			roleMapper.updateById(updateRole);
-		} else {
-			//获取到当前企业的默认角色id
-			defaultRoleId= this.getOrgDefaultRole(orgId).getRoleId();
+		//企业下角色关联有用户，不允许删除
+		List<RoleUser> roleUsers = roleUserService.list(new QueryWrapper<RoleUser>().eq("role_id",roleId).eq("org_id",orgId));
+		if(roleUsers!=null && roleUsers.size()>0){
+			return 0;
 		}
 
-		//循环插入用户角色关系信息
-		for (String userId : userIds) {
-			RoleUser roleUser = new RoleUser();
-			roleUser.setRoleId(defaultRoleId);
-			roleUser.setUId(userId);
-			roleUser.setTCreateTime(LocalDateTime.now());
-			roleUserService.save(roleUser);
-		}
-
-		//移除原来的角色用户关系信息
-		roleUserService.remove(new QueryWrapper<RoleUser>().lambda().in(RoleUser::getUId,userIds));
 		//删除角色
 		return roleMapper.deleteById(roleId);
 	}

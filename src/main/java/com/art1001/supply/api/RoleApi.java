@@ -79,7 +79,13 @@ public class RoleApi {
                                  @NotEmpty(message = "orgId不能为空") @RequestParam(required = false) String orgId){
         JSONObject object = new JSONObject();
         int result = roleService.removeOrgRole(roleId,orgId);
-        object.put("result",1);
+        if(result==1){
+            object.put("result",result);
+            object.put("msg","删除成功");
+        }else{
+            throw new AjaxException("此角色已经分配给用户，不允许删除");
+        }
+
         return object;
     }
 
