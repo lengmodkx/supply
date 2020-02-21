@@ -140,12 +140,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     public Integer addProRole(ProRole proRole) {
         proRole.setCreateTime(LocalDateTime.now());
         //查询该角色的key在项目中是否存在
-        boolean roleNotExist = this.checkIsExist(proRole.getOrgId(),proRole.getRoleKey()) == 0;
-        if(roleNotExist){
-            return proRoleMapper.insert(proRole);
-        } else {
-            return 0;
+        if(this.checkIsExist(proRole.getOrgId(),proRole.getRoleKey()) > 0){
+            throw new ServiceException("key在当前项目中已经存在!");
         }
+        return proRoleMapper.insert(proRole);
     }
 
     @Override

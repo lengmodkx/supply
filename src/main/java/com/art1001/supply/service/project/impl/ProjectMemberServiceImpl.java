@@ -12,6 +12,7 @@ import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
@@ -20,7 +21,6 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
-import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -40,9 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -445,5 +443,33 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 	@Override
 	public void updateAll(String userId, String id) {
 		projectMemberMapper.updateAll(userId,id);
+	}
+
+	@Override
+	public List<Project> getUserProjectsInOrg(String userId, String orgId) {
+		ValidatedUtil.filterNullParam(userId, orgId);
+
+		if(userService.checkUserIsExist(userId) == 0){
+			throw new ServiceException("用户不存在!");
+		}
+
+		Optional.ofNullable(organizationMemberService.findOrgByMemberId(userId, orgId))
+				.orElseThrow(() -> new ServiceException("用户不在该企业中"));
+
+		LambdaQueryWrapper<ProjectMember> getAllProMember = new QueryWrapper<ProjectMember>()
+				.lambda().eq(ProjectMember::getMemberId, userId);
+
+		List<ProjectMember> members = this.list(getAllProMember);
+
+		if(CollectionUtils.isEmpty(members)){
+			new LinkedList<>();
+		}
+
+		List<String> projectIdList = members.stream().map(ProjectMember::getProjectId).collect(Collectors.toList());
+
+		LambdaQueryWrapper<Project> getProjectListQW = new QueryWrapper<Project>()
+				.lambda().in(Project::getProjectId, projectIdList).eq(Project::getOrganizationId, orgId);
+
+		return projectService.list(getProjectListQW);
 	}
 }

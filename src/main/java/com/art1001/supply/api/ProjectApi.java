@@ -6,6 +6,7 @@ import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -30,9 +31,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +49,7 @@ import java.util.List;
  * [DELETE] // 删除
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("projects")
 public class ProjectApi extends BaseController {
@@ -638,5 +642,16 @@ public class ProjectApi extends BaseController {
         return 1;
     }
 
+    /**
+     * 获取企业中的用户项目列表
+     * @param orgId 企业id
+     * @return 用户项目列表
+     */
+    @RequestMapping("/org/projects")
+    public Result getUserProjectsInCurrOrg(@NotNull(message = "企业id不能为空!") String orgId){
+        log.info("Get user the project list in organization. [{}]", orgId);
+        List<Project> projects = projectMemberService.getUserProjectsInOrg(ShiroAuthenticationManager.getUserId(), orgId);
+        return Result.success(projects);
+    }
 
 }

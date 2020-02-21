@@ -6,10 +6,12 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,9 @@ public class LogApi extends BaseController {
     @Resource
     private TaskService taskService;
 
+    @Resource
+    private UserService userService;
+
     /**
      * 发送消息
      * @param publicId 公共id
@@ -54,6 +59,7 @@ public class LogApi extends BaseController {
         try {
             //校验publicType合法性
             msgTypeCheck(publicType);
+            UserEntity byId = userService.getById(ShiroAuthenticationManager.getUserId());
             Log log = new Log();
             log.setPublicId(publicId);
             log.setProjectId(projectId);
@@ -64,9 +70,9 @@ public class LogApi extends BaseController {
             if(logService.save(log)) {
                 String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(publicId);
                 if(taskJoinAndExecutorId != null && taskJoinAndExecutorId.length > 0){
-                    userNewsService.saveUserNews(taskJoinAndExecutorId,publicId,publicType,ShiroAuthenticationManager.getUserEntity().getUserName()+": "+ content);
+                    userNewsService.saveUserNews(taskJoinAndExecutorId,publicId,publicType,byId.getUserName()+": "+ content);
                 }
-                log.setMemberImg(ShiroAuthenticationManager.getUserEntity().getImage());
+                log.setMemberImg(byId.getImage());
                 jsonObject.put("data",new JSONObject().fluentPut("log",log).fluentPut("type",publicType));
                 jsonObject.put("msgId",projectId);
                 jsonObject.put("result",1);

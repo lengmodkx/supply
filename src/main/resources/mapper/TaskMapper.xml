@@ -790,7 +790,7 @@
 		bd.bind_id,
 		f.file_id
 		from prm_task t
-		LEFT JOIN prm_task AS sub ON t.task_id = sub.parent_id
+		LEFT JOIN prm_task AS sub ON t.task_id = sub.parent_id and sub.task_del = 0
 		left join prm_tag_relation tr on t.task_id = tr.task_id
 		left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id

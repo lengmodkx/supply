@@ -221,4 +221,13 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	List<UserEntity> getProjectUserInfo(String projectId, String keyWord);
 
     void updateAll(String userId, String id);
+
+	/**
+	 * 获取用户在企业中的项目列表
+	 * @param userId 用户id
+	 * @param orgId 企业id
+	 * @return 项目列表
+	 */
+    List<Project> getUserProjectsInOrg(String userId, String orgId);
+
 }
