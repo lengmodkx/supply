@@ -206,26 +206,20 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		File file;
 		Schedule schedule;
 		Share share;
-		if(StringUtils.isNotEmpty(projectId)){
-			if((task = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
+		if((task = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
+			if(StringUtils.isNotEmpty(task.getProjectId())){
 				return task.getProjectId();
 			}
 		}
 
-		if(StringUtils.isNotEmpty(projectId)){
-			if((share = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
-				return share.getProjectId();
-			}
+		if((share = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
+			return share.getProjectId();
 		}
-		if(StringUtils.isNotEmpty(projectId)){
-			if((file = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
-				return file.getProjectId();
-			}
+		if((file = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
+			return file.getProjectId();
 		}
-		if(StringUtils.isNotEmpty(projectId)){
-			if((schedule = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
-				return schedule.getProjectId();
-			}
+		if((schedule = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
+			return schedule.getProjectId();
 		}
 		return projectId;
 	}
