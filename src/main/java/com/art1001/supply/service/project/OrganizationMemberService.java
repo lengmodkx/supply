@@ -2,6 +2,7 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.user.ProjectMemberInfo;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -117,7 +118,14 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @param memberId 员工id
 	 * @return
 	 */
-	public Boolean transferOwner(String orgId, String ownerId, String memberId);
+	Boolean transferOwner(String orgId, String ownerId, String memberId);
 
+	/**
+	 * 根据关键字获取企业中的用户信息列表
+	 * @param orgId 企业id
+	 * @param keyword 关键字
+	 * @return 用户信息集合
+	 */
+    List<UserEntity> getOrgMemberByKeyword(String orgId, String keyword);
 
 }

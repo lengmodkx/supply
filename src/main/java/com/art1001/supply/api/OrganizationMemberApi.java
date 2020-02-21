@@ -18,9 +18,11 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -28,6 +30,7 @@ import java.util.List;
  * @author 汪亚锋
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/organization/members")
 public class OrganizationMemberApi {
@@ -262,5 +265,17 @@ public class OrganizationMemberApi {
     public Result changeOrg(@PathVariable(value = "orgId") String orgId){
         organizationMemberService.updateUserDefaultOrg(orgId, ShiroAuthenticationManager.getUserId());
         return Result.success();
+    }
+
+    /**
+     * 根据关键字 模糊 获取企业中的用户列表
+     * @param orgId 企业id
+     * @param keyword 关键字
+     * @return 用户列表
+     */
+    @RequestMapping("/keyword")
+    public Result getOrgMemberByKeyword(@NotNull(message = "企业id不能为空!") String orgId, String keyword){
+        log.info("Get organization member list by keyword. [{},{}]", orgId, keyword);
+        return Result.success(organizationMemberService.getOrgMemberByKeyword(orgId, keyword));
     }
 }

@@ -18,6 +18,14 @@
 		<association property="partment" column="partment_id" javaType="com.art1001.supply.entity.partment.Partment"
 					 select="com.art1001.supply.mapper.partment.PartmentMapper.findPartmentByPartmentId"/>
 	</resultMap>
+
+	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.user.ProjectMemberInfo">
+		<id column="user_id" property="userId" />
+		<result column="user_img" property="memberImg"/>
+		<result column="accountName" property="accountName"/>
+		<result column="user_name" property="memberName"/>
+		<result column="job" property="job"/>
+	</resultMap>
     
 	<sql id="Base_Column_List">
 				id,
@@ -222,6 +230,24 @@
 		from prm_organization_member om  where om.organization_id = #{orgId}
 	</select>
 
+
+	<select id="getOrgMemberList" resultMap="BaseResultMap2">
+		SELECT
+			u.user_id,
+			u.account_name AS accountName,
+			u.image AS memberImg,
+			u.user_name AS memberName,
+			r.role_name AS job
+		FROM
+			prm_organization_member AS pm
+			LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
+			LEFT JOIN sys_role_user AS su ON pm.organization_id = su.org_id
+			AND su.u_id = pm.member_id
+			LEFT JOIN sys_role AS r ON su.role_id = r.role_id
+		WHERE
+			pm.organization_id = #{orgId}
+	</select>
+
 	<!-- 移交企业权限 -->
 	<update id="updateOwner" >
 		update prm_organization_member
@@ -235,6 +261,8 @@
 		set organization_lable = 1
 		WHERE organization_id = #{orgId} and member_id = #{memberId}
 	</update>
+
+
 
 
 </mapper>

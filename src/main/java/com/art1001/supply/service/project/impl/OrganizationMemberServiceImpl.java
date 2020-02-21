@@ -4,22 +4,29 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
+import com.art1001.supply.entity.user.ProjectMemberInfo;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * projectServiceImpl
@@ -34,6 +41,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	/** organizationMapper接口*/
 	@Resource
 	private OrganizationMapper organizationMapper;
+
+	@Resource
+	private UserService userService;
 
 
 	@Resource
@@ -237,5 +247,26 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public List<UserEntity> getOrgMemberByKeyword(String orgId, String keyword) {
+		ValidatedUtil.filterNullParam(orgId);
+
+		LambdaQueryWrapper<OrganizationMember> getMemberListQW = new QueryWrapper<OrganizationMember>().lambda()
+				.eq(OrganizationMember::getOrganizationId, orgId);
+
+		List<OrganizationMember> orgMemberList = this.list(getMemberListQW);
+
+		if(CollectionUtils.isEmpty(orgMemberList)){
+			return new LinkedList<>();
+		}
+
+		List<String> orgMemberIdList = orgMemberList.stream().map(OrganizationMember::getMemberId).collect(Collectors.toList());
+
+		LambdaQueryWrapper<UserEntity> getUserListQW = new QueryWrapper<UserEntity>().lambda()
+				.in(UserEntity::getUserId, orgMemberIdList).like(UserEntity::getAccountName, keyword);
+
+		return userService.list(getUserListQW);
 	}
 }

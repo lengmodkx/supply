@@ -80,11 +80,11 @@
 		u.user_name as member_name,
 		u.image as member_img,
 		u.default_image,
-		u.job,
+		r.role_name as job,
 		u.account_name
 		FROM prm_project_member p
 		LEFT JOIN tb_user u on p.member_id = u.user_id
-		LEFT JOIN sys_pro_role r on p.role_id = r.role_id
+		LEFT JOIN sys_pro_role_user ru on p.member_id = ru.u_id left join sys_pro_role as r on ru.role_id = r.role_id
 		where
 			p.project_id = #{projectId} order by p.member_label desc
 	</select>
