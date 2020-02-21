@@ -24,10 +24,8 @@ import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.wechat.message.context.WeChatAppMessageTemplateBuild;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
-import com.art1001.supply.wechat.message.template.WeChatAppMessageTemplate;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,10 +38,8 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 任务增删改查，复制，移动
@@ -686,6 +682,13 @@ public class  TaskApi extends BaseController {
             task.setParentId(taskId);
             task.setTaskName(taskName);
             task.setProjectId(this.getTaskProjectId(taskId));
+
+            //子任务存分组
+            Task taskGroupId = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
+            if(taskGroupId != null && StringUtils.isNotEmpty(taskGroupId.getTaskGroupId())){
+                task.setTaskGroupId(taskGroupId.getTaskGroupId());
+            }
+
             if(StringUtils.isNotEmpty(executor)){
                 task.setExecutor(executor);
             }
