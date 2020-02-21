@@ -50,7 +50,7 @@
         pr.relation_name,
         <include refid="Base_Column_Group"/> AS task_group
         FROM prm_task pt
-        LEFT JOIN prm_relation pr ON pt.task_group_id = pr.relation_id
+        LEFT JOIN prm_relation pr ON pt.task_menu_id = pr.relation_id
         LEFT JOIN tb_user tu ON pt.executor=tu.user_id
     </sql>
 
@@ -163,7 +163,7 @@
         SELECT
         FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as  create_time
         <include refid="Base_Column_List"/>
-        WHERE pt.executor is NULL  AND pt.project_id=#{projectId}
+        WHERE (pt.executor = '' or pt.executor is null)  AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
