@@ -66,6 +66,12 @@
            <if test="stDTO.taskCondition != null and stDTO.taskCondition != ''">
                AND pt.task_status = #{stDTO.taskCondition}
            </if>
+            <if test="stDTO.taskChild == '是'.toString()">
+                AND  pt.parent_id <![CDATA[  <>  ]]> 0
+            </if>
+            <if test="stDTO.taskRecycle == '是'.toString()">
+                AND  pt.task_del = 1
+            </if>
         </if>
     </sql>
 

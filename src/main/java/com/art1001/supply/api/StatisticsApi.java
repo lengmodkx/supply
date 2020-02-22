@@ -144,6 +144,13 @@ public class StatisticsApi {
                 staticHistogram.setNameArray(nameArray);
                 staticHistogram.setDataArray(dataArray);
                 statistics.setStaticHistogram(staticHistogram);
+            }else {
+                String[] nameArray ={""};
+                Integer[] dataArray ={0};
+                StatisticsHistogram staticHistogram = new StatisticsHistogram();
+                /*staticHistogram.setNameArray(nameArray);
+                staticHistogram.setDataArray(dataArray);*/
+                statistics.setStaticHistogram(staticHistogram);
             }
             ArrayList<TitleVO> arrayList=new ArrayList<>();
             TitleVO title=new TitleVO("执行者","name");
