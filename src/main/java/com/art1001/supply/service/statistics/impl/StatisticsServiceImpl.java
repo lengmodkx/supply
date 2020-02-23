@@ -115,12 +115,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     public List<StatisticsPie> getPieChart(String projectId, Integer count, StaticDto sto) {
         sto = resultStatic(sto);
         //获取每个用户的任务数
-        List<StatisticsPie> statisticsPies=statisticsMapper.getPieDate(projectId,resultStatic(sto));
-
+        List<StatisticsPie> statisticsPies=statisticsMapper.getPieDate(projectId,sto);
+        statisticsPies=getPieSource(statisticsPies);
             for (int i=0;i<statisticsPies.size();i++) {
-                String num = CalculateProportionUtil.proportionDouble( Float.valueOf(statisticsPies.get(i).getY().toString()),(float)count, 2);
-                statisticsPies.get(i).setY(Float.valueOf(num));
-        }
+                    String num = CalculateProportionUtil.proportionDouble( Float.valueOf(statisticsPies.get(i).getY().toString()),(float)count, 2);
+                    statisticsPies.get(i).setY(Float.valueOf(num));
+             }
 
         return  statisticsPies;
     }
@@ -133,10 +133,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         sto = resultStatic(sto);
         //获取每个用户的任务数
         List<StatisticsPie> statisticsPies=statisticsMapper.selectExcutorTask(projectId,resultStatic(sto));
-       /* for (int i=0;i<statisticsPies.size();i++) {
-            String num = CalculateProportionUtil.proportionDouble( Float.valueOf(statisticsPies.get(i).getY().toString()),(float)count, 2);
-            statisticsPies.get(i).setY(Float.valueOf(num));
-        }*/
+        statisticsPies=getPieSource(statisticsPies);
         return  statisticsPies;
     }
 
@@ -154,6 +151,21 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //获取每个用户的数据
         List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
+
+        int noUserInt=0;
+        for (int i=0;i<statisticsHistograms.size();i++) {
+            if (statisticsHistograms.get(i).getName().equals("待认领")){
+                noUserInt+=statisticsHistograms.get(i).getData();
+                statisticsHistograms.remove(i);
+                i--;
+            }
+        }
+        if (noUserInt!=0){
+            StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+            statisticsHistogram.setName("待认领");
+            statisticsHistogram.setData(noUserInt);
+            statisticsHistograms.add(statisticsHistogram);
+        }
 
         String[] nameArray = new String[statisticsHistograms.size()];
         Integer[] dataArray = new Integer[statisticsHistograms.size()];
@@ -294,6 +306,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //获取每个用户的数据
         List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
+        int noUserInt=0;
+        for (int i=0;i<statisticsHistograms.size();i++) {
+            if (statisticsHistograms.get(i).getName().equals("待认领")){
+                noUserInt+=statisticsHistograms.get(i).getData();
+                statisticsHistograms.remove(i);
+                i--;
+            }
+        }
+        if (noUserInt!=0){
+            StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+            statisticsHistogram.setName("待认领");
+            statisticsHistogram.setData(noUserInt);
+            statisticsHistograms.add(statisticsHistogram);
+        }
         return statisticsHistograms;
     }
 
@@ -786,5 +812,26 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         return  statisticsBurnout;
     }
+
+        private  List<StatisticsPie> getPieSource(List<StatisticsPie> statisticsPies){
+            float noUserInt=0F;
+            for (int i=0;i<statisticsPies.size();i++) {
+                if (statisticsPies.get(i).getName().equals("待认领")){
+                    noUserInt+=statisticsPies.get(i).getY();
+                    statisticsPies.remove(i);
+                    i--;
+
+                }
+            }
+            if (noUserInt!=0f){
+                StatisticsPie statisticsPie = new StatisticsPie();
+                statisticsPie.setName("待认领");
+                statisticsPie.setY(noUserInt);
+                statisticsPies.add(statisticsPie);
+                return statisticsPies;
+            }
+            return statisticsPies;
+        }
+
 
 }

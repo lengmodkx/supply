@@ -29,12 +29,28 @@ public class StaticDto {
     /**
      *根据是否是子任务
      */
-    private int taskChild;
+    private String taskChild;
+
+    public String getTaskChild() {
+        return taskChild;
+    }
+
+    public void setTaskChild(String taskChild) {
+        this.taskChild = taskChild;
+    }
+
+    public String getTaskRecycle() {
+        return taskRecycle;
+    }
+
+    public void setTaskRecycle(String taskRecycle) {
+        this.taskRecycle = taskRecycle;
+    }
 
     /**
      *根据是否是回收站
      */
-    private int recycle;
+    private String taskRecycle;
 
     /**
      *根据天数，开始时天数和结束时天数
