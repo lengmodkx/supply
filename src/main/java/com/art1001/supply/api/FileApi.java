@@ -1158,7 +1158,7 @@ public class FileApi extends BaseController {
      * @return 信息
      */
     @GetMapping("{folderId}/material")
-    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Pageable pageable, @RequestParam(required = false) Boolean downloadCount){
+    public JSONObject getMaterialBaseFile(@PathVariable String folderId,Page pageable, @RequestParam(required = false) Boolean downloadCount){
         return fileService.getMateriaBaseFile(folderId,pageable,downloadCount);
     }
 
@@ -1265,4 +1265,5 @@ public class FileApi extends BaseController {
             throw new AjaxException("系统异常,更新elasticSearch失败!",e);
         }
     }
+
 }

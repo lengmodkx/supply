@@ -760,7 +760,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public List<File> getBindInfo(String id) {
-        return fileService.list(new QueryWrapper<File>().select("file_id fileId","file_name fileName","ext ext","catalog catalog").eq("parent_id",id));
+        return fileService.list(new QueryWrapper<File>().select("file_id fileId","file_name fileName","ext ext","catalog catalog").eq("parent_id",id).eq("file_del",0));
     }
 
     /**
@@ -1059,10 +1059,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public JSONObject getMateriaBaseFile(String folderId, Pageable pageable, Boolean downloadCount) {
+    public JSONObject getMateriaBaseFile(String folderId, Page pageable, Boolean downloadCount) {
         JSONObject jsonObject = new JSONObject();
-        Page<File> page = new Page<>(pageable.getPageNumber(),pageable.getPageSize());
-        jsonObject.put("data",fileMapper.findMateriaBaseFile(page, folderId,downloadCount));
+        jsonObject.put("data",fileMapper.findMateriaBaseFile(pageable, folderId,downloadCount));
         jsonObject.put("parentId",folderId);
         jsonObject.put("result",1);
         return jsonObject;
@@ -1179,4 +1178,5 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public void updateAllUser(String userId, String id) {
         fileMapper.updateAllUser(userId, id);
     }
+
 }

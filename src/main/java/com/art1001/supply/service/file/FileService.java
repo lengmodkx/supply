@@ -358,7 +358,7 @@ import java.util.List;
 	File getMaterialBase();
 
 
-    JSONObject getMateriaBaseFile(String folderId, Pageable pageable, Boolean downloadCount);
+    JSONObject getMateriaBaseFile(String folderId, Page pageable, Boolean downloadCount);
 
     /**
      * 获取项目的文件目录树
@@ -461,4 +461,5 @@ import java.util.List;
     void updateAll(String userId, String id);
 
 	void updateAllUser(String userId, String id);
+
 }
