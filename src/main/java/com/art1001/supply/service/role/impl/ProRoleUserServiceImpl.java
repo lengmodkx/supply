@@ -64,13 +64,12 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         return null;
     }
 
-    //暂不使用
     @Override
-    public ProRole getRoleOnOrgForUser(String orgId, String userId) {
-        ValidatedUtil.filterNullParam(orgId, userId);
+    public ProRole getRoleOnOrgForUser(String projectId, String userId) {
+        ValidatedUtil.filterNullParam(projectId, userId);
 
         LambdaQueryWrapper<ProRoleUser> getRoleOnOrgRoleInfo = new QueryWrapper<ProRoleUser>().lambda();
-        getRoleOnOrgRoleInfo.eq(ProRoleUser::getProjectId, orgId).eq(ProRoleUser::getUId, userId);
+        getRoleOnOrgRoleInfo.eq(ProRoleUser::getProjectId, projectId).eq(ProRoleUser::getUId, userId);
 
         ProRoleUser proRoleUser = this.getOne(getRoleOnOrgRoleInfo);
 

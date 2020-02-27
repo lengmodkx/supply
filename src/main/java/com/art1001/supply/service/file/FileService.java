@@ -462,4 +462,12 @@ import java.util.List;
 
 	void updateAllUser(String userId, String id);
 
+	List<String> getSucaiId(String id);
+
+	/**
+	 * 更新模型图缩略图
+	 * @param fileId 模型图文件id
+	 * @param url 新的缩略图url
+	 */
+    void updateModelThumbnail(String fileId, String url);
 }

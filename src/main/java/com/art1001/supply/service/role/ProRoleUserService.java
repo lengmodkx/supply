@@ -39,9 +39,10 @@ public interface ProRoleUserService extends IService<ProRoleUser> {
     ProRole getRoleIdForProjectUser(String projectId, String userId);
 
     /**
-     * 获取用户在某个企业中的项目角色信息
-     * @param orgId 企业id
+     * 获取用户在某个项目中的角色信息
+     * @param projectId 企业id
      * @param userId 用户id
+     * @return 角色信息
      */
-    ProRole getRoleOnOrgForUser(String orgId, String userId);
+    ProRole getRoleOnOrgForUser(String projectId, String userId);
 }

@@ -125,6 +125,11 @@ public class ProRoleApi extends BaseController {
         return success(jsonObject);
     }
 
+    /**
+     * 设置项目的默认角色
+     * @param orgId 企业id
+     * @param roleKey 默认角色的角色key
+     */
     @PutMapping("/default")
     public JSONObject updateDefaultRole(String orgId, String roleKey){
         JSONObject jsonObject = new JSONObject();

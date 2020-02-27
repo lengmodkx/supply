@@ -7,12 +7,14 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.mapper.collect.PublicCollectMapper;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -184,11 +186,11 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	 */
 	@Override
 	public List<PublicCollect> getByType(String collectType) {
-		QueryWrapper<PublicCollect> quert = new QueryWrapper<PublicCollect>().eq("member_id", ShiroAuthenticationManager.getUserId());
+		LambdaQueryWrapper<PublicCollect> eq = new QueryWrapper<PublicCollect>().lambda().eq(PublicCollect::getMemberId, ShiroAuthenticationManager.getUserId());
 		if(StringUtils.isNotEmpty(collectType)){
-			quert.eq("collect_type", collectType);
+			eq.eq(PublicCollect::getCollectType, collectType);
 		}
-		List<PublicCollect> publicCollects = publicCollectMapper.selectList(quert);
+		List<PublicCollect> publicCollects = publicCollectMapper.selectList(eq);
 		publicCollects.forEach(item -> {
 			if(Constants.TASK.equals(item.getCollectType())){
 				item.setItem(JSONObject.parseObject(item.getCollectContent(), TaskApiBean.class));
@@ -200,7 +202,7 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 				item.setItem(JSONObject.parseObject(item.getCollectContent(), Schedule.class));
 			}
 			if(Constants.SHARE.equals(item.getCollectType())){
-				item.setItem(JSONObject.parseObject(item.getCollectContent(), Share.class));
+				item.setItem(JSONObject.parseObject(item.getCollectContent(), ShareApiBean.class));
 			}
 		});
 		return publicCollects;

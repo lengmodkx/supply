@@ -30,6 +30,7 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -51,6 +52,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -393,6 +395,22 @@ public class FileApi extends BaseController {
             throw new AjaxException(e);
         }
         return jsonObject;
+    }
+
+    /**
+     * 更新模型图的缩略图
+     * @param fileId 文件id
+     * @param utl 略缩图地址
+     * @return 结果
+     */
+    @RequestMapping("/update/thumbnail")
+    public Result updateModelThumbnail(@NotNull(message = "模型图文件不能为空") String fileId,
+                                       @NotNull(message = "新缩略图地址不能为空") String url){
+        log.info("Update model thumbnail. [{},{}]", fileId, url);
+
+        fileService.updateModelThumbnail(fileId, url);
+
+        return Result.success();
     }
 
     /**
@@ -1266,4 +1284,9 @@ public class FileApi extends BaseController {
         }
     }
 
+
+    @RequestMapping("/aaa")
+    public Result getSuCai(){
+        return Result.success(fileService.getSucaiId("ef6ba5f0e3584e58a8cc0b2d28286c93"));
+    }
 }

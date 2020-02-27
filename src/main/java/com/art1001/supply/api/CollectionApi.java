@@ -79,7 +79,7 @@ public class CollectionApi {
             if(Constants.FILE.equals(collectType)){
                 collect.setCollectContent(JSON.toJSONString(fileService.findFileApiBean(publicId)));
             }
-            collectService.save(collect);
+             collectService.save(collect);
             object.put("result",1);
             object.put("msg","收藏成功");
         }catch(Exception e){

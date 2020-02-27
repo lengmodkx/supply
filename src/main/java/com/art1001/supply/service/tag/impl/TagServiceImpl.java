@@ -5,12 +5,16 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileRepository;
+import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.tag.TagMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.resource.ProResourcesRoleService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
@@ -65,6 +69,9 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
      */
     @Autowired
     private FileRepository fileRepository;
+
+    @Resource
+	private ProRoleUserService proRoleUserService;
 
 
 	/**
@@ -129,6 +136,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		if (count > 0) {
 			throw new ServiceException();
 		}
+
 		tag.setCreateTime(System.currentTimeMillis());
 		tag.setUpdateTime(System.currentTimeMillis());
 		tag.setMemberId(ShiroAuthenticationManager.getUserId());
@@ -277,14 +285,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		}
 		if(Constants.FILE.equals(publicType)){
             Optional<File> file = fileRepository.findById(publicId);
-           /* if (Stringer.isNotNullOrEmpty(file)){
-				if (Stringer.isNullOrEmpty(file.get().getTagsName())){
-					file.get().setTagsName(tag.getTagName());
-				}else {
-					file.get().setTagsName(file.get().getTagsName()+","+tag.getTagName());
-				}
-				fileRepository.save(file.get());
-			}*/
             tr.setFileId(publicId);
 		}if(Constants.SHARE.equals(publicType)){
 			tr.setShareId(publicId);

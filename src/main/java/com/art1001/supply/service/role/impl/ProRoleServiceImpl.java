@@ -147,10 +147,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     }
 
     @Override
-    public Integer checkIsExist(String projectId, String roleKey) {
+    public Integer checkIsExist(String orgId, String roleKey) {
         //构造出查询当前项目中有没有存在roleKey记录的sql表达式
         LambdaQueryWrapper<ProRole> selectRoleCountByPidAndKeyQw = new QueryWrapper<ProRole>().lambda()
-                .eq(ProRole::getOrgId, projectId)
+                .eq(ProRole::getOrgId, orgId)
                 .eq(ProRole::getRoleKey, roleKey);
         return proRoleMapper.selectCount(selectRoleCountByPidAndKeyQw);
     }
@@ -193,13 +193,11 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     public Integer setProDefaultRole(String orgId, String roleKey) {
         boolean notExist = this.checkIsExist(orgId, roleKey) == 0;
         if(notExist){
-            return -1;
+            throw new ServiceException("企业中没有这个项目角色");
         }
 
+        //获取修改前的项目默认角色
         Integer proDefaultRoleId = this.getProDefaultRoleId(orgId);
-        if(proDefaultRoleId == -1){
-            return proDefaultRoleId;
-        }
 
         ProRole proRole = new ProRole();
         proRole.setUpdateTime(LocalDateTime.now());

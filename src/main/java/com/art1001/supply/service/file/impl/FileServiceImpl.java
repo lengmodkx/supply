@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1179,4 +1180,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         fileMapper.updateAllUser(userId, id);
     }
 
+    @Override
+    public List<String> getSucaiId(String id) {
+        ArrayList<String> strings = new ArrayList<>();
+        this.ids(strings, id);
+        return strings;
+    }
+
+    @Override
+    public void updateModelThumbnail(String fileId, String url) {
+        File file = Optional.ofNullable(this.getById(fileId)).orElseThrow(() -> new ServiceException("该文件不存在!"));
+
+        file.setFileId(fileId);
+        file.setFileThumbnail(url);
+        file.setUpdateTime(System.currentTimeMillis());
+
+        this.updateById(file);
+    }
+
+    public void ids(List<String> ids, String id){
+        LambdaQueryWrapper<File> a = new QueryWrapper<File>().lambda().eq(File::getParentId, id);
+        List<File> list = fileService.list(a);
+        list.forEach(f -> {
+            ids.add(f.getFileId());
+            LambdaQueryWrapper<File> subCount = new QueryWrapper<File>().lambda().eq(File::getParentId, f.getFileId());
+            int count = fileService.count(subCount);
+            if(count > 0){
+                this.ids(ids,f.getFileId());
+            }
+        });
+    }
 }
