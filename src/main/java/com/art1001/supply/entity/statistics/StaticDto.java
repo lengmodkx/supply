@@ -31,6 +31,37 @@ public class StaticDto {
      */
     private String taskChild;
 
+    /**
+     *根据完成时间
+     */
+    private String finishTime_s;
+    private String finishTime_e;
+
+
+    /**
+     *根据创建时间
+     */
+    private String createTime_s;
+    private String createTime_e;
+
+
+    /**
+     *根据优先级
+     */
+    private String priorityLevel;
+
+
+    /**
+     *根据创建者
+     */
+    private String taskCreator;
+
+
+
+
+
+
+
     public String getTaskChild() {
         return taskChild;
     }

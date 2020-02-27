@@ -67,10 +67,22 @@
                AND pt.task_status = #{stDTO.taskCondition}
            </if>
             <if test="stDTO.taskChild == '是'.toString()">
-                AND  pt.parent_id <![CDATA[  <>  ]]> 0
+                AND  pt.parent_id <![CDATA[  <>  ]]> '0'
             </if>
             <if test="stDTO.taskRecycle == '是'.toString()">
                 AND  pt.task_del = 1
+            </if>
+            <if test="stDTO.priorityLevel != null and stDTO.priorityLevel != ''">
+                AND  pt.priority = #{stDTO.priorityLevel}
+            </if>
+            <if test="stDTO.taskCreator != null and stDTO.taskCreator != ''">
+                AND  pt.member_id = #{stDTO.taskCreator}
+            </if>
+            <if test="stDTO.finishTime_s != null and stDTO.finishTime_s != ''">
+                AND pt.finish_time Between  FROM_UNIXTIME(#{stDTO.finishTime_s}, '%Y-%m-%d %T')  AND    FROM_UNIXTIME(#{stDTO.finishTime_e}, '%Y-%m-%d %T')
+            </if>
+            <if test="stDTO.createTime_s != null and stDTO.createTime_s != ''">
+                AND pt.create_time Between  FROM_UNIXTIME(#{stDTO.createTime_s}, '%Y-%m-%d %T')  AND    FROM_UNIXTIME(#{stDTO.createTime_e}, '%Y-%m-%d %T')
             </if>
         </if>
     </sql>

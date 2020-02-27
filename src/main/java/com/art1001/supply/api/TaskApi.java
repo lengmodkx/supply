@@ -684,8 +684,9 @@ public class  TaskApi extends BaseController {
             task.setProjectId(this.getTaskProjectId(taskId));
 
             //子任务存分组
-            Task taskGroupId = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
-            if(taskGroupId != null && StringUtils.isNotEmpty(taskGroupId.getTaskGroupId())){
+            Task taskGroupId = taskService.findTaskByTaskId(taskId);
+                    //getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
+            if(StringUtils.isNotEmpty(taskGroupId.getTaskGroupId())){
                 task.setTaskGroupId(taskGroupId.getTaskGroupId());
             }
 

@@ -302,7 +302,23 @@ public class StatisticsApi {
 
     private  StaticDto getStaticDto( String dto){
             JSONObject jsonObject=JSONObject.fromObject(dto);
-            return (StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+        StaticDto sto =(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+        /*try {
+            if (StringUtils.isNotEmpty(sto.getFinishTime_s())){
+                long startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sto.getFinishTime_s()).getTime();
+                sto.setFinishTime_s(String.valueOf(startTime));
+                if (StringUtils.isNotEmpty(sto.getFinishTime_e())){
+                    long endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sto.getFinishTime_e()).getTime();
+                    sto.setFinishTime_e(String.valueOf(endTime));
+                }else {
+                    sto.setFinishTime_e(String.valueOf(System.currentTimeMillis()/1000));
+                }
+            }
+        }catch (Exception e){
+
+        }*/
+
+            return sto;
     }
 
 }
