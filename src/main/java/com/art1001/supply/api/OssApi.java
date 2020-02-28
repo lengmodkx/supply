@@ -80,6 +80,7 @@ public class OssApi {
             ServletInputStream inputStream = request.getInputStream();
             int contentLength = Integer.parseInt(request.getHeader("content-length"));
             String ossCallbackBody = AliyunOss.getRequestBody(inputStream,contentLength);
+            System.out.println(ossCallbackBody);
             boolean ret = AliyunOss.verifyOSSCallbackRequest(request, ossCallbackBody);
             System.out.println(ret);
             if (ret) {

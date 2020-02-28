@@ -264,7 +264,6 @@ public class ProjectApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
-//    @ProAuthentization("tasks")
     @GetMapping("/{projectId}/tasks")
     public JSONObject taskIndex(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -276,6 +275,9 @@ public class ProjectApi extends BaseController {
             relation.setParentId(groupId);
             relation.setLable(1);
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_Id",projectId).eq("member_id",userId));
+            object.put("roleKey",projectMember.getRoleKey());
+            object.put("userId",userId);
             object.put("result", 1);
             object.put("menus",taskMenu);
         } catch (Exception e) {

@@ -373,7 +373,8 @@
 	<include refid="Base_Column_List3"/>
 	from prm_task t
 		left join prm_task parent on t.parent_id = parent.task_id
-		left join prm_tag_relation tr on t.task_id = tr.task_id left join prm_tag tg on tr.tag_id = tg.tag_id
+		left join prm_tag_relation tr on t.task_id = tr.task_id
+		left join prm_tag tg on tr.tag_id = tg.tag_id
 		left join tb_user u on t.executor = u.user_id
 		where t.task_id = #{taskId}
 	</select>

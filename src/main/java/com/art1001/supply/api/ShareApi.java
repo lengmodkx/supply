@@ -5,6 +5,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;

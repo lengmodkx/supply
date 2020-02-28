@@ -16,6 +16,7 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,8 @@ public class ScheduleApi extends BaseController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private TaskService taskService;
     /**
      * 点击日程菜单栏时页面初始化
      */
@@ -77,8 +80,8 @@ public class ScheduleApi extends BaseController {
      * @param endTime 结束时间
      * @return 冲突的日程集合
      */
-    @GetMapping("/{userId}/member_time_range")
-    public Object testMemberTimeRange(@PathVariable String userId, Long startTime, Long endTime){
+    @GetMapping("check_time")
+    public Object testMemberTimeRange(String userId, Long startTime, Long endTime){
         try {
             return success(scheduleService.testMemberTimeRange(userId, startTime, endTime));
         } catch (Exception e){

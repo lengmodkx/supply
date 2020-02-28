@@ -150,7 +150,9 @@ public class TagApi {
      * 添加标签
      */
     @PostMapping
-    public JSONObject addTag(@RequestParam(value = "projectId") String projectId, @RequestParam("tagName") String tagName, @RequestParam String bgColor) {
+    public JSONObject addTag(@RequestParam(value = "projectId") String projectId,
+                             @RequestParam("tagName") String tagName,
+                             @RequestParam String bgColor) {
         JSONObject jsonObject = new JSONObject();
         try {
             Tag tag = new Tag();
@@ -174,11 +176,18 @@ public class TagApi {
     /**
      * 删除标签
      */
+    @Push(value = PushType.E2,type = 1)
     @DeleteMapping("/{tagId}")
-    public JSONObject deleteTag(@PathVariable Long tagId) {
+    public JSONObject deleteTag(@PathVariable Long tagId,
+                                @RequestParam(value = "projectId") String projectId,
+                                @RequestParam(value = "publicId") String publicId,
+                                @RequestParam(value = "publicType") String publicType
+                                ) {
         JSONObject jsonObject = new JSONObject();
         try {
             tagService.deleteTagByTagId(tagId);
+            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+            jsonObject.put("msgId",projectId);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("删除标签异常:", e);
@@ -256,7 +265,9 @@ public class TagApi {
      */
     @Push(value = PushType.E1,type = 1)
     @PostMapping("/binding")
-    public JSONObject bindingInfo(@RequestParam("tagId")Long tagId, @RequestParam("publicId") String publicId, @RequestParam("publicType")String publicType){
+    public JSONObject bindingInfo(@RequestParam("tagId")Long tagId,
+                                  @RequestParam("publicId") String publicId,
+                                  @RequestParam("publicType")String publicType){
         JSONObject jsonObject = new JSONObject();
         try {
             int i = tagRelationService.findCountById(tagId,publicType,publicId);
@@ -291,11 +302,14 @@ public class TagApi {
      * @param bgColor 标签颜色
      * @return
      */
+    @Push(value = PushType.E2,type = 1)
     @PutMapping("/{tagId}")
     public JSONObject updateTag(@PathVariable Long tagId,
                                 @RequestParam(value = "projectId") String projectId,
-                                @RequestParam(value = "tagName",required = false) String tagName,
-                                @RequestParam(value = "bgColor",required = false) String bgColor
+                                @RequestParam(value = "tagName") String tagName,
+                                @RequestParam(value = "bgColor") String bgColor,
+                                @RequestParam(value = "publicId") String  publicId,
+                                @RequestParam(value = "publicType") String publicType
                                 ){
         JSONObject jsonObject = new JSONObject();
         try{
@@ -305,8 +319,9 @@ public class TagApi {
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
             tagService.updateTag(tag);
+            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+            jsonObject.put("msgId", projectId);
             jsonObject.put("result",1);
-            jsonObject.put("data",tag);
         } catch (ServiceException e){
             jsonObject.put("msg",e.getMessage());
             jsonObject.put("result",0);
