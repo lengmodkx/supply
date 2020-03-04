@@ -333,7 +333,7 @@ public class FileApi extends BaseController {
            fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999));
+//            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999));
             return jsonObject;
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);

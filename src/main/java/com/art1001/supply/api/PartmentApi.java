@@ -82,7 +82,6 @@ PartmentApi {
      * @param partmentLogo 部门logo
      * @return 结果
      */
-    @RequiresPermissions("update:partment")
     @PutMapping("/{partmentId}")
     public JSONObject updatePartment(@PathVariable(value = "partmentId") String partmentId,
                                      @RequestParam(value = "partmentName",required = false) String partmentName,

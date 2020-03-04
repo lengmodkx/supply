@@ -9,6 +9,10 @@ import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -464,7 +468,7 @@ public class AliyunOss {
         retString = retString.replace("-----END PUBLIC KEY-----", "");
         String queryString = request.getQueryString();
         String uri = request.getRequestURI();
-        String authStr = java.net.URLDecoder.decode(uri, "UTF-8").replaceFirst("/","/api");;
+        String authStr = java.net.URLDecoder.decode(uri, "UTF-8").replaceFirst("/","/api");
         if (StringUtils.isNotEmpty(queryString)) {
             authStr += "?" + queryString;
         }
@@ -488,38 +492,16 @@ public class AliyunOss {
         return false;
     }
     private static String executeGet(String url) {
-        BufferedReader in = null;
-
-        String content = null;
         try {
-            // 定义HttpClient
-            @SuppressWarnings("resource")
-            DefaultHttpClient client = new DefaultHttpClient();
-            // 实例化HTTP方法
-            HttpGet request = new HttpGet();
-            request.setURI(new URI(url));
-            HttpResponse response = client.execute(request);
-
-            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            StringBuffer sb = new StringBuffer("");
-            String line = "";
-            String NL = System.getProperty("line.separator");
-            while ((line = in.readLine()) != null) {
-                sb.append(line + NL);
-            }
-            in.close();
-            content = sb.toString();
-        } catch (Exception e) {
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();// 最后要关闭BufferedReader
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return content;
+            OkHttpClient client = new OkHttpClient();
+            final Request request = new Request.Builder().url(url).build();
+            Call call = client.newCall(request);
+            Response response = call.execute();
+            return  response.body().string();
+        }catch (IOException e){
+            e.printStackTrace();
         }
+        return "";
     }
 
     public static void response(HttpServletRequest request, HttpServletResponse response, String results, int status) throws IOException {

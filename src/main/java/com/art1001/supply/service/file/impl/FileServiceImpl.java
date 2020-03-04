@@ -633,7 +633,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public int checkChildFolder(String fileId) {
-        return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("catalog",1)) > 0 ? 1 : 0;
+        return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("file_del","0").eq("catalog",1)) > 0 ? 1 : 0;
     }
 
     /**

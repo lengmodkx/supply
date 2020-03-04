@@ -184,7 +184,7 @@
 		WHERE
 			f.file_del = 0
 			AND public_lable = 0
-			AND parent_id = #{fileId}
+			AND parent_id = #{fileId} order by create_time desc
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">

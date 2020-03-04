@@ -125,7 +125,8 @@ public class PushAspect extends BaseController {
             }
         } else if(push.type() == 4){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get(push));
-        } else{//只需要日志
+        }
+        else{//只需要日志
             if(object.containsKey(ID)){
                 this.saveLog(object,push);
             }
