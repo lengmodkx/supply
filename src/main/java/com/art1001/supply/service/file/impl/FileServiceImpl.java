@@ -18,7 +18,10 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.FileExt;
+import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.ObjectsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,7 +43,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1027,7 +1029,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 //.withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
                 //.withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName.hashCode()))
                 .withFilter(QueryBuilders.termQuery("projectId", projectId))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
