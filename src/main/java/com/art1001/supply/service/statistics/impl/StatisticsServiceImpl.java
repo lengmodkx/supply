@@ -604,7 +604,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     **/
     private StaticDto resultStatic(StaticDto staticDto) {
         if (staticDto.getTaskMember() == null && staticDto.getTaskCase() == null && staticDto.getTaskGroup() == null) {
-            staticDto.setDayNum(8);
+            staticDto.setDayNum(7);
         } else if (staticDto != null) {
             if ("".equals(staticDto.getTaskMember()) || "0".equals(staticDto.getTaskMember())) {
                 staticDto.setTaskMember(null);
@@ -628,7 +628,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     //将数据写入实体类
                     staticDto.setStartDay(day);
                     staticDto.setEndDay(today);
-                    staticDto.setDayNum(8);
+                    staticDto.setDayNum(7);
                 } else if ("30".equals(staticDto.getTaskDay())) {
                     c.setTime(new Date());
                     c.add(Calendar.MONTH, -1);
@@ -656,7 +656,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     //将数据写入实体类
                     staticDto.setStartDay(day);
                     staticDto.setEndDay(today);
-                    staticDto.setDayNum(8);
+                    staticDto.setDayNum(7);
                 }
             } else {
                 try {
@@ -711,9 +711,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         int n=taskCountList.size();
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
 
-        for (int i=0;i<n;i++){
-            taskFinishList.get(i).getTaskCountInt();
-        }
+
 
         int finishCount=this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,null);
 
@@ -726,19 +724,21 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int min=taskCountList.get(0).getTaskCountInt();
 
-        for (int i=0;i<n;i++){
-            firstArray[i] = taskCountList.get(i).getTaskCountAdd();
-            secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
-            finishCount=secondArray[i];
-            everyDateName[i]=taskCountList.get(i).getCreateTime();
-            everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
+        if (!taskCountList.isEmpty()){
+            for (int i=0;i<n;i++){
+                firstArray[i] = taskCountList.get(i).getTaskCountAdd();
+                secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
+                finishCount=secondArray[i];
+                everyDateName[i]=taskCountList.get(i).getCreateTime();
+                everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
 
-            if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
-                if (i<n-1){
-                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
-                    min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
-                }else{
-                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
+                    if (i<n-1){
+                        secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                        min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
+                    }else{
+                        secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                    }
                 }
             }
         }

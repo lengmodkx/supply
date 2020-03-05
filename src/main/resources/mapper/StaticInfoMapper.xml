@@ -130,12 +130,12 @@
 
     <!-- 按时完成的任务量  -->
     <select id="findFinishontTimeTaskCount" resultType="int">
-        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') &gt;= FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1 <include refid="Base_Column_QBC"/>
+        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d  %T') &gt;= FROM_UNIXTIME(finish_time/1000, '%Y-%m-%d  %T') and task_status = 1 <include refid="Base_Column_QBC"/>
     </select>
 
     <!-- 逾期完成的任务量  -->
     <select id="findOverdueCompletion" resultType="int">
-        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d') &lt; FROM_UNIXTIME(#{currDate}, '%Y-%m-%d') and task_status = 1 <include refid="Base_Column_QBC"/>
+        select count(0) from prm_task pt where project_id = #{projectId} and FROM_UNIXTIME(end_time/1000, '%Y-%m-%d  %T') &lt; FROM_UNIXTIME(finish_time/1000, '%Y-%m-%d  %T') and task_status = 1 <include refid="Base_Column_QBC"/>
     </select>
 
 
@@ -195,9 +195,9 @@
     <!-- 按时完成任务数据   update_time 比当前时间小 且任务状态为完成   -->
     <select id="selectPunctualityTask" parameterType="com.art1001.supply.entity.statistics.StatisticsDTO" resultMap="BaseResultMap">
         SELECT
-        FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d  %T') as finish_time
+        FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d  %T') as finish_time
         <include refid="Base_Column_List"/>
-        WHERE <![CDATA[ FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') > DATE_FORMAT(NOW(),'%Y-%m-%d %T')  ]]>
+        WHERE <![CDATA[ FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') > FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d %T')  ]]>
         AND pt.task_status=1 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
@@ -205,10 +205,10 @@
     <!-- 逾期完成 -->
     <select id="selectExpiredToCompleteTask" resultMap="BaseResultMap">
         SELECT
-        FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d  %T') as finish_time,
+        FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d  %T') as finish_time,
         (DATEDIFF(DATE_FORMAT(FROM_UNIXTIME(pt.update_time/1000),'%Y-%m-%d') ,DATE_FORMAT(FROM_UNIXTIME(pt.end_time/1000),'%Y-%m-%d %T'))) as overdue_num
         <include refid="Base_Column_List"/>
-        WHERE <![CDATA[  FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < DATE_FORMAT(NOW(), '%Y-%m-%d %T')  ]]>
+        WHERE <![CDATA[  FROM_UNIXTIME(end_time/1000, '%Y-%m-%d %T') < FROM_UNIXTIME(pt.finish_time/1000,'%Y-%m-%d %T')  ]]>
         AND pt.task_status=1 AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
