@@ -110,7 +110,9 @@ public class MemberInvitationApi extends BaseController {
                     .lambda().eq(ProjectMember::getMemberId,memberId)
                     .eq(ProjectMember::getProjectId, projectId));
 
-            proRoleUserService.remove(new QueryWrapper<ProRoleUser>().eq("u_id",memberId));
+            proRoleUserService.remove(new QueryWrapper<ProRoleUser>().lambda()
+                    .eq(ProRoleUser::getUId,memberId).eq(ProRoleUser::getProjectId, projectId));
+
             object.put("result",1);
             object.put("msg","移除成功");
         }catch(Exception e){
