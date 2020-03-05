@@ -11,10 +11,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -253,7 +250,7 @@ public class RedisUtil {
             return JSONArray.parseArray(JSON.toJSONString(range),c);
         }
 
-        return null;
+        return new ArrayList<>();
 
     }
 

@@ -8,6 +8,7 @@ import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -24,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -74,7 +76,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public UserInfo findInfo(String accountName){
         UserInfo info = userMapper.findInfo(accountName);
-        info.setOrgId(organizationMemberService.findOrgByUserId(info.getUserId()));
+        QueryWrapper<OrganizationMember> wrapper = new QueryWrapper<OrganizationMember>().eq("member_id", info.getUserId());
+        List<OrganizationMember> list = organizationMemberService.list(wrapper);
+
+        String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
+        if(StringUtils.isNotEmpty(orgByUserId)){
+            info.setOrgId(orgByUserId);
+        }else{
+            if(list!=null&&list.size()>0){
+                info.setOrgId(list.get(0).getOrganizationId());
+            }
+        }
         return info;
     }
 

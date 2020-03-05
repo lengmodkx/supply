@@ -60,15 +60,13 @@ public class Interceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
-        List<String> keyList = new ArrayList<>();
         String userId = ShiroAuthenticationManager.getUserId();
-        Map<String,String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        String projectId = map.get("projectId");
-        if(StringUtils.isNotEmpty(projectId)){
-            redisUtil.set("pId"+userId,projectId);
-
-        }
-
+        List<String> keyList = new ArrayList<>();
+        keyList.add("ScheduleApi:initSchedule");
+        keyList.add("ShareApi:share");
+        keyList.add("StatisticsApi:projectStatistics");
+        keyList.add("ShareApi:getShare");
+        keyList.add("ScheduleApi:getSchedule");
         HandlerMethod handlerMethod = (HandlerMethod)handler;
         String name = handlerMethod.getMethod().getName();
         String className = handlerMethod.getBeanType().getSimpleName();
@@ -76,17 +74,10 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
-            if(redisUtil.getObj("pId"+userId)!=null){
-                keyList = proResourcesService.getMemberResourceKey(redisUtil.get("pId"+userId), userId);
-                keyList.add("ScheduleApi:initSchedule");
-                keyList.add("ShareApi:share");
-                keyList.add("StatisticsApi:projectStatistics");
-                keyList.add("ShareApi:getShare");
-                keyList.add("ScheduleApi:getSchedule");
-            }
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
             List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
             keyList.addAll(memberResourceKey);
+            keyList.addAll(redisUtil.getList(String.class, "perms:" + userId));
             if(keyList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
                 return true;

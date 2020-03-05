@@ -72,6 +72,11 @@ public class ProjectApi extends BaseController {
     @Resource
     private ScheduleService scheduleService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private ProResourcesService proResourcesService;
     /**
      * 创建项目
      *
@@ -269,6 +274,8 @@ public class ProjectApi extends BaseController {
         JSONObject object = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
+            List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+            redisUtil.lset("perms:"+userId,keyList);
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
             Relation relation = new Relation();
