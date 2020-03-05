@@ -43,7 +43,6 @@ public class OrganizationGroupApi {
      * @param memberIds 成员id数组
      * @return 结果
      */
-    @RequiresPermissions("create:group")
     @PostMapping("/{orgId}")
     public JSONObject createGroup(@PathVariable String orgId, @RequestParam String groupName, @RequestParam(required = false) String[] memberIds){
         JSONObject jsonObject = new JSONObject();

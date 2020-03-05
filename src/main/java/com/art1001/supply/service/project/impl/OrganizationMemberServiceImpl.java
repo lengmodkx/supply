@@ -6,6 +6,7 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.ProjectMemberInfo;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.project.OrganizationMemberService;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -268,5 +270,15 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 				.in(UserEntity::getUserId, orgMemberIdList).like(UserEntity::getAccountName, keyword);
 
 		return userService.list(getUserListQW);
+	}
+
+	@Override
+	public void removeMemberByOrgId(String orgId) {
+		Optional.ofNullable(orgId).orElseThrow(() -> new ServiceException("删除企业成员信息时,orgId不能为为空."));
+
+		LambdaQueryWrapper<OrganizationMember> eq = new QueryWrapper<OrganizationMember>()
+				.lambda().eq(OrganizationMember::getOrganizationId, orgId);
+
+		this.remove(eq);
 	}
 }

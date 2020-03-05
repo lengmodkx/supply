@@ -1,22 +1,25 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.tree.Tree;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("partments")
-public class
-PartmentApi {
+public class PartmentApi {
 
     @Resource
     private PartmentService partmentService;
@@ -152,5 +155,26 @@ PartmentApi {
         } catch (Exception e){
             throw new SystemException("系统异常,子部门信息获取失败!");
         }
+    }
+
+    /**
+     * 获取部门树
+     * @param orgId 企业id
+     * @param departmentId 部门id
+     * @return 结果
+     */
+    @PostMapping("/tree")
+    public Result getTree(String orgId, String departmentId){
+        log.info("Get department tree. [{},{}]", orgId, departmentId);
+
+        if(StringUtils.isNotEmpty(orgId) && StringUtils.isNotEmpty(departmentId)){
+            return Result.fail("只能传递一个参数");
+        }
+
+        if(StringUtils.isEmpty(orgId) && StringUtils.isEmpty(departmentId)){
+            return Result.fail("参数不能全部为空!");
+        }
+
+        return Result.success(partmentService.getTree(orgId, departmentId));
     }
 }

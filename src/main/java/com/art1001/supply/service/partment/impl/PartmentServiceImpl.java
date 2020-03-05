@@ -1,16 +1,21 @@
 package com.art1001.supply.service.partment.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
+import com.art1001.supply.application.assembler.DepartmentDataAssembler;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
+import com.art1001.supply.entity.tree.Tree;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.util.ValidatedUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +36,9 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 
 	@Resource
 	private PartmentMemberService partmentMemberService;
+
+	@Resource
+	private DepartmentDataAssembler dataAssembler;
 
 	/**
 	 * 查询分页partment数据
@@ -89,7 +97,7 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	 */
 	@Override
 	public void savePartment(Partment partment){
-	    if(StringUtils.isNotEmpty(partment.getParentId())){
+	    if(StringUtils.isEmpty(partment.getParentId())){
 	        partment.setParentId("0");
         }
 		int maxOrder = partmentMapper.findMaxOrder(partment.getOrganizationId(),partment.getParentId());
@@ -145,5 +153,41 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 			total--;
 		}
 		return updateBatchById(partments);
+	}
+
+	@Override
+	public List<Tree> getTree(String orgId, String departmentId) {
+		LambdaQueryWrapper<Partment> eq = new QueryWrapper<Partment>().lambda();
+		if(StringUtils.isNotEmpty(orgId)){
+			eq.eq(Partment::getOrganizationId, orgId).eq(Partment::getParentId, "0");
+		} else {
+			eq.eq(Partment::getParentId, departmentId);
+		}
+
+		List<Partment> departmentList = this.list(eq);
+		List<Tree> trees = dataAssembler.departmentTransFormTree(departmentList);
+		if(CollectionUtils.isEmpty(trees)){
+			return trees;
+		}
+
+		for (Tree tree : trees) {
+			if(this.getChildCount(tree.getId()) > 0){
+				tree.setIsParent(Boolean.TRUE);
+				tree.setOpen(Boolean.FALSE);
+			} else {
+				tree.setIsParent(Boolean.FALSE);
+				tree.setOpen(Boolean.FALSE);
+			}
+
+		}
+		return trees;
+	}
+
+	@Override
+	public int getChildCount(String departmentId) {
+		ValidatedUtil.filterNullParam(departmentId);
+
+		LambdaQueryWrapper<Partment> eq = new QueryWrapper<Partment>().lambda().eq(Partment::getParentId, departmentId);
+		return this.count(eq);
 	}
 }

@@ -80,6 +80,7 @@
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="important" property="important" jdbcType="INTEGER" />
 		<result column="catalog" property="catalog" jdbcType="INTEGER" />
+		<result column="user_name" property="memberName" jdbcType="INTEGER" />
 		<result column="size" property="size" jdbcType="VARCHAR" />
 		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -171,6 +172,7 @@
 			f.important,
 			f.project_id,
 			f.member_id,
+		  	u.user_name,
 			f.`catalog`,
 			f.is_model,
 			f.`size`,
@@ -180,7 +182,7 @@
 			f.file_privacy
 		FROM
 			prm_file f
-			LEFT JOIN prm_file_version v ON (f.file_id = v.file_id AND v.is_master = 1)
+			LEFT JOIN prm_file_version v ON (f.file_id = v.file_id AND v.is_master = 1) left join tb_user as u on u.user_id = f.member_id
 		WHERE
 			f.file_del = 0
 			AND public_lable = 0
