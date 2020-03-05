@@ -10,11 +10,14 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.util.DateUtil;
+import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +46,11 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public List<Share> findByProjectId(String projectId, Integer isDel){
-		return shareMapper.findByProjectId(projectId, isDel);
+		List<Share> byProjectId = shareMapper.findByProjectId(projectId, isDel);
+		byProjectId.forEach(s -> {
+			s.setCreateTimeStr(DateUtils.getDateStr(new Date(s.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
+		});
+		return byProjectId;
 	}
 
 	/**

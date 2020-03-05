@@ -78,6 +78,8 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Override
 	public void deleteOrganizationByOrganizationId(String organizationId){
 		organizationMapper.deleteOrganizationByOrganizationId(organizationId);
+		organizationMemberService.removeMemberByOrgId(organizationId);
+
 	}
 
 	/**

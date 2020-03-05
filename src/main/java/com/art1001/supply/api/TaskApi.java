@@ -378,7 +378,11 @@ public class  TaskApi extends BaseController {
             taskService.updateStartTime(taskId,startTime);
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setStartTime(startTime);
+            if (0==startTime){
+                task.setStartTime(null);
+            }else {
+                task.setStartTime(startTime);
+            }
             object.put("result",1);
             object.put("msg","更新成功");
             object.put("msgId",this.getTaskProjectId(taskId));
@@ -407,7 +411,11 @@ public class  TaskApi extends BaseController {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setEndTime(endTime);
+            if (0==endTime){
+                task.setEndTime(null);
+            }else {
+                task.setEndTime(endTime);
+            }
             taskService.updateById(task);
             object.put("result",1);
             object.put("msg","更新成功");

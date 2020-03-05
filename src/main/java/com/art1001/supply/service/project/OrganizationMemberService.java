@@ -128,4 +128,10 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 */
     List<UserEntity> getOrgMemberByKeyword(String orgId, String keyword);
 
+	/**
+	 * 根据企业id删除企业成员记录
+	 * @param orgId 企业id
+	 */
+	void removeMemberByOrgId(String orgId);
+
 }

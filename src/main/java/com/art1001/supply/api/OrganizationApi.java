@@ -185,5 +185,17 @@ public class OrganizationApi {
         return Result.success(organization);
     }
 
+    /**
+     * 删除企业
+     * @param orgId 企业id
+     * @return 结果
+     */
+    @PostMapping("deleted")
+    public Result deletedOrg(String orgId){
+        log.info("Delete org info [{}], operator is [{}]", orgId, ShiroAuthenticationManager.getUserId());
+        organizationService.deleteOrganizationByOrganizationId(orgId);
+        return Result.success();
+    }
+
 
 }
