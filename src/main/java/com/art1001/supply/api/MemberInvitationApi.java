@@ -36,6 +36,7 @@ import java.util.List;
  * [DELETE] // 删除
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("members")
 public class MemberInvitationApi extends BaseController {
@@ -101,10 +102,14 @@ public class MemberInvitationApi extends BaseController {
      * @return
      */
     @DeleteMapping("/{memberId}")
-    public JSONObject deleteMember(@PathVariable(value = "memberId") String memberId){
+    public JSONObject deleteMember(@PathVariable(value = "memberId") String memberId,
+                                   @NotNull(message = "projectId不能为空!") String projectId){
         JSONObject object = new JSONObject();
         try{
-            projectMemberService.remove(new QueryWrapper<ProjectMember>().eq("member_id",memberId));
+            projectMemberService.remove(new QueryWrapper<ProjectMember>()
+                    .lambda().eq(ProjectMember::getMemberId,memberId)
+                    .eq(ProjectMember::getProjectId, projectId));
+
             proRoleUserService.remove(new QueryWrapper<ProRoleUser>().eq("u_id",memberId));
             object.put("result",1);
             object.put("msg","移除成功");
