@@ -229,23 +229,8 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper,Pr
 		member.setMemberLabel(0);
 
 		ProRole byId = proRoleService.getById(roleId);
-
 		member.setRoleKey(byId.getRoleKey());
-
 		projectMemberMapper.insert(member);
-
-		//汪亚锋 2020-2-10 项目邀请的用户直接加入到企业中，并分配企业成员的权限
-		OrganizationMember member1 = new OrganizationMember();
-		member1.setOrganizationId(orgId);
-		member1.setMemberId(memberId);
-		member1.setOrganizationLable(0);
-		member1.setMemberLock(1);
-		member1.setCreateTime(System.currentTimeMillis());
-		member1.setUpdateTime(System.currentTimeMillis());
-		member1.setUserDefault(false);
-		member1.setOther(0);//项目邀请得成员目前都是外部成员
-		organizationMemberService.saveOrganizationMember(member1);
-
 
 		return 1;
 	}

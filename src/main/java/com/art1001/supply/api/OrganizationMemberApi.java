@@ -72,7 +72,6 @@ public class OrganizationMemberApi {
      * @param memberId 成员id
      * @return
      */
-    //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,

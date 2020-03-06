@@ -76,17 +76,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public UserInfo findInfo(String accountName){
         UserInfo info = userMapper.findInfo(accountName);
-        QueryWrapper<OrganizationMember> wrapper = new QueryWrapper<OrganizationMember>().eq("member_id", info.getUserId());
-        List<OrganizationMember> list = organizationMemberService.list(wrapper);
-
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
-        if(StringUtils.isNotEmpty(orgByUserId)){
-            info.setOrgId(orgByUserId);
-        }else{
-            if(list!=null&&list.size()>0){
-                info.setOrgId(list.get(0).getOrganizationId());
-            }
-        }
+        info.setOrgId(orgByUserId);
         return info;
     }
 

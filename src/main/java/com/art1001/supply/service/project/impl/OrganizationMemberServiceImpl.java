@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +55,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	@Resource
 	private RoleService roleService;
 
-
+	@Resource
+	private OrganizationMemberService organizationMemberService;
 
 	/**
 	 * 根据企业id获取企业员工
@@ -118,15 +120,14 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		if(organizationMember1==null){
 			organizationMember.setCreateTime(System.currentTimeMillis());
 			organizationMember.setUpdateTime(System.currentTimeMillis());
-			organizationMemberMapper.insert(organizationMember);
-			//修改企业成员默认权限，2020-20-10 汪亚锋
-			Role role;
-			if(organizationMember.getOther()==0){
-				role = roleService.getOne(new QueryWrapper<Role>().eq("role_key","externalMember").eq("organization_id", organizationMember.getOrganizationId()));
-			}else{
-				role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
+			String orgId = organizationMemberService.findOrgByUserId(organizationMember.getMemberId());
+			if(StringUtils.isEmpty(orgId)){
+				organizationMemberService.updateUserDefaultOrg(organizationMember.getOrganizationId(),organizationMember.getMemberId());
 			}
 
+			organizationMemberMapper.insert(organizationMember);
+			//修改企业成员默认权限，2020-20-10 汪亚锋
+			Role role = roleService.getOrgDefaultRole(organizationMember.getOrganizationId());
 			RoleUser roleUser = new RoleUser();
 			roleUser.setOrgId(organizationMember.getOrganizationId());
 			roleUser.setRoleId(role.getRoleId());
