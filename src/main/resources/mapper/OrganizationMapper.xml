@@ -242,7 +242,9 @@
 			pm.default_group as group_id,
 		   p.func
 		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId} and p.organization_id = #{orgId} and p.project_del = 0 order by pm.create_time asc
+		where pm.member_id = #{userId} and p.organization_id = #{orgId}
+		<!-- and p.project_del = 0 -->
+		order by pm.create_time asc
 	</select>
 
 	<!-- 修改企业拥有者 -->

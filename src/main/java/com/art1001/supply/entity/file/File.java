@@ -41,7 +41,7 @@ public class File extends Model<File> {
      * 文件名
      */
     // analyzer = "ik_max_word"
-    @Field(type = FieldType.text  )
+    @Field(type = FieldType.text ,analyzer = "ik_max_word")
     private String fileName;
 
 

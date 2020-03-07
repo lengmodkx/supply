@@ -1139,7 +1139,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                //.withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchQuery("fileName", fileName))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
                 //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
