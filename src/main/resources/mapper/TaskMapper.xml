@@ -237,6 +237,47 @@
 		</collection>
 	</resultMap>
 
+	<!-- 成员视图 -->
+	<resultMap id="view_member" type="com.art1001.supply.entity.task.MemberViewResult">
+		<id column="user_id" property="userId"/>
+		<result column="user_name" property="userName"/>
+		<result column="account_name" property="accountName"/>
+		<result column="image" property="image"/>
+		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+			<id column="task_id" property="taskId"/>
+			<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+			<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+			<result column="start_time" property="startTime" jdbcType="BIGINT" />
+			<result column="end_time" property="endTime" jdbcType="BIGINT" />
+			<result column="repeat" property="repeat" jdbcType="VARCHAR" />
+			<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+			<result column="priority" property="priority" jdbcType="VARCHAR" />
+			<result column="level" property="level" jdbcType="INTEGER" />
+			<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+			<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+			<result column="executor" property="executor" jdbcType="VARCHAR" />
+			<result column="executor_name" property="executorName" jdbcType="VARCHAR" />
+			<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
+			<result column="task_type" property="taskType" jdbcType="VARCHAR" />
+			<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
+			<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
+			<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
+			<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
+			<result column="task_del" property="taskDel" jdbcType="INTEGER" />
+			<result column="create_time" property="createTime" jdbcType="BIGINT" />
+			<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+			<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
+			<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+			<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+			<result column="other" property="other" jdbcType="VARCHAR"/>
+			<result column="order" property="order" jdbcType="INTEGER"/>
+			<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
+			<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
+			<result column="progress" property="progress"/>
+			<result column="sub_is_all_complete" property="subIsAllComplete"/>
+		</collection>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.progress,
@@ -1484,5 +1525,20 @@
 			prm_task
 		WHERE
 			task_group_id = #{groupId} and (executor = #{userId} or FIND_IN_SET(#{userId},task_uids))
+	</select>
+
+	<!-- 获取项目任务的成员视图 -->
+	<select id="memberView" resultMap="view_member">
+		SELECT
+			t.*,
+			u.user_id,
+			u.user_name,
+			u.account_name,
+			u.image
+		FROM
+			prm_task AS t
+			LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+			project_id = #{projectId} and t.executor != '0'
 	</select>
 </mapper>

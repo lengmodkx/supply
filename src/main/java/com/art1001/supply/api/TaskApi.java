@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
@@ -151,16 +152,12 @@ public class  TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
-    @Log(PushType.A2)
     @Push(value = PushType.A2,type = 1)
     @DeleteMapping("/{taskId}")
-    public JSONObject deleteTask(@PathVariable(value = "taskId")String taskId){
+    public Result deleteTask(@PathVariable(value = "taskId")String taskId){
         try{
-            JSONObject jsonObject = new JSONObject();
             taskService.removeById(taskId);
-            jsonObject.put("msgId",taskService.findProjectIdByTaskId(taskId));
-            jsonObject.put("data",taskService.findProjectIdByTaskId(taskId));
-            return jsonObject;
+            return Result.success();
         }catch(Exception e){
             throw new AjaxException("系统异常,删除失败",e);
         }

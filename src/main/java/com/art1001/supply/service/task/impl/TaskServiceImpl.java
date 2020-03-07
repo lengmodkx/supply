@@ -50,10 +50,12 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +75,7 @@ import java.util.stream.Collectors;
 /**
  * taskServiceImpl
  */
+@Slf4j
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
@@ -1904,6 +1907,42 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public void updateAll(String userId, String id) {
         taskMapper.updateAll(userId,id);
+    }
+
+    @Override
+    public List<MemberViewResult> memberView(String projectId) {
+        if(!projectService.checkIsExist(projectId)){
+            log.error("project not exist ->>> [{}]", projectId);
+            throw new ServiceException("项目不存在!");
+        }
+
+        List<String> projectAllMemberId = projectMemberService.getProjectAllMemberId(projectId);
+        if(CollectionUtils.isEmpty(projectAllMemberId)){
+            log.info("该项目没有成员信息. [{}]", projectId);
+            return new LinkedList<>();
+        }
+
+        List<MemberViewResult> memberViewResults = taskMapper.memberView(projectId);
+
+        memberViewResults.add(
+                MemberViewResult.buildExecutor(this.getNotExecutorTaskByProjectId(projectId))
+        );
+
+        return memberViewResults;
+    }
+
+    @Override
+    public List<Task> getNotExecutorTaskByProjectId(String projectId) {
+        ValidatedUtil.filterNullParam(projectId);
+        if(!projectService.checkIsExist(projectId)){
+            log.error("project not exist ->>> [{}]", projectId);
+            throw new ServiceException("项目不存在!");
+        }
+
+        LambdaQueryWrapper<Task> eq = new QueryWrapper<Task>()
+                .lambda().eq(Task::getProjectId, projectId).eq(Task::getExecutor, "0");
+
+        return this.list(eq);
     }
 }
 

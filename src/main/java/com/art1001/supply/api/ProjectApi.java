@@ -11,6 +11,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
@@ -292,6 +293,19 @@ public class ProjectApi extends BaseController {
             throw new AjaxException(e);
         }
       return object;
+    }
+
+    /**
+     * 获取成员任务视图
+     * @param projectId 项目id
+     * @return 数据
+     */
+    @RequestMapping("view_member")
+    public Result memberView(@NotNull(message = "项目id不能为空!") String projectId){
+        log.info("Get member view data. [{}]", projectId);
+        List<MemberViewResult> memberViewResults = taskService.memberView(projectId);
+        return Result.success(memberViewResults);
+
     }
 
     /**

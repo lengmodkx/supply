@@ -588,21 +588,16 @@ public class FileApi extends BaseController {
      * @param projectId
      * @return
      */
-    @Log(PushType.C6)
-    @Push(value = PushType.C6)
     @DeleteMapping("/{fileId}")
-    public JSONObject deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
+    public Result deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.deleteFileById(fileId);
-            jsonObject.put("result", 1);
-            jsonObject.put("msgId",projectId+"/recyclebin");
-            jsonObject.put("data",new JSONObject().fluentPut("fileId",fileId));
+            return Result.success();
         } catch (Exception e) {
             log.error("删除文件异常:", e);
             throw new AjaxException(e);
         }
-        return jsonObject;
     }
 
     /**

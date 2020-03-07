@@ -7,6 +7,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
+import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.task.TaskRemindRule;
@@ -661,6 +662,19 @@ public interface TaskService extends IService<Task> {
 	String getExecutorByTaskId(String taskId);
 
     void updateAll(String userId, String id);
+
+	/**
+	 * 项目成员视图
+	 * @param projectId 项目id
+	 * @return 成员视图数据
+	 */
+    List<MemberViewResult> memberView(String projectId);
+
+	/**
+	 * 查询项目下没有执行者的所有任务
+	 * @param projectId 项目id
+	 */
+	List<Task> getNotExecutorTaskByProjectId(String projectId);
 
 
 }

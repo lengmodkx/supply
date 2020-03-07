@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
@@ -159,18 +160,14 @@ public class ShareApi {
     @Log(PushType.B9)
     @Push(PushType.B9)
     @DeleteMapping("/{shareId}")
-    public JSONObject shareDelate(@PathVariable("shareId") String shareId,@RequestParam(value = "projectId") String projectId){
-        JSONObject jsonObject = new JSONObject();
+    public Result shareDelete(@PathVariable("shareId") String shareId, @RequestParam(value = "projectId") String projectId){
         try{
             shareService.removeById(shareId);
-            jsonObject.put("result",1);
-            jsonObject.put("data",projectId);
-            jsonObject.put("msgId",projectId);
+            return Result.success();
         }catch (Exception e){
             log.error("分享删除失败:",e);
             throw new AjaxException(e);
         }
-        return jsonObject;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
+import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.template.TemplateData;
@@ -732,4 +733,6 @@ public interface TaskMapper extends BaseMapper<Task> {
     int checkUserIsExistGroup(@Param("groupId") String groupId, @Param("userId") String userId);
 
     void updateAll(@Param("userId") String userId, @Param("id") String id);
+
+	List<MemberViewResult> memberView(@Param("projectId") String projectId);
 }

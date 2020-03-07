@@ -59,6 +59,7 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
                 .select(ProResources::getSSourceKey)
                 .in(ProResources::getSId, rIds);
 
+
         return proResourcesService.list(selectKeysByRIdsQw).stream()
                 .map(ProResources::getSSourceKey)
                 .collect(Collectors.toList());

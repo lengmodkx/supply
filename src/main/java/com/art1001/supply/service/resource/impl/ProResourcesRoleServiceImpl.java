@@ -6,6 +6,8 @@ import com.art1001.supply.mapper.resource.ProResourcesRoleMapper;
 import com.art1001.supply.service.resource.ProResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -32,6 +34,9 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
 
     @Resource
     private ProResourcesRoleMapper proResourcesRoleMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 注入项目角色业务层Bean
@@ -92,6 +97,9 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
             resourcesRole.setTCreateTime(LocalDateTime.now());
             proResourcesRoleMapper.insert(resourcesRole);
         }
+
+        String userId = ShiroAuthenticationManager.getUserId();
+        redisUtil.remove("perms:"+userId);
 
         return 1;
     }

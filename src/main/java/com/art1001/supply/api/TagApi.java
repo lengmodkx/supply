@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -176,24 +177,16 @@ public class TagApi {
     /**
      * 删除标签
      */
-    @Push(value = PushType.E2,type = 1)
     @DeleteMapping("/{tagId}")
-    public JSONObject deleteTag(@PathVariable Long tagId,
-                                @RequestParam(value = "projectId") String projectId,
-                                @RequestParam(value = "publicId") String publicId,
-                                @RequestParam(value = "publicType") String publicType
+    public Result deleteTag(@PathVariable Long tagId
                                 ) {
-        JSONObject jsonObject = new JSONObject();
         try {
             tagService.deleteTagByTagId(tagId);
-            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
-            jsonObject.put("msgId",projectId);
-            jsonObject.put("result", 1);
+            return Result.success();
         } catch (Exception e) {
             log.error("删除标签异常:", e);
             throw new AjaxException(e);
         }
-        return jsonObject;
     }
 
     /**
