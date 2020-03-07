@@ -9,8 +9,11 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ApiParamsCheckException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,15 @@ public class OrganizationApi {
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private ResourceService resourceService;
 
     /**
      * 新增企业
@@ -127,6 +139,11 @@ public class OrganizationApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Project> projects = organizationService.getProject(orgId);
+            String userId = ShiroAuthenticationManager.getUserId();
+            String orgByUserId = organizationMemberService.findOrgByUserId(userId);
+            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
+            redisUtil.remove("orgms:" + userId);
+            redisUtil.lset("orgms:"+userId, memberResourceKey);
             jsonObject.put("data", projects);
             jsonObject.put("result", 1);
         } catch (Exception e){

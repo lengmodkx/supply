@@ -75,12 +75,14 @@ public class Interceptor implements HandlerInterceptor {
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(allResources.contains(key.toString())){
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
-            List<String> list = redisUtil.getList(String.class, "perms:" + userId);
+            List<String> list = redisUtil.getList(String.class, "orgms:" + userId);
             if(CollectionUtils.isEmpty(list)){
                 list = resourceService.getMemberResourceKey(userId, orgByUserId);
-                redisUtil.lset("perms:" + userId, list);
+                redisUtil.lset("orgms:" + userId, list);
             }
-            if(list.contains(key.toString())){
+
+            List<String> permsList = redisUtil.getList(String.class, "perms:" + userId);
+            if(list.contains(key.toString()) || permsList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
                 return true;
             }

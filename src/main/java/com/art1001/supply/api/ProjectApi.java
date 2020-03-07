@@ -276,6 +276,7 @@ public class ProjectApi extends BaseController {
         try {
             String userId = ShiroAuthenticationManager.getUserId();
             List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+            redisUtil.remove("perms:"+userId);
             redisUtil.lset("perms:"+userId,keyList);
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
