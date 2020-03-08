@@ -181,8 +181,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	 * @return 标签集合
 	 */
 	@Override
-	public List<Tag> searchTag(String tagName) {
-		return tagMapper.searchTag(tagName);
+	public List<Tag> searchTag(String tagName,String projectId) {
+		return tagMapper.searchTag(tagName,projectId);
 	}
 
     /**

@@ -1494,8 +1494,8 @@
 			task.task_id,
 			task.task_name,
 			task.executor,
-			u.user_name as executor_name,
-			u.image as executorImage,
+			u.user_name as executorName,
+			u.image as executorImg,
 			task.end_time,
 			task.task_status,
 			r.relation_name as groupName

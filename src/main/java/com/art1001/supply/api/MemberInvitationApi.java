@@ -239,4 +239,12 @@ public class MemberInvitationApi extends BaseController {
 
         return success(projectMemberService.getProjectUserInfo(projectId, keyWord));
     }
+
+    @GetMapping("info")
+    public JSONObject getUser(@RequestParam String userId){
+        JSONObject jsonObject = new JSONObject();
+
+
+        return jsonObject;
+    }
 }
