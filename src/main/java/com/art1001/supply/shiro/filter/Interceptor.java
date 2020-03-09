@@ -73,6 +73,13 @@ public class Interceptor implements HandlerInterceptor {
         StringBuilder key = new StringBuilder(className);
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
+        if(CollectionUtils.isEmpty(allResources)){
+            allResources = proResourcesService.list(new QueryWrapper<ProResources>()
+                    .lambda().ne(ProResources::getSLevel, 1)).stream()
+                    .map(ProResources::getSSourceKey).collect(Collectors.toList());
+
+            redisUtil.lset("allResources", allResources);
+        }
         if(allResources.contains(key.toString())){
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
             List<String> list = redisUtil.getList(String.class, "orgms:" + userId);
