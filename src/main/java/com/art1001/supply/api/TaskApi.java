@@ -237,11 +237,8 @@ public class  TaskApi extends BaseController {
                     object.put("msg", "父任务已经完成不能重做子任务!");
                     return object;
                 }
-                object.put("msgId",taskService.findChildProjectId(taskId));
-            } else{
-                object.put("msgId",this.getTaskProjectId(taskId));
-
             }
+            object.put("msgId",projectId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus(false);

@@ -124,8 +124,8 @@
     </select>
 
     <!-- 查询出在此项目回收站中的所有分享 -->
-    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
-        select id,title,update_time
+    <select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+        select id,title as publicName,update_time
         from prm_share where is_del = 1 and project_id = #{projectId}
     </select>
 

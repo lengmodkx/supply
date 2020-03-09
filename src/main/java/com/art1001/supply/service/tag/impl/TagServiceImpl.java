@@ -351,7 +351,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	@SuppressWarnings({"Unchecked", "unchecked"})
 	@Override
 	public List<Tag> getByProjectId(String projectId) {
-		LambdaQueryWrapper<Tag> eq = new QueryWrapper<Tag>().lambda().select(Tag::getTagId, Tag::getTagName, Tag::getBgColor).eq(Tag::getProjectId, projectId);
+		LambdaQueryWrapper<Tag> eq = new QueryWrapper<Tag>().lambda().select(Tag::getTagId, Tag::getTagName, Tag::getBgColor).eq(Tag::getProjectId, projectId).eq(Tag::getIsDel,0);
 		return tagMapper.selectList(eq.orderByDesc(Tag::getCreateTime));
 	}
 }

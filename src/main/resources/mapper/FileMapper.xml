@@ -336,9 +336,9 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		from prm_file where find_in_set(#{uId}, file_uIds);
 	</select>
 
-	<!-- 查询出在该项目回收站中的文件 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap2">
-		select file_name,file_id,update_time
+	<!-- 查询出在该项目回收站中的文件/文件夹 -->
+	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+		select file_id as id,file_name as publicName,update_time
 		from prm_file where file_del = 1 and project_id = #{projectId}
 		and catalog = #{type}
 	</select>

@@ -83,7 +83,11 @@ public class RecycleBinServiceImpl implements RecycleBinService {
         if(Constants.TAG_EN.equals(type)){
             return tagService.findRecycleBin(projectId);
         }
-        return fileService.findRecycleBin(projectId, fileType);
+
+        if(Constants.FILE_EN.equals(type)){
+            return fileService.findRecycleBin(projectId, fileType);
+        }
+        return null;
     }
 
     @Override
@@ -102,6 +106,12 @@ public class RecycleBinServiceImpl implements RecycleBinService {
         }
         if(Constants.SCHEDULE_EN.equals(recycleParams.getPublicType())){
             scheduleService.recoverySchedule(recycleParams.getPublicId());
+        }
+        if(Constants.TAG_EN.equals(recycleParams.getPublicType())){
+            tagService.recoveryTag(recycleParams.getPublicId());
+        }
+        if(Constants.GROUP_EN.equals(recycleParams.getPublicType())){
+
         }
         return 1;
     }

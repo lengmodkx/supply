@@ -1071,8 +1071,8 @@
 	</select>
 
 	<!-- 查询出在该项目回收站中的任务 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap3">
-		select task_id,task_name,update_time
+	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+		select task_id as id,task_name as publicName,update_time
 		from prm_task where project_id = #{projectId} and task_del = 1
 	</select>
 

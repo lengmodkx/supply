@@ -79,6 +79,7 @@ public class MemberInvitationApi extends BaseController {
      * @param memberId 用户id
      * @return
      */
+    //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,
                                 @RequestParam(value = "memberId") String memberId,
@@ -238,13 +239,5 @@ public class MemberInvitationApi extends BaseController {
         log.info("Get project user Info. [{},{}]",projectId, keyWord);
 
         return success(projectMemberService.getProjectUserInfo(projectId, keyWord));
-    }
-
-    @GetMapping("info")
-    public JSONObject getUser(@RequestParam String userId){
-        JSONObject jsonObject = new JSONObject();
-
-
-        return jsonObject;
     }
 }

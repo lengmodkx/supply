@@ -127,7 +127,8 @@ public class ShareApi {
             @RequestParam(value = "projectId") String projectId,
             @RequestParam(value = "title") String title,
             @RequestParam(value = "content") String content,
-            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
+            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy,
+            @RequestParam(value = "joinIds") String joinIds
     ){
         JSONObject object = new JSONObject();
         String  userId = ShiroAuthenticationManager.getUserId();
@@ -141,6 +142,7 @@ public class ShareApi {
             share.setUids(userId);
             share.setCreateTime(System.currentTimeMillis());
             share.setUpdateTime(System.currentTimeMillis());
+            share.setUids(joinIds);
             shareService.save(share);
             object.put("result",1);
             object.put("data",projectId);
@@ -365,20 +367,21 @@ public class ShareApi {
             @PathVariable(value = "shareId") String shareId,
             @RequestParam(value = "title") String title,
             @RequestParam(value = "content") String content,
-            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy
+            @RequestParam(value = "isPrivacy",required = false) Integer isPrivacy,
+            @RequestParam(value = "joinIds") String joinIds
     ){
         JSONObject object = new JSONObject();
         String  userId = ShiroAuthenticationManager.getUserId();
         try {
             Share share = new Share();
+            share.setId(shareId);
             share.setTitle(title);
             share.setContent(content);
-            share.setId(shareId);
             share.setIsPrivacy(isPrivacy);
             share.setMemberId(userId);
             share.setUids(userId);
             share.setProjectId(projectId);
-            share.setCreateTime(System.currentTimeMillis());
+            share.setUids(joinIds);
             share.setUpdateTime(System.currentTimeMillis());
             shareService.updateById(share);
             object.put("result",1);

@@ -12,6 +12,6 @@ import lombok.Data;
 public class RecycleBinVO {
 
     private String id;
-    private String name;
+    private String publicName;
     private long updateTime;
 }
