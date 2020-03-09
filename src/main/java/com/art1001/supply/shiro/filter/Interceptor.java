@@ -74,9 +74,16 @@ public class Interceptor implements HandlerInterceptor {
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
         if(CollectionUtils.isEmpty(allResources)){
-            allResources = proResourcesService.list(new QueryWrapper<ProResources>()
+            //获取所有的企业资源
+            List<ResourceEntity> allResourceList = resourceService.list(new QueryWrapper<ResourceEntity>()
+                    .lambda().ne(ResourceEntity::getResourceLevel, 1));
+            allResources = allResourceList.stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
+
+
+            //获取所有的项目资源
+            allResources.addAll(proResourcesService.list(new QueryWrapper<ProResources>()
                     .lambda().ne(ProResources::getSLevel, 1)).stream()
-                    .map(ProResources::getSSourceKey).collect(Collectors.toList());
+                    .map(ProResources::getSSourceKey).collect(Collectors.toList()));
 
             redisUtil.lset("allResources", allResources);
         }
