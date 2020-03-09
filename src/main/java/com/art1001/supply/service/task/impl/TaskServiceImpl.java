@@ -1445,7 +1445,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public Task completeTask(String taskId) {
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId));
+        Task task = getOne(new QueryWrapper<Task>().eq("task_id", taskId));
+
         //这里判断是否有子任务未完成
         List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId).eq("task_del", 0));
         subTask.forEach(t -> {

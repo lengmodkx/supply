@@ -272,7 +272,7 @@
     <!-- 模糊查询标签 -->
     <select id="searchTag" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
-        from prm_tag where tag_name like concat('%',#{tagName},'%') and is_del=0
+        from prm_tag where tag_name like concat('%',#{tagName},'%') and project_Id =#{projectId} and is_del=0
     </select>
 
     <!-- 保存多条标签信息 -->
@@ -312,8 +312,8 @@
     </insert>
 
     <!-- 查询出在该项目回收站中的标签 -->
-    <select id="findRecycleBin" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
+    <select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+        select tag_id as id ,tag_name as publicName ,update_time
         from prm_tag where is_del = 1 and project_id = #{projectId}
     </select>
 

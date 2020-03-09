@@ -496,6 +496,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		relation.setUpdateTime(System.currentTimeMillis());
 		relation.setOrder(relationMapper.findMaxOrder(relation.getProjectId(),0) + 1);
 		relationMapper.saveRelation(relation);
+		//初始化菜单
+		String[] menus  = new String[]{"待处理","进行中","已完成","已审核","已拒绝"};
+		relationMapper.saveRelationBatch(Arrays.asList(menus),relation.getProjectId(),relation.getRelationId());
 		projectMemberService.updateDefaultGroup(relation.getProjectId(),ShiroAuthenticationManager.getUserId(),relation.getRelationId());
 	}
 

@@ -44,6 +44,7 @@ public class Constants {
     //模块小写英文
     public static final String TASK_EN = "task";
     public static final String FILE_EN = "file";
+    public static final String FOLDER_EN = "folder";
     public static final String SCHEDULE_EN = "schedule";
     public static final String SHARE_EN = "share";
     public static final String TAG_EN ="tag";

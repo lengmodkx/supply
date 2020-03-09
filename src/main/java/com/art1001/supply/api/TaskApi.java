@@ -163,6 +163,21 @@ public class  TaskApi extends BaseController {
         }
     }
 
+    @PutMapping("/{taskId}/changeStatus")
+    public JSONObject changeStatus(@PathVariable(value = "taskId")String taskId,
+                                   @RequestParam(value = "projectId") String projectId,
+                                   @RequestParam(value = "status")String status){
+        JSONObject object = new JSONObject();
+
+
+
+
+        return  object;
+    }
+
+
+
+
     /**
      * 完成任务
      * @param taskId 任务id
@@ -171,27 +186,22 @@ public class  TaskApi extends BaseController {
     @AutomationRule(value = "#taskId",trigger = "completed",objectValue = "#label")
     @Push(value = PushType.A3,type = 3)
     @PutMapping("/{taskId}/finish")
-    public JSONObject finishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
+    public JSONObject finishTask(@PathVariable(value = "taskId")String taskId,
+                                 @RequestParam(value = "projectId") String projectId,
+                                 @RequestParam(required = false,defaultValue = "0") Integer label){
         JSONObject object = new JSONObject();
         try{
             taskService.completeTask(taskId);
             String parentId = taskService.getById(taskId).getParentId();
-            if(!parentId.equals("0")){
-                object.put("msgId",taskService.findChildProjectId(taskId));
-            } else{
-                object.put("msgId",this.getTaskProjectId(taskId));
-
-            }
-            Task t = new Task();
-            t.setTaskId(taskId);
-            t.setTaskStatus(true);
             object.put("status",1);
             object.put("result",1);
+            //判断点击的任务是否在父任务页面
             if(label == 1){
-                object.put("data",new JSONObject().fluentPut("taskId",parentId).fluentPut("projectId",object.getString("msgId")));
+                object.put("data",new JSONObject().fluentPut("taskId",parentId).fluentPut("projectId",projectId));
             } else{
-                object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",object.getString("msgId")));
+                object.put("data",new JSONObject().fluentPut("taskId",taskId).fluentPut("projectId",projectId));
             }
+            object.put("msgId",projectId);
             object.put("msg","更新成功");
             object.put("publicType",Constants.TASK);
             object.put("id",taskId);
@@ -213,7 +223,9 @@ public class  TaskApi extends BaseController {
     @Log(PushType.A4)
     @Push(value = PushType.A4,type = 3)
     @PutMapping("/{taskId}/unFinish")
-    public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId,@RequestParam(required = false,defaultValue = "0") Integer label){
+    public JSONObject unFinishTask(@PathVariable(value = "taskId")String taskId,
+                                   @RequestParam(value = "projectId") String projectId,
+                                   @RequestParam(required = false,defaultValue = "0") Integer label){
         JSONObject object = new JSONObject();
         try{
             //这里判断父任务是否已经完成
@@ -225,11 +237,8 @@ public class  TaskApi extends BaseController {
                     object.put("msg", "父任务已经完成不能重做子任务!");
                     return object;
                 }
-                object.put("msgId",taskService.findChildProjectId(taskId));
-            } else{
-                object.put("msgId",this.getTaskProjectId(taskId));
-
             }
+            object.put("msgId",projectId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskStatus(false);
@@ -369,14 +378,16 @@ public class  TaskApi extends BaseController {
     @NotEmpty
     @Push(value = PushType.A7,type = 3)
     @PutMapping(value = "/{taskId}/starttime")
-    public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,  @RequestParam(value = "startTime")Long startTime){
+    public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId")String taskId,
+                                          @RequestParam(value = "startTime")Long startTime){
         JSONObject object = new JSONObject();
         try{
             taskService.updateStartTime(taskId,startTime);
             Task task = new Task();
             task.setTaskId(taskId);
+            task.setUpdateTime(System.currentTimeMillis());
             if (0==startTime){
-                task.setStartTime(null);
+                task.setStartTime(0L);
             }else {
                 task.setStartTime(startTime);
             }
@@ -408,8 +419,9 @@ public class  TaskApi extends BaseController {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
+            task.setUpdateTime(System.currentTimeMillis());
             if (0==endTime){
-                task.setEndTime(null);
+                task.setEndTime(0L);
             }else {
                 task.setEndTime(endTime);
             }

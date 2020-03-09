@@ -497,8 +497,8 @@
 	</select>
 
 	<!-- 查询出在该项目回收站中的日程 -->
-	<select id="findRecycleBin" resultMap="BaseResultMap2" parameterType="java.lang.String">
-		select schedule_id,schedule_name,update_time
+	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+		select schedule_id as id ,schedule_name as publicName,update_time
 		from prm_schedule where is_del = 1 and project_id = #{projectId}
 	</select>
 

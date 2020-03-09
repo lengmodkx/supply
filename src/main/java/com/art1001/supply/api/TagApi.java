@@ -381,10 +381,10 @@ public class TagApi {
      * @return
      */
     @GetMapping("/search")
-    public JSONObject searchByName(@RequestParam(value = "key") String key){
+    public JSONObject searchByName(@RequestParam(value = "key") String key,@RequestParam String projcetId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", tagService.searchTag(key));
+            jsonObject.put("data", tagService.searchTag(key,projcetId));
             jsonObject.put("result", 1);
             return  jsonObject;
         } catch (Exception e){

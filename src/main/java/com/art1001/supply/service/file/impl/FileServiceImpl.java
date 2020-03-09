@@ -492,11 +492,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public Integer recoveryFile(String fileId) {
-
-        String projectId = fileMapper.selectOne(new QueryWrapper<File>().lambda().eq(File::getFileId, fileId).select(File::getProjectId)).getProjectId();
-        String parentId = this.findParentId(projectId);
-        fileMapper.recoveryFile(fileId,parentId,System.currentTimeMillis());
-        Log log = logService.saveLog(fileId,TaskLogFunction.A28.getName(),1);
+        fileMapper.recoveryFile(fileId,System.currentTimeMillis());
+        logService.saveLog(fileId,TaskLogFunction.A28.getName(),1);
         return 1;
     }
 
@@ -1139,7 +1136,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                //.withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchQuery("fileName", fileName))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
                 //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();

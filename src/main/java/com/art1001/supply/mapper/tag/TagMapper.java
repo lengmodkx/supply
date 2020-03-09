@@ -79,7 +79,7 @@ public interface TagMapper extends BaseMapper<Tag> {
 	 * @param tagName 标签名称
 	 * @return 标签集合数据
 	 */
-	List<Tag> searchTag(String tagName);
+	List<Tag> searchTag(String tagName,String projectId);
 
 
 	List<Tag> findTagByTagIds(@Param("tagIds") String tagIds);

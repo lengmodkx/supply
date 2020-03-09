@@ -40,19 +40,11 @@
 		u.user_name,
 		u.sex,
 	    u.birthday,
-		u.telephone,
-		u.email,
 		u.image,
 	    u.address,
 		u.job,
 		u.default_image,
-		u.account_name,
-		u.delete_status,
-		u.locked,
-		u.description,
-		u.creator_name,
-		u.create_time,
-		u.update_time
+		u.description
 	</sql>
 
 	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">

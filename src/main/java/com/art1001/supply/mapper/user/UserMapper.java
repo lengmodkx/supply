@@ -76,4 +76,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
 	//查询部分用户信息
 	UserInfo findInfo(String accountName);
+
+
 }

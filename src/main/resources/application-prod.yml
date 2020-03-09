@@ -49,4 +49,4 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: com.art1001.supply.entity.*
-callback_url: http://www.aldbim.com/oss/callback
+callback_url: http://www.aldbim.com/api/oss/callback

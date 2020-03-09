@@ -85,7 +85,7 @@ public interface TagService extends IService<Tag> {
 	 * @param tagName 标签名称
 	 * @return 标签实体集合
 	 */
-    List<Tag> searchTag(String tagName);
+    List<Tag> searchTag(String tagName,String projectId);
 
 	void removeTag(String publicId, String publicType, long tagId);
 
