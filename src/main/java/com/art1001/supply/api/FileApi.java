@@ -398,9 +398,9 @@ public class FileApi extends BaseController {
     }
 
     /**
-     * 更新模型图的缩略图
+     * 更新模型图的缩略图r
      * @param fileId 文件id
-     * @param utl 略缩图地址
+     * @param url 略缩图地址
      * @return 结果
      */
     @RequestMapping("/update/thumbnail")
@@ -1157,9 +1157,10 @@ public class FileApi extends BaseController {
     @GetMapping("/{fileName}/material_base_search")
     public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,Pageable pageable){
         JSONObject jsonObject = new JSONObject();
+        //将数据库数据更新到ES
+        //this.getFileToElastic();
         jsonObject.put("result",1);
         jsonObject.put("totle",fileService.getSucaiTotle(fileName));
-        //new JSONObject().fluentPut("file", fileService.searchMaterialBaseFile(fileName,pageable)).fluentPut("totle", fileService.getSucaiTotle(fileName))
         jsonObject.put("data", fileService.searchMaterialBaseFile(fileName,pageable));
         jsonObject.put("page",pageable.getPageNumber());
         return jsonObject;
@@ -1258,20 +1259,21 @@ public class FileApi extends BaseController {
     /**
      * 更新ElasticSearch
      */
-    @GetMapping("/saveElc")
-    public void getFileToElastic(){
+    private void getFileToElastic(){
         try {
             List<File> allFile = fileService.list(new QueryWrapper<File>().isNotNull("ext").isNotNull("file_url"));
-            if(allFile == null){
+            if(allFile.isEmpty()){
                 System.out.print("文件不存在!");
+            }else {
+                System.out.print("条数=="+allFile.size());
             }
-            System.out.print("条数=="+allFile.size());
-            for (int i=0;i<allFile.size();i++){
-                File file = allFile.get(i);
+            int count=0;
+            for (File f:allFile) {
                 //保存到ElasticSearch
-                fileRepository.save(file);
+                fileRepository.save(f);
+                count++;
             }
-            System.out.print(allFile.size()+"条数据更新成功");
+            System.out.print("共"+count+"条数据更新成功");
             // return success(fileService.getProjectAllFolder(one.getFileId()));
         } catch (Exception e){
             e.printStackTrace();

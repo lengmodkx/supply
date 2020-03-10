@@ -35,7 +35,9 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -1024,17 +1026,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> searchFile(String fileName, String projectId) {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                //.withQuery(QueryBuilders.multiMatchQuery(fileName, "fileName","tagName"))
-                //.withQuery(QueryBuilders.wildcardQuery("fileName", "*" + fileName + "*"))
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName.hashCode()))
                 .withFilter(QueryBuilders.termQuery("projectId", projectId))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
-        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0){
+        //如果ES查询不到数据，从数据库再查询一遍
+        /*if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0){
             List<File> files = fileService.seachByName(fileName, projectId);
             return  Lists.newArrayList(files);
-        }
+        }*/
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
 
@@ -1133,18 +1134,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
-
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
-                //.withQuery(QueryBuilders.wildcardQuery("fileName.keyword", "*" + fileName + "*"))
-                //.withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
-                .withQuery(QueryBuilders.matchQuery("fileName", fileName))
-                .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+        PageRequest of = PageRequest.of(pageable.getPageNumber()-1, pageable.getPageSize(),new Sort(Sort.Direction.DESC, "createTime"));
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withPageable(of)
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .build();
-                //.withFilter(QueryBuilders.termQuery("fileName", fileName)).build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
-        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
+        //如果在ES查询不到数据，则再从数据库查询一遍
+        /*if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
             List<File> files = fileService.seachByName(fileName, null);
             return  Lists.newArrayList(files);
+        }*/
+        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
+            return null;
         }
         return Lists.newArrayList(byFileNameOrTagNameFiles);
     }
