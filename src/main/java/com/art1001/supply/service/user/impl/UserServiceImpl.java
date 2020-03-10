@@ -121,7 +121,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         file.setUpdateTime(System.currentTimeMillis());
         file.setLevel(1);
         file.setCatalog(1);
-        file.setFilePrivacy(2);
+        file.setFilePrivacy(1);
         file.setFileLabel(1);
         fileMapper.insert(file);
     }

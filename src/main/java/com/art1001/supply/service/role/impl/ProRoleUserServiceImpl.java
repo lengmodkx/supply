@@ -9,6 +9,7 @@ import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,10 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     private ProRoleUserService roleUserService;
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
-        ProRoleUser proRoleUser = getOne(new QueryWrapper<ProRoleUser>().eq("project_id", projectId).eq("u_id", userId));
+        ProRoleUser proRoleUser = new ProRoleUser();
         proRoleUser.setRoleId(roleId);
         updateById(proRoleUser);
+        update(proRoleUser,new UpdateWrapper<ProRoleUser>().eq("project_id", projectId).eq("u_id", userId));
     }
 
     @Override

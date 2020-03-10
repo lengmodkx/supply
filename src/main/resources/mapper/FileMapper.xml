@@ -44,7 +44,7 @@
 	<!-- 映射回收站数据 -->
 	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
 		<id column="file_id" property="id"/>
-		<result column="file_name" property="name" jdbcType="VARCHAR" />
+		<result column="file_name" property="publicName" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
@@ -186,7 +186,7 @@
 		WHERE
 			f.file_del = 0
 			AND public_lable = 0
-			AND parent_id = #{fileId} order by create_time desc
+			AND parent_id = #{fileId} order by f.`catalog` desc,f.create_time asc
 	</select>
 
 	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
