@@ -134,7 +134,7 @@ public class ProjectApi extends BaseController {
      * @return json
      */
     @PutMapping("/{projectId}")
-    public JSONObject projectUpadte(@PathVariable(value = "projectId") String projectId,
+    public JSONObject projectUpdate(@PathVariable(value = "projectId") String projectId,
                                     @RequestParam(value = "projectName", required = false) String projectName,
                                     @RequestParam(value = "projectDes", required = false) String projectDes,
                                     @RequestParam(value = "isPublic", required = false) Integer isPublic,
