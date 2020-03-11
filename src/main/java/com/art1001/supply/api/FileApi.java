@@ -32,19 +32,12 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -167,24 +160,6 @@ public class FileApi extends BaseController {
         }
     }
 
-    /**
-     * 获取素材库子文件信息
-     * @param fileId   文件父id
-     * @param current  当前页
-     * @param size     条数
-     * @return
-     */
-    @GetMapping("fodder/{fileId}")
-    public Result fodderList(@PathVariable String fileId,
-                            @RequestParam(defaultValue = "1") Integer current,
-                            @RequestParam(defaultValue = "10") Integer size) {
-        try {
-            IPage<File> fileList = fileService.queryFodderList(fileId,current,size);
-            return Result.success(fileList);
-        } catch (Exception e){
-            throw new AjaxException(e);
-        }
-    }
 
     /**
      * 获取文件树
@@ -219,7 +194,7 @@ public class FileApi extends BaseController {
      * 获取素材库文件树
      * @return
      */
-    @GetMapping("/fodderTree")
+    @GetMapping("/material/tree")
     public Result<List<FileTree>> getFodderTree(){
         //素材库id
         String fileId="ef6ba5f0e3584e58a8cc0b2d28286c93";
@@ -229,7 +204,6 @@ public class FileApi extends BaseController {
         //查询素材库下的文件夹
         List<FileTree> trees = fileService.querySubFileList(fileId);
         fileTrees.addAll(trees);
-        System.out.println("素材库的子文件夹共"+fileTrees.size()+"个");
         return Result.success(fileTrees);
     }
 
@@ -1214,68 +1188,6 @@ public class FileApi extends BaseController {
         return fileService.getMateriaBaseFile(folderId,pageable,downloadCount);
     }
 
-
-    /**
-     * 获取一个项目的所有文件夹树信息（向下递归）
-     * @param projectId 项目id
-     * @return 目录树信息
-     */
-    @GetMapping("/folder_all_tree")
-    public JSONObject getAllFolderTree(@NotBlank(message = "项目id不能为空！") @RequestParam String projectId){
-        boolean projectNotExist = !projectService.checkIsExist(projectId);
-        if(projectNotExist){
-            return error("参数错误!");
-        }
-        String parentId = fileService.findParentId(projectId);
-        if(StringUtils.isEmpty(parentId)){
-            return error("目录id错误!");
-        }
-        return success(fileService.getAllFolderTree(parentId));
-    }
-
-    /**
-     * 获取管理员素材库的树形数据
-     * @param fileId 顶级目录id
-     * @return 目录数据
-     */
-    @GetMapping("/folder_tree_admin")
-    public JSONObject getAdminTree(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId){
-        return success(fileService.getAllFolderTree(fileId));
-    }
-
-    /**
-     * 点击素材库显示数据
-     * @param fileId 文件夹Id
-     * @return 目录数据
-     */
-    @GetMapping("/folder_tree_data")
-    public JSONObject getTreeData(@NotBlank(message = "fileId不能为空!") @RequestParam String fileId,Pageable pageable){
-        JSONObject jsonObject = new JSONObject();
-        try {
-                List<File> fileList = fileService.list(new QueryWrapper<File>().eq("parent_id", fileId));
-                if (fileList.get(0).getCatalog()==1){
-                    jsonObject.put("data", fileList);
-                    jsonObject.put("totle", fileList.size());
-                }else {
-                    SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
-                            .withQuery(QueryBuilders.matchPhraseQuery("parentId", fileId))
-                            .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
-                            .build();
-                    Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
-                    jsonObject.put("totle", fileService.list(new QueryWrapper<File>().eq("parent_id", fileId)).size());
-                    jsonObject.put("data", Lists.newArrayList(byFileNameOrTagNameFiles));
-                }
-            jsonObject.put("result",1);
-            jsonObject.put("page",pageable.getPageNumber());
-            jsonObject.put("parentId",fileId);
-            return  jsonObject;
-
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new AjaxException("系统异常,查询失败!",e);
-        }
-
-    }
 
     /**
      * 标记或者取消 重要文件标识

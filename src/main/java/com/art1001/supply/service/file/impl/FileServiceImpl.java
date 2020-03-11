@@ -156,13 +156,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public File findFileById(String id) {
-       /* //从elasticSearch查询数据
-        Optional<File> fileById = fileRepository.findById(id);
-        if (Stringer.isNotNullOrEmpty(fileById.get())){
-            return fileById.get();
-        }else{*/
-            return fileMapper.findFileById(id);
-        /*}*/
+      return fileMapper.findFileById(id);
     }
 
     /**
@@ -1091,40 +1085,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return jsonObject;
     }
 
-    @Override
-    public List<FileTreeShowVO> getAllFolderTree(String parentId) {
-        //获取一个目录的所有子级目录id
-        String[] childFolderIds = this.getChildFolderIds(parentId);
-        if(childFolderIds.length == 0){
-            return new ArrayList<>();
-        }
 
-        //构造sql表达式
-        LambdaQueryWrapper<File> selectFolderQw = new QueryWrapper<File>().lambda()
-                .eq(File::getCatalog,1)
-                .select(File::getFileId, File::getFileName, File::getParentId, File::getLevel,File::getCreateTime)
-                .in(File::getFileId, Arrays.asList(childFolderIds));
 
-        File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
-        myFolder.setParentId(parentId);
-        List<File> childFolders = this.list(selectFolderQw);
-        childFolders.add(myFolder);
-        List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
-        //生成目录树
-        this.downLevel(childFolders);
-        this.chanageToFileTreeVO(childFolders, fileTreeShowVOS);
-        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getPId()) || f.getId().equals(Constants.MATERIAL_BASE)).collect(Collectors.toList());
-    }
-
-    @Override
-    public String[] getChildFolderIds(String folderId) {
-
-        String subIds = fileMapper.selectChildFolderIds(folderId);
-        if(!StringUtils.isNotEmpty(subIds)){
-            return new String[0];
-        }
-        return subIds.split(",");
-    }
 
     @Override
     public void updateAll(String userId, String id) {
