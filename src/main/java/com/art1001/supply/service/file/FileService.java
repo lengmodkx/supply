@@ -6,6 +6,7 @@ import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.FileApiBean;
 import com.art1001.supply.entity.file.FileTree;
 import com.art1001.supply.entity.file.FileTreeShowVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
@@ -470,4 +471,12 @@ import java.util.List;
 	 * @param url 新的缩略图url
 	 */
     void updateModelThumbnail(String fileId, String url);
+
+    /**
+     * 查询素材库树图子数据
+     * @param fileId 文件id
+     * @param current 当前页
+     * @param size 每页多少条数据
+     */
+    IPage<File> queryFodderList(String fileId, Integer current, Integer size);
 }

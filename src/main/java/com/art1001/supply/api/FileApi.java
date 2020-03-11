@@ -30,9 +30,9 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -167,6 +168,25 @@ public class FileApi extends BaseController {
     }
 
     /**
+     * 获取素材库子文件信息
+     * @param fileId   文件父id
+     * @param current  当前页
+     * @param size     条数
+     * @return
+     */
+    @GetMapping("fodder/{fileId}")
+    public Result fodderList(@PathVariable String fileId,
+                            @RequestParam(defaultValue = "1") Integer current,
+                            @RequestParam(defaultValue = "10") Integer size) {
+        try {
+            IPage<File> fileList = fileService.queryFodderList(fileId,current,size);
+            return Result.success(fileList);
+        } catch (Exception e){
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
      * 获取文件树
      * @param fileId
      * @return
@@ -192,6 +212,24 @@ public class FileApi extends BaseController {
             FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
             fileTrees.add(trees.size()+1,userRoot);
         }
+        return Result.success(fileTrees);
+    }
+
+    /**
+     * 获取素材库文件树
+     * @return
+     */
+    @GetMapping("/fodderTree")
+    public Result<List<FileTree>> getFodderTree(){
+        //素材库id
+        String fileId="ef6ba5f0e3584e58a8cc0b2d28286c93";
+        List<FileTree> fileTrees = new ArrayList<>();
+        FileTree root = new FileTree(fileId,"0","素材库",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",1);
+        fileTrees.add(0,root);
+        //查询素材库下的文件夹
+        List<FileTree> trees = fileService.querySubFileList(fileId);
+        fileTrees.addAll(trees);
+        System.out.println("素材库的子文件夹共"+fileTrees.size()+"个");
         return Result.success(fileTrees);
     }
 
@@ -708,7 +746,7 @@ public class FileApi extends BaseController {
 
     /**
      * 移动文件
-     * @param fileIds  文件id数组
+     * @param fileId  文件id
      * @param folderId 目标文件夹id
      */
     @Push(value = PushType.C12,type = 2)
@@ -740,7 +778,7 @@ public class FileApi extends BaseController {
 
     /**
      * 复制文件
-     * @param fileIds  多个文件id
+     * @param fileId  文件id
      * @param folderId 目标文件夹id
      */
     @Push(value = PushType.C10,type = 1)

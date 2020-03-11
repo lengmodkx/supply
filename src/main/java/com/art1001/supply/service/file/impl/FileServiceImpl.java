@@ -24,6 +24,7 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ObjectsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
@@ -123,6 +124,28 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             childFile.add(file);
         }
         return childFile;
+    }
+
+   /*  获取素材库树状图数据
+    *
+    **/
+    @Override
+    public IPage<File> queryFodderList(String fileId,Integer current,Integer size) {
+        Page<File> filePage = new Page<>(current,size);
+        File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
+        IPage<File> fileById=null;
+        if (isRoot.getCatalog()==0){
+             fileById = fileMapper.selectPage(filePage, new QueryWrapper<File>().eq("file_id", fileId));
+        }else{
+             fileById = fileMapper.selectPage(null,new QueryWrapper<File>().eq("file_id", fileId));
+        }
+        //List<File> childFile = fileMapper.findChildFile(fileId);
+        /*if(isRoot.getLevel()==0){
+            String userId = ShiroAuthenticationManager.getUserId();
+            File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
+            childFile.add(file);
+        }*/
+        return fileById;
     }
 
     /**
@@ -1145,10 +1168,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             List<File> files = fileService.seachByName(fileName, null);
             return  Lists.newArrayList(files);
         }*/
-        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
+        ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
+        if (files.size()==0 ){
             return null;
         }
-        return Lists.newArrayList(byFileNameOrTagNameFiles);
+        return files;
     }
 
     @Override
