@@ -4,6 +4,8 @@ import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户角色映射表 服务类
@@ -45,4 +47,11 @@ public interface ProRoleUserService extends IService<ProRoleUser> {
      * @return 角色信息
      */
     ProRole getRoleOnOrgForUser(String projectId, String userId);
+
+    /**
+     * 获取角色为（roleId）的用户id列表
+     * @param roleId 角色id
+     * @return 用户id列表
+     */
+    List<String> getRoleUserIdListByRoleId(Integer roleId);
 }

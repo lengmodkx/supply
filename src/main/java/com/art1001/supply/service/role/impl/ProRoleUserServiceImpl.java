@@ -11,10 +11,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -78,5 +82,20 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         Optional.ofNullable(proRoleUser).orElseThrow(() -> new ServiceException("用户在企业中没有角色!"));
 
         return proRoleService.getById(proRoleUser.getRoleId());
+    }
+
+    @Override
+    public List<String> getRoleUserIdListByRoleId(Integer roleId) {
+        ValidatedUtil.filterNullParam(roleId);
+
+        LambdaQueryWrapper<ProRoleUser> eq = new QueryWrapper<ProRoleUser>().lambda()
+                .eq(ProRoleUser::getRoleId, roleId);
+
+        List<ProRoleUser> proRoleUserList = this.list(eq);
+        if(CollectionUtils.isEmpty(proRoleUserList)){
+            return new LinkedList<>();
+        }
+
+        return proRoleUserList.stream().map(ProRoleUser::getUId).collect(Collectors.toList());
     }
 }

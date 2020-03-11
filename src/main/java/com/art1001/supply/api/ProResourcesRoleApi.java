@@ -66,12 +66,8 @@ public class ProResourcesRoleApi extends BaseController {
             return error("roleId角色不存在!");
         }
 
-
-        if(proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), resources) <= 0) {
-            jsonObject.put("result", 0);
-        } else {
-            jsonObject.put("result",1);
-        }
+        proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), resources);
+        jsonObject.put("result",1);
         return jsonObject;
     }
 

@@ -49,7 +49,13 @@ public interface ProResourcesRoleService extends IService<ProResourcesRole> {
      * @param resources 资源id
      * @updateInfo 暂无
      * @date 2019/6/26 11:00
-     * @return 是否成功
      */
-    Integer distributionRoleResource(Integer roleId, String resources);
+    void distributionRoleResource(Integer roleId, String resources);
+
+    /**
+     * 根据角色id 获取对应的权限id列表
+     * @param roleId 角色id
+     * @return 权限id列表
+     */
+    List<String> getResourceIdsByRoleId(Integer roleId);
 }
