@@ -30,6 +30,7 @@
 				news_from_user,
 				news_to_user,
 				news_remind,
+				is_mention,
 				news_type,
 				news_count,
 				create_time,
@@ -207,6 +208,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="isMention != null ">
+				is_mention = #{isMention},
 			</if>
 		</set>
 

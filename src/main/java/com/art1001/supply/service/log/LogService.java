@@ -1,6 +1,7 @@
 package com.art1001.supply.service.log;
 
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.log.LogSendParam;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -46,4 +47,11 @@ public interface LogService extends IService<Log> {
 	 * @return 剩余消息的数据
 	 */
 	List<Log> getSurplusMsg(String publicId, Integer surpluscount);
+
+	/**
+	 * 评论,发送消息
+	 * @param logSendParam 消息参数
+	 * @return 消息信息
+	 */
+    Log sendChat(LogSendParam logSendParam);
 }

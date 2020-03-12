@@ -105,7 +105,12 @@ public class UserNews extends Model<UserNews> {
 	 */
 	private UserEntity newsFromUser;
 
-	public UserNews(String newsId, String newsName, String newsContent, String newsPublicId, Integer newsHandle, String newsFromUserId, String newsToUserId, String newsType, Integer newsCount, Long createTime, Long updateTime) {
+	/**
+	 * 是否是@
+	 */
+	private Boolean isMention;
+
+	public UserNews(String newsId, String newsName, String newsContent, String newsPublicId, Integer newsHandle, String newsFromUserId, String newsToUserId, String newsType, Integer newsCount, Long createTime, Long updateTime, Boolean isMention) {
 		this.newsId = newsId;
 		this.newsName = newsName;
 		this.newsContent = newsContent;
@@ -117,6 +122,7 @@ public class UserNews extends Model<UserNews> {
 		this.newsCount = newsCount;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
+		this.isMention = isMention;
 	}
 
 	public UserNews() {

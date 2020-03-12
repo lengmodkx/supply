@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,12 +37,15 @@ public class Log extends Model<Log> {
 	/**
 	 * 任务，分享，日程，文件
 	 */
+	@NotNull(message = "publicId不能为空")
 	private String publicId;
 
 	/**
 	 * 项目id
 	 */
+	@NotNull(message = "项目不能为空")
 	private String projectId;
+
 	/**
 	 * 用户id
 	 */
@@ -64,6 +68,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 内容
 	 */
+	@NotNull(message = "发送内容不能为空")
 	private String content;
 
 	/**
@@ -82,6 +87,11 @@ public class Log extends Model<Log> {
 	 */
 	@TableField(exist = false)
 	private String dateStr;
+
+	/**
+	 * 被@的用户id (逗号隔开)
+	 */
+	private String mentions;
 
 	@Override
 	protected Serializable pkVal() {

@@ -753,7 +753,7 @@ public class  TaskApi extends BaseController {
             taskService.updateById(task);
 
             String[] taskIdList = taskUids.split(",");
-            userNewsService.saveUserNews(taskIdList ,taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName());
+            userNewsService.saveUserNews(taskIdList ,taskId, Constants.TASK,ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName(), null);
 
 //            //推送微信小程序消息给多个用户
 //            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.updateTaskJoin();

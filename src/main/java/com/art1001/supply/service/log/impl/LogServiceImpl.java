@@ -1,7 +1,9 @@
 package com.art1001.supply.service.log.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.application.assembler.LogAssembler;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.log.LogSendParam;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
@@ -11,12 +13,14 @@ import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.locationtech.spatial4j.io.ShapeIO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -35,6 +39,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	@Resource
 	private UserService userService;
 
+	@Resource
+	private LogAssembler logAssembler;
 	/**
 	 * 保存数据
 	 *
@@ -102,5 +108,20 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 		List<Log> logs = logMapper.selectSurplusMsg(publicId, surpluscount);
 		Collections.reverse(logs);
 		return logs;
+	}
+
+	@Override
+	public Log sendChat(LogSendParam logSendParam) {
+		UserEntity byId = userService.getById(ShiroAuthenticationManager.getUserId());
+		Log log = logAssembler.logSendParamTransFormLog(logSendParam);
+		log.setMemberName(byId.getUserName());
+		log.setMemberImg(byId.getImage());
+
+		if(CollectionUtils.isNotEmpty(logSendParam.getMentionIdList())){
+			log.setMentions(String.join(",", logSendParam.getMentionIdList()));
+		}
+
+		this.save(log);
+		return log;
 	}
 }
