@@ -65,16 +65,6 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     private TagService tagService;
 
     /**
-     * 移入回收站的动作标识
-     */
-    private final String MOVE = "move";
-
-    /**
-     * 恢复的动作标识
-     */
-    private final String RECOVERY = "recovery";
-
-    /**
      * 获取项目中回收站的指定类型的信息
      * @param projectId 项目id
      * @param type 类型
@@ -111,11 +101,11 @@ public class RecycleBinServiceImpl implements RecycleBinService {
 
         AbstractRecycleBin abstractRecycleBin = SpringContextUtil.getBean(beanName, AbstractRecycleBin.class);
 
-        if(MOVE.equals(recycleParamsDto.getAction())) {
+        if(Constants.MOVE.equals(recycleParamsDto.getAction())) {
             abstractRecycleBin.moveToRecycleBin(recycleParamsDto);
         }
 
-        if(RECOVERY.equals(recycleParamsDto.getAction())){
+        if(Constants.RECOVERY.equals(recycleParamsDto.getAction())){
             abstractRecycleBin.recoveryItem(recycleParamsDto);
         }
 

@@ -1,36 +1,10 @@
 package com.art1001.supply.service.recycle;
 
 /**
- * @author heshaohua
- * @date 2020年03月12日 11:14:00
- * 移入回收站/恢复信息的业务类名称枚举
+ * @author shaohua
+ * @date 2020/3/12 23:43
  */
-public enum RecycleBinImplNameEnum {
-
-    /**
-     * 任务回收站的业务实例名称
-     */
-    TaskRecycleBin("task", "taskRecycleBinImpl"),
-
-    /**
-     * 文件回收站的业务实例名称
-     */
-    FileRecycleBin("file", "fileRecycleBinImpl"),
-
-    /**
-     * 分享回收站的业务实例名称
-     */
-    ShareRecycleBin("share", "shareRecycleBinImp"),
-
-    /**
-     * 日程回收站的业务实例名称
-     */
-    ScheduleRecycleBin("schedule", "scheduleRecycleBinImpl"),
-
-    /**
-     * 标签回收站的业务实例名称
-     */
-    TagRecycleBin("tag", "tagRecycleBinImpl"),
+public enum RecycleBinParamCheckEnum {
 
     /**
      * 检查任务参数的实例名称
@@ -91,7 +65,7 @@ public enum RecycleBinImplNameEnum {
      * @return 实例名称
      */
     public static String getBeanName(String code){
-        for (RecycleBinImplNameEnum value : values()) {
+        for (RecycleBinParamCheckEnum value : values()) {
             if(value.getCode().equals(code)){
                 return value.getName();
             }
@@ -100,7 +74,7 @@ public enum RecycleBinImplNameEnum {
     }
 
 
-    RecycleBinImplNameEnum(String code, String name) {
+    RecycleBinParamCheckEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }

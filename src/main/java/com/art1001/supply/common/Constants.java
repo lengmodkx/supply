@@ -78,4 +78,16 @@ public class Constants {
 
     public static final String USER_INFO = "userInfo:";
 
+
+    //===================================================== 回收站模块 ==============================================
+
+    /**
+     * 移入回收站的动作标识
+     */
+    public static final String MOVE = "move";
+
+    /**
+     * 恢复的动作标识
+     */
+    public static final String RECOVERY = "recovery";
 }
