@@ -26,6 +26,6 @@ public interface RecycleBinService {
      * @date 2019/6/5 11:03
      * @return 结果
      */
-    void recovery(RecycleBinParamDTO recycleParams);
+    void moveOrRecovery(RecycleBinParamDTO recycleParams);
 
 }

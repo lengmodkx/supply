@@ -109,7 +109,7 @@ public class Interceptor implements HandlerInterceptor {
             jsonObject.put("result",203);
             PrintWriter writer = response.getWriter();
             writer.print(jsonObject.toJSONString());
-            writer.flush();
+            writer.close();
             return false;
         }
         return true;

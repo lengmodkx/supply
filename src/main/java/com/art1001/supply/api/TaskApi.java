@@ -850,7 +850,7 @@ public class  TaskApi extends BaseController {
     /**
      * 移到回收站
      * @param taskId 任务id
-     * @return
+     * @returnF
      */
     @Push(value = PushType.A17,type = 3)
     @PutMapping("/{taskId}/recyclebin")

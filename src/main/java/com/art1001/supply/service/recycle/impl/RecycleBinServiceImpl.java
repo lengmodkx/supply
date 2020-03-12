@@ -4,13 +4,18 @@ import com.art1001.supply.api.request.RecycleBinParamDTO;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.recycle.AbstractRecycleBin;
+import com.art1001.supply.service.recycle.RecycleBinImplNameEnum;
 import com.art1001.supply.service.recycle.RecycleBinService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.util.SpringContextUtil;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -60,6 +65,16 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     private TagService tagService;
 
     /**
+     * 移入回收站的动作标识
+     */
+    private final String MOVE = "move";
+
+    /**
+     * 恢复的动作标识
+     */
+    private final String RECOVERY = "recovery";
+
+    /**
      * 获取项目中回收站的指定类型的信息
      * @param projectId 项目id
      * @param type 类型
@@ -91,27 +106,40 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     }
 
     @Override
-    public void recovery(RecycleBinParamDTO recycleParamsDto) {
-        if(Constants.TASK_EN.equals(recycleParamsDto.getPublicType())){
-            taskService.recoveryTask(recycleParamsDto.getPublicId(),
-                    recycleParamsDto.getProjectId(),
-                    recycleParamsDto.getGroupId(),
-                    recycleParamsDto.getMenuId());
-        }
-        if(Constants.FILE_EN.equals(recycleParamsDto.getPublicType())){
-            fileService.recoveryFile(recycleParamsDto.getPublicId());
-        }
-        if(Constants.SHARE_EN.equals(recycleParamsDto.getPublicType())){
-            shareService.recoveryShare(recycleParamsDto.getPublicId());
-        }
-        if(Constants.SCHEDULE_EN.equals(recycleParamsDto.getPublicType())){
-            scheduleService.recoverySchedule(recycleParamsDto.getPublicId());
-        }
-        if(Constants.TAG_EN.equals(recycleParamsDto.getPublicType())){
-            tagService.recoveryTag(recycleParamsDto.getPublicId());
-        }
-        if(Constants.GROUP_EN.equals(recycleParamsDto.getPublicType())){
+    public void moveOrRecovery(RecycleBinParamDTO recycleParamsDto) {
+        String beanName = RecycleBinImplNameEnum.getBeanName(recycleParamsDto.getPublicType());
 
+        AbstractRecycleBin abstractRecycleBin = SpringContextUtil.getBean(beanName, AbstractRecycleBin.class);
+
+        if(MOVE.equals(recycleParamsDto.getAction())) {
+            abstractRecycleBin.moveToRecycleBin(recycleParamsDto);
         }
+
+        if(RECOVERY.equals(recycleParamsDto.getAction())){
+            abstractRecycleBin.recoveryItem(recycleParamsDto);
+        }
+
+//
+//        if(Constants.TASK_EN.equals(recycleParamsDto.getPublicType())){
+//            taskService.recoveryTask(recycleParamsDto.getPublicId(),
+//                    recycleParamsDto.getProjectId(),
+//                    recycleParamsDto.getGroupId(),
+//                    recycleParamsDto.getMenuId());
+//        }
+//        if(Constants.FILE_EN.equals(recycleParamsDto.getPublicType())){
+//            fileService.recoveryFile(recycleParamsDto.getPublicId());
+//        }
+//        if(Constants.SHARE_EN.equals(recycleParamsDto.getPublicType())){
+//            shareService.recoveryShare(recycleParamsDto.getPublicId());
+//        }
+//        if(Constants.SCHEDULE_EN.equals(recycleParamsDto.getPublicType())){
+//            scheduleService.recoverySchedule(recycleParamsDto.getPublicId());
+//        }
+//        if(Constants.TAG_EN.equals(recycleParamsDto.getPublicType())){
+//            tagService.recoveryTag(recycleParamsDto.getPublicId());
+//        }
+//        if(Constants.GROUP_EN.equals(recycleParamsDto.getPublicType())){
+//
+//        }
     }
 }
