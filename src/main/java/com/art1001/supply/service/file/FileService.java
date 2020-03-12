@@ -45,6 +45,7 @@ import java.util.List;
 	 */
 	 void deleteFileById(String id);
 
+	 void saveOssFile(File file);
 
 	 void saveFile(String files,String publicId,String projectId);
 
@@ -77,11 +78,11 @@ import java.util.List;
 
 	/**
 	 * 移动文件
-	 *
+	 * @param projectId 移动之后的项目id
 	 * @param fileIds 源文件id数组
 	 * @param folderId 目标目录id
 	 */
-    void moveFile(String fileId, String folderId);
+    void moveFile(String projectId,String fileIds, String folderId);
 
     /**
      * 获取上级文件路径
@@ -409,7 +410,7 @@ import java.util.List;
      * @date 2019/8/28 10:48
      * @return 是否更新成功
      */
-    Integer updateFileName(String fileId, String fileName);
+    File updateFileName(String fileId, String fileName);
 
     Integer updateDownloadCount(String fileId);
 

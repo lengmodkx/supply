@@ -31,7 +31,7 @@
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
-		<collection property="users" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
 		<!--查询标签-->
 		<collection property="tagList" column="file_id" ofType="com.art1001.supply.entity.tag.Tag">
 			<id property="tagId" column="tag_id"/>
@@ -296,8 +296,7 @@
 	</select>
 
 	<update id="moveFile" parameterType="java.util.Map">
-		update prm_file set parent_id = #{folderId}
-		where file_id = #{fileId}
+		update prm_file set parent_id = #{folderId},project_id = #{projectId} where file_id = #{fileId}
 	</update>
 
 	<update id="moveToRecycleBin" parameterType="java.lang.String">

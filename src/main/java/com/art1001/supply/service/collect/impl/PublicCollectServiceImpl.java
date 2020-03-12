@@ -139,7 +139,7 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 	 */
 	@Override
 	public boolean isCollItem(String publicId) {
-		return publicCollectMapper.isCollItem(publicId,ShiroAuthenticationManager.getUserId()) > 0 ? false : true;
+		return publicCollectMapper.isCollItem(publicId, ShiroAuthenticationManager.getUserId()) > 0;
 	}
 
 	/**

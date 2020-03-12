@@ -43,21 +43,22 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	 */
 	@Override
 	public Log saveLog(String publicId,String content,int logFlag){
+		String userId = ShiroAuthenticationManager.getUserId();
+		UserEntity userEntity = userService.findById(userId);
 		Log log = new Log();
 		//设置logId
 		log.setId(IdGen.uuid());
 		//0:日志 1:聊天评论
 		log.setLogType(0);
-		log.setContent(ShiroAuthenticationManager.getUserEntity().getUserName() + " " + content);
+		log.setContent(userEntity.getUserName() + " " + content);
 		//哪个用户操作产生的日志
-		log.setMemberId(ShiroAuthenticationManager.getUserId());
+		log.setMemberId(userId);
 		//对哪个信息的操作
 		log.setPublicId(publicId);
 		//创建时间
 		log.setCreateTime(System.currentTimeMillis());
 		logMapper.insert(log);
-		Log returnLog = logMapper.findLogById(log.getId());
-		return returnLog;
+		return logMapper.findLogById(log.getId());
 	}
 
 	/**
