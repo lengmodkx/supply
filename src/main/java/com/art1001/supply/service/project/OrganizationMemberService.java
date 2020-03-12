@@ -134,4 +134,11 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 */
 	void removeMemberByOrgId(String orgId);
 
+	/**
+	 * 查询userId的用户是否是orgId企业的拥有者
+	 * @param orgId 企业id
+	 * @param userId 用户id
+	 * @return 是否是拥有者
+	 */
+    Boolean checkUserIdIsOrgMaster(String orgId, String userId);
 }
