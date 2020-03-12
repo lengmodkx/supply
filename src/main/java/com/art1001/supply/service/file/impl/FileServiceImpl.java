@@ -174,6 +174,21 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id",fileId));
     }
 
+    @Override
+    public void saveOssFile(File file) {
+        //存库
+        save(file);
+        //写入版本库
+        UserEntity userEntity = userService.findById(file.getMemberId());
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setIsMaster(1);
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersionService.save(fileVersion);
+        //写入日志
+        logService.saveLog(file.getFileId(),"上传了文件",2);
+    }
+
 
     /**
      * 保存文件--文件在前端直接传oss
@@ -339,46 +354,32 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                     iterator.remove();
                 }
             }
-
-            if(file.getFilePrivacy()==2){
-                if(!file.getMemberId().equals(userId)){
-                    iterator.remove();
-                }
-            }
         }
-//        //此处判断parentId代表的文件夹是否是该项目的根目录如果是根目录则需要在childFile中添加一条素材库的数据
-//        String currFileIdParentId = this.getFileParentId(parentId);
-//        if(Stringer.isNotNullOrEmpty(currFileIdParentId)){
-//            //校验是否是项目文件根目录
-//            boolean isProjectRootFolder = currFileIdParentId.equals(Constants.ZERO);
-//            if(isProjectRootFolder){
-//                File materialBase = this.getMaterialBase();
-//                childFile.add(0, materialBase);
-//            }
-//        }
         return childFile;
     }
 
     /**
      * 移动文件
+     * @param projectId 移动之后的项目Id
      * @param fileId   源文件id数组
      * @param folderId 目标目录id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void moveFile(String fileId, String folderId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("fileId", fileId);
-        map.put("folderId", folderId);
-        fileMapper.moveFile(map);
-        //将更改保存到elasticSearch
-        if (fileId!=null){
+    public void moveFile(String projectId,String fileId, String folderId) {
+        Arrays.asList(fileId.split(",")).forEach(v->{
+            Map<String, Object> map = new HashMap<>();
+            map.put("fileId", fileId);
+            map.put("folderId", folderId);
+            map.put("projectId",projectId);
+            fileMapper.moveFile(map);
+
             File file=new File();
             file.setFileId(fileId);
             file.setParentId(folderId);
+            file.setProjectId(projectId);
             fileRepository.save(file);
-            System.out.println(file.getFileName()+" 文件ES上传成功");
-        }
+        });
     }
 
     /**
@@ -434,7 +435,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         String joinId = fileService.findJoinId(fileId);
 
         //log日志
-        Log log = new Log();
         StringBuilder logContent = new StringBuilder();
 
         //将数组转换成集合
@@ -870,15 +870,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public Integer updateFileName(String fileId, String fileName) {
-        if(this.checkIsExist(fileId)){
-            File file = new File();
-            file.setFileId(fileId);
-            file.setFileName(fileName);
-            file.setUpdateTime(System.currentTimeMillis());
-            return updateById(file) ? 1:0;
-        }
-        return -1;
+    public File updateFileName(String fileId, String fileName) {
+        File file = new File();
+        file.setFileId(fileId);
+        file.setFileName(fileName);
+        file.setUpdateTime(System.currentTimeMillis());
+        updateById(file);
+        return getOne(new QueryWrapper<File>().eq("file_id", fileId));
     }
 
     /**

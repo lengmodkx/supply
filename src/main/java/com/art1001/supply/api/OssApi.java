@@ -14,6 +14,7 @@ import com.art1001.supply.entity.OssInfo;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
@@ -40,6 +41,9 @@ public class OssApi {
 
     @Resource
     private NoticeService noticeService;
+
+    @Resource
+    LogService logService;
     /**
      * 前端获取直传文件到阿里云oss的签名
      * @param dir
@@ -103,9 +107,9 @@ public class OssApi {
                 file.setFileUids(object.getString("user_id"));
                 file.setCreateTime(System.currentTimeMillis());
                 file.setLevel(object.getInteger("level"));
-                fileService.save(file);
-                AliyunOss.response(request, response, "{\"Status\":\"OK\"}", HttpServletResponse.SC_OK);
+                fileService.saveOssFile(file);
                 noticeService.pushMsg(object.getString("project_id"),"C2",object.getString("parent_id"));
+                AliyunOss.response(request, response, "{\"Status\":\"OK\"}", HttpServletResponse.SC_OK);
             }
             else{
                 AliyunOss.response(request, response, "{\"Status\":\"verdify not ok\"}", HttpServletResponse.SC_BAD_REQUEST);

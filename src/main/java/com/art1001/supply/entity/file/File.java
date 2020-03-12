@@ -140,7 +140,7 @@ public class File extends Model<File> {
      * 文件参与者信息
      */
     @TableField(exist = false)
-    private List<UserEntity> users;
+    private List<UserEntity> joinInfo;
 
     /**
      * 文件操作日志
@@ -232,6 +232,23 @@ public class File extends Model<File> {
      * 文件隐私模式 0所有成员可见，1参与者可见
      */
     private Integer filePrivacy;
+
+    /**
+     * 文件的版本信息
+     */
+    @TableField(exist = false)
+    private List<FileVersion> versions;
+    /**
+     * 文件是否被收藏
+     */
+    @TableField(exist = false)
+    private Boolean isCollect;
+
+    /**
+     * 文件日志
+     */
+    @TableField(exist = false)
+    private List<Log> logs;
     @Override
     protected Serializable pkVal() {
         return this.fileId;

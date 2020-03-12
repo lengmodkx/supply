@@ -226,11 +226,14 @@ public class FileApi extends BaseController {
     public JSONObject getProjectAllFolder(@PathVariable String projectId){
         try {
             File one = fileService.getOne(new QueryWrapper<File>().select("file_id").eq("project_id", projectId).eq("parent_id", "0"));
-            if(one == null){
-                return error("该项目不存在!");
-            }
+            List<FileTree> fileTrees = new ArrayList<>();
+            FileTree root = new FileTree(one.getFileId(),"0","项目文件夹",true,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png",1);
+            fileTrees.add(0,root);
+            List<FileTree> trees = fileService.querySubFileList(one.getFileId());
+            fileTrees.addAll(trees);
+
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("data",fileService.getProjectAllFolder(one.getFileId()));
+            jsonObject.put("data",fileTrees);
             jsonObject.put("result",1);
             return jsonObject;
            // return success(fileService.getProjectAllFolder(one.getFileId()));
@@ -303,21 +306,13 @@ public class FileApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = fileService.findFileById(fileId);
-            if(file == null){
-                jsonObject.put("msg","文件不存在!");
-                jsonObject.put("result",1);
-                return jsonObject;
-            }
-            List<FileVersion> fileList = fileVersionService.list(new QueryWrapper<FileVersion>().eq("file_id",fileId));
+            List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("file_id",fileId));
+            file.setVersions(versions);
+            file.setLogs(logService.initLog(fileId));
+            file.setIsCollect(publicCollectService.isCollItem(file.getFileId()));
             //设置关联信息
             bindingService.setBindingInfo(fileId,file,null,null,null);
             jsonObject.put("data",file);
-            jsonObject.put("version",fileList);
-            //查询出任务的关联信息
-            //jsonObject.put("bindings",bindingService.list(new QueryWrapper<Binding>().eq("public_id", fileId)));
-            //查询该文件有没有被当前用户收藏
-            jsonObject.put("isCollect",publicCollectService.isCollItem(file.getFileId()));
-            jsonObject.put("logs",logService.initLog(fileId));
             jsonObject.put("result",1);
         } catch (Exception e){
             log.error("系统异常:",e);
@@ -345,7 +340,7 @@ public class FileApi extends BaseController {
            fileService.createFolder(projectId,parentId,folderName);
             jsonObject.put("result",1);
             jsonObject.put("msgId",projectId);
-//            jsonObject.put("data", fileService.queryFileList(parentId, 1, 9999));
+            jsonObject.put("data", parentId);
             return jsonObject;
         } catch (ServiceException e){
             log.error("文件夹已存在!",e);
@@ -727,16 +722,16 @@ public class FileApi extends BaseController {
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
+            @RequestParam String projectId,
             @RequestParam String fileId,
             @RequestParam String toProjectId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.moveFile(fileId, folderId);
+            fileService.moveFile(toProjectId,fileId, folderId);
             Map<String,Object> maps = new HashMap<>();
-            String projectId = getProjectId(fileId);
             if(Objects.equals(toProjectId,projectId)){
-                maps.put(toProjectId,fileService.listByIds(Arrays.asList(fileId)));
+                maps.put(toProjectId,folderId);
             } else{
                 maps.put(projectId,fileId);
                 maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileId)));
@@ -759,7 +754,8 @@ public class FileApi extends BaseController {
     @PostMapping("/copy")
     public JSONObject copyFile(
             @RequestParam(value = "fileId") String fileId,
-            @RequestParam(value = "folderId") String folderId
+            @RequestParam(value = "folderId") String folderId,
+            @RequestParam(value = "projectId") String projectId
     ) {
         JSONObject jsonObject = new JSONObject();
         List<File> files = new ArrayList<File>();
@@ -767,7 +763,7 @@ public class FileApi extends BaseController {
             // 获取源文件
             File file = fileService.findFileById(fileId);
             files.add(file);
-            jsonObject.put("msgId", file.getProjectId());
+            jsonObject.put("msgId", projectId);
             //文件夹处理
             if (file.getCatalog() == 1) {
                 file.setParentId(folderId);
@@ -1011,11 +1007,8 @@ public class FileApi extends BaseController {
                                      @PathVariable(value = "fileId") @NotBlank(message = "fileId不能为空！")String fileId){
         JSONObject jsonObject = new JSONObject();
         try {
-            Integer result = fileService.updateFileName(fileId,fileName);
-            if(result == -1){
-                return error("文件不存在！");
-            }
-            jsonObject.put("result",result);
+            fileService.updateFileName(fileId,fileName);
+            jsonObject.put("result",1);
             jsonObject.put("msgId",getProjectId(fileId));
             jsonObject.put("data",new JSONObject().fluentPut("fileName",fileName).fluentPut("fileId",fileId));
         }catch (Exception e){
