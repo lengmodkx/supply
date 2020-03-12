@@ -1,14 +1,12 @@
 package com.art1001.supply.service.recycle;
 
+import com.art1001.supply.api.request.RecycleBinParamDTO;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.recycle.RecycleParams;
 
 import java.util.List;
 
 /**
- * @Description 回收站接口
- * @Date:2019/5/14 10:51
- * @Author ddm
+ * @author heshaohua
  **/
 public interface RecycleBinService {
 
@@ -24,12 +22,10 @@ public interface RecycleBinService {
     /**
      * 恢复项目回收站中的信息
      * @author heShaoHua
-     * @describe 暂无
      * @param recycleParams 需要恢复的信息参数
-     * @updateInfo 暂无
      * @date 2019/6/5 11:03
      * @return 结果
      */
-    Integer recovery(RecycleParams recycleParams);
+    void recovery(RecycleBinParamDTO recycleParams);
 
 }

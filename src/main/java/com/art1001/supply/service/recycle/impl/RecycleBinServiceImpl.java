@@ -1,8 +1,8 @@
 package com.art1001.supply.service.recycle.impl;
 
+import com.art1001.supply.api.request.RecycleBinParamDTO;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.recycle.RecycleParams;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.recycle.RecycleBinService;
 import com.art1001.supply.service.relation.RelationService;
@@ -91,28 +91,27 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     }
 
     @Override
-    public Integer recovery(RecycleParams recycleParams) {
-        if(Constants.TASK_EN.equals(recycleParams.getPublicType())){
-            taskService.recoveryTask(recycleParams.getPublicId(),
-                    recycleParams.getProjectId(),
-                    recycleParams.getGroupId(),
-                    recycleParams.getMenuId());
+    public void recovery(RecycleBinParamDTO recycleParamsDto) {
+        if(Constants.TASK_EN.equals(recycleParamsDto.getPublicType())){
+            taskService.recoveryTask(recycleParamsDto.getPublicId(),
+                    recycleParamsDto.getProjectId(),
+                    recycleParamsDto.getGroupId(),
+                    recycleParamsDto.getMenuId());
         }
-        if(Constants.FILE_EN.equals(recycleParams.getPublicType())){
-            fileService.recoveryFile(recycleParams.getPublicId());
+        if(Constants.FILE_EN.equals(recycleParamsDto.getPublicType())){
+            fileService.recoveryFile(recycleParamsDto.getPublicId());
         }
-        if(Constants.SHARE_EN.equals(recycleParams.getPublicType())){
-            shareService.recoveryShare(recycleParams.getPublicId());
+        if(Constants.SHARE_EN.equals(recycleParamsDto.getPublicType())){
+            shareService.recoveryShare(recycleParamsDto.getPublicId());
         }
-        if(Constants.SCHEDULE_EN.equals(recycleParams.getPublicType())){
-            scheduleService.recoverySchedule(recycleParams.getPublicId());
+        if(Constants.SCHEDULE_EN.equals(recycleParamsDto.getPublicType())){
+            scheduleService.recoverySchedule(recycleParamsDto.getPublicId());
         }
-        if(Constants.TAG_EN.equals(recycleParams.getPublicType())){
-            tagService.recoveryTag(recycleParams.getPublicId());
+        if(Constants.TAG_EN.equals(recycleParamsDto.getPublicType())){
+            tagService.recoveryTag(recycleParamsDto.getPublicId());
         }
-        if(Constants.GROUP_EN.equals(recycleParams.getPublicType())){
+        if(Constants.GROUP_EN.equals(recycleParamsDto.getPublicType())){
 
         }
-        return 1;
     }
 }
