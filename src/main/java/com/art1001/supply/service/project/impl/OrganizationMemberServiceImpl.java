@@ -9,6 +9,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
@@ -57,6 +58,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Resource
 	private OrganizationMemberService organizationMemberService;
+
+	@Resource
+	private OrganizationService organizationService;
 
 	/**
 	 * 根据企业id获取企业员工
@@ -280,5 +284,28 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 				.lambda().eq(OrganizationMember::getOrganizationId, orgId);
 
 		this.remove(eq);
+	}
+
+	@Override
+	public Boolean checkUserIdIsOrgMaster(String orgId, String userId) {
+		// 该表示为1 代表企业拥有者
+		int label = 1;
+		ValidatedUtil.filterNullParam(orgId, userId);
+
+		if(!organizationService.checkOrgIsExist(orgId)){
+			throw new ServiceException("企业不存在");
+		}
+
+		LambdaQueryWrapper<OrganizationMember> eq = new QueryWrapper<OrganizationMember>().lambda()
+				.eq(OrganizationMember::getOrganizationId, orgId)
+				.eq(OrganizationMember::getMemberId, userId);
+
+		OrganizationMember organizationMember = this.getOne(eq);
+
+		if(organizationMember == null){
+			throw new ServiceException("该用户不在企业中");
+		}
+
+		return organizationMember.getOrganizationLable() == label;
 	}
 }
