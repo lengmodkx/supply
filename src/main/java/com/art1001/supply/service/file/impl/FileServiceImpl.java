@@ -18,16 +18,14 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.FileExt;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.ObjectsUtil;
+import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import com.vividsolutions.jts.util.Assert;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +42,10 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -185,8 +185,58 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         fileVersion.setIsMaster(1);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
+        fileRepository.save(file);
         //写入日志
         logService.saveLog(file.getFileId(),"上传了文件",2);
+    }
+
+    /**
+     * 单个普通文件上传
+     * @param projectId 项目id
+     * @param fileId 文件id
+     * @param multipartFile 文件
+     */
+    @Override
+    public void uploadFile(String projectId, String fileId, MultipartFile multipartFile) {
+        String userId = ShiroAuthenticationManager.getUserId();
+        File originFile = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
+        UserEntity userEntity = userService.findById(userId);
+        // 得到文件名
+        String originalFilename = multipartFile.getOriginalFilename();
+        // 重置文件名
+        assert originalFilename != null;
+        int indexOf = originalFilename.lastIndexOf(".");
+        // 获取后缀名
+        String ext = originalFilename.substring(indexOf).toLowerCase();
+        String fileName = System.currentTimeMillis() + ext;
+        String fileUrl = "upload/file/" + fileName;
+
+        // 写库
+        File file = new File();
+        // 用原本的文件名
+        file.setFileName(originalFilename);
+        file.setExt(ext);
+        file.setProjectId(projectId);
+        file.setFileUrl(fileUrl);
+        if(FileExt.extMap.get("images").contains(ext)){
+            file.setFileThumbnail(fileUrl);
+        }
+        // 得到上传文件的大小
+        long contentLength = multipartFile.getSize();
+        file.setSize(FileUtils.convertFileSize(contentLength));
+        file.setFileUids(originFile.getFileUids());
+        file.setLevel(originFile.getLevel());
+        fileService.save(file);
+//        tagRelationMapper.upda
+        // 修改文件版本
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(file.getFileId());
+        fileVersion.setIsMaster(1);
+        Date time = Calendar.getInstance().getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String format = simpleDateFormat.format(time);
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
+        fileVersionService.save(fileVersion);
     }
 
 

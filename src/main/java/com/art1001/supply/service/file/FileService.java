@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,14 @@ import java.util.List;
 	 void deleteFileById(String id);
 
 	 void saveOssFile(File file);
+
+	/**
+	 * 单个普通文件上传
+	 * @param projectId 项目id
+	 * @param fileId 文件id
+	 * @param multipartFile 文件
+	 */
+	 void uploadFile(String projectId, String fileId, MultipartFile multipartFile);
 
 	 void saveFile(String files,String publicId,String projectId);
 
