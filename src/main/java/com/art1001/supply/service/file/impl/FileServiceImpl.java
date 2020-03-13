@@ -187,7 +187,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         fileVersionService.save(fileVersion);
         fileRepository.save(file);
         //写入日志
-        logService.saveLog(file.getFileId(),"上传了文件",2);
+        Log log = new Log();
+        //设置logId
+        log.setId(IdGen.uuid());
+        //0:日志 1:聊天评论
+        log.setLogType(0);
+        log.setContent(userEntity.getUserName() + " " + "上传了文件");
+        //哪个用户操作产生的日志
+        log.setMemberId(file.getMemberId());
+        //对哪个信息的操作
+        log.setPublicId(file.getFileId());
+        //创建时间
+        log.setCreateTime(System.currentTimeMillis());
+        logService.save(log);
     }
 
     /**
@@ -227,7 +239,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setFileUids(originFile.getFileUids());
         file.setLevel(originFile.getLevel());
         fileService.save(file);
-//        tagRelationMapper.upda
+
         // 修改文件版本
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());

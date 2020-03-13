@@ -694,7 +694,7 @@ public class FileApi extends BaseController {
                 maps.put(toProjectId,folderId);
             } else{
                 maps.put(projectId,fileId);
-                maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileId)));
+                maps.put(toProjectId, folderId);
             }
             jsonObject.put("data",maps);
             jsonObject.put("result", 1);

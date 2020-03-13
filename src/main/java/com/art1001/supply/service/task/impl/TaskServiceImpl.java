@@ -1917,19 +1917,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             throw new ServiceException("项目不存在!");
         }
 
-        List<String> projectAllMemberId = projectMemberService.getProjectAllMemberId(projectId);
-        if(CollectionUtils.isEmpty(projectAllMemberId)){
-            log.info("该项目没有成员信息. [{}]", projectId);
-            return new LinkedList<>();
-        }
+        List<MemberViewResult> groups = new ArrayList<>();
+        List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
+        projectMembers.forEach(v->{
+            MemberViewResult result = new MemberViewResult();
+            result.setUserId(v.getMemberId());
+            result.setUserName(v.getMemberName());
+            result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(),v.getProjectId()));
+            groups.add(result);
+        });
 
-        List<MemberViewResult> memberViewResults = taskMapper.memberView(projectId);
-
-        memberViewResults.add(
-                MemberViewResult.buildExecutor(this.getNotExecutorTaskByProjectId(projectId))
-        );
-
-        return memberViewResults;
+        return groups;
     }
 
     @Override
