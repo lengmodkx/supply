@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -443,7 +444,8 @@ public class FileApi extends BaseController {
     /**
      * 更新普通文件版本
      * @param fileId 文件id
-     * @param fileObj 文件对象
+     * @param projectId 项目id
+     * @param mfile 文件对象
      * @return
      */
     @Log(PushType.C4)
@@ -451,65 +453,23 @@ public class FileApi extends BaseController {
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
             @PathVariable(value = "fileId") String fileId,
-            @RequestParam(value = "fileObj") String fileObj
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam("mfile") MultipartFile mfile
+
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
-            fileVersionService.update(new FileVersion(),new UpdateWrapper<FileVersion>().set("is_master","0").eq("file_id",fileId));
-            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
-
-            JSONObject object1 = JSON.parseObject(fileObj);
-            String files = object1.getString("files");
-
-            JSONObject object = JSON.parseObject(files.substring(1,files.length()-1));
-            String fileName = object.getString("fileName");
-            String fileUrl = object.getString("fileUrl");
-            String size = object.getString("size");
-            String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-            File myFile = new File();
-            // 用原本的文件名
-            myFile.setFileName(fileName);
-            myFile.setLevel(file.getLevel());
-            myFile.setSize(size);
-            myFile.setFileUrl(fileUrl);
-            myFile.setParentId(file.getParentId());
-            myFile.setProjectId(file.getProjectId());
-            myFile.setExt(ext);
-            myFile.setIsModel(0);
-            if(FileExt.extMap.get("images").contains(ext)){
-                myFile.setFileThumbnail(fileUrl);
-            }
-
-            //文件的层级
-            if(StringUtils.isNotEmpty(file.getParentId())){
-                //查询出当前文件夹的level
-                int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",file.getParentId())).getLevel();
-                myFile.setLevel(parentLevel+1);
-            }
-            myFile.setMemberImg(userEntity.getImage());
-            myFile.setMemberName(userEntity.getUserName());
-            myFile.setMemberId(ShiroAuthenticationManager.getUserId());
-            myFile.setFileUids(ShiroAuthenticationManager.getUserId());
-            myFile.setCreateTime(System.currentTimeMillis());
-            myFile.setUpdateTime(System.currentTimeMillis());
-            myFile.setIsModel(0);
-            if(FileExt.extMap.get("images").contains(ext)){
-                myFile.setFileThumbnail(fileUrl);
-            }
-            fileService.save(myFile);
-            //版本历史更新
+            //现将数据库中文件的主版本都置成0，然后再插入主版本
             FileVersion fileVersion = new FileVersion();
-            fileVersion.setFileId(myFile.getFileId());
-            //区分普通文件还是模型文件
+            fileVersion.setFileId(fileId);
             fileVersion.setIsMaster(0);
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-            fileVersionService.save(fileVersion);
+            fileVersionService.updateById(fileVersion);
+
+            fileService.uploadFile(projectId,fileId,mfile);
             // 设置返回数据
             jsonObject.put("msg","更新成功");
             jsonObject.put("result", 1);
-            jsonObject.put("msgId",file.getProjectId());
-            jsonObject.put("data",myFile);
+            jsonObject.put("msgId",projectId);
         } catch (ServiceException e){
             log.error("文件版本更新失败:",e);
             throw new AjaxException(e);
@@ -734,7 +694,7 @@ public class FileApi extends BaseController {
                 maps.put(toProjectId,folderId);
             } else{
                 maps.put(projectId,fileId);
-                maps.put(toProjectId, fileService.listByIds(Arrays.asList(fileId)));
+                maps.put(toProjectId, folderId);
             }
             jsonObject.put("data",maps);
             jsonObject.put("result", 1);

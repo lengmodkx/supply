@@ -108,8 +108,8 @@ public class OssApi {
                 file.setCreateTime(System.currentTimeMillis());
                 file.setLevel(object.getInteger("level"));
                 fileService.saveOssFile(file);
-                noticeService.pushMsg(object.getString("project_id"),"C2",object.getString("parent_id"));
                 AliyunOss.response(request, response, "{\"Status\":\"OK\"}", HttpServletResponse.SC_OK);
+                noticeService.pushMsg(object.getString("project_id"),"C2",object.getString("parent_id"));
             }
             else{
                 AliyunOss.response(request, response, "{\"Status\":\"verdify not ok\"}", HttpServletResponse.SC_BAD_REQUEST);

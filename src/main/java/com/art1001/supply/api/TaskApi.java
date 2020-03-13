@@ -348,7 +348,8 @@ public class  TaskApi extends BaseController {
         try{
             Task task = new Task();
             task.setTaskId(taskId);
-            task.setExecutor(userId);
+            if(StringUtils.isEmpty(userId)) {task.setExecutor("0");}
+            else {task.setExecutor(userId);}
             taskService.updateById(task);
             Task one = taskService.getOne(new QueryWrapper<Task>().lambda().select(Task::getParentId, Task::getTaskId).eq(Task::getTaskId, taskId));
             if(one.getParentId().equals("0")){

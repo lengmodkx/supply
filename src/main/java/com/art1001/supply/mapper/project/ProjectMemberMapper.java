@@ -24,6 +24,7 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
 	 */
 	List<ProjectMember> findByProjectId(@Param("projectId") String projectId);
 
+
 	/**
 	 * 查询成员是否存在于项目中
 	 * @param projectId 项目id
