@@ -1,5 +1,6 @@
 package com.art1001.supply.config.interceptor;
 
+import com.art1001.supply.interceptor.RecycleParamCheckInterceptor;
 import com.art1001.supply.shiro.filter.Interceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +24,13 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
     @Resource
     private Interceptor interceptor;
 
+    @Resource
+    private RecycleParamCheckInterceptor recycleParamCheck;
+
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns("/login","/register","/users/**","/captcha","/code","/forget","/organizations/my_org","/news/count","/oss/callback");
+        registry.addInterceptor(recycleParamCheck).addPathPatterns("/recycle_bin/move_task_rb","/recycle_bin/move_file_rb","/recycle_bin/move_share_rb","/recycle_bin/move_schedule_rb","/recycle_bin/move_tag_rb");
         super.addInterceptors(registry);
     }
 
