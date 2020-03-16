@@ -16,6 +16,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Service;
@@ -168,7 +169,10 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	 * @param content 消息内容
 	 */
 	@Override
-	public void saveUserNews(String[] users, String publicId, String publicType, String content) {
+	public void saveUserNews(String[] users, String publicId,
+							 String publicType, String content,
+							 List<String> mentionList
+	) {
 		String name = "";
 		if(BindingConstants.BINDING_TASK_NAME.equals(publicType)){
 			name = taskService.findTaskNameById(publicId);
@@ -189,15 +193,30 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 		List<String> collect = Arrays.asList(users).stream().distinct().collect(Collectors.toList());
 		users = collect.toArray(new String[collect.size()]);
 		for(int i = 0; i < users.length; i++){
+			String currentUserId = users[i];
 			UserNews userNews = new UserNews();
 			//如果本次循环的id  是当前操作的用户id 则跳过
-			if(users[i].equals(ShiroAuthenticationManager.getUserId())){
+			if(currentUserId.equals(ShiroAuthenticationManager.getUserId())){
 				continue;
+			}
+
+
+			Boolean isMention = false;
+			if(CollectionUtils.isNotEmpty(mentionList)){
+				for (String s : mentionList) {
+					if(s.equals(currentUserId)){
+						isMention = true;
+					}
+				}
 			}
 			//查询该用户有没有该信息的 消息记录 如果没有添加一条 如果有在原来的消息数上 +1
 			int result = userNewsMapper.findUserNewsByPublicId(publicId,users[i]);
 			if(result == 0){
-				 userNews = new UserNews(IdGen.uuid(),name,content,publicId,0,ShiroAuthenticationManager.getUserId(),users[i],publicType,1,System.currentTimeMillis(),System.currentTimeMillis());
+				 userNews = new UserNews(
+				 		IdGen.uuid(),name,content,publicId,0,
+						 ShiroAuthenticationManager.getUserId(),users[i],publicType,
+						 1,System.currentTimeMillis(),System.currentTimeMillis(),isMention
+				 );
 				 userNewsMapper.saveUserNews(userNews);
 			} else{
 				userNews.setNewsContent(content);
@@ -206,6 +225,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 				userNews.setNewsToUserId(users[i]);
 				userNews.setNewsCount(userNewsMapper.findNewsCountByPublicId(publicId,users[i])+1);
 				userNews.setUpdateTime(System.currentTimeMillis());
+				userNews.setIsMention(isMention);
 				userNewsMapper.updateUserNews(userNews);
 			}
 			//查询出该用户的所有未读消息的总条数

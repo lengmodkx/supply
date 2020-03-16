@@ -113,4 +113,6 @@ public interface ShareService extends IService<Share> {
 	 * @return 项目id
 	 */
 	String getProjectIdByShareId(String shareId);
+
+    String[] getJoinAndCreatorId(String publicId);
 }

@@ -28,8 +28,7 @@ public class GroupUserApi extends BaseController {
     private GroupUserService groupUserService;
 
     @PostMapping("/addition_group_user/{groupId}")
-    public JSONObject additionGroupUser(@PathVariable
-                                        @Validated @NotNull(message = "分组id不能为空！") String groupId,
+    public JSONObject additionGroupUser(@PathVariable String groupId,
 
                                         @RequestParam
                                         @Validated @NotNull(message = "用户id不能不空！") String userId){

@@ -91,8 +91,10 @@ public interface UserNewsService extends IService<UserNews> {
 	 * @param publicId 哪条信息的消息
 	 * @param publicType 信息的类型(任务,文件,日程,分享)
 	 * @param content 消息内容
+	 * @param mentions 被@人的id集合
 	 */
-	void saveUserNews(String[] users, String publicId, String publicType, String content);
+	void saveUserNews(String[] users, String publicId, String publicType, String content, List<String> mentions);
+
 
 	/**
 	 * 修改消息的 状态(已读,未读)  并且将消息条数设为0

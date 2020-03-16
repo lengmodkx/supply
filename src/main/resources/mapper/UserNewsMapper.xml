@@ -30,6 +30,7 @@
 				news_from_user,
 				news_to_user,
 				news_remind,
+				is_mention,
 				news_type,
 				news_count,
 				create_time,
@@ -125,6 +126,9 @@
 			<if test="updateTime != null ">
 			update_time,
 			</if>
+			<if test="isMention != null ">
+				is_mention,
+			</if>
 		</trim>
 
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -164,6 +168,9 @@
 			</if>
 			<if test="updateTime != null ">
 				#{updateTime},
+			</if>
+			<if test="isMention != null ">
+				#{isMention},
 			</if>
 		</trim>
 
@@ -207,6 +214,9 @@
 			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
+			</if>
+			<if test="isMention != null ">
+				is_mention = #{isMention},
 			</if>
 		</set>
 

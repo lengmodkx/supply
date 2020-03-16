@@ -355,12 +355,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 content.append(user.getUserName()).append(",");
             }
             //保存被移除的参与者的消息信息
-            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName());
+            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName(), null);
         }
 
         List<String> subtract2 = ListUtils.subtract(list2, list1);
         //保存被添加进来的参与者的消息信息
-        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName());
+        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName(), null);
         if(subtract2 != null && subtract2.size() > 0){
             content.append(TaskLogFunction.C.getName());
             for (Object aSubtract2 : subtract2) {
@@ -706,7 +706,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
         //保存被移除的参与者的消息信息
-        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName);
+        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName, null);
         return logService.saveLog(task.getTaskId(),content.toString(),1);
     }
 

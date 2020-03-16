@@ -6,17 +6,24 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.log.LogSendParam;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 
 /**
  * 日志消息api
@@ -42,43 +49,61 @@ public class LogApi extends BaseController {
     private TaskService taskService;
 
     @Resource
+    private FileService fileService;
+
+    @Resource
+    private ShareService shareService;
+
+    @Resource
+    private ScheduleService scheduleService;
+
+    @Resource
     private UserService userService;
 
     /**
      * 发送消息
-     * @param publicId 公共id
-     * @param projectId 项目id
-     * @param content 发送内容
-     * @param publicType 是哪个模块的消息(task,file,share,schedule)
+     * @param logSendParam 消息参数
      * @return 是否发送成功
      */
     @Push(value = PushType.F1)
     @PostMapping("/chat")
-    public JSONObject sendChat(@RequestParam String publicId,@RequestParam String projectId,@RequestParam String content,@RequestParam String publicType){
+    public JSONObject sendChat(@Validated @RequestBody LogSendParam logSendParam){
         JSONObject jsonObject = new JSONObject();
         try {
             //校验publicType合法性
-            msgTypeCheck(publicType);
-            UserEntity byId = userService.getById(ShiroAuthenticationManager.getUserId());
-            Log log = new Log();
-            log.setPublicId(publicId);
-            log.setProjectId(projectId);
-            log.setLogType(1);
-            log.setContent(content);
-            log.setCreateTime(System.currentTimeMillis());
-            log.setMemberId(ShiroAuthenticationManager.getUserId());
-            log.setMemberName(byId.getUserName());
-            if(logService.save(log)) {
-                String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(publicId);
-                if(taskJoinAndExecutorId != null && taskJoinAndExecutorId.length > 0){
-                    userNewsService.saveUserNews(taskJoinAndExecutorId,publicId,publicType,byId.getUserName()+": "+ content);
-                }
-                log.setMemberImg(byId.getImage());
-                jsonObject.put("data",new JSONObject().fluentPut("log",log).fluentPut("type",publicType));
-                jsonObject.put("msgId",projectId);
-                jsonObject.put("result",1);
-                jsonObject.put("msg","发送成功!");
-                return jsonObject;
+            msgTypeCheck(logSendParam.getPublicType());
+            Log log = logService.sendChat(logSendParam);
+
+            String[] joinAndExecutorId = new String[0];
+
+            if(Constants.TASK.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = taskService.getTaskJoinAndExecutorId(logSendParam.getPublicId());
+            }
+            if(Constants.FILE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = fileService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
+            if(Constants.SCHEDULE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = scheduleService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
+            if(Constants.SHARE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = shareService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
+
+            if(CollectionUtils.isEmpty(logSendParam.getMentionIdList())){
+                logSendParam.setMentionIdList(new ArrayList<>());
+            }
+            if(joinAndExecutorId != null && joinAndExecutorId.length > 0){
+                userNewsService.saveUserNews(
+                        joinAndExecutorId,logSendParam.getPublicId(),
+                        logSendParam.getPublicType(), log.getMemberName() +": "+ logSendParam.getContent(),
+                        logSendParam.getMentionIdList()
+                );
+            log.setMemberImg(log.getMemberImg());
+            jsonObject.put("data",new JSONObject().fluentPut("log",log).fluentPut("type",logSendParam.getPublicType()));
+            jsonObject.put("msgId",logSendParam.getProjectId());
+            jsonObject.put("result",1);
+            jsonObject.put("msg","发送成功!");
+            return jsonObject;
             } else{
                 return error("消息发送失败!");
             }

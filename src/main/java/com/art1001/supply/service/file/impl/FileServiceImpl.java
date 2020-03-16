@@ -1258,4 +1258,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             }
         });
     }
+
+    @Override
+    public String[] getJoinAndCreatorId(String fileId) {
+        LambdaQueryWrapper<File> select = new QueryWrapper<File>().lambda()
+                .select(File::getFileUids, File::getMemberId)
+                .eq(File::getFileId, fileId);
+
+        File one = this.getOne(select);
+        if(one != null){
+            if(one.getFileUids() != null){
+                StringBuilder userIds = new StringBuilder(one.getFileUids());
+                if(StringUtils.isNotEmpty(one.getMemberId())){
+                    userIds.append(",").append(one.getMemberId());
+                }
+                return userIds.toString().split(",");
+            } else if(one.getMemberId() != null){
+                return new String[]{one.getMemberId()};
+            }
+        }
+        return new String[0];
+    }
 }

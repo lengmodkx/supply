@@ -112,7 +112,7 @@ public class PushAspect extends BaseController {
             if(Constants.TASK.equals(object.getString("publicType"))){
                 String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
                 if(ids != null && ids.length > 0){
-                    userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent());
+                    userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent(), null);
                 }
             }
             if(Constants.PROJECT.equals(object.getString("publicType"))){
