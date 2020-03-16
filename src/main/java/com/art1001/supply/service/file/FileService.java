@@ -468,4 +468,11 @@ import java.util.List;
      * @param size 每页多少条数据
      */
     IPage<File> queryFodderList(String fileId, Integer current, Integer size);
+
+	/**
+	 * 获取文件参与者和创建者id数组
+	 * @param fileId 文件id
+	 * @return
+	 */
+	String[] getJoinAndCreatorId(String fileId);
 }

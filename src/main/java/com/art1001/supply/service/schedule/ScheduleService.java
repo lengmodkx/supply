@@ -259,4 +259,6 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return 项目id
 	 */
 	String getProjectId(String scheduleId);
+
+    String[] getJoinAndCreatorId(String publicId);
 }

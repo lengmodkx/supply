@@ -2,6 +2,7 @@ package com.art1001.supply.service.schedule.impl;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
@@ -568,5 +569,26 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         LambdaQueryWrapper<Schedule> select = new QueryWrapper<Schedule>().lambda().eq(Schedule::getScheduleId, scheduleId).select(Schedule::getProjectId);
         String projectId = scheduleMapper.selectOne(select).getProjectId();
         return StringUtils.isNotEmpty(projectId) ? null : projectId;
+    }
+
+    @Override
+    public String[] getJoinAndCreatorId(String publicId) {
+        LambdaQueryWrapper<Schedule> select = new QueryWrapper<Schedule>().lambda()
+                .select(Schedule::getMemberIds, Schedule::getMemberId)
+                .eq(Schedule::getScheduleId, publicId);
+
+        Schedule one = this.getOne(select);
+        if(one != null){
+            if(one.getMemberIds() != null){
+                StringBuilder userIds = new StringBuilder(one.getMemberIds());
+                if(StringUtils.isNotEmpty(one.getMemberId())){
+                    userIds.append(",").append(one.getMemberId());
+                }
+                return userIds.toString().split(",");
+            } else if(one.getMemberId() != null){
+                return new String[]{one.getMemberId()};
+            }
+        }
+        return new String[0];
     }
 }

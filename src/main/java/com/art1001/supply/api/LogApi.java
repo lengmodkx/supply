@@ -9,7 +9,10 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.log.LogSendParam;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.schedule.ScheduleService;
+import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
@@ -46,6 +49,15 @@ public class LogApi extends BaseController {
     private TaskService taskService;
 
     @Resource
+    private FileService fileService;
+
+    @Resource
+    private ShareService shareService;
+
+    @Resource
+    private ScheduleService scheduleService;
+
+    @Resource
     private UserService userService;
 
     /**
@@ -61,14 +73,28 @@ public class LogApi extends BaseController {
             //校验publicType合法性
             msgTypeCheck(logSendParam.getPublicType());
             Log log = logService.sendChat(logSendParam);
-            String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(logSendParam.getPublicId());
+
+            String[] joinAndExecutorId = new String[0];
+
+            if(Constants.TASK.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = taskService.getTaskJoinAndExecutorId(logSendParam.getPublicId());
+            }
+            if(Constants.FILE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = fileService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
+            if(Constants.SCHEDULE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = scheduleService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
+            if(Constants.SHARE.equals(logSendParam.getPublicType())){
+                joinAndExecutorId = shareService.getJoinAndCreatorId(logSendParam.getPublicId());
+            }
 
             if(CollectionUtils.isEmpty(logSendParam.getMentionIdList())){
                 logSendParam.setMentionIdList(new ArrayList<>());
             }
-            if(taskJoinAndExecutorId != null && taskJoinAndExecutorId.length > 0){
+            if(joinAndExecutorId != null && joinAndExecutorId.length > 0){
                 userNewsService.saveUserNews(
-                        taskJoinAndExecutorId,logSendParam.getPublicId(),
+                        joinAndExecutorId,logSendParam.getPublicId(),
                         logSendParam.getPublicType(), log.getMemberName() +": "+ logSendParam.getContent(),
                         logSendParam.getMentionIdList()
                 );

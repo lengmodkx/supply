@@ -1,5 +1,6 @@
 package com.art1001.supply.service.share.impl;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.share.ShareApiBean;
@@ -12,8 +13,10 @@ import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.DateUtil;
 import com.art1001.supply.util.DateUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -202,5 +205,26 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	public String getProjectIdByShareId(String shareId) {
 		Share share = shareMapper.selectOne(new QueryWrapper<Share>().lambda().eq(Share::getId, shareId).select(Share::getProjectId));
 		return  share == null ? null : share.getProjectId();
+	}
+
+	@Override
+	public String[] getJoinAndCreatorId(String publicId) {
+		LambdaQueryWrapper<Share> select = new QueryWrapper<Share>().lambda()
+				.select(Share::getUids, Share::getMemberId)
+				.eq(Share::getId, publicId);
+
+		Share one = this.getOne(select);
+		if(one != null){
+			if(one.getUids() != null){
+				StringBuilder userIds = new StringBuilder(one.getUids());
+				if(StringUtils.isNotEmpty(one.getMemberId())){
+					userIds.append(",").append(one.getMemberId());
+				}
+				return userIds.toString().split(",");
+			} else if(one.getMemberId() != null){
+				return new String[]{one.getMemberId()};
+			}
+		}
+		return new String[0];
 	}
 }
