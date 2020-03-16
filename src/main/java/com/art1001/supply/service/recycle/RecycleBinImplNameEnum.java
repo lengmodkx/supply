@@ -30,34 +30,7 @@ public enum RecycleBinImplNameEnum {
     /**
      * 标签回收站的业务实例名称
      */
-    TagRecycleBin("tag", "tagRecycleBinImpl"),
-
-    /**
-     * 检查任务参数的实例名称
-     */
-    CheckTaskParam("task", "checkTaskParam"),
-
-    /**
-     * 检查任务参数的实例名称
-     */
-    CheckFileParam("file", "checkFileParam"),
-
-    /**
-     * 检查分享参数的实例名称
-     */
-    CheckShareParam("share", "checkShareParam"),
-
-    /**
-     * 检查日程参数的实例名称
-     */
-    CheckScheduleParam("schedule", "checkScheduleParam"),
-
-    /**
-     * 检查标签参数的实例名称
-     */
-    CheckTagParam("tag", "checkTagParam"),
-
-    ;
+    TagRecycleBin("tag", "tagRecycleBinImpl"),;
 
     /**
      * 业务类型编码
