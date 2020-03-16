@@ -578,7 +578,12 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		from prm_file f where `catalog`=1 and file_del=0 and file_id =(select file_id from prm_file where user_id = #{userId})
 	</select>
 
-    <!-- 插入多条文件信息 -->
+
+	<select id="selectTreeFolderByProjectId" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
+
+	</select>
+
+	<!-- 插入多条文件信息 -->
 	<insert id="saveFileBatch">
 		insert into prm_file
 		<trim prefix="(" suffix=")" suffixOverrides=",">
