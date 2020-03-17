@@ -55,6 +55,7 @@ public class RoleApi {
             if(roleService.getOrgRoleIdByKey(orgId, roleKey) > 0) {
                 object.put("result", 0);
                 object.put("msg", "key已经存在！");
+                return object;
             }
             Role role = new Role();
             role.setRoleName(roleName);

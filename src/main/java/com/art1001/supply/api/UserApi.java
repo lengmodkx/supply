@@ -195,7 +195,7 @@ public class UserApi {
         if(RegexUtils.checkMobile(accountName)){
             UserEntity byName = userService.findByName(accountName);
             if(byName == null){
-                return Result.fail("用户不存在");
+                return Result.fail("用户不存在, 无法获取短信验证码。");
             }
             aliyunMessageService.sendCode( byName.getUserId(), accountName);
         } else {

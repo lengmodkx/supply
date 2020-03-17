@@ -147,7 +147,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		LambdaQueryWrapper<Role> selectAdministratorId = new QueryWrapper<Role>().lambda()
 				.eq(Role::getOrganizationId, orgId)
 				.eq(Role::getRoleKey, roleKey);
-		return roleMapper.selectOne(selectAdministratorId).getRoleId();
+		Role role = roleMapper.selectOne(selectAdministratorId);
+		if(role != null){
+			return role.getRoleId();
+		}
+		return 0;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
