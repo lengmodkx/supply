@@ -3,6 +3,7 @@ package com.art1001.supply.service.resource.impl;
 import com.art1001.supply.api.RoleUserApi;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.resource.ProResources;
 import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.entity.resource.ResourceShowVO;
 import com.art1001.supply.entity.role.ResourcesRole;
@@ -27,6 +28,7 @@ import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -177,5 +179,20 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper,ResourceEnti
 				);
 
 		return roleService.getById(userOrgRoleId);
+	}
+
+	@Override
+	public List<String> getResourceKeyByIds(List<String> rIds) {
+		if(CollectionUtils.isEmpty(rIds)){
+			return null;
+		}
+		//构造出根据 resourceId 集合 查询出resourcesKey的sql表达式
+		LambdaQueryWrapper<ResourceEntity> selectKeysByRIdsQw = new QueryWrapper<ResourceEntity>().lambda()
+				.in(ResourceEntity::getResourceId, rIds);
+
+
+		return this.list(selectKeysByRIdsQw).stream()
+				.map(ResourceEntity::getResourceKey)
+				.collect(Collectors.toList());
 	}
 }

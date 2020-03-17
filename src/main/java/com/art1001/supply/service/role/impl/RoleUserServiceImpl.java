@@ -1,5 +1,6 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.role.RoleUserMapper;
 import com.art1001.supply.service.role.RoleUserService;
@@ -7,11 +8,14 @@ import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -58,5 +62,20 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
            return true;
        }
         return  false;
+    }
+
+    @Override
+    public List<String> getRoleUserIdListByRoleId(Integer roleId) {
+        ValidatedUtil.filterNullParam(roleId);
+        LambdaQueryWrapper<RoleUser> eq = new QueryWrapper<RoleUser>().lambda()
+                .eq(RoleUser::getRoleId, roleId);
+
+        //获取list
+        List<RoleUser> proRoleUserList = this.list(eq);
+        if(CollectionUtils.isEmpty(proRoleUserList)){
+            return new LinkedList<>();
+        }
+
+        return proRoleUserList.stream().map(RoleUser::getUId).collect(Collectors.toList());
     }
 }

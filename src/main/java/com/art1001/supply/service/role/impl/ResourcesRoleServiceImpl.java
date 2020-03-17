@@ -1,23 +1,29 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.entity.resource.ResourceEntity;
+import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ResourcesRole;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ResourcesRoleMapper;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.resource.ResourceRoleBindTemplateService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,10 +44,22 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
     private ResourcesRoleMapper resourcesRoleMapper;
 
     @Resource
+    private ResourcesRoleService resourcesRoleService;
+
+    @Resource
     private RoleService roleService;
 
     @Resource
     private ResourceService resourceService;
+
+    @Resource
+    private RoleUserService roleUserService;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Resource
     private ResourceRoleBindTemplateService resourceRoleBindTemplateService;
@@ -120,8 +138,42 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             resourcesRole.setCreateTime(LocalDateTime.now());
             resourcesRoleMapper.insert(resourcesRole);
         }
+
+
+        Role byId = roleService.getById(roleId);
+        this.refreshRedisResourceKey(byId.getRoleId(), byId.getOrganizationId());
+
         return 1;
     }
+
+    private void refreshRedisResourceKey(Integer roleId, String orgId){
+        List<String> userIdList = roleUserService.getRoleUserIdListByRoleId(roleId);
+
+        for (String userId : userIdList) {
+            String userDefaultOrgId = organizationMemberService.findOrgByUserId(userId);
+
+            //如果用户没有默认企业用户id，则不进行操作
+            if(StringUtils.isEmpty(userDefaultOrgId)){
+                continue;
+            }
+            if(userDefaultOrgId.equals(orgId)){
+                //移除掉旧的用户项目权限
+                redisUtil.remove("orgms:" + userId);
+
+                Role role = new Role();
+                role.setRoleId(roleId);
+                List<String> resourceKeyByRIds = resourceService.getResourceKeyByIds(
+                        this.getResourceIdListByRoleId(role)
+                );
+
+                //获取到新的权限并且set到redis中
+                redisUtil.lset("orgms:" + userId, resourceKeyByRIds);
+
+            }
+        }
+
+    }
+
 
     @Override
     public List<String> getResourceIdListByRoleId(Role role) {
