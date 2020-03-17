@@ -85,4 +85,6 @@ public interface ResourceService extends IService<ResourceEntity> {
 	Role getUserRoleInOrg(String userId, String orgId);
 
 
+    List<String> getResourceKeyByIds(List<String> resourceIdListByRoleId);
+
 }

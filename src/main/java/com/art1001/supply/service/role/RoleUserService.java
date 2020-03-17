@@ -39,4 +39,6 @@ public interface RoleUserService extends IService<RoleUser> {
      * @return 角色id
      */
     Boolean updateRoleTransfer(String orgId, String ownerId, String memberId);
+
+    List<String> getRoleUserIdListByRoleId(Integer roleId);
 }
