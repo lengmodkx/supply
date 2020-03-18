@@ -125,7 +125,7 @@
 
     <!-- 待认领的任务量 -->
     <select id="findTobeclaimedTaskCount" resultType="int">
-        select count(0) from prm_task pt where project_id = #{projectId} and (executor = '' or executor is null) <include refid="Base_Column_QBC"/>
+        select count(0) from prm_task pt where project_id = #{projectId} and (executor = '' or executor is null or pt.executor = 0)   <include refid="Base_Column_QBC"/>
     </select>
 
     <!-- 按时完成的任务量  -->
@@ -188,7 +188,7 @@
         SELECT
         FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T') as  create_time
         <include refid="Base_Column_List"/>
-        WHERE (pt.executor = '' or pt.executor is null)  AND pt.project_id=#{projectId}
+        WHERE (pt.executor = '' or pt.executor is null or pt.executor = 0)  AND pt.project_id=#{projectId}
         <include refid="Base_Column_QBC"/>
     </select>
 
