@@ -2,6 +2,7 @@ package com.art1001.supply.api.aop;
 
 import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -30,40 +31,20 @@ public class ProjectAuthentizationAspect {
 
     @Resource
     private RedisUtil redisUtil;
-
-    /**
-     * 注入项目资源业务层Bean
-     */
-    @Resource
-    private ProResourcesService proResourcesService;
-
-    /**
-     * 注入项目成员关系业务层Bean
-     */
-    @Resource
-    private ProjectMemberService projectMemberService;
-
     /**
      * 需要鉴权的请求切点
      */
     @Pointcut("@annotation(com.art1001.supply.annotation.ProAuthentization)")
-    public void push(){}
+    public void checkPermission(){}
 
-    @Before("push()")
+    @Before("checkPermission()")
     public void doBefore(JoinPoint joinPoint){
+        String userId = ShiroAuthenticationManager.getUserId();
         String targetMethodName = joinPoint.getSignature().getName();
         ProAuthentization annotation = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(ProAuthentization.class);
         String permission = annotation.value();
-        String redisKey = Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId();
-        List<String> list;
-        if(redisUtil.exists(redisKey)){
-            list = redisUtil.getList(String.class, Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId());
-        } else {
-            String userCurrentProjectId = projectMemberService.getUserCurrentProjectId();
-            list = proResourcesService.getMemberResourceKey(userCurrentProjectId, ShiroAuthenticationManager.getUserId());
-            redisUtil.lset(Constants.PRO_SOURCES_PREFIX + ShiroAuthenticationManager.getUserId(),list);
-        }
-        boolean notPermission = !list.contains(permission);
+        List<String> permsList =redisUtil.getList(String.class,"perms:"+userId);
+        boolean notPermission = !permsList.contains(permission);
         if(notPermission){
             StringBuilder errMsg = new StringBuilder();
             errMsg.append("用户:")
@@ -72,7 +53,7 @@ public class ProjectAuthentizationAspect {
                     .append(targetMethodName)
                     .append(")!");
             log.error(errMsg.toString());
-            throw new AuthorizationException(errMsg.toString());
+            throw new AjaxException("无权做此操作，请联系管理进行授权");
         }
     }
 }

@@ -568,7 +568,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         //生成条件表达式对象
         LambdaQueryWrapper<Schedule> select = new QueryWrapper<Schedule>().lambda().eq(Schedule::getScheduleId, scheduleId).select(Schedule::getProjectId);
         String projectId = scheduleMapper.selectOne(select).getProjectId();
-        return StringUtils.isNotEmpty(projectId) ? null : projectId;
+        return projectId;
     }
 
     @Override

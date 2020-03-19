@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.*;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
@@ -25,8 +26,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.util.Assert;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
@@ -45,9 +46,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * fileServiceImpl
@@ -116,13 +125,29 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public List<File> queryFileList(String fileId,Integer current,Integer size) {
         //Page<File> filePage = new Page<>(current,size);
-        File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
+        //File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
         List<File> childFile = fileMapper.findChildFile(fileId);
-        if(isRoot.getLevel()==0){
-            String userId = ShiroAuthenticationManager.getUserId();
-            File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
-            childFile.add(file);
+//        if(isRoot.getLevel()==0){
+//            String userId = ShiroAuthenticationManager.getUserId();
+//            File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
+//            file.setMemberName(userService.findById(ShiroAuthenticationManager.getUserId()).getUserName());
+//            childFile.add(file);
+//        }
+        Iterator<File> iterator = childFile.iterator();
+        while(iterator.hasNext()){
+            File file = iterator.next();
+            if(StringUtils.isNotEmpty(file.getFileUids())){
+                file.setJoinInfo(userService.findManyUserById(file.getFileUids()));
+            }else{
+                file.setJoinInfo(new ArrayList<>());
+            }
+            if(file.getFilePrivacy() == 1){
+                if(StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                    iterator.remove();
+                }
+            }
         }
+
         return childFile;
     }
 
@@ -421,28 +446,118 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     /**
-     * 移动文件
+     * 移动文件/文件夹
      * @param projectId 移动之后的项目Id
-     * @param fileId   源文件id数组
+     * @param fileIds   源文件id数组
      * @param folderId 目标目录id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void moveFile(String projectId,String fileId, String folderId) {
-        Arrays.asList(fileId.split(",")).forEach(v->{
-            Map<String, Object> map = new HashMap<>();
-            map.put("fileId", fileId);
-            map.put("folderId", folderId);
-            map.put("projectId",projectId);
-            fileMapper.moveFile(map);
-
-            File file=new File();
-            file.setFileId(fileId);
-            file.setParentId(folderId);
-            file.setProjectId(projectId);
-            fileRepository.save(file);
-        });
+    public void moveFile(String projectId,List<String> fileIds, String folderId) {
+        fileIds.forEach(fileId->moveSingleFile(folderId,projectId,fileId));
+        //搜索引擎采用通知的方式进行数据同步
     }
+
+    /**
+     * 移动单个文件/文件夹
+     * @param parentId 目标文件夹id
+     * @param projectId 目标项目Id
+     * @param fileId 要移动的文件/文件夹的Id
+     */
+    private void moveSingleFile(String parentId,String projectId,String fileId){
+        File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del",0));
+        fileMapper.moveFile(parentId,projectId,fileId);
+        if(file.getCatalog()==0){
+           dealWithFile(file.getFileId(),parentId,1);
+        }
+        //文件和文件夹的处理
+        if(file.getCatalog()==1){
+            //递归更新子文件/文件夹的项目id，其他字段不变
+            recursiveFile(projectId,fileId);
+        }
+    }
+
+    private void recursiveFile(String projectId,String fileId){
+        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del",0));
+        if(fileList!=null && fileList.size()>0){
+            fileList.forEach(file->{
+                File f = new File();
+                f.setFileId(file.getFileId());
+                f.setProjectId(projectId);
+                updateById(f);
+                if(file.getCatalog()==1){
+                    recursiveFile(projectId,file.getFileId());
+                }
+            });
+        }
+    }
+    /**
+     * 复制文件/文件夹
+     * @param projectId 复制之后的项目Id
+     * @param fileIds   源文件id数组
+     * @param folderId 目标目录id
+     */
+    @Override
+    public void copyFile(String projectId, List<String> fileIds, String folderId) {
+        fileIds.forEach(fileId->copySingleFile(fileId,projectId,folderId));
+
+        //搜索引擎采用通知的方式进行数据同步
+    }
+
+    private void copySingleFile(String fileId,String projectId,String folderId){
+        File file = getOne(new QueryWrapper<File>().eq("file_id",fileId).eq("file_del",0));
+        file.setFileId(IdGen.uuid());
+        file.setParentId(folderId);
+        file.setProjectId(projectId);
+        //判断是否是同项目->解除绑定关系
+        save(file);
+        if(file.getCatalog()==0){
+            dealWithFile(file.getFileId(),"",0);
+        }
+
+        if(file.getCatalog()==1){
+            recursiveCopyFile(projectId,fileId);
+        }
+    }
+
+    private void recursiveCopyFile(String projectId,String parentId){
+        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", parentId).eq("file_del",0));
+        if(fileList!=null && fileList.size()>0){
+            fileList.forEach(file->{
+                file.setFileId(IdGen.uuid());
+                file.setProjectId(projectId);
+                file.setParentId(parentId);
+                save(file);
+                if(file.getCatalog()==1){
+                    recursiveCopyFile(projectId,file.getFileId());
+                }
+            });
+        }
+    }
+
+    /**
+     *
+     * @param fileId 文件id
+     * @param parentId
+     * @param flag 移动/复制 1/0
+     */
+    //处理文件版本信息以及和文件相关的信息
+    private void dealWithFile(String fileId,String parentId,Integer flag){
+        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
+        FileVersion fileVersion = new FileVersion();
+        fileVersion.setFileId(fileId);
+        fileVersion.setIsMaster(1);
+        if(flag==0){
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        }else{
+            File file = getOne(new QueryWrapper<File>().eq("file_id",parentId).eq("file_del",0));
+            fileVersion.setInfo(userEntity.getUserName() + " 将文件移动到了 "+ file.getFileName());
+        }
+
+        fileVersionService.save(fileVersion);
+    }
+
+
 
     /**
      * 获取上级url
@@ -1278,5 +1393,105 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             }
         }
         return new String[0];
+    }
+
+    @Override
+    public void downloadSingleFile(File file, HttpServletResponse response){
+        InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
+        // 设置头信息
+        // 设置fileName的编码
+        try {
+            String fileName = URLEncoder.encode(file.getFileName() + file.getExt(), "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            ServletOutputStream outputStream = response.getOutputStream();
+            assert inputStream != null;
+            IOUtils.copy(inputStream,outputStream);
+            outputStream.close();
+            inputStream.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void downloadSingleFolder(File file, HttpServletResponse response) {
+        response.reset(); // 非常重要
+        // 设置fileName的编码
+        String filename = file.getFileName();
+        try {
+            String fileName = URLEncoder.encode(filename + ".zip", "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
+            ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
+            compress(file,zos,filename);
+            zos.close();
+            FileInputStream fis = new FileInputStream(zipFile);
+            response.addHeader("Content-Length", String.valueOf(fis.available()));
+            BufferedInputStream in = new BufferedInputStream(fis);
+            ServletOutputStream out = response.getOutputStream();
+            IOUtils.copy(in,out);
+            out.close();
+            in.close();
+            fis.close();
+            // 删除临时文件
+            zipFile.deleteOnExit();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void compress(File folder, ZipOutputStream out, String dir) throws IOException{
+        List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
+        if(files!=null&&files.size()>0){
+            for (File inFile:files) {
+                if(inFile.getCatalog()==1){
+                    String name = inFile.getFileName();
+                    if (!"".equals(dir)) {
+                        name = dir + "/" + name;
+                    }
+                    compress(inFile,out,name);
+                }else{
+                    AliyunOss.doZip(inFile,out,dir);
+                }
+            }
+        }else{
+            // 空文件夹的处理
+            out.putNextEntry(new ZipEntry(dir + "/"));
+            // 没有文件，不需要文件的copy
+            out.closeEntry();
+        }
+    }
+    @Override
+    public void batchDownLoad(List<File> files, HttpServletResponse response){
+        try {
+            String filename = files.get(0).getFileName()+"等"+(files.size()-1)+"项_aldbim";
+            String fileName = URLEncoder.encode(filename + ".zip", "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
+            ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
+            for (File file: files) {
+               if(file.getCatalog()==0){
+                   AliyunOss.doZip(file,zos,"");
+               }else{
+                   compress(file,zos,file.getFileName());
+               }
+            }
+            zos.close();
+            FileInputStream fis = new FileInputStream(zipFile);
+            response.addHeader("Content-Length", String.valueOf(fis.available()));
+            BufferedInputStream in = new BufferedInputStream(fis);
+            ServletOutputStream out = response.getOutputStream();
+            IOUtils.copy(in,out);
+            out.close();
+            in.close();
+            fis.close();
+            // 删除临时文件
+            zipFile.deleteOnExit();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

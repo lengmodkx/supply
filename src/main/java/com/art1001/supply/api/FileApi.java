@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
+import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
@@ -34,6 +35,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +46,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author heshaohua
@@ -150,9 +154,9 @@ public class FileApi extends BaseController {
      * @return
      */
     @GetMapping("{fileId}")
-    public Result fileList1(@PathVariable String fileId,
+    public Result<List<File>> fileList1(@PathVariable String fileId,
                                         @RequestParam(defaultValue = "1") Integer current,
-                                        @RequestParam(defaultValue = "999") Integer size) {
+                                        @RequestParam(defaultValue = "99999") Integer size) {
         try {
             List<File> fileList = fileService.queryFileList(fileId,current,size);
             return Result.success(fileList);
@@ -177,17 +181,17 @@ public class FileApi extends BaseController {
         List<FileTree> trees = fileService.querySubFileList(fileId);
         fileTrees.addAll(trees);
 
-        File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
-
-        List<FileTree> fileList = fileService.querySubFileList(file.getFileId());
-        if(fileList!=null && fileList.size()>0){
-            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",1);
-            fileTrees.add(trees.size()+1,userRoot);
-            fileTrees.addAll(fileList);
-        }else{
-            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
-            fileTrees.add(trees.size()+1,userRoot);
-        }
+//        File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
+//
+//        List<FileTree> fileList = fileService.querySubFileList(file.getFileId());
+//        if(fileList!=null && fileList.size()>0){
+//            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",1);
+//            fileTrees.add(trees.size()+1,userRoot);
+//            fileTrees.addAll(fileList);
+//        }else{
+//            FileTree userRoot = new FileTree(file.getFileId(),fileId,"我的文件夹",false,"https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/tree-icon/tree3.png",0);
+//            fileTrees.add(trees.size()+1,userRoot);
+//        }
         return Result.success(fileTrees);
     }
 
@@ -283,7 +287,10 @@ public class FileApi extends BaseController {
      */
     @Push(value = PushType.C8,type = 1)
     @PutMapping("/{id}/privacy/{privacy}")
-    public JSONObject privacy(@PathVariable String id, @PathVariable int privacy){
+    public JSONObject privacy(@PathVariable String id,
+                              @PathVariable int privacy,
+                              @RequestParam String projectId,
+                              @RequestParam String parentId) {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = new File();
@@ -291,8 +298,8 @@ public class FileApi extends BaseController {
             file.setFilePrivacy(privacy);
             fileService.updateById(file);
             jsonObject.put("result", 1);
-            jsonObject.put("msgId", this.getProjectId(id));
-            jsonObject.put("data",fileService.getById(id).getParentId());
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("data",parentId);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常，隐私模式设置失败！",e);
@@ -595,42 +602,6 @@ public class FileApi extends BaseController {
     }
 
     /**
-     * 下载
-     * @param fileId 文件id
-     */
-    @GetMapping("/{fileId}/download")
-    public void downloadFile(@PathVariable(value = "fileId") String fileId, HttpServletResponse response){
-        try {
-            File file = fileService.findFileById(fileId);
-            String fileName = file.getFileName();
-            fileService.updateDownloadCount(fileId);
-            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
-            // 设置响应类型
-            //response.setContentType("multipart/form-data");
-            // 设置头信息
-            // 设置fileName的编码
-            fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
-            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            response.setContentType("application/octet-stream");
-            ServletOutputStream outputStream = response.getOutputStream();
-            byte[] bytes = new byte[1024*1024];
-            int n;
-            assert inputStream != null;
-            while ((n = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, n);
-            }
-            outputStream.close();
-            inputStream.close();
-        } catch (NullPointerException e){
-            log.error("系统异常,文件不存在:",e);
-            throw new SystemException(e);
-        } catch (Exception e){
-            log.error("系统异常:",e);
-            throw new SystemException(e);
-        }
-    }
-
-    /**
      * 复制和移动文件时 获取弹框数据
      * @param fileIds 文件id数组
      * @return
@@ -674,26 +645,31 @@ public class FileApi extends BaseController {
     }
 
     /**
-     * 移动文件
-     * @param fileId  文件id
+     * 移动文件/文件夹
      * @param folderId 目标文件夹id
+     * @param parentId 当前文件/文件夹父id
+     * @param projectId 当前项目id
+     * @param fileIds 要移动的文件id数组
+     * @param toProjectId 目标项目id
+     * @return
      */
     @Push(value = PushType.C12,type = 2)
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
+            @RequestParam String parentId,
             @RequestParam String projectId,
-            @RequestParam String fileId,
+            @RequestParam String fileIds,
             @RequestParam String toProjectId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.moveFile(toProjectId,fileId, folderId);
+            fileService.moveFile(toProjectId,Arrays.asList(fileIds.split(",")), folderId);
             Map<String,Object> maps = new HashMap<>();
+            maps.put(projectId,parentId);
             if(Objects.equals(toProjectId,projectId)){
-                maps.put(toProjectId,folderId);
+                maps.put(projectId,folderId);
             } else{
-                maps.put(projectId,fileId);
                 maps.put(toProjectId, folderId);
             }
             jsonObject.put("data",maps);
@@ -706,114 +682,39 @@ public class FileApi extends BaseController {
     }
 
     /**
-     * 复制文件
-     * @param fileId  文件id
+     * 复制文件/文件夹
      * @param folderId 目标文件夹id
+     * @param projectId 当前项目id
+     * @param fileIds 要移动的文件id数组
+     * @param toProjectId 目标项目id
+     * @return
      */
     @Push(value = PushType.C10,type = 1)
-    @PostMapping("/copy")
+    @PostMapping("/{folderId}/copy")
     public JSONObject copyFile(
-            @RequestParam(value = "fileId") String fileId,
-            @RequestParam(value = "folderId") String folderId,
-            @RequestParam(value = "projectId") String projectId
+            @PathVariable String folderId,
+            @RequestParam String projectId,
+            @RequestParam String fileIds,
+            @RequestParam String toProjectId
     ) {
         JSONObject jsonObject = new JSONObject();
-        List<File> files = new ArrayList<File>();
         try {
-            // 获取源文件
-            File file = fileService.findFileById(fileId);
-            files.add(file);
-            jsonObject.put("msgId", projectId);
-            //文件夹处理
-            if (file.getCatalog() == 1) {
-                file.setParentId(folderId);
-                String fId = file.getFileId();
-                fileService.save(file);
-                List<File> childFile = fileService.findChildFile(fId,1);
-                if (childFile.size() > 0) {
-                    Map<String, List<File>> map = new HashMap<>(10);
-                    map.put(file.getFileId(), childFile);
-                    this.copyFolder(map);
-                }
-            } else {
-                this.copyFileSave(file, folderId);
+            fileService.copyFile(projectId,Arrays.asList(fileIds.split(",")),folderId);
+            Map<String,Object> maps = new HashMap<>();
+
+            if(Objects.equals(toProjectId,projectId)){
+                maps.put(projectId,folderId);
+            } else{
+                maps.put(toProjectId, folderId);
             }
+            jsonObject.put("data",maps);
+            jsonObject.put("result", 1);
         } catch (Exception e){
             log.error("系统异常:", e);
             throw new AjaxException(e);
         }
-        jsonObject.put("data",files);
+
         return jsonObject;
-    }
-
-    /**
-     * 复制文件夹
-     */
-    private void copyFolder(Map<String, List<File>> map) {
-        Map<String, List<File>> fileMap = new HashMap<>(10);
-        for (Map.Entry<String, List<File>> entry : map.entrySet()) {
-            // 得到键，即parentId
-            String parentId = entry.getKey();
-            // 得到值，即FileList
-            List<File> fileList = entry.getValue();
-            for (File file : fileList) {
-                // 文件夹
-                if (file.getCatalog() == 1) {
-                    // 设置父级id
-                    file.setParentId(parentId);
-                    String fId = file.getFileId();
-                    String projectId = file.getProjectId();
-                    // 存库
-                    fileService.save(file);
-                    // 得到此文件夹下一层的子集
-                    List<File> childFile = fileService.findChildFile(fId,1);
-                    fileMap.put(file.getFileId(), childFile);
-                } else { //文件
-                    this.copyFileSave(file, parentId);
-                }
-            }
-
-            if (fileMap.size() > 0) {
-                this.copyFolder(fileMap);
-            }
-        }
-    }
-
-    /**
-     * 复制文件保存
-     */
-    private void copyFileSave(File file, String parentId) {
-        // 得到源文件objectName
-        String fileUrl = file.getFileUrl();
-        // 源文件名
-        String fileName = file.getFileName();
-        // 得到后缀名
-        //String ext = fileName.substring(fileName.lastIndexOf("."), fileName.length() - 1);
-        String ext = file.getExt();
-        // 设置现在文件名
-        String newFileName = System.currentTimeMillis() + ext;
-        // 设置现在文件objectName
-        String newFileUrl = fileUrl.substring(0, fileUrl.lastIndexOf("/")) + "/"+ newFileName;
-
-        // 在oss上复制
-        AliyunOss.copyFile(fileUrl, newFileUrl);
-
-        file.setFileId(IdGen.uuid());
-
-        // 设置文件名
-        file.setFileName(fileName);
-        // 设置url
-        file.setFileUrl(newFileUrl);
-        // 设置父级id
-        file.setParentId(parentId);
-
-        fileService.save(file);
-
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(file.getFileId());
-        fileVersion.setIsMaster(1);
-        fileVersion.setInfo(ShiroAuthenticationManager.getUserEntity().getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-        fileVersionService.save(fileVersion);
     }
 
     /**
@@ -824,15 +725,16 @@ public class FileApi extends BaseController {
     @Push(value = PushType.C13,type = 1)
     @PutMapping("/{fileIds}/m_recycle")
     public JSONObject moveToRecycleBin(
-            @PathVariable(value = "fileIds") String[] fileIds,
-            @RequestParam(value = "projectId") String projectId
+            @PathVariable(value = "fileIds") String fileIds,
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam String parentId
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            fileService.moveToRecycleBin(fileIds);
+            fileService.moveToRecycleBin(fileIds.split(","));
             jsonObject.put("result", 1);
             jsonObject.put("msgId", projectId);
-            jsonObject.put("data", fileIds);
+            jsonObject.put("data", parentId);
         } catch (Exception e) {
             log.error("移入回收站异常:", e);
             throw new AjaxException(e);
@@ -918,7 +820,8 @@ public class FileApi extends BaseController {
      */
     @Push(value = PushType.C9,type = 1)
     @PutMapping("/{fileId}/add_remove_join")
-    public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "newJoin") String newJoin){
+    public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId,
+                                           @RequestParam(value = "newJoin") String newJoin){
         JSONObject jsonObject = new JSONObject();
         try {
             fileService.addAndRemoveFileJoin(fileId, newJoin);
@@ -1189,4 +1092,57 @@ public class FileApi extends BaseController {
     public Result getSuCai(){
         return Result.success(fileService.getSucaiId("ef6ba5f0e3584e58a8cc0b2d28286c93"));
     }
+
+    @RequestMapping("/batch/download")
+    public void batchDownLoad(@RequestParam(value = "fileIds") String fileIds, HttpServletResponse response, HttpServletRequest request){
+        String[] ids = fileIds.split(",");
+        List<File> files = fileService.findByIds(ids);
+        try {
+            if(files.size()==1){//处理单个文件的情况
+                if(files.get(0).getCatalog()==0){
+                    fileService.downloadSingleFile(files.get(0),response);
+                }else{
+                    fileService.downloadSingleFolder(files.get(0),response);
+                }
+            }else{//处理多个文件及文件夹
+                fileService.batchDownLoad(files,response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 下载
+     * @param fileId 文件id
+     */
+    @GetMapping("/{fileId}/download")
+    public void downloadFile(@PathVariable(value = "fileId") String fileId, HttpServletResponse response){
+        try {
+            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
+            String fileName = file.getFileName();
+            fileService.updateDownloadCount(fileId);
+            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
+            // 设置响应类型
+            //response.setContentType("multipart/form-data");
+            // 设置头信息
+            // 设置fileName的编码
+            fileName = URLEncoder.encode(fileName+file.getExt(), "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copy(inputStream,outputStream);
+            outputStream.close();
+            inputStream.close();
+        } catch (NullPointerException e){
+            log.error("系统异常,文件不存在:",e);
+            throw new SystemException(e);
+        } catch (Exception e){
+            log.error("系统异常:",e);
+            throw new SystemException(e);
+        }
+    }
+
+
+
 }
