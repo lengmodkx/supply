@@ -133,9 +133,6 @@ public class Share extends Model<Share> {
 	List<UserEntity> joinInfo;
 
 	@TableField(exist = false)
-	private String createTimeStr;
-
-	@TableField(exist = false)
 	private Integer unReadMsg;
 
 //    private String getCreateTimeStr() {

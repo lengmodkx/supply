@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,4 +55,8 @@ public class RecycleBinParamDTO {
      * 文件id集合
      */
     private List<String> fileIdList;
+
+    public List<String> getFileIdList() {
+        return Arrays.asList(publicId.split(","));
+    }
 }

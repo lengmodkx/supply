@@ -27,8 +27,6 @@
 		<result column="level" property="level" jdbcType="INTEGER"/>
 		<result column="is_model" property="isModel" jdbcType="INTEGER"/>
 		<result column="user_id" property="userId" jdbcType="INTEGER"/>
-		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
 		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
 		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
@@ -271,7 +269,7 @@
 			</if>
 	</select>
 
-	<select id="findByIds" resultMap="BaseResultMap">
+	<select id="findByIds" resultMap="PublicMap">
 		select
 		<include refid="Base_Column_List"/>
 		from prm_file
@@ -279,7 +277,7 @@
 		<foreach collection="array" open="(" separator="," close=")" item="id">
 			#{id}
 		</foreach>
-		and public_lable = 0
+		and public_lable = 0 and file_privacy=0
 	</select>
 
 
@@ -295,8 +293,8 @@
 		where catalog = 1 and  parent_id = #{fileId} and public_lable = 0 order by create_time desc
 	</select>
 
-	<update id="moveFile" parameterType="java.util.Map">
-		update prm_file set parent_id = #{folderId},project_id = #{projectId} where file_id = #{fileId}
+	<update id="moveFile" parameterType="java.lang.String">
+		update prm_file set parent_id = #{parentId},project_id = #{projectId} where file_id = #{fileId}
 	</update>
 
 	<update id="moveToRecycleBin" parameterType="java.lang.String">

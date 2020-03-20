@@ -6,6 +6,7 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
+import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
@@ -42,14 +43,23 @@ public class OssApi {
     @Resource
     private NoticeService noticeService;
 
-    @Resource
-    LogService logService;
+    @ProAuthentization("FileApi:uploadFile")
+    @GetMapping("checkperm")
+    public Result checkperm(){
+        return Result.success();
+    }
+
+
+    @ProAuthentization("FileApi:batchDownLoad")
+    @GetMapping("checkdownload")
+    public Result checkdownload(){
+        return Result.success();
+    }
     /**
      * 前端获取直传文件到阿里云oss的签名
      * @param dir
      * @return
      */
-
     @GetMapping("sign")
     public Result getSign(@RequestParam String dir){
         OSSClient client = new OSSClient(oss.getEndpoint(), oss.getAccessId(), oss.getAccessKey());

@@ -1,9 +1,12 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleUserMapper;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.util.ValidatedUtil;
@@ -36,12 +39,19 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
 
     @Resource
     private ProRoleUserService roleUserService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
         ProRoleUser proRoleUser = new ProRoleUser();
         proRoleUser.setRoleId(roleId);
-        updateById(proRoleUser);
         update(proRoleUser,new UpdateWrapper<ProRoleUser>().eq("project_id", projectId).eq("u_id", userId));
+
+        ProRole proRole = proRoleService.getById(roleId);
+        ProjectMember projectMember = new ProjectMember();
+        projectMember.setRoleKey(proRole.getRoleKey());
+        projectMemberService.update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id", projectId).eq("u_id", userId));
     }
 
     @Override

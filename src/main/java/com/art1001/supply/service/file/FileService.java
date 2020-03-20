@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,13 +87,20 @@ import java.util.List;
 	List<File> findChildFile(String parentId,Integer orderType);
 
 	/**
-	 * 移动文件
+	 * 移动文件/文件夹
 	 * @param projectId 移动之后的项目id
 	 * @param fileIds 源文件id数组
 	 * @param folderId 目标目录id
 	 */
-    void moveFile(String projectId,String fileIds, String folderId);
+    void moveFile(String projectId,List<String> fileIds, String folderId);
 
+	/**
+	 * 复制文件/文件夹
+	 * @param projectId 复制之后的项目id
+	 * @param fileIds 源文件id数组
+	 * @param folderId 目标目录id
+	 */
+	void copyFile(String projectId,List<String> fileIds, String folderId);
     /**
      * 获取上级文件路径
      */
@@ -475,4 +483,10 @@ import java.util.List;
 	 * @return
 	 */
 	String[] getJoinAndCreatorId(String fileId);
+
+	void downloadSingleFile(File file, HttpServletResponse response);
+
+	void downloadSingleFolder(File file, HttpServletResponse response);
+
+	void batchDownLoad(List<File> files, HttpServletResponse response);
 }

@@ -7,24 +7,24 @@ import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.exception.SystemException;
+import jodd.io.ZipUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.channels.Channels;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -79,6 +79,19 @@ public class AliyunOss {
         } else {
             log.warn("您的Bucket不存在，创建Bucket：" + bucketName + "。");
         }
+    }
+
+    public static InputStream getInputStream(String key){
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            OSSObject object = ossClient.getObject(bucketName, key);
+            return object.getObjectContent();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            ossClient.shutdown();
+        }
+        return null;
     }
 
     /**
@@ -383,7 +396,7 @@ public class AliyunOss {
             OSSObject ossObject = ossClient.getObject(bucketName, file.getFileUrl());
             InputStream inputStream = ossObject.getObjectContent();
             try {
-                zos.putNextEntry(new ZipEntry(file.getFileName()));
+                zos.putNextEntry(new ZipEntry(file.getFileName()+file.getExt()));
                 int bytesRead = 0;
                 // 向压缩文件中输出数据
                 while((bytesRead=inputStream.read())!=-1){
@@ -414,13 +427,7 @@ public class AliyunOss {
         FileInputStream fis = new FileInputStream(zipFile);
         BufferedInputStream buff = new BufferedInputStream(fis);
         BufferedOutputStream out=new BufferedOutputStream(response.getOutputStream());
-        byte[] car=new byte[1024];
-        int l=0;
-        while (l < zipFile.length()) {
-            int j = buff.read(car, 0, 1024);
-            l += j;
-            out.write(car, 0, j);
-        }
+        IOUtils.copy(buff,out);
         // 关闭流
         fis.close();
         buff.close();
@@ -514,4 +521,93 @@ public class AliyunOss {
         response.setStatus(status);
         response.flushBuffer();
     }
+
+    public static void batchDownLoad(List<com.art1001.supply.entity.file.File> files,HttpServletResponse response, HttpServletRequest request)throws  Exception{
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        String fileName = "chat_file.zip";
+        File zipFile = File.createTempFile("chat_file", ".zip");
+        FileOutputStream f = new FileOutputStream(zipFile);
+        /**
+         * 作用是为任何OutputStream产生校验和
+         * 第一个参数是制定产生校验和的输出流，第二个参数是指定Checksum的类型 （Adler32（较快）和CRC32两种）
+         */
+        CheckedOutputStream csum = new CheckedOutputStream(f, new Adler32());
+        // 用于将数据压缩成Zip文件格式
+        ZipOutputStream zos = new ZipOutputStream(csum);
+        files.forEach(file -> {
+            OSSObject ossObject = ossClient.getObject(bucketName, file.getFileUrl());
+            InputStream inputStream = ossObject.getObjectContent();
+            try {
+                zos.putNextEntry(new ZipEntry(file.getFileName()+file.getExt()));
+                int bytesRead = 0;
+                // 向压缩文件中输出数据
+                while((bytesRead=inputStream.read())!=-1){
+                    zos.write(bytesRead);
+                }
+                inputStream.close();
+                zos.closeEntry(); // 当前文件写完，定位为写入下一条项目
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        zos.close();
+        String header = request.getHeader("User-Agent").toUpperCase();
+        if (header.contains("MSIE") || header.contains("TRIDENT") || header.contains("EDGE")) {
+            fileName = URLEncoder.encode(fileName, "utf-8");
+            fileName = fileName.replace("+", "%20");    //IE下载文件名空格变+号问题
+        } else {
+            fileName = new String(fileName.getBytes(), "ISO8859-1");
+        }
+
+        response.reset();
+        response.setContentType("text/plain");
+        response.setContentType("application/octet-stream; charset=utf-8");
+        response.setHeader("Location", fileName);
+        response.setHeader("Cache-Control", "max-age=0");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+
+        FileInputStream fis = new FileInputStream(zipFile);
+        BufferedInputStream buff = new BufferedInputStream(fis);
+        BufferedOutputStream out=new BufferedOutputStream(response.getOutputStream());
+        byte[] car=new byte[1024];
+        int l=0;
+        while (l < zipFile.length()) {
+            int j = buff.read(car, 0, 1024);
+            l += j;
+            out.write(car, 0, j);
+        }
+        // 关闭流
+        fis.close();
+        buff.close();
+        out.close();
+        ossClient.shutdown();
+        // 删除临时文件
+        zipFile.delete();
+    }
+
+    //压缩文件夹中的文件
+    public static void doZip(com.art1001.supply.entity.file.File inFile, ZipOutputStream out, String dir)  {
+        String entryName;
+        if (!"".equals(dir)) {
+            entryName = dir + "/" + inFile.getFileName() + inFile.getExt();
+        } else {
+            entryName = inFile.getFileName() + inFile.getExt();
+        }
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        try {
+            ZipEntry entry = new ZipEntry(entryName);
+            out.putNextEntry(entry);
+            OSSObject ossObject = ossClient.getObject(bucketName, inFile.getFileUrl());
+            InputStream in = ossObject.getObjectContent();
+            IOUtils.copy(in,out);
+            in.close();
+            ossObject.close();
+            out.closeEntry();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            ossClient.shutdown();
+        }
+    }
+
 }

@@ -97,12 +97,12 @@ public interface FileMapper extends BaseMapper<File> {
 	void moveToRecycleBin(String[] fileIds);
 
 	/**
-	 * 移动文件
-	 * @param map 条件
-	 * 		 fileIds 源文件id数组
-	 * 		 folderId 目标目录id
+	 * 移动单个文件
+	 * @param parentId 目标文件夹id
+	 * @param projectId 目标项目Id
+	 * @param fileId 要移动的文件/文件夹的Id
 	 */
-	void moveFile(Map<String, Object> map);
+	void moveFile(String parentId,String projectId,String fileId);
 
 	/**
 	 * 查询子目录

@@ -49,11 +49,13 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper,Share> implements 
 	 */
 	@Override
 	public List<Share> findByProjectId(String projectId, Integer isDel){
-		List<Share> byProjectId = shareMapper.findByProjectId(projectId, isDel);
-		byProjectId.forEach(s -> {
-			s.setCreateTimeStr(DateUtils.getDateStr(new Date(s.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
+		List<Share> shares = shareMapper.findByProjectId(projectId, isDel);
+		shares.forEach(s -> {
+			int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", s.getId())) - 10;
+			s.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
+			bindingService.setBindingInfo(s.getId(),null,null,s,null);
 		});
-		return byProjectId;
+		return shares;
 	}
 
 	/**
