@@ -1,6 +1,5 @@
 package com.art1001.supply.service.log.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.application.assembler.LogAssembler;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.log.LogSendParam;
@@ -10,17 +9,13 @@ import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
-import org.locationtech.spatial4j.io.ShapeIO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -106,7 +101,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	@Override
 	public List<Log> getSurplusMsg(String publicId, Integer surpluscount) {
 		List<Log> logs = logMapper.selectSurplusMsg(publicId, surpluscount);
-		Collections.reverse(logs);
+		//Collections.reverse(logs);
 		return logs;
 	}
 

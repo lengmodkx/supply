@@ -91,7 +91,7 @@
 	<!-- 加载剩余消息的数据 -->
 	<select id="selectSurplusMsg" resultType="com.art1001.supply.entity.log.Log">
 		select id,public_id as publicId,project_id as projectId,member_id as memberId,content,log_type as logType,l.create_time as createTime,image as memberImg
-		from prm_log l left join tb_user u on u.user_id = l.member_id where public_id = #{publicId} order by l.create_time limit 10,#{surpluscount}
+		from prm_log l left join tb_user u on u.user_id = l.member_id where public_id = #{publicId} order by l.create_time desc limit 10,#{surpluscount}
 	</select>
 
 	<!-- 删除多个任务的日志信息 -->

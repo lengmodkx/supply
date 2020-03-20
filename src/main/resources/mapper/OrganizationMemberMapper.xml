@@ -203,6 +203,7 @@
 		m.create_time,
 		m.organization_lable,
 		m.partment_lable,
+		m.member_lock,
 		u.user_id,
 		u.account_name,
 		u.user_name,
