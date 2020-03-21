@@ -81,22 +81,17 @@ public class RecycleBinApi {
     public JSONObject moveTaskToRecycleBin(RecycleBinParamDTO recycleBinParamDTO
     ){
         JSONObject object = new JSONObject();
-        try{
-            if(!Constants.TASK_EN.equals(recycleBinParamDTO.getPublicType())){
-                object.put("result", 0);
-                object.put("msg", "publicType参数不正确！");
-                return object;
-            }
-            recycleBinService.moveOrRecovery(recycleBinParamDTO);
-            object.put("result",1);
-            object.put("msgId", recycleBinParamDTO.getProjectId());
-            object.put("data", recycleBinParamDTO.getPublicId());
-            object.put("id", recycleBinParamDTO.getPublicId());
-            object.put("publicType", Constants.TASK);
-        }catch(Exception e){
-            log.error("系统异常,移入回收站失败:",e);
-            throw new AjaxException(e);
+        if(!Constants.TASK_EN.equals(recycleBinParamDTO.getPublicType())){
+            object.put("result", 0);
+            object.put("msg", "publicType参数不正确！");
+            return object;
         }
+        recycleBinService.moveOrRecovery(recycleBinParamDTO);
+        object.put("result",1);
+        object.put("msgId", recycleBinParamDTO.getProjectId());
+        object.put("data", recycleBinParamDTO.getPublicId());
+        object.put("id", recycleBinParamDTO.getPublicId());
+        object.put("publicType", Constants.TASK);
         return object;
     }
 
@@ -108,15 +103,10 @@ public class RecycleBinApi {
     @RequestMapping("/move_file_rb")
     public JSONObject moveFileToRecycleBin(RecycleBinParamDTO recycleBinParamDTO) {
         JSONObject jsonObject = new JSONObject();
-        try {
-            recycleBinService.moveOrRecovery(recycleBinParamDTO);
-            jsonObject.put("result", 1);
-            jsonObject.put("msgId", recycleBinParamDTO.getProjectId());
-            jsonObject.put("data", recycleBinParamDTO.getFileIdList());
-        } catch (Exception e) {
-            log.error("移入回收站异常:", e);
-            throw new AjaxException(e);
-        }
+        recycleBinService.moveOrRecovery(recycleBinParamDTO);
+        jsonObject.put("result", 1);
+        jsonObject.put("msgId", recycleBinParamDTO.getProjectId());
+        jsonObject.put("data", recycleBinParamDTO.getFileIdList());
         return jsonObject;
     }
 
@@ -129,15 +119,21 @@ public class RecycleBinApi {
     @RequestMapping("/move_share_rb")
     public JSONObject moveShareToRecycleBin(RecycleBinParamDTO recycleBinParamDTO){
         JSONObject jsonObject = new JSONObject();
-        try {
-            recycleBinService.moveOrRecovery(recycleBinParamDTO);
-            jsonObject.put("result",1);
-            jsonObject.put("data", recycleBinParamDTO.getProjectId());
-            jsonObject.put("msgId", recycleBinParamDTO.getProjectId());
-        } catch (Exception e){
-            log.error("系统异常,移入回收站失败:",e);
-            throw new AjaxException(e);
-        }
+        recycleBinService.moveOrRecovery(recycleBinParamDTO);
+        jsonObject.put("result",1);
+        jsonObject.put("data", recycleBinParamDTO.getProjectId());
+        jsonObject.put("msgId", recycleBinParamDTO.getProjectId());
+        return jsonObject;
+    }
+
+    /**
+     * 标签移入回收站/恢复
+     */
+    @RequestMapping("/move_tag_rb")
+    public JSONObject dropTag(RecycleBinParamDTO recycleBinParamDTO){
+        JSONObject jsonObject = new JSONObject();
+        recycleBinService.moveOrRecovery(recycleBinParamDTO);
+        jsonObject.put("result",1);
         return jsonObject;
     }
 
@@ -147,36 +143,13 @@ public class RecycleBinApi {
      */
     @Push(value = PushType.D12,type = 1)
     @RequestMapping("/move_schedule_rb")
-    public JSONObject moveToRecycleBin(RecycleBinParamDTO recycleBinParamDTO){
+    public JSONObject moveScheduleToRecycleBin(RecycleBinParamDTO recycleBinParamDTO){
         JSONObject object = new JSONObject();
-        try{
-
-            recycleBinService.moveOrRecovery(recycleBinParamDTO);
-            object.put("msgId", recycleBinParamDTO.getProjectId());
-            object.put("data", recycleBinParamDTO.getProjectId());
-            object.put("msg", "成功移至回收站!");
-            object.put("result", 1);
-        }catch(Exception e){
-            log.error("移入回收站失败:",e);
-            throw new AjaxException(e);
-        }
+        recycleBinService.moveOrRecovery(recycleBinParamDTO);
+        object.put("msgId", recycleBinParamDTO.getProjectId());
+        object.put("data", recycleBinParamDTO.getProjectId());
+        object.put("result", 1);
         return object;
-    }
-
-    /**
-     * 移入回收站
-     */
-    @RequestMapping("/move_tag_rb")
-    public JSONObject dropTag(RecycleBinParamDTO recycleBinParamDTO){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            recycleBinService.moveOrRecovery(recycleBinParamDTO);
-            jsonObject.put("result",1);
-        }catch (Exception e){
-            log.error("系统异常,移入回收站失败:",e);
-            throw new AjaxException(e);
-        }
-        return jsonObject;
     }
 
 }
