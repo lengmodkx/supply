@@ -94,7 +94,7 @@ public interface FileMapper extends BaseMapper<File> {
 	 *
 	 * @param fileIds ids
 	 */
-	void moveToRecycleBin(String[] fileIds);
+	void moveToRecycleBin(String[] fileIds,Long timeStamp);
 
 	/**
 	 * 移动单个文件

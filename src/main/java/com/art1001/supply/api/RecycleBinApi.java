@@ -73,7 +73,7 @@ public class RecycleBinApi {
 
     /**
      * 移到回收站/恢复
-     * @param taskId 任务id
+     * @param recycleBinParamDTO 参数对象
      * @return 结果
      */
     @Push(value = PushType.A17,type = 3)

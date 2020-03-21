@@ -92,6 +92,9 @@ public class RecycleBinServiceImpl implements RecycleBinService {
         if(Constants.FILE_EN.equals(type)){
             return fileService.findRecycleBin(projectId, fileType);
         }
+        if(Constants.FOLDER_EN.equals(type)){
+            return fileService.findRecycleBin(projectId, fileType);
+        }
         return null;
     }
 

@@ -564,7 +564,6 @@ public class FileApi extends BaseController {
      */
     @DeleteMapping("/{fileId}")
     public Result deleteFile(@PathVariable(value = "fileId") String fileId, @RequestParam(value = "projectId") String projectId) {
-        JSONObject jsonObject = new JSONObject();
         try {
             fileService.deleteFileById(fileId);
             return Result.success();
@@ -1009,7 +1008,8 @@ public class FileApi extends BaseController {
     }
 
     @GetMapping("/{fileName}/search_file")
-    public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName, @RequestParam @NotBlank(message = "projectId不能为空!") String projectId){
+    public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,
+                               @RequestParam @NotBlank(message = "projectId不能为空!") String projectId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
         jsonObject.put("data", fileService.searchFile(fileName,projectId));
@@ -1143,6 +1143,26 @@ public class FileApi extends BaseController {
         }
     }
 
-
-
+    @Push(value = PushType.C8,type = 1)
+    @PutMapping("/folder/look")
+    public JSONObject setFolderLook(@RequestParam String folderId,
+                                @RequestParam String userIds,
+                                @RequestParam String projectId,
+                                @RequestParam String parentId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            if(StringUtils.isNotEmpty(userIds)){
+                File file = new File();
+                file.setFileId(folderId);
+                file.setFileUids(userIds);
+                fileService.updateById(file);
+            }
+            jsonObject.put("result", 1);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("data",parentId);
+            return jsonObject;
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+    }
 }
