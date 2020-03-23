@@ -33,6 +33,8 @@
 		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
 		<result column="progress" property="progress"/>
+		<result column="total_work_hours" property="totalWorkHours"/>
+		<result column="plan_work_hours" property="planWorkHours"/>
 		<result column="sub_is_all_complete" property="subIsAllComplete"/>
 
 		<!-- 查询父级任务信息 -->
@@ -87,6 +89,8 @@
 		<result column="other" property="other" jdbcType="VARCHAR"/>
 		<result column="order" property="order" jdbcType="INTEGER"/>
 		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
+		<result column="total_work_hours" property="totalWorkHours"/>
+		<result column="plan_work_hours" property="planWorkHours"/>
 		<result column="bind_id" property="bindId"/>
 		<result column="file_id" property="fileId"/>
 		<!--查询标签-->

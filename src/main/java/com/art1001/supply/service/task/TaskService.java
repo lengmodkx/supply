@@ -677,4 +677,17 @@ public interface TaskService extends IService<Task> {
 	List<Task> getNotExecutorTaskByProjectId(String projectId);
 
 
+	/**
+	 * 更新任务的进度
+	 * @param taskId 任务id
+	 * @param progress 任务进度值
+	 */
+    void updateProgress(String taskId, Integer progress);
+
+	/**
+	 * 更新任务的计划工时
+	 * @param taskId 任务id
+	 * @param workingHours 计划工时
+	 */
+	void updatePlanWorkHours(String taskId, Double workingHours);
 }

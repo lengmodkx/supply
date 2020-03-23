@@ -30,11 +30,14 @@ import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBui
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.Range;
 import org.quartz.SchedulerException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -52,6 +55,7 @@ import java.util.Map;
  * [DELETE] // 删除
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("tasks")
 public class  TaskApi extends BaseController {
@@ -1146,6 +1150,35 @@ public class  TaskApi extends BaseController {
         }
     }
 
+    /**
+     * 更新任务的进度
+     * @param taskId 任务id
+     * @param progress 进度值
+     * @return 结果
+     */
+    @PostMapping("/progress")
+    public Result updateProgress(@NotBlank(message = "任务id不能为空") String taskId,
 
+                                 @NotNull(message = "进度值不能为空！")
+                                 @Range(message = "进度值不符合规范", min = 1, max = 100) Integer progress){
 
+        taskService.updateProgress(taskId, progress);
+        return Result.success();
+    }
+
+    /**
+     * 更新任务的计划工时
+     * @param taskId 任务id
+     * @param progress 进度值
+     * @return 结果
+     */
+    @PostMapping("/work_hours")
+    public Result updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
+
+                                  @NotNull(message = "计划值不能为空！")
+                                  @Range(message = "计划值不符合规范", min = 1, max = 480) Double workingHours){
+
+        taskService.updatePlanWorkHours(taskId, workingHours);
+        return Result.success();
+    }
 }

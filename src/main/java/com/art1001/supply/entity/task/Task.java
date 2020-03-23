@@ -324,6 +324,16 @@ Task extends Model<Task> {
 	@TableField(exist = false)
 	private String fileId;
 
+	/**
+	 * 任务的总工时
+	 */
+	private Double totalWorkHours;
+
+	/**
+	 * 任务的计划工时
+	 */
+	private Double planWorkHours;
+
 
 
 	@Override

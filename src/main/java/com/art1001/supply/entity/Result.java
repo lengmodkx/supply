@@ -1,6 +1,9 @@
 package com.art1001.supply.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 全部结果返回类
@@ -8,8 +11,9 @@ import lombok.Data;
  * wangyafeng
  * @param <T>
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class Result<T> {
+public class Result<T> implements Serializable {
     private int result;
     private String msg;
 
@@ -22,8 +26,7 @@ public class Result<T> {
     }
 
     private Result(){
-        this.result = 1;
-        this.msg = "success";
+        super();
     }
 
     private Result(CodeMsg msg){
