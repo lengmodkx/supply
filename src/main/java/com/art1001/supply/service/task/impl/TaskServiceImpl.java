@@ -1965,6 +1965,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setPlanWorkHours(workingHours);
         this.updateById(task);
 
+
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.A35.getName()).append(workingHours).append("小时");
         logService.saveLog(taskId,content.toString(),1);
