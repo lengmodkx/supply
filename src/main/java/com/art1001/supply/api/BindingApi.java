@@ -73,7 +73,8 @@ public class BindingApi {
     public JSONObject saveBinding(@RequestParam String publicId,
                                   @RequestParam String bindId,
                                   @RequestParam String fromType,
-                                  @RequestParam String publicType){
+                                  @RequestParam String publicType,
+                                  @RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
             int i = bindingService.findCountById(bindId,publicType,publicId);
@@ -81,11 +82,10 @@ public class BindingApi {
                 bindingService.saveBindBatch(publicId,bindId,publicType);
                 jsonObject.put("data", new JSONObject().fluentPut("fromType", fromType).fluentPut("publicId",publicId).fluentPut("publicType", publicType).fluentPut("bind",taskService.findTaskApiBean(bindId)));
                 jsonObject.put("result",1);
-                jsonObject.put("msgId", bindingService.getProjectId(publicId));
+                jsonObject.put("msgId", projectId);
                 jsonObject.put("id", publicId);
                 jsonObject.put("publicType", publicType);
             }else {
-                jsonObject.put("data",null);
                 jsonObject.put("result",0);
                 jsonObject.put("msg","不能重复绑定");
             }
