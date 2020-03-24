@@ -13,5 +13,6 @@ public class RecycleBinVO {
 
     private String id;
     private String publicName;
+    private String ext;
     private long updateTime;
 }

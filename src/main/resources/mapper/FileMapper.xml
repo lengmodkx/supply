@@ -175,6 +175,7 @@
 			f.is_model,
 			f.`size`,
 			f.parent_id,
+			f.file_uids,
 			f.create_time,
 			f.file_thumbnail,
 			f.file_privacy
@@ -298,7 +299,7 @@
 	</update>
 
 	<update id="moveToRecycleBin" parameterType="java.lang.String">
-		update prm_file set file_del = 1
+		update prm_file set file_del = 1 and update_time = #{timeStamp}
 		where file_id in
 		<foreach collection="array" open="(" separator="," close=")" item="id">
 			#{id}
@@ -335,9 +336,9 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 
 	<!-- 查询出在该项目回收站中的文件/文件夹 -->
 	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
-		select file_id as id,file_name as publicName,update_time
+		select file_id as id,file_name as publicName,ext,update_time
 		from prm_file where file_del = 1 and project_id = #{projectId}
-		and catalog = #{type}
+		and `catalog` = #{type} order by update_time desc
 	</select>
 
 	<!-- 查询某个文件夹下的公开文件 -->

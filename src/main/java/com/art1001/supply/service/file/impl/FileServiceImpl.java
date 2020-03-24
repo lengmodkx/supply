@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
@@ -124,6 +125,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public List<File> queryFileList(String fileId,Integer current,Integer size) {
+        String userId = ShiroAuthenticationManager.getUserId();
         //Page<File> filePage = new Page<>(current,size);
         //File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
         List<File> childFile = fileMapper.findChildFile(fileId);
@@ -142,7 +144,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 file.setJoinInfo(new ArrayList<>());
             }
             if(file.getFilePrivacy() == 1){
-                if(StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+                if(file.getCatalog()==1){//文件夹处理
+                    if(StringUtils.isEmpty(file.getFileUids())&&!file.getMemberId().equals(userId)){
+                        iterator.remove();
+                    }
+                }
+                if(StringUtils.isNotEmpty(file.getFileUids())
+                        && !ArrayUtils.contains(file.getFileUids().split(","),userId)
+                        && !file.getMemberId().equals(userId)){
                     iterator.remove();
                 }
             }
@@ -580,7 +589,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public void moveToRecycleBin(String[] fileIds) {
-        fileMapper.moveToRecycleBin(fileIds);
+        fileMapper.moveToRecycleBin(fileIds,System.currentTimeMillis());
     }
 
     @Override
