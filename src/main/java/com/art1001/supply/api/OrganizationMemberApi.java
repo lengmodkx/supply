@@ -93,15 +93,15 @@ public class OrganizationMemberApi {
                 jsonObject.put("msg","添加成功");
                 jsonObject.put("data", organizationMemberService.findOrgByMemberId(memberId,orgId));
             } else{
-                if(member.getMemberLock()==1){
+               /* if(member.getMemberLock()==1){
                     organizationMember.setId(member.getId());
                     organizationMemberService.updateOrganizationMember(organizationMember);
                     jsonObject.put("result",1);
                     jsonObject.put("msg","添加成功");
-                }else{
+                }else{*/
                     jsonObject.put("result",0);
-                    jsonObject.put("msg","邀请失败，该成员已被停用");
-                }
+                    jsonObject.put("msg","邀请失败，该成员已在企业中");
+                //}
             }
         }catch (Exception e){
             throw  new AjaxException(e);
@@ -160,15 +160,27 @@ public class OrganizationMemberApi {
      * @return 用户信息
      */
     @GetMapping("/{phone}/user")
-    public JSONObject getUserByPhone(@PathVariable String phone){
+    public JSONObject getUserByPhone(@PathVariable String phone,String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().like("account_name", phone).select("user_id", "user_name", "image", "telephone"));
+            if (users.isEmpty()){
+                users = userService.list(new QueryWrapper<UserEntity>().like("user_name",phone).select("user_id", "user_name", "image", "telephone"));
+            }
             if(users.isEmpty()){
                 jsonObject.put("data",null);
                 jsonObject.put("msg","未搜索到成员");
                 jsonObject.put("result",0);
             }else {
+                //判断该成员是否已在企业里
+                for (UserEntity userEntity : users) {
+                    OrganizationMember member = organizationMemberService.findOrgByMemberId(userEntity.getUserId(),orgId);
+                    if (member!=null){
+                        userEntity.setExistId(1);
+                    }else{
+                        userEntity.setExistId(0);
+                    }
+                }
                 jsonObject.put("data",users);
                 jsonObject.put("result", 1);
             }

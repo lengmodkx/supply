@@ -3,7 +3,6 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
-import com.art1001.supply.annotation.ProAuthentization;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
@@ -30,7 +29,9 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.AliyunOss;
+import com.art1001.supply.util.CommonUtils;
+import com.art1001.supply.util.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -50,15 +51,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @author heshaohua
@@ -1009,10 +1009,10 @@ public class FileApi extends BaseController {
 
     @GetMapping("/{fileName}/search_file")
     public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,
-                               @RequestParam @NotBlank(message = "projectId不能为空!") String projectId){
+                               @RequestParam @NotBlank(message = "projectId不能为空!") String projectId,Pageable pageable){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",1);
-        jsonObject.put("data", fileService.searchFile(fileName,projectId));
+        jsonObject.put("data", fileService.searchFile(fileName,projectId,pageable));
         return jsonObject;
     }
 

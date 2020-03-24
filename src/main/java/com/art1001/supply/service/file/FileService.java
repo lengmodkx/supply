@@ -352,7 +352,7 @@ import java.util.List;
 	 * @param projectId 项目id
 	 * @return 文件信息集合
 	 */
-	List<File> searchFile(String fileName, String projectId);
+	List<File> searchFile(String fileName, String projectId,Pageable pageable);
 
 	/**
 	 * 获取fileId的上级目录的id

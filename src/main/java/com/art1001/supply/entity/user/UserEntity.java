@@ -133,6 +133,10 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private Integer vip;
 
+  //企业中是否已添加角色为成员，null或0为未添加，1为添加
+	@TableField(exist = false)
+	private Integer existId;
+
 	@JsonIgnore
 	@TableField(exist = false)
 	private String sessionKey;
@@ -177,5 +181,6 @@ public class UserEntity extends Model<UserEntity> {
 		this.creatorName = userEntity.getCreatorName();
 		this.createTime = userEntity.getCreateTime();
 		this.updateTime = userEntity.getUpdateTime();
+		this.existId = userEntity.getExistId();
 	}
 }

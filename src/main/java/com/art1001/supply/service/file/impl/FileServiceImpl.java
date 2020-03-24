@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
@@ -33,8 +33,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -1225,11 +1223,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public List<File> searchFile(String fileName, String projectId) {
+    public List<File> searchFile(String fileName, String projectId,Pageable pageable) {
+        PageRequest of;
+        if (pageable==null){
+            of = PageRequest.of(0, 20,new Sort(Sort.Direction.DESC, "createTime"));
+        }else{
+            of = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),new Sort(Sort.Direction.DESC, "createTime"));
+        }
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName.hashCode()))
-                .withFilter(QueryBuilders.termQuery("projectId", projectId))
-                .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withFilter(QueryBuilders.termQuery("projectId", projectId)).withPageable(of)
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果ES查询不到数据，从数据库再查询一遍
