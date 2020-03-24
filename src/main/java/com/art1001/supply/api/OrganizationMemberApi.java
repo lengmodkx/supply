@@ -61,7 +61,13 @@ public class OrganizationMemberApi {
      */
     private static final int MEMBER_NEW =3;
 
+
     private static final int IS_PARTMENT =4;
+
+    /**
+         * 外部成员
+     */
+    private static final int IS_OTHER =5;
 
 
 
@@ -141,9 +147,10 @@ public class OrganizationMemberApi {
                 organizationMember.setCreateTime(System.currentTimeMillis());
             }else if (flag == IS_PARTMENT){
                 organizationMember.setPartmentId(parmentId);
+            }else if (flag == IS_OTHER) {
+                organizationMember.setOther(0);
             }
-
-            pager.setCondition(organizationMember);
+                pager.setCondition(organizationMember);
             List<OrganizationMember> memberList = organizationMemberService.findOrganizationMemberPagerList(pager);
             jsonObject.put("result",1);
             jsonObject.put("data",memberList);

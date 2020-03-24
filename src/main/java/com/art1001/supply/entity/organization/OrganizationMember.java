@@ -88,6 +88,9 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	private Boolean userDefault;
 
+	/**
+	 * 是否是企业员工  1为是  0为外部员工
+	 */
 	private Integer other;
 	@Override
 	protected Serializable pkVal() {

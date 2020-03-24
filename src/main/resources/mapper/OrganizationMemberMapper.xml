@@ -69,6 +69,9 @@
 		<if test="condition.memberLock != null">
 			AND member_lock = #{condition.memberLock}
 		</if>
+		<if test="condition.other != null   or condition.other == 0">
+			AND other = #{condition.other}
+		</if>
 		order by create_time asc
 	</select>
 	

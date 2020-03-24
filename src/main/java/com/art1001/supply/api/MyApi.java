@@ -2,17 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.schedule.Schedule;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Description
@@ -127,11 +123,20 @@ public class MyApi {
      * @return 我创建的文件数据
      */
     @GetMapping("file")
-    public JSONObject meCreated(@RequestParam(required = false) String order){
+    public JSONObject meCreated(@RequestParam(required = false) String order,String type){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",fileService.created(order));
-            jsonObject.put("result",1);
+            if ("create".equals(type)){
+                jsonObject.put("data",fileService.created(order));
+                jsonObject.put("result",1);
+            }else if ("join".equals(type)){
+                jsonObject.put("data",null);
+                jsonObject.put("result",1);
+            }else {
+                jsonObject.put("result",0);
+            }
+
+
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,获取数据失败!");
