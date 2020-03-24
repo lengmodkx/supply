@@ -1007,6 +1007,9 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 文件搜索
+     */
     @GetMapping("/{fileName}/search_file")
     public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,
                                @RequestParam @NotBlank(message = "projectId不能为空!") String projectId,Pageable pageable){
