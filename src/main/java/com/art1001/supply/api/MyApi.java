@@ -130,7 +130,7 @@ public class MyApi {
                 jsonObject.put("data",fileService.created(order));
                 jsonObject.put("result",1);
             }else if ("join".equals(type)){
-                jsonObject.put("data",null);
+                jsonObject.put("data",fileService.join(order));
                 jsonObject.put("result",1);
             }else {
                 jsonObject.put("result",0);

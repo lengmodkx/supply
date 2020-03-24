@@ -984,6 +984,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return created;
     }
 
+
+    /**
+     * 获取我参与的文件并且排序
+     * @param order 排序规则(名称,大小,创建时间)
+     * @return 我参与的文件数据
+     */
+    @Override
+    public List<File> join(String order) {
+        List<File> join = new ArrayList<>(30);
+        if(StringUtils.isNotEmpty(order) && order.equals("size")){
+            for (String c : company) {
+                //join.addAll(fileMapper.joinBySize(ShiroAuthenticationManager.getUserId(),c));
+            }
+        } else if ("create".equals(order)){
+            //join = fileMapper.join(order, ShiroAuthenticationManager.getUserId());
+        }
+        return join;
+    }
+
     /**
      * 从其他信息(任务,文件,日程,分享) 绑定文件信息
      * @param files 文件集合信息

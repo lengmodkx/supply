@@ -275,6 +275,13 @@ import java.util.List;
 	 */
 	List<File> created(String order);
 
+    /**
+     * 获取我参与的文件并且排序
+     * @param order 排序规则(名称,大小,创建时间)
+     * @return 我参与的文件数据
+     */
+    List<File> join(String order);
+
 	/**
 	 * 从其他信息(任务,文件,日程,分享) 绑定文件信息
 	 * @param files 文件集合信息
@@ -489,4 +496,6 @@ import java.util.List;
 	void downloadSingleFolder(File file, HttpServletResponse response);
 
 	void batchDownLoad(List<File> files, HttpServletResponse response);
+
+
 }
