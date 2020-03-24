@@ -1009,6 +1009,7 @@ public class FileApi extends BaseController {
 
     /**
      * 文件搜索
+     * @param pageable   分页
      */
     @GetMapping("/{fileName}/search_file")
     public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,
