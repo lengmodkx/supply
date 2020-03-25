@@ -61,7 +61,7 @@ import java.util.zip.ZipOutputStream;
  * fileServiceImpl
  */
 @Service
-public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements FileService {
+public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
 
     /**
      * fileMapper接口
@@ -96,15 +96,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     private final static String PUBLIC_FILE_NAME = "公共模型库";
 
-    private final static String[] company =  {"GB","MB","KB"};
+    private final static String[] company = {"GB", "MB", "KB", "B"};
 
     @Override
     public List<FileTree> querySubFileList(String fileId) {
         List<FileTree> trees = fileMapper.querySubFileList(fileId);
-        trees.forEach(item->{
-            if(checkChildFolder(item.getId())==1){
+        trees.forEach(item -> {
+            if (checkChildFolder(item.getId()) == 1) {
                 item.setIsParent(1);
-            }else{
+            } else {
                 item.setIsParent(0);
             }
         });
@@ -122,7 +122,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public List<File> queryFileList(String fileId,Integer current,Integer size) {
+    public List<File> queryFileList(String fileId, Integer current, Integer size) {
         String userId = ShiroAuthenticationManager.getUserId();
         //Page<File> filePage = new Page<>(current,size);
         //File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
@@ -134,22 +134,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 //            childFile.add(file);
 //        }
         Iterator<File> iterator = childFile.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             File file = iterator.next();
-            if(StringUtils.isNotEmpty(file.getFileUids())){
+            if (StringUtils.isNotEmpty(file.getFileUids())) {
                 file.setJoinInfo(userService.findManyUserById(file.getFileUids()));
-            }else{
+            } else {
                 file.setJoinInfo(new ArrayList<>());
             }
-            if(file.getFilePrivacy() == 1){
-                if(file.getCatalog()==1){//文件夹处理
-                    if(StringUtils.isEmpty(file.getFileUids())&&!file.getMemberId().equals(userId)){
+            if (file.getFilePrivacy() == 1) {
+                if (file.getCatalog() == 1) {//文件夹处理
+                    if (StringUtils.isEmpty(file.getFileUids()) && !file.getMemberId().equals(userId)) {
                         iterator.remove();
                     }
                 }
-                if(StringUtils.isNotEmpty(file.getFileUids())
-                        && !ArrayUtils.contains(file.getFileUids().split(","),userId)
-                        && !file.getMemberId().equals(userId)){
+                if (StringUtils.isNotEmpty(file.getFileUids())
+                        && !ArrayUtils.contains(file.getFileUids().split(","), userId)
+                        && !file.getMemberId().equals(userId)) {
                     iterator.remove();
                 }
             }
@@ -158,18 +158,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         return childFile;
     }
 
-   /*  获取素材库树状图数据
-    *
-    **/
+    /*  获取素材库树状图数据
+     *
+     **/
     @Override
-    public IPage<File> queryFodderList(String fileId,Integer current,Integer size) {
-        Page<File> filePage = new Page<>(current,size);
+    public IPage<File> queryFodderList(String fileId, Integer current, Integer size) {
+        Page<File> filePage = new Page<>(current, size);
         File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
-        IPage<File> fileById=null;
-        if (isRoot.getCatalog()==0){
-             fileById = fileMapper.selectPage(filePage, new QueryWrapper<File>().eq("file_id", fileId));
-        }else{
-             fileById = fileMapper.selectPage(null,new QueryWrapper<File>().eq("file_id", fileId));
+        IPage<File> fileById = null;
+        if (isRoot.getCatalog() == 0) {
+            fileById = fileMapper.selectPage(filePage, new QueryWrapper<File>().eq("file_id", fileId));
+        } else {
+            fileById = fileMapper.selectPage(null, new QueryWrapper<File>().eq("file_id", fileId));
         }
         //List<File> childFile = fileMapper.findChildFile(fileId);
         /*if(isRoot.getLevel()==0){
@@ -188,12 +188,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
      */
     @Override
     public File findFileById(String id) {
-      return fileMapper.findFileById(id);
+        return fileMapper.findFileById(id);
     }
 
     /**
      * 何少华
      * 通过id删除file数据
+     *
      * @param fileId 文件id
      */
     @Override
@@ -203,7 +204,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         //删除elasticSearch
         fileRepository.deleteById(fileId);
         //删除文件版本信息
-        fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id",fileId));
+        fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id", fileId));
     }
 
     @Override
@@ -215,7 +216,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
-        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
         fileRepository.save(file);
         //写入日志
@@ -236,14 +237,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 单个普通文件上传
-     * @param projectId 项目id
-     * @param fileId 文件id
+     *
+     * @param projectId     项目id
+     * @param fileId        文件id
      * @param multipartFile 文件
      */
     @Override
     public void uploadFile(String projectId, String fileId, MultipartFile multipartFile) {
         String userId = ShiroAuthenticationManager.getUserId();
-        File originFile = fileService.getOne(new QueryWrapper<File>().eq("file_id",fileId));
+        File originFile = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
         UserEntity userEntity = userService.findById(userId);
         // 得到文件名
         String originalFilename = multipartFile.getOriginalFilename();
@@ -262,7 +264,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setExt(ext);
         file.setProjectId(projectId);
         file.setFileUrl(fileUrl);
-        if(FileExt.extMap.get("images").contains(ext)){
+        if (FileExt.extMap.get("images").contains(ext)) {
             file.setFileThumbnail(fileUrl);
         }
         // 得到上传文件的大小
@@ -286,12 +288,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 保存文件--文件在前端直接传oss
+     *
      * @param files
      * @param publicId
      * @param projectId
      */
     @Override
-    public void saveFile(String files,String publicId,String projectId){
+    public void saveFile(String files, String publicId, String projectId) {
         JSONArray array = JSON.parseArray(files);
         for (int i = 0; i < array.size(); i++) {
             JSONObject jsonObject = array.getJSONObject(i);
@@ -320,7 +323,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             save(myFile);
             //保存到ElasticSearch
             fileRepository.save(myFile);
-            System.out.println(myFile.getFileName()+" 文件ES上传成功");
+            System.out.println(myFile.getFileName() + " 文件ES上传成功");
         }
     }
 
@@ -336,9 +339,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         // 用原本的文件名
         modelFile.setFileName(filename);
         //查询出当前文件夹的level
-        if(StringUtils.isNotEmpty(parentId)){
-            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id",parentId));
-            modelFile.setLevel(file.getLevel()+1);
+        if (StringUtils.isNotEmpty(parentId)) {
+            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", parentId));
+            modelFile.setLevel(file.getLevel() + 1);
             modelFile.setProjectId(file.getProjectId());
         }
 
@@ -350,18 +353,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         modelFile.setMemberId(userEntity.getUserId());
         modelFile.setCreateTime(System.currentTimeMillis());
         modelFile.setFileUids(ShiroAuthenticationManager.getUserId());
-        if(StringUtils.isNotEmpty(publicId)){
+        if (StringUtils.isNotEmpty(publicId)) {
             modelFile.setPublicId(publicId);
             modelFile.setPublicLable(1);
         }
         fileService.save(modelFile);
         fileRepository.save(modelFile);
-        System.out.println(modelFile.getFileName()+" 文件ES上传成功");
+        System.out.println(modelFile.getFileName() + " 文件ES上传成功");
         //版本历史更新
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(modelFile.getFileId());
         fileVersion.setIsMaster(1);
-        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
         return modelFile;
     }
@@ -381,7 +384,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         projectFile.setCreateTime(System.currentTimeMillis());
         projectFile.setUpdateTime(System.currentTimeMillis());
         save(projectFile);
-        Arrays.asList("图片","文档","音频","视频","模型").forEach(item->{
+        Arrays.asList("图片", "文档", "音频", "视频", "模型").forEach(item -> {
             File file = new File();
             file.setFileName(item);
             file.setProjectId(projectId);
@@ -405,7 +408,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         file.setFileName(fileName);
         // 设置父级id
         file.setParentId(parentId);
-        file.setLevel(getOne(new QueryWrapper<File>().eq("file_id",parentId)).getLevel()+1);
+        file.setLevel(getOne(new QueryWrapper<File>().eq("file_id", parentId)).getLevel() + 1);
         // 项目id
         file.setProjectId(projectId);
         file.setMemberId(userId);
@@ -426,25 +429,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出该文件夹下的所有子文件夹及文件
+     *
      * @param parentId 父级id，顶级目录为 0
      * @return
      */
     @Override
-    public List<File> findChildFile(String parentId,Integer orderType) {
+    public List<File> findChildFile(String parentId, Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
         List<File> childFile = new ArrayList<>();//fileMapper.findChildFile(parentId,1,9999);
-        if(fileService.isRootFolder(parentId)){
+        if (fileService.isRootFolder(parentId)) {
             File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
-            if(ObjectsUtil.isNotEmpty(myFolder)){
+            if (ObjectsUtil.isNotEmpty(myFolder)) {
                 childFile.add(myFolder);
             }
         }
 
         Iterator<File> iterator = childFile.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             File file = iterator.next();
-            if(file.getFilePrivacy() == 1){
-                if(StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())){
+            if (file.getFilePrivacy() == 1) {
+                if (StringUtils.isNotEmpty(file.getFileUids()) && !Arrays.asList(file.getFileUids().split(",")).contains(ShiroAuthenticationManager.getUserId()) && !file.getMemberId().equals(ShiroAuthenticationManager.getUserId())) {
                     iterator.remove();
                 }
             }
@@ -454,120 +458,123 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 移动文件/文件夹
+     *
      * @param projectId 移动之后的项目Id
      * @param fileIds   源文件id数组
-     * @param folderId 目标目录id
+     * @param folderId  目标目录id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void moveFile(String projectId,List<String> fileIds, String folderId) {
-        fileIds.forEach(fileId->moveSingleFile(folderId,projectId,fileId));
+    public void moveFile(String projectId, List<String> fileIds, String folderId) {
+        fileIds.forEach(fileId -> moveSingleFile(folderId, projectId, fileId));
         //搜索引擎采用通知的方式进行数据同步
     }
 
     /**
      * 移动单个文件/文件夹
-     * @param parentId 目标文件夹id
+     *
+     * @param parentId  目标文件夹id
      * @param projectId 目标项目Id
-     * @param fileId 要移动的文件/文件夹的Id
+     * @param fileId    要移动的文件/文件夹的Id
      */
-    private void moveSingleFile(String parentId,String projectId,String fileId){
-        File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del",0));
-        fileMapper.moveFile(parentId,projectId,fileId);
-        if(file.getCatalog()==0){
-           dealWithFile(file.getFileId(),parentId,1);
+    private void moveSingleFile(String parentId, String projectId, String fileId) {
+        File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
+        fileMapper.moveFile(parentId, projectId, fileId);
+        if (file.getCatalog() == 0) {
+            dealWithFile(file.getFileId(), parentId, 1);
         }
         //文件和文件夹的处理
-        if(file.getCatalog()==1){
+        if (file.getCatalog() == 1) {
             //递归更新子文件/文件夹的项目id，其他字段不变
-            recursiveFile(projectId,fileId);
+            recursiveFile(projectId, fileId);
         }
     }
 
-    private void recursiveFile(String projectId,String fileId){
-        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del",0));
-        if(fileList!=null && fileList.size()>0){
-            fileList.forEach(file->{
+    private void recursiveFile(String projectId, String fileId) {
+        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", 0));
+        if (fileList != null && fileList.size() > 0) {
+            fileList.forEach(file -> {
                 File f = new File();
                 f.setFileId(file.getFileId());
                 f.setProjectId(projectId);
                 updateById(f);
-                if(file.getCatalog()==1){
-                    recursiveFile(projectId,file.getFileId());
+                if (file.getCatalog() == 1) {
+                    recursiveFile(projectId, file.getFileId());
                 }
             });
         }
     }
+
     /**
      * 复制文件/文件夹
+     *
      * @param projectId 复制之后的项目Id
      * @param fileIds   源文件id数组
-     * @param folderId 目标目录id
+     * @param folderId  目标目录id
      */
     @Override
     public void copyFile(String projectId, List<String> fileIds, String folderId) {
-        fileIds.forEach(fileId->copySingleFile(fileId,projectId,folderId));
+        fileIds.forEach(fileId -> copySingleFile(fileId, projectId, folderId));
 
         //搜索引擎采用通知的方式进行数据同步
     }
 
-    private void copySingleFile(String fileId,String projectId,String folderId){
-        File file = getOne(new QueryWrapper<File>().eq("file_id",fileId).eq("file_del",0));
+    private void copySingleFile(String fileId, String projectId, String folderId) {
+        File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
         file.setFileId(IdGen.uuid());
         file.setParentId(folderId);
         file.setProjectId(projectId);
         //判断是否是同项目->解除绑定关系
         save(file);
-        if(file.getCatalog()==0){
-            dealWithFile(file.getFileId(),"",0);
+        if (file.getCatalog() == 0) {
+            dealWithFile(file.getFileId(), "", 0);
         }
 
-        if(file.getCatalog()==1){
-            recursiveCopyFile(projectId,fileId);
+        if (file.getCatalog() == 1) {
+            recursiveCopyFile(projectId, fileId);
         }
     }
 
-    private void recursiveCopyFile(String projectId,String parentId){
-        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", parentId).eq("file_del",0));
-        if(fileList!=null && fileList.size()>0){
-            fileList.forEach(file->{
+    private void recursiveCopyFile(String projectId, String parentId) {
+        List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", parentId).eq("file_del", 0));
+        if (fileList != null && fileList.size() > 0) {
+            fileList.forEach(file -> {
                 file.setFileId(IdGen.uuid());
                 file.setProjectId(projectId);
                 file.setParentId(parentId);
                 save(file);
-                if(file.getCatalog()==1){
-                    recursiveCopyFile(projectId,file.getFileId());
+                if (file.getCatalog() == 1) {
+                    recursiveCopyFile(projectId, file.getFileId());
                 }
             });
         }
     }
 
     /**
-     *
-     * @param fileId 文件id
+     * @param fileId   文件id
      * @param parentId
-     * @param flag 移动/复制 1/0
+     * @param flag     移动/复制 1/0
      */
     //处理文件版本信息以及和文件相关的信息
-    private void dealWithFile(String fileId,String parentId,Integer flag){
+    private void dealWithFile(String fileId, String parentId, Integer flag) {
         UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(fileId);
         fileVersion.setIsMaster(1);
-        if(flag==0){
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
-        }else{
-            File file = getOne(new QueryWrapper<File>().eq("file_id",parentId).eq("file_del",0));
-            fileVersion.setInfo(userEntity.getUserName() + " 将文件移动到了 "+ file.getFileName());
+        if (flag == 0) {
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
+        } else {
+            File file = getOne(new QueryWrapper<File>().eq("file_id", parentId).eq("file_del", 0));
+            fileVersion.setInfo(userEntity.getUserName() + " 将文件移动到了 " + file.getFileName());
         }
 
         fileVersionService.save(fileVersion);
     }
 
 
-
     /**
      * 获取上级url
+     *
      * @param projectId 项目id
      */
     @Override
@@ -587,7 +594,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     @Override
     public void moveToRecycleBin(String[] fileIds) {
-        fileMapper.moveToRecycleBin(fileIds,System.currentTimeMillis());
+        fileMapper.moveToRecycleBin(fileIds, System.currentTimeMillis());
     }
 
     @Override
@@ -598,6 +605,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出该文件的所有参与者id
+     *
      * @param fileId 文件id
      * @return 参与者id
      */
@@ -608,11 +616,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 添加或者移除文件的参与者
-     * @param fileId 当前参与者id
+     *
+     * @param fileId    当前参与者id
      * @param newJoinId 新的参与者id
      * @return 影响行数
      */
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
     public void addAndRemoveFileJoin(String fileId, String newJoinId) {
         //查询出当前文件中的 参与者id
@@ -627,7 +636,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         //比较 oldJoin 和 newJoin 两个集合的差集  (移除)
         List<String> reduce1 = oldJoin.stream().filter(item -> !newJoin.contains(item)).collect(Collectors.toList());
-        if(reduce1 != null && reduce1.size() > 0){
+        if (reduce1 != null && reduce1.size() > 0) {
             logContent.append(TaskLogFunction.B.getName()).append(" ");
             for (String uId : reduce1) {
                 UserEntity userEntity = userService.findById(uId);
@@ -637,7 +646,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         //比较 newJoin  和 oldJoin 两个集合的差集  (添加)
         List<String> reduce2 = newJoin.stream().filter(item -> !oldJoin.contains(item)).collect(Collectors.toList());
-        if(reduce2 != null && reduce2.size() > 0){
+        if (reduce2 != null && reduce2.size() > 0) {
             logContent.append(TaskLogFunction.C.getName()).append(" ");
             for (String uId : reduce2) {
                 UserEntity userEntity = userService.findById(uId);
@@ -646,21 +655,23 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         }
 
         //如果没有参与者变动直接返回
-        if((reduce1 == null && reduce1.size() == 0) && (reduce2 == null && reduce2.size() == 0)){
+        if ((reduce1 == null && reduce1.size() == 0) && (reduce2 == null && reduce2.size() == 0)) {
             return;
-        } else{
+        } else {
             File file = new File();
             file.setFileId(fileId);
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
             updateById(file);
             fileRepository.save(file);
-            System.out.println(file.getFileName()+" 文件ES上传成功");
-            logService.saveLog(fileId,logContent.toString(),2);
+            System.out.println(file.getFileName() + " 文件ES上传成功");
+            logService.saveLog(fileId, logContent.toString(), 2);
         }
     }
+
     /**
      * 根据文件id 查询出文件名
+     *
      * @param publicId 文件id
      * @return
      */
@@ -671,6 +682,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出我参与的所有文件
+     *
      * @return
      */
     @Override
@@ -680,28 +692,31 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出在该项目回收站中的文件
+     *
      * @param projectId 项目id
      * @return
      */
     @Override
-    public List<RecycleBinVO> findRecycleBin(String projectId,String type) {
-        return fileMapper.findRecycleBin(projectId,type);
+    public List<RecycleBinVO> findRecycleBin(String projectId, String type) {
+        return fileMapper.findRecycleBin(projectId, type);
     }
 
     /**
      * 恢复文件
+     *
      * @param fileId 文件的id
      */
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
     public Integer recoveryFile(String fileId) {
-        fileMapper.recoveryFile(fileId,System.currentTimeMillis());
-        logService.saveLog(fileId,TaskLogFunction.A28.getName(),1);
+        fileMapper.recoveryFile(fileId, System.currentTimeMillis());
+        logService.saveLog(fileId, TaskLogFunction.A28.getName(), 1);
         return 1;
     }
 
     /**
      * 查询某个文件夹下的公开文件
+     *
      * @param parentId 父文件夹id
      * @return
      */
@@ -723,19 +738,20 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 加载出该项目的所有文件数据
+     *
      * @param projectId 项目id
-     * @param fileId 文件id
+     * @param fileId    文件id
      * @return
      */
     @Override
     public List<File> findProjectFile(String projectId, String fileId) {
         List<File> fileList = new ArrayList<>();
-        if("0".equals(fileId)){
-            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId),1);
-        } else if(PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))){
+        if ("0".equals(fileId)) {
+            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId), 1);
+        } else if (PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))) {
             //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
             fileList = fileService.findPublicFile(fileService.findFileId());
-        } else{
+        } else {
             fileList = fileService.findPublicFile(fileId);
         }
         return fileList;
@@ -743,16 +759,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 插入多条文件信息
+     *
      * @param files 文件id
      */
     @Override
-    public void saveFileBatch(String projectId, String files, String parentId,String publicId) {
+    public void saveFileBatch(String projectId, String files, String parentId, String publicId) {
         UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
         List<File> fileList = new ArrayList<>();
         List<FileVersion> versionList = new ArrayList<>();
-        if(StringUtils.isNotEmpty(files)){
+        if (StringUtils.isNotEmpty(files)) {
             JSONArray array = JSON.parseArray(files);
-            for (int i=0;i<array.size();i++) {
+            for (int i = 0; i < array.size(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 String fileName = object.getString("fileName");
                 String fileUrl = object.getString("fileUrl");
@@ -762,7 +779,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 File myFile = new File();
                 myFile.setFileId(IdGen.uuid());
                 // 用原本的文件名
-                myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
+                myFile.setFileName(fileName.substring(0, fileName.lastIndexOf(".")));
                 myFile.setExt(ext);
                 myFile.setProjectId(projectId);
                 myFile.setFileUrl(fileUrl);
@@ -771,10 +788,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setSize(size);
                 myFile.setIsModel(0);
                 //文件的层级
-                if(StringUtils.isNotEmpty(parentId)){
+                if (StringUtils.isNotEmpty(parentId)) {
                     //查询出当前文件夹的level
-                    int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id",parentId)).getLevel();
-                    myFile.setLevel(parentLevel+1);
+                    int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id", parentId)).getLevel();
+                    myFile.setLevel(parentLevel + 1);
                     myFile.setParentId(parentId);
                 }
                 myFile.setMemberImg(userEntity.getImage());
@@ -783,20 +800,20 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
                 myFile.setUpdateTime(System.currentTimeMillis());
-                if(FileExt.extMap.get("images").contains(ext)){
+                if (FileExt.extMap.get("images").contains(ext)) {
                     myFile.setFileThumbnail(fileUrl);
                 }
-                if(StringUtils.isNotEmpty(publicId)){
+                if (StringUtils.isNotEmpty(publicId)) {
                     myFile.setPublicId(publicId);
                     myFile.setPublicLable(0);
                 }
                 fileList.add(myFile);
                 fileRepository.save(myFile);
-                System.out.println(myFile.getFileName()+" 文件ES上传成功");
+                System.out.println(myFile.getFileName() + " 文件ES上传成功");
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
                 fileVersion.setIsMaster(1);
-                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(),"yyyy-MM-dd HH:mm"));
+                fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
                 versionList.add(fileVersion);
             }
             saveBatch(fileList);
@@ -806,6 +823,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url)
+     *
      * @param id 文件id
      * @return
      */
@@ -816,6 +834,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询出项目下的根文件夹的id
+     *
      * @param projectId 项目id
      * @return
      */
@@ -831,15 +850,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 检查该目录下是否有子文件夹
+     *
      * @param fileId 目录id
      */
     @Override
     public int checkChildFolder(String fileId) {
-        return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id",fileId).eq("file_del","0").eq("catalog",1)) > 0 ? 1 : 0;
+        return fileMapper.selectCount(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", "0").eq("catalog", 1)) > 0 ? 1 : 0;
     }
 
     /**
      * 查看文件夹或者文件是否存在 (true:存在  false:不存在)
+     *
      * @param fileId 文件
      * @return 结果
      */
@@ -853,6 +874,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 根据项目id获取该项目下的根文件夹
+     *
      * @param projectId 项目id
      * @return 文件树形图信息
      */
@@ -863,6 +885,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 根据父级id获取该项目下的根文件夹
+     *
      * @param parentId 父级id
      * @return 文件树形图信息
      */
@@ -873,6 +896,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 获取一个项目的所有文件夹
+     *
      * @param fileId 根目录id
      * @return 文件夹信息
      */
@@ -882,27 +906,28 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         List<File> files = fileMapper.selectProjectAllFolder(fileId);
         List<File> root = files.stream().filter(item -> item.getParentId().equals(fileId)).collect(Collectors.toList());
         List<File> sub = files.stream().filter(item -> !item.getParentId().equals(fileId)).collect(Collectors.toList());
-        this.folderLayered(sub,root);
-        this.chanageToFileTreeVO(root,fileTreeShowVOS);
+        this.folderLayered(sub, root);
+        this.chanageToFileTreeVO(root, fileTreeShowVOS);
         return fileTreeShowVOS;
     }
 
     /**
      * 文件夹分层
+     *
      * @param files 文件夹集合
      */
-    private void folderLayered(List<File> files, List<File> collect){
+    private void folderLayered(List<File> files, List<File> collect) {
         collect.forEach(parentFile -> {
             files.forEach(file -> {
-                if(file.getParentId().equals(parentFile.getFileId())){
-                    if(parentFile.getFiles() == null){
+                if (file.getParentId().equals(parentFile.getFileId())) {
+                    if (parentFile.getFiles() == null) {
                         parentFile.setFiles(new ArrayList<File>());
                     }
                     parentFile.getFiles().add(file);
                 }
             });
-            if(!CollectionUtils.isEmpty(parentFile.getFiles())){
-                folderLayered(files,parentFile.getFiles());
+            if (!CollectionUtils.isEmpty(parentFile.getFiles())) {
+                folderLayered(files, parentFile.getFiles());
             }
         });
     }
@@ -910,7 +935,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     /**
      * 文件夹类型转化
      */
-    private void chanageToFileTreeVO(List<File> files,List<FileTreeShowVO> fileTreeShowVOS){
+    private void chanageToFileTreeVO(List<File> files, List<FileTreeShowVO> fileTreeShowVOS) {
         List<File> collect = files.stream().sorted(Comparator.comparing(File::getCreateTime).reversed()).collect(Collectors.toList());
         collect.forEach(file -> {
             FileTreeShowVO fileTreeShowVO = new FileTreeShowVO();
@@ -918,21 +943,21 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             fileTreeShowVO.setText(file.getFileName());
             fileTreeShowVO.setOpened(true);
             fileTreeShowVOS.add(fileTreeShowVO);
-            if(StringUtils.isNotEmpty(file.getParentId())){
+            if (StringUtils.isNotEmpty(file.getParentId())) {
                 fileTreeShowVO.setPId(file.getParentId());
             }
-            if(!CollectionUtils.isEmpty(file.getFiles())){
+            if (!CollectionUtils.isEmpty(file.getFiles())) {
                 fileTreeShowVO.setChildren(new ArrayList<FileTreeShowVO>());
-                chanageToFileTreeVO(file.getFiles(),fileTreeShowVO.getChildren());
+                chanageToFileTreeVO(file.getFiles(), fileTreeShowVO.getChildren());
             }
         });
     }
 
     //文件向上递归的分层
-    private void upLevel(List<File> files){
+    private void upLevel(List<File> files) {
         files.forEach(f -> {
             files.forEach(s -> {
-                if(s.getParentId().equals(f.getFileId())){
+                if (s.getParentId().equals(f.getFileId())) {
                     List<File> subs = new ArrayList<>();
                     subs.add(s);
                     f.setFiles(subs);
@@ -942,11 +967,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     //文件向下递归的分层
-    private void downLevel(List<File> files){
+    private void downLevel(List<File> files) {
         files.forEach(f -> {
             List<File> subs = new ArrayList<>();
             files.forEach(s -> {
-                if(s.getParentId().equals(f.getFileId())){
+                if (s.getParentId().equals(f.getFileId())) {
                     subs.add(s);
                 }
             });
@@ -955,31 +980,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
 
-
     /**
      * 获取文件的绑定信息
+     *
      * @param id 父id
      * @return 文件信息
      */
     @Override
     public List<File> getBindInfo(String id) {
-        return fileService.list(new QueryWrapper<File>().select("file_id fileId","file_name fileName","ext ext","catalog catalog").eq("parent_id",id).eq("file_del",0));
+        return fileService.list(new QueryWrapper<File>().select("file_id fileId", "file_name fileName", "ext ext", "catalog catalog").eq("parent_id", id).eq("file_del", 0));
     }
 
     /**
      * 获取我创建的文件并且排序
+     *
      * @param order 排序规则(名称,大小,创建时间)
      * @return 我创建的文件数据
      */
     @Override
     public List<File> created(String order) {
         List<File> created = new ArrayList<>(30);
-        if(StringUtils.isNotEmpty(order) && order.equals("size")){
+        if (StringUtils.isNotEmpty(order) && order.equals("size")) {
             for (String c : company) {
-                created.addAll(fileMapper.createdBySize(ShiroAuthenticationManager.getUserId(),c));
+                created.addAll(fileMapper.createdBySize(ShiroAuthenticationManager.getUserId(), c));
             }
-        } else{
+        } else if ("create".equals(order)) {
             created = fileMapper.created(order, ShiroAuthenticationManager.getUserId());
+        } else {
+            created = fileMapper.created(null, ShiroAuthenticationManager.getUserId());
         }
         return created;
     }
@@ -987,24 +1015,28 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 获取我参与的文件并且排序
+     *
      * @param order 排序规则(名称,大小,创建时间)
      * @return 我参与的文件数据
      */
     @Override
     public List<File> join(String order) {
         List<File> join = new ArrayList<>(30);
-        if(StringUtils.isNotEmpty(order) && order.equals("size")){
+        if (StringUtils.isNotEmpty(order) && order.equals("size")) {
             for (String c : company) {
-                //join.addAll(fileMapper.joinBySize(ShiroAuthenticationManager.getUserId(),c));
+                join.addAll(fileMapper.joinBySize(ShiroAuthenticationManager.getUserId(), c));
             }
-        } else if ("create".equals(order)){
-            //join = fileMapper.join(order, ShiroAuthenticationManager.getUserId());
+        } else if ("create".equals(order)) {
+            join = fileMapper.join(order, ShiroAuthenticationManager.getUserId());
+        } else {
+            join = fileMapper.join(null, ShiroAuthenticationManager.getUserId());
         }
         return join;
     }
 
     /**
      * 从其他信息(任务,文件,日程,分享) 绑定文件信息
+     *
      * @param files 文件集合信息
      * @return
      */
@@ -1012,7 +1044,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     public boolean bindFile(String files) {
         JSONArray array = JSON.parseArray(files);
         List<File> fileList = new ArrayList<File>();
-        for (int i=0;i<array.size();i++) {
+        for (int i = 0; i < array.size(); i++) {
             JSONObject object = array.getJSONObject(i);
             String fileName = object.getString("fileName");
             String fileUrl = object.getString("fileUrl");
@@ -1024,7 +1056,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             File myFile = new File();
             myFile.setFileId(IdGen.uuid());
             // 用原本的文件名
-            myFile.setFileName(fileName.substring(0,fileName.lastIndexOf(".")));
+            myFile.setFileName(fileName.substring(0, fileName.lastIndexOf(".")));
             myFile.setExt(ext);
             myFile.setProjectId(projectId);
             myFile.setFileUrl(fileUrl);
@@ -1038,32 +1070,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             myFile.setFileUids(ShiroAuthenticationManager.getUserId());
             myFile.setCreateTime(System.currentTimeMillis());
             myFile.setUpdateTime(System.currentTimeMillis());
-            if(FileExt.extMap.get("images").contains(ext)){
+            if (FileExt.extMap.get("images").contains(ext)) {
                 myFile.setFileThumbnail(fileUrl);
             }
 
-            if(StringUtils.isNotEmpty(publicId)){
+            if (StringUtils.isNotEmpty(publicId)) {
                 myFile.setPublicId(publicId);
                 myFile.setPublicLable(1);
             }
             fileList.add(myFile);
         }
-       return this.saveBatch(fileList);
+        return this.saveBatch(fileList);
     }
 
     /**
      * 根据文件名称在项目中进行模糊查询
-     * @param fileName 文件名称 (模糊查询)
+     *
+     * @param fileName  文件名称 (模糊查询)
      * @param projectId 项目id
      * @return
      */
     @Override
     public List<File> seachByName(String fileName, String projectId) {
-        return fileMapper.seachByName(fileName,projectId);
+        return fileMapper.seachByName(fileName, projectId);
     }
 
     /**
      * 获取一个文件的链接地址
+     *
      * @param fileId 文件id
      * @return 链接地址
      */
@@ -1084,15 +1118,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 获取绑定该标签的文件信息 (version2.0)
+     *
      * @param tagId 标签id
      * @return 文件集合
      */
     @Override
     public List<File> getBindTagInfo(Long tagId) {
-        List<File> files=new ArrayList<File>();
+        List<File> files = new ArrayList<File>();
         List<TagRelation> tagRelation = tagRelationMapper.findTagRelationByTagId(tagId);
-        for (TagRelation t:tagRelation) {
-            if (t.getFileId()!=null){
+        for (TagRelation t : tagRelation) {
+            if (t.getFileId() != null) {
                 files.add(fileMapper.findFileById(t.getFileId()));
             }
         }
@@ -1102,7 +1137,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public Integer updateDownloadCount(String fileId) {
         Integer checkResult = this.checkFile(fileId);
-        if(checkResult == 1){
+        if (checkResult == 1) {
             //获取到该文件的当前下载数量
             Integer currentDownloadCount = this.getDownloadCountByFileId(fileId);
             File file = new File();
@@ -1117,7 +1152,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public Integer getDownloadCountByFileId(String fileId) {
         Integer checkResult = this.checkFile(fileId);
-        if(checkResult == 1){
+        if (checkResult == 1) {
             //构造sql表达式
             LambdaQueryWrapper<File> selectFileDownloadCountQw = new QueryWrapper<File>().lambda()
                     .eq(File::getFileId, fileId)
@@ -1132,20 +1167,20 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
         List<FileTreeShowVO> fileTreeShowVOS = new ArrayList<>();
         //查询到该目录的上级所有目录的id集合
-            List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
+        List<String> fileIds = Arrays.asList(fileMapper.selectParentFolders(fileId).split(","));
 
         //生成目录查询条件表达式
         LambdaQueryWrapper<File> selectFileListQw = new QueryWrapper<File>().lambda()
-                .select(File::getFileId, File::getFileName, File::getCreateTime,File::getParentId)
+                .select(File::getFileId, File::getFileName, File::getCreateTime, File::getParentId)
                 .in(File::getFileId, fileIds);
 
         List<File> fileList = fileMapper.selectList(selectFileListQw);
 
         File rootFolder = this.getProjectRootFolderId(fileId);
-        if(StringUtils.isNotEmpty(rootFolder.getUserId())){
+        if (StringUtils.isNotEmpty(rootFolder.getUserId())) {
             File parentFolder = this.getProjectParentFolder(projectId);
             fileList.forEach(f -> {
-                if(f.getFileId().equals(rootFolder.getFileId())){
+                if (f.getFileId().equals(rootFolder.getFileId())) {
                     f.setParentId(parentFolder.getFileId());
                 }
             });
@@ -1155,12 +1190,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         this.upLevel(fileList);
         this.chanageToFileTreeVO(fileList, fileTreeShowVOS);
         //过滤出第一条数据(该集合除第一条外其他数据无用)
-        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getPId())) .collect(Collectors.toList());
+        return fileTreeShowVOS.stream().filter(f -> Constants.ZERO.equals(f.getPId())).collect(Collectors.toList());
 
     }
 
     /**
      * 获取一个文件的在项目中最顶级的目录id
+     *
      * @param fileId 文件/目录id
      * @return 根目录id
      * @author heShaoHua
@@ -1184,27 +1220,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public boolean isRootFolder(String fileId) {
         File byId = fileService.getById(fileId);
-        if(byId.getLevel() == 0){
+        if (byId.getLevel() == 0) {
             return true;
         }
         return false;
     }
 
 
-
     /*
-    * 查询文件层级
-    * */
+     * 查询文件层级
+     * */
     @Override
     public List<File> getPathFolders(String fileId, String projectId) {
         File file = fileMapper.findFileById(fileId);
-        List<File> folderPathList=new ArrayList<>();
+        List<File> folderPathList = new ArrayList<>();
         //folderPathList.add(fileMapper.findFileTier(projectId));
-        if (!ObjectUtils.allNotNull(file)){
-            return  null;
-        }else {
+        if (!ObjectUtils.allNotNull(file)) {
+            return null;
+        } else {
             folderPathList.add(file);
-            return this.getFolderPath(file,folderPathList);
+            return this.getFolderPath(file, folderPathList);
         }
     }
 
@@ -1216,8 +1251,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     /*
-    *  获取root文件的路径
-    * */
+     *  获取root文件的路径
+     * */
     @Override
     public File findFileTier(String projectId) {
         return fileMapper.findFileTier(projectId);
@@ -1225,15 +1260,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
 
     /**
-     *
      * 递归查找父级，一直查找到root为止，最终返回包含所有Folder的List，因为是递归，所以不能在方法里new 容器List，那样每次递归都会new一个List
      * 所以容器List必须从外部传入, 终止条件(基础情况)parentId == -1
      */
-    private List<File> getFolderPath( File file , List<File> folderPathList) {
+    private List<File> getFolderPath(File file, List<File> folderPathList) {
         if ("0".equals(file.getParentId())) {
             //root
             return folderPathList;
-        }else {
+        } else {
             //找到父文件
             File parentFile = fileMapper.findFileById(file.getParentId());
             folderPathList.add(parentFile);
@@ -1242,12 +1276,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public List<File> searchFile(String fileName, String projectId,Pageable pageable) {
+    public List<File> searchFile(String fileName, String projectId, Pageable pageable) {
         PageRequest of;
-        if (pageable==null){
-            of = PageRequest.of(0, 20,new Sort(Sort.Direction.DESC, "createTime"));
-        }else{
-            of = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),new Sort(Sort.Direction.DESC, "createTime"));
+        if (pageable == null) {
+            of = PageRequest.of(0, 20, new Sort(Sort.Direction.DESC, "createTime"));
+        } else {
+            of = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
         }
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
@@ -1270,7 +1304,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 .eq(File::getFileId, fileId);
 
         File file = fileMapper.selectOne(selectParentIdQw);
-        if(file != null && StringUtils.isNotEmpty(file.getParentId())){
+        if (file != null && StringUtils.isNotEmpty(file.getParentId())) {
             return file.getParentId();
         }
         return null;
@@ -1285,31 +1319,30 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     @Override
     public JSONObject getMateriaBaseFile(String folderId, Page pageable, Boolean downloadCount) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data",fileMapper.findMateriaBaseFile(pageable, folderId,downloadCount));
-        jsonObject.put("parentId",folderId);
-        jsonObject.put("result",1);
+        jsonObject.put("data", fileMapper.findMateriaBaseFile(pageable, folderId, downloadCount));
+        jsonObject.put("parentId", folderId);
+        jsonObject.put("result", 1);
         return jsonObject;
     }
 
 
-
-
     @Override
     public void updateAll(String userId, String id) {
-        fileMapper.updateAll(userId,id);
+        fileMapper.updateAll(userId, id);
     }
 
     /**
      * 素材库查询总条数
+     *
      * @param fileName
      * @return
      */
     @Override
     public Integer getSucaiTotle(String fileName) {
-        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName",fileName);
+        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
         Iterable<File> search1 = fileRepository.search(fileName1);
         Iterator it = search1.iterator();
-        int count=0;
+        int count = 0;
         while (it.hasNext()) {
             it.next();
             count++;
@@ -1319,13 +1352,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 查询素材库
+     *
      * @param fileName 文件名称
      * @param pageable
      * @return
      */
     @Override
     public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
-        PageRequest of = PageRequest.of(pageable.getPageNumber()-1, pageable.getPageSize(),new Sort(Sort.Direction.DESC, "createTime"));
+        PageRequest of = PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
@@ -1337,7 +1371,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             return  Lists.newArrayList(files);
         }*/
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
-        if (files.size()==0 ){
+        if (files.size() == 0) {
             return null;
         }
         return files;
@@ -1357,13 +1391,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
 
     /**
      * 校验fileId是否合法 fileId为空返回-1  fileId文件不存在返回-2, 正确返回1
+     *
      * @param fileId 文件id
      * @return
      */
-    private Integer checkFile(String fileId){
+    private Integer checkFile(String fileId) {
         //文件不存在返回-2
         boolean fileNotExist = !this.checkIsExist(fileId);
-        if(fileNotExist){
+        if (fileNotExist) {
             return -2;
         }
         return 1;
@@ -1392,15 +1427,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
         this.updateById(file);
     }
 
-    public void ids(List<String> ids, String id){
+    public void ids(List<String> ids, String id) {
         LambdaQueryWrapper<File> a = new QueryWrapper<File>().lambda().eq(File::getParentId, id);
         List<File> list = fileService.list(a);
         list.forEach(f -> {
             ids.add(f.getFileId());
             LambdaQueryWrapper<File> subCount = new QueryWrapper<File>().lambda().eq(File::getParentId, f.getFileId());
             int count = fileService.count(subCount);
-            if(count > 0){
-                this.ids(ids,f.getFileId());
+            if (count > 0) {
+                this.ids(ids, f.getFileId());
             }
         });
     }
@@ -1412,14 +1447,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
                 .eq(File::getFileId, fileId);
 
         File one = this.getOne(select);
-        if(one != null){
-            if(one.getFileUids() != null){
+        if (one != null) {
+            if (one.getFileUids() != null) {
                 StringBuilder userIds = new StringBuilder(one.getFileUids());
-                if(StringUtils.isNotEmpty(one.getMemberId())){
+                if (StringUtils.isNotEmpty(one.getMemberId())) {
                     userIds.append(",").append(one.getMemberId());
                 }
                 return userIds.toString().split(",");
-            } else if(one.getMemberId() != null){
+            } else if (one.getMemberId() != null) {
                 return new String[]{one.getMemberId()};
             }
         }
@@ -1427,8 +1462,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
     }
 
     @Override
-    public void downloadSingleFile(File file, HttpServletResponse response){
-        InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(),response);
+    public void downloadSingleFile(File file, HttpServletResponse response) {
+        InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
         // 设置头信息
         // 设置fileName的编码
         try {
@@ -1437,10 +1472,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             response.setContentType("application/octet-stream");
             ServletOutputStream outputStream = response.getOutputStream();
             assert inputStream != null;
-            IOUtils.copy(inputStream,outputStream);
+            IOUtils.copy(inputStream, outputStream);
             outputStream.close();
             inputStream.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -1456,72 +1491,73 @@ public class FileServiceImpl extends ServiceImpl<FileMapper,File> implements Fil
             response.setContentType("application/octet-stream");
             java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
-            compress(file,zos,filename);
+            compress(file, zos, filename);
             zos.close();
             FileInputStream fis = new FileInputStream(zipFile);
             response.addHeader("Content-Length", String.valueOf(fis.available()));
             BufferedInputStream in = new BufferedInputStream(fis);
             ServletOutputStream out = response.getOutputStream();
-            IOUtils.copy(in,out);
+            IOUtils.copy(in, out);
             out.close();
             in.close();
             fis.close();
             // 删除临时文件
             zipFile.deleteOnExit();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void compress(File folder, ZipOutputStream out, String dir) throws IOException{
+    private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
-        if(files!=null&&files.size()>0){
-            for (File inFile:files) {
-                if(inFile.getCatalog()==1){
+        if (files != null && files.size() > 0) {
+            for (File inFile : files) {
+                if (inFile.getCatalog() == 1) {
                     String name = inFile.getFileName();
                     if (!"".equals(dir)) {
                         name = dir + "/" + name;
                     }
-                    compress(inFile,out,name);
-                }else{
-                    AliyunOss.doZip(inFile,out,dir);
+                    compress(inFile, out, name);
+                } else {
+                    AliyunOss.doZip(inFile, out, dir);
                 }
             }
-        }else{
+        } else {
             // 空文件夹的处理
             out.putNextEntry(new ZipEntry(dir + "/"));
             // 没有文件，不需要文件的copy
             out.closeEntry();
         }
     }
+
     @Override
-    public void batchDownLoad(List<File> files, HttpServletResponse response){
+    public void batchDownLoad(List<File> files, HttpServletResponse response) {
         try {
-            String filename = files.get(0).getFileName()+"等"+(files.size()-1)+"项_aldbim";
+            String filename = files.get(0).getFileName() + "等" + (files.size() - 1) + "项_aldbim";
             String fileName = URLEncoder.encode(filename + ".zip", "UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             response.setContentType("application/octet-stream");
             java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
-            for (File file: files) {
-               if(file.getCatalog()==0){
-                   AliyunOss.doZip(file,zos,"");
-               }else{
-                   compress(file,zos,file.getFileName());
-               }
+            for (File file : files) {
+                if (file.getCatalog() == 0) {
+                    AliyunOss.doZip(file, zos, "");
+                } else {
+                    compress(file, zos, file.getFileName());
+                }
             }
             zos.close();
             FileInputStream fis = new FileInputStream(zipFile);
             response.addHeader("Content-Length", String.valueOf(fis.available()));
             BufferedInputStream in = new BufferedInputStream(fis);
             ServletOutputStream out = response.getOutputStream();
-            IOUtils.copy(in,out);
+            IOUtils.copy(in, out);
             out.close();
             in.close();
             fis.close();
             // 删除临时文件
             zipFile.deleteOnExit();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

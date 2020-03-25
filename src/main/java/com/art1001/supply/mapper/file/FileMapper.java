@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * filemapper接口
@@ -312,4 +311,10 @@ public interface FileMapper extends BaseMapper<File> {
     void updateAll(@Param("userId")String userId,@Param("id") String id);
 
 	void updateAllUser(@Param("userId") String userId,@Param("id") String id);
+
+	//我参与的文件，根据大小排序
+	List<File> joinBySize(@Param("userId") String userId,@Param("company")String company);
+
+	//我参与的文件，根据创建时间排序
+	List<File> join(@Param("order") String order, @Param("userId")String userId);
 }

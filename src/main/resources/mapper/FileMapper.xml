@@ -1,95 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.file.FileMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
-		<id column="file_id" property="fileId"/>
-		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
-		<result column="ext" property="ext" jdbcType="VARCHAR" />
-		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="important" property="important" jdbcType="INTEGER" />
-		<result column="catalog" property="catalog" jdbcType="INTEGER" />
-		<result column="size" property="size" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="file_uids" property="fileUids" jdbcType="CLOB" />
-		<result column="file_label" property="fileLabel" jdbcType="INTEGER" />
-		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
-		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
-		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
-		<result column="public_lable" property="publicLable" jdbcType="VARCHAR" />
-		<result column="level" property="level" jdbcType="INTEGER"/>
-		<result column="is_model" property="isModel" jdbcType="INTEGER"/>
-		<result column="user_id" property="userId" jdbcType="INTEGER"/>
-		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
-					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
-		<collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}" select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
-		<!--查询标签-->
-		<collection property="tagList" column="file_id" ofType="com.art1001.supply.entity.tag.Tag">
-			<id property="tagId" column="tag_id"/>
-			<result property="tagName" column="tag_name"/>
-			<result property="bgColor" column="bg_color"/>
-		</collection>
-		<!--<collection property="logList" javaType="java.util.ArrayList" select="com.art1001.supply.mapper.log.LogMapper.initLog"/>-->
-	</resultMap>
 
-	<!-- 映射回收站数据 -->
-	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
-		<id column="file_id" property="id"/>
-		<result column="file_name" property="publicName" jdbcType="VARCHAR" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-	</resultMap>
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.File">
+        <id column="file_id" property="fileId"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="ext" property="ext" jdbcType="VARCHAR"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="member_name" property="memberName" jdbcType="VARCHAR"/>
+        <result column="member_img" property="memberImg" jdbcType="VARCHAR"/>
+        <result column="important" property="important" jdbcType="INTEGER"/>
+        <result column="catalog" property="catalog" jdbcType="INTEGER"/>
+        <result column="size" property="size" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="file_del" property="fileDel" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="file_uids" property="fileUids" jdbcType="CLOB"/>
+        <result column="file_label" property="fileLabel" jdbcType="INTEGER"/>
+        <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+        <result column="file_privacy" property="filePrivacy" jdbcType="INTEGER"/>
+        <result column="public_id" property="publicId" jdbcType="VARCHAR"/>
+        <result column="public_lable" property="publicLable" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="is_model" property="isModel" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+                     select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
+        <collection property="joinInfo" javaType="java.util.ArrayList" column="{memberIds=file_uids}"
+                    select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+        <!--查询标签-->
+        <collection property="tagList" column="file_id" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
+        <!--<collection property="logList" javaType="java.util.ArrayList" select="com.art1001.supply.mapper.log.LogMapper.initLog"/>-->
+    </resultMap>
 
-	<!-- 用于关联、收藏的数据 -->
-	<resultMap id="FileApiBean" type="com.art1001.supply.entity.file.FileApiBean">
-		<id column="file_id" property="fileId"/>
-		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
-		<result column="ext" property="ext" jdbcType="VARCHAR" />
-		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
-		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
-	</resultMap>
+    <!-- 映射回收站数据 -->
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
+        <id column="file_id" property="id"/>
+        <result column="file_name" property="publicName" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
 
-	<resultMap id="PublicMap" type="com.art1001.supply.entity.file.File">
-		<id column="file_id" property="fileId"/>
-		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
-		<result column="ext" property="ext" jdbcType="VARCHAR" />
-		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="catalog" property="catalog" jdbcType="INTEGER" />
-		<result column="size" property="size" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="file_del" property="fileDel" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
-	</resultMap>
-	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.file.File">
-		<id column="file_id" property="fileId"/>
-		<result column="file_name" property="fileName" jdbcType="VARCHAR" />
-		<result column="ext" property="ext" jdbcType="VARCHAR" />
-		<result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="important" property="important" jdbcType="INTEGER" />
-		<result column="catalog" property="catalog" jdbcType="INTEGER" />
-		<result column="user_name" property="memberName" jdbcType="INTEGER" />
-		<result column="size" property="size" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER" />
-		<result column="file_privacy" property="filePrivacy" jdbcType="INTEGER" />
-<!--		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"-->
-<!--					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>-->
-		<association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
-					 select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
-	</resultMap>
-	<sql id="Base_Column_List">
+    <!-- 用于关联、收藏的数据 -->
+    <resultMap id="FileApiBean" type="com.art1001.supply.entity.file.FileApiBean">
+        <id column="file_id" property="fileId"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="ext" property="ext" jdbcType="VARCHAR"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="PublicMap" type="com.art1001.supply.entity.file.File">
+        <id column="file_id" property="fileId"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="ext" property="ext" jdbcType="VARCHAR"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="catalog" property="catalog" jdbcType="INTEGER"/>
+        <result column="size" property="size" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="file_del" property="fileDel" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="BaseResultMap3" type="com.art1001.supply.entity.file.File">
+        <id column="file_id" property="fileId"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="ext" property="ext" jdbcType="VARCHAR"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="important" property="important" jdbcType="INTEGER"/>
+        <result column="catalog" property="catalog" jdbcType="INTEGER"/>
+        <result column="user_name" property="memberName" jdbcType="INTEGER"/>
+        <result column="size" property="size" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+        <result column="file_privacy" property="filePrivacy" jdbcType="INTEGER"/>
+        <!--		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"-->
+        <!--					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>-->
+        <association property="user" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+                     select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
+    </resultMap>
+    <sql id="Base_Column_List">
 				file_id,
 				file_name,
 				ext,
@@ -112,7 +113,7 @@
 				public_id,
 				`level`
 	</sql>
-	<sql id="Base_Column_List2">
+    <sql id="Base_Column_List2">
 				f.file_id,
 				f.file_name,
 				f.user_id,
@@ -140,28 +141,29 @@
 				tg.bg_color
 	</sql>
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
-	
-	<select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
-		select
-		<include refid="Base_Column_List2" />
-		from prm_file f left join prm_tag_relation tr on f.file_id = tr.file_id left join prm_tag tg on tr.tag_id = tg.tag_id
-		where
-		f.file_id = #{fileId} and  f.file_del=0
-	</select>
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
 
-	<select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id="findFileById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List2"/>
+        from prm_file f left join prm_tag_relation tr on f.file_id = tr.file_id left join prm_tag tg on tr.tag_id =
+        tg.tag_id
+        where
+        f.file_id = #{fileId} and f.file_del=0
+    </select>
+
+    <select id="findByParentIdAndFileName" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(0) FROM prm_file WHERE parent_id = #{parentId} AND file_name = #{fileName}
 	</select>
 
-	<!-- 查询子文件 -->
-	<select id="findChildFile" resultMap="BaseResultMap3">
+    <!-- 查询子文件 -->
+    <select id="findChildFile" resultMap="BaseResultMap3">
 		SELECT
 			f.file_id,
 			f.file_name,
@@ -188,7 +190,7 @@
 			AND parent_id = #{fileId} order by f.`catalog` desc,f.create_time asc
 	</select>
 
-	<select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT
 			file_url
 		FROM
@@ -198,17 +200,17 @@
 		AND file_id = #{fileId}
 	</select>
 
-	<select id="findByProjectIdAndParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM
-			prm_file
-		WHERE
-			project_id = #{projectId}
-		AND parent_id = #{parentId}
-	</select>
+    <select id="findByProjectIdAndParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        prm_file
+        WHERE
+        project_id = #{projectId}
+        AND parent_id = #{parentId}
+    </select>
 
-	<select id="findTopLevel" parameterType="java.lang.String" resultType="java.lang.String">
+    <select id="findTopLevel" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT
 			file_url
 		FROM
@@ -220,133 +222,138 @@
 		LIMIT 0, 1
 	</select>
 
-	<select id="findFileList" parameterType="com.art1001.supply.entity.file.File" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM
-		prm_file
-            where file_label = 0
-			<if test="fileId != null and fileId != ''">
-				and file_id = #{fileId}
-			</if>
-			<if test="fileName != null and fileName != ''">
-				and file_name = #{fileName}
-			</if>
-			<if test="ext != null and ext != ''">
-				and ext = #{ext}
-			</if>
-			<if test="fileUrl != null and fileUrl != ''">
-				and file_url = #{fileUrl}
-			</if>
-			<if test="projectId != null and projectId != ''">
-				and project_id = #{projectId}
-			</if>
-			<if test="memberId != null and memberId != ''">
-				and member_id = #{memberId}
-			</if>
-			<if test="memberId != null and memberId != ''">
-				and member_name = #{memberName}
-			</if>
-			<if test="memberId != null and memberId != ''">
-				and member_img = #{memberImg}
-			</if>
-			<if test="catalog != null ">
-				and catalog = #{catalog}
-			</if>
-			<if test="is_model != null ">
-				and is_model = #{isModel}
-			</if>
-			<if test="parentId != null and parentId != ''">
-				and parent_id = #{parentId}
-			</if>
-			<if test="fileDel != null">
-				and file_del = #{fileDel}
-			</if>
-			<if test="fileUids != null">
-				and file_uids = #{fileUids}
-			</if>
-			<if test="publicLable">
-				and public_lable = #{publicLable}
-			</if>
-	</select>
+    <select id="findFileList" parameterType="com.art1001.supply.entity.file.File" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        prm_file
+        where file_label = 0
+        <if test="fileId != null and fileId != ''">
+            and file_id = #{fileId}
+        </if>
+        <if test="fileName != null and fileName != ''">
+            and file_name = #{fileName}
+        </if>
+        <if test="ext != null and ext != ''">
+            and ext = #{ext}
+        </if>
+        <if test="fileUrl != null and fileUrl != ''">
+            and file_url = #{fileUrl}
+        </if>
+        <if test="projectId != null and projectId != ''">
+            and project_id = #{projectId}
+        </if>
+        <if test="memberId != null and memberId != ''">
+            and member_id = #{memberId}
+        </if>
+        <if test="memberId != null and memberId != ''">
+            and member_name = #{memberName}
+        </if>
+        <if test="memberId != null and memberId != ''">
+            and member_img = #{memberImg}
+        </if>
+        <if test="catalog != null ">
+            and catalog = #{catalog}
+        </if>
+        <if test="is_model != null ">
+            and is_model = #{isModel}
+        </if>
+        <if test="parentId != null and parentId != ''">
+            and parent_id = #{parentId}
+        </if>
+        <if test="fileDel != null">
+            and file_del = #{fileDel}
+        </if>
+        <if test="fileUids != null">
+            and file_uids = #{fileUids}
+        </if>
+        <if test="publicLable">
+            and public_lable = #{publicLable}
+        </if>
+    </select>
 
-	<select id="findByIds" resultMap="PublicMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_file
-		where file_id in
-		<foreach collection="array" open="(" separator="," close=")" item="id">
-			#{id}
-		</foreach>
-		and public_lable = 0 and file_privacy=0
-	</select>
+    <select id="findByIds" resultMap="PublicMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_file
+        where file_id in
+        <foreach collection="array" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+        and public_lable = 0 and file_privacy=0
+    </select>
 
 
-	<select id="findProjectUrl" parameterType="java.lang.String" resultType="java.lang.String">
+    <select id="findProjectUrl" parameterType="java.lang.String" resultType="java.lang.String">
 		select file_url from prm_file where parent_id = '1' and file_label=0 and project_id = #{projectId}
 	</select>
 
-	<select id="findChildFolder" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM
-		prm_file
-		where catalog = 1 and  parent_id = #{fileId} and public_lable = 0 order by create_time desc
-	</select>
+    <select id="findChildFolder" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        prm_file
+        where catalog = 1 and parent_id = #{fileId} and public_lable = 0 order by create_time desc
+    </select>
 
-	<update id="moveFile" parameterType="java.lang.String">
+    <update id="moveFile" parameterType="java.lang.String">
 		update prm_file set parent_id = #{parentId},project_id = #{projectId} where file_id = #{fileId}
 	</update>
 
-	<update id="moveToRecycleBin" parameterType="java.lang.String">
-		update prm_file set file_del = 1 and update_time = #{timeStamp}
-		where file_id in
-		<foreach collection="array" open="(" separator="," close=")" item="id">
-			#{id}
-		</foreach>
-	</update>
-	
-	<delete id="deleteFileById" parameterType="java.lang.String">
+    <update id="moveToRecycleBin" parameterType="java.lang.String">
+        update prm_file set file_del = 1 and update_time = #{timeStamp}
+        where file_id in
+        <foreach collection="array" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteFileById" parameterType="java.lang.String">
 		delete from
 		prm_file where file_id = #{fileId}
 	</delete>
 
-	<update id="updateTagId" parameterType="java.lang.String">
+    <update id="updateTagId" parameterType="java.lang.String">
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}
 	</update>
     <update id="updateAll">
 		update prm_file set member_id = #{userId} where member_id = #{id}
 	</update>
-	<update id="updateAllUser">
+    <update id="updateAllUser">
 
 update prm_file set user_id = #{userId} where user_id = #{id}
 	</update>
 
-	<!-- 根据项目id 查询文件信息 -->
-	<select id="findFileByProjectId" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_file where project_id = #{projectId}
-	</select>
+    <!-- 根据项目id 查询文件信息 -->
+    <select id="findFileByProjectId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_file where project_id = #{projectId}
+    </select>
 
     <!-- 查询我参与的所有文件 -->
-	<select id="findJoinFile" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_file where find_in_set(#{uId}, file_uIds);
-	</select>
+    <select id="findJoinFile" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_file where find_in_set(#{uId}, file_uIds);
+    </select>
 
-	<!-- 查询出在该项目回收站中的文件/文件夹 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+    <!-- 查询出在该项目回收站中的文件/文件夹 -->
+    <select id="findRecycleBin" parameterType="java.lang.String"
+            resultType="com.art1001.supply.entity.base.RecycleBinVO">
 		select file_id as id,file_name as publicName,ext,update_time
 		from prm_file where file_del = 1 and project_id = #{projectId}
 		and `catalog` = #{type} order by update_time desc
 	</select>
 
-	<!-- 查询某个文件夹下的公开文件 -->
-	<select id="findPublicFile" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/> from prm_file where parent_id = #{parentId}
-	</select>
+    <!-- 查询某个文件夹下的公开文件 -->
+    <select id="findPublicFile" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_file where parent_id = #{parentId}
+    </select>
 
-	<!-- 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url) -->
+    <!-- 查询分享部分信息 (项目名称,文件名称,文件后缀名,文件url) -->
     <select id="selectFileApiBean" resultMap="FileApiBean">
 		SELECT
 			file_id,
@@ -361,13 +368,13 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		f.file_id = #{id}
 	</select>
 
-	<!--  查询出该项目的最上级文件夹的id -->
-	<select id="selectParentId" resultType="java.lang.String">
+    <!--  查询出该项目的最上级文件夹的id -->
+    <select id="selectParentId" resultType="java.lang.String">
 		select file_id from prm_file where project_id = #{projectId} and `level` = 0
 	</select>
 
-	<!-- 根据父级id获取该项目下的根文件夹 -->
-	<select id="selectTreeChildFolder" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
+    <!-- 根据父级id获取该项目下的根文件夹 -->
+    <select id="selectTreeChildFolder" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
 		SELECT
 			file_id AS id,
 			file_name AS text
@@ -381,82 +388,83 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			create_time DESC
 	</select>
 
-	<!-- 获取一个项目的所有文件夹 -->
-	<select id="selectProjectAllFolder" resultType="com.art1001.supply.entity.file.File">
+    <!-- 获取一个项目的所有文件夹 -->
+    <select id="selectProjectAllFolder" resultType="com.art1001.supply.entity.file.File">
 		select * from prm_file where catalog = 1 AND find_in_set(file_id,getChildFolder(#{fileId})) order by create_time desc
 	</select>
 
-	<!-- 获取我创建的文件并且排序 -->
-	<select id="created" resultType="com.art1001.supply.entity.file.File">
-		SELECT
-			file_id,
-			file_name,
-			size,
-			ext,
-			file_url,
-			update_time,
-			catalog
-		FROM
-			prm_file
-		WHERE
-			member_id = #{userId}
-			AND catalog = '0'
-		<if test="order != null and order != ''">
-			<if test="order == 'update'">
-				order by update_time desc
-			</if>
-			<if test="order == 'name'">
-				order by file_name desc
-			</if>
-		</if>
-	</select>
+    <!-- 获取我创建的文件并且排序 -->
+    <select id="created" resultType="com.art1001.supply.entity.file.File">
+        SELECT
+        file_id,
+        file_name,
+        size,
+        ext,
+        file_url,
+        update_time,
+        create_time,
+        catalog
+        FROM
+        prm_file
+        WHERE
+        member_id = #{userId}
+        AND catalog = '0'
+        AND file_del = '0'
+        <if test="order != null and order != ''">
+            <if test="order == 'create'">
+                order by create_time desc
+            </if>
+        </if>
+    </select>
 
 
-	<select id="createdBySize" resultType="com.art1001.supply.entity.file.File">
+    <select id="createdBySize" resultType="com.art1001.supply.entity.file.File">
 		SELECT
 		file_id,
 		file_name,
+		file_url,
 		`size`,
 		ext,
 		update_time,
+		create_time,
 		`catalog`
 		FROM
 		prm_file
 		WHERE
 		member_id = #{userId}
-		AND catalog = '0' AND size like <![CDATA[ CONCAT('%',#{company},'%') ]]>
+		AND catalog = '0'
+		AND file_del = '0'
+		AND size like <![CDATA[ CONCAT('%',#{company},'%') ]]>
 		order by size desc
 	</select>
 
 
-
-
-	<!--根据文件名称在项目中进行模糊查询-->
-	<select id="seachByName" resultMap="BaseResultMap">
-		select
-			f.file_id,
-			f.file_name,
-			f.ext,
-			f.file_url,
-			f.project_id,
-			f.member_id,
-			f.member_name,
-			f.`catalog`,
-			f.is_model,
-			f.`size`,
-			f.parent_id,
-			f.file_del,
-			f.create_time,
-			f.update_time,
-			f.file_uids,
-			f.file_label,
-			f.file_thumbnail,
-			f.file_privacy,
-			f.public_id,
-			f.`level`
-		from prm_file f
-		left join prm_file_version v on f.file_id = v.file_id
-		where
+    <!--根据文件名称在项目中进行模糊查询-->
+    <select id="seachByName" resultMap="BaseResultMap">
+        select
+        f.file_id,
+        f.file_name,
+        f.ext,
+        f.file_url,
+        f.project_id,
+        f.member_id,
+        f.member_name,
+        f.`catalog`,
+        f.is_model,
+        f.`size`,
+        f.parent_id,
+        f.file_del,
+        f.create_time,
+        f.update_time,
+        f.file_uids,
+        f.file_label,
+        f.file_thumbnail,
+        f.file_privacy,
+        f.public_id,
+        f.`level`
+        from prm_file f
+        left join prm_file_version v on f.file_id = v.file_id
+        where
         <choose>
             <when test="projectId !=null and projectId != ''">
                 project_id = #{projectId}
@@ -465,17 +473,21 @@ update prm_file set user_id = #{userId} where user_id = #{id}
                 project_id = ''
             </otherwise>
         </choose>
-  		 and public_lable = 0 and v.is_master = 1
-		 and file_name like <![CDATA[ concat('%',#{fileName},'%') ]]>
-		order by `catalog` desc,create_time desc
-	</select>
-    <select id="publicFile" resultType="com.art1001.supply.entity.file.File">
-		select <include refid="Base_Column_List" /> from prm_file pf
-		left join prm_file_version pfv on pf.file_id = pfv.file_id
-		where public_id = #{publicId} and pfv.is_master = 1 and pf.file_del=0 and public_lable = 1
-	</select>
+        and public_lable = 0 and v.is_master = 1
+        and file_name like <![CDATA[ concat('%',#{fileName},'%') ]]>
+        order by `catalog` desc,create_time desc
+    </select>
 
-	<!-- 获取绑定该标签的文件信息 (version2.0) -->
+
+    <select id="publicFile" resultType="com.art1001.supply.entity.file.File">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_file pf
+        left join prm_file_version pfv on pf.file_id = pfv.file_id
+        where public_id = #{publicId} and pfv.is_master = 1 and pf.file_del=0 and public_lable = 1
+    </select>
+
+    <!-- 获取绑定该标签的文件信息 (version2.0) -->
     <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.file.File">
 		SELECT
 			f.file_name,
@@ -491,18 +503,18 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		AND f.file_del = '0'
 	</select>
 
-	<!-- 获取某个文件或者目录的所有上级目录id (一直到顶端目录) -->
-	<select id="selectParentFolders" resultType="java.lang.String">
+    <!-- 获取某个文件或者目录的所有上级目录id (一直到顶端目录) -->
+    <select id="selectParentFolders" resultType="java.lang.String">
 		select getParentFolder(#{fileId})
 	</select>
 
-	<!-- 获取该项目下的根目录信息 -->
+    <!-- 获取该项目下的根目录信息 -->
     <select id="selectProjectParentFolder" resultType="com.art1001.supply.entity.file.File">
 		select file_id,file_name,parent_id,create_time from prm_file where project_id = #{projectId} and `level` = 0
 	</select>
 
-	<!-- 获取一个文件的在项目中最顶级的目录id -->
-	<select id="selectProjectRootFolderId" resultType="com.art1001.supply.entity.file.File">
+    <!-- 获取一个文件的在项目中最顶级的目录id -->
+    <select id="selectProjectRootFolderId" resultType="com.art1001.supply.entity.file.File">
 		SELECT
 			file_id,file_name,parent_id,create_time,user_id
 		FROM
@@ -511,7 +523,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			file_id = ( SELECT getRootFolder ( #{fileId} ) )
 	</select>
 
-	<!-- 获取文件层级 -->
+    <!-- 获取文件层级 -->
     <select id="findFileTier" resultType="com.art1001.supply.entity.file.File">
 		SELECT
 			file_id,file_name,parent_id,create_time,user_id
@@ -521,7 +533,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			file_name = '文件库'  AND   project_id = #{projectId}
 	</select>
 
-	<select id="findMateriaBaseFile" resultType="com.art1001.supply.entity.file.File">
+    <select id="findMateriaBaseFile" resultType="com.art1001.supply.entity.file.File">
 		SELECT
 			f.file_id,
 			f.file_name,
@@ -553,25 +565,28 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			create_time DESC
 	</select>
 
-	<!-- 某个目录下的所有子级目录id字符串（逗号隔开） -->
-	<select id="selectChildFolderIds" resultType="java.lang.String">
+    <!-- 某个目录下的所有子级目录id字符串（逗号隔开） -->
+    <select id="selectChildFolderIds" resultType="java.lang.String">
 		SELECT
 			getChildFolder ( #{folderId} )
 	</select>
-	<select id="querySubFileList" resultType="com.art1001.supply.entity.file.FileTree">
+
+    <select id="querySubFileList" resultType="com.art1001.supply.entity.file.FileTree">
 		select
 			f.file_id as id,
 		 	f.parent_id as pId,
 		 	f.file_name as `name`
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id = #{fileId}
 	</select>
-	<select id="queryFileListByUserId" resultType="com.art1001.supply.entity.file.FileTree">
+
+    <select id="queryFileListByUserId" resultType="com.art1001.supply.entity.file.FileTree">
 		select
 			f.file_id as id,
 		 	f.parent_id as pId,
 		 	f.file_name as `name`
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id =(select file_id from prm_file where user_id = #{userId})
 	</select>
+
     <select id="queryFileByUserId" resultType="com.art1001.supply.entity.file.FileTree">
 		select
 			f.file_id as id,
@@ -581,73 +596,119 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 	</select>
 
 
-	<select id="selectTreeFolderByProjectId" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
+    <select id="selectTreeFolderByProjectId" resultType="com.art1001.supply.entity.file.FileTreeShowVO">
 
+    </select>
+
+
+    <!--  查询我参与的文件，根据大小排序 -->
+    <select id="joinBySize" resultType="com.art1001.supply.entity.file.File">
+		SELECT
+		file_id,
+		file_name,
+		file_url,
+		`size`,
+		ext,
+		update_time,
+		create_time,
+		`catalog`
+		FROM
+		prm_file
+		WHERE
+		find_in_set(#{userId},file_uids)
+		AND catalog = '0'
+		AND file_del = '0'
+		AND size like <![CDATA[ CONCAT('%',#{company},'%') ]]>
+		order by size desc
 	</select>
 
-	<!-- 插入多条文件信息 -->
-	<insert id="saveFileBatch">
-		insert into prm_file
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-				file_id,
-				file_name,
-				ext,
-				file_url,
-				project_id,
-				`catalog`,
-				`size`,
-				parent_id,
-				member_id,
-				file_uids,
-				create_time,
-				`level`
-		</trim>
-		VALUES
+    <!--  查询我参与的文件，根据创建时间排序 -->
+    <select id="join" resultType="com.art1001.supply.entity.file.File">
+        SELECT
+        file_id,
+        file_name,
+        size,
+        ext,
+        file_url,
+        update_time,
+        create_time,
+        catalog
+        FROM
+        prm_file
+        WHERE
+        find_in_set(#{userId},file_uids)
+        AND catalog = '0'
+        AND file_del = '0'
+        <if test="order != null and order != ''">
+            <if test="order == 'create'">
+                order by create_time desc
+            </if>
+        </if>
+    </select>
 
-		<foreach collection="list" separator="," item="file" >
-			(
-				<trim suffixOverrides=",">
-					<if test="file.fileId != null and file.fileId != ''">
-						#{file.fileId},
-					</if>
-					<if test="file.fileName != null and file.fileName != ''">
-						#{file.fileName},
-					</if>
-					<if test="file.ext != null and file.ext != ''">
-						#{file.ext},
-					</if>
-					<if test="file.fileUrl != null and file.fileUrl != ''">
-						#{file.fileUrl},
-					</if>
-					<if test="file.projectId != null and file.projectId != ''">
-						#{file.projectId},
-					</if>
-					<if test="file.catalog != null ">
-						#{file.catalog},
-					</if>
-					<if test="file.size != null and file.size != ''">
-						#{file.size},
-					</if>
-					<if test="file.parentId != null and file.parentId != ''">
-						#{file.parentId},
-					</if>
-					<if test="file.isModel != null and file.isModel != ''">
-						#{file.isModel},
-					</if>
-					<if test="file.memberId != null ">
-						#{file.memberId},
-					</if>
-					<if test="file.fileUids != null ">
-						#{file.fileUids},
-					</if>
-					<if test="file.createTime != null ">
-						#{file.createTime},
-					</if>
-					<if test="file.level != null ">
-						#{file.level}
-					</if>
-				</trim>
-			)
-		</foreach>
-	</insert>
+    <!-- 插入多条文件信息 -->
+    <insert id="saveFileBatch">
+        insert into prm_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            file_id,
+            file_name,
+            ext,
+            file_url,
+            project_id,
+            `catalog`,
+            `size`,
+            parent_id,
+            member_id,
+            file_uids,
+            create_time,
+            `level`
+        </trim>
+        VALUES
+
+        <foreach collection="list" separator="," item="file">
+            (
+            <trim suffixOverrides=",">
+                <if test="file.fileId != null and file.fileId != ''">
+                    #{file.fileId},
+                </if>
+                <if test="file.fileName != null and file.fileName != ''">
+                    #{file.fileName},
+                </if>
+                <if test="file.ext != null and file.ext != ''">
+                    #{file.ext},
+                </if>
+                <if test="file.fileUrl != null and file.fileUrl != ''">
+                    #{file.fileUrl},
+                </if>
+                <if test="file.projectId != null and file.projectId != ''">
+                    #{file.projectId},
+                </if>
+                <if test="file.catalog != null ">
+                    #{file.catalog},
+                </if>
+                <if test="file.size != null and file.size != ''">
+                    #{file.size},
+                </if>
+                <if test="file.parentId != null and file.parentId != ''">
+                    #{file.parentId},
+                </if>
+                <if test="file.isModel != null and file.isModel != ''">
+                    #{file.isModel},
+                </if>
+                <if test="file.memberId != null ">
+                    #{file.memberId},
+                </if>
+                <if test="file.fileUids != null ">
+                    #{file.fileUids},
+                </if>
+                <if test="file.createTime != null ">
+                    #{file.createTime},
+                </if>
+                <if test="file.level != null ">
+                    #{file.level}
+                </if>
+            </trim>
+            )
+        </foreach>
+    </insert>
 </mapper>
