@@ -1176,7 +1176,9 @@ public class  TaskApi extends BaseController {
     public Result updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
 
                                   @NotNull(message = "计划值不能为空！")
-                                  @Range(message = "计划值不符合规范", min = 1, max = 480) Double workingHours){
+                                  @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours){
+
+        log.info("Update work hours.[{},{}]", taskId, workingHours);
 
         taskService.updatePlanWorkHours(taskId, workingHours);
         return Result.success();

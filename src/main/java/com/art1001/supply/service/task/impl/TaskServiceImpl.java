@@ -1952,9 +1952,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setUpdateTime(System.currentTimeMillis());
         this.updateById(task);
 
-        StringBuilder content = new StringBuilder();
-        content.append(TaskLogFunction.A34.getName()).append(progress).append("%");
-        logService.saveLog(taskId,content.toString(),1);
+        String content = TaskLogFunction.A34.getName() + progress + "%";
+        logService.saveLog(taskId,content,1);
     }
 
     @Override
@@ -1965,9 +1964,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setPlanWorkHours(workingHours);
         this.updateById(task);
 
-        StringBuilder content = new StringBuilder();
-        content.append(TaskLogFunction.A35.getName()).append(workingHours).append("小时");
-        logService.saveLog(taskId,content.toString(),1);
+        String content = TaskLogFunction.A35.getName() + workingHours + "小时";
+        logService.saveLog(taskId,content, 1);
     }
 }
 

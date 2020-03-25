@@ -369,6 +369,9 @@
 		t.other,
 		t.order,
 		t.task_uids,
+		t.progress,
+		t.total_work_hours,
+		t.plan_work_hours,
 		tg.tag_id,
 		tg.tag_name,
 		tg.bg_color
