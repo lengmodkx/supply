@@ -604,7 +604,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     **/
     private StaticDto resultStatic(StaticDto staticDto) {
         if (staticDto.getTaskMember() == null && staticDto.getTaskCase() == null && staticDto.getTaskGroup() == null) {
-            staticDto.setDayNum(7);
+            staticDto.setDayNum(8);
         } else if (staticDto != null) {
             if ("".equals(staticDto.getTaskMember()) || "0".equals(staticDto.getTaskMember())) {
                 staticDto.setTaskMember(null);
@@ -628,7 +628,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     //将数据写入实体类
                     staticDto.setStartDay(day);
                     staticDto.setEndDay(today);
-                    staticDto.setDayNum(7);
+                    staticDto.setDayNum(8);
                 } else if ("30".equals(staticDto.getTaskDay())) {
                     c.setTime(new Date());
                     c.add(Calendar.MONTH, -1);
@@ -656,7 +656,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     //将数据写入实体类
                     staticDto.setStartDay(day);
                     staticDto.setEndDay(today);
-                    staticDto.setDayNum(7);
+                    staticDto.setDayNum(8);
                 }
             } else {
                 try {
@@ -785,8 +785,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     private StatisticsBurnout getCumulative(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto) {
-
-
         sto =  resultStatic(sto);
         int n=taskCountList.size();
         Long currentDate=System.currentTimeMillis()/1000;
