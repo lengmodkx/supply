@@ -1943,5 +1943,29 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
         return this.list(eq);
     }
+
+    @Override
+    public void updateProgress(String taskId, Integer progress) {
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setProgress(progress);
+        task.setUpdateTime(System.currentTimeMillis());
+        this.updateById(task);
+
+        String content = TaskLogFunction.A34.getName() + progress + "%";
+        logService.saveLog(taskId,content,1);
+    }
+
+    @Override
+    public void updatePlanWorkHours(String taskId, Double workingHours) {
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setUpdateTime(System.currentTimeMillis());
+        task.setPlanWorkHours(workingHours);
+        this.updateById(task);
+
+        String content = TaskLogFunction.A35.getName() + workingHours + "小时";
+        logService.saveLog(taskId,content, 1);
+    }
 }
 
