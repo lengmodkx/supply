@@ -1699,7 +1699,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return 任务集合
      */
     @Override
-    public List<Task> findMeAndOrder(Boolean isDone, String order, String type) {
+    public List<Task> findMeAndOrder(Integer isDone, String order, String type) {
         if(Constants.EXECUTE.equals(type)){
             return taskMapper.selectExecuteAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
         }
@@ -1719,7 +1719,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return 项目集合
      */
     @Override
-    public List<Project> findExecuteOrderProject(Boolean isDone) {
+    public List<Project> findExecuteOrderProject(Integer isDone) {
         return taskMapper.selectExecuteOrderProject(isDone,ShiroAuthenticationManager.getUserId());
     }
 

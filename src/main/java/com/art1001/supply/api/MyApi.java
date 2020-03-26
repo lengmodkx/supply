@@ -37,7 +37,7 @@ public class MyApi {
      * @return 任务 或者 项目的集合
      */
     @GetMapping("/task")
-    public JSONObject getExecute(@RequestParam Boolean isDone,@RequestParam String order,@RequestParam String type){
+    public JSONObject getExecute(@RequestParam Integer isDone,@RequestParam String order,@RequestParam String type){
         JSONObject jsonObject = new JSONObject();
         try {
             if(Constants.PROJECT.equals(order)){

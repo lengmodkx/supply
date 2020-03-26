@@ -14,10 +14,7 @@ import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.quartz.SchedulerException;
 
 import java.util.List;
@@ -559,7 +556,7 @@ public interface TaskService extends IService<Task> {
 	 * @param type 查询类型 (我执行的,我创建的,我参与的)
 	 * @return 任务集合
 	 */
-	List<Task> findMeAndOrder(Boolean isDone, String order, String type);
+	List<Task> findMeAndOrder(Integer isDone, String order, String type);
 
 	/**
 	 * 查询出我执行的任务并且按照项目排序
@@ -567,7 +564,7 @@ public interface TaskService extends IService<Task> {
 	 * @param isDone 是否完成 (筛选条件)
 	 * @return 项目集合
 	 */
-	List<Project> findExecuteOrderProject(Boolean isDone);
+	List<Project> findExecuteOrderProject(Integer isDone);
 
 	/**
 	 * 根据id集合 查询出对应的任务信息 以及执行者信息

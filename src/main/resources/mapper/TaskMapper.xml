@@ -1252,12 +1252,7 @@
 			<where>
 				t.executor = #{userId}
 				AND
-				<if test="isDone">
-					t.task_status = '完成'
-				</if>
-				<if test="!isDone">
-					t.task_status = '未完成'
-				</if>
+				t.task_status = #{isDone}
 			</where>
 			<if test="order == 'created'">
 				order by t.create_time desc
@@ -1291,12 +1286,7 @@
 			<where>
 				find_in_set(#{userId}, t.task_uids)
 				AND
-				<if test="isDone">
-					t.task_status = '完成'
-				</if>
-				<if test="!isDone">
-					t.task_status = '未完成'
-				</if>
+				t.task_status = #{isDone}
 			</where>
 			<if test="order == 'created'">
 				order by t.create_time desc
@@ -1330,12 +1320,7 @@
 		<where>
 			t.member_id = #{userId}
 			AND
-			<if test="isDone">
-				t.task_status = '完成'
-			</if>
-			<if test="!isDone">
-				t.task_status = '未完成'
-			</if>
+			t.task_status = #{isDone}
 		</where>
 		<if test="order == 'created'">
 			order by t.create_time desc
@@ -1349,7 +1334,7 @@
 	</select>
 
 	<!-- 查询出我执行的任务并且按照项目排序 -->
-	<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
+		<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
 		SELECT
 		p.project_id AS p_id,
 		p.project_name,
@@ -1370,12 +1355,7 @@
 		p.project_id IN ( SELECT project_id FROM prm_project_member WHERE member_id = #{userId} )
 		AND t.executor = #{userId}
 		AND
-		<if test="isDone">
-			t.task_status = '完成'
-		</if>
-		<if test="!isDone">
-			t.task_status = '未完成'
-		</if>
+		t.task_status = #{isDone}
 	</select>
 
 	<!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->

@@ -96,7 +96,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     private final static String PUBLIC_FILE_NAME = "公共模型库";
 
-    private final static String[] company = {"GB", "MB", "KB", "B"};
+    private final static String[] company = {"GB", "MB", "KB"};
 
     @Override
     public List<FileTree> querySubFileList(String fileId) {
@@ -1002,7 +1002,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> created = new ArrayList<>(30);
         if (StringUtils.isNotEmpty(order) && order.equals("size")) {
             for (String c : company) {
-                created.addAll(fileMapper.createdBySize(ShiroAuthenticationManager.getUserId(), c));
+                created = fileMapper.createdBySize(ShiroAuthenticationManager.getUserId(), c);
             }
         } else if ("create".equals(order)) {
             created = fileMapper.created(order, ShiroAuthenticationManager.getUserId());
@@ -1024,7 +1024,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> join = new ArrayList<>(30);
         if (StringUtils.isNotEmpty(order) && order.equals("size")) {
             for (String c : company) {
-                join.addAll(fileMapper.joinBySize(ShiroAuthenticationManager.getUserId(), c));
+                join = fileMapper.joinBySize(ShiroAuthenticationManager.getUserId(), c);
             }
         } else if ("create".equals(order)) {
             join = fileMapper.join(order, ShiroAuthenticationManager.getUserId());
