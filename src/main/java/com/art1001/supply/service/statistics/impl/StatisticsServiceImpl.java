@@ -199,13 +199,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectTaskBurnOut(projectId,sto);
             Integer count = this.statisticsMapper.taskSevenDayAgo(projectId, currentDate, sto.getDayNum());
             //项目进展走势
+
+            //因为如果要查8天的数据，传8会查到其九天之前每天完成的数量，所以在查询时 将天数-1
+            sto.setDayNum(sto.getDayNum()-1);
             List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto,dayNumMap);
             //重写之后的list数据  累计总任务
             List<StatisticsResultVO> taskCountList=DateUtil.getSticList(taskOfProgress, count);
             taskCountList=DateUtil.getBurnoutList(taskCountList);
-
+            //任务在一定天数内每天完成的数量
             List<StatisticsResultVO> taskOfFinishProgress = this.statisticsMapper.taskOfFinishProgress(projectId, currentDate,sto,dayNumMap);
-
+            sto.setDayNum(sto.getDayNum()+1);
 
             // type = 0 时包含所有数据  type = 1   燃尽图数据  type = 2  累计图数据
             if (type == 0){
