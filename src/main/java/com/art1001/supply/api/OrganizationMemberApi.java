@@ -200,6 +200,35 @@ public class OrganizationMemberApi {
             throw new SystemException("系统异常,获取用户信息失败!",e);
         }
     }
+
+    //搜索企业成员
+    @GetMapping("/{phone}/searchOrgUser")
+    public JSONObject searchMembers(@PathVariable String phone,String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            List<UserEntity> users = userService.getUserByOrgId(phone,orgId);
+            if (!users.isEmpty()){
+                jsonObject.put("data",users);
+                jsonObject.put("msg","搜索成功");
+                jsonObject.put("result",1);
+            }else {
+                jsonObject.put("msg","搜索失败");
+                jsonObject.put("result",0);
+            }
+
+
+            return jsonObject;
+
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new SystemException("系统异常,获取用户信息失败!",e);
+        }
+    }
+
+
+
+
     @DeleteMapping
     public Result removeOrgUser(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "userId") String userId){

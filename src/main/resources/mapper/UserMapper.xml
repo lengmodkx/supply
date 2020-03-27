@@ -179,6 +179,6 @@
 		u.image,
 		u.telephone
 		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id
-		where  organization_id = #{orgId}  and m.account_name like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>
+		where  m.organization_id = #{orgId}  and u.account_name like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>  or  u.telephone like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>
 	</select>
 </mapper>
