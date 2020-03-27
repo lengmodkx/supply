@@ -83,8 +83,7 @@ public class OrganizationMemberApi {
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,
-                                @RequestParam(value = "memberId") String memberId,
-                                @RequestParam @Range(min = 0, max = 1) Integer external){
+                                @RequestParam(value = "memberId") String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
             OrganizationMember member = organizationMemberService.findOrgByMemberId(memberId,orgId);
