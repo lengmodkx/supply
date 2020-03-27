@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.Result;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -104,6 +105,14 @@ public class  RelationApi {
             relation.setRelationName(groupName);
             relation.setProjectId(projectId);
             relationService.saveGroup(relation);
+            GroupVO groupVO = new GroupVO();
+            groupVO.setGroupId(relation.getRelationId());
+            groupVO.setGroupName(relation.getRelationName());
+            groupVO.setCompletePercentage("0");
+            groupVO.setBeOverdue(0);
+            groupVO.setCompleteCount(0);
+            groupVO.setNotCompleteCount(0);
+
             return Result.success(relation);
         }catch (Exception e){
             log.error("添加关系异常:",e);
