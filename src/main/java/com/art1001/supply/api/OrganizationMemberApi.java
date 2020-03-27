@@ -17,6 +17,7 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -295,5 +296,15 @@ public class OrganizationMemberApi {
     public Result getOrgMemberByKeyword(@NotNull(message = "企业id不能为空!") String orgId, String keyword){
         log.info("Get organization member list by keyword. [{},{}]", orgId, keyword);
         return Result.success(organizationMemberService.getOrgMemberByKeyword(orgId, keyword));
+    }
+
+    @PutMapping("/{orgId}/lock")
+    public Result lockUser(@PathVariable String orgId,
+                           @RequestParam String userId,
+                           @RequestParam Integer lock){
+        OrganizationMember member = new OrganizationMember();
+        member.setMemberLock(lock);
+        organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
+        return Result.success();
     }
 }

@@ -126,12 +126,12 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	public List<Partment> findOrgPartmentInfo(String orgId) {
 		List<Partment> partments = partmentMapper.selectOrgPartmentInfo(orgId);
 		partments.forEach(item -> {
-			if(!CollectionUtils.isEmpty(item.getSubPartments())){
-				item.setIsExistSubPartment(true);
+			List<Partment> subPartment = partmentMapper.findSubPartment(item.getPartmentId());
+			if(!CollectionUtils.isEmpty(subPartment)){
+				item.setHasPartment(true);
 			} else{
-				item.setIsExistSubPartment(false);
+				item.setHasPartment(false);
 			}
-			item.setSubPartments(null);
 		});
 		return partments;
 	}
@@ -189,5 +189,19 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 
 		LambdaQueryWrapper<Partment> eq = new QueryWrapper<Partment>().lambda().eq(Partment::getParentId, departmentId);
 		return this.count(eq);
+	}
+
+	@Override
+	public List<Partment> findSubPartment(String parentId) {
+		List<Partment> subPartment = partmentMapper.findSubPartment(parentId);
+		subPartment.forEach(item -> {
+			List<Partment> subPartment1 = partmentMapper.findSubPartment(item.getPartmentId());
+			if(!CollectionUtils.isEmpty(subPartment1)){
+				item.setHasPartment(true);
+			} else{
+				item.setHasPartment(false);
+			}
+		});
+		return subPartment;
 	}
 }

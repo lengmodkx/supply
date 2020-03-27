@@ -65,4 +65,6 @@ public interface PartmentMapper extends BaseMapper<Partment> {
 	 * @return 部门信息
 	 */
     List<Partment> selectOrgPartmentInfo(@Param("orgId") String orgId);
+
+	List<Partment> findSubPartment(String parentId);
 }

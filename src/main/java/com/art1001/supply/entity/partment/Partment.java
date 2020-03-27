@@ -68,16 +68,10 @@ public class Partment extends Model<Partment> {
 	private String parentId;
 
 	/**
-	 * 该部门的子部门信息
-	 */
-	@TableField(exist = false)
-	private List<Partment> subPartments;
-
-	/**
 	 * 是否存在子部门
 	 */
 	@TableField(exist = false)
-	private Boolean isExistSubPartment;
+	private Boolean hasPartment;
 
 
 

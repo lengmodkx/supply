@@ -7,6 +7,7 @@
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="partment_logo" property="partmentLogo" jdbcType="VARCHAR" />
 		<result column="partment_name" property="partmentName" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
 		<result column="partment_order" property="partmentOrder" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
@@ -22,13 +23,14 @@
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						partment_id,
-				organization_id,
-				partment_logo,
-				partment_name,
-				partment_order,
-				create_time,
-				update_time
+		partment_id,
+		organization_id,
+		partment_logo,
+		partment_name,
+		partment_order,
+		parent_id,
+		create_time,
+		update_time
 	</sql>
 
 	<sql id="whereStatement">
@@ -88,22 +90,29 @@
 	</select>
 
 	<!-- 获取某个企业下的部门信息 -->
-    <select id="selectOrgPartmentInfo" resultMap="BaseResultMap2">
+    <select id="selectOrgPartmentInfo" resultMap="BaseResultMap">
 		SELECT
-			p.partment_id,
-			p.partment_name,
-			s.parent_id AS s_id
+			<include refid="Base_Column_List"/>
 		FROM
-			prm_partment AS p
-			LEFT JOIN prm_partment AS s ON p.partment_id = s.parent_id
+			prm_partment
 		WHERE
-			p.organization_id = #{orgId} AND p.parent_id = '0'
+			organization_id = #{orgId} and parent_id = '0'
 		ORDER BY
-			p.partment_order
+			partment_order
+	</select>
+	<select id="findSubPartment" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM
+			prm_partment
+		WHERE
+			parent_id = #{parentId}
+		ORDER BY
+			partment_order
 	</select>
 
 
-    <delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
+	<delete id="deletePartmentByPartmentId" parameterType="java.lang.String">
 		delete from
 		prm_partment where partment_id = #{partmentId}
 	</delete>

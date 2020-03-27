@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -38,16 +39,16 @@ public class PartmentApi {
                                   @RequestParam(value = "partmentLogo",required = false) String partmentLogo){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(parentId != null){
+            Partment partment = new Partment();
+            if(StringUtils.isNotEmpty(parentId)){
                 if(!partmentService.checkPartmentIsExist(parentId)){
                     jsonObject.put("result", 0);
                     jsonObject.put("msg", "父级部门不存在!");
                     return jsonObject;
                 }
+                partment.setParentId(parentId);
             }
-            Partment partment = new Partment();
             partment.setOrganizationId(orgId);
-            partment.setParentId(parentId);
             partment.setPartmentName(partmentName);
             partment.setPartmentLogo(partmentLogo);
             partmentService.savePartment(partment);
@@ -149,7 +150,8 @@ public class PartmentApi {
     public JSONObject getSubPartment(@PathVariable String partmentId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", partmentService.list(new QueryWrapper<Partment>().eq("parent_id", partmentId)));
+            List<Partment> partments =  partmentService.findSubPartment(partmentId);
+            jsonObject.put("data", partments);
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e){
@@ -164,7 +166,7 @@ public class PartmentApi {
      * @return 结果
      */
     @PostMapping("/tree")
-    public Result getTree(String orgId, String departmentId){
+    public Result getTree(@RequestParam(required = false) String orgId, @RequestParam(required = false)String departmentId){
         log.info("Get department tree. [{},{}]", orgId, departmentId);
 
         if(StringUtils.isNotEmpty(orgId) && StringUtils.isNotEmpty(departmentId)){

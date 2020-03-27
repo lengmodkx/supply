@@ -87,4 +87,5 @@ public interface PartmentService extends IService<Partment> {
 	 */
 	int getChildCount(String departmentId);
 
+	List<Partment> findSubPartment(String parentId);
 }

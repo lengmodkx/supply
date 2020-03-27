@@ -2,12 +2,17 @@ package com.art1001.supply.api;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentMemberService;
+import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,22 +42,32 @@ public class PartmentMemberApi {
     @Resource
     private PartmentMemberService partmentMemberService;
 
+    @Resource
+    private PartmentService partmentService;
 
+    @Resource
+    private OrganizationMemberService organizationMemberService;
     /**
      * 添加部门成员
      * @param memberId 成员id
      * @return 添加结果
      */
     @PostMapping("/{partmentId}/add")
-    public JSONObject addPartmentMember(@PathVariable String partmentId, @RequestParam String memberId){
+    public JSONObject addPartmentMember(@PathVariable String partmentId,
+                                        @RequestParam String orgId,
+                                        @RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
             PartmentMember partmentMember = new PartmentMember();
             partmentMember.setPartmentId(partmentId);
             partmentMember.setMemberId(memberId);
-            if(partmentMemberService.addPartmentMember(partmentMember)){
-                jsonObject.put("data",partmentMemberService.getPartmentMemberInfo(partmentId,memberId));
-            }
+            partmentMemberService.addPartmentMember(partmentMember);
+            OrganizationMember member = new OrganizationMember();
+            member.setPartmentId(partmentId);
+            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
+
+            Partment partment = partmentService.getById(partmentId);
+            jsonObject.put("data",partment);
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (ServiceException e){
@@ -94,12 +109,18 @@ public class PartmentMemberApi {
      * @return 结果
      */
     @DeleteMapping("/{partmentId}/member")
-    public JSONObject removePartmentMember(@PathVariable String partmentId,@RequestParam String memberId){
+    public JSONObject removePartmentMember(@PathVariable String partmentId,
+                                           @RequestParam String orgId,
+                                           @RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(partmentMemberService.remove(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", memberId))){
-                jsonObject.put("result", 1);
-            }
+            OrganizationMember member = new OrganizationMember();
+            member.setPartmentId("0");
+            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
+            partmentMemberService.remove(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", memberId));
+            Partment partment = partmentService.getById(partmentId);
+            jsonObject.put("result", 1);
+            jsonObject.put("data",partment);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,移除失败!",e);
