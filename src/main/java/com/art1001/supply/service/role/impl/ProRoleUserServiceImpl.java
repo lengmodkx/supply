@@ -51,7 +51,7 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         ProRole proRole = proRoleService.getById(roleId);
         ProjectMember projectMember = new ProjectMember();
         projectMember.setRoleKey(proRole.getRoleKey());
-        projectMemberService.update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id", projectId).eq("u_id", userId));
+        projectMemberService.update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id", projectId).eq("member_id", userId));
     }
 
     @Override

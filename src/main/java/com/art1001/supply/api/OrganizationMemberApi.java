@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,7 +83,8 @@ public class OrganizationMemberApi {
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "parmentId",required = false) String parmentId,
-                                @RequestParam(value = "memberId") String memberId){
+                                @RequestParam(value = "memberId") String memberId,
+                                @RequestParam @Range(min = 0, max = 1) Integer external){
         JSONObject jsonObject = new JSONObject();
         try {
             OrganizationMember member = organizationMemberService.findOrgByMemberId(memberId,orgId);
@@ -230,7 +232,7 @@ public class OrganizationMemberApi {
     /**
      * 获取企业所有成员
      * @param orgId 企业id
-     * @return
+     * @returnp
      */
     @GetMapping("/getMembers/{orgId}")
     public JSONObject getMemberCompanies(@PathVariable String orgId){
