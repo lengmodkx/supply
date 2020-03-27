@@ -4,7 +4,6 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
-import com.art1001.supply.entity.user.ProjectMemberInfo;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +59,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Resource
 	private OrganizationService organizationService;
+	private String orgId;
+	private String userId;
 
 	/**
 	 * 根据企业id获取企业员工
@@ -288,6 +288,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Override
 	public Boolean checkUserIdIsOrgMaster(String orgId, String userId) {
+		this.orgId = orgId;
+		this.userId = userId;
 		// 该表示为1 代表企业拥有者
 		int label = 1;
 		ValidatedUtil.filterNullParam(orgId, userId);

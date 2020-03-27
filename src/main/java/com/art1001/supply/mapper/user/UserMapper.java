@@ -78,4 +78,13 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	UserInfo findInfo(String accountName);
 
 
+	/**
+	 * 通过电话或姓名搜索所有企业成员
+	 * @param orgId 企业id
+	 * @param phone 电话或姓名信息
+	 * @return
+	 */
+	List<UserEntity> getUserByOrgId(@Param("phone")String phone, @Param("orgId")String orgId);
+
+
 }

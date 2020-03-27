@@ -2,7 +2,6 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.user.ProjectMemberInfo;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -141,4 +140,6 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return 是否是拥有者
 	 */
     Boolean checkUserIdIsOrgMaster(String orgId, String userId);
+
+
 }

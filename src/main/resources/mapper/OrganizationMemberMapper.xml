@@ -26,7 +26,7 @@
 		<result column="user_name" property="memberName"/>
 		<result column="job" property="job"/>
 	</resultMap>
-    
+
 	<sql id="Base_Column_List">
 				id,
 				organization_id,

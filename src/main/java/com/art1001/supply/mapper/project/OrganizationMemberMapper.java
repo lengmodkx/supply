@@ -94,4 +94,5 @@ public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember>
 	Boolean updateMember(@Param("orgId")String orgId, @Param("memberId")String memberId);
 
     List<ProjectMemberInfo> getOrgMemberList(@Param("orgId") String orgId);
+
 }

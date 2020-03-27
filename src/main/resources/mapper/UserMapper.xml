@@ -60,9 +60,9 @@
 		<result property="updateTime" column="update_time"/>
 		<result property="sex" column="sex"/>
 		<result property="birthday" column="birthday"/>
-		<result property="telephone" column="telephone"/>
 		<result property="email" column="email"/>
 		<result property="image" column="image"/>
+		<result property="telephone" column="telephone"/>
 		<result property="address" column="address"/>
 		<result property="job" column="job"/>
 		<result property="defaultImage" column="default_image"/>
@@ -168,5 +168,17 @@
 	</select>
     <select id="findInfo" resultType="com.art1001.supply.entity.user.UserInfo">
 		select user_id , user_name, account_name,image from tb_user where account_name=#{accountName}
+	</select>
+
+
+	<!-- 搜索企业成员 -->
+	<select id="getUserByOrgId" resultType="com.art1001.supply.entity.user.UserEntity">
+		select
+		u.user_id,
+		u.account_name,
+		u.image,
+		u.telephone
+		from prm_organization_member as m left join tb_user u on m.member_id = u.user_id
+		where  organization_id = #{orgId}  and m.account_name like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>
 	</select>
 </mapper>
