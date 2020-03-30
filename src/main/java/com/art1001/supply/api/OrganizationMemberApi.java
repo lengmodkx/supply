@@ -19,12 +19,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -206,9 +206,17 @@ public class OrganizationMemberApi {
         JSONObject jsonObject = new JSONObject();
         try {
 
+
             List<UserEntity> users = userService.getUserByOrgId(phone,orgId);
+
             if (!users.isEmpty()){
-                jsonObject.put("data",users);
+                List<OrganizationMember> memberList = new ArrayList<>();
+                for (UserEntity u:users){
+                    OrganizationMember organizationMember = new OrganizationMember();
+                    organizationMember.setUserEntity(u);
+                    memberList.add(organizationMember);
+                }
+                jsonObject.put("data",memberList);
                 jsonObject.put("msg","搜索成功");
                 jsonObject.put("result",1);
             }else {

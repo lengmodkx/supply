@@ -3,6 +3,8 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.entity.Result;
+import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -95,22 +97,27 @@ public class  RelationApi {
      * @return
      */
     @PostMapping("/{projectId}/group")
-    public JSONObject addGroup(
+    public Result addGroup(
             @PathVariable(value = "projectId") String projectId,
             @RequestParam(value = "groupName") String groupName){
-        JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();
             relation.setRelationName(groupName);
             relation.setProjectId(projectId);
             relationService.saveGroup(relation);
-            jsonObject.put("groupId",relation.getRelationId());
-            jsonObject.put("result",1);
+            GroupVO groupVO = new GroupVO();
+            groupVO.setGroupId(relation.getRelationId());
+            groupVO.setGroupName(relation.getRelationName());
+            groupVO.setCompletePercentage("0");
+            groupVO.setBeOverdue(0);
+            groupVO.setCompleteCount(0);
+            groupVO.setNotCompleteCount(0);
+
+            return Result.success(relation);
         }catch (Exception e){
             log.error("添加关系异常:",e);
             throw new AjaxException(e);
         }
-        return jsonObject;
     }
 
     /**
