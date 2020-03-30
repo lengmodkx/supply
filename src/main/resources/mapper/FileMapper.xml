@@ -21,6 +21,7 @@
         <result column="file_uids" property="fileUids" jdbcType="CLOB"/>
         <result column="file_label" property="fileLabel" jdbcType="INTEGER"/>
         <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+        <result column="model_url" property="modelUrl" jdbcType="VARCHAR"/>
         <result column="file_privacy" property="filePrivacy" jdbcType="INTEGER"/>
         <result column="public_id" property="publicId" jdbcType="VARCHAR"/>
         <result column="public_lable" property="publicLable" jdbcType="VARCHAR"/>
@@ -54,6 +55,7 @@
         <result column="ext" property="ext" jdbcType="VARCHAR"/>
         <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
         <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+
     </resultMap>
 
     <resultMap id="PublicMap" type="com.art1001.supply.entity.file.File">
@@ -69,6 +71,7 @@
         <result column="create_time" property="createTime" jdbcType="BIGINT"/>
         <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
         <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+        <result column="model_url" property="modelUrl" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap id="BaseResultMap3" type="com.art1001.supply.entity.file.File">
         <id column="file_id" property="fileId"/>
@@ -84,6 +87,7 @@
         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="BIGINT"/>
         <result column="file_thumbnail" property="fileThumbnail" jdbcType="INTEGER"/>
+        <result column="model_url" property="modelUrl" jdbcType="VARCHAR"/>
         <result column="file_privacy" property="filePrivacy" jdbcType="INTEGER"/>
         <!--		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"-->
         <!--					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>-->
@@ -109,6 +113,7 @@
 				file_uids,
 				file_label,
 				file_thumbnail,
+				f.model_url,
 				file_privacy,
 				public_id,
 				`level`
@@ -132,6 +137,7 @@
 				f.file_uids,
 				f.file_label,
 				f.file_thumbnail,
+				f.model_url,
 				f.file_privacy,
 				f.public_id,
 				f.public_lable,
@@ -180,6 +186,7 @@
 			f.file_uids,
 			f.create_time,
 			f.file_thumbnail,
+			f.model_url,
 			f.file_privacy
 		FROM
 			prm_file f

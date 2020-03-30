@@ -16,7 +16,6 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -164,6 +163,10 @@ public class File extends Model<File> {
      */
     private String fileThumbnail;
 
+    /**
+     * 模型文件路径
+     */
+    private String modelUrl;
     /**
      * 文件标识
      */

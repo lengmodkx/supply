@@ -36,6 +36,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
@@ -52,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -1169,4 +1171,33 @@ public class FileApi extends BaseController {
             throw new SystemException(e);
         }
     }
+
+    @PostMapping("model/change")
+    public JSONObject modelChange(@RequestParam String fileId){
+        JSONObject jsonObject = new JSONObject();
+        File file = fileService.getById(fileId);
+        if(StringUtils.isNotEmpty(file.getModelUrl())){
+            jsonObject.put("result", 1);
+            return jsonObject;
+        }
+        String url = "http://www.aldbim.com/model/files/model/change?fileId="+fileId;
+        OkHttpClient client = new OkHttpClient();
+        final Request request = new Request.Builder().get().url(url).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@org.jetbrains.annotations.NotNull Call call, @org.jetbrains.annotations.NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@org.jetbrains.annotations.NotNull Call call, @org.jetbrains.annotations.NotNull Response response) throws IOException {
+
+            }
+        });
+        jsonObject.put("result", 1);
+        return jsonObject;
+    }
+
+
 }
