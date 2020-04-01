@@ -7,6 +7,7 @@
 		<result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
 		<result column="organization_imgae" property="organizationImage" jdbcType="VARCHAR" />
 		<result column="organization_des" property="organizationDes" jdbcType="VARCHAR" />
+		<result column="organization_intro" property="organizationIntro" jdbcType="VARCHAR" />
 		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
 		<result column="organization_member" property="organizationMember" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
@@ -29,6 +30,7 @@
 				organization_name,
 				organization_imgae,
 				organization_des,
+				organization_intro,
 				is_public,
 				organization_member,
 				create_time,
@@ -102,6 +104,9 @@
 			<if test="organizationDes != null and organizationDes != ''">
 			organization_des,
 			</if>
+			<if test="organizationIntro != null and organizationIntro != ''">
+				organization_intro,
+			</if>
 			<if test="isPublic != null ">
 			is_public,
 			</if>
@@ -173,6 +178,9 @@
 			</if>
 			<if test="organizationDes != null and organizationDes != ''">
 				organization_des = #{organizationDes},
+			</if>
+			<if test="organizationIntro != null and organizationIntro != ''">
+				organization_intro = #{organizationIntro},
 			</if>
 			<if test="isPublic != null ">
 				is_public = #{isPublic},

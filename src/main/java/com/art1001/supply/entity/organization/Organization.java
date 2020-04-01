@@ -48,10 +48,17 @@ public class Organization extends Model<Organization> {
 
 
 	/**
-	 * 企业简介
+	 * 企业规模
 	 */
 	@NotEmpty(message = "企业简介不能为空!",groups = SaveOrg.class)
 	private String organizationDes;
+
+
+
+	/**
+	 * 企业简介
+	 */
+	private String organizationIntro;
 
 
 	/**
