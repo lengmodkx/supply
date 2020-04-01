@@ -331,6 +331,7 @@ public class OrganizationMemberApi {
     /**
      * 根据关键字 模糊 获取企业中的用户列表
      * @param orgId 企业id
+     * @param projectId 项目id
      * @param keyword 关键字
      * @return 用户列表
      */
