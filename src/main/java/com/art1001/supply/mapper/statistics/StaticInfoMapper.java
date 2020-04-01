@@ -219,4 +219,9 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
      * 逾期完成数据
      */
     List<StatisticsResultVO> selectExpiredToCompleteTask(@Param("stDTO") StaticDto sto, @Param("projectId") String projectId);
+
+    /**
+     * 查询饼图数据总计划工时
+     */
+    Double getTaskManHour(String projectId, StaticDto sto);
 }

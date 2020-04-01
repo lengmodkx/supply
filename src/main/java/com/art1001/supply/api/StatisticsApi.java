@@ -88,26 +88,38 @@ public class StatisticsApi {
         try {
 
             Statistics statistics=this.getCondition(projectId);
-            //获取总任务数
-            Integer count=this.statisticsService.getCountTask(projectId,sto);
-            //根据项目id获取饼图数据
-            List<StatisticsPie> staticPies= this.statisticsService.selectExcutorTask(projectId,count,sto);
+              //按任务数查询
+           if(sto.getTaskCount().isEmpty() || sto.getTaskCount().equals("按任务数")){
+               //获取总任务数
+               Integer count=this.statisticsService.getCountTask(projectId,sto);
+               //根据项目id获取饼图数据
+               List<StatisticsPie> staticPies= this.statisticsService.selectExcutorTask(projectId,count,sto);
 
-            statistics.setPieData(staticPies);
+               statistics.setPieData(staticPies);
 
-            TitleVO title1=new TitleVO("执行者","name");
-            TitleVO title2=new TitleVO("任务数","y");
+               TitleVO title1=new TitleVO("执行者","name");
+               TitleVO title2=new TitleVO("任务数","y");
+
+               ArrayList<TitleVO> arrayList=new ArrayList<>();
+               arrayList.add(title1);
+               arrayList.add(title2);
+
+               statistics.setTitleList(arrayList);
+
+               return statistics;
+           }else {
+               //按计划工时查询
+
+               //获取总计划工时
+               Double sum=this.statisticsService.getTaskManHour(projectId,sto);
+
+               //根据项目id获取饼图数据
+               List<StatisticsPie> staticPies= this.statisticsService.selectEveryExcutorTask(projectId,sum,sto);
 
 
+               return null;
+           }
 
-
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            arrayList.add(title1);
-            arrayList.add(title2);
-
-            statistics.setTitleList(arrayList);
-
-            return statistics;
 
         } catch (Exception e) {
             e.printStackTrace();

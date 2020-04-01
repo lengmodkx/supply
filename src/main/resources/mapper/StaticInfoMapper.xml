@@ -323,4 +323,10 @@
         WHERE pt.project_id=#{value} GROUP BY  <include refid="Base_Column_Group"/>
     </select>
 
+
+    <!-- 饼图总计划工时 -->
+    <select id="getTaskManHour" resultType="java.lang.Double">
+        SELECT SUM(pt.plan_work_hours) FROM prm_task pt   WHERE  pt.project_id=#{projectId} <include refid="Base_Column_QBC"/>
+    </select>
+
 </mapper>
