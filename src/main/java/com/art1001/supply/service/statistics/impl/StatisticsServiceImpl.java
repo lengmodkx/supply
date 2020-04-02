@@ -306,21 +306,45 @@ public class StatisticsServiceImpl implements StatisticsService {
         sto = resultStatic(sto);
 
         //获取每个用户的数据
-        List<StatisticsHistogram> statisticsHistograms = statisticsMapper.getHistogramsDate(projectId, currentDate, sto);
-        int noUserInt = 0;
-        for (int i = 0; i < statisticsHistograms.size(); i++) {
-            if (statisticsHistograms.get(i).getName().equals("待认领")) {
-                noUserInt += statisticsHistograms.get(i).getData();
-                statisticsHistograms.remove(i);
-                i--;
+        List<StatisticsHistogram> statisticsHistograms = new ArrayList<>();
+
+        if (sto.getTaskCount() == null || "按任务数".equals(sto.getTaskCount())){
+            statisticsHistograms = statisticsMapper.getHistogramsDate(projectId, currentDate, sto);
+            int noUserInt = 0;
+            for (int i = 0; i < statisticsHistograms.size(); i++) {
+                if (statisticsHistograms.get(i).getName().equals("待认领")) {
+                    noUserInt += statisticsHistograms.get(i).getData();
+                    statisticsHistograms.remove(i);
+                    i--;
+                }
             }
-        }
-        if (noUserInt != 0) {
-            StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
-            statisticsHistogram.setName("待认领");
-            statisticsHistogram.setData(noUserInt);
-            statisticsHistograms.add(statisticsHistogram);
-        }
+            if (noUserInt != 0) {
+                StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+                statisticsHistogram.setName("待认领");
+                statisticsHistogram.setData(noUserInt);
+                statisticsHistograms.add(statisticsHistogram);
+            }
+        }else {
+            //按计划工时查询
+            statisticsHistograms = statisticsMapper.getManHourData(projectId, currentDate, sto);
+            statisticsHistograms.removeAll(Collections.singleton(null));
+            Double noUserInt = 0.0;
+            if (statisticsHistograms.size()!=0){
+                for (int i = 0; i < statisticsHistograms.size(); i++) {
+                    if ("待认领".equals(statisticsHistograms.get(i).getName())) {
+                        noUserInt += statisticsHistograms.get(i).getDoubleData();
+                        statisticsHistograms.remove(i);
+                        i--;
+                    }
+                }
+                if (noUserInt != 0) {
+                    StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+                    statisticsHistogram.setName("待认领");
+                    statisticsHistogram.setDoubleData(noUserInt);
+                    statisticsHistograms.add(statisticsHistogram);
+                }
+            }
+            }
         return statisticsHistograms;
     }
 
@@ -334,7 +358,14 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     public List<StatisticsPie> selectEveryExcutorTask(String projectId, Double sum, StaticDto sto) {
-        return null;
+        sto = resultStatic(sto);
+        //获取每个用户的工时
+        List<StatisticsPie> statisticsPies = statisticsMapper.selectEveryExcutorTask(projectId, sto);
+        //去除查询到的null元素
+        statisticsPies.removeAll(Collections.singleton(null));
+        statisticsPies = getPieSource(statisticsPies);
+        return statisticsPies;
+
     }
 
 
@@ -826,7 +857,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                 noUserInt += statisticsPies.get(i).getY();
                 statisticsPies.remove(i);
                 i--;
-
             }
         }
         if (noUserInt != 0f) {

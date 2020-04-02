@@ -23,42 +23,42 @@ import java.util.List;
 public class StatisticsApi {
 
 
-
     @Resource
     private StatisticsService statisticsService;
 
 
     /**
      * 页面项目统计总览
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getPieChart/{projectId}")
-    public Statistics projectStatistics(@PathVariable("projectId") String projectId){
+    public Statistics projectStatistics(@PathVariable("projectId") String projectId) {
 
         try {
 
-            Statistics statistics=new Statistics();
+            Statistics statistics = new Statistics();
             StaticDto sto = new StaticDto();
 
 
             //获取总任务数
-            Integer count=this.statisticsService.getCountTask(projectId,sto);
+            Integer count = this.statisticsService.getCountTask(projectId, sto);
 
 
             //statistics.setCount(count);
 
 
             //根据项目id获取饼图数据
-            List<StatisticsPie> staticPies= this.statisticsService.getPieChart(projectId,count,sto);
+            List<StatisticsPie> staticPies = this.statisticsService.getPieChart(projectId, count, sto);
             //根据项目id获取柱状图数据
-            StatisticsHistogram staticHistograms=this.statisticsService.getHistogramsChart(projectId,sto);
+            StatisticsHistogram staticHistograms = this.statisticsService.getHistogramsChart(projectId, sto);
             //根据项目id获取燃尽图数据   type=1 获取燃尽图数据  type=0 包含累计图数据
-            StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId,0, sto);
+            StatisticsBurnout statisticsBurnout = this.statisticsService.getTaskBurnout(projectId, 0, sto);
             //根据项目id获取累计数据
             //StatisticsBurnout statisticsAdd=this.statisticsService.selectProjectProgress(projectId);
             //查询出该项目下的所有任务 状态数量概览
-            List<QueryVO> countList=this.statisticsService.findTaskCountOverView(projectId,sto);
+            List<QueryVO> countList = this.statisticsService.findTaskCountOverView(projectId, sto);
 
             statistics.setCountData(countList);
             statistics.setPieData(staticPies);
@@ -70,148 +70,162 @@ public class StatisticsApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
-
 
 
     /**
      * 饼图统计数据集
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getPieSource/{projectId}")
-    public Statistics pieStatistics(@PathVariable("projectId") String projectId ,@RequestParam("data")String dto){
+    public Statistics pieStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
 
-        StaticDto sto=this.getStaticDto(dto);
+        StaticDto sto = this.getStaticDto(dto);
 
         try {
 
-            Statistics statistics=this.getCondition(projectId);
-              //按任务数查询
-           if(sto.getTaskCount().isEmpty() || sto.getTaskCount().equals("按任务数")){
-               //获取总任务数
-               Integer count=this.statisticsService.getCountTask(projectId,sto);
-               //根据项目id获取饼图数据
-               List<StatisticsPie> staticPies= this.statisticsService.selectExcutorTask(projectId,count,sto);
+            Statistics statistics = this.getCondition(projectId);
+            //按任务数查询
+            if (sto.getTaskCount()== null || "按任务数".equals(sto.getTaskCount())) {
 
-               statistics.setPieData(staticPies);
+                    //获取总任务数
+                    Integer count = this.statisticsService.getCountTask(projectId, sto);
+                    //根据项目id获取饼图数据
+                    List<StatisticsPie> staticPies = this.statisticsService.selectExcutorTask(projectId, count, sto);
 
-               TitleVO title1=new TitleVO("执行者","name");
-               TitleVO title2=new TitleVO("任务数","y");
+                    statistics.setPieData(staticPies);
 
-               ArrayList<TitleVO> arrayList=new ArrayList<>();
-               arrayList.add(title1);
-               arrayList.add(title2);
+                    TitleVO title1 = new TitleVO("执行者", "name");
+                    TitleVO title2 = new TitleVO("任务数", "y");
 
-               statistics.setTitleList(arrayList);
+                    ArrayList<TitleVO> arrayList = new ArrayList<>();
+                    arrayList.add(title1);
+                    arrayList.add(title2);
 
-               return statistics;
-           }else {
-               //按计划工时查询
+                    statistics.setTitleList(arrayList);
 
-               //获取总计划工时
-               Double sum=this.statisticsService.getTaskManHour(projectId,sto);
+                    return statistics;
+                } else {
+                    //按计划工时查询
 
-               //根据项目id获取饼图数据
-               List<StatisticsPie> staticPies= this.statisticsService.selectEveryExcutorTask(projectId,sum,sto);
+                    //获取总计划工时
+                    Double sum = this.statisticsService.getTaskManHour(projectId, sto);
 
+                    //根据项目id获取饼图数据
+                    List<StatisticsPie> staticPies = this.statisticsService.selectEveryExcutorTask(projectId, sum, sto);
+                    statistics.setPieData(staticPies);
 
-               return null;
-           }
+                    TitleVO title1 = new TitleVO("执行者", "name");
+                    TitleVO title2 = new TitleVO("计划工时（单位：h）", "y");
 
+                    ArrayList<TitleVO> arrayList = new ArrayList<>();
+                    arrayList.add(title1);
+                    arrayList.add(title2);
 
+                    statistics.setTitleList(arrayList);
+
+                    return statistics;
+                }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
 
 
     /**
      * 柱状图统计数据集
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getHistogramSource/{projectId}")
-    public Statistics histogramStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
+    public Statistics histogramStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
 
-        StaticDto sto=this.getStaticDto(dto);
+        StaticDto sto = this.getStaticDto(dto);
+
         try {
             Statistics statistics=this.getCondition(projectId);
-            //根据项目id获取柱状图数据
             List<StatisticsHistogram> staticHistograms=this.statisticsService.getHistogramsData(projectId,sto);
-
             statistics.setHisResultlist(staticHistograms);
-
-            if (!staticHistograms.isEmpty()){
+            if (!staticHistograms.isEmpty()) {
                 String[] nameArray = new String[staticHistograms.size()];
                 Integer[] dataArray = new Integer[staticHistograms.size()];
+                Double[]  doubleArray = new Double[staticHistograms.size()];
 
-                for(int i=0;i<staticHistograms.size();i++){
+                for (int i = 0; i < staticHistograms.size(); i++) {
                     nameArray[i] = staticHistograms.get(i).getName();
-                    dataArray[i] = staticHistograms.get(i).getData();
+                    if (staticHistograms.get(i).getData() != null ){
+                        dataArray[i] = staticHistograms.get(i).getData();
+                    }else{
+                        doubleArray[i] = staticHistograms.get(i).getDoubleData();
+                    }
                 }
                 StatisticsHistogram staticHistogram = new StatisticsHistogram();
                 staticHistogram.setNameArray(nameArray);
+                staticHistogram.setDoubleArray(doubleArray);
                 staticHistogram.setDataArray(dataArray);
                 statistics.setStaticHistogram(staticHistogram);
-            }else {
-                String[] nameArray ={""};
-                Integer[] dataArray ={0};
-                StatisticsHistogram staticHistogram = new StatisticsHistogram();
-                /*staticHistogram.setNameArray(nameArray);
-                staticHistogram.setDataArray(dataArray);*/
-                statistics.setStaticHistogram(staticHistogram);
+                if (null != sto.getTaskCount()){
+                    staticHistogram.setTaskType(sto.getTaskCount());
+                }
+            } else {
+                statistics.setStaticHistogram(new StatisticsHistogram());
             }
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("执行者","name");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("执行者", "name");
             arrayList.add(title);
-            title=new TitleVO("任务数","data");
+            //根据项目id获取柱状图数据
+            if (sto.getTaskCount() == null || "按任务数".equals(sto.getTaskCount())){
+                title = new TitleVO("任务数", "data");
+            }else {
+                title = new TitleVO("计划工时（单位：h）", "doubleData");
+            }
             arrayList.add(title);
-
-
             statistics.setTitleList(arrayList);
-
             return statistics;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
 
 
     /**
      * 任务燃尽图统计数据集
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getBurnoutSource/{projectId}")
-    public Statistics burnoutStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
+    public Statistics burnoutStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
 
-        StaticDto sto=this.getStaticDto(dto);
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+        StaticDto sto = this.getStaticDto(dto);
+        if (dto != null) {
+            JSONObject jsonObject = JSONObject.fromObject(dto);
+            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
         }
 
         try {
-            Statistics statistics=this.getCondition(projectId);
+            Statistics statistics = this.getCondition(projectId);
             //根据项目id获取燃尽图数据
-            StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId,1,sto);
+            StatisticsBurnout statisticsBurnout = this.statisticsService.getTaskBurnout(projectId, 1, sto);
             statistics.setStatisticsBurnout(statisticsBurnout);
 
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("时间","createTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("时间", "createTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("变动类型","changeType");
+            title = new TitleVO("变动类型", "changeType");
             arrayList.add(title);
-            title=new TitleVO("任务数","taskCountString");
+            title = new TitleVO("任务数", "taskCountString");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -220,36 +234,37 @@ public class StatisticsApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
 
     /**
      * 任累计图统计数据集
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getAddSource/{projectId}")
-    public Statistics addStatistics(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
+    public Statistics addStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
 
-        StaticDto sto=this.getStaticDto(dto);
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+        StaticDto sto = this.getStaticDto(dto);
+        if (dto != null) {
+            JSONObject jsonObject = JSONObject.fromObject(dto);
+            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
         }
 
         try {
-            Statistics statistics=this.getCondition(projectId);
+            Statistics statistics = this.getCondition(projectId);
             //根据项目id获取燃尽图数据
-            StatisticsBurnout statisticsBurnout=this.statisticsService.getTaskBurnout(projectId,2, sto);
+            StatisticsBurnout statisticsBurnout = this.statisticsService.getTaskBurnout(projectId, 2, sto);
             statistics.setStatisticsBurnout(statisticsBurnout);
 
 
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title1=new TitleVO("创建时间","createTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title1 = new TitleVO("创建时间", "createTime");
             arrayList.add(title1);
-            title1=new TitleVO("任务","taskName");
+            title1 = new TitleVO("任务", "taskName");
             arrayList.add(title1);
-            title1=new TitleVO("执行者","executor");
+            title1 = new TitleVO("执行者", "executor");
             arrayList.add(title1);
 
             statistics.setTitleList(arrayList);
@@ -259,62 +274,66 @@ public class StatisticsApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
 
     /**
      * 任累计图统计数据集
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getCountData/{projectId}")
-    public Statistics getCountData(@PathVariable("projectId") String projectId,@RequestParam("data")String dto){
-        StaticDto sto=this.getStaticDto(dto);
-        if(dto!=null){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-            sto=(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
-            if (!sto.getTaskCase().isEmpty()){
-                if(sto.getTaskCase().equals("已完成")){ sto.setTaskCondition(1);}
-                else { sto.setTaskCondition(0);}
+    public Statistics getCountData(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
+        StaticDto sto = this.getStaticDto(dto);
+        if (dto != null) {
+            JSONObject jsonObject = JSONObject.fromObject(dto);
+            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
+            if (!sto.getTaskCase().isEmpty()) {
+                if (sto.getTaskCase().equals("已完成")) {
+                    sto.setTaskCondition(1);
+                } else {
+                    sto.setTaskCondition(0);
+                }
             }
         }
 
         List<QueryVO> taskCountOverView = this.statisticsService.findTaskCountOverView(projectId, sto);
-        Statistics statistics=getCountTable(projectId,"已完成",dto);
+        Statistics statistics = getCountTable(projectId, "已完成", dto);
         statistics.setCountData(taskCountOverView);
-        return  statistics;
+        return statistics;
     }
-
 
 
     /**
      * 页面项目统计总览
+     *
      * @param projectId 项目id
      * @return Statistics 对象
      */
     @GetMapping(value = "getCountTable/{projectId}/{divName}")
-    public Statistics getCountTable(@PathVariable("projectId") String projectId,@PathVariable("divName")String divName,@RequestParam("data")String dto) {
+    public Statistics getCountTable(@PathVariable("projectId") String projectId, @PathVariable("divName") String divName, @RequestParam("data") String dto) {
 
-        StaticDto sto=this.getStaticDto(dto);
+        StaticDto sto = this.getStaticDto(dto);
 
 
-        Statistics condition = this.statisticsService.getCountTable(divName,projectId,sto);
+        Statistics condition = this.statisticsService.getCountTable(divName, projectId, sto);
 
         Statistics condition1 = getCondition(projectId);
         condition.setExecutor(condition1.getExecutor());
         condition.setTaskGroup(condition1.getTaskGroup());
-        return  condition;
+        return condition;
     }
 
-        //获取分组数据
-    private  Statistics getCondition( String projectId){
-        return  this.statisticsService.getGroupData(projectId);
+    //获取分组数据
+    private Statistics getCondition(String projectId) {
+        return this.statisticsService.getGroupData(projectId);
     }
 
 
-    private  StaticDto getStaticDto( String dto){
-            JSONObject jsonObject=JSONObject.fromObject(dto);
-        StaticDto sto =(StaticDto)JSONObject.toBean(jsonObject, StaticDto.class);
+    private StaticDto getStaticDto(String dto) {
+        JSONObject jsonObject = JSONObject.fromObject(dto);
+        StaticDto sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
         /*try {
             if (StringUtils.isNotEmpty(sto.getFinishTime_s())){
                 long startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sto.getFinishTime_s()).getTime();
@@ -330,7 +349,7 @@ public class StatisticsApi {
 
         }*/
 
-            return sto;
+        return sto;
     }
 
 }

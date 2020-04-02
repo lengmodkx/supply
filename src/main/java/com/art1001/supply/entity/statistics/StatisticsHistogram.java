@@ -1,5 +1,7 @@
 package com.art1001.supply.entity.statistics;
 
+import lombok.Data;
+
 import java.util.Arrays;
 
 /**
@@ -7,22 +9,34 @@ import java.util.Arrays;
  * @Date: 2019/4/17 18:39
  * @Description:  柱状图数据
  */
+@Data
 public class StatisticsHistogram {
+
+    private String  taskType;
 
     private String name = "待认领";
 
     private Integer data;
 
+    private Double doubleData;
+
     private String[] nameArray ;
 
     private Integer[] dataArray ;
+
+    private Double[] doubleArray ;
 
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name==null){
+            this.name="待认领";
+        }else {
+            this.name = name;
+        }
+
     }
 
     public String[] getNameArray() { return nameArray; }

@@ -10,6 +10,7 @@
     <resultMap id="resultHistograms" type="com.art1001.supply.entity.statistics.StatisticsHistogram">
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="data" property="data" jdbcType="VARCHAR" />
+        <result column="doubleData" property="doubleData" jdbcType="DOUBLE" />
     </resultMap>
 
     <resultMap id="resultTaskGroup" type="com.art1001.supply.entity.statistics.QueryVO">
@@ -327,6 +328,26 @@
     <!-- 饼图总计划工时 -->
     <select id="getTaskManHour" resultType="java.lang.Double">
         SELECT SUM(pt.plan_work_hours) FROM prm_task pt   WHERE  pt.project_id=#{projectId} <include refid="Base_Column_QBC"/>
+    </select>
+
+
+    <!-- 获取每个用户的计划工时 -->
+    <select id="selectEveryExcutorTask" resultType="com.art1001.supply.entity.statistics.StatisticsPie">
+        SELECT  tu.user_name as name ,SUM(pt.plan_work_hours) AS y FROM prm_task pt
+        LEFT JOIN tb_user tu ON pt.executor=tu.user_id
+        where pt.project_id=#{projectId}
+        <include refid="Base_Column_QBC"/>
+        GROUP BY pt.executor
+    </select>
+
+    <!--  柱状图数据，按计划工时查询 -->
+    <select id="getManHourData" resultType="com.art1001.supply.entity.statistics.StatisticsHistogram">
+        SELECT tu.user_name AS name , SUM(pt.plan_work_hours) AS doubleData FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
+        WHERE  project_id = #{projectId}
+        <!-- AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+        BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T') -->
+        <include refid="Base_Column_QBC"/>
+        GROUP BY pt.executor
     </select>
 
 </mapper>

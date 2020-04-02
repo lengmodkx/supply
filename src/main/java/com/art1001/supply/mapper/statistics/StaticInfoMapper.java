@@ -223,5 +223,15 @@ public interface StaticInfoMapper extends BaseMapper<Task> {
     /**
      * 查询饼图数据总计划工时
      */
-    Double getTaskManHour(String projectId, StaticDto sto);
+    Double getTaskManHour(@Param("projectId")String projectId, @Param("stDTO")StaticDto sto);
+
+    /**
+     * 查询每个用户的计划工时
+     */
+    List<StatisticsPie> selectEveryExcutorTask(@Param("projectId")String projectId, @Param("stDTO")StaticDto sto);
+
+    /**
+     * 柱状图数据，按计划工时查询
+     */
+    List<StatisticsHistogram> getManHourData(@Param("projectId") String projectId, @Param("currentDate") Long currentDate, @Param("stDTO")StaticDto sto);
 }
