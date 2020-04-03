@@ -63,4 +63,14 @@ public interface StatisticsService {
      *获取统计页面柱状图的图数据和表数据
      */
     List<StatisticsHistogram> getHistogramsData(String projectId, StaticDto sto);
+
+    /*
+     *获取统计页面饼图总计划工时
+     */
+    Double getTaskManHour(String projectId, StaticDto sto);
+
+    /*
+     *获取统计页面计划工时饼图数据
+     */
+    List<StatisticsPie> selectEveryExcutorTask(String projectId, Double sum, StaticDto sto);
 }

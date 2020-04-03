@@ -28,10 +28,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     private static final String FINISH_TASK_CASE = "完成";
 
 
-
     /**
      * 查询出该项目下的所有任务 状态数量概览
      * (多次连库查询比筛选集合效率略高 所以 使用多次按照关键字查库的方式 取出数据)
+     *
      * @param projectId 项目id
      * @param sto
      * @return
@@ -39,64 +39,63 @@ public class StatisticsServiceImpl implements StatisticsService {
     public List<QueryVO> findTaskCountOverView(String projectId, StaticDto sto) {
         sto = resultStatic(sto);
         int total = statisticsMapper.getCountTask(projectId, sto);
-        String[] overViewName = {"任务总量","已完成","未完成","已逾期","待认领","按时完成","今日到期",  "逾期完成"};
+        String[] overViewName = {"任务总量", "已完成", "未完成", "已逾期", "待认领", "按时完成", "今日到期", "逾期完成"};
         List<QueryVO> list = new ArrayList<QueryVO>();
         List<String> chartsList = new ArrayList<String>();
-        int taskCount=0;
+        int taskCount = 0;
         for (String names : overViewName) {
 
             QueryVO queryVO = new QueryVO();
             queryVO.setValue(names);
 
 
-            if(StaticticsVO.HANGINTHEAIR.equals(names)){
+            if (StaticticsVO.HANGINTHEAIR.equals(names)) {
                 //查询出未完成的任务数量
-                taskCount = statisticsMapper.findHangInTheAirTaskCount(projectId,sto);
-            }else if(StaticticsVO.COMPLETED.equals(names)) {
+                taskCount = statisticsMapper.findHangInTheAirTaskCount(projectId, sto);
+            } else if (StaticticsVO.COMPLETED.equals(names)) {
                 //查询出已完成的任务
-                taskCount = statisticsMapper.findCompletedTaskCount(projectId,sto);
-            }else  if(StaticticsVO.MATURINGTODAY.equals(names)){
+                taskCount = statisticsMapper.findCompletedTaskCount(projectId, sto);
+            } else if (StaticticsVO.MATURINGTODAY.equals(names)) {
                 //查询出今日到期的任务
-                taskCount = statisticsMapper.currDayTaskCount(projectId,System.currentTimeMillis()/1000,sto);
+                taskCount = statisticsMapper.currDayTaskCount(projectId, System.currentTimeMillis() / 1000, sto);
 
-            }else if(StaticticsVO.BEOVERDUE.equals(names)){
+            } else if (StaticticsVO.BEOVERDUE.equals(names)) {
                 //查询出已逾期的任务
-                taskCount = statisticsMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis()/1000,sto);
+                taskCount = statisticsMapper.findBeoberdueTaskCount(projectId, System.currentTimeMillis() / 1000, sto);
 
-            }else if(StaticticsVO.TOBECLAIMED.equals(names)){
+            } else if (StaticticsVO.TOBECLAIMED.equals(names)) {
                 //查询出待认领的任务
-                taskCount = statisticsMapper.findTobeclaimedTaskCount(projectId,sto);
+                taskCount = statisticsMapper.findTobeclaimedTaskCount(projectId, sto);
 
-            }else  if(StaticticsVO.FINISHONTIME.equals(names)){
+            } else if (StaticticsVO.FINISHONTIME.equals(names)) {
                 //查询出按时完成的任务
-                taskCount = statisticsMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis()/1000,sto);
+                taskCount = statisticsMapper.findFinishontTimeTaskCount(projectId, System.currentTimeMillis() / 1000, sto);
 
-            }else if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
+            } else if (StaticticsVO.OVERDUECOMPLETION.equals(names)) {
                 //查询出逾期完成任务
-                taskCount = statisticsMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000,sto);
+                taskCount = statisticsMapper.findOverdueCompletion(projectId, System.currentTimeMillis() / 1000, sto);
             }
 
-                if(!StaticticsVO.TASKTOTALCOUNT.equals(names)){
-                    //设置百分比
-                    NumberFormat numberFormat = NumberFormat.getInstance();
-                    numberFormat.setMaximumFractionDigits(0);
-                    //设置该组的达标数量
-                    queryVO.setLabel(String.valueOf(taskCount));
-                    Double value = (double) taskCount / (double) total * 100;
-                    if (!value.isNaN()){
-                        queryVO.setPercent(Double.valueOf(numberFormat.format(value)));
-                    }else{
-                        queryVO.setPercent((double)0);
-                    }
-                }else{
-                    queryVO.setLabel(String.valueOf(total));
-                    queryVO.setPercent((double)100);
+            if (!StaticticsVO.TASKTOTALCOUNT.equals(names)) {
+                //设置百分比
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(0);
+                //设置该组的达标数量
+                queryVO.setLabel(String.valueOf(taskCount));
+                Double value = (double) taskCount / (double) total * 100;
+                if (!value.isNaN()) {
+                    queryVO.setPercent(Double.valueOf(numberFormat.format(value)));
+                } else {
+                    queryVO.setPercent((double) 0);
                 }
+            } else {
+                queryVO.setLabel(String.valueOf(total));
+                queryVO.setPercent((double) 100);
+            }
             list.add(queryVO);
         }
         return list;
     }
-
 
 
     /**
@@ -104,8 +103,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     public Integer getCountTask(String projectId, StaticDto sto) {
-       sto = resultStatic(sto);
-        return statisticsMapper.getCountTask(projectId,sto);
+        sto = resultStatic(sto);
+        return statisticsMapper.getCountTask(projectId, sto);
     }
 
     /**
@@ -115,14 +114,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     public List<StatisticsPie> getPieChart(String projectId, Integer count, StaticDto sto) {
         sto = resultStatic(sto);
         //获取每个用户的任务数
-        List<StatisticsPie> statisticsPies=statisticsMapper.getPieDate(projectId,sto);
-        statisticsPies=getPieSource(statisticsPies);
-            for (int i=0;i<statisticsPies.size();i++) {
-                    String num = CalculateProportionUtil.proportionDouble( Float.valueOf(statisticsPies.get(i).getY().toString()),(float)count, 2);
-                    statisticsPies.get(i).setY(Float.valueOf(num));
-             }
+        List<StatisticsPie> statisticsPies = statisticsMapper.getPieDate(projectId, sto);
+        statisticsPies = getPieSource(statisticsPies);
+        for (int i = 0; i < statisticsPies.size(); i++) {
+            String num = CalculateProportionUtil.proportionDouble(Float.valueOf(statisticsPies.get(i).getY().toString()), (float) count, 2);
+            statisticsPies.get(i).setY(Float.valueOf(num));
+        }
 
-        return  statisticsPies;
+        return statisticsPies;
     }
 
     /**
@@ -132,9 +131,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public List<StatisticsPie> selectExcutorTask(String projectId, Integer count, StaticDto sto) {
         sto = resultStatic(sto);
         //获取每个用户的任务数
-        List<StatisticsPie> statisticsPies=statisticsMapper.selectExcutorTask(projectId,resultStatic(sto));
-        statisticsPies=getPieSource(statisticsPies);
-        return  statisticsPies;
+        List<StatisticsPie> statisticsPies = statisticsMapper.selectExcutorTask(projectId, sto);
+        statisticsPies = getPieSource(statisticsPies);
+        return statisticsPies;
     }
 
 
@@ -142,25 +141,25 @@ public class StatisticsServiceImpl implements StatisticsService {
      * 获取柱状图数据
      */
     @Override
-    public StatisticsHistogram getHistogramsChart(String projectId,StaticDto sto) {
+    public StatisticsHistogram getHistogramsChart(String projectId, StaticDto sto) {
 
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
-        sto =  resultStatic(sto);
+        sto = resultStatic(sto);
 
 
         //获取每个用户的数据
-        List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
+        List<StatisticsHistogram> statisticsHistograms = statisticsMapper.getHistogramsDate(projectId, currentDate, sto);
 
-        int noUserInt=0;
-        for (int i=0;i<statisticsHistograms.size();i++) {
-            if (statisticsHistograms.get(i).getName().equals("待认领")){
-                noUserInt+=statisticsHistograms.get(i).getData();
+        int noUserInt = 0;
+        for (int i = 0; i < statisticsHistograms.size(); i++) {
+            if (statisticsHistograms.get(i).getName().equals("待认领")) {
+                noUserInt += statisticsHistograms.get(i).getData();
                 statisticsHistograms.remove(i);
                 i--;
             }
         }
-        if (noUserInt!=0){
+        if (noUserInt != 0) {
             StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
             statisticsHistogram.setName("待认领");
             statisticsHistogram.setData(noUserInt);
@@ -170,12 +169,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         String[] nameArray = new String[statisticsHistograms.size()];
         Integer[] dataArray = new Integer[statisticsHistograms.size()];
 
-        for(int i=0;i<statisticsHistograms.size();i++){
-              nameArray[i] = statisticsHistograms.get(i).getName();
-              dataArray[i] = statisticsHistograms.get(i).getData();
+        for (int i = 0; i < statisticsHistograms.size(); i++) {
+            nameArray[i] = statisticsHistograms.get(i).getName();
+            dataArray[i] = statisticsHistograms.get(i).getData();
         }
 
-       StatisticsHistogram staticHistogram = new StatisticsHistogram();
+        StatisticsHistogram staticHistogram = new StatisticsHistogram();
         staticHistogram.setNameArray(nameArray);
         staticHistogram.setDataArray(dataArray);
 
@@ -184,16 +183,16 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     //获取任务燃尽图数据
-    public  StatisticsBurnout getTaskBurnout(String projectId, Integer type, StaticDto sto) {
+    public StatisticsBurnout getTaskBurnout(String projectId, Integer type, StaticDto sto) {
 
         Long currentDate = System.currentTimeMillis() / 1000;
 
         // 需要返回的chart数据
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
 
-        sto =  resultStatic(sto);
+        sto = resultStatic(sto);
 
-         Map<String, Integer> dayNumMap = DateUtil.everyDate(sto.getDayNum());
+        Map<String, Integer> dayNumMap = DateUtil.everyDate(sto.getDayNum());
         try {
             //获取七天的总数据
             //List<StatisticsResultVO> statisticsResultVOList = this.statisticsMapper.selectTaskBurnOut(projectId,sto);
@@ -201,28 +200,28 @@ public class StatisticsServiceImpl implements StatisticsService {
             //项目进展走势
 
             //因为如果要查8天的数据，传8会查到其九天之前每天完成的数量，所以在查询时 将天数-1
-            sto.setDayNum(sto.getDayNum()-1);
-            List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate,sto,dayNumMap);
+            sto.setDayNum(sto.getDayNum() - 1);
+            List<StatisticsResultVO> taskOfProgress = this.statisticsMapper.taskOfProgress(projectId, currentDate, sto, dayNumMap);
             //重写之后的list数据  累计总任务
-            List<StatisticsResultVO> taskCountList=DateUtil.getSticList(taskOfProgress, count);
-            taskCountList=DateUtil.getBurnoutList(taskCountList);
+            List<StatisticsResultVO> taskCountList = DateUtil.getSticList(taskOfProgress, count);
+            taskCountList = DateUtil.getBurnoutList(taskCountList);
             //任务在一定天数内每天完成的数量
-            List<StatisticsResultVO> taskOfFinishProgress = this.statisticsMapper.taskOfFinishProgress(projectId, currentDate,sto,dayNumMap);
-            sto.setDayNum(sto.getDayNum()+1);
+            List<StatisticsResultVO> taskOfFinishProgress = this.statisticsMapper.taskOfFinishProgress(projectId, currentDate, sto, dayNumMap);
+            sto.setDayNum(sto.getDayNum() + 1);
 
             // type = 0 时包含所有数据  type = 1   燃尽图数据  type = 2  累计图数据
-            if (type == 0){
-                statisticsBurnout = this.getSticAllData(taskCountList, taskOfFinishProgress, projectId,sto);
+            if (type == 0) {
+                statisticsBurnout = this.getSticAllData(taskCountList, taskOfFinishProgress, projectId, sto);
 
-            }else if(type == 1){
-               statisticsBurnout=this.getBurnout(taskCountList,taskOfFinishProgress);
-               statisticsBurnout.setSticResultVOS(this.statisticsMapper.selectTaskBurnOut(projectId,sto));
+            } else if (type == 1) {
+                statisticsBurnout = this.getBurnout(taskCountList, taskOfFinishProgress);
+                statisticsBurnout.setSticResultVOS(this.statisticsMapper.selectTaskBurnOut(projectId, sto));
 
-            }else if(type == 2){
-                statisticsBurnout=this.getCumulative(taskCountList,taskOfFinishProgress,projectId,sto);
-                statisticsBurnout.setSticResultVOS(this.statisticsMapper.selectProjectProgress(projectId,sto));
+            } else if (type == 2) {
+                statisticsBurnout = this.getCumulative(taskCountList, taskOfFinishProgress, projectId, sto);
+                statisticsBurnout.setSticResultVOS(this.statisticsMapper.selectProjectProgress(projectId, sto));
             }
-            return  statisticsBurnout;
+            return statisticsBurnout;
 
 
         } catch (Exception e) {
@@ -230,8 +229,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return null;
     }
-
-
 
 
     /**
@@ -247,19 +244,19 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<QueryVO> executor = this.statisticsMapper.getExecutorGroup(projectId);
         //删除列表中的null元素
         executor.removeAll(Collections.singleton(null));
-        QueryVO vo=new QueryVO();
+        QueryVO vo = new QueryVO();
         vo.setValue("0");
         vo.setLabel("全部");
-        executor.add(0,vo);
+        executor.add(0, vo);
 
         List<QueryVO> taskGroup = this.statisticsMapper.getTaskGroup(projectId);
-        vo=new QueryVO();
+        vo = new QueryVO();
         vo.setValue("0");
         vo.setLabel("所有任务分组");
-        taskGroup.add(0,vo);
+        taskGroup.add(0, vo);
 
 
-        Statistics statistics=new Statistics();
+        Statistics statistics = new Statistics();
         statistics.setExecutor(executor);
         statistics.setTaskGroup(taskGroup);
         return statistics;
@@ -268,7 +265,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public Statistics getCountTable(String divName, String projectId, StaticDto sto) {
 
-        sto =  resultStatic(sto);
+        sto = resultStatic(sto);
 
 
         if (divName != null && !"".equals(divName)) {
@@ -276,7 +273,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 return this.selectUnfinishedTask(sto, projectId);
             } else if (StaticticsVO.COMPLETED.equals(divName)) {
                 return this.selectFinishedTask(sto, projectId);
-            }  else if (StaticticsVO.MATURINGTODAY.equals(divName)) {
+            } else if (StaticticsVO.MATURINGTODAY.equals(divName)) {
                 return this.selectExpireTask(sto, projectId);
             } else if (StaticticsVO.BEOVERDUE.equals(divName)) {
                 return this.selectOverdueTask(sto, projectId);
@@ -295,6 +292,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     /**
      * 获取统计页面的图数据和表数据
+     *
      * @param projectId
      * @param sto
      * @return
@@ -305,35 +303,79 @@ public class StatisticsServiceImpl implements StatisticsService {
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
 
-        sto =  resultStatic(sto);
+        sto = resultStatic(sto);
 
         //获取每个用户的数据
-        List<StatisticsHistogram> statisticsHistograms=statisticsMapper.getHistogramsDate(projectId,currentDate,sto);
-        int noUserInt=0;
-        for (int i=0;i<statisticsHistograms.size();i++) {
-            if (statisticsHistograms.get(i).getName().equals("待认领")){
-                noUserInt+=statisticsHistograms.get(i).getData();
-                statisticsHistograms.remove(i);
-                i--;
+        List<StatisticsHistogram> statisticsHistograms = new ArrayList<>();
+
+        if (sto.getTaskCount() == null || "按任务数".equals(sto.getTaskCount())){
+            statisticsHistograms = statisticsMapper.getHistogramsDate(projectId, currentDate, sto);
+            int noUserInt = 0;
+            for (int i = 0; i < statisticsHistograms.size(); i++) {
+                if (statisticsHistograms.get(i).getName().equals("待认领")) {
+                    noUserInt += statisticsHistograms.get(i).getData();
+                    statisticsHistograms.remove(i);
+                    i--;
+                }
             }
-        }
-        if (noUserInt!=0){
-            StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
-            statisticsHistogram.setName("待认领");
-            statisticsHistogram.setData(noUserInt);
-            statisticsHistograms.add(statisticsHistogram);
-        }
+            if (noUserInt != 0) {
+                StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+                statisticsHistogram.setName("待认领");
+                statisticsHistogram.setData(noUserInt);
+                statisticsHistograms.add(statisticsHistogram);
+            }
+        }else {
+            //按计划工时查询
+            statisticsHistograms = statisticsMapper.getManHourData(projectId, currentDate, sto);
+            statisticsHistograms.removeAll(Collections.singleton(null));
+            Double noUserInt = 0.0;
+            if (statisticsHistograms.size()!=0){
+                for (int i = 0; i < statisticsHistograms.size(); i++) {
+                    if ("待认领".equals(statisticsHistograms.get(i).getName())) {
+                        noUserInt += statisticsHistograms.get(i).getDoubleData();
+                        statisticsHistograms.remove(i);
+                        i--;
+                    }
+                }
+                if (noUserInt != 0) {
+                    StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+                    statisticsHistogram.setName("待认领");
+                    statisticsHistogram.setDoubleData(noUserInt);
+                    statisticsHistograms.add(statisticsHistogram);
+                }
+            }
+            }
         return statisticsHistograms;
+    }
+
+    @Override
+    public Double getTaskManHour(String projectId, StaticDto sto) {
+        return statisticsMapper.getTaskManHour(projectId, sto);
+    }
+
+    /*
+     *获取计划工时饼图数据
+     */
+    @Override
+    public List<StatisticsPie> selectEveryExcutorTask(String projectId, Double sum, StaticDto sto) {
+        sto = resultStatic(sto);
+        //获取每个用户的工时
+        List<StatisticsPie> statisticsPies = statisticsMapper.selectEveryExcutorTask(projectId, sto);
+        //去除查询到的null元素
+        statisticsPies.removeAll(Collections.singleton(null));
+        statisticsPies = getPieSource(statisticsPies);
+        return statisticsPies;
+
     }
 
 
     /**
-         * 未完成数据
-         */
+     * 未完成数据
+     */
     private Statistics selectUnfinishedTask(StaticDto sto, String projectId) {
 
-        sto =  resultStatic(sto);
-        Statistics statistics=new Statistics();
+        sto = resultStatic(sto);
+        Statistics statistics = new Statistics();
         try {
             // 总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -342,16 +384,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("截止时间","endTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("截止时间", "endTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -360,21 +402,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         } catch (Exception e) {
             System.out.println("---未完成报错---");
-            statistics=null;
+            statistics = null;
             e.printStackTrace();
         }
         return statistics;
     }
 
 
-
-
     /**
      * 已完成数据
      */
     private Statistics selectFinishedTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -383,16 +423,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("完成时间","finishTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("完成时间", "finishTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -407,13 +447,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-
     /**
      * 今日到期
      */
     private Statistics selectExpireTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -422,16 +461,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("创建时间","createTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("创建时间", "createTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -449,8 +488,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      * 已逾期
      */
     private Statistics selectOverdueTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -459,16 +498,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("截止时间","endTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("截止时间", "endTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -486,8 +525,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      * 待认领
      */
     private Statistics selectWaitClaimTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -496,14 +535,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("创建时间","createTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("创建时间", "createTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -522,8 +561,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      * 按时完成数据
      */
     private Statistics selectPunctualityTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -532,16 +571,16 @@ public class StatisticsServiceImpl implements StatisticsService {
             //String percent = numChange((double) statisticsResultVOList.size() / (double) count);
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("完成时间","finishTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("完成时间", "finishTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -559,8 +598,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      * 逾期完成数据
      */
     private Statistics selectExpiredToCompleteTask(StaticDto sto, String projectId) {
-        Statistics statistics=new Statistics();
-        sto =  resultStatic(sto);
+        Statistics statistics = new Statistics();
+        sto = resultStatic(sto);
         try {
             //总任务数
             int count = this.statisticsMapper.getCountTask(projectId, sto);
@@ -576,18 +615,18 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
             //表格数据
-            ArrayList<TitleVO> arrayList=new ArrayList<>();
-            TitleVO title=new TitleVO("完成时间","finishTime");
+            ArrayList<TitleVO> arrayList = new ArrayList<>();
+            TitleVO title = new TitleVO("完成时间", "finishTime");
             arrayList.add(title);
-            title=new TitleVO("任务","taskName");
+            title = new TitleVO("任务", "taskName");
             arrayList.add(title);
-            title=new TitleVO("执行者","executor");
+            title = new TitleVO("执行者", "executor");
             arrayList.add(title);
-            title=new TitleVO("任务分组","taskGroup");
+            title = new TitleVO("任务分组", "taskGroup");
             arrayList.add(title);
-            title=new TitleVO("列表","listView");
+            title = new TitleVO("列表", "listView");
             arrayList.add(title);
-            title=new TitleVO("逾期天数","overdueNum");
+            title = new TitleVO("逾期天数", "overdueNum");
             arrayList.add(title);
 
             statistics.setTitleList(arrayList);
@@ -603,8 +642,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     /*
-    * 设置统计条件
-    **/
+     * 设置统计条件
+     **/
     private StaticDto resultStatic(StaticDto staticDto) {
         if (staticDto.getTaskMember() == null && staticDto.getTaskCase() == null && staticDto.getTaskGroup() == null) {
             staticDto.setDayNum(8);
@@ -613,7 +652,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 staticDto.setTaskMember(null);
             }
 
-            if ("".equals(staticDto.getTaskMember()) || "0".equals(staticDto.getTaskGroup()) || staticDto.getTaskGroup() == "null" ) {
+            if ("".equals(staticDto.getTaskMember()) || "0".equals(staticDto.getTaskGroup()) || staticDto.getTaskGroup() == "null") {
                 staticDto.setTaskGroup(null);
             }
 
@@ -705,18 +744,17 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     //获取进入统计页面的所有数据
-    private StatisticsBurnout  getSticAllData(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto){
+    private StatisticsBurnout getSticAllData(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto) {
 
-        sto =  resultStatic(sto);
+        sto = resultStatic(sto);
 
         //系统当前时间
         Long currentDate = System.currentTimeMillis() / 1000;
-        int n=taskCountList.size();
+        int n = taskCountList.size();
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
 
 
-
-        int finishCount=this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,null);
+        int finishCount = this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate, null);
 
         //项目进展走势
         Integer[] firstArray = new Integer[n];
@@ -725,22 +763,22 @@ public class StatisticsServiceImpl implements StatisticsService {
         Double[] everyDateInt = new Double[n];
         Integer[] secondInt = new Integer[n];
 
-        int min=taskCountList.get(0).getTaskCountInt();
+        int min = taskCountList.get(0).getTaskCountInt();
 
-        if (!taskCountList.isEmpty()){
-            for (int i=0;i<n;i++){
+        if (!taskCountList.isEmpty()) {
+            for (int i = 0; i < n; i++) {
                 firstArray[i] = taskCountList.get(i).getTaskCountAdd();
-                secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
-                finishCount=secondArray[i];
-                everyDateName[i]=taskCountList.get(i).getCreateTime();
+                secondArray[i] = taskFinishList.get(i).getTaskCountInt() + finishCount;
+                finishCount = secondArray[i];
+                everyDateName[i] = taskCountList.get(i).getCreateTime();
                 everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
 
-                if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
-                    if (i<n-1){
-                        secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
-                        min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
-                    }else{
-                        secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+                if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())) {
+                    if (i < n - 1) {
+                        secondInt[i] = min - taskFinishList.get(i).getTaskCountInt();
+                        min = secondInt[i] + taskCountList.get(i + 1).getTaskCountInt();
+                    } else {
+                        secondInt[i] = min - taskFinishList.get(i).getTaskCountInt();
                     }
                 }
             }
@@ -757,25 +795,24 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-
-   //任务燃尽图
+    //任务燃尽图
     private StatisticsBurnout getBurnout(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList) {
-        int n=taskCountList.size();
+        int n = taskCountList.size();
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
         String[] everyDateName = new String[n];
         Double[] everyDateInt = new Double[n];
         Integer[] secondInt = new Integer[n];
-        int min=taskCountList.get(0).getTaskCountInt();
+        int min = taskCountList.get(0).getTaskCountInt();
 
-        for (int i=0;i<n;i++){
-            everyDateName[i]=taskCountList.get(i).getCreateTime();
+        for (int i = 0; i < n; i++) {
+            everyDateName[i] = taskCountList.get(i).getCreateTime();
             everyDateInt[i] = taskCountList.get(i).getTaskCountDouble();
-            if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())){
-                if (i<n-1){
-                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
-                    min=secondInt[i]+taskCountList.get(i+1).getTaskCountInt();
-                }else{
-                    secondInt[i]=min-taskFinishList.get(i).getTaskCountInt();
+            if (taskFinishList.get(i).getFinishTime().equals(taskCountList.get(i).getCreateTime())) {
+                if (i < n - 1) {
+                    secondInt[i] = min - taskFinishList.get(i).getTaskCountInt();
+                    min = secondInt[i] + taskCountList.get(i + 1).getTaskCountInt();
+                } else {
+                    secondInt[i] = min - taskFinishList.get(i).getTaskCountInt();
                 }
             }
         }
@@ -786,53 +823,51 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-
     private StatisticsBurnout getCumulative(List<StatisticsResultVO> taskCountList, List<StatisticsResultVO> taskFinishList, String projectId, StaticDto sto) {
-        sto =  resultStatic(sto);
-        int n=taskCountList.size();
-        Long currentDate=System.currentTimeMillis()/1000;
+        sto = resultStatic(sto);
+        int n = taskCountList.size();
+        Long currentDate = System.currentTimeMillis() / 1000;
 
         StatisticsBurnout statisticsBurnout = new StatisticsBurnout();
 
-        int finishCount=this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate,null);
+        int finishCount = this.statisticsMapper.taskFinishOfSevenDayAgo(projectId, currentDate, null);
 
         Integer[] firstArray = new Integer[n];
         Integer[] secondArray = new Integer[n];
         String[] everyDateName = new String[n];
 
-        for (int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             firstArray[i] = taskCountList.get(i).getTaskCountAdd();
-            secondArray[i] = taskFinishList.get(i).getTaskCountInt()+finishCount;
-            finishCount=secondArray[i];
-            everyDateName[i]=taskCountList.get(i).getCreateTime();
+            secondArray[i] = taskFinishList.get(i).getTaskCountInt() + finishCount;
+            finishCount = secondArray[i];
+            everyDateName[i] = taskCountList.get(i).getCreateTime();
         }
 
         statisticsBurnout.setCumulativeTask(firstArray);
         statisticsBurnout.setCompletionTask(secondArray);
         statisticsBurnout.setEveryDate(everyDateName);
 
-        return  statisticsBurnout;
+        return statisticsBurnout;
     }
 
-        private  List<StatisticsPie> getPieSource(List<StatisticsPie> statisticsPies){
-            float noUserInt=0F;
-            for (int i=0;i<statisticsPies.size();i++) {
-                if (statisticsPies.get(i).getName().equals("待认领")){
-                    noUserInt+=statisticsPies.get(i).getY();
-                    statisticsPies.remove(i);
-                    i--;
-
-                }
+    private List<StatisticsPie> getPieSource(List<StatisticsPie> statisticsPies) {
+        float noUserInt = 0F;
+        for (int i = 0; i < statisticsPies.size(); i++) {
+            if (statisticsPies.get(i).getName().equals("待认领")) {
+                noUserInt += statisticsPies.get(i).getY();
+                statisticsPies.remove(i);
+                i--;
             }
-            if (noUserInt!=0f){
-                StatisticsPie statisticsPie = new StatisticsPie();
-                statisticsPie.setName("待认领");
-                statisticsPie.setY(noUserInt);
-                statisticsPies.add(statisticsPie);
-                return statisticsPies;
-            }
+        }
+        if (noUserInt != 0f) {
+            StatisticsPie statisticsPie = new StatisticsPie();
+            statisticsPie.setName("待认领");
+            statisticsPie.setY(noUserInt);
+            statisticsPies.add(statisticsPie);
             return statisticsPies;
         }
+        return statisticsPies;
+    }
 
 
 }

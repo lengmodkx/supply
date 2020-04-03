@@ -11,6 +11,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
@@ -39,6 +40,9 @@ public class OrganizationMemberApi {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
 
     @Resource
     private UserService userService;
@@ -327,13 +331,24 @@ public class OrganizationMemberApi {
     /**
      * 根据关键字 模糊 获取企业中的用户列表
      * @param orgId 企业id
+     * @param projectId 项目id
      * @param keyword 关键字
      * @return 用户列表
      */
     @RequestMapping("/keyword")
-    public Result getOrgMemberByKeyword(@NotNull(message = "企业id不能为空!") String orgId, String keyword){
+    public Result getOrgMemberByKeyword(@NotNull(message = "企业id不能为空!") String orgId, String keyword,@NotNull(message = "项目id不能为空!") String projectId){
         log.info("Get organization member list by keyword. [{},{}]", orgId, keyword);
-        return Result.success(organizationMemberService.getOrgMemberByKeyword(orgId, keyword));
+        List<UserEntity> orgMemberByKeyword = organizationMemberService.getOrgMemberByKeyword(orgId, keyword);
+        //判断该成员是否已在企业里
+        for (UserEntity userEntity : orgMemberByKeyword) {
+            int member = projectMemberService.findMemberIsExist (projectId,userEntity.getUserId());
+            if (member != 0){
+                userEntity.setExistId(1);
+            }else{
+                userEntity.setExistId(0);
+            }
+        }
+        return Result.success(orgMemberByKeyword);
     }
 
     @PutMapping("/{orgId}/lock")

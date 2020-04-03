@@ -9,8 +9,12 @@ public class QueryVO {
 
     private String value;
 
+
     private String label;
 
+    /*
+     * 百分比
+     */
     private Double percent;
 
     public Double getPercent() {

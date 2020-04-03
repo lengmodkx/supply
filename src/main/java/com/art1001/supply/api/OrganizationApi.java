@@ -17,7 +17,6 @@ import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -159,7 +158,8 @@ public class OrganizationApi {
      * 更新企业
      * @param orgId 企业id
      * @param orgName 企业名称
-     * @param orgDes 企业简介
+     * @param orgDes 企业规模
+     * @param orgIntro 企业简介
      * @param isPublic 企业公开性
      * @param orgImg 企业头像
      * @param memberId 企业归属
@@ -170,6 +170,7 @@ public class OrganizationApi {
     public JSONObject updateOrg(@PathVariable(value = "orgId") String orgId,
                                 @RequestParam(value = "orgName",required = false) String orgName,
                                 @RequestParam(value = "orgDes",required = false) String orgDes,
+                                @RequestParam(value = "orgIntro",required = false) String orgIntro,
                                 @RequestParam(value = "isPublic",required = false) Integer isPublic,
                                 @RequestParam(value = "orgImg",required = false)String orgImg,
                                 @RequestParam(value = "memberId",required = false)String memberId){
@@ -179,6 +180,7 @@ public class OrganizationApi {
             organization.setOrganizationId(orgId);
             organization.setOrganizationName(orgName);
             organization.setOrganizationDes(orgDes);
+            organization.setOrganizationIntro(orgIntro);
             organization.setIsPublic(isPublic);
             organization.setOrganizationImage(orgImg);
             organization.setOrganizationMember(memberId);
