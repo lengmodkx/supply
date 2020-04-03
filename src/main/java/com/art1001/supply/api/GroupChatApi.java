@@ -48,7 +48,7 @@ public class GroupChatApi {
      * 发消息
      * @param projectId 项目id
      * @param content 发送的内容
-     * @param files 是否附带文件
+     * @param request 请求
      * @return 返回结果
      */
     @Push(value = PushType.G1)
@@ -57,58 +57,61 @@ public class GroupChatApi {
                            @RequestParam(required = false, defaultValue = "") String content,
                            HttpServletRequest request){
         JSONObject object = new JSONObject();
+        Chat chat = new Chat();
         try{
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            List<MultipartFile> files = multipartRequest.getFiles("files");
             //文件和内容都为空则不发送推送消息
-            if (files == null && StringUtils.isEmpty(content)) {
+            if ("".equals(org.apache.commons.lang.StringUtils.defaultString(request.getParameter("files"))) && StringUtils.isEmpty(content)) {
                 object.put("result",0);
                 return object;
             }
-            Chat chat = new Chat();
+            //空文件上传会出现异常，所以需要进一步处理
+            MultipartHttpServletRequest multipartRequest =null;
+            if (request instanceof MultipartHttpServletRequest) {
+                multipartRequest = (MultipartHttpServletRequest)(request);
+                List<MultipartFile> files = multipartRequest.getFiles("files");
+
+                if (files != null && files.size()>0) {
+                    //fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
+                    files.forEach(multipartFile -> {
+                        try{
+                            // 得到文件名
+                            String originalFilename = multipartFile.getOriginalFilename();
+                            // 重置文件名
+                            assert originalFilename != null;
+                            int indexOf = originalFilename.lastIndexOf(".");
+                            // 获取后缀名
+                            String ext = originalFilename.substring(indexOf).toLowerCase();
+                            String fileName = System.currentTimeMillis() + ext;
+                            String fileUrl = "upload/file/" + fileName;
+                            AliyunOss.uploadInputStream(fileUrl,multipartFile.getInputStream());
+
+                            // 写库
+                            File file = new File();
+                            // 用原本的文件名
+                            file.setFileName(originalFilename);
+                            file.setExt(ext);
+                            file.setProjectId(projectId);
+                            file.setFileUrl(fileUrl);
+                            file.setPublicLable(1);
+                            file.setPublicId(chat.getChatId());
+                            if (FileExt.extMap.get("images").contains(ext)) {
+                                file.setFileThumbnail(fileUrl);
+                            }
+                            // 得到上传文件的大小
+                            long contentLength = multipartFile.getSize();
+                            file.setSize(FileUtils.convertFileSize(contentLength));
+                            fileService.save(file);
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
             chat.setCreateTime(System.currentTimeMillis());
             chat.setContent(content);
             chat.setProjectId(projectId);
             chatService.save(chat);
-            if (files != null && files.size()>0) {
-                //fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
-                files.forEach(multipartFile -> {
-                    try{
-                        // 得到文件名
-                        String originalFilename = multipartFile.getOriginalFilename();
-                        // 重置文件名
-                        assert originalFilename != null;
-                        int indexOf = originalFilename.lastIndexOf(".");
-                        // 获取后缀名
-                        String ext = originalFilename.substring(indexOf).toLowerCase();
-                        String fileName = System.currentTimeMillis() + ext;
-                        String fileUrl = "upload/file/" + fileName;
-                        AliyunOss.uploadInputStream(fileUrl,multipartFile.getInputStream());
-
-                        // 写库
-                        File file = new File();
-                        // 用原本的文件名
-                        file.setFileName(originalFilename);
-                        file.setExt(ext);
-                        file.setProjectId(projectId);
-                        file.setFileUrl(fileUrl);
-                        file.setPublicLable(1);
-                        file.setPublicId(chat.getChatId());
-                        if (FileExt.extMap.get("images").contains(ext)) {
-                            file.setFileThumbnail(fileUrl);
-                        }
-                        // 得到上传文件的大小
-                        long contentLength = multipartFile.getSize();
-                        file.setSize(FileUtils.convertFileSize(contentLength));
-                        fileService.save(file);
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-
-                });
-
-            }
             Chat chatById = chatService.findChatById(chat.getChatId());
             chatById.setIsOwn(1);
             object.put("result",1);
