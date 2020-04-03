@@ -113,7 +113,7 @@ public class  RelationApi {
             groupVO.setCompleteCount(0);
             groupVO.setNotCompleteCount(0);
 
-            return Result.success(relation);
+            return Result.success(groupVO);
         }catch (Exception e){
             log.error("添加关系异常:",e);
             throw new AjaxException(e);

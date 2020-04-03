@@ -88,6 +88,11 @@ public class Organization extends Model<Organization> {
 	private Long updateTime;
 
 	/**
+	 * 企业规模
+	 */
+	private String scale;
+
+	/**
 	 * 该企业下的所有项目
 	 */
 	@TableField(exist = false)

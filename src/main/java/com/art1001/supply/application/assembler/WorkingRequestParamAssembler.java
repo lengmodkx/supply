@@ -28,6 +28,7 @@ public class WorkingRequestParamAssembler {
         taskWorkingHours.setHours(workingHoursRequestParam.getHours());
         taskWorkingHours.setCreateTime(System.currentTimeMillis());
         taskWorkingHours.setCreateName(byId.getUserName());
+        taskWorkingHours.setHoursDate(workingHoursRequestParam.getHoursDate());
         taskWorkingHours.setTaskId(workingHoursRequestParam.getTaskId());
         return taskWorkingHours;
     }

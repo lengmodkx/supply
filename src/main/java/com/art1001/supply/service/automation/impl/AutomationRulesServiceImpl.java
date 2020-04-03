@@ -83,8 +83,8 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
     @Override
     public Integer checkTaskMenuObjectCount(String menuId, String projectId) {
         //参数校验
-        boolean paramIncorrect = (StringUtils.isNotEmpty(menuId) && StringUtils.isNotEmpty(projectId))
-                || StringUtils.isNotEmpty(menuId);
+        boolean paramIncorrect = (StringUtils.isEmpty(menuId) && StringUtils.isEmpty(projectId))
+                || StringUtils.isEmpty(menuId);
         if(paramIncorrect){
             return -1;
         }
@@ -97,8 +97,8 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
     @Override
     public AutomationRule getNewestRuleByCreateTime(String menuId, String projectId) {
         //参数校验
-        boolean paramIncorrect = (StringUtils.isNotEmpty(menuId) && StringUtils.isNotEmpty(projectId))
-                || StringUtils.isNotEmpty(menuId);
+        boolean paramIncorrect = (StringUtils.isEmpty(menuId) && StringUtils.isEmpty(projectId))
+                || StringUtils.isEmpty(menuId);
         if(paramIncorrect){
             return null;
         }

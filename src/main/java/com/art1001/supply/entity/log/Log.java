@@ -43,7 +43,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 项目id
 	 */
-	@NotNull(message = "项目不能为空")
+	@NotNull(message = "项目id不能为空")
 	private String projectId;
 
 	/**

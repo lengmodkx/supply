@@ -40,7 +40,7 @@ public class AutomationRuleTriggerCheckImpl {
     public AutomationRuleTriggerCheck checkAutomationRuleTrigger(){
         return (annotationValue,tr) -> {
 
-            if(StringUtils.isNotEmpty(annotationValue.getTaskId())||StringUtils.isNotEmpty(tr)){
+            if(StringUtils.isEmpty(annotationValue.getTaskId())||StringUtils.isEmpty(tr)){
                 return -1;
             }
 

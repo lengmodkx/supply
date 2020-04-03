@@ -25,4 +25,9 @@ public class WorkingHoursRequestParam {
     @NotBlank(message = "任务id 不能为空！")
     private String taskId;
 
+    /**
+     * 工时选择时间
+     */
+    private Long hoursDate;
+
 }

@@ -16,7 +16,6 @@ import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.CodeGen;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;

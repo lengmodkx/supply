@@ -41,6 +41,11 @@ public class TaskWorkingHours implements Serializable {
      */
     private String taskId;
 
+    /**
+     * 工时预计时间
+     */
+    private Long hoursDate;
+
 
 
     @Override

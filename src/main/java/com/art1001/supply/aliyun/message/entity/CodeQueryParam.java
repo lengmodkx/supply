@@ -15,11 +15,11 @@ public class CodeQueryParam {
         return new CodeQueryParam(code);
     }
 
-    public CodeQueryParam(String code) {
+    private CodeQueryParam(String code) {
         this.code = code;
     }
 
-    public CodeQueryParam() {
+    private CodeQueryParam() {
 
     }
 }
