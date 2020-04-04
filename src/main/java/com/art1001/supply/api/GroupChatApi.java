@@ -1,5 +1,7 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSException;
 import com.art1001.supply.annotation.Push;
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,61 +56,38 @@ public class GroupChatApi {
      */
     @Push(value = PushType.G1)
     @PostMapping
-    public JSONObject chat(@RequestParam String projectId,
+    public JSONObject chat(String projectId,
                            @RequestParam(required = false, defaultValue = "") String content,
-                           HttpServletRequest request){
+                           @RequestParam("files") String files){
         JSONObject object = new JSONObject();
         try{
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            List<MultipartFile> files = multipartRequest.getFiles("files");
+
             //文件和内容都为空则不发送推送消息
-            if (files == null && StringUtils.isEmpty(content)) {
+            if (StringUtils.isEmpty(files) && StringUtils.isEmpty(content)) {
                 object.put("result",0);
                 return object;
             }
+
             Chat chat = new Chat();
             chat.setMemberId(ShiroAuthenticationManager.getUserId());
             chat.setCreateTime(System.currentTimeMillis());
             chat.setContent(content);
             chat.setProjectId(projectId);
             chatService.save(chat);
-            if (files != null && files.size()>0) {
-                //fileService.saveFile(files,chat.getChatId(),chat.getProjectId());
-                files.forEach(multipartFile -> {
-                    try{
-                        // 得到文件名
-                        String originalFilename = multipartFile.getOriginalFilename();
-                        // 重置文件名
-                        assert originalFilename != null;
-                        int indexOf = originalFilename.lastIndexOf(".");
-                        // 获取后缀名
-                        String ext = originalFilename.substring(indexOf).toLowerCase();
-                        String fileName = System.currentTimeMillis() + ext;
-                        String fileUrl = "upload/file/" + fileName;
-                        AliyunOss.uploadInputStream(fileUrl,multipartFile.getInputStream());
 
-                        // 写库
-                        File file = new File();
-                        // 用原本的文件名
-                        file.setFileName(originalFilename);
-                        file.setExt(ext);
-                        file.setProjectId(projectId);
-                        file.setFileUrl(fileUrl);
-                        file.setPublicLable(1);
-                        file.setPublicId(chat.getChatId());
-                        if (FileExt.extMap.get("images").contains(ext)) {
-                            file.setFileThumbnail(fileUrl);
-                        }
-                        // 得到上传文件的大小
-                        long contentLength = multipartFile.getSize();
-                        file.setSize(FileUtils.convertFileSize(contentLength));
-                        fileService.save(file);
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-
-                });
-
+            if(StringUtils.isNotEmpty(files)){
+                JSONArray objects = JSON.parseArray(files);
+                for (int i=0;i<objects.size();i++) {
+                    JSONObject jsonObject = objects.getJSONObject(i);
+                    File file = new File();
+                    file.setProjectId(projectId);
+                    file.setPublicId(chat.getChatId());
+                    file.setPublicLable(1);
+                    file.setFileUrl(jsonObject.getString("url"));
+                    file.setFileName(jsonObject.getString("name"));
+                    file.setSize(jsonObject.getString("size"));
+                    fileService.save(file);
+                }
             }
             Chat chatById = chatService.findChatById(chat.getChatId());
             chatById.setIsOwn(1);
@@ -121,6 +101,10 @@ public class GroupChatApi {
         }
         return object;
     }
+
+
+
+
 
     /**
      * 撤回消息

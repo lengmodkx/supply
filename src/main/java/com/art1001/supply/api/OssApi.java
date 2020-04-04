@@ -91,6 +91,32 @@ public class OssApi {
         }
     }
 
+    @GetMapping("websign")
+    public Result getWebSign(@RequestParam String dir){
+        OSSClient client = new OSSClient(oss.getEndpoint(), oss.getAccessId(), oss.getAccessKey());
+        try {
+            long expireEndTime = System.currentTimeMillis() + 30 * 1000;
+            Date expiration = new Date(expireEndTime);
+            PolicyConditions policyCods = new PolicyConditions();
+            policyCods.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
+            policyCods.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
+            String postPolicy = client.generatePostPolicy(expiration, policyCods);
+            byte[] binaryData = postPolicy.getBytes(StandardCharsets.UTF_8);
+            String encodedPolicy = BinaryUtil.toBase64String(binaryData);
+            String postSignature = client.calculatePostSignature(postPolicy);
+            oss.setPolicy(encodedPolicy);
+            oss.setSignature(postSignature);
+            oss.setDir(dir);
+            oss.setExpire(String.valueOf(expireEndTime / 1000));
+            return Result.success(oss);
+        }catch (Exception e){
+            return Result.fail(CodeMsg.SERVER_ERROR);
+        }
+    }
+
+
+
+
     /**
      * 阿里云oss回调请求地址，推送未加
      */

@@ -377,7 +377,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 
     <!--  查询出该项目的最上级文件夹的id -->
     <select id="selectParentId" resultType="java.lang.String">
-		select file_id from prm_file where project_id = #{projectId} and `level` = 0
+		select file_id from prm_file where project_id = #{projectId} and `level` = 0 and public_lable = 0
 	</select>
 
     <!-- 根据父级id获取该项目下的根文件夹 -->
