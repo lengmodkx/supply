@@ -173,7 +173,12 @@ public class StatisticsApi {
                     staticHistogram.setTaskType(sto.getTaskCount());
                 }
             } else {
-                statistics.setStaticHistogram(new StatisticsHistogram());
+                StatisticsHistogram statisticsHistogram = new StatisticsHistogram();
+                if (null != sto.getTaskCount()){
+                    statisticsHistogram.setTaskType(sto.getTaskCount());
+                }
+                statistics.setStaticHistogram(statisticsHistogram);
+
             }
             ArrayList<TitleVO> arrayList = new ArrayList<>();
             TitleVO title = new TitleVO("执行者", "name");
