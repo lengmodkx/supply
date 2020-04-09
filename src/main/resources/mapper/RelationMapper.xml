@@ -13,6 +13,7 @@
 		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
 		<result column="order" property="order" jdbcType="INTEGER" />
 		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="default_group" property="defaultGroup" jdbcType="INTEGER" />
 	</resultMap>
 
 	<resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">

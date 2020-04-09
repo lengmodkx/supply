@@ -94,6 +94,9 @@ public class Relation extends Model<Relation> {
 	private Boolean subIsExist;
 
 
+    private  Integer defaultGroup;
+
+
 	@Override
 	protected Serializable pkVal() {
 		return this.relationId;

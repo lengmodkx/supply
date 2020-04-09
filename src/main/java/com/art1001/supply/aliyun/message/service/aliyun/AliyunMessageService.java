@@ -16,7 +16,12 @@ public interface AliyunMessageService extends MessageService {
      */
     void sendMessage(String code, String phoneNumbers);
 
-
+    /**
+     * 生成code发送短信验证码
+     * @param userId 用户id
+     * @param phone 手机号
+     */
+    @Override
     void sendCode(String userId, String phone);
 
 }

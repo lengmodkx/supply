@@ -61,7 +61,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @return
 	 */
 	public static long pastMinutes(Date date) {
-		long t = new Date().getTime()-date.getTime();
+		long t = System.currentTimeMillis()-date.getTime();
 		return t/(60*1000);
 	}
 	/**

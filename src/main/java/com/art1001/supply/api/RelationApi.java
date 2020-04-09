@@ -6,24 +6,20 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
-import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.relation.RelationService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author heshaohua
@@ -465,5 +461,30 @@ public class  RelationApi {
     }
 
 
+    /**
+     * 修改分组名称
+     * @param relationId 菜单/分组id
+     * @param newName  新分组名称
+     * @return json
+     */
+     @Push(PushType.C15)
+     @PostMapping("/updateGroupName")
+     public JSONObject  updateGroupName(@RequestParam(value = "relationId")String relationId,@RequestParam(value = "newName")String newName){
+         JSONObject jsonObject =new JSONObject();
+         try {
+             Relation relation =new Relation();
+             relation.setRelationId(relationId);
+             relation.setRelationName(newName);
+             relationService.updateRelation(relation);
+             jsonObject.put("result",1);
+             jsonObject.put("msg","修改成功");
+             return jsonObject;
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         jsonObject.put("result",0);
+         jsonObject.put("msg","修改失败");
+         return  jsonObject;
+     }
 
 }
