@@ -351,6 +351,7 @@ public class OrganizationMemberApi {
         return Result.success(orgMemberByKeyword);
     }
 
+   //停用/启用企业成员
     @PutMapping("/{orgId}/lock")
     public Result lockUser(@PathVariable String orgId,
                            @RequestParam String userId,

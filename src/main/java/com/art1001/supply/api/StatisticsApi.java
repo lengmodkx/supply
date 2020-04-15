@@ -243,7 +243,7 @@ public class StatisticsApi {
     }
 
     /**
-     * 任累计图统计数据集
+     * 任务累计图统计数据集
      *
      * @param projectId 项目id
      * @return Statistics 对象
@@ -283,7 +283,7 @@ public class StatisticsApi {
     }
 
     /**
-     * 任累计图统计数据集
+     * 概览表详细数据集
      *
      * @param projectId 项目id
      * @return Statistics 对象
@@ -311,7 +311,7 @@ public class StatisticsApi {
 
 
     /**
-     * 页面项目统计总览
+     * 查询概览图表数据
      *
      * @param projectId 项目id
      * @return Statistics 对象

@@ -231,7 +231,7 @@
     <select id="getHistogramsDate"  resultMap="resultHistograms">
          SELECT tu.user_name AS name , COUNT(1) AS data FROM prm_task pt LEFT JOIN tb_user tu ON tu.user_id=pt.executor
          WHERE  project_id = #{projectId}
-         <!-- AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
+         <!--  AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
          BETWEEN  DATE_SUB(NOW(),INTERVAL #{stDTO.DayNum} DAY) AND FROM_UNIXTIME(#{currentDate}, '%Y-%m-%d %T') -->
         <include refid="Base_Column_QBC"/>
 		 GROUP BY pt.executor

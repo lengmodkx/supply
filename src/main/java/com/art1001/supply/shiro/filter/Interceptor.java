@@ -6,32 +6,21 @@ import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.resource.ResourceService;
-import com.art1001.supply.service.role.ProRoleUserService;
-import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import jodd.util.HashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

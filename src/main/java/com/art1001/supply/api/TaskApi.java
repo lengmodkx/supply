@@ -167,7 +167,7 @@ public class  TaskApi extends BaseController {
         }
     }
 
-    @PutMapping("/{taskId}/changeStatus")
+   /* @PutMapping("/{taskId}/changeStatus")
     public JSONObject changeStatus(@PathVariable(value = "taskId")String taskId,
                                    @RequestParam(value = "projectId") String projectId,
                                    @RequestParam(value = "status")String status){
@@ -177,7 +177,7 @@ public class  TaskApi extends BaseController {
 
 
         return  object;
-    }
+    }*/
 
 
 

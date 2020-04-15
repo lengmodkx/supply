@@ -1149,6 +1149,7 @@ public class FileApi extends BaseController {
         }
     }
 
+    //文件设置隐私模式
     @Push(value = PushType.C8,type = 1)
     @PutMapping("/folder/look")
     public JSONObject setFolderLook(@RequestParam String folderId,
@@ -1172,6 +1173,7 @@ public class FileApi extends BaseController {
         }
     }
 
+    //更改模型文件路径
     @PostMapping("model/change")
     public JSONObject modelChange(@RequestParam String fileId){
         JSONObject jsonObject = new JSONObject();
