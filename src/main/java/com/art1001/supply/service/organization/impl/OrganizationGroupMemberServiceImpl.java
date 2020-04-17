@@ -113,18 +113,19 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
         groupOwnerInfo = organizationGroupService.getGroupOwnerInfo(groupId);
         //获取该群组的所有成员信息
         List<OrganizationGroupMember> organizationGroupMembers = organizationGroupMemberMapper.selectGroupMembes(groupId);
-        if(CollectionUtils.isEmpty(organizationGroupMembers)){
+        if(organizationGroupMembers.isEmpty() || CollectionUtils.isEmpty(organizationGroupMembers)){
             return new ArrayList<>();
+        }else {
+            //标记该群组的拥有者成员
+            organizationGroupMembers.forEach(item -> {
+                if(item.getUserId().equals(groupOwnerInfo.getUserId())){
+                    item.setIsOwner(true);
+                } else{
+                    item.setIsOwner(false);
+                }
+            });
+            return organizationGroupMembers;
         }
-        //标记该群组的拥有者成员
-        organizationGroupMembers.forEach(item -> {
-            if(item.getUserId().equals(groupOwnerInfo.getUserId())){
-                item.setIsOwner(true);
-            } else{
-                item.setIsOwner(false);
-            }
-        });
-        return organizationGroupMembers;
     }
 
 }

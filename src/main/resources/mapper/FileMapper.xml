@@ -563,7 +563,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			f.public_id,
 			f.`level`
 		FROM
-			prm_file f
+			new_file f
 			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
 		WHERE
 			parent_id = #{folderId}
@@ -651,6 +651,15 @@ update prm_file set user_id = #{userId} where user_id = #{id}
                 order by create_time desc
             </if>
         </if>
+    </select>
+    <select id="findMateriaCount" resultType="java.lang.Long">
+        SELECT
+			count(1)
+		FROM
+			new_file f
+			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
+		WHERE
+			parent_id = #{folderId}
     </select>
 
     <!-- 插入多条文件信息 -->

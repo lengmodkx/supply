@@ -1,17 +1,15 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.partment.Partment;
-import com.art1001.supply.entity.tree.Tree;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,6 +30,7 @@ public class PartmentApi {
      * @param partmentLogo 部门logo
      * @return 结果
      */
+    @Push(value = PushType.P1,type = 1)
     @PostMapping("/{orgId}")
     public JSONObject addPartment(@PathVariable(value = "orgId") String orgId,
                                   @RequestParam(value = "partmentName") String partmentName,
@@ -111,6 +110,7 @@ public class PartmentApi {
      * @param orgId 企业id
      * @return 结果
      */
+    @Push(value = PushType.P2,type = 1)
     @GetMapping("/{orgId}")
     public JSONObject allParment(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
