@@ -317,4 +317,6 @@ public interface FileMapper extends BaseMapper<File> {
 
 	//我参与的文件，根据创建时间排序
 	List<File> join(@Param("order") String order, @Param("userId")String userId);
+
+	long findMateriaCount(String folderId);
 }

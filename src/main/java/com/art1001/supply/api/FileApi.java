@@ -1103,6 +1103,7 @@ public class FileApi extends BaseController {
      */
     @GetMapping("{folderId}/material")
     public JSONObject getMaterialBaseFile(@PathVariable String folderId,Page pageable, @RequestParam(required = false) Boolean downloadCount){
+
         return fileService.getMateriaBaseFile(folderId,pageable,downloadCount);
     }
 
@@ -1160,7 +1161,8 @@ public class FileApi extends BaseController {
         String[] ids = fileIds.split(",");
         List<File> files = fileService.findByIds(ids);
         try {
-            if(files.size()==1){//处理单个文件的情况
+            //处理单个文件的情况
+            if(files.size()==1){
                 if(files.get(0).getCatalog()==0){
                     fileService.downloadSingleFile(files.get(0),response);
                 }else{
@@ -1215,9 +1217,8 @@ public class FileApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try{
             if(StringUtils.isNotEmpty(userIds)){
-                File file = new File();
-                file.setFileId(folderId);
-                file.setFileUids(userIds);
+                File file = fileService.findFileById(folderId);
+                file.setFileUids(file.getFileUids());
                 fileService.updateById(file);
             }
             jsonObject.put("result", 1);
@@ -1228,6 +1229,63 @@ public class FileApi extends BaseController {
             throw new SystemException(e);
         }
     }
+
+    @Push(value = PushType.C8,type = 1)
+    @PutMapping("/folder/delUser")
+    public JSONObject setFolderDelUser(@RequestParam String folderId,
+                                    @RequestParam String userIds,
+                                    @RequestParam String projectId,
+                                    @RequestParam String parentId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+
+                File file = fileService.findFileById(folderId);
+                if(StringUtils.isEmpty(file.getFileUids())){
+                    List<String> ids = Arrays.asList(file.getFileUids().split(","));
+                    ids.forEach(id->{
+                        if (id.equals(userIds)){
+                            ids.remove(id);
+                        }
+                    });
+                    file.setFileUids(StringUtils.join(ids, ","));
+                }
+                fileService.updateById(file);
+
+            jsonObject.put("result", 1);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("data",parentId);
+            return jsonObject;
+        }catch (Exception e){
+            throw new SystemException(e);
+        }
+    }
+
+    /**
+     * 获取可以看某个文件夹的所有可见成员
+     * @param folderId 文件id
+     * @return
+     */
+    @GetMapping("/{folderId}/member")
+    public JSONObject getFileMembers(@PathVariable("folderId") String folderId){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            File file = fileService.findFileById(folderId);
+            List<UserEntity> fileId=new ArrayList<>();
+            if(StringUtils.isNotEmpty(file.getFileUids())){
+                List<String> ids = Arrays.asList(file.getFileUids().split(","));
+                ids.forEach(id->{
+                    fileId.add(userService.findById(id));
+                });
+            }
+            jsonObject.put("data",fileId);
+            jsonObject.put("result",1);
+            jsonObject.put("msg","获取成功!");
+        }catch(Exception e){
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
 
     //更改模型文件路径
     @PostMapping("model/change")
