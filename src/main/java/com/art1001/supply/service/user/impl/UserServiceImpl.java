@@ -193,10 +193,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             user.setDefaultImage(info.getHeadImgUrl());
             user.setImage(info.getHeadImgUrl());
             userMapper.insert(user);
+            userInfo.setUserId(user.getUserId());
+            userInfo.setUserName(user.getUserName());
             userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
         } else {
             BeanUtils.copyProperties(userEntity,userInfo);
             userInfo.setBindPhone(false);
+            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
+            userInfo.setOrgId(orgByUserId);
             userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         }
         return userInfo;
@@ -257,8 +261,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         UserEntity userEntity = new UserEntity();
         if(this.checkUserIsExistByAccountName(phone)){
-            UserEntity byAccountName = this.findByName(phone);
-            userEntity.setUserId(byAccountName.getUserId());
+            UserEntity byName = this.findByName(phone);
+            userEntity.setUserId(byName.getUserId());
             userEntity.setWxUnionId(byId.getWxUnionId());
             userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
@@ -266,6 +270,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             removeById(userId);
         } else {
             userEntity.setUserId(userId);
+            userEntity.setWxUnionId(byId.getWxUnionId());
+            userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
             userEntity.setAccountName(phone);
             userEntity.setUserName(nickName);

@@ -29,7 +29,11 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns("/login","/register","/users/**","/captcha","/code","/forget","/organizations/my_org","/news/count","/oss/callback");
+        String[] path = new String[]{"/message/code","/login","/register","/captcha","/forget",
+                "/code","/logout","/bind/phone","/bind/wechat","/notbind/wechat", "/reset_password",
+                "/change_password", "/users/**","/organizations/my_org","/news/count","/oss/callback",
+                "/wechatcode","/wechattoken","/files/**/upload","/files/**/model","/files/**/name","/files/deletefile"};
+        registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns(path);
         registry.addInterceptor(recycleParamCheck).addPathPatterns("/recycle_bin/move_task_rb","/recycle_bin/move_file_rb","/recycle_bin/move_share_rb","/recycle_bin/move_schedule_rb","/recycle_bin/move_tag_rb");
         super.addInterceptors(registry);
     }

@@ -362,7 +362,7 @@ public class UserApi {
      * @return 结果
      */
     @PostMapping("/bind/phone")
-    public JSONObject bindPhone(
+    public Result<UserInfo> bindPhone(
                                 @Validated @NotNull(message = "手机号不能为空！") String phone,
                                 @Validated @NotNull(message = "code码不能为空！") String code,
                                 @Validated @NotNull(message = "用户id不能为空！") String userId,
@@ -374,14 +374,9 @@ public class UserApi {
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code, userId, nickName);
 
-        UserEntity byId = userService.findByName(phone);
+        UserInfo userInfo = userService.findInfo(phone);
 
-        JSONObject json = new JSONObject();
-
-        json.put("userInfo", byId);
-        json.put("accessToken", JwtUtil.sign(phone, byId.getCredentialsSalt()));
-        json.put("result",1);
-        return json;
+        return Result.success(userInfo);
     }
 
     @GetMapping("/is_bind_phone")
@@ -448,18 +443,16 @@ public class UserApi {
     }
 
     @PostMapping("reset_password")
-    public Object resetPassword(@Validated @NotNull(message = "密码不能为空") String password,String accountName){
-        JSONObject jsonObject = new JSONObject();
+    public Result resetPassword(@Validated @NotNull(message = "密码不能为空") String password,String accountName){
         UserEntity byName = userService.findByName(accountName);
-
         String password_cryto = new Md5Hash(password,byName.getAccountName()+byName.getCredentialsSalt(),2).toBase64();
-
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(byName.getUserId());
         userEntity.setUpdateTime(new Date());
         userEntity.setPassword(password_cryto);
         userService.updateById(userEntity);
-        return jsonObject;
+
+        return Result.success();
     }
 
     @PostMapping("change_password")

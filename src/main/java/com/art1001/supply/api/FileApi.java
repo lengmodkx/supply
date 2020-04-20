@@ -388,6 +388,52 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
+    @Push(value = PushType.C2,type = 1)
+    @PostMapping("/uploadFile")
+    public JSONObject uploadFile1(
+            @RequestParam(value = "parentId") String parentId,
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "files") String files,
+            @RequestParam(required = false) String publicId
+
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            fileService.saveFileBatch(projectId,files,parentId,publicId);
+            jsonObject.put("result", 1);
+            jsonObject.put("msgId",projectId);
+            jsonObject.put("data",parentId);
+        } catch (Exception e) {
+            log.error("上传文件异常:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
+    @Push(value = PushType.C3)
+    @PostMapping("/uploadModel")
+    public JSONObject uploadModel1(
+            @PathVariable(value = "parentId") String parentId,
+            @RequestParam(value = "fileCommon") String fileCommon,
+            @RequestParam(value = "fileModel") String fileModel,
+            @RequestParam(value = "filename") String filename
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            File modelFile = fileService.saveModel(fileModel,fileCommon,null,filename,parentId);
+            jsonObject.put("result",1);
+            jsonObject.put("msgId",modelFile.getProjectId());
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId));
+            jsonObject.put("id",modelFile.getFileId());
+        } catch (Exception e) {
+            log.error("上传文件异常:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
     /**
      * 上传模型文件
      */
@@ -575,6 +621,16 @@ public class FileApi extends BaseController {
         }
     }
 
+    @DeleteMapping("/deletefile")
+    public Result deleteFile1(@RequestParam(value = "fileId") String fileId) {
+        try {
+            fileService.deleteFileById(fileId);
+            return Result.success();
+        } catch (Exception e) {
+            log.error("删除文件异常:", e);
+            throw new AjaxException(e);
+        }
+    }
     /**
      * 从回收站中恢复文件
      * @param fileId 文件id

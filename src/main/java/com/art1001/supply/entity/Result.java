@@ -27,6 +27,7 @@ public class Result<T> implements Serializable {
 
     private Result(){
         this.result = 1;
+        this.msg = "success";
     }
 
     private Result(CodeMsg msg){

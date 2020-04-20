@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -110,7 +111,7 @@ public class UserEntity extends Model<UserEntity> {
 	/**
 	 * 用户出生日期
 	 */
-
+	@JsonFormat(pattern="yyyy-MM-dd",timezone="GMT+8")
 	private Date birthday;
 
 	/**
@@ -138,16 +139,12 @@ public class UserEntity extends Model<UserEntity> {
 	private Integer existId;
 
 	@JsonIgnore
-	@TableField(exist = false)
 	private String sessionKey;
 	@JsonIgnore
-	@TableField(exist = false)
 	private String wxAppOpenId;
 	@JsonIgnore
-	@TableField(exist = false)
 	private String wxUnionId;
 	@JsonIgnore
-	@TableField(exist = false)
 	private String wxOpenId;
 
 	@TableField(exist = false)
