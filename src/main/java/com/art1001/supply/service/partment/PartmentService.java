@@ -2,6 +2,7 @@ package com.art1001.supply.service.partment;
 
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.tree.Tree;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -88,4 +89,12 @@ public interface PartmentService extends IService<Partment> {
 	int getChildCount(String departmentId);
 
 	List<Partment> findSubPartment(String parentId);
+
+	/**
+	 * 获取部门简单信息
+	 * @param memberId
+	 * @return
+	 */
+    List<Partment> getSimpleDeptInfo(String memberId);
+
 }

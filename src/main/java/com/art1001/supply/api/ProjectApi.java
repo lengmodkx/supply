@@ -10,6 +10,7 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
@@ -465,21 +466,27 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * 根据项目id 获取成员信息
+     * 根据项目id 获取企业成员详细信息
      * @param projectId 项目id
      * @return 成员信息
+     *
      */
     @GetMapping("/{projectId}/members")
     public JSONObject getMembersByProject(@PathVariable String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",projectMemberService.findByProjectId(projectId));
+            jsonObject.put("data",projectMemberService.findByProjectIdAndOrgId(projectId));
             jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,获取成员信息失败!",e);
         }
     }
+
+    /*public JSONObject updateMembersInfo(ProjectMemberDTO projectMemberDTO){
+        JSONObject jsonObject = new JSONObject();
+        return jsonObject;
+    }*/
 
     /**
      * 获取项目甘特图的数据

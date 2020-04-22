@@ -217,4 +217,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 		organizationMemberService.update(one, new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, userId).eq(OrganizationMember::getOrganizationId,one.getOrganizationId()));
 	}
+
+
 }

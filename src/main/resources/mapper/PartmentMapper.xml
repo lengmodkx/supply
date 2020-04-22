@@ -202,5 +202,16 @@
 		WHERE partment_id = #{partmentId}
 
 	</update>
-	
+
+	<select id="getSimpleDeptInfo" resultType="com.art1001.supply.entity.partment.Partment">
+		SELECT
+        	p.partment_id,
+        	p.partment_name,
+        	p.parent_id
+        FROM
+        	prm_partment p
+        	JOIN prm_partment_member pm ON p.partment_id = pm.partment_id
+        WHERE
+        	pm.member_id = #{memberId}
+	</select>
 </mapper>

@@ -2,15 +2,15 @@ package com.art1001.supply.entity.project;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * projectMemberEntity
  */
+
+
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)

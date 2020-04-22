@@ -142,4 +142,5 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
     Boolean checkUserIdIsOrgMaster(String orgId, String userId);
 
 
+
 }

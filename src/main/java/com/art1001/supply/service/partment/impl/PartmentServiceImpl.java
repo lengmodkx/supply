@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.art1001.supply.application.assembler.DepartmentDataAssembler;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.tree.Tree;
@@ -203,5 +204,10 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 			}
 		});
 		return subPartment;
+	}
+
+	@Override
+	public List<Partment> getSimpleDeptInfo(String memberId) {
+		return partmentMapper.getSimpleDeptInfo(memberId);
 	}
 }

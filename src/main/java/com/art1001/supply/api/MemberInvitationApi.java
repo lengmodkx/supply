@@ -2,7 +2,6 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
-import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
@@ -10,8 +9,6 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
-import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
@@ -52,6 +49,9 @@ public class MemberInvitationApi extends BaseController {
 
     @Resource
     private ProRoleUserService proRoleUserService;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
     /**
      * 通过用户账户查询用户
      * @param keyword 关键字
@@ -64,6 +64,7 @@ public class MemberInvitationApi extends BaseController {
         try{
 
             List<UserEntity> userEntityList = userService.findByKey(keyword);
+
             object.put("result",1);
             object.put("data",userEntityList);
         }catch(Exception e){

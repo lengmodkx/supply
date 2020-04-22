@@ -35,7 +35,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/organization/members")
+    @RequestMapping("/organization/members")
 public class OrganizationMemberApi {
 
     @Resource
@@ -74,7 +74,6 @@ public class OrganizationMemberApi {
          * 外部成员
      */
     private static final int IS_OTHER =5;
-
 
 
     /**
@@ -361,4 +360,6 @@ public class OrganizationMemberApi {
         organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
         return Result.success();
     }
+
+
 }

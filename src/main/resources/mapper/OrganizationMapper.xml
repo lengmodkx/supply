@@ -261,4 +261,6 @@
 		set organization_member = #{memberId}
 		WHERE organization_id = #{orgId} and organization_member = #{ownerId}
 	</update>
+
+
 </mapper>

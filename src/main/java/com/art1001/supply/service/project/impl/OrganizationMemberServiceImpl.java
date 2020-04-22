@@ -1,7 +1,9 @@
 package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
@@ -9,6 +11,8 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.partment.PartmentMemberService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
@@ -58,9 +62,17 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	private OrganizationMemberService organizationMemberService;
 
 	@Resource
+	private PartmentService partmentService;
+
+	@Resource
 	private OrganizationService organizationService;
+
+	@Resource
+	private PartmentMemberService partmentMemberService;
+
 	private String orgId;
 	private String userId;
+
 
 	/**
 	 * 根据企业id获取企业员工
@@ -310,4 +322,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 		return organizationMember.getOrganizationLable() == label;
 	}
+
+
 }

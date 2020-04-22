@@ -3,6 +3,7 @@ package com.art1001.supply.service.organization;
 import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -93,4 +94,6 @@ public interface OrganizationService extends IService<Organization> {
 	 * @param userId 用户id
 	 */
 	void personalProject(String userId);
+
+
 }

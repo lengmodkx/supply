@@ -2,6 +2,8 @@ package com.art1001.supply.mapper.organization;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -92,4 +94,6 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
 	 * @return 布尔值
 	 */
 	Boolean updatOorganization(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("memberId")String memberId);
+
+
 }

@@ -2,6 +2,7 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -21,6 +22,14 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * 根据项目id 和 用户id 查询
 	 */
 	List<ProjectMember> findByProjectId(String projectId);
+
+
+	/**
+	 * 获取企业成员详细信息
+	 * @param projectId
+	 * @return
+	 */
+	List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId);
 
 	/**
 	 * 查询成员是否存在于项目中

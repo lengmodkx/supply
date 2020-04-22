@@ -72,21 +72,28 @@
 	<!-- 根据项目id 查询项目的成员信息 -->
 	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
 		SELECT
-		p.id,
-		p.project_id,
-		p.member_id,
-		p.member_label,
-		p.role_key,
-		u.user_name as member_name,
-		u.image as member_img,
-		u.default_image,
-		r.role_name as job,
-		u.account_name
-		FROM prm_project_member p
-		LEFT JOIN tb_user u on p.member_id = u.user_id
-		LEFT JOIN sys_pro_role_user ru on p.member_id = ru.u_id AND ru.project_id = #{projectId} left join sys_pro_role as r on ru.role_id = r.role_id
-		where
-			p.project_id = #{projectId} order by p.member_label desc
+	p.id,
+	p.project_id,
+	p.member_id,
+	p.member_label,
+	p.role_key,
+	u.user_name AS member_name,
+	u.image AS member_img,
+	u.default_image,
+	r.role_name AS job,
+	u.account_name AS memberPhone
+FROM
+	prm_project_member p
+	JOIN tb_user u
+	JOIN sys_pro_role_user ru
+	JOIN sys_pro_role AS r ON p.member_id = u.user_id
+	AND p.member_id = ru.u_id
+	AND ru.project_id = #{projectId}
+	AND ru.role_id = r.role_id
+WHERE
+	p.project_id = #{projectId}
+ORDER BY
+	p.member_label DESC
 	</select>
 
 	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
