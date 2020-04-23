@@ -95,6 +95,6 @@ public interface PartmentService extends IService<Partment> {
 	 * @param memberId
 	 * @return
 	 */
-    List<Partment> getSimpleDeptInfo(String memberId);
+    Partment getSimpleDeptInfo(String memberId);
 
 }

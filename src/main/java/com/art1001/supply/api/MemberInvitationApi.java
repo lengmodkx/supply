@@ -75,11 +75,15 @@ public class MemberInvitationApi extends BaseController {
     }
 
     /**
-     * 给项目添加成员
-     * @param projectId 项目id
-     * @param memberId 用户id
-     * @return
-     */
+    * @Author: 邓凯欣
+    * @Email： dengkaixin@art1001.com
+    * @Param: projectId 项目id
+    * @param： memberId 用户id
+    * @param： orgId 企业id
+    * @return:
+    * @Description: 给项目添加成员，同时将数据存储到企业详情信息表
+    * @create: 15:33 2020/4/22
+    */
     //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,

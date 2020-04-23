@@ -6,17 +6,17 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.project.GantChartVO;
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.project.ProjectTreeVO;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -29,6 +29,7 @@ import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
+import com.art1001.supply.util.MyBeanUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +82,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 
 	@Resource
 	private ProRoleUserService proRoleUserService;
+
+	@Resource
+	private OrganizationMemberInfoService organizationMemberInfoService;
 
 	/**
 	 * 查询分页project数据
@@ -496,4 +501,53 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper,Project> imple
 	public void updateAllProject(String userId, String id) {
 		projectMapper.updateAllProject(userId,id);
 	}
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param:
+	* @return:
+	* @Description: 更新企业成员详细信息
+	* @create: 18:48 2020/4/22
+	*/
+	@Override
+	public Integer updateMembersInfo(OrganizationMemberInfo organinfo) {
+		//	 * String memberId,String userName, Date entryTime, String job, Integer memberLabel, String address, String email, String phone, Date birthday, String deptName, String deptId
+		OrganizationMemberInfo memberInfo =new  OrganizationMemberInfo();
+		if (organinfo.getUserName()!=null) {
+			memberInfo.setUserName(organinfo.getUserName());
+		}
+		if (organinfo.getEntryTime()!=null) {
+			memberInfo.setEntryTime(organinfo.getEntryTime());
+		}
+		if (organinfo.getJob()!=null) {
+			memberInfo.setJob(organinfo.getJob());
+		}
+		if (organinfo.getMemberLabel()!=null) {
+			memberInfo.setMemberLabel(organinfo.getMemberLabel());
+		}
+		if (organinfo.getAddress()!=null) {
+			memberInfo.setAddress(organinfo.getAddress());
+		}
+		if (organinfo.getEmail()!=null) {
+			memberInfo.setEmail(organinfo.getEmail());
+		}
+		if (organinfo.getPhone()!=null) {
+			memberInfo.setPhone(organinfo.getPhone());
+		}
+		if (organinfo.getBirthday()!=null) {
+			memberInfo.setBirthday(organinfo.getBirthday());
+		}
+		if (organinfo.getDeptName()!=null) {
+			memberInfo.setDeptName(organinfo.getDeptName());
+		}
+		if (organinfo.getDeptId()!=null) {
+			memberInfo.setDeptId(organinfo.getDeptId());
+		}
+		memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
+		return organizationMemberInfoService.update(memberInfo,new QueryWrapper<OrganizationMemberInfo>().eq("member_id",organinfo.getMemberId()).eq("project_id",organinfo.getProjectId()))?1:0;
+
+	}
+
+
 }

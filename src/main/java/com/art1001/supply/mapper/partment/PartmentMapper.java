@@ -68,5 +68,5 @@ public interface PartmentMapper extends BaseMapper<Partment> {
 
 	List<Partment> findSubPartment(String parentId);
 
-    List<Partment> getSimpleDeptInfo(@Param("memberId")String memberId);
+    Partment getSimpleDeptInfo(@Param("memberId")String memberId);
 }

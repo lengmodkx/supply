@@ -2,11 +2,14 @@ package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -219,4 +222,16 @@ public interface ProjectService extends IService<Project> {
     Boolean checkIsSubProject(String projectId);
 
     void updateAllProject(String userId, String id);
+
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 修改部门成员详细信息
+    * @create: 18:33 2020/4/22
+    */
+	Integer updateMembersInfo(OrganizationMemberInfo organinfo);
+
 }

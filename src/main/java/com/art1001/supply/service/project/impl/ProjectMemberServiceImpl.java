@@ -4,7 +4,9 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
@@ -19,7 +21,9 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -40,6 +44,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import org.apache.commons.codec.language.bm.Languages;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -47,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -119,6 +125,12 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private PartmentService partmentService;
 
+    @Resource
+    private OrganizationMemberInfoService organizationMemberInfoService;
+
+    @Resource
+    private PartmentMemberService partmentMemberService;
+
     @Override
     public List<Project> findProjectByMemberId(String memberId, Integer projectDel) {
         return projectMemberMapper.findProjectByMemberId(memberId, projectDel);
@@ -131,50 +143,36 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
     /**
      * 获取企业成员详细信息
+     *
      * @param projectId
-
      * @return
      */
     @Override
     public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
         //根据项目id查询项目信息
         List<ProjectMember> byProjectId = projectMemberMapper.findByProjectId(projectId);
+        List<String> memberIds = byProjectId.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+
         List<ProjectMemberDTO> list = Lists.newArrayList();
+
+        ProjectMemberDTO dto = new ProjectMemberDTO();
+
         byProjectId.stream().forEach(r -> {
-            ProjectMemberDTO projectMemberDTO =new ProjectMemberDTO();
-            //根据获取的用户id查询用户信息
-            UserEntity byId = userService.findById(r.getMemberId());
             try {
-                BeanUtils.copyProperties(r,projectMemberDTO);
-                projectMemberDTO.setBirthday(byId.getBirthday());
-                projectMemberDTO.setAddress(byId.getAddress());
-                projectMemberDTO.setMemberPhone(byId.getAccountName());
-                projectMemberDTO.setMemberEmail(byId.getEmail());
-                projectMemberDTO.setDefaultImage(byId.getDefaultImage());
-                projectMemberDTO.setOrgId(byId.getDefaultOrgId());
+                BeanUtils.copyProperties(r,dto);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            //查询部门id，部门名称及上级部门
-            List<Partment> simpleDeptInfo = partmentService.getSimpleDeptInfo(byId.getUserId());
-            for (Partment org : simpleDeptInfo) {
-                try {
-                    BeanUtils.copyProperties(org,projectMemberDTO);
-                    projectMemberDTO.setAddress(byId.getAddress());
-                    projectMemberDTO.setBirthday(byId.getBirthday());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (!org.getParentId().equals("0")) {
-                    projectMemberDTO.setParentId(org.getParentId());
-                    projectMemberDTO.setParentMentName(projectService.findProjectByProjectId(org.getParentId()).getProjectName());
-                }
-                projectMemberDTO.setParentId("0");
-            }
-            list.add(projectMemberDTO);
         });
-            return list;
+
+        memberIds.stream().forEach(userId -> {
+            OrganizationMemberInfo memberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(userId);
+            dto.setOrganizationMemberInfo(memberInfo);
+
+        });
+        list.add(dto);
+
+        return list;
     }
 
     /**
@@ -275,6 +273,14 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return projectMemberMapper.getStarProject(userId);
     }
 
+    /**
+     * @Author: 邓凯欣
+     * @Email： dengkaixin@art1001.com
+     * @Param: [projectId, memberId, orgId]
+     * @return: java.lang.Integer
+     * @Description: 新加的修改，将数据添加到企业用户详情表
+     * @create: 15:41 2020/4/22
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer saveMember(String projectId, String memberId, String orgId) {
@@ -299,6 +305,46 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         ProRole byId = proRoleService.getById(roleId);
         member.setRoleKey(byId.getRoleKey());
         projectMemberMapper.insert(member);
+
+
+        //新修改....
+        //根据用户id查询用户信息
+        UserEntity user = userService.findById(memberId);
+        //查询部门信息
+        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId());
+
+
+        //查询部门成员信息
+        PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
+
+        //上级名称
+        String parentName = "";
+        if (deptInfo.getParentId().equals("0") && !StringUtils.isEmpty(deptInfo.getParentId())) {
+            parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
+        }
+        //邀请成功后将邀请成员的信息添加到企业用户详情表
+        OrganizationMemberInfo info =new OrganizationMemberInfo();
+        info.setId(String.valueOf(UUID.randomUUID()));
+        info.setProjectId(projectId);
+        info.setMemberId(memberId);
+        info.setOrganizationId(orgId);
+        info.setAddress(user.getAddress());
+        info.setBirthday(String.valueOf(user.getBirthday().getTime()));
+        info.setCreateTime(String.valueOf(System.currentTimeMillis()));
+        info.setUpdateTime(String.valueOf(System.currentTimeMillis()));
+        info.setDeptId(deptInfo.getPartmentId());
+        info.setDeptName(deptInfo.getPartmentName());
+        info.setEmail(user.getEmail());
+        //todo 入职时间录入问题待解决
+        info.setEntryTime("null");
+        info.setJob(user.getJob());
+        info.setUserName(user.getUserName());
+        info.setMemberLabel(partInfo.getMemberLabel());
+        info.setParentId(deptInfo.getParentId());
+        info.setParentName(parentName);
+        info.setPhone(user.getAccountName());
+
+        organizationMemberInfoService.save(info);
 
         return 1;
     }

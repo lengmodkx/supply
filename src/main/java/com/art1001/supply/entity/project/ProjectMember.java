@@ -118,6 +118,7 @@ public class ProjectMember extends Model<ProjectMember> {
 	@TableField(exist = false)
 	private String accountName;
 
+
 	@TableField(exist = false)
 	private Boolean visible = false;
 

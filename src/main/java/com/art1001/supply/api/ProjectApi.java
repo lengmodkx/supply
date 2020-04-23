@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.Result;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -466,11 +468,13 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * 根据项目id 获取企业成员详细信息
-     * @param projectId 项目id
-     * @return 成员信息
-     *
-     */
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: projectId 项目id
+    * @return:
+    * @Description: 获取项目成员详细信息
+    * @create: 11:33 2020/4/22
+    */
     @GetMapping("/{projectId}/members")
     public JSONObject getMembersByProject(@PathVariable String projectId){
         JSONObject jsonObject = new JSONObject();
@@ -483,10 +487,27 @@ public class ProjectApi extends BaseController {
         }
     }
 
-    /*public JSONObject updateMembersInfo(ProjectMemberDTO projectMemberDTO){
+   /**
+   * @Author: 邓凯欣
+   * @Email：dengkaixin@art1001.com
+   * @Param: 企业详细信息DTO
+   * @return:
+       * @Description: 修改企业详细信息
+   * @create: 11:32 2020/4/22
+   */
+    @PostMapping("/updateMembersInfo")
+    public JSONObject updateMembersInfo(
+           @RequestBody OrganizationMemberInfo organinfo){
         JSONObject jsonObject = new JSONObject();
+        //memberId,userName,entryTime,job,memberLabel,address,email,phone,birthday,deptName,deptId
+        Integer result=projectService.updateMembersInfo(organinfo);
+        if (result==0) {
+            throw new AjaxException("系统异常,修改成员信息失败!");
+        }
+        jsonObject.put("result",1);
+        jsonObject.put("message","修改成功");
         return jsonObject;
-    }*/
+    }
 
     /**
      * 获取项目甘特图的数据

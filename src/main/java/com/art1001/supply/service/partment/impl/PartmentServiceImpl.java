@@ -207,7 +207,7 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	}
 
 	@Override
-	public List<Partment> getSimpleDeptInfo(String memberId) {
+	public Partment getSimpleDeptInfo(String memberId) {
 		return partmentMapper.getSimpleDeptInfo(memberId);
 	}
 }
