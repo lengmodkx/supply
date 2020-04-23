@@ -532,26 +532,31 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptName, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date parse=new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date entryTimeDate=new Date();
             if (entryTime!=null) {
-                 parse = simpleDateFormat.parse(entryTime);
+                String dateString = entryTime.replace("Z", " UTC");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                 entryTimeDate = format.parse(dateString);
+                memberInfo.setEntryTime(String.valueOf(entryTimeDate.getTime()));
             }
-            Date parse1=new Date();
+
+            Date birthdayDate=new Date();
             if (birthday!=null) {
-                 parse1 = simpleDateFormat.parse(birthday);
+                String dateString = entryTime.replace("Z", " UTC");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                birthdayDate = format.parse(dateString);
+                memberInfo.setBirthday(String.valueOf(birthdayDate.getTime()));
             }
             memberInfo.setMemberId(memberId);
             memberInfo.setProjectId(projectId);
             memberInfo.setUserName(userName);
-            memberInfo.setEntryTime(String.valueOf(parse.getTime()));
             memberInfo.setStayComDate(memberInfo.getStayComDate());
             memberInfo.setJob(job);
             memberInfo.setMemberLabel(memberLabel);
             memberInfo.setAddress(address);
             memberInfo.setMemberEmail(memberEmail);
             memberInfo.setPhone(phone);
-            memberInfo.setBirthday(String.valueOf(parse1.getTime()));
             memberInfo.setDeptName(deptName);
             memberInfo.setDeptId(deptId);
             memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));

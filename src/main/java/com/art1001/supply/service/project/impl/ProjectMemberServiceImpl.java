@@ -48,6 +48,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.codec.language.bm.Languages;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -180,20 +181,28 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 try {
                     //设置司龄
                     if (memberInfo.getEntryTime() != null) {
-                        Calendar c = Calendar.getInstance();
-                        //时间问题
+
+                        //在家postman测不了，明天去了试试
+
+                        /*Calendar c = Calendar.getInstance();
                         c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
-                        Long aLong = c.getTimeInMillis();
+                        Long aLong = c.getTimeInMillis();*/
+
                         Long l = System.currentTimeMillis();
 
-                        float num = (float) (l - aLong) / 1000 / 60 / 60 / 24 / 365;
+                        float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
+                        float num2=(float) (l - Long.valueOf(memberInfo.getEntryTime())) / 1000 / 60 / 60 / 24;
                         DecimalFormat df = new DecimalFormat("0.0");
-                        if ("0.0".equals(df.format(num))) {
-                            memberInfo.setStayComDate("月内入职");
+                        //司龄有待修改
+//                        if ((((float) (l - aLong)) / 1000 / 60 / 60 / 24)<40) {
+                        String format = df.format(num);
+                        if ("0.0".equals(format)) {
+                            memberInfo.setStayComDate("刚刚入职");
+                        }else {
+                            memberInfo.setStayComDate(df.format(num) + "年");
                         }
-                        memberInfo.setStayComDate(df.format(num) + "年");
                     }
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
