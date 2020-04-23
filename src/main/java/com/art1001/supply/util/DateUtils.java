@@ -316,7 +316,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @return
 	 */
 	public static String getDateStr(Date date) {
-		return DateFormatUtils.format(date, DEFAULT_FORMAT);
+		return DateFormatUtils.format(date, DEFAULT_YEAR_MON_DAY);
 	}
 
 	/**

@@ -28,6 +28,7 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.MyBeanUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -40,6 +41,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -527,26 +529,29 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String projectId, String userName, Date entryTime, String job, String memberLabel, String address, String memberEmail, String phone, Date birthday, String deptName, String deptId) {
+    public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptName, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         try {
-            String entryTimes ="";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date parse=new Date();
             if (entryTime!=null) {
-                
-                entryTimes = String.valueOf(entryTime.getTime());
+                 parse = simpleDateFormat.parse(entryTime);
             }
-
+            Date parse1=new Date();
+            if (birthday!=null) {
+                 parse1 = simpleDateFormat.parse(birthday);
+            }
             memberInfo.setMemberId(memberId);
             memberInfo.setProjectId(projectId);
             memberInfo.setUserName(userName);
-            memberInfo.setEntryTime(entryTimes);
+            memberInfo.setEntryTime(String.valueOf(parse.getTime()));
             memberInfo.setStayComDate(memberInfo.getStayComDate());
             memberInfo.setJob(job);
             memberInfo.setMemberLabel(memberLabel);
             memberInfo.setAddress(address);
             memberInfo.setMemberEmail(memberEmail);
             memberInfo.setPhone(phone);
-            memberInfo.setBirthday(String.valueOf(birthday.getTime()));
+            memberInfo.setBirthday(String.valueOf(parse1.getTime()));
             memberInfo.setDeptName(deptName);
             memberInfo.setDeptId(deptId);
             memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));

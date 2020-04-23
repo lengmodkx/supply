@@ -500,13 +500,13 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberId")String memberId,
             @RequestParam(value = "projectId")String projectId,
             @RequestParam(value = "userName",required = false) String userName,
-            @RequestParam(value = "entryTime",required = false) Date entryTime,
+            @RequestParam(value = "entryTime",required = false) String entryTime,
             @RequestParam(value = "job",required = false) String job,
             @RequestParam(value = "memberLabel",required = false) String memberLabel,
             @RequestParam(value = "address",required = false) String address,
             @RequestParam(value = "memberEmail",required = false) String memberEmail,
             @RequestParam(value = "phone",required = false) String phone,
-            @RequestParam(value = "birthday",required = false) Date birthday,
+            @RequestParam(value = "birthday",required = false) String birthday,
             @RequestParam(value = "deptName",required = false) String deptName,
             @RequestParam(value = "deptId",required = false) String deptId
            ){

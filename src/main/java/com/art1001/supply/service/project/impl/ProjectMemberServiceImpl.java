@@ -174,20 +174,24 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
             OrganizationMemberInfo memberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(userId);
             UserEntity byId = userService.findById(userId);
             dto.setMemberEmail(byId.getEmail());
-            if (memberInfo!=null) {
+            if (memberInfo != null) {
                 dto.setMemberName(memberInfo.getUserName());
                 dto.setMemberPhone(memberInfo.getPhone());
                 try {
                     //设置司龄
-                    if (memberInfo.getEntryTime()!=null) {
+                    if (memberInfo.getEntryTime() != null) {
                         Calendar c = Calendar.getInstance();
+                        //时间问题
                         c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
                         Long aLong = c.getTimeInMillis();
                         Long l = System.currentTimeMillis();
 
-                        float num  =(float) (l-aLong) /1000/60/60/24/365;
+                        float num = (float) (l - aLong) / 1000 / 60 / 60 / 24 / 365;
                         DecimalFormat df = new DecimalFormat("0.0");
-                        memberInfo.setStayComDate(df.format(num)+"年");
+                        if ("0.0".equals(df.format(num))) {
+                            memberInfo.setStayComDate("月内入职");
+                        }
+                        memberInfo.setStayComDate(df.format(num) + "年");
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
