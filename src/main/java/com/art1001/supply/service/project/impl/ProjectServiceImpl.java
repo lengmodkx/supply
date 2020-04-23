@@ -532,7 +532,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         try {
             String entryTimes ="";
             if (entryTime!=null) {
-                 entryTimes = String.valueOf(entryTime.getTime());
+                
+                entryTimes = String.valueOf(entryTime.getTime());
             }
 
             memberInfo.setMemberId(memberId);
