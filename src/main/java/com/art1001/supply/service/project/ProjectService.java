@@ -232,6 +232,6 @@ public interface ProjectService extends IService<Project> {
     * @Description: 修改部门成员详细信息
     * @create: 18:33 2020/4/22
     */
-	Integer updateMembersInfo(OrganizationMemberInfo organinfo);
+	Integer updateMembersInfo(String memberId,String projectId,String userName,String entryTime, String job,Integer memberLabel,String address,String memberEmail,String accountName,String birthday,String deptName,String deptId);
 
 }

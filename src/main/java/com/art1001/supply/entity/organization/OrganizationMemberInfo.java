@@ -9,6 +9,9 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -31,7 +34,7 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
    */
   private String projectId;
   /**
-   * 企业id
+       * 企业id
    */
   private String organizationId;
   /**
@@ -42,7 +45,8 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   /**
      * 邮箱
    */
-  private String email;
+  @TableField(value = "email")
+  private String memberEmail;
   /**
      * 生日
    */
@@ -55,9 +59,10 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   /**
      * 电话号
    */
-  private String phone;
+  @TableField(value = "phone")
+  private String memberPhone;
   /**
-   * 地址
+   * 办公地点
    */
   private String address;
   /**
@@ -104,7 +109,8 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
    * 司龄
    */
   @TableField(exist = false)
-  private String stayComDate;
+    private String stayComDate;
+
 
 
   @Override

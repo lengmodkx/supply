@@ -21,7 +21,7 @@ import java.util.Date;
 public class ProjectMemberDTO {
 
     /**
-     * 头像
+         * 头像
      */
     @TableField(exist = false)
     private String memberImg;
@@ -41,6 +41,12 @@ public class ProjectMemberDTO {
      */
     @TableField(exist = false)
     private String accountName;
+
+    /**
+     * 成员职位
+     */
+    @TableField(exist = false)
+    private String job;
 
     /**
      * 手机号
@@ -78,7 +84,7 @@ public class ProjectMemberDTO {
     private Integer roleId;
 
     /**
-     * 角色key
+         * 角色key
      */
     private String roleKey;
 
@@ -116,7 +122,7 @@ public class ProjectMemberDTO {
     private Boolean current;
 
     /**
-     * 企业成员详细信息
+         * 企业成员详细信息
      */
     private OrganizationMemberInfo organizationMemberInfo;
 }

@@ -52,6 +52,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -160,6 +162,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         byProjectId.stream().forEach(r -> {
             try {
                 BeanUtils.copyProperties(r,dto);
+                dto.setAccountName(r.getMemberPhone());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -167,7 +170,24 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
         memberIds.stream().forEach(userId -> {
             OrganizationMemberInfo memberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(userId);
+            if (memberInfo!=null) {
+
+                try {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
+                    Long aLong = c.getTimeInMillis();
+                    Long l = System.currentTimeMillis();
+
+                    float num  =(float) (l-aLong) /1000/60/60/24/365;
+                    DecimalFormat df = new DecimalFormat("0.0");
+                    memberInfo.setStayComDate(df.format(num)+"年");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
             dto.setOrganizationMemberInfo(memberInfo);
+
 
         });
         list.add(dto);
@@ -334,16 +354,14 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         info.setUpdateTime(String.valueOf(System.currentTimeMillis()));
         info.setDeptId(deptInfo.getPartmentId());
         info.setDeptName(deptInfo.getPartmentName());
-        info.setEmail(user.getEmail());
+        info.setMemberEmail(user.getEmail());
         //todo 入职时间录入问题待解决
-        info.setEntryTime("null");
         info.setJob(user.getJob());
         info.setUserName(user.getUserName());
         info.setMemberLabel(partInfo.getMemberLabel());
         info.setParentId(deptInfo.getParentId());
         info.setParentName(parentName);
-        info.setPhone(user.getAccountName());
-
+        info.setMemberPhone(user.getAccountName());
         organizationMemberInfoService.save(info);
 
         return 1;
