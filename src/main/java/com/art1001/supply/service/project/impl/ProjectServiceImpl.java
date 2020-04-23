@@ -527,45 +527,33 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, Integer memberLabel, String address, String memberEmail, String accountName, String birthday, String deptName, String deptId) {
+    public Integer updateMembersInfo(String memberId, String projectId, String userName, Date entryTime, String job, String memberLabel, String address, String memberEmail, String phone, Date birthday, String deptName, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
-        memberInfo.setMemberId(memberId);
-        memberInfo.setProjectId(projectId);
-        if (userName != null) {
+        try {
+            String entryTimes ="";
+            if (entryTime!=null) {
+                 entryTimes = String.valueOf(entryTime.getTime());
+            }
+
+            memberInfo.setMemberId(memberId);
+            memberInfo.setProjectId(projectId);
             memberInfo.setUserName(userName);
-        }
-        if (entryTime != null) {
-            memberInfo.setEntryTime(entryTime);
+            memberInfo.setEntryTime(entryTimes);
             memberInfo.setStayComDate(memberInfo.getStayComDate());
-        }
-        if (job != null) {
             memberInfo.setJob(job);
-        }
-        if (memberLabel != null) {
             memberInfo.setMemberLabel(memberLabel);
-        }
-        if (address != null) {
             memberInfo.setAddress(address);
-        }
-        if (memberEmail != null) {
             memberInfo.setMemberEmail(memberEmail);
-        }
-        if (accountName != null) {
-            memberInfo.setMemberPhone(accountName);
-        }
-        if (birthday != null) {
-            memberInfo.setBirthday(birthday);
-        }
-        if (deptName != null) {
+            memberInfo.setPhone(phone);
+            memberInfo.setBirthday(String.valueOf(birthday.getTime()));
             memberInfo.setDeptName(deptName);
-        }
-        if (deptId != null) {
             memberInfo.setDeptId(deptId);
+            memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
+            organizationMemberInfoService.updateMembersInfo(memberInfo);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
-        memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-        return organizationMemberInfoService.update(memberInfo, new QueryWrapper<OrganizationMemberInfo>().eq("member_id", memberId).eq("project_id", projectId)) ? 1 : 0;
-
     }
-
-
 }

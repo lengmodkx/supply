@@ -144,11 +144,13 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
 
     /**
-     * 获取企业成员详细信息
-     *
-     * @param projectId
-     * @return
-     */
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取企业成员详细信息
+    * @create: 14:41 2020/4/23
+    */
     @Override
     public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
         //根据项目id查询项目信息
@@ -167,28 +169,30 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 e.printStackTrace();
             }
         });
-
         memberIds.stream().forEach(userId -> {
             OrganizationMemberInfo memberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(userId);
+            UserEntity byId = userService.findById(userId);
+            dto.setMemberEmail(byId.getEmail());
             if (memberInfo!=null) {
-
+                dto.setMemberName(memberInfo.getUserName());
+                dto.setMemberPhone(memberInfo.getPhone());
                 try {
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
-                    Long aLong = c.getTimeInMillis();
-                    Long l = System.currentTimeMillis();
+                    //设置司龄
+                    if (memberInfo.getEntryTime()!=null) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
+                        Long aLong = c.getTimeInMillis();
+                        Long l = System.currentTimeMillis();
 
-                    float num  =(float) (l-aLong) /1000/60/60/24/365;
-                    DecimalFormat df = new DecimalFormat("0.0");
-                    memberInfo.setStayComDate(df.format(num)+"年");
+                        float num  =(float) (l-aLong) /1000/60/60/24/365;
+                        DecimalFormat df = new DecimalFormat("0.0");
+                        memberInfo.setStayComDate(df.format(num)+"年");
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
-
             dto.setOrganizationMemberInfo(memberInfo);
-
-
         });
         list.add(dto);
 
@@ -337,13 +341,21 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         //查询部门成员信息
         PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
 
-        //上级名称
-        String parentName = "";
-        if (deptInfo.getParentId().equals("0") && !StringUtils.isEmpty(deptInfo.getParentId())) {
-            parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
-        }
-        //邀请成功后将邀请成员的信息添加到企业用户详情表
         OrganizationMemberInfo info =new OrganizationMemberInfo();
+        String parentName = "";
+        if (partInfo!=null) {
+            if (deptInfo.getParentId().equals("0") && !StringUtils.isEmpty(deptInfo.getParentId())) {
+                parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
+            }
+            info.setDeptId(deptInfo.getPartmentId());
+            info.setDeptName(deptInfo.getPartmentName());
+            info.setParentId(deptInfo.getParentId());
+            info.setParentName(parentName);
+        }
+        //上级名称
+
+
+        //邀请成功后将邀请成员的信息添加到企业用户详情表
         info.setId(String.valueOf(UUID.randomUUID()));
         info.setProjectId(projectId);
         info.setMemberId(memberId);
@@ -352,16 +364,14 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         info.setBirthday(String.valueOf(user.getBirthday().getTime()));
         info.setCreateTime(String.valueOf(System.currentTimeMillis()));
         info.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-        info.setDeptId(deptInfo.getPartmentId());
-        info.setDeptName(deptInfo.getPartmentName());
+
         info.setMemberEmail(user.getEmail());
         //todo 入职时间录入问题待解决
         info.setJob(user.getJob());
         info.setUserName(user.getUserName());
-        info.setMemberLabel(partInfo.getMemberLabel());
-        info.setParentId(deptInfo.getParentId());
-        info.setParentName(parentName);
-        info.setMemberPhone(user.getAccountName());
+        info.setMemberLabel(String.valueOf(partInfo.getMemberLabel()));
+
+        info.setPhone(user.getAccountName());
         organizationMemberInfoService.save(info);
 
         return 1;

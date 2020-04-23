@@ -26,6 +26,8 @@ public class ProjectMemberDTO {
     @TableField(exist = false)
     private String memberImg;
 
+    @TableField(exist = false)
+    private String memberEmail;
 
     @TableField(exist = false)
     private Project project;

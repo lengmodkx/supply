@@ -45,7 +45,7 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   /**
      * 邮箱
    */
-  @TableField(value = "email")
+  @TableField(value = "memberEmail")
   private String memberEmail;
   /**
      * 生日
@@ -59,8 +59,7 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   /**
      * 电话号
    */
-  @TableField(value = "phone")
-  private String memberPhone;
+  private String phone;
   /**
    * 办公地点
    */
@@ -68,8 +67,8 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   /**
    * 员工类型 1:成员 2:拥有者 3:管理员
    */
-@TableField(value = "memberLabel")
-  private Integer memberLabel;
+  @TableField(value = "memberLabel")
+  private String memberLabel;
   /**
    * 职位
    */

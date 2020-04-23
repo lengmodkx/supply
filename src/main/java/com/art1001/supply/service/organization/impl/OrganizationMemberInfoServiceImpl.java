@@ -25,4 +25,9 @@ public class OrganizationMemberInfoServiceImpl extends ServiceImpl<OrganizationM
     public OrganizationMemberInfo findorgMemberInfoByMemberId(String userId) {
         return organizationMemberInfoMapper.findorgMemberInfoByMemberId(userId);
     }
+
+    @Override
+    public void updateMembersInfo(OrganizationMemberInfo memberInfo) {
+        organizationMemberInfoMapper.updateMembersInfo(memberInfo);
+    }
 }

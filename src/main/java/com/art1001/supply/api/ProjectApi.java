@@ -500,20 +500,20 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberId")String memberId,
             @RequestParam(value = "projectId")String projectId,
             @RequestParam(value = "userName",required = false) String userName,
-            @RequestParam(value = "entryTime",required = false) String entryTime,
+            @RequestParam(value = "entryTime",required = false) Date entryTime,
             @RequestParam(value = "job",required = false) String job,
-            @RequestParam(value = "memberLabel",required = false) Integer memberLabel,
+            @RequestParam(value = "memberLabel",required = false) String memberLabel,
             @RequestParam(value = "address",required = false) String address,
             @RequestParam(value = "memberEmail",required = false) String memberEmail,
-            @RequestParam(value = "accountName",required = false) String accountName,
-            @RequestParam(value = "birthday",required = false) String birthday,
+            @RequestParam(value = "phone",required = false) String phone,
+            @RequestParam(value = "birthday",required = false) Date birthday,
             @RequestParam(value = "deptName",required = false) String deptName,
             @RequestParam(value = "deptId",required = false) String deptId
            ){
         JSONObject jsonObject = new JSONObject();
         //memberId,userName,entryTime,job,memberLabel,address,email,phone,birthday,deptName,deptId
 //        Integer result=projectService.updateMembersInfo(organinfo);
-        Integer result=projectService.updateMembersInfo(memberId,projectId,userName,entryTime,job,memberLabel,address,memberEmail,accountName,birthday,deptName,deptId);
+        Integer result=projectService.updateMembersInfo(memberId,projectId,userName,entryTime,job,memberLabel,address,memberEmail,phone,birthday,deptName,deptId);
         if (result==0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }

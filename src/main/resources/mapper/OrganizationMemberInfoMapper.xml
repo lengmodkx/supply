@@ -8,12 +8,12 @@
         <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
         <result column="organization_id" property="organizationId" jdbcType="VARCHAR"/>
         <result column="userName" property="userName" jdbcType="VARCHAR"/>
-        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="memberEmail" property="memberEmail" jdbcType="VARCHAR"/>
         <result column="birthday" property="birthday" jdbcType="VARCHAR"/>
         <result column="entry_time" property="entryTime" jdbcType="VARCHAR"/>
         <result column="phone" property="phone" jdbcType="VARCHAR"/>
         <result column="address" property="address" jdbcType="VARCHAR"/>
-        <result column="memberLabel" property="memberLabel" jdbcType="INTEGER"/>
+        <result column="memberLabel" property="memberLabel" jdbcType="VARCHAR"/>
         <result column="job" property="job" jdbcType="VARCHAR"/>
         <result column="deptId" property="deptId" jdbcType="VARCHAR"/>
         <result column="deptName" property="deptName" jdbcType="VARCHAR"/>
@@ -29,7 +29,7 @@
         project_id,
         organization_id,
         userName,
-        email,
+        memberEmail,
         birthday,
         entry_time,
         phone,
@@ -50,6 +50,49 @@
      from prm_organization_member_info
      where member_id=#{userId}
     </select>
+
+    <update id="updateMembersInfo" parameterType="com.art1001.supply.entity.organization.OrganizationMemberInfo">
+        update prm_organization_member_info
+        <set>
+            <if test="memberId != null and memberId != ''">
+                member_id = #{memberId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="userName != null and userName != ''">
+                userName = #{userName},
+            </if>
+            <if test="memberEmail != null and memberEmail != ''">
+                memberEmail = #{memberEmail},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="entryTime != null and entryTime != ''">
+                entry_time = #{entryTime},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="memberLabel != null and memberLabel != ''">
+                memberLabel = #{memberLabel},
+            </if>
+            <if test="job != null and job != ''">
+                job = #{job},
+            </if>
+            <if test="deptId != null and deptId != ''">
+                deptId = #{deptId},
+            </if>
+            <if test="deptName != null and deptName != ''">
+                deptName = #{deptName},
+            </if>
+        </set>
+        where member_id=#{memberId} and project_id=#{projectId}
+    </update>
 
 
 </mapper>

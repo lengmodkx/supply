@@ -16,4 +16,6 @@ public interface OrganizationMemberInfoMapper extends BaseMapper<OrganizationMem
     * @create: 17:55 2020/4/22
     */
     OrganizationMemberInfo findorgMemberInfoByMemberId(String userId);
+
+    void updateMembersInfo(OrganizationMemberInfo memberInfo);
 }

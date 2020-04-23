@@ -15,4 +15,6 @@ public interface OrganizationMemberInfoService extends IService<OrganizationMemb
     * @create: 17:16 2020/4/22
     */
     OrganizationMemberInfo findorgMemberInfoByMemberId(@Param("userId") String userId);
+
+    void updateMembersInfo(OrganizationMemberInfo memberInfo);
 }
