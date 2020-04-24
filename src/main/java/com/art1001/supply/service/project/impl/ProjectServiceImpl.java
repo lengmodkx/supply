@@ -7,6 +7,8 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.ProRole;
@@ -17,6 +19,8 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
+import com.art1001.supply.service.partment.PartmentMemberService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
@@ -90,6 +94,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private OrganizationMemberInfoService organizationMemberInfoService;
+
+    @Resource
+    private PartmentMemberService partmentMemberService;
+
+    @Resource
+    private PartmentService partmentService;
 
     /**
      * 查询分页project数据
@@ -529,12 +539,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptName, String deptId) {
+    public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date entryTimeDate=new Date();
-            if (entryTime!=null) {
+            if (!entryTime.equals("")) {
                 String dateString = entryTime.replace("Z", " UTC");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
                  entryTimeDate = format.parse(dateString);
@@ -557,9 +566,25 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             memberInfo.setAddress(address);
             memberInfo.setMemberEmail(memberEmail);
             memberInfo.setPhone(phone);
-            memberInfo.setDeptName(deptName);
-            memberInfo.setDeptId(deptId);
+            if (deptId!=null) {
+                Partment partment = partmentService.findPartmentByPartmentId(deptId);
+                memberInfo.setDeptName(partment.getPartmentName());
+                memberInfo.setDeptId(deptId);
+            }
             memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
+
+            PartmentMember partmentMember = new PartmentMember();
+            partmentMember.setCreateTime(System.currentTimeMillis());
+            partmentMember.setUpdateTime(System.currentTimeMillis());
+            partmentMember.setMemberId(memberInfo.getMemberId());
+
+            if (!"".equals(memberInfo.getMemberLabel())) {
+                partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
+            }
+            //todo 时候拥有者 等待后期解决 目前先默认不是吧
+            partmentMember.setIsMaster(false);
+
+            partmentMemberService.update(partmentMember,new QueryWrapper<PartmentMember>().eq("member_id",memberId).eq("partment_id",deptId));
             organizationMemberInfoService.updateMembersInfo(memberInfo);
             return 1;
         } catch (Exception e) {

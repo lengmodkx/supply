@@ -9,13 +9,16 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -203,13 +206,12 @@ public class PartmentApi {
     public JSONObject getDeptNameByOrgId(@PathVariable String orgId) {
 
         JSONObject jsonObject = new JSONObject();
-        List<Partment> orgPartmentInfo = partmentService.findOrgPartmentInfo(orgId);
-        List<String> deptName = Lists.newArrayList();
+        List<Partment> orgPartmentInfo = partmentService.findOrgParentByOrgId(orgId);
         try {
             if (!CollectionUtils.isEmpty(orgPartmentInfo)) {
-                deptName = orgPartmentInfo.stream().map(Partment::getPartmentName).collect(Collectors.toList());
+
                 jsonObject.put("result", 1);
-                jsonObject.put("data", deptName);
+                jsonObject.put("data", orgPartmentInfo);
             }
         } catch (Exception e) {
            throw new AjaxException("系统异常，获取失败");

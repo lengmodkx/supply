@@ -97,4 +97,5 @@ public interface PartmentService extends IService<Partment> {
 	 */
     Partment getSimpleDeptInfo(String memberId);
 
+	List<Partment> findOrgParentByOrgId(String orgId);
 }

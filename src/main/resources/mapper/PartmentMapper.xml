@@ -214,4 +214,17 @@
         WHERE
         	pm.member_id = #{memberId}
 	</select>
+
+
+    <select id="findOrgParentByOrgId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        prm_partment
+        WHERE
+        organization_id = #{orgId}
+        ORDER BY
+        partment_order
+    </select>
+
 </mapper>

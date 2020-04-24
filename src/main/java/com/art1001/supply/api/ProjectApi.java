@@ -507,13 +507,10 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberEmail",required = false) String memberEmail,
             @RequestParam(value = "phone",required = false) String phone,
             @RequestParam(value = "birthday",required = false) String birthday,
-            @RequestParam(value = "deptName",required = false) String deptName,
             @RequestParam(value = "deptId",required = false) String deptId
            ){
         JSONObject jsonObject = new JSONObject();
-        //memberId,userName,entryTime,job,memberLabel,address,email,phone,birthday,deptName,deptId
-//        Integer result=projectService.updateMembersInfo(organinfo);
-        Integer result=projectService.updateMembersInfo(memberId,projectId,userName,entryTime,job,memberLabel,address,memberEmail,phone,birthday,deptName,deptId);
+        Integer result=projectService.updateMembersInfo(memberId,projectId,userName,entryTime,job,memberLabel,address,memberEmail,phone,birthday,deptId);
         if (result==0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
@@ -708,10 +705,13 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * 获取企业中的用户项目列表
-     * @param orgId 企业id
-     * @return 用户项目列表
-     */
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取企业部门名称及id
+    * @create: 12:02 2020/4/24
+    */
     @RequestMapping("/org/projects")
     public Result getUserProjectsInCurrOrg(@NotNull(message = "企业id不能为空!") String orgId){
         log.info("Get user the project list in organization. [{}]", orgId);

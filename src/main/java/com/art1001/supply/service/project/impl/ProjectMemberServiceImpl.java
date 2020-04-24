@@ -69,6 +69,8 @@ import static jdk.nashorn.internal.runtime.Debug.id;
 @Service
 public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, ProjectMember> implements ProjectMemberService {
 
+    private static final String POINTZERO="0.0";
+    private static final String ZERO="0";
     /**
      * projectMemberMapper接口
      */
@@ -182,21 +184,13 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                     //设置司龄
                     if (memberInfo.getEntryTime() != null) {
 
-                        //在家postman测不了，明天去了试试
-
-                        /*Calendar c = Calendar.getInstance();
-                        c.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(memberInfo.getEntryTime()));
-                        Long aLong = c.getTimeInMillis();*/
-
                         Long l = System.currentTimeMillis();
 
                         float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
-                        float num2=(float) (l - Long.valueOf(memberInfo.getEntryTime())) / 1000 / 60 / 60 / 24;
                         DecimalFormat df = new DecimalFormat("0.0");
-                        //司龄有待修改
-//                        if ((((float) (l - aLong)) / 1000 / 60 / 60 / 24)<40) {
+
                         String format = df.format(num);
-                        if ("0.0".equals(format)) {
+                        if (POINTZERO.equals(format)) {
                             memberInfo.setStayComDate("刚刚入职");
                         }else {
                             memberInfo.setStayComDate(df.format(num) + "年");
@@ -355,7 +349,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
             PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
             String parentName = "";
             if (partInfo!=null) {
-                if (deptInfo.getParentId().equals("0") && !StringUtils.isEmpty(deptInfo.getParentId())) {
+                if (deptInfo.getParentId().equals(ZERO) && !StringUtils.isEmpty(deptInfo.getParentId())) {
                     parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
                 }
                 info.setDeptId(deptInfo.getPartmentId());
@@ -387,7 +381,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         if (user.getEmail()!=null) {
             info.setMemberEmail(user.getEmail());
         }
-        //todo 入职时间录入问题待解决
         if (user.getJob()!=null) {
             info.setJob(user.getJob());
         }

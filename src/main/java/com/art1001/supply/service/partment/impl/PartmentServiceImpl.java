@@ -206,8 +206,29 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 		return subPartment;
 	}
 
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param:
+	* @return:
+	* @Description: 获取简单部门信息
+	* @create: 10:43 2020/4/24
+	*/
 	@Override
 	public Partment getSimpleDeptInfo(String memberId) {
 		return partmentMapper.getSimpleDeptInfo(memberId);
+	}
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param:
+	* @return:
+	* @Description: 根据企业id查询下属部门
+	* @create: 10:43 2020/4/24
+	*/
+	@Override
+	public List<Partment> findOrgParentByOrgId(String orgId) {
+		return partmentMapper.findOrgParentByOrgId(orgId);
 	}
 }
