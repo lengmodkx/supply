@@ -1169,7 +1169,7 @@ public class  TaskApi extends BaseController {
     /**
      * 更新任务的计划工时
      * @param taskId 任务id
-     * @param progress 进度值
+     * @param workingHours 进度值
      * @return 结果
      */
     @PostMapping("/work_hours")

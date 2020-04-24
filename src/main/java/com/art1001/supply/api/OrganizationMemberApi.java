@@ -5,11 +5,13 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.RoleService;
@@ -52,6 +54,10 @@ public class OrganizationMemberApi {
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private OrganizationMemberInfoService organizationMemberInfoService;
+
     /**
      * 未分配部门的员工
      */
@@ -237,13 +243,19 @@ public class OrganizationMemberApi {
     }
 
 
-
-
+    /**
+    * @Param: orgId企业id userId用户id
+    * @return:
+    * @Description: 移除企业成员
+    */
     @DeleteMapping
     public Result removeOrgUser(@RequestParam(value = "orgId",required = false) String orgId,
                                 @RequestParam(value = "userId") String userId){
         organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
         roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id",orgId).eq("u_id",userId));
+
+        //新修改  移除企业成员时需要把企业成员详情信息一并删除
+        organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>().eq("organization_id",orgId).eq("member_id",userId));
         return Result.success();
     }
 

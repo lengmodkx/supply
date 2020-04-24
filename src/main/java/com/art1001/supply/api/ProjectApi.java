@@ -15,9 +15,11 @@ import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -28,6 +30,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -81,6 +84,12 @@ public class ProjectApi extends BaseController {
 
     @Resource
     private ProResourcesService proResourcesService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrganizationMemberInfoService organizationMemberInfoService;
     /**
      * 创建项目
      *
@@ -116,6 +125,24 @@ public class ProjectApi extends BaseController {
         project.setEndTime(endTime);
         project.setMemberId(ShiroAuthenticationManager.getUserId());
         projectService.saveProject(project);
+
+        //新修改  创建企业时将创建者的信息放入到企业成员详情信息表
+        String userId = ShiroAuthenticationManager.getUserId();
+        UserEntity user = userService.findById(userId);
+        OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
+        memberInfo.setId(IdGen.uuid());
+        memberInfo.setMemberLabel("拥有者");
+        memberInfo.setOrganizationId(orgId);
+        memberInfo.setPhone(user.getAccountName());
+        memberInfo.setUserName(user.getUserName());
+        memberInfo.setMemberId(userId);
+        memberInfo.setMemberEmail(user.getEmail());
+        memberInfo.setJob(user.getJob());
+        memberInfo.setProjectId(project.getProjectId());
+        memberInfo.setCreateTime(String.valueOf(System.currentTimeMillis()));
+        memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
+        organizationMemberInfoService.save(memberInfo);
+
         //写资源表
         object.put("result", 1);
         object.put("data", project.getProjectId());
@@ -533,8 +560,7 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
         jsonObject.put("msgId", projectId);
-        jsonObject.put("publicType", "project");
-        jsonObject.put("id", projectId);
+        jsonObject.put("data", projectId);
         jsonObject.put("result",1);
         jsonObject.put("message","修改成功");
         return jsonObject;

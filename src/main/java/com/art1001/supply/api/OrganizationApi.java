@@ -4,15 +4,20 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ApiParamsCheckException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.resource.ResourceService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
@@ -46,6 +51,12 @@ public class OrganizationApi {
     @Resource
     private ResourceService resourceService;
 
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrganizationMemberInfoService organizationMemberInfoService;
+
     /**
      * 新增企业
      * @param organization 企业信息
@@ -58,6 +69,7 @@ public class OrganizationApi {
             ValidatorUtils.validateEntity(organization, SaveOrg.class);
             organization.setOrganizationImage("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/org-img.jpg");
             organizationService.saveOrganization(organization);
+
             jsonObject.put("result",1);
             jsonObject.put("data", organization.getOrganizationId());
         } catch (ApiParamsCheckException e){
