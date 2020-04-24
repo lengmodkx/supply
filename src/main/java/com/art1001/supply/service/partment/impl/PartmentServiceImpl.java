@@ -215,8 +215,8 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	* @create: 10:43 2020/4/24
 	*/
 	@Override
-	public Partment getSimpleDeptInfo(String memberId) {
-		return partmentMapper.getSimpleDeptInfo(memberId);
+	public Partment getSimpleDeptInfo(String memberId,String orgId) {
+		return partmentMapper.getSimpleDeptInfo(memberId,orgId);
 	}
 
 	/**

@@ -559,8 +559,9 @@ public class ProjectApi extends BaseController {
         if (result==0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
+        List<OrganizationMemberInfo> organizationMemberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(memberId, projectId);
         jsonObject.put("msgId", projectId);
-        jsonObject.put("data", projectId);
+        jsonObject.put("data", new JSONObject().fluentPut("projectId",projectId).fluentPut("organizationMemberInfo",organizationMemberInfo));
         jsonObject.put("result",1);
         jsonObject.put("message","修改成功");
         return jsonObject;

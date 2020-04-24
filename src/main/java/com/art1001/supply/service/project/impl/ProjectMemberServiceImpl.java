@@ -352,7 +352,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         //根据用户id查询用户信息
         UserEntity user = userService.findById(memberId);
         //查询部门信息
-        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId());
+        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId(),orgId);
         OrganizationMemberInfo info =new OrganizationMemberInfo();
         if (deptInfo!=null) {
             PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
