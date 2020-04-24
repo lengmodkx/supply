@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @ClassName OrganizationMemberInfoServiceImpl
@@ -22,8 +23,8 @@ public class OrganizationMemberInfoServiceImpl extends ServiceImpl<OrganizationM
     private OrganizationMemberInfoMapper organizationMemberInfoMapper;
 
     @Override
-    public OrganizationMemberInfo findorgMemberInfoByMemberId(String userId) {
-        return organizationMemberInfoMapper.findorgMemberInfoByMemberId(userId);
+    public List<OrganizationMemberInfo> findorgMemberInfoByMemberId(String userId,String projectId) {
+        return organizationMemberInfoMapper.findorgMemberInfoByMemberId(userId,projectId);
     }
 
     @Override

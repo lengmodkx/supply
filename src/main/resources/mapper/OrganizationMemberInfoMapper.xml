@@ -48,7 +48,7 @@
     SELECT
     <include refid="Base_Column_List" />
      from prm_organization_member_info
-     where member_id=#{userId}
+     where member_id=#{userId} and project_id = #{projectId}
     </select>
 
     <update id="updateMembersInfo" parameterType="com.art1001.supply.entity.organization.OrganizationMemberInfo">

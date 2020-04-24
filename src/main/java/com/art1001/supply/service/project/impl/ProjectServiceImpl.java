@@ -568,7 +568,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             memberInfo.setPhone(phone);
             if (deptId!=null) {
                 Partment partment = partmentService.findPartmentByPartmentId(deptId);
-                memberInfo.setDeptName(partment.getPartmentName());
+                if (partment!=null) {
+                    memberInfo.setDeptName(partment.getPartmentName());
+                }
                 memberInfo.setDeptId(deptId);
             }
             memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));

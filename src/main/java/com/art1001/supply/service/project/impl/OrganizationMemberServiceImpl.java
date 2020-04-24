@@ -1,6 +1,7 @@
 package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.partment.Partment;
@@ -10,6 +11,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
@@ -69,6 +71,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Resource
 	private PartmentMemberService partmentMemberService;
+
+	@Resource
+	private OrganizationMemberInfoService organizationMemberInfoService;
 
 	private String orgId;
 	private String userId;
@@ -256,11 +261,20 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 			Boolean updateOwner= organizationMemberMapper.updateOwner(orgId,ownerId);
 			Boolean updateMember=organizationMemberMapper.updateMember(orgId,memberId);
 			Boolean updatOorganization = organizationMapper.updatOorganization(orgId,ownerId,memberId);
+
+			//新修改 当用户移交企业权限后，用户信息表的memberlabel更改为成员
+			OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
+			memberInfo.setMemberLabel("成员");
+			//生成sql
+			organizationMemberInfoService.update(memberInfo,new QueryWrapper<OrganizationMemberInfo>()
+					.eq("member_id",memberId).eq("organization_id",orgId));
+
 			//将userRole表权限互换
 			Boolean updateRoleTransfer=roleUserService.updateRoleTransfer(orgId,ownerId,memberId);
 			if (updateOwner && updateMember && updatOorganization && updateRoleTransfer){
 				return true;
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

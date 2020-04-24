@@ -537,6 +537,28 @@ public class ProjectApi extends BaseController {
     }
 
     /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: projectId 项目id
+    * @return:
+    * @Description: 推送消息
+    * @create: 14:21 2020/4/24
+    */
+    @Push(value = PushType.K1)
+    @PutMapping("/{projectId}/SendMemberInfoMsg")
+    public JSONObject SendMemberInfoMsg(@PathVariable("projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("publicType", "project");
+            jsonObject.put("id", projectId);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常，推送失败");
+        }
+        return jsonObject;
+    }
+
+    /**
      * 获取项目甘特图的数据
      * @param projectId 项目id
      * @return

@@ -45,6 +45,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.codec.language.bm.Languages;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -158,51 +159,59 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Override
     public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
         //根据项目id查询项目信息
-        List<ProjectMember> byProjectId = projectMemberMapper.findByProjectId(projectId);
-        List<String> memberIds = byProjectId.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+        List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
+//        List<String> memberIds = projects.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
 
         List<ProjectMemberDTO> list = Lists.newArrayList();
 
-        ProjectMemberDTO dto = new ProjectMemberDTO();
 
-        byProjectId.stream().forEach(r -> {
+        /*projects.stream().forEach(r -> {
             try {
-                BeanUtils.copyProperties(r,dto);
+                BeanUtils.copyProperties(r, dto);
                 dto.setAccountName(r.getMemberPhone());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
-        memberIds.stream().forEach(userId -> {
-            OrganizationMemberInfo memberInfo = organizationMemberInfoService.findorgMemberInfoByMemberId(userId);
-            UserEntity byId = userService.findById(userId);
+        });*/
+        projects.stream().forEach(project -> {
+            ProjectMemberDTO dto = new ProjectMemberDTO();
+
+            BeanUtils.copyProperties(project,dto);
+            dto.setAccountName(project.getMemberPhone());
+
+            List<OrganizationMemberInfo> memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(),project.getProjectId());
+            UserEntity byId = userService.findById(project.getMemberId());
             dto.setMemberEmail(byId.getEmail());
-            if (memberInfo != null) {
-                dto.setMemberName(memberInfo.getUserName());
-                dto.setMemberPhone(memberInfo.getPhone());
-                try {
-                    //设置司龄
-                    if (memberInfo.getEntryTime() != null) {
+            if (!CollectionUtils.isEmpty(memberInfos)) {
 
-                        Long l = System.currentTimeMillis();
+                memberInfos.stream().forEach(memberInfo->{
+                    dto.setMemberName(memberInfo.getUserName());
+                    dto.setMemberPhone(memberInfo.getPhone());
+                    try {
+                        //设置司龄
+                        if (memberInfo.getEntryTime() != null) {
 
-                        float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
-                        DecimalFormat df = new DecimalFormat("0.0");
+                            Long l = System.currentTimeMillis();
 
-                        String format = df.format(num);
-                        if (POINTZERO.equals(format)) {
-                            memberInfo.setStayComDate("刚刚入职");
-                        }else {
-                            memberInfo.setStayComDate(df.format(num) + "年");
+                            float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
+                            DecimalFormat df = new DecimalFormat("0.0");
+
+                            String format = df.format(num);
+                            if (POINTZERO.equals(format)) {
+                                memberInfo.setStayComDate("刚刚入职");
+                            }else {
+                                memberInfo.setStayComDate(df.format(num) + "年");
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    dto.setOrganizationMemberInfo(memberInfo);
+                    list.add(dto);
+                });
             }
-            dto.setOrganizationMemberInfo(memberInfo);
+
         });
-        list.add(dto);
 
         return list;
     }
