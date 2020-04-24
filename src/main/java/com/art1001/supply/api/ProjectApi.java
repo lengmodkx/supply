@@ -512,6 +512,7 @@ public class ProjectApi extends BaseController {
    * @Description: 修改企业详细信息
    * @create: 11:32 2020/4/22
    */
+    @Push(value = PushType.K1,type = 3)
     @PostMapping("/updateMembersInfo")
     public JSONObject updateMembersInfo(
             @RequestParam(value = "memberId")String memberId,
@@ -531,32 +532,15 @@ public class ProjectApi extends BaseController {
         if (result==0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
+        jsonObject.put("msgId", projectId);
+        jsonObject.put("publicType", "project");
+        jsonObject.put("id", projectId);
         jsonObject.put("result",1);
         jsonObject.put("message","修改成功");
         return jsonObject;
     }
 
-    /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param: projectId 项目id
-    * @return:
-    * @Description: 推送消息
-    * @create: 14:21 2020/4/24
-    */
-    @Push(value = PushType.K1)
-    @PutMapping("/{projectId}/SendMemberInfoMsg")
-    public JSONObject SendMemberInfoMsg(@PathVariable("projectId") String projectId){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("msgId", projectId);
-            jsonObject.put("publicType", "project");
-            jsonObject.put("id", projectId);
-        } catch (Exception e) {
-            throw new AjaxException("系统异常，推送失败");
-        }
-        return jsonObject;
-    }
+
 
     /**
      * 获取项目甘特图的数据

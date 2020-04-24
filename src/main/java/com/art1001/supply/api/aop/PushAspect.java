@@ -132,7 +132,7 @@ public class PushAspect extends BaseController {
             }
         }
         //去除无用的返回参数
-         object.remove("msgId");
+        object.remove("msgId");
         object.remove("data");
         object.remove("id");
         object.remove("name");
