@@ -7,6 +7,7 @@ import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.project.ProjectTreeVO;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Date;
@@ -234,4 +235,15 @@ public interface ProjectService extends IService<Project> {
     */
 	Integer updateMembersInfo(String memberId,String projectId,String userName,String entryTime, String job,String memberLabel,String address,String memberEmail,String phone,String birthday,String deptId);
 
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param: orgId 企业id
+	* @Param: memberId 用户id
+	* @Param: dateSort 查询时间戳
+	* @return:
+	* @Description: 根据用户id和项目id获取任务列表
+	* @create: 18:08 2020/4/26
+	*/
+    List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort);
 }

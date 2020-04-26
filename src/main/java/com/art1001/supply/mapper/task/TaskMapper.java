@@ -736,4 +736,6 @@ public interface TaskMapper extends BaseMapper<Task> {
     void updateAll(@Param("userId") String userId, @Param("id") String id);
 
 	List<MemberViewResult> memberView(@Param("projectId") String projectId);
+
+    List<Task> getTaskPanelByStartAndEndTime(@Param("ids")List<String> taskIds, @Param("startTime") String startTime, @Param("endTime") String endTime);
 }

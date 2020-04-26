@@ -1576,4 +1576,32 @@ select
 		LEFT JOIN prm_file as f on f.public_id = t.task_id
 		where t.executor = #{excutorId} and t.project_id = #{projectId} and t.task_del = 0 GROUP BY task_id order by t.`order` asc
 	</select>
+
+
+		<select id="getTaskPanelByStartAndEndTime" resultMap="panelListMap">
+		SELECT
+		t.task_id,
+		t.task_name,
+		f.start_time,
+		f.project_id,
+		f.end_time,
+		t.executor,
+		m.relation_id,
+		m.relation_name,
+		u.user_name,
+		u.image
+		FROM
+		prm_task AS t
+		LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
+		LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
+		LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		WHERE
+		t.task_id IN
+		<foreach collection="ids" item="id" separator="," close=")" open="(">
+			#{id}
+		</foreach>
+		AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
+		BETWEEN  #{startTime}  and  #{endTime}
+		ORDER by t.create_time ,f.create_time DESC
+	</select>
 </mapper>

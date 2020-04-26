@@ -687,4 +687,17 @@ public interface TaskService extends IService<Task> {
 	 * @param workingHours 计划工时
 	 */
 	void updatePlanWorkHours(String taskId, Double workingHours);
+
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param: projectId 项目id
+	* @Param: startTime 每月第一天
+	* @Param: endTime 每月最后一天
+	* @return:
+	* @Description: 根据项目id，月份第一天和最后一天查询本月的任务
+	* @create: 18:18 2020/4/26
+	*/
+	List<Task> getTaskPanelByStartAndEndTime(String projectId, String startTime, String endTime);
 }

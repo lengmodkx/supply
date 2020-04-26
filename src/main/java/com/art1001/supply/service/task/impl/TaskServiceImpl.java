@@ -77,7 +77,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
+public class
+TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
     @Resource
     private TaskService taskService;
@@ -1966,6 +1967,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
         String content = TaskLogFunction.A35.getName() + workingHours + "小时";
         logService.saveLog(taskId,content, 1);
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email： dengkaixin@art1001.com
+    * @Param: projectId 项目id startTime每月第一天 endTime 每月最后一天
+    * @return: List<Task>
+    * @Description: 根据项目id，开始时间，结束时间查询任务集合
+    * @create: 14:11 2020/4/26
+    */
+    @Override
+    public List<Task> getTaskPanelByStartAndEndTime(String projectId, String startTime, String endTime) {
+        String projectAllTask = projectService.findProjectAllTask(projectId);
+        if (StringUtils.isEmpty(projectAllTask)) {
+            return new ArrayList<>();
+        }
+        List<String> taskIds = Arrays.asList(projectAllTask.split(","));
+
+        return taskMapper.getTaskPanelByStartAndEndTime(taskIds,startTime,endTime);
     }
 }
 

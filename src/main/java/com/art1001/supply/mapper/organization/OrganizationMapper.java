@@ -85,7 +85,7 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
      * @date 2019/5/29 10:56
      * @return 企业项目集合
      */
-    List<Project> selectProject(@Param("orgId") String orgId,@Param("userId")String userId);
+    List<Project> selectProject(@Param("userId")String userId,@Param("orgId") String orgId);
 
 	/**
 	 * 修改Organiza表的拥有者

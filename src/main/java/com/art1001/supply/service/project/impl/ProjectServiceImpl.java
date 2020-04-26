@@ -14,11 +14,13 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -38,8 +40,10 @@ import com.art1001.supply.util.MyBeanUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,6 +104,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private PartmentService partmentService;
+
+    @Resource
+    private OrganizationService organizationService;
+
+    @Resource
+    private ProjectService projectService;
 
     /**
      * 查询分页project数据
@@ -543,7 +553,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         try {
             Date entryTimeDate=new Date();
-            if (!entryTime.equals("")) {
+            if (!entryTime.equals("")&&entryTime!=null) {
                 String dateString = entryTime.replace("Z", " UTC");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
                  entryTimeDate = format.parse(dateString);
@@ -551,7 +561,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             }
 
             Date birthdayDate=new Date();
-            if (birthday!=null) {
+            if (!"".equals(birthday)&&birthday!=null) {
                 String dateString = entryTime.replace("Z", " UTC");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
                 birthdayDate = format.parse(dateString);
@@ -593,5 +603,64 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             e.printStackTrace();
             return 0;
         }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: orgId 企业id
+    * @Param: memberId 用户id
+    * @Param: dateSort 查询时间戳
+    * @return:
+    * @Description: 根据用户id和项目id获取任务列表
+    * @create: 18:10 2020/4/26
+    */
+    @Override
+    public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) {
+        //时间戳转换
+        Long aLong = Long.valueOf(dateSort);
+        Timestamp timestamp = new Timestamp(aLong);
+        Date date = timestamp;
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(date);
+        int month = instance.get(Calendar.MONTH);
+        int year = instance.get(Calendar.YEAR);
+
+
+        //获取月份第一天和最后一天
+        String startTime = DateUtils.getFisrtDayOfMonth(year, month+1 );
+        String endTime = DateUtils.getLastDayOfMonth(year, month+1 );
+
+
+        //根据指定的用户id和企业id查询项目信息
+        List<Project> projects = organizationService.getProjectByUserIdAndOrgId(memberId, orgId);
+        List<TaskDynamicVO> list = Lists.newArrayList();
+
+
+        if (!CollectionUtils.isEmpty(projects)) {
+            //遍历项目列表
+            projects.forEach(r -> {
+                //根据项目id，月份第一天和最后一天查询本月的任务
+                List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
+                //放入projectId
+                tasks.stream().forEach(e->{ e.setProjectId(r.getProjectId());});
+                if (!CollectionUtils.isEmpty(tasks)) {
+                    tasks.forEach(task -> {
+                        //根据项目id查询项目成员信息
+                        List<String> collect = projectMemberService.findByProjectId(task.getProjectId())
+                                .stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+                        TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
+                        BeanUtils.copyProperties(task, taskDynamicVO);
+                        //查询项目名
+                        taskDynamicVO.setProjectName(projectService.getOne(new QueryWrapper<Project>()
+                                .select("project_name").eq("project_id", taskDynamicVO.getProjectId()))
+                                .getProjectName());
+                        taskDynamicVO.setProjectMembers(collect.size());
+                        list.add(taskDynamicVO);
+                    });
+                }
+            });
+        }
+        return list;
     }
 }
