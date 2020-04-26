@@ -233,4 +233,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		});
 		return roles;
 	}
+
+	@Override
+	public Integer getOrgRoleIdByName(String orgId, String roleName) {
+		//构造出查询该企业超级管理员id的条件表达式
+		LambdaQueryWrapper<Role> selectAdministratorId = new QueryWrapper<Role>().lambda()
+				.eq(Role::getOrganizationId, orgId)
+				.eq(Role::getRoleName, roleName);
+		Role role = roleMapper.selectOne(selectAdministratorId);
+		if(role != null){
+			return role.getRoleId();
+		}
+		return 0;
+	}
 }

@@ -121,4 +121,16 @@ public interface RoleService extends IService<Role> {
     Role getRoleAndResourcesInfo(Integer roleId);
 
     List<Role> roleForMember(String userId, String orgId);
+
+    /**
+     * 根据角色name,查询出某个企业的对应角色
+     * @author heShaoHua
+     * @describe 企业默认角色key说明 拥有者:administrator  管理员:admin 成员:member
+     * @param orgId 企业id
+     * @param roleName 角色name
+     * @updateInfo 暂无
+     * @date 2019/5/29 15:25
+     * @return 角色id
+     */
+    Integer getOrgRoleIdByName(String orgId, String roleName);
 }
