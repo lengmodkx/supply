@@ -1218,7 +1218,11 @@ public class FileApi extends BaseController {
         try{
             if(StringUtils.isNotEmpty(userIds)){
                 File file = fileService.findFileById(folderId);
-                file.setFileUids(file.getFileUids());
+                if (file.getFileUids()==null){
+                    file.setFileUids(userIds);
+                }else{
+                    file.setFileUids(file.getFileUids()+","+userIds);
+                }
                 fileService.updateById(file);
             }
             jsonObject.put("result", 1);
@@ -1240,13 +1244,15 @@ public class FileApi extends BaseController {
         try{
 
                 File file = fileService.findFileById(folderId);
-                if(StringUtils.isEmpty(file.getFileUids())){
+                if(!StringUtils.isEmpty(file.getFileUids())){
                     List<String> ids = Arrays.asList(file.getFileUids().split(","));
-                    ids.forEach(id->{
-                        if (id.equals(userIds)){
-                            ids.remove(id);
+                    List arrList = new ArrayList(ids);
+                    for(int i=0;i<arrList.size();i++){
+                        if (arrList.get(i).equals(userIds)){
+                            arrList.remove(i);
+                            i--;
                         }
-                    });
+                    }
                     file.setFileUids(StringUtils.join(ids, ","));
                 }
                 fileService.updateById(file);
