@@ -653,7 +653,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                         BeanUtils.copyProperties(task, taskDynamicVO);
                         //查询项目名
                         taskDynamicVO.setProjectName(projectService.getOne(new QueryWrapper<Project>()
-                                .select("project_name").eq("project_id", taskDynamicVO.getProjectId()))
+                                .select("project_name").eq("project_id", task.getProjectId()))
                                 .getProjectName());
                         taskDynamicVO.setProjectMembers(collect.size());
                         list.add(taskDynamicVO);
