@@ -619,8 +619,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) {
         //时间戳转换
         Long aLong = Long.valueOf(dateSort);
-        Timestamp timestamp = new Timestamp(aLong);
-        Date date = timestamp;
+        Date date = new Timestamp(aLong);
         Calendar instance = Calendar.getInstance();
         instance.setTime(date);
         int month = instance.get(Calendar.MONTH);
@@ -643,19 +642,23 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
 
-                List<String> collect = projectMemberService.findByProjectId(r.getProjectId())
+                //合成一个sql语句 回家改
+                List<String> projectMembers = projectMemberService.findByProjectId(r.getProjectId())
                         .stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
 
                 String projectName = projectService.getOne(new QueryWrapper<Project>()
                         .select("project_name").eq("project_id", r.getProjectId()))
                         .getProjectName();
+
+
+
                 if (!CollectionUtils.isEmpty(tasks)) {
                     tasks.forEach(task->{
                         TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
                         BeanUtils.copyProperties(task, taskDynamicVO);
                         taskDynamicVO.setProjectId(r.getProjectId());
                         taskDynamicVO.setProjectName(projectName);
-                        taskDynamicVO.setProjectMembers(collect.size());
+                        taskDynamicVO.setProjectMembers(projectMembers.size());
                         list.add(taskDynamicVO);
                     });
                 }

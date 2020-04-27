@@ -186,7 +186,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
      * @Description: 获取企业成员详细信息
      * @create: 14:41 2020/4/23
      */
-    @Override
+    /*@Override
     public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
         //根据项目id查询项目信息
         List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
@@ -204,7 +204,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 if (memberInfos != null) {
                     dto.setMemberName(memberInfos.getUserName());
                     dto.setMemberPhone(memberInfos.getPhone());
-
                     //设置司龄
                     if (memberInfos.getEntryTime() != null) {
                         Long l = System.currentTimeMillis();
@@ -227,7 +226,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return list;
 
     }
-
+*/
     /**
      * 查询成员是否存在于项目中
      *

@@ -105,6 +105,11 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
   private String updateTime;
 
   /**
+   * 用户头像
+   */
+  private String image;
+
+  /**
    * 司龄
    */
   @TableField(exist = false)

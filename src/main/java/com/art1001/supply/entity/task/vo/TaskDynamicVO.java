@@ -1,6 +1,9 @@
 package com.art1001.supply.entity.task.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @ClassName TaskDynamicVO

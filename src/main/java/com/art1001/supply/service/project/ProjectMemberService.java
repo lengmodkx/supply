@@ -31,7 +31,7 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @param projectId
 	 * @return
 	 */
-	List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId);
+//	List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId);
 
 	/**
 	 * 查询成员是否存在于项目中

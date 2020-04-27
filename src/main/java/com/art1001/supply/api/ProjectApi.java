@@ -579,10 +579,11 @@ public class ProjectApi extends BaseController {
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
-        List<ProjectMemberDTO> collect = projectMemberService.findByProjectIdAndOrgId(projectId)
+    /*    List<ProjectMemberDTO> collect = projectMemberService.findByProjectIdAndOrgId(projectId)
                 .stream().filter(f -> f.getOrganizationMemberInfo().getMemberId().equals(memberId))
-                .collect(Collectors.toList());
-        jsonObject.put("date", collect);
+                .collect(Collectors.toList());*/
+
+        jsonObject.put("date", projectMemberService.findMemberByOrgId(projectId,memberId));
         jsonObject.put("msgId", projectId);
         jsonObject.put("result", 1);
 
