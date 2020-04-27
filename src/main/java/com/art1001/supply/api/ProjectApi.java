@@ -514,11 +514,11 @@ public class ProjectApi extends BaseController {
         return jsonObject;
     }
 
-    /*    *//**
+    /**
      * 根据项目id 获取成员信息
      * @param projectId 项目id
      * @return 成员信息
-     *//*
+     */
     @GetMapping("/{projectId}/members")
     public JSONObject getMembersByProject(@PathVariable String projectId){
         JSONObject jsonObject = new JSONObject();
@@ -529,7 +529,7 @@ public class ProjectApi extends BaseController {
         } catch (Exception e){
             throw new AjaxException("系统异常,获取成员信息失败!",e);
         }
-    }*/
+    }
 
     /**
      * @Author: 邓凯欣
@@ -539,8 +539,8 @@ public class ProjectApi extends BaseController {
      * @Description: 获取项目成员详细信息
      * @create: 11:33 2020/4/22
      */
-    @GetMapping("/{projectId}/members")
-    public JSONObject getMembersByProject(@PathVariable String projectId) {
+    @GetMapping("/{projectId}/getOneMembers")
+    public JSONObject getMemberByProject(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("data", projectMemberService.findByProjectIdAndOrgId(projectId));
