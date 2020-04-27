@@ -162,18 +162,19 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
         List<ProjectMemberDTO> list = Lists.newArrayList();
 
-        projects.stream().forEach(project -> {
-            ProjectMemberDTO dto = new ProjectMemberDTO();
-            BeanUtils.copyProperties(project, dto);
-            dto.setAccountName(project.getMemberPhone());
+        try {
+            projects.forEach(project -> {
+                ProjectMemberDTO dto = new ProjectMemberDTO();
+                BeanUtils.copyProperties(project, dto);
+                dto.setAccountName(project.getMemberPhone());
 
-            OrganizationMemberInfo memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(), project.getProjectId());
-            UserEntity byId = userService.findById(project.getMemberId());
-            dto.setMemberEmail(byId.getEmail());
-            if (memberInfos != null) {
-                dto.setMemberName(memberInfos.getUserName());
-                dto.setMemberPhone(memberInfos.getPhone());
-                try {
+                OrganizationMemberInfo memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(), project.getProjectId());
+                UserEntity byId = userService.findById(project.getMemberId());
+                dto.setMemberEmail(byId.getEmail());
+                if (memberInfos != null) {
+                    dto.setMemberName(memberInfos.getUserName());
+                    dto.setMemberPhone(memberInfos.getPhone());
+
                     //设置司龄
                     if (memberInfos.getEntryTime() != null) {
                         Long l = System.currentTimeMillis();
@@ -183,19 +184,18 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                         String format = df.format(num);
                         if (POINTZERO.equals(format)) {
                             memberInfos.setStayComDate("刚刚入职");
-                        } else {
-                            memberInfos.setStayComDate(df.format(num) + "年");
                         }
+                        memberInfos.setStayComDate(df.format(num) + "年");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    dto.setOrganizationMemberInfo(memberInfos);
+                    list.add(dto);
                 }
-                dto.setOrganizationMemberInfo(memberInfos);
-                list.add(dto);
-            }
-        });
-
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return list;
+
     }
 
     /**

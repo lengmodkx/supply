@@ -780,12 +780,9 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * @Author: 邓凯欣
-     * @Email：dengkaixin@art1001.com
-     * @Param:
-     * @return:
-     * @Description: 获取企业部门名称及id
-     * @create: 12:02 2020/4/24
+     * 获取企业中的用户项目列表
+     * @param orgId 企业id
+     * @return 用户项目列表
      */
     @RequestMapping("/org/projects")
     public Result getUserProjectsInCurrOrg(@NotNull(message = "企业id不能为空!") String orgId) {

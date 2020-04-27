@@ -552,16 +552,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         try {
-            Date entryTimeDate=new Date();
-            if (!entryTime.equals("")&&entryTime!=null) {
+            Date entryTimeDate = new Date();
+            if (!entryTime.equals("") && entryTime != null) {
                 String dateString = entryTime.replace("Z", " UTC");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
-                 entryTimeDate = format.parse(dateString);
+                entryTimeDate = format.parse(dateString);
                 memberInfo.setEntryTime(String.valueOf(entryTimeDate.getTime()));
             }
 
-            Date birthdayDate=new Date();
-            if (!"".equals(birthday)&&birthday!=null) {
+            Date birthdayDate = new Date();
+            if (!"".equals(birthday) && birthday != null) {
                 String dateString = entryTime.replace("Z", " UTC");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
                 birthdayDate = format.parse(dateString);
@@ -576,9 +576,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             memberInfo.setAddress(address);
             memberInfo.setMemberEmail(memberEmail);
             memberInfo.setPhone(phone);
-            if (deptId!=null) {
+            if (deptId != null) {
                 Partment partment = partmentService.findPartmentByPartmentId(deptId);
-                if (partment!=null) {
+                if (partment != null) {
                     memberInfo.setDeptName(partment.getPartmentName());
                 }
                 memberInfo.setDeptId(deptId);
@@ -596,7 +596,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             //todo 时候拥有者 等待后期解决 目前先默认不是吧
             partmentMember.setIsMaster(false);
 
-            partmentMemberService.update(partmentMember,new QueryWrapper<PartmentMember>().eq("member_id",memberId).eq("partment_id",deptId));
+            partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>().eq("member_id", memberId).eq("partment_id", deptId));
             organizationMemberInfoService.updateMembersInfo(memberInfo);
             return 1;
         } catch (Exception e) {
@@ -606,15 +606,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param: orgId 企业id
-    * @Param: memberId 用户id
-    * @Param: dateSort 查询时间戳
-    * @return:
-    * @Description: 根据用户id和项目id获取任务列表
-    * @create: 18:10 2020/4/26
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param: orgId 企业id
+     * @Param: memberId 用户id
+     * @Param: dateSort 查询时间戳
+     * @return:
+     * @Description: 根据用户id和项目id获取任务列表
+     * @create: 18:10 2020/4/26
+     */
     @Override
     public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) {
         //时间戳转换
@@ -628,8 +628,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
 
         //获取月份第一天和最后一天
-        String startTime = DateUtils.getFisrtDayOfMonth(year, month+1 );
-        String endTime = DateUtils.getLastDayOfMonth(year, month+1 );
+        String startTime = DateUtils.getFisrtDayOfMonth(year, month + 1);
+        String endTime = DateUtils.getLastDayOfMonth(year, month + 1);
 
 
         //根据指定的用户id和企业id查询项目信息
@@ -642,19 +642,19 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             projects.forEach(r -> {
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
-                //放入projectId
-                tasks.stream().forEach(e->{ e.setProjectId(r.getProjectId());});
+
+                List<String> collect = projectMemberService.findByProjectId(r.getProjectId())
+                        .stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+
+                String projectName = projectService.getOne(new QueryWrapper<Project>()
+                        .select("project_name").eq("project_id", r.getProjectId()))
+                        .getProjectName();
                 if (!CollectionUtils.isEmpty(tasks)) {
-                    tasks.forEach(task -> {
-                        //根据项目id查询项目成员信息
-                        List<String> collect = projectMemberService.findByProjectId(task.getProjectId())
-                                .stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+                    tasks.forEach(task->{
                         TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
                         BeanUtils.copyProperties(task, taskDynamicVO);
-                        //查询项目名
-                        taskDynamicVO.setProjectName(projectService.getOne(new QueryWrapper<Project>()
-                                .select("project_name").eq("project_id", task.getProjectId()))
-                                .getProjectName());
+                        taskDynamicVO.setProjectId(r.getProjectId());
+                        taskDynamicVO.setProjectName(projectName);
                         taskDynamicVO.setProjectMembers(collect.size());
                         list.add(taskDynamicVO);
                     });

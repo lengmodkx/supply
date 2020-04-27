@@ -2,11 +2,13 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.ProRoleUserService;
@@ -52,6 +54,9 @@ public class MemberInvitationApi extends BaseController {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private OrganizationMemberInfoService organizationMemberInfoService;
     /**
      * 通过用户账户查询用户
      * @param keyword 关键字
@@ -117,6 +122,9 @@ public class MemberInvitationApi extends BaseController {
 
             proRoleUserService.remove(new QueryWrapper<ProRoleUser>().lambda()
                     .eq(ProRoleUser::getUId,memberId).eq(ProRoleUser::getProjectId, projectId));
+
+            organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>()
+                    .eq("member_id",memberId).eq("project_id", projectId));
 
             object.put("result",1);
             object.put("msg","移除成功");
