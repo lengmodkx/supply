@@ -13,10 +13,10 @@ public interface OrganizationMemberInfoService extends IService<OrganizationMemb
     * @Email：dengkaixin@art1001.com
     * @Param:
     * @return:
-    * @Description: 根据用户id查询企业成员详情
+    * @Description: 根据用户id和项目id查询企业成员详情
     * @create: 17:16 2020/4/22
     */
-    List<OrganizationMemberInfo> findorgMemberInfoByMemberId( String userId,String projectId);
+    OrganizationMemberInfo findorgMemberInfoByMemberId( String userId,String projectId);
 
     void updateMembersInfo(OrganizationMemberInfo memberInfo);
 }

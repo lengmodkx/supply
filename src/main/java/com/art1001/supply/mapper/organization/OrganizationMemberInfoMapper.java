@@ -18,7 +18,7 @@ public interface OrganizationMemberInfoMapper extends BaseMapper<OrganizationMem
     * @Description: 查询企业成员详情
     * @create: 17:55 2020/4/22
     */
-    List<OrganizationMemberInfo> findorgMemberInfoByMemberId(@Param("userId") String userId,@Param("projectId") String projectId);
+    OrganizationMemberInfo findorgMemberInfoByMemberId(@Param("userId") String userId,@Param("projectId") String projectId);
 
     void updateMembersInfo(OrganizationMemberInfo memberInfo);
 }

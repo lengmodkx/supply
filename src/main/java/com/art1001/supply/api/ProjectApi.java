@@ -539,8 +539,8 @@ public class ProjectApi extends BaseController {
      * @Description: 获取项目成员详细信息
      * @create: 11:33 2020/4/22
      */
-    @GetMapping("/{projectId}/getOneMembers")
-    public JSONObject getMemberByProject(@PathVariable String projectId) {
+    @GetMapping("/{projectId}/membersInfo")
+    public JSONObject getMembersInfoByProject(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("data", projectMemberService.findByProjectIdAndOrgId(projectId));

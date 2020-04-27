@@ -23,7 +23,7 @@ public class OrganizationMemberInfoServiceImpl extends ServiceImpl<OrganizationM
     private OrganizationMemberInfoMapper organizationMemberInfoMapper;
 
     @Override
-    public List<OrganizationMemberInfo> findorgMemberInfoByMemberId(String userId,String projectId) {
+    public OrganizationMemberInfo findorgMemberInfoByMemberId(String userId,String projectId) {
         return organizationMemberInfoMapper.findorgMemberInfoByMemberId(userId,projectId);
     }
 

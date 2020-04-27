@@ -70,8 +70,8 @@ import static jdk.nashorn.internal.runtime.Debug.id;
 @Service
 public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, ProjectMember> implements ProjectMemberService {
 
-    private static final String POINTZERO="0.0";
-    private static final String ZERO="0";
+    private static final String POINTZERO = "0.0";
+    private static final String ZERO = "0";
     /**
      * projectMemberMapper接口
      */
@@ -149,68 +149,50 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param:
-    * @return:
-    * @Description: 获取企业成员详细信息
-    * @create: 14:41 2020/4/23
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param:
+     * @return:
+     * @Description: 获取企业成员详细信息
+     * @create: 14:41 2020/4/23
+     */
     @Override
     public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
         //根据项目id查询项目信息
         List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
-//        List<String> memberIds = projects.stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
-
         List<ProjectMemberDTO> list = Lists.newArrayList();
 
-
-        /*projects.stream().forEach(r -> {
-            try {
-                BeanUtils.copyProperties(r, dto);
-                dto.setAccountName(r.getMemberPhone());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });*/
         projects.stream().forEach(project -> {
             ProjectMemberDTO dto = new ProjectMemberDTO();
-
-            BeanUtils.copyProperties(project,dto);
+            BeanUtils.copyProperties(project, dto);
             dto.setAccountName(project.getMemberPhone());
 
-            List<OrganizationMemberInfo> memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(),project.getProjectId());
+            OrganizationMemberInfo memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(), project.getProjectId());
             UserEntity byId = userService.findById(project.getMemberId());
             dto.setMemberEmail(byId.getEmail());
-            if (!CollectionUtils.isEmpty(memberInfos)) {
+            if (memberInfos != null) {
+                dto.setMemberName(memberInfos.getUserName());
+                dto.setMemberPhone(memberInfos.getPhone());
+                try {
+                    //设置司龄
+                    if (memberInfos.getEntryTime() != null) {
+                        Long l = System.currentTimeMillis();
+                        float num = ((float) (l - Long.valueOf(memberInfos.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
+                        DecimalFormat df = new DecimalFormat("0.0");
 
-                memberInfos.stream().forEach(memberInfo->{
-                    dto.setMemberName(memberInfo.getUserName());
-                    dto.setMemberPhone(memberInfo.getPhone());
-                    try {
-                        //设置司龄
-                        if (memberInfo.getEntryTime() != null) {
-
-                            Long l = System.currentTimeMillis();
-
-                            float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
-                            DecimalFormat df = new DecimalFormat("0.0");
-
-                            String format = df.format(num);
-                            if (POINTZERO.equals(format)) {
-                                memberInfo.setStayComDate("刚刚入职");
-                            }else {
-                                memberInfo.setStayComDate(df.format(num) + "年");
-                            }
+                        String format = df.format(num);
+                        if (POINTZERO.equals(format)) {
+                            memberInfos.setStayComDate("刚刚入职");
+                        } else {
+                            memberInfos.setStayComDate(df.format(num) + "年");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    dto.setOrganizationMemberInfo(memberInfo);
-                    list.add(dto);
-                });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dto.setOrganizationMemberInfo(memberInfos);
+                list.add(dto);
             }
-
         });
 
         return list;
@@ -352,12 +334,12 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         //根据用户id查询用户信息
         UserEntity user = userService.findById(memberId);
         //查询部门信息
-        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId(),orgId);
-        OrganizationMemberInfo info =new OrganizationMemberInfo();
-        if (deptInfo!=null) {
+        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId(), orgId);
+        OrganizationMemberInfo info = new OrganizationMemberInfo();
+        if (deptInfo != null) {
             PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
             String parentName = "";
-            if (partInfo!=null) {
+            if (partInfo != null) {
                 if (deptInfo.getParentId().equals(ZERO) && !StringUtils.isEmpty(deptInfo.getParentId())) {
                     parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
                 }
@@ -378,25 +360,25 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         info.setProjectId(projectId);
         info.setMemberId(memberId);
         info.setOrganizationId(orgId);
-        if (user.getAddress()!=null) {
+        if (user.getAddress() != null) {
             info.setAddress(user.getAddress());
         }
-        if (user.getBirthday()!=null) {
+        if (user.getBirthday() != null) {
             info.setBirthday(String.valueOf(user.getBirthday().getTime()));
         }
         info.setCreateTime(String.valueOf(System.currentTimeMillis()));
         info.setUpdateTime(String.valueOf(System.currentTimeMillis()));
 
-        if (user.getEmail()!=null) {
+        if (user.getEmail() != null) {
             info.setMemberEmail(user.getEmail());
         }
-        if (user.getJob()!=null) {
+        if (user.getJob() != null) {
             info.setJob(user.getJob());
         }
-        if (user.getUserName()!=null) {
+        if (user.getUserName() != null) {
             info.setUserName(user.getUserName());
         }
-        if (user.getAccountName()!=null) {
+        if (user.getAccountName() != null) {
             info.setPhone(user.getAccountName());
         }
         organizationMemberInfoService.save(info);
