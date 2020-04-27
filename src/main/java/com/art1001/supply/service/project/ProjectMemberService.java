@@ -1,5 +1,6 @@
 package com.art1001.supply.service.project;
 
+import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
@@ -240,4 +241,10 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 */
     List<Project> getUserProjectsInOrg(String userId, String orgId);
 
+	/**
+	 * 获取用户详情
+	 * @param projectId 项目id
+	 * @return 项目列表
+	 */
+	OrganizationMemberInfo findMemberByOrgId(String projectId,String userId);
 }
