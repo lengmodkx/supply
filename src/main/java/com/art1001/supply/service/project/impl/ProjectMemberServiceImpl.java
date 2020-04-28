@@ -19,6 +19,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMemberInfoMapper;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
@@ -142,6 +143,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private OrganizationMemberInfoMapper organizationMemberInfoMapper;
 
+    @Resource
+    private OrganizationMemberMapper organizationMemberMapper;
+
     @Override
     public List<Project> findProjectByMemberId(String memberId, Integer projectDel) {
         return projectMemberMapper.findProjectByMemberId(memberId, projectDel);
@@ -152,11 +156,11 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return projectMemberMapper.findByProjectId(projectId);
     }
 
-    @Override
-    public OrganizationMemberInfo findMemberByOrgId(String projectId,String userId){
+/*    @Override
+    public OrganizationMemberInfo findMemberByOrgId(String projectId,String memberId){
 
         try {
-            OrganizationMemberInfo memberInfo  = organizationMemberInfoMapper.selectOne(new QueryWrapper<OrganizationMemberInfo>().eq("project_id", projectId).eq("member_id", userId));
+            OrganizationMemberInfo memberInfo  = organizationMemberInfoMapper.selectOne(new QueryWrapper<OrganizationMemberInfo>().eq("project_id", projectId).eq("member_id", memberId));
             //设置司龄
             if (memberInfo.getEntryTime() != null) {
                 Long l = System.currentTimeMillis();
@@ -176,6 +180,32 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
             e.printStackTrace();
         }
         return new OrganizationMemberInfo();
+    }
+   */
+    @Override
+    public OrganizationMember findMemberByProjectIdAndMemberId(String projectId,String memberId){
+
+        try {
+            OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("project_id", projectId).eq("member_id", memberId));
+            //设置司龄
+            if (memberInfo.getEntryTime() != null) {
+                Long l = System.currentTimeMillis();
+
+                float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
+                DecimalFormat df = new DecimalFormat("0.0");
+
+                String format = df.format(num);
+                if (POINTZERO.equals(format)) {
+                    memberInfo.setStayComDate("刚刚入职");
+                }else {
+                    memberInfo.setStayComDate(df.format(num) + "年");
+                }
+            }
+            return  memberInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new OrganizationMember();
     }
 
     /**
@@ -359,7 +389,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         projectMemberMapper.insert(member);
 
 
-        //新修改....
+       /* //新修改....
         //根据用户id查询用户信息
         UserEntity user = userService.findById(memberId);
         //查询部门信息
@@ -411,7 +441,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
             info.setPhone(user.getAccountName());
         }
         organizationMemberInfoService.save(info);
-
+*/
         return 1;
     }
 

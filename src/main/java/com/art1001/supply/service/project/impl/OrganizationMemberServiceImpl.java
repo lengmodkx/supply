@@ -234,6 +234,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMember.setCreateTime(System.currentTimeMillis());
 		organizationMember.setUpdateTime(System.currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
+		//todo 添加其他信息
 		organizationMemberMapper.insert(organizationMember);
 
 		this.updateUserDefaultOrg(orgId, userId);

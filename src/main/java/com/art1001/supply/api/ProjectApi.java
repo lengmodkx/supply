@@ -140,7 +140,7 @@ public class ProjectApi extends BaseController {
         projectService.saveProject(project);
 
         //新修改  创建企业时将创建者的信息放入到企业成员详情信息表
-        String userId = ShiroAuthenticationManager.getUserId();
+       /* String userId = ShiroAuthenticationManager.getUserId();
         UserEntity user = userService.findById(userId);
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         memberInfo.setId(IdGen.uuid());
@@ -152,9 +152,10 @@ public class ProjectApi extends BaseController {
         memberInfo.setMemberEmail(user.getEmail());
         memberInfo.setJob(user.getJob());
         memberInfo.setProjectId(project.getProjectId());
+        memberInfo.setImage(user.getImage());
         memberInfo.setCreateTime(String.valueOf(System.currentTimeMillis()));
         memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-        organizationMemberInfoService.save(memberInfo);
+        organizationMemberInfoService.save(memberInfo);*/
 
         //写资源表
         object.put("result", 1);
@@ -539,11 +540,11 @@ public class ProjectApi extends BaseController {
      * @Description: 获取项目成员详细信息
      * @create: 11:33 2020/4/22
      */
-    @GetMapping("/{projectId}/membersInfo/{userId}")
-    public JSONObject getMembersInfoByProject(@PathVariable String projectId,@PathVariable String userId) {
+    @GetMapping("/{projectId}/membersInfo/{memberId}")
+    public JSONObject getMembersInfoByProject(@PathVariable String projectId,@PathVariable String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", projectMemberService.findMemberByOrgId(projectId,userId));
+            jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -583,7 +584,7 @@ public class ProjectApi extends BaseController {
                 .stream().filter(f -> f.getOrganizationMemberInfo().getMemberId().equals(memberId))
                 .collect(Collectors.toList());*/
 
-        jsonObject.put("date", projectMemberService.findMemberByOrgId(projectId,memberId));
+        jsonObject.put("date", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
         jsonObject.put("msgId", projectId);
         jsonObject.put("result", 1);
 
@@ -798,7 +799,7 @@ public class ProjectApi extends BaseController {
      * @Param: orgId 企业id
      * @Param: memberId 用户id
      * @Param: dateSort 查询时间戳
-     * @return: dateSort 查询时间  String类型，格式为 yyyy-MM-dd
+     * @return: dateSort 查询时间  String类型 时间戳
      * @Description: 根据用户id和项目id获取任务列表
      * @create: 10:39 2020/4/26
      */

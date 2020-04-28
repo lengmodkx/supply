@@ -1,5 +1,6 @@
 package com.art1001.supply.service.project;
 
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -246,5 +247,15 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @param projectId 项目id
 	 * @return 项目列表
 	 */
-	OrganizationMemberInfo findMemberByOrgId(String projectId,String userId);
+//	OrganizationMemberInfo findMemberByOrgId(String projectId,String memberId);
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param:
+	* @return:
+	* @Description: 根据项目id及用户id查询企业成员
+	* @create: 11:36 2020/4/28
+	*/
+	OrganizationMember findMemberByProjectIdAndMemberId(String projectId, String memberId);
 }

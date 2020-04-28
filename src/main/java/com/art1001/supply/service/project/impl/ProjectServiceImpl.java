@@ -642,15 +642,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
 
-                //合成一个sql语句 回家改
-                List<String> projectMembers = projectMemberService.findByProjectId(r.getProjectId())
-                        .stream().map(ProjectMember::getMemberId).collect(Collectors.toList());
+                List<ProjectMember> projectMembers = projectMemberService.findByProjectId(r.getProjectId());
 
                 String projectName = projectService.getOne(new QueryWrapper<Project>()
                         .select("project_name").eq("project_id", r.getProjectId()))
                         .getProjectName();
-
-
 
                 if (!CollectionUtils.isEmpty(tasks)) {
                     tasks.forEach(task->{

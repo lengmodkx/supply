@@ -6,6 +6,7 @@
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
@@ -13,6 +14,16 @@
 		<result column="partment_lable" property="partmentLable" jdbcType="INTEGER" />
 		<result column="member_lock" property="memberLock" jdbcType="INTEGER" />
 		<result column="other" property="other" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="memberEmail" property="memberEmail" jdbcType="VARCHAR" />
+		<result column="birthday" property="birthday" jdbcType="VARCHAR" />
+		<result column="entry_time" property="entryTime" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="member_label" property="memberLabel" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+		<!--<result column="user_default" property="userDefault" jdbcType="BOOLEAN" />-->
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 		<association property="partment" column="partment_id" javaType="com.art1001.supply.entity.partment.Partment"
@@ -31,12 +42,22 @@
 				id,
 				organization_id,
 				partment_id,
+				project_id,
 				member_id,
 				create_time,
 				update_time,
 				organization_lable,
 				partment_lable,
-				member_lock
+				member_lock,
+				userName,
+				memberEmail,
+				birthday,
+				entry_time,
+				phone,
+				address,
+				member_label,
+				job,
+				image
 	</sql>
 
 	<sql id="whereStatement">

@@ -254,8 +254,6 @@ public class OrganizationMemberApi {
         organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
         roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id",orgId).eq("u_id",userId));
 
-        //新修改  移除企业成员时需要把企业成员详情信息一并删除
-        organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>().eq("organization_id",orgId).eq("member_id",userId));
         return Result.success();
     }
 
