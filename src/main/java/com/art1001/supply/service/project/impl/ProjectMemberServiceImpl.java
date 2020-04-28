@@ -156,32 +156,17 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return projectMemberMapper.findByProjectId(projectId);
     }
 
-/*    @Override
-    public OrganizationMemberInfo findMemberByOrgId(String projectId,String memberId){
 
-        try {
-            OrganizationMemberInfo memberInfo  = organizationMemberInfoMapper.selectOne(new QueryWrapper<OrganizationMemberInfo>().eq("project_id", projectId).eq("member_id", memberId));
-            //设置司龄
-            if (memberInfo.getEntryTime() != null) {
-                Long l = System.currentTimeMillis();
 
-                float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
-                DecimalFormat df = new DecimalFormat("0.0");
-
-                String format = df.format(num);
-                if (POINTZERO.equals(format)) {
-                    memberInfo.setStayComDate("刚刚入职");
-                }else {
-                    memberInfo.setStayComDate(df.format(num) + "年");
-                }
-            }
-            return  memberInfo;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new OrganizationMemberInfo();
-    }
-   */
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @param orgId
+    * @param memberId
+    * @return:
+    * @Description: 根据项目id及用户id查询企业成员
+    * @create: 15:49 2020/4/28
+    */
     @Override
     public OrganizationMember findMemberByProjectIdAndMemberId(String orgId,String memberId){
 
@@ -216,55 +201,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return new OrganizationMember();
     }
 
-    /**
-     * @Author: 邓凯欣
-     * @Email：dengkaixin@art1001.com
-     * @Param:
-     * @return:
-     * @Description: 获取企业成员详细信息
-     * @create: 14:41 2020/4/23
-     */
-    /*@Override
-    public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
-        //根据项目id查询项目信息
-        List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
-        List<ProjectMemberDTO> list = Lists.newArrayList();
-
-        try {
-            projects.forEach(project -> {
-                ProjectMemberDTO dto = new ProjectMemberDTO();
-                BeanUtils.copyProperties(project, dto);
-                dto.setAccountName(project.getMemberPhone());
-
-                OrganizationMemberInfo memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(), project.getProjectId());
-                UserEntity byId = userService.findById(project.getMemberId());
-                dto.setMemberEmail(byId.getEmail());
-                if (memberInfos != null) {
-                    dto.setMemberName(memberInfos.getUserName());
-                    dto.setMemberPhone(memberInfos.getPhone());
-                    //设置司龄
-                    if (memberInfos.getEntryTime() != null) {
-                        Long l = System.currentTimeMillis();
-                        float num = ((float) (l - Long.valueOf(memberInfos.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
-                        DecimalFormat df = new DecimalFormat("0.0");
-
-                        String format = df.format(num);
-                        if (POINTZERO.equals(format)) {
-                            memberInfos.setStayComDate("刚刚入职");
-                        }
-                        memberInfos.setStayComDate(df.format(num) + "年");
-                    }
-                    dto.setOrganizationMemberInfo(memberInfos);
-                    list.add(dto);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-
-    }
-*/
     /**
      * 查询成员是否存在于项目中
      *

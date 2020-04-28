@@ -560,7 +560,6 @@ public class ProjectApi extends BaseController {
      * @Description: 修改企业详细信息
      * @create: 11:32 2020/4/22
      */
-//    @Push(value = PushType.K1, type = 1)
     @PostMapping("/updateMembersInfo")
     public JSONObject updateMembersInfo(
             @RequestParam(value = "memberId") String memberId,
@@ -580,11 +579,6 @@ public class ProjectApi extends BaseController {
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
-    /*    List<ProjectMemberDTO> collect = projectMemberService.findByProjectIdAndOrgId(projectId)
-                .stream().filter(f -> f.getOrganizationMemberInfo().getMemberId().equals(memberId))
-                .collect(Collectors.toList());*/
-
-//        jsonObject.put("date", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
         jsonObject.put("msgId", projectId);
         jsonObject.put("result", 1);
 
