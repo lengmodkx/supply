@@ -563,7 +563,7 @@ public class ProjectApi extends BaseController {
     @PostMapping("/updateMembersInfo")
     public JSONObject updateMembersInfo(
             @RequestParam(value = "memberId") String memberId,
-            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "orgId") String orgId,
             @RequestParam(value = "userName", required = false) String userName,
             @RequestParam(value = "entryTime", required = false) String entryTime,
             @RequestParam(value = "job", required = false) String job,
@@ -575,13 +575,12 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "deptId", required = false) String deptId
     ) {
         JSONObject jsonObject = new JSONObject();
-        Integer result = projectService.updateMembersInfo(memberId, projectId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
+        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
-        jsonObject.put("msgId", projectId);
+        jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
         jsonObject.put("result", 1);
-
         jsonObject.put("message", "修改成功");
         return jsonObject;
     }

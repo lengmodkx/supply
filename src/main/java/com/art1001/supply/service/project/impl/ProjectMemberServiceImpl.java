@@ -173,6 +173,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         try {
             OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
             //设置司龄
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             if (memberInfo.getEntryTime() != null) {
                 Long l = System.currentTimeMillis();
                 float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
@@ -183,14 +184,20 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 }else {
                     memberInfo.setStayComDate(df.format(num) + "年");
                 }
+                memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
             }
+            if(!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday()!=null){
+                String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
+                memberInfo.setBirthday(format);
+            }
+
 
             PartmentMember partmentMember= partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
             if (partmentMember!=null) {
                 if (partmentMember.getIsMaster()) {
                     memberInfo.setParentName(partmentMember.getPartmentName());
                 } else {
-                    memberInfo.setParentName("null");
+                    memberInfo.setParentName(null);
                 }
             }
 

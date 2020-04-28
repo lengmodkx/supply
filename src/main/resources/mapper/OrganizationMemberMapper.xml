@@ -213,6 +213,33 @@
 			<if test="memberLock != null ">
 				member_lock = #{memberLock},
 			</if>
+			<if test="userName != null ">
+				userName = #{userName},
+			</if>
+			<if test="memberEmail != null ">
+				memberEmail = #{memberEmail},
+			</if>
+			<if test="birthday != null ">
+				birthday = #{birthday},
+			</if>
+			<if test="entryTime != null ">
+				entry_time = #{entryTime},
+			</if>
+			<if test="phone != null ">
+				phone = #{phone},
+			</if>
+			<if test="address != null ">
+				address = #{address},
+			</if>
+			<if test="job != null ">
+				job = #{job},
+			</if>
+			<if test="memberLock != null ">
+				member_lock = #{memberLock},
+			</if>
+			<if test="memberLock != null ">
+				member_lock = #{memberLock},
+			</if>
 		</set>
 
 		WHERE id = #{id}
