@@ -31,6 +31,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtil;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
@@ -49,6 +50,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -579,7 +581,24 @@ public class ProjectApi extends BaseController {
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
-        jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String s = String.valueOf(sdf.parse(entryTime).getTime());
+
+            Long l = System.currentTimeMillis();
+            float num = ((float) (l -Long.valueOf(s)) / 1000 / 60 / 60 / 24 / 365);
+            DecimalFormat df = new DecimalFormat("0.0");
+            String format = df.format(num);
+            if ("0.0".equals(format)) {
+                jsonObject.put("data","刚刚入职");
+            }else {
+                jsonObject.put("data",format + "年");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
         jsonObject.put("result", 1);
         jsonObject.put("message", "修改成功");
         return jsonObject;
