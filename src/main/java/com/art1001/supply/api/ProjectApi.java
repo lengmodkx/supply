@@ -540,11 +540,11 @@ public class ProjectApi extends BaseController {
      * @Description: 获取项目成员详细信息
      * @create: 11:33 2020/4/22
      */
-    @GetMapping("/{projectId}/membersInfo/{memberId}")
-    public JSONObject getMembersInfoByProject(@PathVariable String projectId,@PathVariable String memberId) {
+    @GetMapping("/{orgId}/membersInfo/{memberId}")
+    public JSONObject getMembersInfoByProject(@PathVariable String orgId,@PathVariable String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
+            jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -560,7 +560,7 @@ public class ProjectApi extends BaseController {
      * @Description: 修改企业详细信息
      * @create: 11:32 2020/4/22
      */
-    @Push(value = PushType.K1, type = 1)
+//    @Push(value = PushType.K1, type = 1)
     @PostMapping("/updateMembersInfo")
     public JSONObject updateMembersInfo(
             @RequestParam(value = "memberId") String memberId,
@@ -584,7 +584,7 @@ public class ProjectApi extends BaseController {
                 .stream().filter(f -> f.getOrganizationMemberInfo().getMemberId().equals(memberId))
                 .collect(Collectors.toList());*/
 
-        jsonObject.put("date", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
+//        jsonObject.put("date", projectMemberService.findMemberByProjectIdAndMemberId(projectId,memberId));
         jsonObject.put("msgId", projectId);
         jsonObject.put("result", 1);
 

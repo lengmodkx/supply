@@ -595,7 +595,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             if (!"".equals(memberInfo.getMemberLabel())) {
                 partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
             }
-            //todo 时候拥有者 等待后期解决 目前先默认不是吧
+            //todo 是否拥有者 等待后期解决 目前先默认不是吧
             partmentMember.setIsMaster(false);
 
             partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>().eq("member_id", memberId).eq("partment_id", deptId));

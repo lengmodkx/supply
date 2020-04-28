@@ -67,10 +67,10 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
      * @param partmentId 部门id
      * @return 部门成员信息
      */
-    @Override
+  /*  @Override
     public PartmentMember getPartmentMemberInfo(String partmentId,String memberId) {
         return partmentMemberMapper.selectPartmentMemberInfo(partmentId,memberId);
-    }
+    }*/
 
     /**
      * 获取一个部门的全部成员信息
@@ -80,5 +80,10 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
     @Override
     public List<PartmentMember> getMemberByPartmentId(String partmentId) {
         return partmentMemberMapper.selectMemberByPartmentId(partmentId);
+    }
+
+    @Override
+    public PartmentMember getSimplePartmentMemberInfo(String partmentId, String memberId) {
+        return partmentMemberMapper.getSimplePartmentMemberInfo(partmentId,memberId);
     }
 }

@@ -183,17 +183,15 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
    */
     @Override
-    public OrganizationMember findMemberByProjectIdAndMemberId(String projectId,String memberId){
+    public OrganizationMember findMemberByProjectIdAndMemberId(String orgId,String memberId){
 
         try {
-            OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("project_id", projectId).eq("member_id", memberId));
+            OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
             //设置司龄
             if (memberInfo.getEntryTime() != null) {
                 Long l = System.currentTimeMillis();
-
                 float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
                 DecimalFormat df = new DecimalFormat("0.0");
-
                 String format = df.format(num);
                 if (POINTZERO.equals(format)) {
                     memberInfo.setStayComDate("刚刚入职");
@@ -201,6 +199,16 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                     memberInfo.setStayComDate(df.format(num) + "年");
                 }
             }
+
+            PartmentMember partmentMember= partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
+            if (partmentMember!=null) {
+                if (partmentMember.getIsMaster()) {
+                    memberInfo.setParentName(partmentMember.getPartmentName());
+                } else {
+                    memberInfo.setParentName("null");
+                }
+            }
+
             return  memberInfo;
         } catch (Exception e) {
             e.printStackTrace();

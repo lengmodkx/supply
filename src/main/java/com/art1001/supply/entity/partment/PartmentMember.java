@@ -32,6 +32,12 @@ private static final long serialVersionUID=1L;
     private String partmentId;
 
     /**
+     * 部门名称
+     */
+    @TableField(exist = false)
+    private String partmentName;
+
+    /**
      * 用户id
      */
     private String memberId;

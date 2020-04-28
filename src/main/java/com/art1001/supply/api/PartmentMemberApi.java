@@ -63,6 +63,7 @@ public class PartmentMemberApi {
             partmentMember.setMemberId(memberId);
             partmentMemberService.addPartmentMember(partmentMember);
             OrganizationMember member = new OrganizationMember();
+
             member.setPartmentId(partmentId);
             organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
 

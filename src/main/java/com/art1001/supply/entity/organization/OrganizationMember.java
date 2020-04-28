@@ -43,10 +43,6 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	private String partmentId;
 
-	/**
-	 * 项目id
-	 */
-	private String projectId;
 
 	/**
 	 * 会员id
@@ -151,6 +147,18 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	@TableField(exist = false)
 	private String stayComDate;
+
+    /**
+     * 部门名称
+     */
+	@TableField(exist = false)
+	private String deptName;
+
+    /**
+     * 上级
+     */
+	@TableField(exist = false)
+	private String parentName;
 
 	@Override
 	protected Serializable pkVal() {

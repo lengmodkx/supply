@@ -234,6 +234,16 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMember.setCreateTime(System.currentTimeMillis());
 		organizationMember.setUpdateTime(System.currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
+
+		UserEntity user = userService.findById(userId);
+		organizationMember.setMemberId(userId);
+		organizationMember.setAddress(user.getAddress());
+		organizationMember.setImage(user.getImage());
+		organizationMember.setPhone(user.getAccountName());
+		organizationMember.setJob(user.getJob());
+		organizationMember.setMemberEmail(user.getEmail());
+		organizationMember.setUserName(user.getUserName());
+
 		//todo 添加其他信息
 		organizationMemberMapper.insert(organizationMember);
 
@@ -263,13 +273,13 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 			Boolean updateMember=organizationMemberMapper.updateMember(orgId,memberId);
 			Boolean updatOorganization = organizationMapper.updatOorganization(orgId,ownerId,memberId);
 
-			//新修改 当用户移交企业权限后，用户信息表的memberlabel更改为成员
-			OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
+			/*//新修改 当用户移交企业权限后，企业用户表的memberlabel更改为成员
+			OrganizationMember memberInfo = new OrganizationMember();
 			memberInfo.setMemberLabel("成员");
 			//生成sql
-			organizationMemberInfoService.update(memberInfo,new QueryWrapper<OrganizationMemberInfo>()
+			organizationMemberService.update(memberInfo,new QueryWrapper<OrganizationMember>()
 					.eq("member_id",memberId).eq("organization_id",orgId));
-
+*/
 			//将userRole表权限互换
 			Boolean updateRoleTransfer=roleUserService.updateRoleTransfer(orgId,ownerId,memberId);
 			if (updateOwner && updateMember && updatOorganization && updateRoleTransfer){

@@ -6,7 +6,6 @@
 		<result column="id" property="id" jdbcType="VARCHAR" />
 		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
 		<result column="partment_id" property="partmentId" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
@@ -42,7 +41,6 @@
 				id,
 				organization_id,
 				partment_id,
-				project_id,
 				member_id,
 				create_time,
 				update_time,
