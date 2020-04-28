@@ -6,6 +6,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
@@ -551,6 +552,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public Integer updateMembersInfo(String memberId, String projectId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
+//        OrganizationMember memberInfo = new OrganizationMember();
         try {
             Date entryTimeDate = new Date();
             if (!entryTime.equals("") && entryTime != null) {

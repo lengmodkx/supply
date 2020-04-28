@@ -133,7 +133,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	/**
 	 * 员工身份
 	 */
-	@TableField(value = "memberLabel")
+	@TableField(value = "member_label")
 	private String memberLabel;
 
 	/**
