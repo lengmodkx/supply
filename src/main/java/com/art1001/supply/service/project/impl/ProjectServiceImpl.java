@@ -567,7 +567,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             if(!"".equals(entryTime)  && null != entryTime){
                 memberInfo.setEntryTime(String.valueOf(sdf.parse(entryTime).getTime()));
             }
-            memberInfo.setEntryTime(String.valueOf(sdf.parse(entryTime).getTime()));
             memberInfo.setStayComDate(memberInfo.getStayComDate());
             memberInfo.setJob(job);
             memberInfo.setMemberLabel(memberLabel);
