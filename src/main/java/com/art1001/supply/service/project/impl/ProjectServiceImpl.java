@@ -638,7 +638,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
 
         //根据指定的用户id和企业id查询项目信息
-        List<Project> projects = organizationService.getProjectByUserIdAndOrgId(memberId, orgId);
+        //List<Project> projects = organizationService.getProjectByUserIdAndOrgId(memberId, orgId);
+        List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id", orgId));
         List<TaskDynamicVO> list = Lists.newArrayList();
 
 
@@ -648,19 +649,23 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
 
-                String projectName = projectService.getOne(new QueryWrapper<Project>()
+                TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
+                taskDynamicVO.setTasks(tasks);
+                taskDynamicVO.setProjectId(r.getProjectId());
+                taskDynamicVO.setProjectName(r.getProjectName());
+                list.add(taskDynamicVO);
+              /*  String projectName = projectService.getOne(new QueryWrapper<Project>()
                         .select("project_name").eq("project_id", r.getProjectId()))
-                        .getProjectName();
+                        .getProjectName();*/
 
-                if (!CollectionUtils.isEmpty(tasks)) {
+               /* if (!CollectionUtils.isEmpty(tasks)) {
                     tasks.forEach(task->{
-                        TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
+
                         BeanUtils.copyProperties(task, taskDynamicVO);
-                        taskDynamicVO.setProjectId(r.getProjectId());
-                        taskDynamicVO.setProjectName(projectName);
-                        list.add(taskDynamicVO);
+
+
                     });
-                }
+                }*/
             });
         }
         return list;

@@ -1,9 +1,12 @@
 package com.art1001.supply.entity.task.vo;
 
+import com.art1001.supply.entity.task.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @ClassName TaskDynamicVO
@@ -13,15 +16,11 @@ import lombok.NoArgsConstructor;
  */
 @Data
 public class TaskDynamicVO {
-    /**
-     * 任务id
-     */
-    private String taskId;
 
     /**
      * 任务名称
      */
-    private String taskName;
+    private List<Task> tasks;
 
     /**
      * 项目id
@@ -32,5 +31,8 @@ public class TaskDynamicVO {
      * 项目名称
      */
     private String projectName;
+
+
+
 
 }

@@ -209,7 +209,6 @@ public class PartmentApi {
         List<Partment> orgPartmentInfo = partmentService.findOrgParentByOrgId(orgId);
         try {
             if (!CollectionUtils.isEmpty(orgPartmentInfo)) {
-
                 jsonObject.put("result", 1);
                 jsonObject.put("data", orgPartmentInfo);
             }
