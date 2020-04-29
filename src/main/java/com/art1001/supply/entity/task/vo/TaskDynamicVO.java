@@ -33,8 +33,4 @@ public class TaskDynamicVO {
      */
     private String projectName;
 
-    /**
-     * 项目人数
-     */
-    private Integer projectMembers;
 }

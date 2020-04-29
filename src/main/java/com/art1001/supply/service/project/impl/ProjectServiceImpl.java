@@ -580,29 +580,29 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>()
                     .eq("organization_id", orgId).eq("member_id", memberId));
 
-            if (organizationMember!=null) {
+            Optional.ofNullable(organizationMember).ifPresent(r->{
                 PartmentMember partmentMember = new PartmentMember();
-                if (ZERO.equals(organizationMember.getPartmentId())) {
+                if (ZERO.equals(r.getPartmentId())) {
                     partmentMember.setCreateTime(System.currentTimeMillis());
                     partmentMember.setUpdateTime(System.currentTimeMillis());
                     partmentMember.setMemberId(memberId);
                     partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
                     partmentMember.setIsMaster(false);
-                    if (deptId!=null) {
-                        partmentMember.setPartmentId(deptId);
-                        memberInfo.setPartmentId(deptId);
-                    }
+                    Optional.ofNullable(deptId).ifPresent(d->{
+                        partmentMember.setPartmentId(d);
+                        memberInfo.setPartmentId(d);
+                    });
                     partmentMemberService.save(partmentMember);
                 }else {
                     partmentMember.setUpdateTime(System.currentTimeMillis());
-                    if (deptId!=null) {
-                        partmentMember.setPartmentId(deptId);
-                        memberInfo.setPartmentId(deptId);
-                    }
+                    Optional.ofNullable(deptId).ifPresent(d->{
+                        partmentMember.setPartmentId(d);
+                        memberInfo.setPartmentId(d);
+                    });
                     partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>()
                             .eq("member_id", memberId).eq("partment_id", deptId));
                 }
-            }
+            });
             organizationMemberService.update(memberInfo,new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
             return 1;
         } catch (Exception e) {
@@ -648,8 +648,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
 
-                List<ProjectMember> projectMembers = projectMemberService.findByProjectId(r.getProjectId());
-
                 String projectName = projectService.getOne(new QueryWrapper<Project>()
                         .select("project_name").eq("project_id", r.getProjectId()))
                         .getProjectName();
@@ -660,7 +658,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                         BeanUtils.copyProperties(task, taskDynamicVO);
                         taskDynamicVO.setProjectId(r.getProjectId());
                         taskDynamicVO.setProjectName(projectName);
-                        taskDynamicVO.setProjectMembers(projectMembers.size());
                         list.add(taskDynamicVO);
                     });
                 }

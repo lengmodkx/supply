@@ -236,7 +236,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		organizationMember.setOrganizationLable(1);
 
 		UserEntity user = userService.findById(userId);
-		organizationMember.setMemberId(userId);
+		//organizationMember.setMemberId(userId);
 		organizationMember.setAddress(user.getAddress());
 		organizationMember.setImage(user.getImage());
 		organizationMember.setPhone(user.getAccountName());
