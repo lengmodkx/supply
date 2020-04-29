@@ -582,17 +582,20 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String s = String.valueOf(sdf.parse(entryTime).getTime());
 
-            Long l = System.currentTimeMillis();
-            float num = ((float) (l -Long.valueOf(s)) / 1000 / 60 / 60 / 24 / 365);
-            DecimalFormat df = new DecimalFormat("0.0");
-            String format = df.format(num);
-            if ("0.0".equals(format)) {
-                jsonObject.put("data","刚刚入职");
-            }else {
-                jsonObject.put("data",format + "年");
+            if (entryTime!=null ) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String s = String.valueOf(sdf.parse(entryTime).getTime());
+
+                Long l = System.currentTimeMillis();
+                float num = ((float) (l - Long.valueOf(s)) / 1000 / 60 / 60 / 24 / 365);
+                DecimalFormat df = new DecimalFormat("0.0");
+                String format = df.format(num);
+                if ("0.0".equals(format)) {
+                    jsonObject.put("data", "刚刚入职");
+                } else {
+                    jsonObject.put("data", format + "年");
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -812,7 +815,7 @@ public class ProjectApi extends BaseController {
      * @Param: memberId 用户id
      * @Param: dateSort 查询时间戳
      * @return: dateSort 查询时间  String类型 时间戳
-     * @Description: 根据用户id和项目id获取任务列表
+     * @Description: 最近动态API
      * @create: 10:39 2020/4/26
      */
     @GetMapping("/{memberId}/{orgId}/tasks")
@@ -827,6 +830,7 @@ public class ProjectApi extends BaseController {
             e.printStackTrace();
             throw new AjaxException("系统异常，查询失败");
         }
-
     }
+
+
 }

@@ -7,6 +7,7 @@ import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
+import com.art1001.supply.entity.partment.PartmentVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
@@ -157,43 +158,53 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
 
 
-
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @param orgId
-    * @param memberId
-    * @return:
-    * @Description: 根据项目id及用户id查询企业成员
-    * @create: 15:49 2020/4/28
-    */
+     * @param orgId
+     * @param memberId
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @return:
+     * @Description: 根据项目id及用户id查询企业成员
+     * @create: 15:49 2020/4/28
+     */
     @Override
-    public OrganizationMember findMemberByProjectIdAndMemberId(String orgId,String memberId){
+    public OrganizationMember findMemberByProjectIdAndMemberId(String orgId, String memberId) {
 
         try {
             OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
+
+            //设置部门id和部门名称集合
+            List<PartmentVO> partmentVOS = Lists.newArrayList();
+            partmentService.findOrgPartmentInfo(orgId).forEach(r -> {
+                PartmentVO partmentVO = new PartmentVO();
+                BeanUtils.copyProperties(r, partmentVO);
+                partmentVOS.add(partmentVO);
+            });
+            memberInfo.setPartmentVOS(partmentVOS);
+
+
             //设置司龄
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             if (memberInfo.getEntryTime() != null) {
                 Long l = System.currentTimeMillis();
-                float num = ((float) (l -Long.valueOf(memberInfo.getEntryTime()) )) / 1000 / 60 / 60 / 24 / 365;
+                float num = ((float) (l - Long.valueOf(memberInfo.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
                 DecimalFormat df = new DecimalFormat("0.0");
                 String format = df.format(num);
                 if (POINTZERO.equals(format)) {
                     memberInfo.setStayComDate("刚刚入职");
-                }else {
+                } else {
                     memberInfo.setStayComDate(df.format(num) + "年");
                 }
                 memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
             }
-            if(!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday()!=null){
+            if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
                 String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
                 memberInfo.setBirthday(format);
             }
 
 
-            PartmentMember partmentMember= partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
-            if (partmentMember!=null) {
+            PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
+            if (partmentMember != null) {
                 if (partmentMember.getIsMaster()) {
                     memberInfo.setParentName(partmentMember.getPartmentName());
                 } else {
@@ -201,7 +212,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 }
             }
 
-            return  memberInfo;
+            return memberInfo;
         } catch (Exception e) {
             e.printStackTrace();
         }
