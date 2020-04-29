@@ -7,7 +7,6 @@ import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
-import com.art1001.supply.entity.partment.PartmentVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
@@ -172,16 +171,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
         try {
             OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
-
-            //设置部门id和部门名称集合
-            List<PartmentVO> partmentVOS = Lists.newArrayList();
-            partmentService.findOrgPartmentInfo(orgId).forEach(r -> {
-                PartmentVO partmentVO = new PartmentVO();
-                BeanUtils.copyProperties(r, partmentVO);
-                partmentVOS.add(partmentVO);
-            });
-            memberInfo.setPartmentVOS(partmentVOS);
-
 
             //设置司龄
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

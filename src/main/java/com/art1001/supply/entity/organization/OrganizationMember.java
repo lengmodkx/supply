@@ -1,7 +1,6 @@
 package com.art1001.supply.entity.organization;
 
 import com.art1001.supply.entity.partment.Partment;
-import com.art1001.supply.entity.partment.PartmentVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -161,12 +160,6 @@ public class OrganizationMember extends Model<OrganizationMember> {
      */
 	@TableField(exist = false)
 	private String parentName;
-
-	/**
-	 * 部门id和部门名称VO
-	 */
-	@TableField(exist = false)
-	private List<PartmentVO> partmentVOS;
 
 
 	@Override

@@ -8,6 +8,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -22,6 +23,7 @@ import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -104,6 +106,9 @@ public class ProjectApi extends BaseController {
 
     @Resource
     private OrganizationService organizationService;
+
+    @Resource
+    private PartmentService partmentService;
 
     /**
      * 创建项目
@@ -829,6 +834,27 @@ public class ProjectApi extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
             throw new AjaxException("系统异常，查询失败");
+        }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: orgId 企业id
+    * @return:
+    * @Description: 查询企业下的部门信息
+    * @create: 10:45 2020/4/29
+    */
+    @GetMapping("/{orgId}/getDeptNameByOrgId")
+    public JSONObject getDeptNameByOrgId(@PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",partmentService.findOrgPartmentInfo(orgId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
         }
     }
 
