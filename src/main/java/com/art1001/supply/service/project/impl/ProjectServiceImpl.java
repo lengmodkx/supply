@@ -51,6 +51,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.swing.plaf.multi.MultiLabelUI;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -112,6 +113,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private ProjectService projectService;
+
+    private final static String ZERO="0";
 
     /**
      * 查询分页project数据
@@ -556,7 +559,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
             memberInfo.setUserName(userName);
             //memberInfo.setMemberId(memberId);
             memberInfo.setOrganizationId(orgId);
@@ -573,27 +575,34 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             memberInfo.setAddress(address);
             memberInfo.setMemberEmail(memberEmail);
             memberInfo.setPhone(phone);
-            if (deptId != null) {
-               /* Partment partment = partmentService.findPartmentByPartmentId(deptId);
-                if (partment != null) {
-                    memberInfo.setDeptName(partment.getPartmentName());
-                }*/
-                memberInfo.setPartmentId(deptId);
+
+            //根据企业id和成员id查询企业成员
+            OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>()
+                    .eq("organization_id", orgId).eq("member_id", memberId));
+
+            if (organizationMember!=null) {
+                PartmentMember partmentMember = new PartmentMember();
+                if (ZERO.equals(organizationMember.getPartmentId())) {
+                    partmentMember.setCreateTime(System.currentTimeMillis());
+                    partmentMember.setUpdateTime(System.currentTimeMillis());
+                    partmentMember.setMemberId(memberId);
+                    partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
+                    partmentMember.setIsMaster(false);
+                    if (deptId!=null) {
+                        partmentMember.setPartmentId(deptId);
+                        memberInfo.setPartmentId(deptId);
+                    }
+                    partmentMemberService.save(partmentMember);
+                }else {
+                    partmentMember.setUpdateTime(System.currentTimeMillis());
+                    if (deptId!=null) {
+                        partmentMember.setPartmentId(deptId);
+                        memberInfo.setPartmentId(deptId);
+                    }
+                    partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>()
+                            .eq("member_id", memberId).eq("partment_id", deptId));
+                }
             }
-
-
-          /*  PartmentMember partmentMember = new PartmentMember();
-            partmentMember.setCreateTime(System.currentTimeMillis());
-            partmentMember.setUpdateTime(System.currentTimeMillis());
-            partmentMember.setMemberId(memberInfo.getMemberId());
-
-            if (!"".equals(memberInfo.getMemberLabel())) {
-                partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
-            }
-            //todo 是否拥有者 等待后期解决 目前先默认不是吧
-            partmentMember.setIsMaster(false);
-
-            partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>().eq("member_id", memberId).eq("partment_id", deptId));*/
             organizationMemberService.update(memberInfo,new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
             return 1;
         } catch (Exception e) {
