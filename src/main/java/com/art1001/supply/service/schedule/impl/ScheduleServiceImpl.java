@@ -185,9 +185,9 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
      */
     @Override
     public List<Schedule> findScheduleListByProjectId(String projectId) {
-        List<Schedule> scheduleListByProjectId = scheduleMapper.findScheduleListByProjectId(projectId);
+        List<Schedule> schedules = scheduleMapper.findScheduleListByProjectId(projectId);
 
-        Iterator<Schedule> iterator = scheduleListByProjectId.iterator();
+        Iterator<Schedule> iterator = schedules.iterator();
         while(iterator.hasNext()){
             Schedule next = iterator.next();
 
@@ -207,7 +207,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                 }
             }
         }
-        return scheduleListByProjectId;
+        return schedules;
     }
 
     /**

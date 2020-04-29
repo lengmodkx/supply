@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("template")
+@RequestMapping("templates")
 public class TemplateApi {
     @Resource
     private TemplateDataService templateDataService;

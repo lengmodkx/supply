@@ -113,7 +113,7 @@
 				file_uids,
 				file_label,
 				file_thumbnail,
-				f.model_url,
+				model_url,
 				file_privacy,
 				public_id,
 				`level`

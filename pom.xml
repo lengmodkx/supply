@@ -85,6 +85,10 @@
             <!--<scope>runtime</scope>-->
        <!--</dependency>-->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.13</version>
@@ -141,9 +145,13 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.1.0</version>
+            <version>4.5.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-aliyuncvc</artifactId>
+            <version>1.0.6</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
@@ -401,6 +409,7 @@
                     <include>application-${package.environment}.yml</include>
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
+                    <include>**/*.html</include>
                 </includes>
             </resource>
         </resources>

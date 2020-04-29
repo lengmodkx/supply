@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: @package.environment@
+  thymeleaf:
+    cache: false
+    mode: HTML5
 server:
   port: 8080
 

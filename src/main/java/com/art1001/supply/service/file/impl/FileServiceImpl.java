@@ -1368,10 +1368,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
-        /*if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
-            List<File> files = fileService.seachByName(fileName, null);
+        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
+            List<File> files = fileService.list(new QueryWrapper<File>().eq("catalog","0").like("file_name",fileName));
             return  Lists.newArrayList(files);
-        }*/
+        }
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
         if (files.size() == 0) {
             return null;

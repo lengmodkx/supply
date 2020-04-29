@@ -29,7 +29,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        String[] path = new String[]{"/message/code","/login","/register","/captcha","/forget",
+        String[] path = new String[]{"/index/**","/aliyun/**","/message/code","/login","/register","/captcha","/forget",
                 "/code","/logout","/bind/phone","/bind/wechat","/notbind/wechat", "/reset_password",
                 "/change_password", "/users/**","/organizations/my_org","/news/count","/oss/callback",
                 "/wechatcode","/wechattoken","/files/**/upload","/files/**/model","/files/**/name","/files/deletefile"};

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="theme-normal" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="yes" name="apple-touch-fullscreen" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <title>阿拉丁BIM云平台</title>
+    <link href="https://g.alicdn.com/InformationPlatform/conference_js/1.1.5/conference.css" rel="stylesheet" />
+    <script src="https://lang.alicdn.com/mcms/web-conference/0.0.17/web-conference.json"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script th:inline="javascript">
+      var data = [[${meetingInfo}]];
+      var userId = [[${userId}]];
+      var meetingDomain = data.meetingDomain;
+      var meetingToken = data.meetingToken;
+      var meetingCode = data.meetingCode;
+      var memberUUID = data.memberUUID;
+      var meetingUUID = data.meetingUUID;
+      var meetingAppId = data.meetingAppId;
+
+      window.pageConfig = {
+        "meetingRouter": "/detail",
+        "meetingRouterEnter": "/enter",
+        "minChromeVersion": 70,
+        "companyLogo": {
+          "en": "https://dn-st.teambition.net/meetings/meetings.logo.png",
+          "zh-cn": "https://dn-st.teambition.net/meetings/meetings.logo.png"
+        },
+        "meetingLogo": "",
+        "downloadUrl": "",
+        "startClientUrl": "",
+        "unsupportBrowserUrl": false,
+        "unsupportBrowserVersionUrl": false,
+        "invalidMeetingUrl": false,
+        "showChat": false,
+        "showEmailInvite": false,
+        "showSpeakerIcon": true,
+        "showMicroIcon": true,
+        "showCameraIcon": true,
+        "showShowScreenIcon": true,
+        "showClientGuide": false,
+        "moreInfo": {
+          "language": true,
+          "extra": []
+        },
+        "nickJoinTitle": {
+          "en": "Participant",
+          "zh-cn": "加入会议"
+        },
+        "nickJoinPlaceholder": {
+          "en": "Your meeting name",
+          "zh-cn": "请输入你的姓名"
+        },
+        "useWs": false,
+        "appTitle": {
+          "en": "ALDBIM Meetings",
+          "zh-cn": "阿拉丁BIM云平台会议"
+        },
+        "token": meetingToken,
+        "memberUuid": memberUUID,
+        "wssUrl": meetingDomain,
+        "empId": userId,
+        "meetingUUID": meetingUUID,
+        "meetingAppId": meetingAppId,
+        "slsInfo": {
+          "logServiceEndpoint": "log-global.aliyuncs.com",
+          "logstore": "client_info",
+          "project": "alimeeting-paas"
+        },
+        "shareInfo": {
+          "title": {
+            "en": "Share",
+            "zh-cn": "快速复制分享"
+          },
+          "tips": {
+            "en": "After copied, share with others and invite them.",
+            "zh-cn": "复制后发送给其他人，邀请他们加入。"
+          },
+          "content": [{
+            "title": {
+              "en": "Link",
+              "zh-cn": "会议链接"
+            },
+            "tooltip": {},
+            "action": "copy",
+            "actionValue": "https://www.aldbim.com/detail?code=" + meetingCode,
+            "actionLabel": {
+              "en": "Copy Meeting Link",
+              "zh-cn": "复制会议链接"
+            }
+          }, {
+            "title": {
+              "en": "Code",
+              "zh-cn": "会议口令"
+            },
+            "tooltip": {
+              "en": "Use ALDBIM Web or App and enter the Id to join.",
+              "zh-cn": "从阿拉丁BIM云平台 主页或 App 的全局创建入口进入视频讨论，输入此 ID 即可加入。"
+            },
+            "action": "copy",
+            "actionValue": meetingCode,
+            "actionLabel": {
+              "en": "Copy",
+              "zh-cn": "复制"
+            }
+          }]
+        },
+        "appDefaultLang": "zh-cn"
+      }
+      window.localStorage.setItem('lang', "")
+    </script>
+    <script src="https://g.alicdn.com/InformationPlatform/conference_js/1.1.5/dll/vendor_h.js"></script>
+    <script src="https://g.alicdn.com/InformationPlatform/conference_js/1.1.5/conference.js"></script>
+  </body>
+</html>
