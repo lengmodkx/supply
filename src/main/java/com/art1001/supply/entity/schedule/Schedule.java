@@ -133,6 +133,8 @@ public class Schedule extends Model<Schedule> {
 	 */
 	private Integer fabulousCount;
 
+	private String meetingCode;
+
 	/**
 	 * 是否在回收站 0 否 1 是
 	 */

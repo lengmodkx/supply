@@ -2,7 +2,7 @@ spring:
   datasource:
     #阿里巴巴数据源连接池配置
     druid:
-      url: jdbc:mysql://rm-2ze0z93hgk53405zn6o.mysql.rds.aliyuncs.com:3306/supply?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+      url: jdbc:mysql://rm-2ze0z93hgk53405zn6o.mysql.rds.aliyuncs.com:3306/supply01?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
       username: supply
       password: Wangyafeng123456
       driver-class-name: com.mysql.cj.jdbc.Driver

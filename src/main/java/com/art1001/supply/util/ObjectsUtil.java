@@ -1,6 +1,7 @@
 
 package com.art1001.supply.util;
 
+import javax.servlet.http.Cookie;
 import java.util.Collection;
 import java.util.Map;
 
@@ -49,4 +50,16 @@ public class ObjectsUtil {
         return result;
     }
 
+    public static String getValue(Cookie[] cookies, String key) {
+        String value = null;
+        if (null != cookies && cookies.length > 0) {
+            for (Cookie c : cookies) {
+                if (key.equals(c.getName())) {
+                    value = c.getValue();
+                    break;
+                }
+            }
+        }
+        return value;
+    }
 }

@@ -20,6 +20,7 @@
 		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
 		<result column="is_del" property="isDel" jdbcType="INTEGER" />
 		<result column="isAllday" property="isAllday" jdbcType="INTEGER" />
+		<result column="meeting_code" property="meetingCode" jdbcType="VARCHAR" />
 		<!--关联项目-->
 		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
 					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
@@ -42,7 +43,7 @@
 	<!-- 映射回收站数据 -->
 	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
 		<id column="schedule_id" property="id"/>
-		<result column="schedule_name" property="name" jdbcType="VARCHAR" />
+		<result column="schedule_name" property="publicName" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
 
@@ -150,7 +151,8 @@
 				member_ids,
 				privacy_pattern,
 				schedule_calendar,
-				is_del
+				is_del,
+				meeting_code
 	</sql>
 
 	<sql id="Base_Column_List2">
@@ -171,6 +173,7 @@
 				s.privacy_pattern,
 				s.is_del,
 				s.schedule_calendar,
+				s.meeting_code,
 				tg.tag_id,
 				tg.tag_name,
 				tg.bg_color
