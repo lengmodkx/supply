@@ -31,4 +31,6 @@ public interface PartmentMemberMapper extends BaseMapper<PartmentMember> {
      * @return 全部成员信息
      */
     List<PartmentMember> selectMemberByPartmentId(@Param("partmentId") String partmentId);
+
+    PartmentMember getSimplePartmentMemberInfo(@Param("partmentId")String partmentId,@Param("memberId") String memberId);
 }

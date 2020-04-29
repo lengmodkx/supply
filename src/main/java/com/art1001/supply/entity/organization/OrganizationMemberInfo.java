@@ -65,7 +65,7 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
    */
   private String address;
   /**
-   * 员工类型 1:成员 2:拥有者 3:管理员
+   * 员工身份
    */
   @TableField(value = "memberLabel")
   private String memberLabel;
@@ -103,6 +103,11 @@ public class OrganizationMemberInfo extends Model<OrganizationMemberInfo> {
    */
   @TableField(value = "updateTime")
   private String updateTime;
+
+  /**
+   * 用户头像
+   */
+  private String image;
 
   /**
    * 司龄

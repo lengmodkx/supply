@@ -8,6 +8,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -22,6 +23,7 @@ import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -31,6 +33,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtil;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
@@ -49,6 +52,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -103,6 +107,9 @@ public class ProjectApi extends BaseController {
     @Resource
     private OrganizationService organizationService;
 
+    @Resource
+    private PartmentService partmentService;
+
     /**
      * 创建项目
      *
@@ -140,7 +147,7 @@ public class ProjectApi extends BaseController {
         projectService.saveProject(project);
 
         //新修改  创建企业时将创建者的信息放入到企业成员详情信息表
-        String userId = ShiroAuthenticationManager.getUserId();
+       /* String userId = ShiroAuthenticationManager.getUserId();
         UserEntity user = userService.findById(userId);
         OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
         memberInfo.setId(IdGen.uuid());
@@ -152,9 +159,10 @@ public class ProjectApi extends BaseController {
         memberInfo.setMemberEmail(user.getEmail());
         memberInfo.setJob(user.getJob());
         memberInfo.setProjectId(project.getProjectId());
+        memberInfo.setImage(user.getImage());
         memberInfo.setCreateTime(String.valueOf(System.currentTimeMillis()));
         memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-        organizationMemberInfoService.save(memberInfo);
+        organizationMemberInfoService.save(memberInfo);*/
 
         //写资源表
         object.put("result", 1);
@@ -539,11 +547,11 @@ public class ProjectApi extends BaseController {
      * @Description: 获取项目成员详细信息
      * @create: 11:33 2020/4/22
      */
-    @GetMapping("/{projectId}/membersInfo")
-    public JSONObject getMembersInfoByProject(@PathVariable String projectId) {
+    @GetMapping("/{orgId}/membersInfo/{memberId}")
+    public JSONObject getMembersInfoByProject(@PathVariable String orgId,@PathVariable String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", projectMemberService.findByProjectIdAndOrgId(projectId));
+            jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -559,11 +567,10 @@ public class ProjectApi extends BaseController {
      * @Description: 修改企业详细信息
      * @create: 11:32 2020/4/22
      */
-    @Push(value = PushType.K1, type = 1)
     @PostMapping("/updateMembersInfo")
     public JSONObject updateMembersInfo(
             @RequestParam(value = "memberId") String memberId,
-            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "orgId") String orgId,
             @RequestParam(value = "userName", required = false) String userName,
             @RequestParam(value = "entryTime", required = false) String entryTime,
             @RequestParam(value = "job", required = false) String job,
@@ -575,17 +582,32 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "deptId", required = false) String deptId
     ) {
         JSONObject jsonObject = new JSONObject();
-        Integer result = projectService.updateMembersInfo(memberId, projectId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
+        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
-        List<ProjectMemberDTO> collect = projectMemberService.findByProjectIdAndOrgId(projectId)
-                .stream().filter(f -> f.getOrganizationMemberInfo().getMemberId().equals(memberId))
-                .collect(Collectors.toList());
-        jsonObject.put("date", collect);
-        jsonObject.put("msgId", projectId);
-        jsonObject.put("result", 1);
+        try {
 
+            if (entryTime!=null ) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String s = String.valueOf(sdf.parse(entryTime).getTime());
+
+                Long l = System.currentTimeMillis();
+                float num = ((float) (l - Long.valueOf(s)) / 1000 / 60 / 60 / 24 / 365);
+                DecimalFormat df = new DecimalFormat("0.0");
+                String format = df.format(num);
+                if ("0.0".equals(format)) {
+                    jsonObject.put("data", "刚刚入职");
+                } else {
+                    jsonObject.put("data", format + "年");
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        jsonObject.put("result", 1);
         jsonObject.put("message", "修改成功");
         return jsonObject;
     }
@@ -780,12 +802,9 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * @Author: 邓凯欣
-     * @Email：dengkaixin@art1001.com
-     * @Param:
-     * @return:
-     * @Description: 获取企业部门名称及id
-     * @create: 12:02 2020/4/24
+     * 获取企业中的用户项目列表
+     * @param orgId 企业id
+     * @return 用户项目列表
      */
     @RequestMapping("/org/projects")
     public Result getUserProjectsInCurrOrg(@NotNull(message = "企业id不能为空!") String orgId) {
@@ -800,8 +819,8 @@ public class ProjectApi extends BaseController {
      * @Param: orgId 企业id
      * @Param: memberId 用户id
      * @Param: dateSort 查询时间戳
-     * @return: dateSort 查询时间  String类型，格式为 yyyy-MM-dd
-     * @Description: 根据用户id和项目id获取任务列表
+     * @return: dateSort 查询时间  String类型 时间戳
+     * @Description: 最近动态API
      * @create: 10:39 2020/4/26
      */
     @GetMapping("/{memberId}/{orgId}/tasks")
@@ -816,6 +835,28 @@ public class ProjectApi extends BaseController {
             e.printStackTrace();
             throw new AjaxException("系统异常，查询失败");
         }
-
     }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: orgId 企业id
+    * @return:
+    * @Description: 查询企业下的部门信息
+    * @create: 10:45 2020/4/29
+    */
+    @GetMapping("/{orgId}/getDeptNameByOrgId")
+    public JSONObject getDeptNameByOrgId(@PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",partmentService.findOrgPartmentInfo(orgId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
+
+
 }

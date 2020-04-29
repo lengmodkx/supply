@@ -46,4 +46,20 @@
         WHERE pm.partment_id = #{partmentId}
     </select>
 
+
+    <select id="getSimplePartmentMemberInfo" resultMap="BaseResultMap">
+         SELECT
+         	pm.is_master,
+         	p.partment_id,
+         	u.user_name	as parentName
+         FROM
+         	prm_partment p
+         	JOIN prm_partment_member pm
+         	JOIN tb_user u ON p.partment_id = pm.partment_id
+         	AND pm.member_id = u.user_id
+         WHERE
+         	p.partment_id = #{partmentId}
+         	AND pm.member_id = #{memberId}
+    </select>
+
 </mapper>

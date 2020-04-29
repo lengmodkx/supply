@@ -13,6 +13,16 @@
 		<result column="partment_lable" property="partmentLable" jdbcType="INTEGER" />
 		<result column="member_lock" property="memberLock" jdbcType="INTEGER" />
 		<result column="other" property="other" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="memberEmail" property="memberEmail" jdbcType="VARCHAR" />
+		<result column="birthday" property="birthday" jdbcType="VARCHAR" />
+		<result column="entry_time" property="entryTime" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="member_label" property="memberLabel" jdbcType="VARCHAR" />
+		<result column="job" property="job" jdbcType="VARCHAR" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+		<!--<result column="user_default" property="userDefault" jdbcType="BOOLEAN" />-->
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>
 		<association property="partment" column="partment_id" javaType="com.art1001.supply.entity.partment.Partment"
@@ -36,7 +46,16 @@
 				update_time,
 				organization_lable,
 				partment_lable,
-				member_lock
+				member_lock,
+				userName,
+				memberEmail,
+				birthday,
+				entry_time,
+				phone,
+				address,
+				member_label,
+				job,
+				image
 	</sql>
 
 	<sql id="whereStatement">
@@ -190,6 +209,33 @@
 			</if>
 			<if test="partmentLable != null ">
 				partment_lable = #{partmentLable},
+			</if>
+			<if test="memberLock != null ">
+				member_lock = #{memberLock},
+			</if>
+			<if test="userName != null ">
+				userName = #{userName},
+			</if>
+			<if test="memberEmail != null ">
+				memberEmail = #{memberEmail},
+			</if>
+			<if test="birthday != null ">
+				birthday = #{birthday},
+			</if>
+			<if test="entryTime != null ">
+				entry_time = #{entryTime},
+			</if>
+			<if test="phone != null ">
+				phone = #{phone},
+			</if>
+			<if test="address != null ">
+				address = #{address},
+			</if>
+			<if test="job != null ">
+				job = #{job},
+			</if>
+			<if test="memberLock != null ">
+				member_lock = #{memberLock},
 			</if>
 			<if test="memberLock != null ">
 				member_lock = #{memberLock},

@@ -223,7 +223,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 //		if(this.checkOrgIsExist(orgId)){
 //			return new ArrayList<>();
 //		}
-		List<Project> projects = organizationMapper.selectProject(memberId, orgId);
+		List<Project> projects = organizationMapper.selectProject(orgId,memberId);
 		return projects;
 	}
 

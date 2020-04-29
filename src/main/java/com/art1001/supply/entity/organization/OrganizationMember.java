@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author 汪亚锋
@@ -92,6 +93,75 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 * 是否是企业员工  1为是  0为外部员工
 	 */
 	private Integer other;
+
+	/**
+	 * 名字
+	 */
+	@TableField(value = "userName")
+	private String userName;
+
+	/**
+	 * 邮箱
+	 */
+	@TableField(value = "memberEmail")
+	private String memberEmail;
+
+	/**
+	 * 生日
+	 */
+	private String birthday;
+
+	/**
+	 * 入职时间
+	 */
+	@TableField(value = "entry_time")
+	private String entryTime;
+
+	/**
+	 * 电话号
+	 */
+	private String phone;
+
+	/**
+	 * 办公地点
+	 */
+	private String address;
+
+	/**
+	 * 员工身份
+	 */
+	@TableField(value = "member_label")
+	private String memberLabel;
+
+	/**
+	 * 职位
+	 */
+	private String job;
+
+	/**
+	 * 用户头像
+	 */
+	private String image;
+
+	/**
+	 * 司龄
+	 */
+	@TableField(exist = false)
+	private String stayComDate;
+
+    /**
+     * 部门名称
+     */
+	@TableField(exist = false)
+	private String deptName;
+
+    /**
+     * 上级
+     */
+	@TableField(exist = false)
+	private String parentName;
+
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

@@ -11,6 +11,7 @@ import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.apache.ibatis.annotations.Delete;
@@ -47,6 +48,9 @@ public class PartmentMemberApi {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private UserService userService;
     /**
      * 添加部门成员
      * @param memberId 成员id
@@ -61,8 +65,11 @@ public class PartmentMemberApi {
             PartmentMember partmentMember = new PartmentMember();
             partmentMember.setPartmentId(partmentId);
             partmentMember.setMemberId(memberId);
+            //新修改 添加部门成员时将用户信息存进去
+
             partmentMemberService.addPartmentMember(partmentMember);
             OrganizationMember member = new OrganizationMember();
+
             member.setPartmentId(partmentId);
             organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
 

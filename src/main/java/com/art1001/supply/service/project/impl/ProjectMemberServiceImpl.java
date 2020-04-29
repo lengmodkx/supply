@@ -18,6 +18,8 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.organization.OrganizationMemberInfoMapper;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
@@ -138,6 +140,12 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private PartmentMemberService partmentMemberService;
 
+    @Resource
+    private OrganizationMemberInfoMapper organizationMemberInfoMapper;
+
+    @Resource
+    private OrganizationMemberMapper organizationMemberMapper;
+
     @Override
     public List<Project> findProjectByMemberId(String memberId, Integer projectDel) {
         return projectMemberMapper.findProjectByMemberId(memberId, projectDel);
@@ -148,54 +156,56 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return projectMemberMapper.findByProjectId(projectId);
     }
 
+
     /**
+     * @param orgId
+     * @param memberId
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
-     * @Param:
      * @return:
-     * @Description: 获取企业成员详细信息
-     * @create: 14:41 2020/4/23
+     * @Description: 根据项目id及用户id查询企业成员
+     * @create: 15:49 2020/4/28
      */
     @Override
-    public List<ProjectMemberDTO> findByProjectIdAndOrgId(String projectId) {
-        //根据项目id查询项目信息
-        List<ProjectMember> projects = projectMemberMapper.findByProjectId(projectId);
-        List<ProjectMemberDTO> list = Lists.newArrayList();
+    public OrganizationMember findMemberByProjectIdAndMemberId(String orgId, String memberId) {
 
-        projects.stream().forEach(project -> {
-            ProjectMemberDTO dto = new ProjectMemberDTO();
-            BeanUtils.copyProperties(project, dto);
-            dto.setAccountName(project.getMemberPhone());
+        try {
+            OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
 
-            OrganizationMemberInfo memberInfos = organizationMemberInfoService.findorgMemberInfoByMemberId(project.getMemberId(), project.getProjectId());
-            UserEntity byId = userService.findById(project.getMemberId());
-            dto.setMemberEmail(byId.getEmail());
-            if (memberInfos != null) {
-                dto.setMemberName(memberInfos.getUserName());
-                dto.setMemberPhone(memberInfos.getPhone());
-                try {
-                    //设置司龄
-                    if (memberInfos.getEntryTime() != null) {
-                        Long l = System.currentTimeMillis();
-                        float num = ((float) (l - Long.valueOf(memberInfos.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
-                        DecimalFormat df = new DecimalFormat("0.0");
-
-                        String format = df.format(num);
-                        if (POINTZERO.equals(format)) {
-                            memberInfos.setStayComDate("刚刚入职");
-                        } else {
-                            memberInfos.setStayComDate(df.format(num) + "年");
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+            //设置司龄
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (memberInfo.getEntryTime() != null) {
+                Long l = System.currentTimeMillis();
+                float num = ((float) (l - Long.valueOf(memberInfo.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
+                DecimalFormat df = new DecimalFormat("0.0");
+                String format = df.format(num);
+                if (POINTZERO.equals(format)) {
+                    memberInfo.setStayComDate("刚刚入职");
+                } else {
+                    memberInfo.setStayComDate(df.format(num) + "年");
                 }
-                dto.setOrganizationMemberInfo(memberInfos);
-                list.add(dto);
+                memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
             }
-        });
+            if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
+                String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
+                memberInfo.setBirthday(format);
+            }
 
-        return list;
+
+            PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
+            if (partmentMember != null) {
+                if (partmentMember.getIsMaster()) {
+                    memberInfo.setParentName(partmentMember.getPartmentName());
+                } else {
+                    memberInfo.setParentName(null);
+                }
+            }
+
+            return memberInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new OrganizationMember();
     }
 
     /**
@@ -330,7 +340,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         projectMemberMapper.insert(member);
 
 
-        //新修改....
+       /* //新修改....
         //根据用户id查询用户信息
         UserEntity user = userService.findById(memberId);
         //查询部门信息
@@ -382,7 +392,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
             info.setPhone(user.getAccountName());
         }
         organizationMemberInfoService.save(info);
-
+*/
         return 1;
     }
 
