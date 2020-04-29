@@ -7,6 +7,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
@@ -738,4 +739,31 @@ public interface TaskMapper extends BaseMapper<Task> {
 	List<MemberViewResult> memberView(@Param("projectId") String projectId);
 
     List<Task> getTaskPanelByStartAndEndTime(@Param("ids")List<String> taskIds, @Param("startTime") String startTime, @Param("endTime") String endTime);
+
+
+	/**
+	 * 根据时间查询任务
+	 * @param memberId
+	 * @param projectId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<Task> getTaskInfoListByTime(@Param("memberId") String memberId, @Param("projectId") String projectId, @Param("startTime") Long startTime,@Param("endTime") Long endTime);
+
+	/**
+	 * 未完成任务
+	 * @param memberId
+	 * @param projectId
+	 * @return
+	 */
+	List<Task> getUnfinishedTask(String memberId, String projectId);
+
+	/**
+	 * 查询所有任务
+	 * @param memberId
+	 * @param projectId
+	 * @return
+	 */
+	List<Task> getTaskInfoList(String memberId, String projectId);
 }

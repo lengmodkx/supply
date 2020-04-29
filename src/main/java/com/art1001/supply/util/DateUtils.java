@@ -10,6 +10,10 @@ import org.joda.time.format.DateTimeFormatter;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -87,6 +91,78 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(cal.getTime());
     }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获得某天最大时间 23:59:59
+    * @create: 17:34 2020/4/29
+    */
+    public static Date getEndOfDay(Date date) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());;
+        LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+        return Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获得某天最小时间 00:00:00
+    * @create: 17:34 2020/4/29
+    */
+    public static Date getStartOfDay(Date date) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+        LocalDateTime startOfDay = localDateTime.with(LocalTime.MIN);
+        return Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取当前周的第一天
+    * @create: 17:39 2020/4/29
+    */
+    public static Date getFirstDayOfWeek(Date date) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(date);
+            cal.set(Calendar.DAY_OF_WEEK, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cal.getTime();
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取当前周最后一天
+    * @create: 17:41 2020/4/29
+    */
+    public static Date getLastDayOfWeek(Date date) {
+        Calendar cal = Calendar.getInstance();
+
+        try {
+            cal.setTime(date);
+            cal.set(Calendar.DAY_OF_WEEK, 1);
+            cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 6);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return cal.getTime();
+    }
+
+
 
 
     /**

@@ -11,6 +11,7 @@ import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
@@ -700,4 +701,15 @@ public interface TaskService extends IService<Task> {
 	* @create: 18:18 2020/4/26
 	*/
 	List<Task> getTaskPanelByStartAndEndTime(String projectId, String startTime, String endTime);
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @Param: memberId 成员id
+	* @Param: projectId 项目id
+	* @return:
+	* @Description: 任务安排-查询任务列表
+	* @create: 16:41 2020/4/29
+	*/
+    TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify);
 }

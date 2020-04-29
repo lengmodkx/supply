@@ -20,6 +20,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
@@ -77,8 +78,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class
-TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
+public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
     @Resource
     private TaskService taskService;
@@ -152,6 +152,12 @@ TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
 
     @Resource
     private FileService fileService;
+
+    private static final String CLASSIFY_TODAY="今天";
+    private static final String CLASSIFY_WEEK="最近一周";
+    private static final String CLASSIFY_MONTH="最近一个月";
+    private static final String CLASSIFY_ALL="全部";
+    private static final String CLASSIFY_NOTALL="未完成的任务";
 
     /**
      * 用户点赞接口
@@ -1986,6 +1992,57 @@ TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
         List<String> taskIds = Arrays.asList(projectAllTask.split(","));
 
         return taskMapper.getTaskPanelByStartAndEndTime(taskIds,startTime,endTime);
+    }
+
+    /**
+     * 任务安排-查询任务列表
+     * @param memberId 成员id
+     * @param projectId 项目id
+     * @return List<TaskDynamicVO>
+     */
+    @Override
+    public TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) {
+        TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
+        taskDynamicVO.setProjectId(projectId);
+
+        Optional.ofNullable(projectService.findProjectByProjectId(projectId)).ifPresent(r->{
+            taskDynamicVO.setProjectName(r.getProjectName());
+        });
+
+        Long startTime;
+        Long endTime;
+        if (CLASSIFY_TODAY.equals(classify)) {
+            startTime = DateUtils.getStartOfDay(new Date()).getTime();
+            endTime=DateUtils.getEndOfDay(new Date()).getTime();
+            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+        }
+        if (CLASSIFY_WEEK.equals(classify)) {
+            startTime = DateUtils.getFirstDayOfWeek(new Date()).getTime();
+            endTime=DateUtils.getLastDayOfWeek(new Date()).getTime();
+            taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
+            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+        }
+        if (CLASSIFY_MONTH.equals(classify)) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTime(new Date());
+
+            //todo 时间这里有问题
+            int month = instance.get(Calendar.MONTH);
+            int year = instance.get(Calendar.YEAR);
+            startTime=Long.valueOf(DateUtils.getFisrtDayOfMonth(year,month));
+            endTime=Long.valueOf(DateUtils.getLastDayOfMonth(year,month));
+            taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
+            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+
+        }
+        if (CLASSIFY_NOTALL.equals(classify)) {
+            taskDynamicVO.setTasks(taskMapper.getUnfinishedTask(memberId,projectId));
+        }
+        if (CLASSIFY_ALL.equals(classify)) {
+            taskDynamicVO.setTasks(taskMapper.getTaskInfoList(memberId,projectId));
+        }
+        return taskDynamicVO;
+
     }
 }
 

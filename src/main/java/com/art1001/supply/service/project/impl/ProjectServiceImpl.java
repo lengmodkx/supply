@@ -114,7 +114,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private ProjectService projectService;
 
-    private final static String ZERO="0";
+    private static final String ZERO="0";
 
     /**
      * 查询分页project数据

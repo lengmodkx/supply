@@ -13,6 +13,7 @@ import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -43,6 +44,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -1183,4 +1185,32 @@ public class  TaskApi extends BaseController {
         taskService.updatePlanWorkHours(taskId, workingHours);
         return Result.success();
     }
+
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: memberId 成员id
+    * @Param: projectId 项目id
+    * @return:
+    * @Description: 任务安排-查询任务列表
+    * @create: 16:36 2020/4/29
+    */
+    @GetMapping("/{memberId}/getTaskInfoList/{projectId}")
+    public JSONObject getTaskInfoList(@PathVariable String memberId,@PathVariable String projectId,String classify){
+            JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",taskService.getTaskInfoList(memberId,projectId,classify));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，查询失败");
+        }
+    }
+
+
 }
+
+
+

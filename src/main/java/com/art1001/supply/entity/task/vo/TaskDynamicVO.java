@@ -18,11 +18,6 @@ import java.util.List;
 public class TaskDynamicVO {
 
     /**
-     * 任务名称
-     */
-    private List<Task> tasks;
-
-    /**
      * 项目id
      */
     private String projectId;
@@ -31,6 +26,10 @@ public class TaskDynamicVO {
      * 项目名称
      */
     private String projectName;
+    /**
+     * 任务名称
+     */
+    private List<Task> tasks;
 
 
 

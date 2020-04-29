@@ -377,6 +377,9 @@
 		tg.bg_color
 	</sql>
 
+	<sql id="Base_Column_List4">
+
+	</sql>
 
 
 	<sql id="whereStatement">
@@ -1603,5 +1606,37 @@ select
 		AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
 		BETWEEN  #{startTime}  and  #{endTime}
 		ORDER by t.create_time ,f.create_time DESC
+	</select>
+
+	<select id="getTaskInfoListByTime" resultMap="panelListMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		prm_task
+		WHERE
+		executor=#{memberId} and project_id=#{projectId}
+		AND task_del = 0 and  update_time
+		BETWEEN  #{startTime}  and  #{endTime}
+		ORDER by create_time DESC
+	</select>
+
+	<select id="getUnfinishedTask" resultMap="panelListMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		prm_task
+		WHERE
+		executor=#{memberId} and project_id=#{projectId}
+		and task_status=0 ORDER by create_time DESC
+	</select>
+
+	<select id="getTaskInfoList" resultMap="panelListMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		prm_task
+		WHERE
+		executor=#{memberId} and project_id=#{projectId}
+	    ORDER by create_time DESC
 	</select>
 </mapper>
