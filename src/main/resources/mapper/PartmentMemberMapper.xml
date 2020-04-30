@@ -11,6 +11,7 @@
         <result column="member_label" property="memberLabel" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
+        <result column="member_type" property="memberType" jdbcType="VARCHAR" />
         <association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
             <id column="user_id" property="userId"/>
             <result column="image" property="image"/>

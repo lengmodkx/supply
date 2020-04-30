@@ -587,8 +587,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     partmentMember.setUpdateTime(System.currentTimeMillis());
                     partmentMember.setMemberId(memberId);
 
-                    //todo 页面传的是String，但是数据库存的是Integer，问题需要解决
-                    partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
+                    partmentMember.setMemberType(memberInfo.getMemberLabel());
 
                     partmentMember.setIsMaster(false);
                     Optional.ofNullable(deptId).ifPresent(d->{

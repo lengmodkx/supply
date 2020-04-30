@@ -161,7 +161,8 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	@TableField(exist = false)
 	private String parentName;
 
-
+	@TableField(value = "member_type")
+	private String memberType;
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

@@ -22,6 +22,7 @@
 		<result column="member_label" property="memberLabel" jdbcType="VARCHAR" />
 		<result column="job" property="job" jdbcType="VARCHAR" />
 		<result column="image" property="image" jdbcType="VARCHAR" />
+		<result column="member_type" property="memberType" jdbcType="VARCHAR" />
 		<!--<result column="user_default" property="userDefault" jdbcType="BOOLEAN" />-->
 		<association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
 					 select="com.art1001.supply.mapper.user.UserMapper.findById"/>

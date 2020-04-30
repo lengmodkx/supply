@@ -68,4 +68,7 @@ private static final long serialVersionUID=1L;
     @TableField(exist = false)
     private UserEntity userEntity;
 
+    @TableField(value = "member_type")
+    private String memberType;
+
 }
