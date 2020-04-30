@@ -68,7 +68,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -2001,7 +2003,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return List<TaskDynamicVO>
      */
     @Override
-    public TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) {
+    public TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) throws ParseException {
         TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
         taskDynamicVO.setProjectId(projectId);
 
@@ -2025,14 +2027,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         if (CLASSIFY_MONTH.equals(classify)) {
             Calendar instance = Calendar.getInstance();
             instance.setTime(new Date());
-
-            //todo 时间这里有问题
-            int month = instance.get(Calendar.MONTH);
+            int month = instance.get(Calendar.MONTH)+1;
             int year = instance.get(Calendar.YEAR);
-            startTime=Long.valueOf(DateUtils.getFisrtDayOfMonth(year,month));
-            endTime=Long.valueOf(DateUtils.getLastDayOfMonth(year,month));
-            taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
-            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date start = sdf.parse(DateUtils.getFisrtDayOfMonth(year, month));
+            Date end = sdf.parse(DateUtils.getLastDayOfMonth(year, month));
+            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,start.getTime(),end.getTime()));
 
         }
         if (CLASSIFY_NOTALL.equals(classify)) {

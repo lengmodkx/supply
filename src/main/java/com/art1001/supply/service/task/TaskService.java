@@ -18,6 +18,7 @@ import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.quartz.SchedulerException;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -711,5 +712,5 @@ public interface TaskService extends IService<Task> {
 	* @Description: 任务安排-查询任务列表
 	* @create: 16:41 2020/4/29
 	*/
-    TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify);
+    TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) throws ParseException;
 }
