@@ -247,4 +247,12 @@ public interface ProjectService extends IService<Project> {
 	* @create: 18:08 2020/4/26
 	*/
     List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException;
+
+	/**
+	 * 根据企业id和用户id查询项目
+	 * @param orgId
+	 * @param memberId
+	 * @return
+	 */
+    List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId);
 }

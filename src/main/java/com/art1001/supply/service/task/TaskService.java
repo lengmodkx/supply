@@ -713,4 +713,13 @@ public interface TaskService extends IService<Task> {
 	* @create: 16:41 2020/4/29
 	*/
     TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) throws ParseException;
+
+
+	/**
+	 * 根据项目id和用户id查询任务
+	 * @param projectId
+	 * @param memberId
+	 * @return
+	 */
+	List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId);
 }

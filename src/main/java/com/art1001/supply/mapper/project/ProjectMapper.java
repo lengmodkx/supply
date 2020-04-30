@@ -165,4 +165,12 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	Integer updatePictureById(@Param("projectId")String projectId, @Param("fileUrl")String fileUrl);
 
     void updateAllProject(@Param("userId") String userId,@Param("id") String id);
+
+	/**
+	 * 根据企业id和用户id查询项目
+	 * @param orgId
+	 * @param memberId
+	 * @return
+	 */
+    List<Project> getProjectsByMemberIdAndOrgId(@Param("orgId") String orgId,@Param("memberId") String memberId);
 }

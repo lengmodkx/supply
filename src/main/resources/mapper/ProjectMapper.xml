@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.project.ProjectMapper">
-	
+
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.project.Project">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
@@ -30,22 +30,22 @@
 
 	<resultMap id="ProjectAndTaskByExecutor" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
-					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}"
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task"
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndExecutor"/>
 	</resultMap>
 
 	<resultMap id="ProjectAndTaskByUser" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
-					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}"
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task"
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndUser"/>
 	</resultMap>
 
 	<resultMap id="ProjectAndTaskByCreateMember" type="com.art1001.supply.entity.project.Project" extends="BaseResultMap">
 		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<collection property="taskList" column="{projectId=project_id,memberId=mid}" 
-					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task" 
+		<collection property="taskList" column="{projectId=project_id,memberId=mid}"
+					javaType="ArrayList" ofType="com.art1001.supply.entity.task.Task"
 					select="com.art1001.supply.mapper.task.TaskMapper.findTaskByProjectAndStatusAndCreateMember"/>
 	</resultMap>
 
@@ -84,22 +84,22 @@
 			</if>
 		</where>
 	</sql>
-	
+
 	<select id="findProjectPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
-		
+
 		select <include refid="Base_Column_List" /> from prm_project
 		<include refid="whereStatement" />
-		
+
 		<if test="orderBy == 0">
 			order by project_id desc
 		</if>
 		<if test="orderBy == 1">
 			order by project_id asc
 		</if>
-		
+
 	</select>
-	
+
 	<select id="findProjectAllList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.project.Project">
 		SELECT
@@ -112,7 +112,7 @@
 			order by project_id asc
 		</if>
 	</select>
-	
+
 	<select id="findProjectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
@@ -121,7 +121,7 @@
 		where project_id = #{projectId}
         and project_del = 0
 	</select>
-	
+
 	<delete id="deleteProjectByProjectId" parameterType="java.lang.String">
 		delete from
 		prm_project where project_id = #{projectId}
@@ -321,6 +321,19 @@
 			p.func
 		from prm_project p
 		where p.member_id = #{userId}   and p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
+	</select>
+
+	<!--根据企业id和用户id查询项目-->
+	<select id="getProjectsByMemberIdAndOrgId" resultMap="BaseResultMap1">
+		SELECT
+		p.project_id,
+		p.project_name
+        FROM
+        	prm_project p
+        	JOIN prm_project_member pm ON p.project_id = pm.project_id
+        WHERE
+        	p.organization_id = #{orgId}
+        	AND pm.member_id =#{memberId}
 	</select>
 
 

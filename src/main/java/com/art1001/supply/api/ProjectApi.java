@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.Result;
+import com.art1001.supply.entity.TimeMap;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
@@ -849,7 +850,16 @@ public class ProjectApi extends BaseController {
     public JSONObject getYearOfAllMonth(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",DateUtils.getYearOfAllMonth());
+            Map<Long, String> times = DateUtils.getYearOfAllMonth();
+
+            List<TimeMap>list=Lists.newArrayList();
+            for (Map.Entry<Long, String> entry : times.entrySet()) {
+                TimeMap timeMap = new TimeMap();
+                timeMap.setTimeStamp(entry.getKey());
+                timeMap.setYearOfMonth(entry.getValue());
+                list.add(timeMap);
+            }
+            jsonObject.put("data",list);
             jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e) {
@@ -879,4 +889,6 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常，请稍后再试");
         }
     }
+
+
 }

@@ -586,7 +586,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     partmentMember.setCreateTime(System.currentTimeMillis());
                     partmentMember.setUpdateTime(System.currentTimeMillis());
                     partmentMember.setMemberId(memberId);
+
+                    //todo 页面传的是String，但是数据库存的是Integer，问题需要解决
                     partmentMember.setMemberLabel(Integer.valueOf(memberInfo.getMemberLabel()));
+
                     partmentMember.setIsMaster(false);
                     Optional.ofNullable(deptId).ifPresent(d->{
                         partmentMember.setPartmentId(d);
@@ -653,5 +656,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             });
         }
         return list;
+    }
+
+    /**
+     * 根据企业id和用户id查询项目
+     * @param orgId
+     * @param memberId
+     * @return
+     */
+    @Override
+    public List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId) {
+        return projectMapper.getProjectsByMemberIdAndOrgId(orgId,memberId);
     }
 }

@@ -19,6 +19,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
@@ -88,6 +89,9 @@ public class  TaskApi extends BaseController {
 
     @Resource
     private WeChatAppMessageTemplateDataBuildService updateTaskJoinInfo;
+
+    @Resource
+    private ProjectService projectService;
 
     /**
      * 任务页面初始化
@@ -1209,7 +1213,47 @@ public class  TaskApi extends BaseController {
         }
     }
 
+    /**
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param:
+     * @return:
+     * @Description: 任务安排-批量交接任务-根据企业id和用户id查询项目
+     * @create: 15:10 2020/4/30
+     */
+    @GetMapping("/{orgId}/getProjectsByMemberIdAndOrgId/{memberId}")
+    public JSONObject getProjectsByMemberIdAndOrgId(@PathVariable String orgId,@PathVariable String memberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("date",projectService.getProjectsByMemberIdAndOrgId(orgId,memberId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，查询失败");
+        }
+    }
 
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description:  任务安排-批量交接任务-根据项目id和用户id查询任务
+    * @create: 16:03 2020/4/30
+    */
+    @GetMapping("/{memberId}/getTasksByProjectIdAndMemberId/{projectId}")
+    public JSONObject getTasksByProjectIdAndMemberId(@PathVariable String memberId,@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("date",taskService.getTasksByProjectIdAndMemberId(memberId,projectId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，查询失败");
+        }
+    }
 }
 
 

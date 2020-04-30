@@ -26,6 +26,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
+import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.quartz.MyJob;
@@ -154,6 +155,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private ProjectMapper projectMapper;
 
     private static final String CLASSIFY_TODAY="今天";
     private static final String CLASSIFY_WEEK="最近一周";
@@ -2039,5 +2043,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return taskDynamicVO;
 
     }
+
+    /**
+     * 根据项目id和用户id查询任务
+     * @param memberId
+     * @param projectId
+     * @return
+     */
+    @Override
+    public List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId) {
+        return taskMapper.getUnfinishedTask(memberId,projectId);
+    }
+
 }
 
