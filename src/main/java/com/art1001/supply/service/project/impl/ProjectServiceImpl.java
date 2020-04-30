@@ -624,8 +624,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException {
         //时间戳转换
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        Date date = sdf.parse(dateSort);
+        Date date = new Date(Long.valueOf(dateSort));
         Integer year = Integer.valueOf( new SimpleDateFormat("yyyy").format(date));
         Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(date));
         //获取月份第一天和最后一天

@@ -823,11 +823,11 @@ public class ProjectApi extends BaseController {
      * @Description: 最近动态API
      * @create: 10:39 2020/4/26
      */
-    @GetMapping("/{memberId}/{orgId}/tasks")
-    public JSONObject getTasksByUserIdAndProjectId(@PathVariable String orgId, @PathVariable String memberId, String dateSort) {
+    @GetMapping("/{memberId}/{orgId}/tasks/{time}")
+    public JSONObject getTasksByUserIdAndProjectId(@PathVariable String orgId, @PathVariable String memberId, @PathVariable String time) {
         JSONObject jsonObject = new JSONObject();
         try {
-            List<TaskDynamicVO> list = projectService.getTaskDynamicVOS(orgId, memberId, dateSort);
+            List<TaskDynamicVO> list = projectService.getTaskDynamicVOS(orgId, memberId, time);
             jsonObject.put("result", 1);
             jsonObject.put("data", list);
             return jsonObject;
