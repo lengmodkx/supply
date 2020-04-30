@@ -582,14 +582,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
             Optional.ofNullable(organizationMember).ifPresent(r->{
                 PartmentMember partmentMember = new PartmentMember();
+                //判断部门id是否为0
                 if (ZERO.equals(r.getPartmentId())) {
                     partmentMember.setCreateTime(System.currentTimeMillis());
                     partmentMember.setUpdateTime(System.currentTimeMillis());
                     partmentMember.setMemberId(memberId);
-
                     partmentMember.setMemberType(memberInfo.getMemberLabel());
-
                     partmentMember.setIsMaster(false);
+
                     Optional.ofNullable(deptId).ifPresent(d->{
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
