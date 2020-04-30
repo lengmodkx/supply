@@ -1599,10 +1599,7 @@ select
 		LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
 		LEFT JOIN tb_user AS u ON t.executor = u.user_id
 		WHERE
-		t.task_id IN
-		<foreach collection="ids" item="id" separator="," close=")" open="(">
-			#{id}
-		</foreach>
+		t.project_id = #{projectId}
 		AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
 		BETWEEN  #{startTime}  and  #{endTime}
 		ORDER by t.create_time ,f.create_time DESC

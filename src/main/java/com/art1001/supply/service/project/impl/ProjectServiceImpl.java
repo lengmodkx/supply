@@ -622,19 +622,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:10 2020/4/26
      */
     @Override
-    public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) {
+    public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException {
         //时间戳转换
-        Long aLong = Long.valueOf(dateSort);
-        Date date = new Timestamp(aLong);
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(date);
-        int month = instance.get(Calendar.MONTH);
-        int year = instance.get(Calendar.YEAR);
-
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Date date = sdf.parse(dateSort);
+        Integer year = Integer.valueOf( new SimpleDateFormat("yyyy").format(date));
+        Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(date));
         //获取月份第一天和最后一天
-        String startTime = DateUtils.getFisrtDayOfMonth(year, month + 1);
-        String endTime = DateUtils.getLastDayOfMonth(year, month + 1);
+        String startTime = DateUtils.getFisrtDayOfMonth(year, month);
+        String endTime = DateUtils.getLastDayOfMonth(year, month);
 
 
         //根据指定的用户id和企业id查询项目信息
@@ -648,24 +644,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             projects.forEach(r -> {
                 //根据项目id，月份第一天和最后一天查询本月的任务
                 List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
-
-                TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
-                taskDynamicVO.setTasks(tasks);
-                taskDynamicVO.setProjectId(r.getProjectId());
-                taskDynamicVO.setProjectName(r.getProjectName());
-                list.add(taskDynamicVO);
-              /*  String projectName = projectService.getOne(new QueryWrapper<Project>()
-                        .select("project_name").eq("project_id", r.getProjectId()))
-                        .getProjectName();*/
-
-               /* if (!CollectionUtils.isEmpty(tasks)) {
-                    tasks.forEach(task->{
-
-                        BeanUtils.copyProperties(task, taskDynamicVO);
-
-
-                    });
-                }*/
+                if (tasks != null && tasks.size() >0){
+                    TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
+                    taskDynamicVO.setTasks(tasks);
+                    taskDynamicVO.setProjectId(r.getProjectId());
+                    taskDynamicVO.setProjectName(r.getProjectName());
+                    list.add(taskDynamicVO);
+                }
             });
         }
         return list;

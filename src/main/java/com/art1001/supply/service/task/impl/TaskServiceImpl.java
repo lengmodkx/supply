@@ -1987,13 +1987,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     */
     @Override
     public List<Task> getTaskPanelByStartAndEndTime(String projectId, String startTime, String endTime) {
-        String projectAllTask = projectService.findProjectAllTask(projectId);
-        if (StringUtils.isEmpty(projectAllTask)) {
-            return new ArrayList<>();
-        }
-        List<String> taskIds = Arrays.asList(projectAllTask.split(","));
 
-        return taskMapper.getTaskPanelByStartAndEndTime(taskIds,startTime,endTime);
+        return taskMapper.getTaskPanelByStartAndEndTime(projectId,startTime,endTime);
     }
 
     /**
