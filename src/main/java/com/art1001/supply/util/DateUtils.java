@@ -169,18 +169,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     * @Description: 获取当前系统时间最近12月的年月（含当月）
     * @create: 10:59 2020/4/30
     */
-    public static List<Map<Long,String>>getYearOfAllMonth(){
-        List<Map<Long,String>>list= Lists.newArrayList();
+    public static Map<Long,String>getYearOfAllMonth(){
+//        List<Map<Long,String>>list= Lists.newArrayList();
         LocalDate today = LocalDate.now();
+        Map<Long,String>mapAll= Maps.newLinkedHashMap();
         for(long i = 0L;i <= 11L; i++){
-            Map<Long,String>map= Maps.newHashMap();
+            Map<Long,String>map= Maps.newLinkedHashMap();
             LocalDate localDate = today.minusMonths(i);
             String ss = localDate.toString().substring(0,7);
             Long timestamp = localDate.atStartOfDay(ZoneOffset.ofHours(8)).toInstant().toEpochMilli();
             map.put(timestamp,ss);
-            list.add(map);
+            mapAll.putAll(map);
         }
-        return list;
+        return mapAll;
     }
 
 
