@@ -1,5 +1,7 @@
 package com.art1001.supply.util;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -10,10 +12,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 
 /**
@@ -162,7 +161,27 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return cal.getTime();
     }
 
-
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取当前系统时间最近12月的年月（含当月）
+    * @create: 10:59 2020/4/30
+    */
+    public static List<Map<Long,String>>getYearOfAllMonth(){
+        List<Map<Long,String>>list= Lists.newArrayList();
+        LocalDate today = LocalDate.now();
+        for(long i = 0L;i <= 11L; i++){
+            Map<Long,String>map= Maps.newHashMap();
+            LocalDate localDate = today.minusMonths(i);
+            String ss = localDate.toString().substring(0,7);
+            Long timestamp = localDate.atStartOfDay(ZoneOffset.ofHours(8)).toInstant().toEpochMilli();
+            map.put(timestamp,ss);
+            list.add(map);
+        }
+        return list;
+    }
 
 
     /**

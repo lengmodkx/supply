@@ -840,6 +840,28 @@ public class ProjectApi extends BaseController {
     /**
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取当前日期最近一年的年月信息
+    * @create: 11:22 2020/4/30
+    */
+    @GetMapping("/getYearOfAllMonth")
+    public JSONObject getYearOfAllMonth(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",DateUtils.getYearOfAllMonth());
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，获取信息失败");
+        }
+
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
     * @Param: orgId 企业id
     * @return:
     * @Description: 查询企业下的部门信息
