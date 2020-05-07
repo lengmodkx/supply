@@ -7,6 +7,7 @@ import com.art1001.supply.entity.project.GantChartVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.project.ProjectTreeVO;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -246,7 +247,7 @@ public interface ProjectService extends IService<Project> {
 	* @Description: 根据用户id和项目id获取任务列表
 	* @create: 18:08 2020/4/26
 	*/
-    List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException;
+    List<Task> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException;
 
 	/**
 	 * 根据企业id和用户id查询项目

@@ -20,6 +20,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.*;
+import com.art1001.supply.entity.task.vo.ExecutorVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
@@ -164,6 +165,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     private static final String CLASSIFY_MONTH="最近一个月";
     private static final String CLASSIFY_ALL="全部";
     private static final String CLASSIFY_NOTALL="未完成的任务";
+    private static final String ZERO="0";
 
     /**
      * 用户点赞接口
@@ -2054,6 +2056,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId) {
         return taskMapper.getUnfinishedTask(memberId,projectId);
     }
+
+    /**
+     * 根据项目id获取执行者列表
+     * @param projectId
+     * @return
+     */
+    @Override
+    public List<ExecutorVo> getExecutors(String projectId) {
+        List<ExecutorVo> executors = taskMapper.getExecutors(projectId);
+        Optional.ofNullable(executors).ifPresent(es->{
+            es.forEach(e->{
+                if (ZERO.equals(e.getExecutor())) {
+                    e.setExecutorName("待认领");
+                }
+            });
+        });
+        return executors;
+    }
+
+
 
 }
 

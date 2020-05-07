@@ -114,7 +114,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private ProjectService projectService;
 
-    private static final String ZERO="0";
+    private static final String ZERO = "0";
 
     /**
      * 查询分页project数据
@@ -563,10 +563,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             //memberInfo.setMemberId(memberId);
             memberInfo.setOrganizationId(orgId);
             memberInfo.setUserName(userName);
-            if(!"".equals(birthday)  && null != birthday ){
+            if (!"".equals(birthday) && null != birthday) {
                 memberInfo.setBirthday(String.valueOf(sdf.parse(birthday).getTime()));
             }
-            if(!"".equals(entryTime)  && null != entryTime){
+            if (!"".equals(entryTime) && null != entryTime) {
                 memberInfo.setEntryTime(String.valueOf(sdf.parse(entryTime).getTime()));
             }
             memberInfo.setStayComDate(memberInfo.getStayComDate());
@@ -580,7 +580,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>()
                     .eq("organization_id", orgId).eq("member_id", memberId));
 
-            Optional.ofNullable(organizationMember).ifPresent(r->{
+            Optional.ofNullable(organizationMember).ifPresent(r -> {
                 PartmentMember partmentMember = new PartmentMember();
                 //判断部门id是否为0
                 if (ZERO.equals(r.getPartmentId())) {
@@ -590,14 +590,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     partmentMember.setMemberType(memberInfo.getMemberLabel());
                     partmentMember.setIsMaster(false);
 
-                    Optional.ofNullable(deptId).ifPresent(d->{
+                    Optional.ofNullable(deptId).ifPresent(d -> {
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
                     });
                     partmentMemberService.save(partmentMember);
-                }else {
+                } else {
                     partmentMember.setUpdateTime(System.currentTimeMillis());
-                    Optional.ofNullable(deptId).ifPresent(d->{
+                    Optional.ofNullable(deptId).ifPresent(d -> {
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
                     });
@@ -605,7 +605,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                             .eq("member_id", memberId).eq("partment_id", deptId));
                 }
             });
-            organizationMemberService.update(memberInfo,new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
+            organizationMemberService.update(memberInfo, new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
             return 1;
         } catch (Exception e) {
             e.printStackTrace();
@@ -624,10 +624,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:10 2020/4/26
      */
     @Override
-    public List<TaskDynamicVO> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException {
+    public List<Task> getTaskDynamicVOS(String orgId, String memberId, String dateSort) throws ParseException {
         //时间戳转换
         Date date = new Date(Long.valueOf(dateSort));
-        Integer year = Integer.valueOf( new SimpleDateFormat("yyyy").format(date));
+        Integer year = Integer.valueOf(new SimpleDateFormat("yyyy").format(date));
         Integer month = Integer.valueOf(new SimpleDateFormat("MM").format(date));
         //获取月份第一天和最后一天
         String startTime = DateUtils.getFisrtDayOfMonth(year, month);
@@ -635,36 +635,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
 
         //根据指定的用户id和企业id查询项目信息
-        //List<Project> projects = organizationService.getProjectByUserIdAndOrgId(memberId, orgId);
-        List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id", orgId));
-        List<TaskDynamicVO> list = Lists.newArrayList();
-
+        List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id", orgId).eq("member_id", memberId));
+        List<Task> list = Lists.newArrayList();
 
         if (!CollectionUtils.isEmpty(projects)) {
-            //遍历项目列表
-            projects.forEach(r -> {
-                //根据项目id，月份第一天和最后一天查询本月的任务
-                List<Task> tasks = taskService.getTaskPanelByStartAndEndTime(r.getProjectId(), startTime, endTime);
-                if (tasks != null && tasks.size() >0){
-                    TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
-                    taskDynamicVO.setTasks(tasks);
-                    taskDynamicVO.setProjectId(r.getProjectId());
-                    taskDynamicVO.setProjectName(r.getProjectName());
-                    list.add(taskDynamicVO);
-                }
-            });
+            for (Project project : projects) {
+                List<Task> list1=taskService.getTaskPanelByStartAndEndTime(project.getProjectId(), startTime, endTime);
+                list.addAll(list1);
+            }
         }
+
         return list;
     }
 
     /**
      * 根据企业id和用户id查询项目
+     *
      * @param orgId
      * @param memberId
      * @return
      */
     @Override
     public List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId) {
-        return projectMapper.getProjectsByMemberIdAndOrgId(orgId,memberId);
+        return projectMapper.getProjectsByMemberIdAndOrgId(orgId, memberId);
     }
 }

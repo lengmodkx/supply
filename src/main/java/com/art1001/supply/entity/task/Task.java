@@ -334,6 +334,11 @@ Task extends Model<Task> {
 	 */
 	private Double planWorkHours;
 
+	/**
+	 * 项目名
+	 */
+	@TableField(exist = false)
+	private String projectName;
 
 
 	@Override

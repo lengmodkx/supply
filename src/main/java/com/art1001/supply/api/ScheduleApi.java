@@ -1,5 +1,6 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
@@ -8,6 +9,7 @@ import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
+import com.art1001.supply.entity.schedule.ScheduleListVO;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -543,5 +545,27 @@ public class ScheduleApi extends BaseController {
         } catch (Exception e){
             throw new AjaxException("系统异常,获取绑定信息失败!",e);
         }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: 
+    * @return: 
+    * @Description: 获取日程列表
+    * @create: 15:19 2020/5/6
+    */
+    @GetMapping("/getScheduleList/{projectId}/{memberId}")
+    public JSONObject getScheduleList(@PathVariable String projectId,@PathVariable String memberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",scheduleService.getScheduleList(projectId,memberId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+
     }
 }

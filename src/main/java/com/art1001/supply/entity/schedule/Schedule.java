@@ -215,6 +215,12 @@ public class Schedule extends Model<Schedule> {
 	@TableField(exist = false)
 	private String img;
 
+	/**
+	 * 项目名称
+	 */
+	@TableField(exist = false)
+	private String projectName;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.scheduleId;

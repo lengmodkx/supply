@@ -218,14 +218,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		organizationMemberService.update(one, new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, userId).eq(OrganizationMember::getOrganizationId,one.getOrganizationId()));
 	}
 
-	@Override
-	public List<Project> getProjectByUserIdAndOrgId(String memberId,String orgId) {
-//		if(this.checkOrgIsExist(orgId)){
-//			return new ArrayList<>();
-//		}
-		List<Project> projects = organizationMapper.selectProject(orgId,memberId);
-		return projects;
-	}
+
 
 
 }

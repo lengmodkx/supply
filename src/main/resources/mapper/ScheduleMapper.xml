@@ -674,4 +674,22 @@
 			s.is_del = '0'
 	</select>
 
+	<select id="getScheduleList" resultType="com.art1001.supply.entity.schedule.Schedule">
+		SELECT
+        	sc.start_time,
+        	sc.end_time,
+        	sc.schedule_id,
+        	sc.schedule_name,
+        	sc.project_id,
+        	sc.create_time,
+        	p.project_name as projectName
+        FROM
+        	prm_schedule sc
+        	JOIN prm_project p ON sc.project_id = p.project_id
+        WHERE
+        	sc.project_id = #{project_id}
+        	AND sc.member_id = #{member_id}
+        	and sc.is_del='0'
+	</select>
+
 </mapper>

@@ -11,6 +11,7 @@ import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.task.TaskRemindRule;
+import com.art1001.supply.entity.task.vo.ExecutorVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
@@ -722,4 +723,13 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId);
+
+	/**
+	 * 根据项目id获取执行者列表
+	 * @param projectId
+	 * @return List<ExecutorVo>
+	 */
+	List<ExecutorVo> getExecutors(String projectId);
+
+
 }

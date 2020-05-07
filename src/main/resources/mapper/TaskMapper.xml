@@ -1582,27 +1582,25 @@ select
 
 
 		<select id="getTaskPanelByStartAndEndTime" resultMap="panelListMap">
-		SELECT
-		t.task_id,
-		t.task_name,
-		f.start_time,
-		f.project_id,
-		f.end_time,
-		t.executor,
-		m.relation_id,
-		m.relation_name,
-		u.user_name,
-		u.image
-		FROM
-		prm_task AS t
-		LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
-		LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
-		LEFT JOIN tb_user AS u ON t.executor = u.user_id
-		WHERE
-		t.project_id = #{projectId}
-		AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
-		BETWEEN  #{startTime}  and  #{endTime}
-		ORDER by t.create_time ,f.create_time DESC
+			SELECT
+		     t.task_id,
+		     t.task_name,
+		     f.start_time,
+		     f.project_id,
+		     f.end_time,
+		     IF(t.executor='0',"未指派",t.executor) as executor,
+		     f.project_name as projectName,
+		     u.user_name as executorName,
+		     u.image as executorImg
+	       FROM
+		    prm_task AS t
+		    LEFT JOIN prm_project AS f ON t.project_id = f.project_id
+		    LEFT JOIN tb_user AS u ON t.executor = u.user_id
+		    WHERE
+		    t.project_id = #{projectId}
+		    AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
+		    BETWEEN  #{startTime}  and  #{endTime}
+		    ORDER by t.create_time ,f.create_time DESC
 	</select>
 
 	<select id="getTaskInfoListByTime" resultMap="panelListMap">
@@ -1635,6 +1633,19 @@ select
 		WHERE
 		executor=#{memberId} and project_id=#{projectId}
 	    ORDER by create_time DESC
+	</select>
+
+	<select id="getExecutors" resultType="com.art1001.supply.entity.task.vo.ExecutorVo">
+      SELECT
+      	t.executor,
+      	u.user_name as executorName
+      FROM
+      	prm_task t
+      	 left JOIN tb_user u ON t.executor = u.user_id
+      WHERE
+      	t.project_id = #{projectId}
+      GROUP BY
+      	executor
 	</select>
 
 </mapper>

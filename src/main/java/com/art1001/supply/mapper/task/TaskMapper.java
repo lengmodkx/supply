@@ -7,6 +7,7 @@ import com.art1001.supply.entity.statistics.StatisticsResultVO;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
+import com.art1001.supply.entity.task.vo.ExecutorVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -769,4 +770,10 @@ public interface TaskMapper extends BaseMapper<Task> {
 	List<Task> getTaskInfoList(String memberId, String projectId);
 
 
+	/**
+	 * 根据项目id获取执行者列表
+	 * @param projectId
+	 * @return
+	 */
+    List<ExecutorVo> getExecutors(@Param("projectId") String projectId);
 }

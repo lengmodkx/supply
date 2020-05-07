@@ -97,14 +97,5 @@ public interface OrganizationService extends IService<Organization> {
 	void personalProject(String userId);
 
 
-	/**
-	* @Author: 邓凯欣
-	* @Email：dengkaixin@art1001.com
-	* @Param: memberId 用户id
-	* @Param: orgId 企业id
-	* @return:
-	* @Description:  根据指定的用户id和企业id查询项目信息
-	* @create: 11:58 2020/4/26
-	*/
-	List<Project> getProjectByUserIdAndOrgId(String memberId,String orgId);
+
 }

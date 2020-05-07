@@ -5,6 +5,7 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
+import com.art1001.supply.entity.schedule.ScheduleListVO;
 import com.art1001.supply.entity.schedule.ScheduleVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -261,4 +262,12 @@ public interface ScheduleService extends IService<Schedule> {
 	String getProjectId(String scheduleId);
 
     String[] getJoinAndCreatorId(String publicId);
+
+	/**
+	 * 获取日程列表
+	 * @param projectId
+	 * @param memberId
+	 * @return
+	 */
+    List<ScheduleListVO> getScheduleList(String projectId, String memberId);
 }

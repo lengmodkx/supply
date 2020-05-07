@@ -4,10 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.schedule.Schedule;
-import com.art1001.supply.entity.schedule.ScheduleApiBean;
-import com.art1001.supply.entity.schedule.ScheduleLogFunction;
-import com.art1001.supply.entity.schedule.ScheduleVo;
+import com.art1001.supply.entity.schedule.*;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
@@ -25,14 +22,16 @@ import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -590,5 +589,40 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
             }
         }
         return new String[0];
+    }
+
+    /**
+     * 获取日程列表
+     * @param projectId
+     * @param memberId
+     * @return
+     */
+    @Override
+    public List<ScheduleListVO> getScheduleList(String projectId, String memberId) {
+        List<Schedule>scheduleList=scheduleMapper.getScheduleList(projectId,memberId);
+        List<ScheduleListVO>scheduleListVOS= Lists.newArrayList();
+
+
+        Optional.ofNullable(scheduleList).ifPresent(schedules->{
+            List<ScheduleSimpleInfoVO>scheduleSimpleInfoVOS=Lists.newArrayList();
+            ScheduleSimpleInfoVO scheduleSimpleInfoVO = new ScheduleSimpleInfoVO();
+            schedules.forEach(schedule -> {
+                //日期处理，Long转换成MM-dd类型
+                DateTimeFormatter time = DateTimeFormatter.ofPattern("MM月dd日");
+                DateTimeFormatter time2 = DateTimeFormatter.ofPattern("HH:mm");
+                String createTime = time.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(schedule.getCreateTime()), ZoneId.systemDefault()));
+                String startTime = time2.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(schedule.getStartTime()), ZoneId.systemDefault()));
+                String endTime = time2.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(schedule.getEndTime()), ZoneId.systemDefault()));
+
+                //赋值
+                scheduleSimpleInfoVOS.add(ScheduleSimpleInfoVO.builder()
+                        .startTime(startTime).endTime(endTime).projectId(schedule.getProjectId())
+                        .projectName(schedule.getProjectName()).scheduleId(schedule.getScheduleId())
+                        .scheduleName(schedule.getScheduleName()).build());
+
+                scheduleListVOS.add(ScheduleListVO.builder().createTime(createTime).scheduleSimpleInfoVOS(scheduleSimpleInfoVOS).build());
+            });
+        });
+        return scheduleListVOS;
     }
 }

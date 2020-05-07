@@ -241,4 +241,6 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @return 日程id
 	 */
     List<Schedule> selectBindTagInfo(@Param("tagId") Long tagId);
+
+	List<Schedule> getScheduleList(@Param("project_id") String projectId, @Param("member_id") String memberId);
 }
