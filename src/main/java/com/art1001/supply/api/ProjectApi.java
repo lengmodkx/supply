@@ -10,10 +10,7 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectFunc;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.project.ProjectMemberDTO;
+import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
@@ -28,6 +25,7 @@ import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.project.ProjectSimpleInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -111,6 +109,8 @@ public class ProjectApi extends BaseController {
     @Resource
     private PartmentService partmentService;
 
+    @Resource
+    private ProjectSimpleInfoService projectSimpleInfoService;
     /**
      * 创建项目
      *
@@ -889,5 +889,80 @@ public class ProjectApi extends BaseController {
         }
     }
 
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: memberId
+    * @return:
+    * @Description: 项目经历API 根据成员id获取项目信息
+    * @create: 13:51 2020/5/7
+    */
+    @GetMapping("/getExperience/{memberId}")
+    public JSONObject getExperience(@PathVariable("memberId") String memberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",projectService.findProjectByUserId(memberId));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 添加项目经历
+    * @create: 14:40 2020/5/7
+    */
+    @Push(value = PushType.F2, type = 1)
+    @PutMapping ("/addExperience/{memberId}/{projectId}")
+    public JSONObject addExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            ProjectSimpleInfo projectSimpleInfo = new ProjectSimpleInfo();
+            projectSimpleInfo.setMemberId(memberId);
+            projectSimpleInfo.setProjectId(projectId);
+            if (projectSimpleInfoService.save(projectSimpleInfo)) {
+                jsonObject.put("result", 1);
+                jsonObject.put("msg", "成功!");
+            }else{
+                jsonObject.put("result", 0);
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 取消项目经历
+    * @create: 14:41 2020/5/7
+    */
+    @Push(value = PushType.F3, type = 1)
+    @DeleteMapping("/deleteExperience/{memberId}/{projectId}")
+    public JSONObject deleteExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (projectSimpleInfoService.remove(new QueryWrapper<ProjectSimpleInfo>().eq("member_id",memberId).eq("project_id",projectId))) {
+                jsonObject.put("result",1);
+                jsonObject.put("msg","成功");
+            }else{
+                jsonObject.put("result",0);
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
 
 }
