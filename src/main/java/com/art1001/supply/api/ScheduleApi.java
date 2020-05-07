@@ -555,7 +555,7 @@ public class ScheduleApi extends BaseController {
     * @Description: 获取日程列表
     * @create: 15:19 2020/5/6
     */
-    @GetMapping("/getScheduleList/{projectId}/{memberId}")
+        @GetMapping("/getScheduleList/{projectId}/{memberId}")
     public JSONObject getScheduleList(@PathVariable String projectId,@PathVariable String memberId){
         JSONObject jsonObject = new JSONObject();
         try {

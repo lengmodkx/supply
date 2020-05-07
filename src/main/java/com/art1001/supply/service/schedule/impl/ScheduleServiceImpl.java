@@ -605,7 +605,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
         Optional.ofNullable(scheduleList).ifPresent(schedules->{
             List<ScheduleSimpleInfoVO>scheduleSimpleInfoVOS=Lists.newArrayList();
-            ScheduleSimpleInfoVO scheduleSimpleInfoVO = new ScheduleSimpleInfoVO();
+            ScheduleListVO scheduleListVO=new ScheduleListVO();
             schedules.forEach(schedule -> {
                 //日期处理，Long转换成MM-dd类型
                 DateTimeFormatter time = DateTimeFormatter.ofPattern("MM月dd日");
@@ -619,9 +619,11 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                         .startTime(startTime).endTime(endTime).projectId(schedule.getProjectId())
                         .projectName(schedule.getProjectName()).scheduleId(schedule.getScheduleId())
                         .scheduleName(schedule.getScheduleName()).build());
-
-                scheduleListVOS.add(ScheduleListVO.builder().createTime(createTime).scheduleSimpleInfoVOS(scheduleSimpleInfoVOS).build());
+                scheduleListVO.setCreateTime(createTime);
+                scheduleListVO.setScheduleSimpleInfoVOS(scheduleSimpleInfoVOS);
+//                scheduleListVOS.add(ScheduleListVO.builder().createTime(createTime).scheduleSimpleInfoVOS(scheduleSimpleInfoVOS).build());
             });
+            scheduleListVOS.add(scheduleListVO);
         });
         return scheduleListVOS;
     }

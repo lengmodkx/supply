@@ -100,6 +100,9 @@ public class TaskApi extends BaseController {
     @Resource
     private ProjectService projectService;
 
+
+    private static final String ZERO="0";
+
     /**
      * 任务页面初始化
      *
