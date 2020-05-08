@@ -1600,7 +1600,7 @@ select
 		    t.project_id = #{projectId}
 		    AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
 		    BETWEEN  #{startTime}  and  #{endTime}
-		    ORDER by t.create_time ,f.create_time DESC
+		    ORDER by t.create_time ,f.c	reate_time DESC
 	</select>
 
 	<select id="getTaskInfoListByTime" resultMap="panelListMap">

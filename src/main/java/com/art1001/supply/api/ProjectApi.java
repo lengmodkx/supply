@@ -274,6 +274,7 @@ public class ProjectApi extends BaseController {
      * @return
      */
 //    @RequiresPermissions("delete:project")
+//    @Push(value = PushType.D12,type = 1)
     @DeleteMapping("/{projectId}")
     public JSONObject deleteProject(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -589,7 +590,7 @@ public class ProjectApi extends BaseController {
         }
         try {
 
-            if (entryTime!=null ) {
+            if (entryTime!=null&& !"".equals(entryTime)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String s = String.valueOf(sdf.parse(entryTime).getTime());
 
@@ -607,7 +608,7 @@ public class ProjectApi extends BaseController {
             e.printStackTrace();
         }
 
-
+        jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
         jsonObject.put("result", 1);
         jsonObject.put("message", "修改成功");
         return jsonObject;
@@ -913,7 +914,8 @@ public class ProjectApi extends BaseController {
     /**
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
-    * @Param:
+    * @Param: memberId 成员id
+    * @Param: projectId 项目id
     * @return:
     * @Description: 添加项目经历
     * @create: 14:40 2020/5/7

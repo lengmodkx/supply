@@ -550,12 +550,13 @@ public class ScheduleApi extends BaseController {
     /**
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
-    * @Param: 
-    * @return: 
+    * @Param: projectId 项目id
+    * @Param: memberId 项目id
+    * @return:
     * @Description: 获取日程列表
     * @create: 15:19 2020/5/6
     */
-        @GetMapping("/getScheduleList/{projectId}/{memberId}")
+    @GetMapping("/getScheduleList/{projectId}/{memberId}")
     public JSONObject getScheduleList(@PathVariable String projectId,@PathVariable String memberId){
         JSONObject jsonObject = new JSONObject();
         try {

@@ -174,33 +174,34 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
             //设置司龄
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            if (memberInfo.getEntryTime() != null) {
-                Long l = System.currentTimeMillis();
-                float num = ((float) (l - Long.valueOf(memberInfo.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
-                DecimalFormat df = new DecimalFormat("0.0");
-                String format = df.format(num);
-                if (POINTZERO.equals(format)) {
-                    memberInfo.setStayComDate("刚刚入职");
-                } else {
-                    memberInfo.setStayComDate(df.format(num) + "年");
+            if (memberInfo!=null) {
+                if (memberInfo.getEntryTime() != null) {
+                    Long l = System.currentTimeMillis();
+                    float num = ((float) (l - Long.valueOf(memberInfo.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
+                    DecimalFormat df = new DecimalFormat("0.0");
+                    String format = df.format(num);
+                    if (POINTZERO.equals(format)) {
+                        memberInfo.setStayComDate("刚刚入职");
+                    } else {
+                        memberInfo.setStayComDate(df.format(num) + "年");
+                    }
+                    memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
                 }
-                memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
-            }
-            if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
-                String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
-                memberInfo.setBirthday(format);
-            }
+                if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
+                    String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
+                    memberInfo.setBirthday(format);
+                }
 
 
-            PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
-            if (partmentMember != null) {
-                if (partmentMember.getIsMaster()) {
-                    memberInfo.setParentName(partmentMember.getPartmentName());
-                } else {
-                    memberInfo.setParentName(null);
+                PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
+                if (partmentMember != null) {
+                    if (partmentMember.getIsMaster()) {
+                        memberInfo.setParentName(partmentMember.getPartmentName());
+                    } else {
+                        memberInfo.setParentName(null);
+                    }
                 }
             }
-
             return memberInfo;
         } catch (Exception e) {
             e.printStackTrace();

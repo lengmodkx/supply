@@ -621,8 +621,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                         .scheduleName(schedule.getScheduleName()).build());
                 scheduleListVO.setCreateTime(createTime);
                 scheduleListVO.setScheduleSimpleInfoVOS(scheduleSimpleInfoVOS);
-//                scheduleListVOS.add(ScheduleListVO.builder().createTime(createTime).scheduleSimpleInfoVOS(scheduleSimpleInfoVOS).build());
-            });
+                });
             scheduleListVOS.add(scheduleListVO);
         });
         return scheduleListVOS;
