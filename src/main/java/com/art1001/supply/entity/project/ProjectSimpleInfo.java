@@ -21,13 +21,33 @@ public class ProjectSimpleInfo extends Model<ProjectSimpleInfo> {
   @TableId(value = "id",type = IdType.UUID)
   private String id;
   /**
-   * 成员id
+   * 被修改人的成员id
    */
-  private String memberId;
+  private String modifyId;
+
+  /**
+   * 修改人的成员id
+   */
+  private String updateId;
   /**
    * 项目id
    */
   private String projectId;
+
+  /**
+   * 企业id
+   */
+  private String organizationId;
+
+  /**
+   * 创建时间
+   */
+  private Long createTime;
+
+  /**
+   * 修改时间
+   */
+  private Long updateTime;
 
 
   @Override

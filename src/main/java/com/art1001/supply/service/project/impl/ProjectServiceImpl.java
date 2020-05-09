@@ -27,6 +27,7 @@ import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.project.ProjectSimpleInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
@@ -113,6 +114,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private ProjectSimpleInfoService projectSimpleInfoService;
 
     private static final String ZERO = "0";
 
@@ -676,5 +680,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId) {
         return projectMapper.getProjectsByMemberIdAndOrgId(orgId, memberId);
+    }
+
+    @Override
+    public List<Project> getExperience(String memberId, String organizationId) {
+        List<Project> projectByUserId = projectMapper.selectList(new QueryWrapper<Project>().eq("member_id", memberId).eq("organization_id", organizationId));
+        List<ProjectSimpleInfo> projectSimpleInfos = projectSimpleInfoService.getIsExperience(memberId, organizationId);
+        if (!CollectionUtils.isEmpty(projectSimpleInfos)) {
+            Optional.ofNullable(projectByUserId).ifPresent(projects -> projects.stream()
+                    .filter(f -> !projectSimpleInfos.stream()
+                            .map(ProjectSimpleInfo::getProjectId)
+                            .equals(f.getProjectId()))
+                    .forEach(e -> e.setIsAdd(0)));
+            Optional.ofNullable(projectByUserId).ifPresent(projects -> projects.stream()
+                    .filter(f -> projectSimpleInfos.stream()
+                            .map(ProjectSimpleInfo::getProjectId)
+                            .equals(f.getProjectId()))
+                    .forEach(e -> e.setIsAdd(1)));
+        }
+        return projectByUserId;
     }
 }

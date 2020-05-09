@@ -895,15 +895,15 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param: memberId
-    * @return:
+    * @return: todo 等待确定表之后再修改
     * @Description: 项目经历API 根据成员id获取项目信息
     * @create: 13:51 2020/5/7
     */
-    @GetMapping("/getExperience/{memberId}")
-    public JSONObject getExperience(@PathVariable("memberId") String memberId){
+    @GetMapping("/getExperience/{organizationId}/{memberId}")
+    public JSONObject getExperience(@PathVariable("memberId") String memberId,@PathVariable String organizationId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",projectService.findProjectByUserId(memberId));
+            jsonObject.put("data",projectService.getExperience(memberId,organizationId));
             jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e) {
@@ -916,8 +916,29 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param: memberId 成员id
+    * @return: todo 等待确定表之后再修改
+    * @Description: 获取项目经历中已添加的项目信息
+    * @create: 15:56 2020/5/9
+    */
+    @GetMapping("/getIsExperience/{organizationId}/{memberId}")
+    public JSONObject getIsExperience(@PathVariable String memberId,@PathVariable String organizationId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",projectSimpleInfoService.getIsExperience(memberId,organizationId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+        return jsonObject;
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: memberId 成员id
     * @Param: projectId 项目id
-    * @return:
+    * @return: todo 等待确定表之后再修改
     * @Description: 添加项目经历
     * @create: 14:40 2020/5/7
     */
@@ -927,7 +948,7 @@ public class ProjectApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             ProjectSimpleInfo projectSimpleInfo = new ProjectSimpleInfo();
-            projectSimpleInfo.setMemberId(memberId);
+            projectSimpleInfo.setModifyId(memberId);
             projectSimpleInfo.setProjectId(projectId);
             if (projectSimpleInfoService.save(projectSimpleInfo)) {
                 jsonObject.put("result", 1);
@@ -946,7 +967,7 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param:
-    * @return:
+    * @return: todo 等待确定表之后再修改
     * @Description: 取消项目经历
     * @create: 14:41 2020/5/7
     */

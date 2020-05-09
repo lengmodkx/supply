@@ -149,6 +149,9 @@ public class Project extends Model<Project> {
     @TableField(exist = false)
     private String groupId;
 
+    @TableField(exist = false)
+    private Integer isAdd;
+
     @Override
     protected Serializable pkVal() {
         return this.projectId;

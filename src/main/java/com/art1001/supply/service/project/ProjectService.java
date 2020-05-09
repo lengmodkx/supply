@@ -256,4 +256,12 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
     List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId);
+
+	/**
+	 * 查询企业下该成员所有的项目信息
+	 * @param memberId
+	 * @param organizationId
+	 * @return
+	 */
+	List<Project> getExperience(String memberId, String organizationId);
 }

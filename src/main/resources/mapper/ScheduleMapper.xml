@@ -682,6 +682,7 @@
         	sc.schedule_name,
         	sc.project_id,
         	sc.create_time,
+        	sc.is_allday,
         	p.project_name as projectName
         FROM
         	prm_schedule sc

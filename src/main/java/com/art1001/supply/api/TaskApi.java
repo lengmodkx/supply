@@ -1222,7 +1222,7 @@ public class TaskApi extends BaseController {
      * @param workingHours 进度值
      * @return 结果
      */
-    @Push(value = PushType.A31)
+    @Push(value = PushType.A31,type = 1)
     @PostMapping("/work_hours")
     public JSONObject updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
 
@@ -1235,7 +1235,7 @@ public class TaskApi extends BaseController {
             Task task = taskService.findTaskByTaskId(taskId);
             jsonObject.put("result",1);
             jsonObject.put("data",task.getTaskId());
-            jsonObject.put("msgId",task.getTaskId());
+            jsonObject.put("msgId",task.getProjectId());
         } catch (Exception e) {
             e.printStackTrace();
         }
