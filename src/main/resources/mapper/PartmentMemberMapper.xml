@@ -48,10 +48,11 @@
     </select>
 
 
-    <select id="getSimplePartmentMemberInfo" resultMap="BaseResultMap">
+    <select id="getSimplePartmentMemberInfo" resultType="com.art1001.supply.entity.partment.PartmentMember">
          SELECT
          	pm.is_master,
          	p.partment_id,
+         	p.partment_name as partmentName,
          	u.user_name	as parentName
          FROM
          	prm_partment p

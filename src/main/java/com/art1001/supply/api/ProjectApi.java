@@ -581,10 +581,11 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberEmail", required = false) String memberEmail,
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "birthday", required = false) String birthday,
-            @RequestParam(value = "deptId", required = false) String deptId
+            @RequestParam(value = "deptId", required = false) String deptId,
+            @RequestParam(value = "deptName",required = false)String deptName
     ) {
         JSONObject jsonObject = new JSONObject();
-        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
+        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId,deptName);
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }

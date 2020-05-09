@@ -72,7 +72,7 @@ import static jdk.nashorn.internal.runtime.Debug.id;
 @Service
 public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, ProjectMember> implements ProjectMemberService {
 
-    private static final String POINTZERO = "0.0";
+    private static final String POINTZERO = "-0.0";
     private static final String ZERO = "0";
     /**
      * projectMemberMapper接口
@@ -195,6 +195,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
                 PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
                 if (partmentMember != null) {
+                    memberInfo.setDeptName(partmentMember.getPartmentName());
                     if (partmentMember.getIsMaster()) {
                         memberInfo.setParentName(partmentMember.getPartmentName());
                     } else {

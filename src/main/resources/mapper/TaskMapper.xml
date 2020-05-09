@@ -1600,38 +1600,47 @@ select
 		    t.project_id = #{projectId}
 		    AND t.task_del = 0 and  FROM_UNIXTIME( t.create_time / 1000, '%Y-%m-%d' )
 		    BETWEEN  #{startTime}  and  #{endTime}
-		    ORDER by t.create_time ,f.c	reate_time DESC
+		    ORDER by t.create_time ,f.create_time DESC
 	</select>
 
-	<select id="getTaskInfoListByTime" resultMap="panelListMap">
+	<select id="getTaskInfoListByTime" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List" />,
+		p.project_name as projectName
 		FROM
 		prm_task
+		join prm_project p
+		on prm_task.project_id=p.project_id
 		WHERE
-		executor=#{memberId} and project_id=#{projectId}
-		AND task_del = 0 and  update_time
+		executor=#{memberId} and prm_task.project_id=#{projectId}
+		AND task_del = 0 and  prm_task.update_time
 		BETWEEN  #{startTime}  and  #{endTime}
 		ORDER by create_time DESC
 	</select>
 
-	<select id="getUnfinishedTask" resultMap="panelListMap">
+	<select id="getUnfinishedTask" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List" />,
+		p.project_name as projectName
 		FROM
 		prm_task
+		join prm_project p
+		on prm_task.project_id=p.project_id
 		WHERE
-		executor=#{memberId} and project_id=#{projectId}
+		executor=#{memberId} and prm_task.project_id=#{projectId}
 		and task_status=0 ORDER by create_time DESC
 	</select>
 
-	<select id="getTaskInfoList" resultMap="panelListMap">
+	<select id="getTaskInfoList" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List" />,
+		p.project_name as projectName
 		FROM
 		prm_task
+		join prm_project p
+		on prm_task.project_id=p.project_id
 		WHERE
-		executor=#{memberId} and project_id=#{projectId}
+		executor=#{memberId} and prm_task.project_id=#{projectId}
 	    ORDER by create_time DESC
 	</select>
 

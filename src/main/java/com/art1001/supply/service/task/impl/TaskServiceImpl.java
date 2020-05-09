@@ -58,6 +58,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
@@ -2005,26 +2006,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * @return List<TaskDynamicVO>
      */
     @Override
-    public TaskDynamicVO getTaskInfoList(String memberId, String projectId,String classify) throws ParseException {
-        TaskDynamicVO taskDynamicVO = new TaskDynamicVO();
-        taskDynamicVO.setProjectId(projectId);
+    public List<Task> getTaskInfoList(String memberId, String projectId,String classify) throws ParseException {
 
-        Optional.ofNullable(projectService.findProjectByProjectId(projectId)).ifPresent(r->{
-            taskDynamicVO.setProjectName(r.getProjectName());
-        });
-
+        List<Task> taskInfoList = Lists.newArrayList();
         Long startTime;
         Long endTime;
         if (CLASSIFY_TODAY.equals(classify)) {
             startTime = DateUtils.getStartOfDay(new Date()).getTime();
             endTime=DateUtils.getEndOfDay(new Date()).getTime();
-            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
         }
         if (CLASSIFY_WEEK.equals(classify)) {
             startTime = DateUtils.getFirstDayOfWeek(new Date()).getTime();
             endTime=DateUtils.getLastDayOfWeek(new Date()).getTime();
-            taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
-            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime));
+            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
         }
         if (CLASSIFY_MONTH.equals(classify)) {
             Calendar instance = Calendar.getInstance();
@@ -2034,16 +2029,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date start = sdf.parse(DateUtils.getFisrtDayOfMonth(year, month));
             Date end = sdf.parse(DateUtils.getLastDayOfMonth(year, month));
-            taskDynamicVO.setTasks(taskMapper.getTaskInfoListByTime(memberId, projectId,start.getTime(),end.getTime()));
+            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,start.getTime(),end.getTime());
 
         }
         if (CLASSIFY_NOTALL.equals(classify)) {
-            taskDynamicVO.setTasks(taskMapper.getUnfinishedTask(memberId,projectId));
+            taskInfoList=taskMapper.getUnfinishedTask(memberId,projectId);
         }
         if (CLASSIFY_ALL.equals(classify)) {
-            taskDynamicVO.setTasks(taskMapper.getTaskInfoList(memberId,projectId));
+            taskInfoList=taskMapper.getTaskInfoList(memberId, projectId);
         }
-        return taskDynamicVO;
+            return taskInfoList;
 
     }
 
