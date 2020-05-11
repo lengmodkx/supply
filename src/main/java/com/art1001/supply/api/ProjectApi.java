@@ -334,6 +334,7 @@ public class ProjectApi extends BaseController {
             List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
             redisUtil.remove("perms:" + userId);
             redisUtil.lset("perms:" + userId, keyList);
+            redisUtil.set("userId:"+userId,projectId);
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
             Relation relation = new Relation();
