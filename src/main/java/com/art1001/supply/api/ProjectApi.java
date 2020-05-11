@@ -137,6 +137,7 @@ public class ProjectApi extends BaseController {
         Project project = new Project();
         project.setOrganizationId(orgId);
         project.setProjectName(projectName);
+        project.setProjectDel(0);
         project.setProjectDes(projectDes);
         project.setStartTime(startTime);
         if (StringUtils.isNotEmpty(parentId)) {
