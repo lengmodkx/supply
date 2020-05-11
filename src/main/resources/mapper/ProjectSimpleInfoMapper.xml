@@ -6,5 +6,10 @@
         <result column="id" property="id" jdbcType="VARCHAR" />
         <result column="project_id" property="projectId" jdbcType="VARCHAR" />
         <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+        <result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
     </resultMap>
+
+
 </mapper>

@@ -235,7 +235,7 @@ public interface ProjectService extends IService<Project> {
     * @Description: 修改部门成员详细信息
     * @create: 18:33 2020/4/22
     */
-	Integer updateMembersInfo(String memberId,String orgId,String userName,String entryTime, String job,String memberLabel,String address,String memberEmail,String phone,String birthday,String deptId);
+	Integer updateMembersInfo(String memberId,String orgId,String userName,String entryTime, String job,String memberLabel,String address,String memberEmail,String phone,String birthday,String deptId,String deptName);
 
 	/**
 	* @Author: 邓凯欣
@@ -256,4 +256,12 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
     List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId);
+
+	/**
+	 * 查询企业下该成员所有的项目信息
+	 * @param memberId
+	 * @param organizationId
+	 * @return
+	 */
+	List<Project> getExperience(String memberId, String organizationId);
 }

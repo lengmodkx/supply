@@ -1222,16 +1222,24 @@ public class TaskApi extends BaseController {
      * @param workingHours 进度值
      * @return 结果
      */
+    @Push(value = PushType.A31,type = 1)
     @PostMapping("/work_hours")
-    public Result updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
+    public JSONObject updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
 
                                   @NotNull(message = "计划值不能为空！")
                                   @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours) {
-
-        log.info("Update work hours.[{},{}]", taskId, workingHours);
-
-        taskService.updatePlanWorkHours(taskId, workingHours);
-        return Result.success();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            taskService.updatePlanWorkHours(taskId, workingHours);
+            log.info("Update work hours.[{},{}]", taskId, workingHours);
+            Task task = taskService.findTaskByTaskId(taskId);
+            jsonObject.put("result",1);
+            jsonObject.put("data",task.getTaskId());
+            jsonObject.put("msgId",task.getProjectId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 
 

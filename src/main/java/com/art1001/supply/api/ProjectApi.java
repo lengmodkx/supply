@@ -40,6 +40,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -274,6 +275,7 @@ public class ProjectApi extends BaseController {
      * @return
      */
 //    @RequiresPermissions("delete:project")
+//    @Push(value = PushType.D12,type = 1)
     @DeleteMapping("/{projectId}")
     public JSONObject deleteProject(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
@@ -581,16 +583,17 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberEmail", required = false) String memberEmail,
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "birthday", required = false) String birthday,
-            @RequestParam(value = "deptId", required = false) String deptId
+            @RequestParam(value = "deptId", required = false) String deptId,
+            @RequestParam(value = "deptName",required = false)String deptName
     ) {
         JSONObject jsonObject = new JSONObject();
-        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
+        Integer result = projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId,deptName);
         if (result == 0) {
             throw new AjaxException("系统异常,修改成员信息失败!");
         }
         try {
 
-            if (entryTime!=null ) {
+            if (entryTime!=null&& !"".equals(entryTime)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String s = String.valueOf(sdf.parse(entryTime).getTime());
 
@@ -608,7 +611,7 @@ public class ProjectApi extends BaseController {
             e.printStackTrace();
         }
 
-
+        jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId,memberId));
         jsonObject.put("result", 1);
         jsonObject.put("message", "修改成功");
         return jsonObject;
@@ -898,11 +901,11 @@ public class ProjectApi extends BaseController {
     * @Description: 项目经历API 根据成员id获取项目信息
     * @create: 13:51 2020/5/7
     */
-    @GetMapping("/getExperience/{memberId}")
-    public JSONObject getExperience(@PathVariable("memberId") String memberId){
+    @GetMapping("/getExperience/{organizationId}/{memberId}")
+    public JSONObject getExperience(@PathVariable("memberId") String memberId,@PathVariable String organizationId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",projectService.findProjectByUserId(memberId));
+            jsonObject.put("data",projectService.getExperience(memberId,organizationId));
             jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e) {
@@ -914,19 +917,44 @@ public class ProjectApi extends BaseController {
     /**
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
-    * @Param:
+    * @Param: memberId 成员id
+    * @return:
+    * @Description: 获取项目经历中已添加的项目信息
+    * @create: 15:56 2020/5/9
+    */
+    @GetMapping("/getIsExperience/{organizationId}/{memberId}")
+    public JSONObject getIsExperience(@PathVariable String memberId,@PathVariable String organizationId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",projectSimpleInfoService.getIsExperience(memberId,organizationId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+        return jsonObject;
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: memberId 成员id
+    * @Param: projectId 项目id
     * @return:
     * @Description: 添加项目经历
     * @create: 14:40 2020/5/7
     */
     @Push(value = PushType.F2, type = 1)
-    @PutMapping ("/addExperience/{memberId}/{projectId}")
-    public JSONObject addExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId){
+        @PutMapping ("/{memberId}/{projectId}/{organizationId}")
+    public JSONObject addExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId,@PathVariable("organizationId")String organizationId){
         JSONObject jsonObject = new JSONObject();
         try {
             ProjectSimpleInfo projectSimpleInfo = new ProjectSimpleInfo();
             projectSimpleInfo.setMemberId(memberId);
             projectSimpleInfo.setProjectId(projectId);
+            projectSimpleInfo.setOrganizationId(organizationId);
+            projectSimpleInfo.setCreateTime(System.currentTimeMillis());
+            projectSimpleInfo.setUpdateTime(System.currentTimeMillis());
             if (projectSimpleInfoService.save(projectSimpleInfo)) {
                 jsonObject.put("result", 1);
                 jsonObject.put("msg", "成功!");

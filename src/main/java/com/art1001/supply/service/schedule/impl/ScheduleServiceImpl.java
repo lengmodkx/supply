@@ -607,6 +607,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
             List<ScheduleSimpleInfoVO>scheduleSimpleInfoVOS=Lists.newArrayList();
             ScheduleListVO scheduleListVO=new ScheduleListVO();
             schedules.forEach(schedule -> {
+                ScheduleSimpleInfoVO scheduleSimpleInfoVO=ScheduleSimpleInfoVO.builder().build();
                 //日期处理，Long转换成MM-dd类型
                 DateTimeFormatter time = DateTimeFormatter.ofPattern("MM月dd日");
                 DateTimeFormatter time2 = DateTimeFormatter.ofPattern("HH:mm");
@@ -615,14 +616,20 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                 String endTime = time2.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(schedule.getEndTime()), ZoneId.systemDefault()));
 
                 //赋值
-                scheduleSimpleInfoVOS.add(ScheduleSimpleInfoVO.builder()
-                        .startTime(startTime).endTime(endTime).projectId(schedule.getProjectId())
-                        .projectName(schedule.getProjectName()).scheduleId(schedule.getScheduleId())
-                        .scheduleName(schedule.getScheduleName()).build());
+                if (schedule.getIsAllday()==1) {
+                    scheduleSimpleInfoVO.setStartTime("全天");
+                }else{
+                    scheduleSimpleInfoVO.setStartTime(startTime);
+                    scheduleSimpleInfoVO.setEndTime(endTime);
+                }
+                scheduleSimpleInfoVO.setProjectId(schedule.getProjectId());
+                scheduleSimpleInfoVO.setProjectName(schedule.getProjectName());
+                scheduleSimpleInfoVO.setScheduleId(schedule.getScheduleId());
+                scheduleSimpleInfoVO.setScheduleName(schedule.getScheduleName());
+                scheduleSimpleInfoVOS.add(scheduleSimpleInfoVO);
                 scheduleListVO.setCreateTime(createTime);
                 scheduleListVO.setScheduleSimpleInfoVOS(scheduleSimpleInfoVOS);
-//                scheduleListVOS.add(ScheduleListVO.builder().createTime(createTime).scheduleSimpleInfoVOS(scheduleSimpleInfoVOS).build());
-            });
+                });
             scheduleListVOS.add(scheduleListVO);
         });
         return scheduleListVOS;

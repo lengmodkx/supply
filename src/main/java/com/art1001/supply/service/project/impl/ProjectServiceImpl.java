@@ -27,6 +27,7 @@ import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.project.ProjectSimpleInfoService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
@@ -113,6 +114,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private ProjectSimpleInfoService projectSimpleInfoService;
 
     private static final String ZERO = "0";
 
@@ -554,7 +558,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
+    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId,String deptName) {
         OrganizationMember memberInfo = new OrganizationMember();
 
         try {
@@ -570,11 +574,21 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 memberInfo.setEntryTime(String.valueOf(sdf.parse(entryTime).getTime()));
             }
             memberInfo.setStayComDate(memberInfo.getStayComDate());
-            memberInfo.setJob(job);
-            memberInfo.setMemberLabel(memberLabel);
-            memberInfo.setAddress(address);
-            memberInfo.setMemberEmail(memberEmail);
-            memberInfo.setPhone(phone);
+            if (!"".equals(job) && null != job) {
+                memberInfo.setJob(job);
+            }
+            if (!"".equals(memberLabel) && null!=memberLabel) {
+                memberInfo.setMemberLabel(memberLabel);
+            }
+            if (!"".equals(address) && null!=address) {
+                memberInfo.setAddress(address);
+            }
+            if (!"".equals(memberEmail) && null!=memberEmail) {
+                memberInfo.setMemberEmail(memberEmail);
+            }
+            if (!"".equals(phone) && null!=phone) {
+                memberInfo.setPhone(phone);
+            }
 
             //根据企业id和成员id查询企业成员
             OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>()
@@ -582,6 +596,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
             Optional.ofNullable(organizationMember).ifPresent(r -> {
                 PartmentMember partmentMember = new PartmentMember();
+                Partment partment = new Partment();
                 //判断部门id是否为0
                 if (ZERO.equals(r.getPartmentId())) {
                     partmentMember.setCreateTime(System.currentTimeMillis());
@@ -593,8 +608,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     Optional.ofNullable(deptId).ifPresent(d -> {
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
+                        partment.setPartmentId(d);
+                        if (!"".equals(deptName)&&null!=deptName) {
+                            partment.setPartmentName(deptName);
+                        }
+                        partment.setOrganizationId(orgId);
+                        partment.setUpdateTime(System.currentTimeMillis());
                     });
                     partmentMemberService.save(partmentMember);
+                    partmentService.save(partment);
                 } else {
                     partmentMember.setUpdateTime(System.currentTimeMillis());
                     Optional.ofNullable(deptId).ifPresent(d -> {
@@ -658,5 +680,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<Project> getProjectsByMemberIdAndOrgId(String orgId, String memberId) {
         return projectMapper.getProjectsByMemberIdAndOrgId(orgId, memberId);
+    }
+
+    @Override
+    public List<Project> getExperience(String memberId, String organizationId) {
+
+        List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("member_id", memberId).eq("organization_id", organizationId));
+        List<ProjectSimpleInfo>projectSimpleInfoList=projectSimpleInfoService.isAdd(memberId,organizationId);
+        if (!CollectionUtils.isEmpty(projectSimpleInfoList)) {
+            Optional.ofNullable(projects).ifPresent(project->project.stream()
+                    .filter(f->!f.getProjectId()
+                            .equals(projectSimpleInfoList.stream()
+                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(0)));
+            Optional.ofNullable(projects).ifPresent(project->project.stream()
+                    .filter(f->f.getProjectId()
+                            .equals(projectSimpleInfoList.stream()
+                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(1)));
+        }
+        return projects;
+
     }
 }
