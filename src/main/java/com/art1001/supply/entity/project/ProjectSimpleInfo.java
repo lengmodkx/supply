@@ -23,12 +23,8 @@ public class ProjectSimpleInfo extends Model<ProjectSimpleInfo> {
   /**
    * 被修改人的成员id
    */
-  private String modifyId;
+  private String memberId;
 
-  /**
-   * 修改人的成员id
-   */
-  private String updateId;
   /**
    * 项目id
    */
@@ -48,6 +44,7 @@ public class ProjectSimpleInfo extends Model<ProjectSimpleInfo> {
    * 修改时间
    */
   private Long updateTime;
+
 
 
   @Override

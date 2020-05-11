@@ -37,9 +37,19 @@ public class ProjectSimpleInfoServiceImpl extends ServiceImpl<ProjectSimpleInfoM
      * @return
      */
     @Override
-    public List<ProjectSimpleInfo> getIsExperience(String memberId,String organizationId) {
-        return projectSimpleInfoMapper.selectList(new QueryWrapper<ProjectSimpleInfo>().eq("member_id", memberId).eq("organization_id",organizationId));
+    public List<Project> getIsExperience(String memberId,String organizationId) {
+        List<Project>list=Lists.newArrayList();
+        projectSimpleInfoMapper.selectList(new QueryWrapper<ProjectSimpleInfo>().eq("member_id",memberId).eq("organization_id",organizationId)).forEach(r->{
+            Project projectByProjectId = projectService.findProjectByProjectId(r.getProjectId());
+            projectByProjectId.setIsAdd(1);
+            list.add(projectByProjectId);
+        });
+        return list;
+    }
 
+    @Override
+    public List<ProjectSimpleInfo> isAdd(String memberId, String organizationId) {
+       return projectSimpleInfoMapper.selectList(new QueryWrapper<ProjectSimpleInfo>().eq("member_id",memberId).eq("organization_id",organizationId));
     }
 
 
