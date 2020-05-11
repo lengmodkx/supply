@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ProjectSimpleInfoService extends IService<ProjectSimpleInfo> {
 
-    List<ProjectSimpleInfo> getIsExperience(String memberId,String organizationId);
+    List<Project> getIsExperience(String memberId,String organizationId);
 
+    List<ProjectSimpleInfo> isAdd(String memberId, String organizationId);
 }

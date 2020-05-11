@@ -40,6 +40,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -895,7 +896,7 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param: memberId
-    * @return: todo 等待确定表之后再修改
+    * @return:
     * @Description: 项目经历API 根据成员id获取项目信息
     * @create: 13:51 2020/5/7
     */
@@ -916,7 +917,7 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param: memberId 成员id
-    * @return: todo 等待确定表之后再修改
+    * @return:
     * @Description: 获取项目经历中已添加的项目信息
     * @create: 15:56 2020/5/9
     */
@@ -938,18 +939,21 @@ public class ProjectApi extends BaseController {
     * @Email：dengkaixin@art1001.com
     * @Param: memberId 成员id
     * @Param: projectId 项目id
-    * @return: todo 等待确定表之后再修改
+    * @return:
     * @Description: 添加项目经历
     * @create: 14:40 2020/5/7
     */
     @Push(value = PushType.F2, type = 1)
-    @PutMapping ("/addExperience/{memberId}/{projectId}")
-    public JSONObject addExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId){
+        @PutMapping ("/{memberId}/{projectId}/{organizationId}")
+    public JSONObject addExperience(@PathVariable("memberId")String memberId,@PathVariable("projectId")String projectId,@PathVariable("organizationId")String organizationId){
         JSONObject jsonObject = new JSONObject();
         try {
             ProjectSimpleInfo projectSimpleInfo = new ProjectSimpleInfo();
-            projectSimpleInfo.setModifyId(memberId);
+            projectSimpleInfo.setMemberId(memberId);
             projectSimpleInfo.setProjectId(projectId);
+            projectSimpleInfo.setOrganizationId(organizationId);
+            projectSimpleInfo.setCreateTime(System.currentTimeMillis());
+            projectSimpleInfo.setUpdateTime(System.currentTimeMillis());
             if (projectSimpleInfoService.save(projectSimpleInfo)) {
                 jsonObject.put("result", 1);
                 jsonObject.put("msg", "成功!");
@@ -967,7 +971,7 @@ public class ProjectApi extends BaseController {
     * @Author: 邓凯欣
     * @Email：dengkaixin@art1001.com
     * @Param:
-    * @return: todo 等待确定表之后再修改
+    * @return:
     * @Description: 取消项目经历
     * @create: 14:41 2020/5/7
     */

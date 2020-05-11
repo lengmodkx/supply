@@ -684,20 +684,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Override
     public List<Project> getExperience(String memberId, String organizationId) {
-        List<Project> projectByUserId = projectMapper.selectList(new QueryWrapper<Project>().eq("member_id", memberId).eq("organization_id", organizationId));
-        List<ProjectSimpleInfo> projectSimpleInfos = projectSimpleInfoService.getIsExperience(memberId, organizationId);
-        if (!CollectionUtils.isEmpty(projectSimpleInfos)) {
-            Optional.ofNullable(projectByUserId).ifPresent(projects -> projects.stream()
-                    .filter(f -> !projectSimpleInfos.stream()
-                            .map(ProjectSimpleInfo::getProjectId)
-                            .equals(f.getProjectId()))
-                    .forEach(e -> e.setIsAdd(0)));
-            Optional.ofNullable(projectByUserId).ifPresent(projects -> projects.stream()
-                    .filter(f -> projectSimpleInfos.stream()
-                            .map(ProjectSimpleInfo::getProjectId)
-                            .equals(f.getProjectId()))
-                    .forEach(e -> e.setIsAdd(1)));
+
+        List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("member_id", memberId).eq("organization_id", organizationId));
+        List<ProjectSimpleInfo>projectSimpleInfoList=projectSimpleInfoService.isAdd(memberId,organizationId);
+        if (!CollectionUtils.isEmpty(projectSimpleInfoList)) {
+            Optional.ofNullable(projects).ifPresent(project->project.stream()
+                    .filter(f->!f.getProjectId()
+                            .equals(projectSimpleInfoList.stream()
+                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(0)));
+            Optional.ofNullable(projects).ifPresent(project->project.stream()
+                    .filter(f->f.getProjectId()
+                            .equals(projectSimpleInfoList.stream()
+                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(1)));
         }
-        return projectByUserId;
+        return projects;
+
     }
 }
