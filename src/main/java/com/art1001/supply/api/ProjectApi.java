@@ -139,6 +139,7 @@ public class ProjectApi extends BaseController {
         Project project = new Project();
         project.setOrganizationId(orgId);
         project.setProjectName(projectName);
+        project.setProjectDel(0);
         project.setProjectDes(projectDes);
         project.setStartTime(startTime);
         if (StringUtils.isNotEmpty(parentId)) {
@@ -336,6 +337,7 @@ public class ProjectApi extends BaseController {
             List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
             redisUtil.remove("perms:" + userId);
             redisUtil.lset("perms:" + userId, keyList);
+            redisUtil.set("userId:"+userId,projectId);
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
             Relation relation = new Relation();

@@ -6,21 +6,16 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
-import com.art1001.supply.annotation.ProAuthentization;
-import com.art1001.supply.annotation.Push;
-import com.art1001.supply.annotation.PushType;
-import com.art1001.supply.common.Constants;
+import com.art1001.supply.annotation.ProjectAuth;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.OssInfo;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -43,14 +38,14 @@ public class OssApi {
     @Resource
     private NoticeService noticeService;
 
-    @ProAuthentization("FileApi:uploadFile")
+    @ProjectAuth("FileApi:uploadFile")
     @GetMapping("checkperm")
     public Result checkperm(){
         return Result.success();
     }
 
 
-    @ProAuthentization("FileApi:batchDownLoad")
+    @ProjectAuth("FileApi:batchDownLoad")
     @GetMapping("checkdownload")
     public Result checkdownload(){
         return Result.success();

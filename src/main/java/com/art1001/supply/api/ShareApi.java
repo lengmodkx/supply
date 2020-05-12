@@ -162,7 +162,10 @@ public class ShareApi {
     @Log(PushType.B9)
     @Push(PushType.B9)
     @DeleteMapping("/{shareId}")
-    public Result shareDelete(@PathVariable("shareId") String shareId, @RequestParam(value = "projectId") String projectId){
+    public Result shareDelete(@PathVariable("shareId") String shareId
+         // 在回收站彻底删除分享时调用的接口，没有项目id这个参数
+         // ,  @RequestParam(value = "projectId") String projectId
+                               ){
         try{
             shareService.removeById(shareId);
             return Result.success();

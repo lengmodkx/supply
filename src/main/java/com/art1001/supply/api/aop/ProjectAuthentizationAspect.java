@@ -1,14 +1,15 @@
 package com.art1001.supply.api.aop;
 
-import com.art1001.supply.annotation.ProAuthentization;
-import com.art1001.supply.common.Constants;
+import com.art1001.supply.annotation.ProjectAuth;
+import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
-import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.AuthorizationException;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -31,18 +32,28 @@ public class ProjectAuthentizationAspect {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
+
     /**
      * 需要鉴权的请求切点
      */
-    @Pointcut("@annotation(com.art1001.supply.annotation.ProAuthentization)")
+    @Pointcut("@annotation(com.art1001.supply.annotation.ProjectAuth)")
     public void checkPermission(){}
 
     @Before("checkPermission()")
     public void doBefore(JoinPoint joinPoint){
-        String userId = ShiroAuthenticationManager.getUserId();
         String targetMethodName = joinPoint.getSignature().getName();
-        ProAuthentization annotation = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(ProAuthentization.class);
+        ProjectAuth annotation = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(ProjectAuth.class);
         String permission = annotation.value();
+        String userId = ShiroAuthenticationManager.getUserId();
+        ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_id", redisUtil.get("userId:" + userId)).eq("member_id", userId));
+        String roleKey = projectMember.getRoleKey();
+        if(StringUtils.equalsIgnoreCase("administrator",roleKey)){
+
+        }
+
         List<String> permsList =redisUtil.getList(String.class,"perms:"+userId);
         boolean notPermission = !permsList.contains(permission);
         if(notPermission){
