@@ -1,288 +1,288 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.task.TaskMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId"/>
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="start_time" property="startTime" jdbcType="BIGINT" />
-		<result column="end_time" property="endTime" jdbcType="BIGINT" />
-		<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-		<result column="priority" property="priority" jdbcType="VARCHAR" />
-		<result column="level" property="level" jdbcType="INTEGER" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="executor" property="executor" jdbcType="VARCHAR" />
-		<result column="executor_name" property="executorName" jdbcType="VARCHAR" />
-		<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
-		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
-		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
-		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
-		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
-		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
-		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
-		<result column="other" property="other" jdbcType="VARCHAR"/>
-		<result column="order" property="order" jdbcType="INTEGER"/>
-		<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
-		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
-		<result column="progress" property="progress"/>
-		<result column="total_work_hours" property="totalWorkHours"/>
-		<result column="plan_work_hours" property="planWorkHours"/>
-		<result column="sub_is_all_complete" property="subIsAllComplete"/>
 
-		<!-- 查询父级任务信息 -->
-		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
-			<id column="par_id" property="taskId"/>
-			<result column="par_name" property="taskName"/>
-		</association>
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="repeat" property="repeat" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="priority" property="priority" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="executor" property="executor" jdbcType="VARCHAR"/>
+        <result column="executor_name" property="executorName" jdbcType="VARCHAR"/>
+        <result column="executor_img" property="executorImg" jdbcType="VARCHAR"/>
+        <result column="task_type" property="taskType" jdbcType="VARCHAR"/>
+        <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR"/>
+        <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_del" property="taskDel" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="finish_time" property="finishTime" jdbcType="BIGINT"/>
+        <result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+        <result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+        <result column="other" property="other" jdbcType="VARCHAR"/>
+        <result column="order" property="order" jdbcType="INTEGER"/>
+        <result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
+        <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
+        <result column="progress" property="progress"/>
+        <result column="total_work_hours" property="totalWorkHours"/>
+        <result column="plan_work_hours" property="planWorkHours"/>
+        <result column="sub_is_all_complete" property="subIsAllComplete"/>
 
-		<!--查询项目-->
-		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-		<!--查询参与者-->
-		<collection property="joinInfo" column="{memberIds=task_uids}" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
-		<!--查询子任务-->
-		<collection property="taskList" column="task_id" javaType="java.util.ArrayList"
-					select="com.art1001.supply.mapper.task.TaskMapper.findSubLevelTask"/>
-		<!--查询标签-->
-		<collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
-			<id property="tagId" column="tag_id"/>
-			<result property="tagName" column="tag_name"/>
-			<result property="bgColor" column="bg_color"/>
-		</collection>
-	</resultMap>
+        <!-- 查询父级任务信息 -->
+        <association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+            <id column="par_id" property="taskId"/>
+            <result column="par_name" property="taskName"/>
+        </association>
 
-	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
-		<!--查询执行者-->
-		<id column="task_id" property="taskId" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="start_time" property="startTime" jdbcType="BIGINT" />
-		<result column="end_time" property="endTime" jdbcType="BIGINT" />
-		<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-		<result column="priority" property="priority" jdbcType="VARCHAR" />
-		<result column="level" property="level" jdbcType="INTEGER" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="executor" property="executor" jdbcType="VARCHAR" />
-		<result column="executor_name" property="executorName" jdbcType="VARCHAR" />
-		<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
-		<result column="task_type" property="taskType" jdbcType="VARCHAR" />
-		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
-		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
-		<result column="task_del" property="taskDel" jdbcType="INTEGER" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
-		<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
-		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
-		<result column="other" property="other" jdbcType="VARCHAR"/>
-		<result column="order" property="order" jdbcType="INTEGER"/>
-		<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
-		<result column="total_work_hours" property="totalWorkHours"/>
-		<result column="plan_work_hours" property="planWorkHours"/>
-		<result column="bind_id" property="bindId"/>
-		<result column="file_id" property="fileId"/>
-		<!--查询标签-->
-		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
-			<id property="tagId" column="tag_id"/>
-			<result property="tagName" column="tag_name"/>
-			<result property="bgColor" column="bg_color"/>
-		</collection>
+        <!--查询项目-->
+        <association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+                     select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+        <!--查询参与者-->
+        <collection property="joinInfo" column="{memberIds=task_uids}" javaType="java.util.ArrayList"
+                    select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+        <!--查询子任务-->
+        <collection property="taskList" column="task_id" javaType="java.util.ArrayList"
+                    select="com.art1001.supply.mapper.task.TaskMapper.findSubLevelTask"/>
+        <!--查询标签-->
+        <collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
+    </resultMap>
 
-		<!-- 查询子任务 -->
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id column="sub_task_id" property="taskId"/>
-			<result column="sub_task_name" property="taskName"/>
-			<result column="sub_status" property="taskStatus" />
-		</collection>
-	</resultMap>
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
+        <!--查询执行者-->
+        <id column="task_id" property="taskId"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="repeat" property="repeat" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="priority" property="priority" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="executor" property="executor" jdbcType="VARCHAR"/>
+        <result column="executor_name" property="executorName" jdbcType="VARCHAR"/>
+        <result column="executor_img" property="executorImg" jdbcType="VARCHAR"/>
+        <result column="task_type" property="taskType" jdbcType="VARCHAR"/>
+        <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_del" property="taskDel" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="finish_time" property="finishTime" jdbcType="BIGINT"/>
+        <result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+        <result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+        <result column="other" property="other" jdbcType="VARCHAR"/>
+        <result column="order" property="order" jdbcType="INTEGER"/>
+        <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
+        <result column="total_work_hours" property="totalWorkHours"/>
+        <result column="plan_work_hours" property="planWorkHours"/>
+        <result column="bind_id" property="bindId"/>
+        <result column="file_id" property="fileId"/>
+        <!--查询标签-->
+        <collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
 
-	<!-- 任务看板模式专用 -->
-	<resultMap id="panelListMap" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId"/>
-		<result column="task_name" property="taskName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="relation_id" property="taskMenuId"/>
-		<result column="relation_name" property="taskMenuName"/>
-		<result column="executor" property="executor"/>
-		<result column="user_name" property="executorName"/>
-		<result column="image" property="executorImg"/>
-		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
-			<id column="f_id" property="taskId"/>
-			<result column="f_name" property="taskName"/>
-		</association>
-	</resultMap>
+        <!-- 查询子任务 -->
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id column="sub_task_id" property="taskId"/>
+            <result column="sub_task_name" property="taskName"/>
+            <result column="sub_status" property="taskStatus"/>
+        </collection>
+    </resultMap>
 
-	<!-- 回收站专用 -->
-	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
-		<!--查询执行者-->
-		<id column="task_id" property="id" />
-		<result column="task_name" property="publicName" jdbcType="VARCHAR" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-	</resultMap>
+    <!-- 任务看板模式专用 -->
+    <resultMap id="panelListMap" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="relation_id" property="taskMenuId"/>
+        <result column="relation_name" property="taskMenuName"/>
+        <result column="executor" property="executor"/>
+        <result column="user_name" property="executorName"/>
+        <result column="image" property="executorImg"/>
+        <association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+            <id column="f_id" property="taskId"/>
+            <result column="f_name" property="taskName"/>
+        </association>
+    </resultMap>
 
-	<!-- 关联信息 -->
-	<resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskApiBean">
-		<id column="task_id" property="taskId" />
-		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="image" property="userImage" jdbcType="VARCHAR"/>
-		<result column="project_name" property="projectName" jdbcType="VARCHAR"/>
-		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
-		<result column="group_name" property="groupName" jdbcType="VARCHAR"/>
-		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
-	</resultMap>
+    <!-- 回收站专用 -->
+    <resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
+        <!--查询执行者-->
+        <id column="task_id" property="id"/>
+        <result column="task_name" property="publicName" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
 
-	<!-- 统计页面数据 ResultMap -->
-	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
-		<result column="end_time" property="endTime" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
-		<result column="finish_time" property="finishTime" jdbcType="VARCHAR" />
-		<result column="task_case" property="taskCase" jdbcType="VARCHAR" />
-		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
-		<result column="list_view" property="listView" jdbcType="VARCHAR" />
-		<result column="overdue_num" property="overdueNum" jdbcType="VARCHAR" />
-		<result column="dynamic_num" property="dynamicNum" jdbcType="VARCHAR" />
-		<result column="change_type" property="changeType" jdbcType="VARCHAR" />
-		<result column="task_count" property="taskCountString" jdbcType="VARCHAR" />
-		<result column="task_count" property="taskCountInt" jdbcType="INTEGER" />
-		<result column="task_num" property="taskDayNum" jdbcType="VARCHAR" />
-		<result column="task_gross" property="taskDayGross" jdbcType="VARCHAR" />
-		<result column="task_unfinish" property="unfinishTaskNum" jdbcType="INTEGER" />
-		<result column="task_finish" property="finishTaskNum" jdbcType="INTEGER" />
-		<result column="task_precedence" property="taskPrecedence" jdbcType="VARCHAR" />
-		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-		<result column="u_name" property="executor" jdbcType="VARCHAR" />
-		<result column="task_group" property="taskGroup" jdbcType="VARCHAR" />
-		<result column="relation_name" property="listView" jdbcType="VARCHAR" />
-	</resultMap>
+    <!-- 关联信息 -->
+    <resultMap id="bindingInfo" type="com.art1001.supply.entity.task.TaskApiBean">
+        <id column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="image" property="userImage" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+    </resultMap>
 
-	<!-- 用于查询我执行的任务信息映射 -->
-	<resultMap id="meTask" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId"/>
-		<result column="task_name" property="taskName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="level" property="level"/>
-		<result column="image" property="executorImg"/>
-		<association property="project" javaType="com.art1001.supply.entity.project.Project">
-			<id column="p_id" property="projectId"/>
-			<result column="project_name" property="projectName"/>
-		</association>
-		<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
-			<result column="f_name" property="taskName"/>
-		</association>
-	</resultMap>
+    <!-- 统计页面数据 ResultMap -->
+    <resultMap id="BaseResultMap4" type="com.art1001.supply.entity.statistics.StatisticsResultVO">
+        <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="finish_time" property="finishTime" jdbcType="VARCHAR"/>
+        <result column="task_case" property="taskCase" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="task_group" property="taskGroup" jdbcType="VARCHAR"/>
+        <result column="list_view" property="listView" jdbcType="VARCHAR"/>
+        <result column="overdue_num" property="overdueNum" jdbcType="VARCHAR"/>
+        <result column="dynamic_num" property="dynamicNum" jdbcType="VARCHAR"/>
+        <result column="change_type" property="changeType" jdbcType="VARCHAR"/>
+        <result column="task_count" property="taskCountString" jdbcType="VARCHAR"/>
+        <result column="task_count" property="taskCountInt" jdbcType="INTEGER"/>
+        <result column="task_num" property="taskDayNum" jdbcType="VARCHAR"/>
+        <result column="task_gross" property="taskDayGross" jdbcType="VARCHAR"/>
+        <result column="task_unfinish" property="unfinishTaskNum" jdbcType="INTEGER"/>
+        <result column="task_finish" property="finishTaskNum" jdbcType="INTEGER"/>
+        <result column="task_precedence" property="taskPrecedence" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="u_name" property="executor" jdbcType="VARCHAR"/>
+        <result column="task_group" property="taskGroup" jdbcType="VARCHAR"/>
+        <result column="relation_name" property="listView" jdbcType="VARCHAR"/>
+    </resultMap>
 
-	<!-- 查询我只执行的任务并且按照项目分组 -->
-	<resultMap id="meExecuteByProject" type="com.art1001.supply.entity.project.Project">
-		<id column="p_id" property="projectId"/>
-		<result column="project_name" property="projectName"/>
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id column="task_id" property="taskId"/>
-			<result column="task_name" property="taskName"/>
-			<result column="start_time" property="startTime"/>
-			<result column="end_time" property="endTime"/>
-			<result column="level" property="level"/>
-			<association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
-				<id column="f_id" property="taskId"/>
-				<result column="f_name" property="taskName"/>
-			</association>
-		</collection>
-	</resultMap>
+    <!-- 用于查询我执行的任务信息映射 -->
+    <resultMap id="meTask" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="level" property="level"/>
+        <result column="image" property="executorImg"/>
+        <association property="project" javaType="com.art1001.supply.entity.project.Project">
+            <id column="p_id" property="projectId"/>
+            <result column="project_name" property="projectName"/>
+        </association>
+        <association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+            <result column="f_name" property="taskName"/>
+        </association>
+    </resultMap>
 
-	<resultMap id="BaseResult5" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId" />
-		<result column="task_name" property="taskName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="parent_id" property="parentId"/>
-		<result column="user_name" property="executorName"/>
-	</resultMap>
+    <!-- 查询我只执行的任务并且按照项目分组 -->
+    <resultMap id="meExecuteByProject" type="com.art1001.supply.entity.project.Project">
+        <id column="p_id" property="projectId"/>
+        <result column="project_name" property="projectName"/>
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id column="task_id" property="taskId"/>
+            <result column="task_name" property="taskName"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="level" property="level"/>
+            <association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
+                <id column="f_id" property="taskId"/>
+                <result column="f_name" property="taskName"/>
+            </association>
+        </collection>
+    </resultMap>
 
-	<!-- 任务的简便信息 -->
-	<resultMap id="resultMap6" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId"/>
-		<result column="project_id" property="projectId"/>
-		<result column="task_name" property="taskName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="repeat" property="repeat"/>
-		<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-		<result column="user_name" property="executorName"/>
-		<result column="user_id" property="executor"/>
-		<result column="image" property="executorImg"/>
-		<result column="priority" property="priority"/>
-		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
-			<id column="tag_id" property="tagId"/>
-			<result column="tag_name" property="tagName"/>
-			<result column="bg_color" property="bgColor"/>
-		</collection>
-	</resultMap>
+    <resultMap id="BaseResult5" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="user_name" property="executorName"/>
+    </resultMap>
 
-	<!-- 仅用于移动列表所有任务前的数据提供 -->
-	<resultMap id="moveTaskData" type="com.art1001.supply.entity.task.Task">
-		<id column="task_id" property="taskId"/>
-		<result column="project_id" property="projectId"/>
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id column="s_task_id" property="taskId"/>
-		</collection>
-	</resultMap>
+    <!-- 任务的简便信息 -->
+    <resultMap id="resultMap6" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="project_id" property="projectId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="repeat" property="repeat"/>
+        <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="user_name" property="executorName"/>
+        <result column="user_id" property="executor"/>
+        <result column="image" property="executorImg"/>
+        <result column="priority" property="priority"/>
+        <collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+            <id column="tag_id" property="tagId"/>
+            <result column="tag_name" property="tagName"/>
+            <result column="bg_color" property="bgColor"/>
+        </collection>
+    </resultMap>
 
-	<!-- 成员视图 -->
-	<resultMap id="view_member" type="com.art1001.supply.entity.task.MemberViewResult">
-		<id column="user_id" property="userId"/>
-		<result column="user_name" property="userName"/>
-		<result column="account_name" property="accountName"/>
-		<result column="image" property="image"/>
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id column="task_id" property="taskId"/>
-			<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-			<result column="task_name" property="taskName" jdbcType="VARCHAR" />
-			<result column="start_time" property="startTime" jdbcType="BIGINT" />
-			<result column="end_time" property="endTime" jdbcType="BIGINT" />
-			<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-			<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-			<result column="priority" property="priority" jdbcType="VARCHAR" />
-			<result column="level" property="level" jdbcType="INTEGER" />
-			<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-			<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-			<result column="executor" property="executor" jdbcType="VARCHAR" />
-			<result column="executor_name" property="executorName" jdbcType="VARCHAR" />
-			<result column="executor_img" property="executorImg" jdbcType="VARCHAR" />
-			<result column="task_type" property="taskType" jdbcType="VARCHAR" />
-			<result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR" />
-			<result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR" />
-			<result column="task_status" property="taskStatus" jdbcType="VARCHAR" />
-			<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
-			<result column="task_del" property="taskDel" jdbcType="INTEGER" />
-			<result column="create_time" property="createTime" jdbcType="BIGINT" />
-			<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-			<result column="finish_time" property="finishTime" jdbcType="BIGINT" />
-			<result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
-			<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
-			<result column="other" property="other" jdbcType="VARCHAR"/>
-			<result column="order" property="order" jdbcType="INTEGER"/>
-			<result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
-			<result column="task_uids" property="taskUIds" jdbcType="CLOB" />
-			<result column="progress" property="progress"/>
-			<result column="sub_is_all_complete" property="subIsAllComplete"/>
-		</collection>
-	</resultMap>
+    <!-- 仅用于移动列表所有任务前的数据提供 -->
+    <resultMap id="moveTaskData" type="com.art1001.supply.entity.task.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="project_id" property="projectId"/>
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id column="s_task_id" property="taskId"/>
+        </collection>
+    </resultMap>
 
-	<sql id="Base_Column_List">
+    <!-- 成员视图 -->
+    <resultMap id="view_member" type="com.art1001.supply.entity.task.MemberViewResult">
+        <id column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="account_name" property="accountName"/>
+        <result column="image" property="image"/>
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id column="task_id" property="taskId"/>
+            <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+            <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+            <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+            <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+            <result column="repeat" property="repeat" jdbcType="VARCHAR"/>
+            <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+            <result column="priority" property="priority" jdbcType="VARCHAR"/>
+            <result column="level" property="level" jdbcType="INTEGER"/>
+            <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+            <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+            <result column="executor" property="executor" jdbcType="VARCHAR"/>
+            <result column="executor_name" property="executorName" jdbcType="VARCHAR"/>
+            <result column="executor_img" property="executorImg" jdbcType="VARCHAR"/>
+            <result column="task_type" property="taskType" jdbcType="VARCHAR"/>
+            <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+            <result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR"/>
+            <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
+            <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+            <result column="task_del" property="taskDel" jdbcType="INTEGER"/>
+            <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+            <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+            <result column="finish_time" property="finishTime" jdbcType="BIGINT"/>
+            <result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+            <result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+            <result column="other" property="other" jdbcType="VARCHAR"/>
+            <result column="order" property="order" jdbcType="INTEGER"/>
+            <result column="task_group" property="taskGroupId" jdbcType="VARCHAR"/>
+            <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
+            <result column="progress" property="progress"/>
+            <result column="sub_is_all_complete" property="subIsAllComplete"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 		prm_task.task_id,
 		prm_task.progress,
 		prm_task.project_id,
@@ -310,7 +310,7 @@
 		prm_task.order,
 		prm_task.task_uids
 	</sql>
-	<sql id="Base_Column_List2">
+    <sql id="Base_Column_List2">
 		prm_task.task_id,
 		prm_task.project_id,
 		prm_task.task_name,
@@ -339,7 +339,7 @@
 		prm_task.task_uids
 	</sql>
 
-	<sql id="Base_Column_List3">
+    <sql id="Base_Column_List3">
 		t.task_id,
 		t.project_id,
 		t.task_name,
@@ -377,432 +377,439 @@
 		tg.bg_color
 	</sql>
 
-	<sql id="Base_Column_List4">
+    <sql id="Base_Column_List4">
 
-	</sql>
+    </sql>
 
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
-	
-	<select id="findTaskPagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-		
-		select * from prm_task
-		<include refid="whereStatement" />
-		
-		<if test="orderBy == 0">
-			order by task_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by task_id asc
-		</if>
-		
-	</select>
-	
-	<select id="findTaskAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.task.Task">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_task
-		<if test="orderBy == 0">
-			order by task_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by task_id asc
-		</if>
-	</select>
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
 
-	<!-- 根据任务id 查询任务的信息 和执行者的信息 -->
-	<select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
-	SELECT
-	<include refid="Base_Column_List3"/>
-	from prm_task t
-		left join prm_task parent on t.parent_id = parent.task_id
-		left join prm_tag_relation tr on t.task_id = tr.task_id
-		left join prm_tag tg on tr.tag_id = tg.tag_id
-		left join tb_user u on t.executor = u.user_id
-		where t.task_id = #{taskId}
-	</select>
-	
-	<delete id="deleteTask" parameterType="java.lang.String">
+    <select id="findTaskPagerList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.base.Pager">
+
+        select * from prm_task
+        <include refid="whereStatement"/>
+
+        <if test="orderBy == 0">
+            order by task_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by task_id asc
+        </if>
+
+    </select>
+
+    <select id="findTaskAllList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_task
+        <if test="orderBy == 0">
+            order by task_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by task_id asc
+        </if>
+    </select>
+
+    <!-- 根据任务id 查询任务的信息 和执行者的信息 -->
+    <select id="findTaskByTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List3"/>
+        from prm_task t
+        left join prm_task parent on t.parent_id = parent.task_id
+        left join prm_tag_relation tr on t.task_id = tr.task_id
+        left join prm_tag tg on tr.tag_id = tg.tag_id
+        left join tb_user u on t.executor = u.user_id
+        where t.task_id = #{taskId}
+    </select>
+
+    <delete id="deleteTask" parameterType="java.lang.String">
 		delete from
 		prm_task where task_id = #{taskId}
 	</delete>
 
-	<insert id="saveTaskBatch">
-		insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remarks, priority, level, parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time, update_time, fabulous_count, privacy_pattern, other, `order`, task_uids) values
-		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
-		 ( REPLACE(UUID(), '-', '') ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId} )
-		</foreach>
-	</insert>
+    <insert id="saveTaskBatch">
+        insert into prm_task(task_id, project_id, task_name, start_time, end_time, `repeat`, remarks, priority, level,
+        parent_id, member_id, executor, task_type, task_menu_id, task_status, task_code, task_del, create_time,
+        update_time, fabulous_count, privacy_pattern, other, `order`, task_uids) values
+        <foreach collection="templateDataList" item="templateData" index="index" separator=",">
+            ( REPLACE(UUID(), '-', '')
+            ,#{projectId},#{templateData.taskName},null,null,'不重复','不提醒',#{templateData.remarks},'普通',null,'0',#{memberId},null,null,#{menuId},'未完成',null,0,unix_timestamp(now()),unix_timestamp(now()),null,null,0,0,null,#{index},null,#{memberId}
+            )
+        </foreach>
+    </insert>
 
 
-	<insert id="saveTask" parameterType="com.art1001.supply.entity.task.Task">
+    <insert id="saveTask" parameterType="com.art1001.supply.entity.task.Task">
 
-		insert into prm_task
-		<trim prefix="(" suffix=")" suffixOverrides=",">
+        insert into prm_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
 
-			<if test="taskId != null and taskId != ''">
-			task_id,
-			</if>
-			<if test="projectId != null and projectId != ''">
-			project_id,
-			</if>
-			<if test="taskName != null and taskName != ''">
-			task_name,
-			</if>
-			<if test="startTime != null ">
-			start_time,
-			</if>
-			<if test="endTime != null ">
-			end_time,
-			</if>
-			<if test="repeat != null and repeat != ''">
-			`repeat`,
-			</if>
-			<if test="remarks != null and remarks != ''">
-			remarks,
-			</if>
-			<if test="priority != null and priority != ''">
-			priority,
-			</if>
-			<if test="level != null ">
-			`level`,
-			</if>
-			<if test="parentId != null and parentId != ''">
-			parent_id,
-			</if>
-			<if test="memberId != null and memberId != ''">
-			member_id,
-			</if>
-			<if test="executor != null and executor != ''">
-			executor,
-			</if>
-			<if test="taskType != null and taskType != ''">
-			task_type,
-			</if>
-			<if test="taskMenuId != null and taskMenuId != ''">
-			task_menu_id,
-			</if>
-			<if test="taskGroupId != null and taskGroupId != ''">
-				task_group_id,
-			</if>
-			<if test="taskStatus != null and taskStatus != ''">
-			task_status,
-			</if>
-			<if test="taskCode != null and taskCode != ''">
-			task_code,
-			</if>
-			<if test="taskDel != null ">
-			task_del,
-			</if>
-			<if test="createTime != null ">
-			create_time,
-			</if>
-			<if test="updateTime != null ">
-			update_time,
-			</if>
-			<if test="finishTime != null ">
-			finish_time,
-			</if>
-			<if test="fabulousCount != null">
-				fabulous_count,
-			</if>
-			<if test="privacyPattern != null">
-				privacy_pattern,
-			</if>
-			<if test="other != null">
-				other,
-			</if>
-			<if test="order != null">
-				`order`,
-			</if>
-			<if test="taskUIds != null and taskUIds!=''">
-				task_uids,
-			</if>
+            <if test="taskId != null and taskId != ''">
+                task_id,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="taskName != null and taskName != ''">
+                task_name,
+            </if>
+            <if test="startTime != null ">
+                start_time,
+            </if>
+            <if test="endTime != null ">
+                end_time,
+            </if>
+            <if test="repeat != null and repeat != ''">
+                `repeat`,
+            </if>
+            <if test="remarks != null and remarks != ''">
+                remarks,
+            </if>
+            <if test="priority != null and priority != ''">
+                priority,
+            </if>
+            <if test="level != null ">
+                `level`,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id,
+            </if>
+            <if test="executor != null and executor != ''">
+                executor,
+            </if>
+            <if test="taskType != null and taskType != ''">
+                task_type,
+            </if>
+            <if test="taskMenuId != null and taskMenuId != ''">
+                task_menu_id,
+            </if>
+            <if test="taskGroupId != null and taskGroupId != ''">
+                task_group_id,
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                task_status,
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                task_code,
+            </if>
+            <if test="taskDel != null ">
+                task_del,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="finishTime != null ">
+                finish_time,
+            </if>
+            <if test="fabulousCount != null">
+                fabulous_count,
+            </if>
+            <if test="privacyPattern != null">
+                privacy_pattern,
+            </if>
+            <if test="other != null">
+                other,
+            </if>
+            <if test="order != null">
+                `order`,
+            </if>
+            <if test="taskUIds != null and taskUIds!=''">
+                task_uids,
+            </if>
 
-		</trim>
+        </trim>
 
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
 
-			<if test="taskId != null and taskId != ''">
-				#{taskId},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				#{projectId},
-			</if>
-			<if test="taskName != null and taskName != ''">
-				#{taskName},
-			</if>
-			<if test="startTime != null ">
-				#{startTime},
-			</if>
-			<if test="endTime != null ">
-				#{endTime},
-			</if>
-			<if test="repeat != null and repeat != ''">
-				#{repeat},
-			</if>
-			<if test="remarks != null and remarks != ''">
-				#{remarks},
-			</if>
-			<if test="priority != null and priority != ''">
-				#{priority},
-			</if>
-			<if test="level != null ">
-				#{level},
-			</if>
-			<if test="parentId != null and parentId != ''">
-				#{parentId},
-			</if>
-			<if test="memberId != null and memberId != ''">
-				#{memberId},
-			</if>
-			<if test="executor != null and executor != ''">
-				#{executor},
-			</if>
-			<if test="taskType != null and taskType != ''">
-				#{taskType},
-			</if>
-			<if test="taskMenuId != null and taskMenuId != ''">
-				#{taskMenuId},
-			</if>
-			<if test="taskGroupId != null and taskGroupId != ''">
-				#{taskGroupId},
-			</if>
-			<if test="taskStatus != null and taskStatus != ''">
-				#{taskStatus},
-			</if>
-			<if test="taskCode != null and taskCode != ''">
-				#{taskCode},
-			</if>
-			<if test="taskDel != null ">
-				#{taskDel},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="finishTime != null ">
-				#{finishTime},
-			</if>
-			<if test="fabulousCount != null">
-				#{fabulousCount},
-			</if>
-			<if test="privacyPattern != null">
-				#{privacyPattern},
-			</if>
-			<if test="other != null">
-				#{other},
-			</if>
-			<if test="order != null">
-				#{order},
-			</if>
-			<if test="taskUIds != null and taskUIds!=''">
-				#{taskUIds},
-			</if>
-		</trim>
+            <if test="taskId != null and taskId != ''">
+                #{taskId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="taskName != null and taskName != ''">
+                #{taskName},
+            </if>
+            <if test="startTime != null ">
+                #{startTime},
+            </if>
+            <if test="endTime != null ">
+                #{endTime},
+            </if>
+            <if test="repeat != null and repeat != ''">
+                #{repeat},
+            </if>
+            <if test="remarks != null and remarks != ''">
+                #{remarks},
+            </if>
+            <if test="priority != null and priority != ''">
+                #{priority},
+            </if>
+            <if test="level != null ">
+                #{level},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                #{memberId},
+            </if>
+            <if test="executor != null and executor != ''">
+                #{executor},
+            </if>
+            <if test="taskType != null and taskType != ''">
+                #{taskType},
+            </if>
+            <if test="taskMenuId != null and taskMenuId != ''">
+                #{taskMenuId},
+            </if>
+            <if test="taskGroupId != null and taskGroupId != ''">
+                #{taskGroupId},
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                #{taskStatus},
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                #{taskCode},
+            </if>
+            <if test="taskDel != null ">
+                #{taskDel},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="finishTime != null ">
+                #{finishTime},
+            </if>
+            <if test="fabulousCount != null">
+                #{fabulousCount},
+            </if>
+            <if test="privacyPattern != null">
+                #{privacyPattern},
+            </if>
+            <if test="other != null">
+                #{other},
+            </if>
+            <if test="order != null">
+                #{order},
+            </if>
+            <if test="taskUIds != null and taskUIds!=''">
+                #{taskUIds},
+            </if>
+        </trim>
 
-	</insert>
-	
-	<update id="updateTask" parameterType="com.art1001.supply.entity.task.Task">
+    </insert>
 
-		update prm_task
-		<set>
-			<if test="projectId != null and projectId != ''">
-				project_id = #{projectId},
-			</if>
-			<if test="taskName != null and taskName != ''">
-				task_name = #{taskName},
-			</if>
-			<if test="startTime != null ">
-				start_time = #{startTime},
-			</if>
-			<if test="endTime != null ">
-				end_time = #{endTime},
-			</if>
-			<if test="repeat != null and repeat != ''">
-				`repeat` = #{repeat},
-			</if>
-			<if test="remarks != null">
-				`remarks` = #{remarks},
-			</if>
-			<if test="priority != null and priority != ''">
-				`priority` = #{priority},
-			</if>
-			<if test="level != null ">
-				`level` = #{level},
-			</if>
-			<if test="parentId != null and parentId != ''">
-				parent_id = #{parentId},
-			</if>
-			<if test="memberId != null and memberId != ''">
-				member_id = #{memberId},
-			</if>
-			<if test="executor != null and executor != ''">
-				executor = #{executor},
-			</if>
-			<if test="taskType != null and taskType != ''">
-				task_type = #{taskType},
-			</if>
-			<if test="taskMenuId != null and taskMenuId != ''">
-				task_menu_id = #{taskMenuId},
-			</if>
-			<if test="taskStatus != null and taskStatus != ''">
-				task_status = #{taskStatus},
-			</if>
-			<if test="taskCode != null and taskCode != ''">
-				task_code = #{taskCode},
-			</if>
-			<if test="taskDel != null ">
-				task_del = #{taskDel},
-			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
-			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
-			</if>
-			<if test="updateTime != null ">
-				finish_time = #{finishTime},
-			</if>
-			<if test="fabulousCount != null">
-				fabulous_count = #{fabulousCount},
-			</if>
-			<if test="privacyPattern != null">
-				privacy_pattern = #{privacyPattern},
-			</if>
-			<if test="other != null">
-				other = #{other},
-			</if>
-			<if test="order != null">
-				`order` = #{order},
-			</if>
-			<if test="taskUIds != null and taskUIds != null">
-				task_uids = #{taskUIds},
-			</if>
-		</set>
-		WHERE task_id = #{taskId}
-	</update>
+    <update id="updateTask" parameterType="com.art1001.supply.entity.task.Task">
 
-	<!-- 此条sql 用来处理任务 移入回收站的功能 -->
-	<update id="moveToRecycleBin">
-		update prm_task
-		<set>
-			task_del = 1,
-			<if test="updateTime != null">
-				update_time = #{updateTime},
-			</if>
-		</set>
-		<where>
-			task_id = #{taskId}
-		</where>
-	</update>
+        update prm_task
+        <set>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="taskName != null and taskName != ''">
+                task_name = #{taskName},
+            </if>
+            <if test="startTime != null ">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null ">
+                end_time = #{endTime},
+            </if>
+            <if test="repeat != null and repeat != ''">
+                `repeat` = #{repeat},
+            </if>
+            <if test="remarks != null">
+                `remarks` = #{remarks},
+            </if>
+            <if test="priority != null and priority != ''">
+                `priority` = #{priority},
+            </if>
+            <if test="level != null ">
+                `level` = #{level},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id = #{parentId},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id = #{memberId},
+            </if>
+            <if test="executor != null and executor != ''">
+                executor = #{executor},
+            </if>
+            <if test="taskType != null and taskType != ''">
+                task_type = #{taskType},
+            </if>
+            <if test="taskMenuId != null and taskMenuId != ''">
+                task_menu_id = #{taskMenuId},
+            </if>
+            <if test="taskStatus != null and taskStatus != ''">
+                task_status = #{taskStatus},
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                task_code = #{taskCode},
+            </if>
+            <if test="taskDel != null ">
+                task_del = #{taskDel},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateTime != null ">
+                finish_time = #{finishTime},
+            </if>
+            <if test="fabulousCount != null">
+                fabulous_count = #{fabulousCount},
+            </if>
+            <if test="privacyPattern != null">
+                privacy_pattern = #{privacyPattern},
+            </if>
+            <if test="other != null">
+                other = #{other},
+            </if>
+            <if test="order != null">
+                `order` = #{order},
+            </if>
+            <if test="taskUIds != null and taskUIds != null">
+                task_uids = #{taskUIds},
+            </if>
+        </set>
+        WHERE task_id = #{taskId}
+    </update>
 
-	<!-- 此条sql 用来处理任务恢复的功能 -->
-	<update id="recoverTask">
-		update prm_task
-		<set>
-			task_del = 0,
-			<if test="updateTime != null">
-				update_time = #{updateTime},
-			</if>
-			task_menu_id = #{menuId},
-		</set>
-		<where>
-			task_id = #{taskId}
-		</where>
-	</update>
+    <!-- 此条sql 用来处理任务 移入回收站的功能 -->
+    <update id="moveToRecycleBin">
+        update prm_task
+        <set>
+            task_del = 1,
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            task_id = #{taskId}
+        </where>
+    </update>
 
-	<!-- 用于处理任务分组 移入\恢复  的sql -->
-	<update id="groupTaskmoveToRecycleBin">
-		update prm_task
-		<set>
-			<if test="taskDel != null and taskDel != ''">
-				<if test="taskDel == 1">
-					task_del = 0,
-				</if>
-				<if test="taskDel == 0">
-					task_del = 1,
-				</if>
-			</if>
-		</set>
-		where task_id = #{taskId}
-	</update>
+    <!-- 此条sql 用来处理任务恢复的功能 -->
+    <update id="recoverTask">
+        update prm_task
+        <set>
+            task_del = 0,
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            task_menu_id = #{menuId},
+        </set>
+        <where>
+            task_id = #{taskId}
+        </where>
+    </update>
 
-	<!-- 修改某个任务的状态 -->
-	<update id="changeTaskStatus">
-		update prm_task
-		<set>
-			<if test="taskStatus != '' and taskStatus != null">
-				task_status = #{taskStatus},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime},
-			</if>
-		</set>
-		<where>
-			task_id = #{taskId}
-		</where>
-	</update>
-	<!-- 根据任务id数组查找出任务 -->
-	<select id="findManyTask" resultMap="BaseResultMap">
-		select
-	  	<include refid="Base_Column_List"/>
-		from prm_task where task_id in
-		<foreach collection="array" item="id" open="(" close=")" separator=",">
-			#{id}
-		</foreach>
-	</select>
+    <!-- 用于处理任务分组 移入\恢复  的sql -->
+    <update id="groupTaskmoveToRecycleBin">
+        update prm_task
+        <set>
+            <if test="taskDel != null and taskDel != ''">
+                <if test="taskDel == 1">
+                    task_del = 0,
+                </if>
+                <if test="taskDel == 0">
+                    task_del = 1,
+                </if>
+            </if>
+        </set>
+        where task_id = #{taskId}
+    </update>
 
-	<!-- 查询某个任务的标签id -->
-	<select id="findTaskTagByTaskId" resultType="java.lang.String">
+    <!-- 修改某个任务的状态 -->
+    <update id="changeTaskStatus">
+        update prm_task
+        <set>
+            <if test="taskStatus != '' and taskStatus != null">
+                task_status = #{taskStatus},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            task_id = #{taskId}
+        </where>
+    </update>
+    <!-- 根据任务id数组查找出任务 -->
+    <select id="findManyTask" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 查询某个任务的标签id -->
+    <select id="findTaskTagByTaskId" resultType="java.lang.String">
 		select tag_id from prm_task where task_id = #{taskId}
 	</select>
 
-	<!-- 查询某个任务的全部子任务信息 -->
-	<select id="findSubLevelTask" resultMap="BaseResultMap" parameterType="java.lang.String">
-		select
-		<include refid="Base_Column_List"/>
-		,
-		u.user_id,
-		u.user_name as executor_name,
-		u.image as executor_img
-		from prm_task left join tb_user as u on prm_task.executor = u.user_id  where parent_id = #{taskId} and task_del = 0
-	</select>
+    <!-- 查询某个任务的全部子任务信息 -->
+    <select id="findSubLevelTask" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        u.user_id,
+        u.user_name as executor_name,
+        u.image as executor_img
+        from prm_task left join tb_user as u on prm_task.executor = u.user_id where parent_id = #{taskId} and task_del =
+        0
+    </select>
 
-	<select id="findSubTaskCount" resultType="java.lang.Integer" >
-		select count(0) from prm_task where parent_id = #{taskId}
-		<if test="taskStatus != '' and taskStatus != null">
-			and task_status = #{taskStatus}
-		</if>
-	</select>
+    <select id="findSubTaskCount" resultType="java.lang.Integer">
+        select count(0) from prm_task where parent_id = #{taskId}
+        <if test="taskStatus != '' and taskStatus != null">
+            and task_status = #{taskStatus}
+        </if>
+    </select>
 
-	<!-- 根据任务状态查询多个任务信息 -->
-	<select id="findTaskByStatus" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>,r.parent_id as task_group
-		from prm_task LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where task_status = #{status} and prm_task.project_id = #{projectId}
-	</select>
+    <!-- 根据任务状态查询多个任务信息 -->
+    <select id="findTaskByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,r.parent_id as task_group
+        from prm_task LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where task_status = #{status}
+        and prm_task.project_id = #{projectId}
+    </select>
 
-	<!-- 查询今天的任务 -->
-	<select id="findTaskByToday" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>,r.parent_id as task_group
-		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where (SELECT FROM_UNIXTIME(prm_task.create_time/1000, '%Y-%m-%d')) = ( select CURDATE())
-		and project_id = #{projectId}
-	</select>
+    <!-- 查询今天的任务 -->
+    <select id="findTaskByToday" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,r.parent_id as task_group
+        from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where (SELECT
+        FROM_UNIXTIME(prm_task.create_time/1000, '%Y-%m-%d')) = ( select CURDATE())
+        and project_id = #{projectId}
+    </select>
 
-	<!-- 查询当前菜单下的全部任务信息 -->
-	<select id="findTaskByMenuId" resultMap="BaseResultMap2">
+    <!-- 查询当前菜单下的全部任务信息 -->
+    <select id="findTaskByMenuId" resultMap="BaseResultMap2">
 		select
 		t.task_id,
 		t.project_id,
@@ -851,108 +858,112 @@
 		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.`order` asc
 	</select>
 
-	<!-- 查询某个执行者的所有任务 -->
-	<select id="findTaskByExecutor" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List2"/>,r.parent_id as task_group
-		from prm_task left join prm_relation r on prm_task.task_menu_id = r.relation_id where executor = #{uId} and task_status = '未完成'
-		<if test="orderType != null and orderType != ''">
-			<if test="orderType == '2'.toString()">
-				order by end_time asc
-			</if>
-			<if test="orderType == '3'.toString()">
-				order by prm_project.create_time desc
-			</if>
-		</if>
-	</select>
+    <!-- 查询某个执行者的所有任务 -->
+    <select id="findTaskByExecutor" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List2"/>,r.parent_id as task_group
+        from prm_task left join prm_relation r on prm_task.task_menu_id = r.relation_id where executor = #{uId} and
+        task_status = '未完成'
+        <if test="orderType != null and orderType != ''">
+            <if test="orderType == '2'.toString()">
+                order by end_time asc
+            </if>
+            <if test="orderType == '3'.toString()">
+                order by prm_project.create_time desc
+            </if>
+        </if>
+    </select>
 
-	<!-- 查询项目下所有待认领的任务 -->
-	<select id="waitClaimTask" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>,r.parent_id as task_group
-		from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where project_id = #{projectId} and (executor = '' or executor is null)
-	</select>
+    <!-- 查询项目下所有待认领的任务 -->
+    <select id="waitClaimTask" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,r.parent_id as task_group
+        from prm_task t LEFT JOIN prm_relation r on t.task_menu_id = r.relation_id where project_id = #{projectId} and
+        (executor = '' or executor is null)
+    </select>
 
-	<!-- 将任务的执行者设置为空字符串 -->
-	<delete id="removeExecutor">
-		delete from prm_task_member
-		<where>
-			public_id = #{taskId} and type = '执行者'
-		</where>
-	</delete>
+    <!-- 将任务的执行者设置为空字符串 -->
+    <delete id="removeExecutor">
+        delete from prm_task_member
+        <where>
+            public_id = #{taskId} and type = '执行者'
+        </where>
+    </delete>
 
-	<!-- 清空该任务的所有参与者 -->
-	<delete id="clearTaskMember">
+    <!-- 清空该任务的所有参与者 -->
+    <delete id="clearTaskMember">
 		delete from prm_task_member where task_id = #{taskId}
 	</delete>
 
-	<!-- 查询当前子任务的父级任务的项目id -->
-	<select id="findFatherLevelProjectId" resultType="com.art1001.supply.entity.task.Task">
+    <!-- 查询当前子任务的父级任务的项目id -->
+    <select id="findFatherLevelProjectId" resultType="com.art1001.supply.entity.task.Task">
 		select
 	  	prm_task.project_id projectId
 		from prm_task where task_id = #{taskId}
 	</select>
 
-	<!-- 查询出项目下的所有任务 -->
-	<select id="findTaskByProject" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId}
-	</select>
+    <!-- 查询出项目下的所有任务 -->
+    <select id="findTaskByProject" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId}
+    </select>
 
-	<!-- 查询出项目下的指定执行者 并且是未完成的任务 -->
-	<select id="findTaskByProjectAndStatusAndExecutor" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and executor = #{memberId} and task_status = '未完成'
-	</select>
+    <!-- 查询出项目下的指定执行者 并且是未完成的任务 -->
+    <select id="findTaskByProjectAndStatusAndExecutor" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and executor = #{memberId} and
+        task_status = '未完成'
+    </select>
 
-	<!-- 查询出项目下的指定参与者 并且是未完成的任务 -->
-	<select id="findTaskByProjectAndStatusAndUser" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where find_in_set(#{memberId}, task_uids) and project_id = #{projectId} and task_status = '未完成'
-	</select>
+    <!-- 查询出项目下的指定参与者 并且是未完成的任务 -->
+    <select id="findTaskByProjectAndStatusAndUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where find_in_set(#{memberId}, task_uids) and project_id = #{projectId} and task_status = '未完成'
+    </select>
 
-	<!-- 查询出项目下的指定创建者 并且是未完成的任务 -->
-	<select id="findTaskByProjectAndStatusAndCreateMember" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and  member_id = #{memberId} and task_status = '未完成'
-	</select>
+    <!-- 查询出项目下的指定创建者 并且是未完成的任务 -->
+    <select id="findTaskByProjectAndStatusAndCreateMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_del = 0 and parent_id = 0 and project_id = #{projectId} and member_id = #{memberId} and
+        task_status = '未完成'
+    </select>
 
-	<!-- 按照优先级查询任务 -->
-	<select id="findTaskByPriority" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where project_id = #{projectId} and priority = #{priority}
-	</select>
+    <!-- 按照优先级查询任务 -->
+    <select id="findTaskByPriority" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where project_id = #{projectId} and priority = #{priority}
+    </select>
 
-	<!-- 查询任务下的所有子任务 -->
-	<select id="findTaskByFatherTask" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_del = 0 and parent_id = #{taskId}
-	</select>
+    <!-- 查询任务下的所有子任务 -->
+    <select id="findTaskByFatherTask" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_del = 0 and parent_id = #{taskId}
+    </select>
 
-	<!-- 查询菜单下的所有任务信息 不包括 执行者信息 -->
-	<select id="simpleTaskMenu" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_menu_id = #{menuId}
-	</select>
+    <!-- 查询菜单下的所有任务信息 不包括 执行者信息 -->
+    <select id="simpleTaskMenu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_menu_id = #{menuId}
+    </select>
 
-	<!-- 根据子任务id 查询出父任务信息 -->
-	<select id="findTaskBySubTaskId" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where task_id = (
-			select parent_id from prm_task where task_id = #{taskId}
-		)
-	</select>
+    <!-- 根据子任务id 查询出父任务信息 -->
+    <select id="findTaskBySubTaskId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where task_id = (
+        select parent_id from prm_task where task_id = #{taskId}
+        )
+    </select>
 
-	<!-- 查询出当前用户参与的近三天的任务 -->
-	<select id="findByUserIdAndByTreeDay" resultMap="meTask">
+    <!-- 查询出当前用户参与的近三天的任务 -->
+    <select id="findByUserIdAndByTreeDay" resultMap="meTask">
 		SELECT
 			t.task_id,
 			t.task_name,
@@ -971,142 +982,149 @@
 			AND ( SELECT FROM_UNIXTIME( t.start_time / 1000, '%Y-%m-%d' ) ) &lt;= ( SELECT adddate( curdate( ), '+2 days' ) ) AND ( SELECT FROM_UNIXTIME( t.start_time / 1000, '%Y-%m-%d' ) ) &gt;= ( SELECT curdate( ) ) order by t.end_time desc
 	</select>
 
-	<!-- 查询出我参与的所有任务 -->
-	<select id="findTaskByUserId" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-	  	from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
+    <!-- 查询出我参与的所有任务 -->
+    <select id="findTaskByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
 
-		<if test="orderType != null and orderType != ''">
-			<if test="orderType == '2'.toString()">
-				order by end_time
-			</if>
-			<if test="orderType == '3'.toString()">
-				order by prm_task.create_time desc
-			</if>
-		</if>
-	</select>
+        <if test="orderType != null and orderType != ''">
+            <if test="orderType == '2'.toString()">
+                order by end_time
+            </if>
+            <if test="orderType == '3'.toString()">
+                order by prm_task.create_time desc
+            </if>
+        </if>
+    </select>
 
 
-	<!-- 查询某个用户创建的所有任务 当前项目下 -->
-	<select id="findTaskByMemberId" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_task where member_id = #{memberId}
-	</select>
+    <!-- 查询某个用户创建的所有任务 当前项目下 -->
+    <select id="findTaskByMemberId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where member_id = #{memberId}
+    </select>
 
-	<!-- 查询出某个用户执行的所有完成的任务 -->
-	<select id="findTaskByExecutorAndStatus" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where executor = #{id} and task_status = '完成'
-	</select>
+    <!-- 查询出某个用户执行的所有完成的任务 -->
+    <select id="findTaskByExecutorAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List2"/>
+        ,prm_project.project_name
+        from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where executor = #{id} and
+        task_status = '完成'
+    </select>
 
-	<!-- 查询出某个用户参与的所有任务  (根据任务状态查询) -->
-	<select id="findTaskByUserIdByStatus" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List2"/>
-		from prm_task where find_in_set(#{uId}, task_uids)
-		<if test="status != null and status != ''">
-			and task_status = #{status}
-		</if>
-	</select>
+    <!-- 查询出某个用户参与的所有任务  (根据任务状态查询) -->
+    <select id="findTaskByUserIdByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List2"/>
+        from prm_task where find_in_set(#{uId}, task_uids)
+        <if test="status != null and status != ''">
+            and task_status = #{status}
+        </if>
+    </select>
 
-	<!-- 查询某个用户的参与的所有任务 并且排序 -->
-	<select id="findTaskByUserAndTime" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
-		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">
-			order by end_time
-		</if>
-		<if test="orderType != null and orderType != '' and orderType == '3'.toString()">
-			order by create_time desc
-		</if>
-	</select>
+    <!-- 查询某个用户的参与的所有任务 并且排序 -->
+    <select id="findTaskByUserAndTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where find_in_set(#{id}, task_uids) and task_status = '未完成'
+        <if test="orderType != null and orderType != '' and orderType == '2'.toString()">
+            order by end_time
+        </if>
+        <if test="orderType != null and orderType != '' and orderType == '3'.toString()">
+            order by create_time desc
+        </if>
+    </select>
 
-	<!-- 查询出该用户创建的任务 (根据任务状态查询) -->
-	<select id="findTaskByCreateMemberByStatus" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id = #{uId}
-		<if test="status != null and status != ''">
-			and task_status = #{status}
-		</if>
-	</select>
+    <!-- 查询出该用户创建的任务 (根据任务状态查询) -->
+    <select id="findTaskByCreateMemberByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List2"/>
+        ,prm_project.project_name
+        from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id =
+        #{uId}
+        <if test="status != null and status != ''">
+            and task_status = #{status}
+        </if>
+    </select>
 
-	<!-- 查询出某个用户创建的所有任务 (只要未完成的) -->
-	<select id="findTaskByCreateMember" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List2"/>
-		,prm_project.project_name
-		from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id = #{id} and task_status = '未完成'
-		<if test="orderType == '2'.toString()">
-			order by end_time
-		</if>
-		<if test="orderType == '3'.toString()">
-			order by prm_task.create_time desc
-		</if>
-	</select>
+    <!-- 查询出某个用户创建的所有任务 (只要未完成的) -->
+    <select id="findTaskByCreateMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List2"/>
+        ,prm_project.project_name
+        from prm_task left join prm_project on prm_task.project_id = prm_project.project_id where prm_task.member_id =
+        #{id} and task_status = '未完成'
+        <if test="orderType == '2'.toString()">
+            order by end_time
+        </if>
+        <if test="orderType == '3'.toString()">
+            order by prm_task.create_time desc
+        </if>
+    </select>
 
-	<!-- 查询某个用户的创建的所有任务 并且排序 -->
-	<select id="findTaskByCreateMemberAndTime" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_task where member_id = #{uId}
-		<if test="orderType != null and orderType != '' and orderType == '2'.toString()">
-			order by end_time
-		</if>
-		<if test="orderType != null and orderType != '' and orderType == '3'.toString()">
-			order by create_time
-		</if>
-	</select>
+    <!-- 查询某个用户的创建的所有任务 并且排序 -->
+    <select id="findTaskByCreateMemberAndTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where member_id = #{uId}
+        <if test="orderType != null and orderType != '' and orderType == '2'.toString()">
+            order by end_time
+        </if>
+        <if test="orderType != null and orderType != '' and orderType == '3'.toString()">
+            order by create_time
+        </if>
+    </select>
 
-	<!-- 清空该任务的标签 -->
-	<update id="clearTaskTag">
-		update prm_task
-		<set>
-			tag_id = ''
-		</set>
-		where task_id = #{taskId}
-	</update>
+    <!-- 清空该任务的标签 -->
+    <update id="clearTaskTag">
+        update prm_task
+        <set>
+            tag_id = ''
+        </set>
+        where task_id = #{taskId}
+    </update>
     <update id="updateAll">
 		update prm_task set member_id = #{userId} where member_id = #{id}
 	</update>
 
     <!-- 根据用户查询出该用户执行的和创建的所有任务 -->
-	<select id="findTaskByCalendar" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_task where executor = #{uId} or member_id = #{uId}
-	</select>
+    <select id="findTaskByCalendar" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where executor = #{uId} or member_id = #{uId}
+    </select>
 
-	<!-- 查询出在该项目回收站中的任务 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+    <!-- 查询出在该项目回收站中的任务 -->
+    <select id="findRecycleBin" parameterType="java.lang.String"
+            resultType="com.art1001.supply.entity.base.RecycleBinVO">
 		select task_id as id,task_name as publicName,update_time
 		from prm_task where project_id = #{projectId} and task_del = 1
 	</select>
 
-	<!-- 永久删除多个任务 -->
-	<delete id="deleteManyTask">
-		delete from prm_task where task_id in (
-		<foreach collection="list" separator="," item="taskId">
-			#{taskId}
-		</foreach>
-		)
-	</delete>
+    <!-- 永久删除多个任务 -->
+    <delete id="deleteManyTask">
+        delete from prm_task where task_id in (
+        <foreach collection="list" separator="," item="taskId">
+            #{taskId}
+        </foreach>
+        )
+    </delete>
 
-	<!-- 按执行者分布查询 -->
-	<select id="selectTaskByExecutor" resultMap="BaseResultMap4">
+    <!-- 按执行者分布查询 -->
+    <select id="selectTaskByExecutor" resultMap="BaseResultMap4">
 		SELECT  COUNT(1) AS task_count FROM prm_task pt where project_id = #{projectId} GROUP BY pt.executor
 	</select>
 
-	<!-- 按优先级分布查询 -->
-	<select id="selectTaskByPriority" resultMap="BaseResultMap4">
+    <!-- 按优先级分布查询 -->
+    <select id="selectTaskByPriority" resultMap="BaseResultMap4">
 		SELECT  COUNT(1) AS task_count  FROM prm_task pt where project_id = #{projectId} GROUP BY pt.priority;
 	</select>
 
-	<!-- 期间完成的任务 -->
-	<select id="selectTaskByFinishTime" resultMap="BaseResultMap4">
+    <!-- 期间完成的任务 -->
+    <select id="selectTaskByFinishTime" resultMap="BaseResultMap4">
 		SELECT pt.executor,COUNT(1) AS task_count FROM prm_task pt
 	    WHERE pt.task_status='完成' AND  project_id = #{projectId}
         AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
@@ -1114,8 +1132,8 @@
 		GROUP BY pt.executor
 	</select>
 
-	<!-- 期间未完成的任务 -->
-	<select id="taskByUnfinishTime" resultMap="BaseResultMap4">
+    <!-- 期间未完成的任务 -->
+    <select id="taskByUnfinishTime" resultMap="BaseResultMap4">
 		SELECT pt.executor,COUNT(1) AS task_count FROM prm_task pt
 	    WHERE pt.task_status='未完成' AND  project_id = #{projectId}
         AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
@@ -1123,8 +1141,8 @@
 		GROUP BY pt.executor
 	</select>
 
-	<!-- 期间逾期的任务 -->
-	<select id="taskByEndTime" resultMap="BaseResultMap4">
+    <!-- 期间逾期的任务 -->
+    <select id="taskByEndTime" resultMap="BaseResultMap4">
 		SELECT pt.executor,COUNT(1)  AS task_count FROM prm_task pt
 		WHERE (FROM_UNIXTIME(pt.update_time/1000,'%Y-%m-%d %T') > FROM_UNIXTIME(pt.end_time/1000,'%Y-%m-%d %T') AND pt.task_status='完成' )      -- 判断 在这期间 已完成 但是逾期的任务
 		OR
@@ -1135,8 +1153,8 @@
 		GROUP BY pt.executor
 	</select>
 
-	<!-- 期间修改截止时间的任务 -->
-	<select id="taskByOverdue" resultMap="BaseResultMap4">
+    <!-- 期间修改截止时间的任务 -->
+    <select id="taskByOverdue" resultMap="BaseResultMap4">
 		-- 判断是否有修改截止时间  按照状态为未完成 且修改时间不等于创建时间
 		SELECT  pt.executor,COUNT(1)  AS task_count
 		FROM prm_task pt
@@ -1145,8 +1163,8 @@
 	    GROUP BY pt.executor
 	</select>
 
-	<!-- 期间高频参与的任务 -->
-	<select id="taskByLogCount" resultMap="BaseResultMap4">
+    <!-- 期间高频参与的任务 -->
+    <select id="taskByLogCount" resultMap="BaseResultMap4">
 		-- 根据 每条任务的动态数进行查询 并排序
 		SELECT  pt.executor,COUNT(ptl.task_id)  AS task_count
 		FROM prm_task pt
@@ -1158,8 +1176,8 @@
 	    ORDER BY COUNT(ptl.task_id) DESC
 	</select>
 
-	<!-- 按任务分组分布查询 -->
-	<select id="taskByTaskGroup" resultMap="BaseResultMap4">
+    <!-- 按任务分组分布查询 -->
+    <select id="taskByTaskGroup" resultMap="BaseResultMap4">
 		SELECT
 		(SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id) AS task_group,
 		(SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成' AND pt1.project_id=pr.project_id) AS task_finish,
@@ -1170,8 +1188,8 @@
 		GROUP BY (SELECT relation_name FROM prm_relation pr1 WHERE pr1.relation_id=pr.parent_id);
 	</select>
 
-	<!-- 期间截止任务分成员完成情况 -->
-	<select id="taskByMember" resultMap="BaseResultMap4">
+    <!-- 期间截止任务分成员完成情况 -->
+    <select id="taskByMember" resultMap="BaseResultMap4">
 	   SELECT tu.u_name,
 	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.executor=tu.u_id) AS task_finish,
 	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.executor=tu.u_id)  AS task_unfinish
@@ -1183,8 +1201,8 @@
 	   GROUP BY pt.executor;
 	</select>
 
-	<!-- 期间截止任务按截止时间分布 -->
-	<select id="taskByEndTaskOfEndTime" resultMap="BaseResultMap4">
+    <!-- 期间截止任务按截止时间分布 -->
+    <select id="taskByEndTaskOfEndTime" resultMap="BaseResultMap4">
 	   SELECT FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d') as create_time,
 	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.project_id=pt.project_id) AS task_finish,
 	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.project_id=pt.project_id)  AS task_unfinish
@@ -1195,8 +1213,8 @@
 	   group by FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d')
 	</select>
 
-	<!-- 查询出需要被关联的任务信息 -->
-	<select id="findTaskApiBean" resultMap="bindingInfo">
+    <!-- 查询出需要被关联的任务信息 -->
+    <select id="findTaskApiBean" resultMap="bindingInfo">
 		SELECT
 			t.task_id,
 			t.task_name,
@@ -1214,12 +1232,12 @@
 		WHERE task_id = #{taskId}
 	</select>
 
-	<!-- 获取一个子任务的项目id -->
-	<select id="findChildTaskProject" resultType="java.lang.String">
+    <!-- 获取一个子任务的项目id -->
+    <select id="findChildTaskProject" resultType="java.lang.String">
 		select getChildTaskProjectId(#{taskId})
 	</select>
 
-	<!-- 获取子任务的绑定信息 -->
+    <!-- 获取子任务的绑定信息 -->
     <select id="getBindChild" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
 			t.task_name AS taskName,
@@ -1235,109 +1253,109 @@
 			t.ORDER DESC
 	</select>
 
-	<!-- 查询我执行的任务并且筛选 -->
-	<select id="selectExecuteAndOrder" resultMap="meTask">
-		SELECT
-			t.task_id,
-			t.task_name,
-			t.start_time,
-			t.end_time,
-			t.`level`,
-			p.project_id AS p_id,
-			p.project_name,
-			f.task_name AS f_name,
-			u.image
-		FROM
-			prm_task AS t
-			LEFT JOIN prm_project AS p ON t.project_id = p.project_id
-			LEFT JOIN tb_user as u on u.user_id = t.executor
-			LEFT JOIN prm_task f ON t.parent_id = f.task_id
-			<where>
-				t.executor = #{userId}
-				AND
-				t.task_status = #{isDone}
-			</where>
-			<if test="order == 'created'">
-				order by t.create_time desc
-			</if>
-			<if test="order == 'dueDate'">
-				order by t.end_time desc
-			</if>
-			<if test="order == 'priority'">
-				order by FIELD(t.priority,'非常紧急','紧急','普通')
-			</if>
-	</select>
+    <!-- 查询我执行的任务并且筛选 -->
+    <select id="selectExecuteAndOrder" resultMap="meTask">
+        SELECT
+        t.task_id,
+        t.task_name,
+        t.start_time,
+        t.end_time,
+        t.`level`,
+        p.project_id AS p_id,
+        p.project_name,
+        f.task_name AS f_name,
+        u.image
+        FROM
+        prm_task AS t
+        LEFT JOIN prm_project AS p ON t.project_id = p.project_id
+        LEFT JOIN tb_user as u on u.user_id = t.executor
+        LEFT JOIN prm_task f ON t.parent_id = f.task_id
+        <where>
+            t.executor = #{userId}
+            AND
+            t.task_status = #{isDone}
+        </where>
+        <if test="order == 'created'">
+            order by t.create_time desc
+        </if>
+        <if test="order == 'dueDate'">
+            order by t.end_time desc
+        </if>
+        <if test="order == 'priority'">
+            order by FIELD(t.priority,'非常紧急','紧急','普通')
+        </if>
+    </select>
 
-	<!-- 查询我参与的任务并且筛选 -->
-	<select id="selectJoinAndOrder" resultMap="meTask">
-		select
-			t.task_id,
-			t.task_name,
-			t.start_time,
-			t.end_time,
-			t.`level`,
-			p.project_id AS p_id,
-			p.project_name,
-			f.task_name AS f_name,
-			u.image
-		FROM
-			prm_task AS t
-			LEFT JOIN prm_project AS p ON
-			t.project_id = p.project_id
-			LEFT JOIN tb_user as u on u.user_id = t.executor
-			LEFT JOIN prm_task f ON t.parent_id = f.task_id
-			<where>
-				find_in_set(#{userId}, t.task_uids)
-				AND
-				t.task_status = #{isDone}
-			</where>
-			<if test="order == 'created'">
-				order by t.create_time desc
-			</if>
-			<if test="order == 'dueDate'">
-				order by t.end_time desc
-			</if>
-			<if test="order == 'priority'">
-				order by FIELD(t.priority,'非常紧急','紧急','普通')
-			</if>
-	</select>
+    <!-- 查询我参与的任务并且筛选 -->
+    <select id="selectJoinAndOrder" resultMap="meTask">
+        select
+        t.task_id,
+        t.task_name,
+        t.start_time,
+        t.end_time,
+        t.`level`,
+        p.project_id AS p_id,
+        p.project_name,
+        f.task_name AS f_name,
+        u.image
+        FROM
+        prm_task AS t
+        LEFT JOIN prm_project AS p ON
+        t.project_id = p.project_id
+        LEFT JOIN tb_user as u on u.user_id = t.executor
+        LEFT JOIN prm_task f ON t.parent_id = f.task_id
+        <where>
+            find_in_set(#{userId}, t.task_uids)
+            AND
+            t.task_status = #{isDone}
+        </where>
+        <if test="order == 'created'">
+            order by t.create_time desc
+        </if>
+        <if test="order == 'dueDate'">
+            order by t.end_time desc
+        </if>
+        <if test="order == 'priority'">
+            order by FIELD(t.priority,'非常紧急','紧急','普通')
+        </if>
+    </select>
 
-	<!-- 查询我创建的任务并且筛选 -->
-	<select id="selectCreatedAndOrder" resultMap="meTask">
-		select
-		t.task_id,
-		t.task_name,
-		t.start_time,
-		t.end_time,
-		t.`level`,
-		p.project_id AS p_id,
-		p.project_name,
-		f.task_name AS f_name,
-		u.image
-		FROM
-		prm_task AS t
-		LEFT JOIN prm_project AS p ON
-		t.project_id = p.project_id
-		LEFT JOIN tb_user as u on u.user_id = t.executor
-		LEFT JOIN prm_task f ON t.parent_id = f.task_id
-		<where>
-			t.member_id = #{userId}
-			AND
-			t.task_status = #{isDone}
-		</where>
-		<if test="order == 'created'">
-			order by t.create_time desc
-		</if>
-		<if test="order == 'dueDate'">
-			order by t.end_time desc
-		</if>
-		<if test="order == 'priority'">
-			order by FIELD(t.priority,'非常紧急','紧急','普通')
-		</if>
-	</select>
+    <!-- 查询我创建的任务并且筛选 -->
+    <select id="selectCreatedAndOrder" resultMap="meTask">
+        select
+        t.task_id,
+        t.task_name,
+        t.start_time,
+        t.end_time,
+        t.`level`,
+        p.project_id AS p_id,
+        p.project_name,
+        f.task_name AS f_name,
+        u.image
+        FROM
+        prm_task AS t
+        LEFT JOIN prm_project AS p ON
+        t.project_id = p.project_id
+        LEFT JOIN tb_user as u on u.user_id = t.executor
+        LEFT JOIN prm_task f ON t.parent_id = f.task_id
+        <where>
+            t.member_id = #{userId}
+            AND
+            t.task_status = #{isDone}
+        </where>
+        <if test="order == 'created'">
+            order by t.create_time desc
+        </if>
+        <if test="order == 'dueDate'">
+            order by t.end_time desc
+        </if>
+        <if test="order == 'priority'">
+            order by FIELD(t.priority,'非常紧急','紧急','普通')
+        </if>
+    </select>
 
-	<!-- 查询出我执行的任务并且按照项目排序 -->
-		<select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
+    <!-- 查询出我执行的任务并且按照项目排序 -->
+    <select id="selectExecuteOrderProject" resultMap="meExecuteByProject">
 		SELECT
 		p.project_id AS p_id,
 		p.project_name,
@@ -1361,17 +1379,17 @@
 		t.task_status = #{isDone}
 	</select>
 
-	<!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->
-	<select id="listById" resultMap="BaseResult5">
-		select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name,`level`
-		from prm_task t left join tb_user u on t.executor = u.user_id where task_id in
-		<foreach collection="list" item="id" open="(" close=")" separator=",">
-			#{id}
-		</foreach>
-	</select>
+    <!-- 根据id集合 查询出对应的任务信息 以及执行者信息 -->
+    <select id="listById" resultMap="BaseResult5">
+        select t.task_id,t.task_name,t.start_time,t.end_time,t.parent_id,u.user_name,`level`
+        from prm_task t left join tb_user u on t.executor = u.user_id where task_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 
-	<!-- 查询出一个任务基本信息 -->
-	<select id="selectSimpleTaskById" resultMap="resultMap6">
+    <!-- 查询出一个任务基本信息 -->
+    <select id="selectSimpleTaskById" resultMap="resultMap6">
 		SELECT
 			t.task_id,
 			t.task_name,
@@ -1394,39 +1412,39 @@
 			LEFT JOIN prm_tag tag ON tr.tag_id = tag.tag_id where t.task_id = #{taskId}
 	</select>
 
-	<!-- 把该子任务向上递归直到获取到顶级父任务的项目id -->
-	<select id="selectChildProjectId" resultType="java.lang.String">
+    <!-- 把该子任务向上递归直到获取到顶级父任务的项目id -->
+    <select id="selectChildProjectId" resultType="java.lang.String">
 		select getChildTaskProjectId(#{id})
 	</select>
 
-	<!-- 获取任务的看板模式的数据 -->
-	<select id="getTaskPanel" resultMap="panelListMap">
-		SELECT
-			t.task_id,
-			t.task_name,
-			f.task_id as f_id,
-			f.task_name as f_name,
-			t.start_time,
-			t.end_time,
-			t.executor,
-			m.relation_id,
-			m.relation_name,
-			u.user_name,
-			u.image
-		FROM
-			prm_task AS t
-			LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
-			LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
-			LEFT JOIN tb_user AS u ON t.executor = u.user_id
-		WHERE
-			t.task_id IN
-			<foreach collection="ids" item="id" separator="," close=")" open="(">
-				#{id}
-			</foreach>
-			AND t.task_del = 0 ORDER by t.create_time ,f.create_time DESC
-	</select>
+    <!-- 获取任务的看板模式的数据 -->
+    <select id="getTaskPanel" resultMap="panelListMap">
+        SELECT
+        t.task_id,
+        t.task_name,
+        f.task_id as f_id,
+        f.task_name as f_name,
+        t.start_time,
+        t.end_time,
+        t.executor,
+        m.relation_id,
+        m.relation_name,
+        u.user_name,
+        u.image
+        FROM
+        prm_task AS t
+        LEFT JOIN prm_task AS f ON t.parent_id = f.task_id
+        LEFT JOIN prm_relation AS m ON t.task_menu_id = m.relation_id
+        LEFT JOIN tb_user AS u ON t.executor = u.user_id
+        WHERE
+        t.task_id IN
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+        AND t.task_del = 0 ORDER by t.create_time ,f.create_time DESC
+    </select>
 
-	<!-- 获取项目中的日历任务信息 (version2.0) -->
+    <!-- 获取项目中的日历任务信息 (version2.0) -->
     <select id="selectCalendarTask" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
 			t.task_id,
@@ -1444,8 +1462,8 @@
 			AND t.task_del = 0
 	</select>
 
-	<!-- 获取和当前用户相关的任务信息 (version2.0) -->
-	<select id="relevant" resultType="com.art1001.supply.entity.task.Task">
+    <!-- 获取和当前用户相关的任务信息 (version2.0) -->
+    <select id="relevant" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
 			t.task_id,
 			t.task_name,
@@ -1465,8 +1483,8 @@
 
 	</select>
 
-	<!--  查询任务的 (id,projectid,子任务的taskId) -->
-	<select id="selectMoveData" resultMap="moveTaskData">
+    <!--  查询任务的 (id,projectid,子任务的taskId) -->
+    <select id="selectMoveData" resultMap="moveTaskData">
 		SELECT
 			t.task_id,
 			t.project_id,
@@ -1478,7 +1496,7 @@
 			t.task_menu_id = #{menuId}
 	</select>
 
-	<!-- 获取绑定该标签的任务信息 -->
+    <!-- 获取绑定该标签的任务信息 -->
     <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.task.Task">
 		SELECT
 			task.task_id,
@@ -1500,15 +1518,15 @@
 		AND task.task_del = '0'
 	</select>
 
-	<select id="selectChildTaskId" resultType="java.lang.String">
+    <select id="selectChildTaskId" resultType="java.lang.String">
 		SELECT
 		getSubTaskById (
 		#{taskId}
 		)
 	</select>
 
-	<!--  -->
-	<select id="checkUserIsExistGroup" resultType="java.lang.Integer">
+    <!--  -->
+    <select id="checkUserIsExistGroup" resultType="java.lang.Integer">
 		SELECT
 			count( 1 )
 		FROM
@@ -1517,8 +1535,8 @@
 			task_group_id = #{groupId} and (executor = #{userId} or FIND_IN_SET(#{userId},task_uids))
 	</select>
 
-	<!-- 获取项目任务的成员视图 -->
-	<select id="memberView" resultMap="view_member">
+    <!-- 获取项目任务的成员视图 -->
+    <select id="memberView" resultMap="view_member">
 		SELECT
 			t.*,
 			u.user_id,
@@ -1531,7 +1549,7 @@
 		WHERE
 			project_id = #{projectId} and t.executor != '0'
 	</select>
-	<select id="findTaskByExcutorId" resultType="com.art1001.supply.entity.task.Task">
+    <select id="findTaskByExcutorId" resultType="com.art1001.supply.entity.task.Task">
 select
 		t.task_id,
 		t.project_id,
@@ -1581,7 +1599,7 @@ select
 	</select>
 
 
-		<select id="getTaskPanelByStartAndEndTime" resultMap="panelListMap">
+    <select id="getTaskPanelByStartAndEndTime" resultMap="panelListMap">
 			SELECT
 		     t.task_id,
 		     t.task_name,
@@ -1603,58 +1621,75 @@ select
 		    ORDER by t.create_time ,f.create_time DESC
 	</select>
 
-	<select id="getTaskInfoListByTime" resultType="com.art1001.supply.entity.task.Task">
-		SELECT
-		<include refid="Base_Column_List" />,
-		p.project_name as projectName
-		FROM
-		prm_task
-		join prm_project p
-		on prm_task.project_id=p.project_id
-		WHERE
-		executor=#{memberId} and prm_task.project_id=#{projectId}
-		AND task_del = 0 and  prm_task.update_time
-		BETWEEN  #{startTime}  and  #{endTime}
-		ORDER by create_time DESC
+    <select id="getTaskInfoListByTime" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        p.project_name as projectName
+        FROM
+        prm_task
+        join prm_project p
+        on prm_task.project_id=p.project_id
+        WHERE
+        executor=#{memberId} and prm_task.project_id=#{projectId}
+        AND task_del = 0 and prm_task.update_time
+        BETWEEN #{startTime} and #{endTime}
+        ORDER by create_time DESC
+    </select>
+
+    <select id="getUnfinishedTask" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        p.project_name as projectName
+        FROM
+        prm_task
+        join prm_project p
+        on prm_task.project_id=p.project_id
+        WHERE
+        executor=#{memberId} and prm_task.project_id=#{projectId}
+        and task_status=0 ORDER by create_time DESC
+    </select>
+
+    <select id="getTaskInfoList" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        p.project_name as projectName
+        FROM
+        prm_task
+        join prm_project p
+        on prm_task.project_id=p.project_id
+        WHERE
+        executor=#{memberId} and prm_task.project_id=#{projectId}
+        ORDER by create_time DESC
+    </select>
+
+    <select id="getExecutors" resultType="com.art1001.supply.entity.task.vo.ExecutorVo">
+     SELECT
+     	p.member_id as executor,
+     	u.user_name AS executorName,
+     	u.image AS executorImg
+     FROM
+     	prm_project_member as p
+     	JOIN tb_user u
+     	on p.member_id=u.user_id
+     WHERE
+     	p.project_id = #{projectId}
+     GROUP BY
+     	p.member_id
 	</select>
 
-	<select id="getUnfinishedTask" resultType="com.art1001.supply.entity.task.Task">
-		SELECT
-		<include refid="Base_Column_List" />,
-		p.project_name as projectName
-		FROM
-		prm_task
-		join prm_project p
-		on prm_task.project_id=p.project_id
-		WHERE
-		executor=#{memberId} and prm_task.project_id=#{projectId}
-		and task_status=0 ORDER by create_time DESC
-	</select>
 
-	<select id="getTaskInfoList" resultType="com.art1001.supply.entity.task.Task">
-		SELECT
-		<include refid="Base_Column_List" />,
-		p.project_name as projectName
-		FROM
-		prm_task
-		join prm_project p
-		on prm_task.project_id=p.project_id
-		WHERE
-		executor=#{memberId} and prm_task.project_id=#{projectId}
-	    ORDER by create_time DESC
-	</select>
+    <select id="getUnfinishedTaskAndExecutor0" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        p.project_name as projectName
+        FROM
+        prm_task
+        join prm_project p
+        on prm_task.project_id=p.project_id
+        WHERE
+         prm_task.project_id=#{projectId}
+        and task_status=0 and prm_task.executor=0  ORDER by create_time DESC
+    </select>
 
-	<select id="getExecutors" resultType="com.art1001.supply.entity.task.vo.ExecutorVo">
-      SELECT
-      	t.executor,
-      	u.user_name as executorName
-      FROM
-      	prm_task t
-      	 left JOIN tb_user u ON t.executor = u.user_id
-      WHERE
-      	t.project_id = #{projectId}
-      GROUP BY
-      	executor
-	</select>
 
 </mapper>

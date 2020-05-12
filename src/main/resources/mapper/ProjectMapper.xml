@@ -324,16 +324,18 @@
 	</select>
 
 	<!--根据企业id和用户id查询项目-->
-	<select id="getProjectsByMemberIdAndOrgId" resultMap="BaseResultMap1">
+	<select id="getProjectsByMemberIdAndOrgId" resultType="com.art1001.supply.entity.project.Project">
 		SELECT
 		p.project_id,
-		p.project_name
+		p.project_name,
+		p.end_time
         FROM
         	prm_project p
         	JOIN prm_project_member pm ON p.project_id = pm.project_id
         WHERE
         	p.organization_id = #{orgId}
         	AND pm.member_id =#{memberId}
+        group by p.project_id
 	</select>
 
 

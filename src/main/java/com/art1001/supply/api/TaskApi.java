@@ -101,7 +101,7 @@ public class TaskApi extends BaseController {
     private ProjectService projectService;
 
 
-    private static final String ZERO="0";
+    private static final String ZERO = "0";
 
     /**
      * 任务页面初始化
@@ -1222,20 +1222,20 @@ public class TaskApi extends BaseController {
      * @param workingHours 进度值
      * @return 结果
      */
-    @Push(value = PushType.A31,type = 1)
+    @Push(value = PushType.A31, type = 1)
     @PostMapping("/work_hours")
     public JSONObject updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
 
-                                  @NotNull(message = "计划值不能为空！")
-                                  @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours) {
+                                      @NotNull(message = "计划值不能为空！")
+                                      @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours) {
         JSONObject jsonObject = new JSONObject();
         try {
             taskService.updatePlanWorkHours(taskId, workingHours);
             log.info("Update work hours.[{},{}]", taskId, workingHours);
             Task task = taskService.findTaskByTaskId(taskId);
-            jsonObject.put("result",1);
-            jsonObject.put("data",task.getTaskId());
-            jsonObject.put("msgId",task.getProjectId());
+            jsonObject.put("result", 1);
+            jsonObject.put("data", task.getTaskId());
+            jsonObject.put("msgId", task.getProjectId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1277,7 +1277,7 @@ public class TaskApi extends BaseController {
     public JSONObject getProjectsByMemberIdAndOrgId(@PathVariable String orgId, @PathVariable String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("date", projectService.getProjectsByMemberIdAndOrgId(orgId, memberId));
+            jsonObject.put("data", projectService.getProjectsByMemberIdAndOrgId(orgId, memberId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -1298,7 +1298,7 @@ public class TaskApi extends BaseController {
     public JSONObject getTasksByProjectIdAndMemberId(@PathVariable String memberId, @PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("date", taskService.getTasksByProjectIdAndMemberId(memberId, projectId));
+            jsonObject.put("data", taskService.getTasksByProjectIdAndMemberId(memberId, projectId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -1338,7 +1338,7 @@ public class TaskApi extends BaseController {
      * @Description: 将任务批量指派给执行者
      * @create: 13:28 2020/5/6
      */
-    @GetMapping("/updateExecutors/{taskIds}/{executor}")
+ /*   @GetMapping("/updateExecutors/{taskIds}/{executor}")
     public JSONObject updateExecutors(@PathVariable List<String> taskIds, @PathVariable String executor) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -1352,6 +1352,36 @@ public class TaskApi extends BaseController {
                     jsonObject.put("message","指派成功");
                 }
             }
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }*/
+
+    /**
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param: taskIds 任务id集合
+     * @Param: executor 任务执行者
+     * @return:
+     * @Description: 将任务指派给执行者
+     * @create: 13:28 2020/5/6
+     */
+    @GetMapping("/updateExecutor/{taskId}/{executor}")
+    public JSONObject updateExecutors(@PathVariable String taskId, @PathVariable String executor) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Task task = new Task();
+            task.setExecutor(executor);
+            task.setUpdateTime(System.currentTimeMillis());
+            task.setTaskId(taskId);
+            boolean update = taskService.updateById(task);
+            if (update) {
+                jsonObject.put("result", 1);
+                jsonObject.put("message", "指派成功");
+            }
+
             return jsonObject;
         } catch (Exception e) {
             e.printStackTrace();

@@ -172,24 +172,13 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         try {
             OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
 
-            //设置司龄
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
             if (memberInfo!=null) {
                 if (memberInfo.getEntryTime() != null) {
-                    Long l = System.currentTimeMillis();
-                    float num = ((float) (l - Long.valueOf(memberInfo.getEntryTime()))) / 1000 / 60 / 60 / 24 / 365;
-                    DecimalFormat df = new DecimalFormat("0.0");
-                    String format = df.format(num);
-                    if (POINTZERO.equals(format)) {
-                        memberInfo.setStayComDate("刚刚入职");
-                    } else {
-                        memberInfo.setStayComDate(df.format(num) + "年");
-                    }
-                    memberInfo.setEntryTime(sdf.format(new Date(Long.valueOf(memberInfo.getEntryTime()))));
+                    memberInfo.setEntryTime(memberInfo.getEntryTime());
                 }
                 if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
-                    String format = sdf.format(new Date(Long.valueOf(memberInfo.getBirthday())));
-                    memberInfo.setBirthday(format);
+                    memberInfo.setBirthday(memberInfo.getBirthday());
                 }
 
 

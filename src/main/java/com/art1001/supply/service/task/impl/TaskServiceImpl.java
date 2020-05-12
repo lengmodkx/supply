@@ -2050,7 +2050,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      */
     @Override
     public List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId) {
-        return taskMapper.getUnfinishedTask(memberId,projectId);
+        return taskMapper.getUnfinishedTaskAndExecutor0(memberId,projectId);
     }
 
     /**
@@ -2061,6 +2061,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<ExecutorVo> getExecutors(String projectId) {
         List<ExecutorVo> executors = taskMapper.getExecutors(projectId);
+
         Optional.ofNullable(executors).ifPresent(es->{
             es.forEach(e->{
                 if (ZERO.equals(e.getExecutor())) {

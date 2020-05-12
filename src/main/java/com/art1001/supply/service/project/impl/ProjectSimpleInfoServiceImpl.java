@@ -31,14 +31,15 @@ public class ProjectSimpleInfoServiceImpl extends ServiceImpl<ProjectSimpleInfoM
     private ProjectService projectService;
 
     /**
-     * 查询项目信息列表
-     *
+     * 根据项目中间表的成员id和企业id查询项目信息列表
+     * prm_project_simple_info 表
      * @param memberId
      * @return
      */
     @Override
     public List<Project> getIsExperience(String memberId,String organizationId) {
         List<Project>list=Lists.newArrayList();
+        //使用项目中间表查处的项目id查询项目信息，并表示已添加
         projectSimpleInfoMapper.selectList(new QueryWrapper<ProjectSimpleInfo>().eq("member_id",memberId).eq("organization_id",organizationId)).forEach(r->{
             Project projectByProjectId = projectService.findProjectByProjectId(r.getProjectId());
             projectByProjectId.setIsAdd(1);
@@ -47,6 +48,12 @@ public class ProjectSimpleInfoServiceImpl extends ServiceImpl<ProjectSimpleInfoM
         return list;
     }
 
+    /**
+     * 根据项目中间表的成员id及企业id查询项目中间表信息
+     * @param memberId
+     * @param organizationId
+     * @return
+     */
     @Override
     public List<ProjectSimpleInfo> isAdd(String memberId, String organizationId) {
        return projectSimpleInfoMapper.selectList(new QueryWrapper<ProjectSimpleInfo>().eq("member_id",memberId).eq("organization_id",organizationId));

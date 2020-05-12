@@ -18,4 +18,9 @@ public class ExecutorVo {
      * 任务执行者名称
      */
     private String executorName;
+
+    /**
+     * 任务执行者头像
+     */
+    private String executorImg;
 }

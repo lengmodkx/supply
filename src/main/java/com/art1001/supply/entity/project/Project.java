@@ -149,6 +149,9 @@ public class Project extends Model<Project> {
     @TableField(exist = false)
     private String groupId;
 
+    /**
+     * 是否添加 0未添加 1已添加
+     */
     @TableField(exist = false)
     private Integer isAdd;
 

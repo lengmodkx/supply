@@ -558,35 +558,34 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId,String deptName) {
+    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId, String deptName) {
         OrganizationMember memberInfo = new OrganizationMember();
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            memberInfo.setUserName(userName);
-            //memberInfo.setMemberId(memberId);
+
             memberInfo.setOrganizationId(orgId);
-            memberInfo.setUserName(userName);
-            if (!"".equals(birthday) && null != birthday) {
-                memberInfo.setBirthday(String.valueOf(sdf.parse(birthday).getTime()));
+            if(StringUtils.isNotEmpty(userName)){
+                memberInfo.setUserName(userName);
             }
-            if (!"".equals(entryTime) && null != entryTime) {
-                memberInfo.setEntryTime(String.valueOf(sdf.parse(entryTime).getTime()));
+            if (StringUtils.isNotEmpty(birthday)) {
+                memberInfo.setBirthday(birthday);
             }
-            memberInfo.setStayComDate(memberInfo.getStayComDate());
-            if (!"".equals(job) && null != job) {
+            if (StringUtils.isNotEmpty(entryTime)) {
+                memberInfo.setEntryTime(entryTime);
+            }
+            if (StringUtils.isNotEmpty(job)) {
                 memberInfo.setJob(job);
             }
-            if (!"".equals(memberLabel) && null!=memberLabel) {
+            if (StringUtils.isNotEmpty(memberLabel)) {
                 memberInfo.setMemberLabel(memberLabel);
             }
-            if (!"".equals(address) && null!=address) {
+            if (StringUtils.isNotEmpty(address)) {
                 memberInfo.setAddress(address);
             }
-            if (!"".equals(memberEmail) && null!=memberEmail) {
+            if (StringUtils.isNotEmpty(memberEmail)) {
                 memberInfo.setMemberEmail(memberEmail);
             }
-            if (!"".equals(phone) && null!=phone) {
+            if (StringUtils.isNotEmpty(phone)) {
                 memberInfo.setPhone(phone);
             }
 
@@ -609,20 +608,23 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
                         partment.setPartmentId(d);
-                        if (!"".equals(deptName)&&null!=deptName) {
+                        if (!"".equals(deptName) && null != deptName) {
                             partment.setPartmentName(deptName);
                         }
                         partment.setOrganizationId(orgId);
                         partment.setUpdateTime(System.currentTimeMillis());
                     });
+
                     partmentMemberService.save(partmentMember);
                     partmentService.save(partment);
                 } else {
                     partmentMember.setUpdateTime(System.currentTimeMillis());
+
                     Optional.ofNullable(deptId).ifPresent(d -> {
                         partmentMember.setPartmentId(d);
                         memberInfo.setPartmentId(d);
                     });
+
                     partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>()
                             .eq("member_id", memberId).eq("partment_id", deptId));
                 }
@@ -662,7 +664,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         if (!CollectionUtils.isEmpty(projects)) {
             for (Project project : projects) {
-                List<Task> list1=taskService.getTaskPanelByStartAndEndTime(project.getProjectId(), startTime, endTime);
+                List<Task> list1 = taskService.getTaskPanelByStartAndEndTime(project.getProjectId(), startTime, endTime);
                 list.addAll(list1);
             }
         }
@@ -682,20 +684,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         return projectMapper.getProjectsByMemberIdAndOrgId(orgId, memberId);
     }
 
+    /**
+     * 查询企业下该成员所有的项目信息
+     * @param memberId
+     * @param organizationId
+     * @return
+     */
     @Override
     public List<Project> getExperience(String memberId, String organizationId) {
 
         List<Project> projects = projectMapper.selectList(new QueryWrapper<Project>().eq("member_id", memberId).eq("organization_id", organizationId));
-        List<ProjectSimpleInfo>projectSimpleInfoList=projectSimpleInfoService.isAdd(memberId,organizationId);
+        List<String> projectSimpleInfoList = projectSimpleInfoService.isAdd(memberId, organizationId).stream().map(ProjectSimpleInfo::getProjectId).collect(Collectors.toList());
+
+        //当项目表的id包含项目中间表的projectId时，设置是否添加
         if (!CollectionUtils.isEmpty(projectSimpleInfoList)) {
-            Optional.ofNullable(projects).ifPresent(project->project.stream()
-                    .filter(f->!f.getProjectId()
-                            .equals(projectSimpleInfoList.stream()
-                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(0)));
-            Optional.ofNullable(projects).ifPresent(project->project.stream()
-                    .filter(f->f.getProjectId()
-                            .equals(projectSimpleInfoList.stream()
-                                    .map(ProjectSimpleInfo::getProjectId))).forEach(e->e.setIsAdd(1)));
+            Optional.ofNullable(projects).ifPresent(p -> projectSimpleInfoList.forEach(r -> {
+                p.stream().filter(f -> f.getProjectId().equals(r)).forEach(c -> c.setIsAdd(1));
+                p.stream().filter(f -> !f.getProjectId().equals(r)).forEach(c -> c.setIsAdd(0));
+            }));
+            //项目中间表没有值时表示从未添加过
+        } else {
+            Optional.ofNullable(projects).ifPresent(projectList -> projectList
+                    .forEach(e -> e.setIsAdd(0)));
         }
         return projects;
 
