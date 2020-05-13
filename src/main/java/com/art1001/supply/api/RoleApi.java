@@ -51,7 +51,7 @@ public class RoleApi {
                               @RequestParam(value = "roleKey")String roleKey){
         JSONObject object = new JSONObject();
         try{
-            if(roleService.getOrgRoleIdByName(orgId, roleName) > 0) {
+            /*if(roleService.getOrgRoleIdByName(orgId, roleName) > 0) {
                 object.put("result", 0);
                 object.put("msg", "请检查角色名称是否已存在！");
                 return object;
@@ -60,7 +60,7 @@ public class RoleApi {
                 object.put("result", 0);
                 object.put("msg", "key已经存在！");
                 return object;
-            }
+            }*/
             Role role = new Role();
             role.setRoleName(roleName);
             role.setRoleDes(roleDes);
