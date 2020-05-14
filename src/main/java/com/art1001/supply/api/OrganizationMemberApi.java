@@ -37,7 +37,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
-    @RequestMapping("/organization/members")
+@RequestMapping("/organization/members")
 public class OrganizationMemberApi {
 
     @Resource

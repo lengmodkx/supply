@@ -9,6 +9,7 @@ import com.art1001.supply.service.role.RoleUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.sql.Timestamp;
 
 /**
  * 角色api
+ *
  * @author 汪亚锋
  * [POST]   // 新增
  * [GET]    // 查询
@@ -36,21 +38,25 @@ public class RoleApi {
 
     @Resource
     private RoleUserService roleUserService;
+
+    private static final String ROLENAME = "拥有者";
+
     /**
      * 添加角色
-     * @param orgId 企业id
+     *
+     * @param orgId    企业id
      * @param roleName 角色名称
-     * @param roleDes 角色描述
-     * @param roleKey 角色标识
+     * @param roleDes  角色描述
+     * @param roleKey  角色标识
      * @return
      */
     @PostMapping("/org")
-    public JSONObject addRole(@RequestParam(value = "orgId")String orgId,
-                              @RequestParam(value = "roleName")String roleName,
-                              @RequestParam(value = "roleDes")String roleDes,
-                              @RequestParam(value = "roleKey")String roleKey){
+    public JSONObject addRole(@RequestParam(value = "orgId") String orgId,
+                              @RequestParam(value = "roleName") String roleName,
+                              @RequestParam(value = "roleDes") String roleDes,
+                              @RequestParam(value = "roleKey") String roleKey) {
         JSONObject object = new JSONObject();
-        try{
+        try {
             /*if(roleService.getOrgRoleIdByName(orgId, roleName) > 0) {
                 object.put("result", 0);
                 object.put("msg", "请检查角色名称是否已存在！");
@@ -70,28 +76,29 @@ public class RoleApi {
             role.setCreateTime(new Timestamp(System.currentTimeMillis()));
             role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             roleService.save(role);
-            object.put("result",1);
+            object.put("result", 1);
             object.put("data", role);
             return object;
-        }catch(Exception e){
-            throw new AjaxException("系统异常,角色添加失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,角色添加失败!", e);
         }
     }
 
     /**
      * 删除角色
+     *
      * @param roleId 角色id
      * @return
      */
     @DeleteMapping("/{roleId}/org")
-    public JSONObject deleteRole(@PathVariable(value = "roleId")Integer roleId,
-                                 @NotEmpty(message = "orgId不能为空") @RequestParam(required = false) String orgId){
+    public JSONObject deleteRole(@PathVariable(value = "roleId") Integer roleId,
+                                 @NotEmpty(message = "orgId不能为空") @RequestParam(required = false) String orgId) {
         JSONObject object = new JSONObject();
-        int result = roleService.removeOrgRole(roleId,orgId);
-        if(result==1){
-            object.put("result",result);
-            object.put("msg","删除成功");
-        }else{
+        int result = roleService.removeOrgRole(roleId, orgId);
+        if (result == 1) {
+            object.put("result", result);
+            object.put("msg", "删除成功");
+        } else {
             throw new AjaxException("此角色已经分配给用户，不允许删除");
         }
 
@@ -100,24 +107,25 @@ public class RoleApi {
 
     /**
      * 角色列表
+     *
      * @return
      */
     @GetMapping("/{current}/{size}")
-    public JSONObject roleList(@RequestParam(value = "roleName",required = false)String roleName,
-                               @RequestParam(value = "orgId")String orgId,
-                               @PathVariable(value = "current")Long current,
-                               @PathVariable(value = "size")Long size){
+    public JSONObject roleList(@RequestParam(value = "roleName", required = false) String roleName,
+                               @RequestParam(value = "orgId") String orgId,
+                               @PathVariable(value = "current") Long current,
+                               @PathVariable(value = "size") Long size) {
         JSONObject object = new JSONObject();
-        try{
+        try {
             Role role = new Role();
             role.setRoleName(roleName);
             role.setOrganizationId(orgId);
-            Page<Role> roleList = roleService.selectListPage(current, size, role,orgId);
-            object.put("data",roleList);
-            object.put("result",1);
-            object.put("msg","查询成功");
-        }catch(Exception e){
-            log.error("查询失败，{}",e);
+            Page<Role> roleList = roleService.selectListPage(current, size, role, orgId);
+            object.put("data", roleList);
+            object.put("result", 1);
+            object.put("msg", "查询成功");
+        } catch (Exception e) {
+            log.error("查询失败，{}", e);
             throw new AjaxException(e);
         }
         return object;
@@ -125,19 +133,20 @@ public class RoleApi {
 
     /**
      * 更新角色
-     * @param roleId 角色id
+     *
+     * @param roleId   角色id
      * @param roleName 角色名称
-     * @param roleDes 角色描述
-     * @param roleKey 角色标识
+     * @param roleDes  角色描述
+     * @param roleKey  角色标识
      * @return
      */
     @PutMapping("/{roleId}")
-    public JSONObject updateRole(@PathVariable(value = "roleId")Integer roleId,
-                                 @RequestParam(value = "roleName",required = false)String roleName,
-                                 @RequestParam(value = "roleDes",required = false)String roleDes,
-                                 @RequestParam(value = "roleKey",required = false)String roleKey){
+    public JSONObject updateRole(@PathVariable(value = "roleId") Integer roleId,
+                                 @RequestParam(value = "roleName", required = false) String roleName,
+                                 @RequestParam(value = "roleDes", required = false) String roleDes,
+                                 @RequestParam(value = "roleKey", required = false) String roleKey) {
         JSONObject object = new JSONObject();
-        try{
+        try {
 
             Role role = new Role();
             role.setRoleId(roleId);
@@ -147,50 +156,59 @@ public class RoleApi {
             role.setRoleStatus(0);
             role.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             roleService.updateById(role);
-            object.put("result",1);
-        }catch(Exception e){
-            throw new AjaxException("系统异常,角色更新失败!",e);
+            object.put("result", 1);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,角色更新失败!", e);
         }
         return object;
     }
 
     /**
      * 企业成员角色列表
+     *
      * @return
      */
     @GetMapping
-    public JSONObject roleList(@RequestParam(value = "orgId")String orgId,
-                               @RequestParam(value = "userId")String userId){
+    public JSONObject roleList(@RequestParam(value = "orgId") String orgId,
+                               @RequestParam(value = "userId") String userId) {
         JSONObject object = new JSONObject();
-        try{
-            object.put("data",roleService.roleForMember(userId,orgId));
-            object.put("result",1);
-            object.put("msg","查询成功");
-        }catch(Exception e){
-            log.error("查询失败，{}",e);
+        try {
+            object.put("data", roleService.roleForMember(userId, orgId));
+            object.put("result", 1);
+            object.put("msg", "查询成功");
+        } catch (Exception e) {
+            log.error("查询失败，{}", e);
             throw new AjaxException(e);
         }
         return object;
     }
+
     /**
      * 更新企业成员角色
+     *
      * @param roleId
      * @return
      */
     @PutMapping("/{roleId}/update")
     public JSONObject updateUserRole(@PathVariable(value = "roleId") Integer roleId,
-                                     @RequestParam(value = "orgId")String orgId,
-                                     @RequestParam(value = "userId")String userId){
+                                     @RequestParam(value = "orgId") String orgId,
+                                     @RequestParam(value = "userId") String userId) {
         JSONObject object = new JSONObject();
-        try{
-            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id",userId).eq("org_id",orgId));
-            roleUser.setUId(userId);
-            roleUser.setOrgId(orgId);
-            roleUser.setRoleId(roleId);
-            roleUserService.updateById(roleUser);
-            object.put("result",1);
-            object.put("msg","");
-        }catch(Exception e){
+        try {
+            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
+            Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id",roleId));
+            if (!ROLENAME.equals(role.getRoleName())) {
+                roleUser.setUId(userId);
+                roleUser.setOrgId(orgId);
+                roleUser.setRoleId(roleId);
+                roleUserService.updateById(roleUser);
+                object.put("result", 1);
+                object.put("msg", "");
+            } else {
+                object.put("result", 0);
+                object.put("msg", "企业拥有着只能有一个");
+            }
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
         return object;
@@ -198,15 +216,16 @@ public class RoleApi {
 
     /**
      * 更新企业的默认角色
-     * @param orgId 企业id
+     *
+     * @param orgId  企业id
      * @param roleId 角色id
      * @return 是否成功
      */
     @PutMapping("/{orgId}/{roleId}/org_default_role")
-    public JSONObject updateOrgDefaultRole(@NotEmpty(message = "orgId 不能为空!")@PathVariable String orgId,
-                                           @NotEmpty(message = "roleId不能为空!")@PathVariable String roleId){
+    public JSONObject updateOrgDefaultRole(@NotEmpty(message = "orgId 不能为空!") @PathVariable String orgId,
+                                           @NotEmpty(message = "roleId不能为空!") @PathVariable String roleId) {
         JSONObject jsonObject = new JSONObject();
-        int result = roleService.updateOrgDefaultRole(orgId,roleId);
+        int result = roleService.updateOrgDefaultRole(orgId, roleId);
         jsonObject.put("result", result);
         return jsonObject;
     }

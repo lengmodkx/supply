@@ -1515,16 +1515,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
+        memberDownloadService.save(
+                MemberDownload.builder().fileId(folder.getFileId())
+                        .memberId(ShiroAuthenticationManager.getUserId())
+                        .isDelete(folder.getFileDel())
+                        .downloadTime(String.valueOf(System.currentTimeMillis())).build());
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
         if (files != null && files.size() > 0) {
             for (File inFile : files) {
-
-                memberDownloadService.save(
-                        MemberDownload.builder().fileId(inFile.getFileId())
-                                .memberId(ShiroAuthenticationManager.getUserId())
-                                .isDelete(inFile.getFileDel())
-                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
-
                 if (inFile.getCatalog() == 1) {
                     String name = inFile.getFileName();
                     if (!"".equals(dir)) {
