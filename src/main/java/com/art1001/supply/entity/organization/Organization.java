@@ -73,6 +73,12 @@ public class Organization extends Model<Organization> {
 	private String organizationMember;
 
 	/**
+	 * 企业拥有者头像
+	 */
+	@TableField(exist = false)
+	private String userImg;
+
+	/**
 	 * 企业联系人
 	 */
 	@NotEmpty(message = "联系人不能为空",groups = SaveOrg.class)
