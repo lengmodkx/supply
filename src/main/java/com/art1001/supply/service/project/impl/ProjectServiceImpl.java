@@ -668,7 +668,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 list.addAll(list1);
             }
         }
-
         return list;
     }
 

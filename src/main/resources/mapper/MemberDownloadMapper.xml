@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.file.MemberDownloadMapper">
+
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.file.MemberDownload">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+        <result column="file_id" property="fileId" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+        <result column="download_time" property="downloadTime" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getIsDownload" resultType="com.art1001.supply.entity.file.MemberDownload">
+        SELECT
+        	f.file_id,
+        	f.file_name,
+        	f.size,
+        	f.file_del AS is_delete,
+        	f.create_time
+        FROM
+        	prm_file f
+        WHERE
+        	file_id IN (
+        	SELECT
+        		file_id
+        	FROM
+        		prm_member_download
+        	WHERE
+        	member_id = #{memberId})
+
+    </select>
+
+</mapper>

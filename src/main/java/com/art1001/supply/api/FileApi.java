@@ -8,10 +8,7 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.file.FileRepository;
-import com.art1001.supply.entity.file.FileTree;
-import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
@@ -22,6 +19,7 @@ import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.MemberDownloadService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectService;
@@ -129,6 +127,9 @@ public class FileApi extends BaseController {
      */
     @Autowired
     private FileRepository fileRepository;
+
+    @Resource
+    private MemberDownloadService memberDownloadService;
 
     /**
      * 加载项目下文件列表数据
@@ -1164,6 +1165,13 @@ public class FileApi extends BaseController {
             //处理单个文件的情况
             if(files.size()==1){
                 if(files.get(0).getCatalog()==0){
+                    //保存成员下载信息
+                    for (String id : ids) {
+                        memberDownloadService.save(MemberDownload.builder()
+                                .memberId(ShiroAuthenticationManager.getUserId())
+                                .fileId(id).isDelete(fileService.getOne(new QueryWrapper<File>().eq("file_id",id)).getFileDel())
+                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
+                    }
                     fileService.downloadSingleFile(files.get(0),response);
                 }else{
                     fileService.downloadSingleFolder(files.get(0),response);
@@ -1196,6 +1204,12 @@ public class FileApi extends BaseController {
             response.setContentType("application/octet-stream");
             ServletOutputStream outputStream = response.getOutputStream();
             IOUtils.copy(inputStream,outputStream);
+
+            memberDownloadService.save(MemberDownload.builder()
+                    .memberId(ShiroAuthenticationManager.getUserId())
+                    .fileId(fileId).isDelete(file.getFileDel())
+                    .downloadTime(String.valueOf(System.currentTimeMillis())).build());
+
             outputStream.close();
             inputStream.close();
         } catch (NullPointerException e){
@@ -1321,5 +1335,25 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 获取用户已下载信息
+    * @create: 10:15 2020/5/14
+    */
+    @GetMapping("/getIsDownload/{memberId}")
+    public JSONObject getIsDownload(@PathVariable String memberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",memberDownloadService.getIsDownload(memberId));
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
 
 }

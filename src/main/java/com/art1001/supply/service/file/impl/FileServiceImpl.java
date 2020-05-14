@@ -16,6 +16,7 @@ import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
+import com.art1001.supply.service.file.MemberDownloadService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -89,6 +90,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Autowired
     private FileRepository fileRepository;
+
+    @Resource
+    private MemberDownloadService memberDownloadService;
 
 
     /**
@@ -1368,9 +1372,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
-        if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0 ){
-            List<File> files = fileService.list(new QueryWrapper<File>().eq("catalog","0").like("file_name",fileName));
-            return  Lists.newArrayList(files);
+        if (Lists.newArrayList(byFileNameOrTagNameFiles).size() == 0) {
+            List<File> files = fileService.list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
+            return Lists.newArrayList(files);
         }
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
         if (files.size() == 0) {
@@ -1514,6 +1518,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
         if (files != null && files.size() > 0) {
             for (File inFile : files) {
+
+                memberDownloadService.save(
+                        MemberDownload.builder().fileId(inFile.getFileId())
+                                .memberId(ShiroAuthenticationManager.getUserId())
+                                .isDelete(inFile.getFileDel())
+                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
+
                 if (inFile.getCatalog() == 1) {
                     String name = inFile.getFileName();
                     if (!"".equals(dir)) {
@@ -1542,6 +1553,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
             for (File file : files) {
+
+                //将数据存储到成员下载表
+                memberDownloadService.save(
+                        MemberDownload.builder().fileId(file.getFileId())
+                                .memberId(ShiroAuthenticationManager.getUserId())
+                                .isDelete(file.getFileDel())
+                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
+
                 if (file.getCatalog() == 0) {
                     AliyunOss.doZip(file, zos, "");
                 } else {
