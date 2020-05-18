@@ -442,10 +442,12 @@ public class ProjectApi extends BaseController {
      * @return
      */
     @GetMapping("/seach")
-    public JSONObject seachByName(@RequestParam String projectName, @RequestParam String condition) {
+    public JSONObject seachByName(@RequestParam(required = false) String projectName,
+                                  @RequestParam(required = false) String condition,
+                                  @RequestParam String orgId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", projectService.seachByName(projectName, condition));
+            jsonObject.put("data", projectService.seachByName(projectName, condition, orgId));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
@@ -546,6 +548,27 @@ public class ProjectApi extends BaseController {
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取成员信息失败!", e);
         }
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 根据成员名称或成员电话模糊查询项目成员
+    * @create: 16:12 2020/5/15
+    */
+    @GetMapping("/searchMemberByName/{projectId}")
+    public JSONObject searchMemberByName(@RequestParam(required = false) String condition,@PathVariable String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data", projectMemberService.searchMemberByName(condition, projectId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+        return jsonObject;
     }
 
     /**

@@ -138,14 +138,14 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @param projectName 项目名称
 	 * @return
 	 */
-    List<Project> selectStarByName(@Param("projectName") String projectName, @Param("userId") String userId);
+    List<Project> selectStarByName(@Param("projectName") String projectName, @Param("userId") String userId,@Param("orgId") String orgId);
 
 	/**
 	 * @param userId 用户id
 	 * @param projectName 项目名称
 	 * @return
 	 */
-	List<Project> selectJoin(@Param("userId") String userId, @Param("projectName") String projectName);
+	List<Project> selectJoin(@Param("userId") String userId, @Param("projectName") String projectName,@Param("orgId") String orgId);
 
 	/**
 	 * 查询出当前用户创建的项目 并且根据项目名称模糊查询
@@ -153,7 +153,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
 	 * @param projectName 项目名称
 	 * @return
 	 */
-	List<Project> selectCreatedByName(@Param("userId")String userId, @Param("projectName")String projectName);
+	List<Project> selectCreatedByName(@Param("userId")String userId, @Param("projectName")String projectName,@Param("orgId") String orgId);
 
 	/**
 	 * 修改项目封面图片
@@ -175,4 +175,30 @@ public interface ProjectMapper extends BaseMapper<Project> {
     List<Project> getProjectsByMemberIdAndOrgId(@Param("orgId") String orgId,@Param("memberId") String memberId);
 
 
+	/**
+	 * 根据名称查询企业下所有项目 模糊查询
+	 * @param projectName
+	 * @param memberId
+	 * @param orgId
+	 * @return
+	 */
+	List<Project> selectAllByName(@Param("projectName")String projectName, @Param("memberId")String memberId,@Param("orgId") String orgId);
+
+	/**
+	 * 根据项目名称查询企业下所有已删除的项目
+	 * @param projectName
+	 * @param memberId
+	 * @param orgId
+	 * @return
+	 */
+	List<Project> selectTrashByName(@Param("projectName")String projectName, @Param("memberId")String memberId, @Param("orgId")String orgId);
+
+	/**
+	 * 根据项目名称查询企业下所有已完成的项目
+	 * @param projectName
+	 * @param memberId
+	 * @param orgId
+	 * @return
+	 */
+	List<Project> selectCompleteByName(@Param("projectName")String projectName, @Param("memberId")String memberId, @Param("orgId")String orgId);
 }

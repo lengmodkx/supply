@@ -63,4 +63,12 @@ public interface ProjectMemberMapper extends BaseMapper<ProjectMember> {
     List<UserEntity> selectProjectUserInfo(@Param("projectId") String projectId, @Param("keyWord") String keyWord);
 
     void updateAll(@Param("userId") String userId, @Param("id") String id);
+
+	/**
+	 * 根据成员名称或成员电话模糊查询项目成员
+	 * @param condition
+	 * @param projectId
+	 * @return
+	 */
+    List<ProjectMember> searchMemberByName(@Param("condition") String condition,@Param("projectId") String projectId);
 }

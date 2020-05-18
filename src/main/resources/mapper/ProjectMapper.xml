@@ -291,7 +291,7 @@
 			p.project_status,
 			p.func
 		from prm_project p right join prm_project_collect pc on p.project_id = pc.project_id
-		where pc.member_id = #{userId} and  p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pc.create_time desc
+		where pc.member_id = #{userId} and p.organization_id=#{orgId} and  p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pc.create_time desc
 	</select>
 
 	<!-- 查询出当前用户参与的项目  根据项目名称模糊查询 -->
@@ -307,7 +307,7 @@
 		    pm.default_group as group_id,
 			p.func
 		from prm_project p right join prm_project_member pm on p.project_id = pm.project_id
-		where pm.member_id = #{userId}  and p.project_del=0 and pm.member_label = 0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pm.create_time desc
+		where pm.member_id = #{userId} and p.organization_id=#{orgId}  and p.project_del=0 and pm.member_label = 0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by pm.create_time desc
 	</select>
 
 	<!-- 查询当前用户创建的项目 并且 根据项目名称模糊查询 -->
@@ -320,7 +320,7 @@
 			p.project_status,
 			p.func
 		from prm_project p
-		where p.member_id = #{userId}   and p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
+		where p.member_id = #{userId} and p.organization_id=#{orgId} and p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
 	</select>
 
 	<!--根据企业id和用户id查询项目-->
@@ -336,6 +336,55 @@
         	p.organization_id = #{orgId}
         	AND pm.member_id =#{memberId}
         group by p.project_id
+	</select>
+
+	<!--根据名称查询企业下所有项目 模糊查询-->
+	<select id="selectAllByName" resultType="com.art1001.supply.entity.project.Project">
+		SELECT
+        	p.project_id,
+        	p.project_name,
+        	p.project_cover,
+        	p.project_des,
+        	p.project_del,
+        	p.project_status,
+        	p.func
+        FROM
+        	prm_project p join prm_project_member pm on p.project_id=pm.project_id
+        WHERE
+        	pm.member_id = #{memberId} and p.organization_id=#{orgId} and  p.project_del=0 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
+     </select>
+
+
+	<!--根据项目名称查询企业下所有已删除的项目-->
+	<select id="selectTrashByName" resultType="com.art1001.supply.entity.project.Project">
+     SELECT
+     	p.project_id,
+     	p.project_name,
+     	p.project_cover,
+     	p.project_des,
+     	p.project_del,
+     	p.project_status,
+     	p.func
+     FROM
+     	prm_project p join prm_project_member pm on p.project_id=pm.project_id
+     WHERE
+     	pm.member_id = #{memberId} and p.organization_id=#{orgId} and  p.project_del=1 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
+	</select>
+
+	<!--根据项目名称查询企业下所有已完成的项目-->
+	<select id="selectCompleteByName" resultType="com.art1001.supply.entity.project.Project">
+       SELECT
+        	p.project_id,
+        	p.project_name,
+        	p.project_cover,
+        	p.project_des,
+        	p.project_del,
+        	p.project_status,
+        	p.func
+        FROM
+        	prm_project p join prm_project_member pm on p.project_id=pm.project_id
+        WHERE
+        	pm.member_id = #{memberId} and p.organization_id=#{orgId} and  p.project_del=0 and p.project_status=1 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
 	</select>
 
 

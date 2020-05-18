@@ -37,6 +37,23 @@ public class Constants {
 
     public static final String STAR ="star";
 
+    /**
+     * 全部
+     */
+    public static final String ALL ="all";
+
+    /**
+     * 回收站
+     */
+    public static final String TRASH ="trash";
+
+    /**
+     * 已完成
+     */
+    public static final String COMPLETE ="complete";
+
+
+
     //标识 0,1
     public static final String ZERO ="0";
     public static final String ONE ="1";

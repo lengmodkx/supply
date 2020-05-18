@@ -431,15 +431,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @return
      */
     @Override
-    public List<Project> seachByName(String projectName, String condition) {
+    public List<Project> seachByName(String projectName, String condition,String orgId) {
+        if (Constants.ALL.equals(condition)) {
+            return projectMapper.selectAllByName(projectName, ShiroAuthenticationManager.getUserId(),orgId);
+        }
+        if (Constants.TRASH.equals(condition)) {
+            return projectMapper.selectTrashByName(projectName,ShiroAuthenticationManager.getUserId(),orgId);
+        }
+        if (Constants.COMPLETE.equals(condition)) {
+            return projectMapper.selectCompleteByName(projectName,ShiroAuthenticationManager.getUserId(),orgId);
+        }
         if (Constants.STAR.equals(condition)) {
-            return projectMapper.selectStarByName(projectName, ShiroAuthenticationManager.getUserId());
+            return projectMapper.selectStarByName(projectName, ShiroAuthenticationManager.getUserId(),orgId);
         }
         if (Constants.CREATED.equals(condition)) {
-            return projectMapper.selectCreatedByName(ShiroAuthenticationManager.getUserId(), projectName);
+            return projectMapper.selectCreatedByName(ShiroAuthenticationManager.getUserId(), projectName,orgId);
         }
         if (Constants.JOIN.equals(condition)) {
-            return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(), projectName);
+            return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(), projectName,orgId);
         }
         return new ArrayList<>();
     }

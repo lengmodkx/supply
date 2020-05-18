@@ -258,4 +258,12 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	* @create: 11:36 2020/4/28
 	*/
 	OrganizationMember findMemberByProjectIdAndMemberId(String projectId, String memberId);
+
+	/**
+	 * 根据成员名称或成员电话模糊查询项目成员
+	 * @param  condition
+	 * @param projectId
+	 * @return
+	 */
+	List<ProjectMember> searchMemberByName(String condition,String projectId);
 }

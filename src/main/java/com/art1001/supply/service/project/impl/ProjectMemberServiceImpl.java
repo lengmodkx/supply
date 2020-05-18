@@ -200,6 +200,19 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
 
     /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param: memberName成员名称 memberPhone 成员电话
+    * @return: 根据成员名称或成员电话模糊查询项目成员
+    * @Description:
+    * @create: 16:15 2020/5/15
+    */
+    @Override
+    public List<ProjectMember> searchMemberByName(String condition,String projectId) {
+        return projectMemberMapper.searchMemberByName(condition,projectId);
+    }
+
+    /**
      * 查询成员是否存在于项目中
      *
      * @param projectId 项目id

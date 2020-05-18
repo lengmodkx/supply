@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.project.ProjectMemberMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.project.ProjectMember">
-		<result column="id" property="id" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="member_label" property="memberLabel" jdbcType="INTEGER" />
-		<result column="default_image" property="memberImg" jdbcType="INTEGER" />
-		<result column="account_name" property="accountName" jdbcType="VARCHAR" />
-		<result column="job" property="job" jdbcType="VARCHAR" />
-		<result column="default_view" property="defaultView"/>
-		<result column="collect" property="collect" jdbcType="INTEGER" />
-		<result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER" />
-		<result column="role_id" property="roleId" jdbcType="INTEGER" />
-	</resultMap>
+
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.project.ProjectMember">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="member_name" property="memberName" jdbcType="VARCHAR"/>
+        <result column="member_img" property="memberImg" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="member_label" property="memberLabel" jdbcType="INTEGER"/>
+        <result column="default_image" property="memberImg" jdbcType="INTEGER"/>
+        <result column="account_name" property="accountName" jdbcType="VARCHAR"/>
+        <result column="job" property="job" jdbcType="VARCHAR"/>
+        <result column="default_view" property="defaultView"/>
+        <result column="collect" property="collect" jdbcType="INTEGER"/>
+        <result column="is_receivemessage" property="isReceiveMessage" jdbcType="INTEGER"/>
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
+    </resultMap>
 
     <resultMap id="BaseResultMap1" type="com.art1001.supply.entity.project.Project">
 
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
-        <result column="member_id" property="memberId" jdbcType="VARCHAR" />
-        <result column="start_time" property="startTime" jdbcType="BIGINT" />
-        <result column="end_time" property="endTime" jdbcType="BIGINT" />
-        <result column="project_cover" property="projectCover" jdbcType="VARCHAR" />
-        <result column="project_des" property="projectDes" jdbcType="VARCHAR" />
-        <result column="project_del" property="projectDel" jdbcType="INTEGER" />
-        <result column="project_status" property="projectStatus" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="BIGINT" />
-        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
-        <result column="is_public" property="isPublic" jdbcType="INTEGER" />
-		<result column="default_view" property="defaultView"/>
-        <result column="project_remind" property="projectRemind" jdbcType="INTEGER" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="project_cover" property="projectCover" jdbcType="VARCHAR"/>
+        <result column="project_des" property="projectDes" jdbcType="VARCHAR"/>
+        <result column="project_del" property="projectDel" jdbcType="INTEGER"/>
+        <result column="project_status" property="projectStatus" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="is_public" property="isPublic" jdbcType="INTEGER"/>
+        <result column="default_view" property="defaultView"/>
+        <result column="project_remind" property="projectRemind" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List1">
@@ -54,23 +54,23 @@
 		prm_project.project_remind
     </sql>
 
-	<sql id="Base_Column_List">
+    <sql id="Base_Column_List">
 		id,project_id,member_id,member_name,create_time,update_time,member_label,collect,is_receivemessage,r_id
 	</sql>
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
-	<update id="updateAll">
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
+    <update id="updateAll">
 		update prm_project_member set member_id = #{userId} where member_id = #{id}
 	</update>
 
-	<!-- 根据项目id 查询项目的成员信息 -->
-	<select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <!-- 根据项目id 查询项目的成员信息 -->
+    <select id="findByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
 		SELECT
 	p.id,
 	p.project_id,
@@ -96,18 +96,18 @@ ORDER BY
 	p.member_label DESC
 	</select>
 
-	<select id="findProjectByMemberId" resultMap="BaseResultMap1">
+    <select id="findProjectByMemberId" resultMap="BaseResultMap1">
 
         SELECT
-        <include refid="Base_Column_List1" />
+        <include refid="Base_Column_List1"/>
         FROM
         prm_project
         LEFT JOIN prm_project_member ON prm_project.project_id = prm_project_member.project_id
         WHERE
         prm_project_member.member_id = #{memberId} and project_del = #{projectDel}
-	</select>
+    </select>
 
-	<!-- 获取星标项目 -->
+    <!-- 获取星标项目 -->
     <select id="getStarProject" resultType="com.art1001.supply.entity.project.Project">
 		SELECT
 			p.project_id,
@@ -122,8 +122,8 @@ ORDER BY
 		AND project_del = 0
 	</select>
 
-	<!-- 获取当前用户的非星标项目 -->
-	<select id="getNotStarProject" resultType="com.art1001.supply.entity.project.Project">
+    <!-- 获取当前用户的非星标项目 -->
+    <select id="getNotStarProject" resultType="com.art1001.supply.entity.project.Project">
 		SELECT
 			p.project_id,
 			p.project_name
@@ -137,22 +137,22 @@ ORDER BY
 		AND project_del = 0
 	</select>
 
-	<!-- 根据项目id集合查询出这些项目下的所有成员id -->
+    <!-- 根据项目id集合查询出这些项目下的所有成员id -->
     <select id="selectMemberIdListByProjectIdList" resultType="java.lang.String">
-		SELECT DISTINCT
-			m.member_id
-		FROM
-			prm_project AS p
-			LEFT JOIN prm_project_member AS m ON p.project_id = m.project_id
-		WHERE
-			p.project_id IN (
-				<foreach collection="proIdList" separator="," item="proId">
-					#{proId}
-				</foreach>
-			)
-	</select>
+        SELECT DISTINCT
+        m.member_id
+        FROM
+        prm_project AS p
+        LEFT JOIN prm_project_member AS m ON p.project_id = m.project_id
+        WHERE
+        p.project_id IN (
+        <foreach collection="proIdList" separator="," item="proId">
+            #{proId}
+        </foreach>
+        )
+    </select>
 
-	<!-- 查询项目用户信息 -->
+    <!-- 查询项目用户信息 -->
     <select id="selectProjectUserInfo" resultType="com.art1001.supply.entity.user.UserEntity">
 		SELECT
 			u.account_name AS accountName,
@@ -166,6 +166,32 @@ ORDER BY
 
 		u.account_name LIKE CONCAT('%',#{keyWord},'%') OR u.user_name LIKE CONCAT('%',#{keyWord},'%')
 	</select>
+    <select id="searchMemberByName" resultType="com.art1001.supply.entity.project.ProjectMember">
+        SELECT
+        pm.id,
+        pm.project_id,
+        pm.member_id,
+        pm.create_time,
+        pm.update_time,
+        pm.member_label,
+        pm.collect,
+        pm.is_receivemessage,
+        pm.default_group,
+        pm.default_view,
+        pm.role_id,
+        pm.role_key,
+        pm.current,
+        u.image as memberImg,
+        u.user_id as memberId,
+        u.user_name as memberName,
+        u.job as job,
+        u.account_name as memberPhone
+        FROM
+        prm_project_member pm
+        JOIN tb_user u ON pm.member_id = u.user_id and pm.project_id = #{projectId}
+        WHERE
+            u.user_name like <![CDATA[ CONCAT('%',#{condition},'%') ]]> or u.account_name like <![CDATA[ CONCAT('%',#{condition},'%') ]]>
+    </select>
 
 
 </mapper>

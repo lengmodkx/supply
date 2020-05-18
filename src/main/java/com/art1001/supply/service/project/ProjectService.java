@@ -148,7 +148,7 @@ public interface ProjectService extends IService<Project> {
 	 * @param condition 搜索条件
 	 * @return
 	 */
-    List<Project> seachByName(String projectName, String condition);
+    List<Project> seachByName(String projectName, String condition,String orgId);
 
 	/**
 	 * 获取项目下的所有任务id字符串 (逗号隔开)
