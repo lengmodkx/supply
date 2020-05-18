@@ -18,6 +18,7 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -369,6 +370,26 @@ public class OrganizationMemberApi {
         member.setMemberLock(lock);
         organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
         return Result.success();
+    }
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 生成链接邀请成员
+    * @create: 15:14 2020/5/18
+    */
+    @GetMapping("/getOrganizationMemberByUrl")
+    public JSONObject getOrganizationMemberByUrl(String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data", organizationMemberService.getOrganizationMemberByUrl(orgId));
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+        return jsonObject;
     }
 
 

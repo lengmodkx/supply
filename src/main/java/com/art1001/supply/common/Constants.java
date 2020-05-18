@@ -95,6 +95,8 @@ public class Constants {
 
     public static final String USER_INFO = "userInfo:";
 
+    public static final String PRINTURL="printUrl:";
+
 
     //===================================================== 回收站模块 ==============================================
 

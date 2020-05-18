@@ -1,6 +1,7 @@
 package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.InviteVO;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -142,5 +143,10 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
     Boolean checkUserIdIsOrgMaster(String orgId, String userId);
 
 
-
+	/**
+	 * 根据企业id返回邀请成员页面所需的数据
+	 * @param orgId
+	 * @return 邀请成员页面返回信息
+	 */
+	InviteVO getOrganizationMemberByUrl(String orgId);
 }
