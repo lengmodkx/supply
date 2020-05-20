@@ -2,7 +2,7 @@ package com.art1001.supply.service.project.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.organization.InviteVO;
+import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.organization.OrganizationMember;
@@ -44,6 +44,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.lang.System.currentTimeMillis;
 
 /**
  * projectServiceImpl
@@ -151,8 +153,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	public void saveOrganizationMember(OrganizationMember organizationMember){
 		OrganizationMember organizationMember1 = getOne(new QueryWrapper<OrganizationMember>().eq("member_id", organizationMember.getMemberId()).eq("organization_id", organizationMember.getOrganizationId()));
 		if(organizationMember1==null){
-			organizationMember.setCreateTime(System.currentTimeMillis());
-			organizationMember.setUpdateTime(System.currentTimeMillis());
+			organizationMember.setCreateTime(currentTimeMillis());
+			organizationMember.setUpdateTime(currentTimeMillis());
 			organizationMemberMapper.insert(organizationMember);
 			String orgId = organizationMemberService.findOrgByUserId(organizationMember.getMemberId());
 			if(StringUtils.isEmpty(orgId)){
@@ -208,7 +210,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		//构造修改数据信息
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setUserDefault(false);
-		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setUpdateTime(currentTimeMillis());
 
 		//构造出条件对象(清除当前用户的企业记录)
 		LambdaQueryWrapper<OrganizationMember> clear = new QueryWrapper<OrganizationMember>().lambda()
@@ -243,8 +245,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setOrganizationId(orgId);
 		organizationMember.setMemberId(userId);
-		organizationMember.setCreateTime(System.currentTimeMillis());
-		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setCreateTime(currentTimeMillis());
+		organizationMember.setUpdateTime(currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
 
 		UserEntity user = userService.findById(userId);
@@ -360,27 +362,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		return organizationMember.getOrganizationLable() == label;
 	}
 
-	/**
-	 * 根据企业id返回邀请成员页面所需的数据
-	 * @param orgId
-	 * @return
-	 */
-	@Override
-	public InviteVO getOrganizationMemberByUrl(String orgId) {
-		List<String> organizationIds = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>()
-				.eq("organization_id", orgId)).stream().map(OrganizationMember::getMemberId)
-				.collect(Collectors.toList());
-		String printUrl = ShortCodeUtils.getString(orgId);
-
-		LocalDateTime twoDayLater = LocalDateTime.now().withNano(0).plusHours(48);
-
-		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		InviteVO inviteVO=InviteVO.builder().memberNum(organizationIds.size())
-				.effectiveDate(df.format(twoDayLater))
-				.printUrl(printUrl).build();
-		redisUtil.set(Constants.PRINTURL+printUrl,inviteVO,twoDayLater.toInstant(ZoneOffset.of("+8")).toEpochMilli());
-		return inviteVO;
-	}
 
 
 }

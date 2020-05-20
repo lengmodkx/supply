@@ -1,14 +1,26 @@
 package com.art1001.supply.util.crypto;
 
+import com.art1001.supply.util.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.expression.Operation;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Random;
 
+@Component
 public class ShortCodeUtils {
 
-    public static HashMap<String, String> map = new HashMap<String, String>();
+    @Resource
+    private RedisUtil redisUtil;
 
+//    public static HashMap<String, String> map = new HashMap<String, String>();
 
-    public static String getString(String alphabet) {
+    public  String getString(String alphabet) {
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 6; i++) {
@@ -22,22 +34,17 @@ public class ShortCodeUtils {
     /**
      * 加密
      */
-    public static String encode(String longUrl) {
+    public String encode(String longUrl) {
         String key = getString(longUrl);
-        if (map.containsKey(key)) {
-            key = getString(longUrl);
-        }
-        map.put(key, longUrl);
-
-        return "https://www.aldbim.com/" + key;
+        redisUtil.set("shortUrl:"+key,key,LocalDateTime.now().withNano(0).plusHours(48).toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        return key;
     }
 
     /**
      * 解密
      */
-    public static String decode(String shortUrl) {
-        String[] split = shortUrl.split("com/");
-
-        return map.get(split[1]);
+    public String decode(String shortUrl) {
+        String[] split = shortUrl.split("in/");
+        return redisUtil.get("shortUrl:"+split[1]);
     }
 }

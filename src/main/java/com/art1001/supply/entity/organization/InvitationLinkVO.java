@@ -6,27 +6,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @ClassName InviteVO
+ * @ClassName InvitationLinkVO
  * @Author 邓凯欣 lengmodkx@163.com
- * @Date 2020/5/18 15:24
- * @Discription 邀请成员VO
+ * @Date 2020/5/19 13:52
+ * @Discription 邀请表VO
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InviteVO {
+public class InvitationLinkVO {
     /**
-     * 企业当前成员数量
+     * 当前企业成员数量
      */
     private Integer memberNum;
-
     /**
      * 到期时间
      */
-    private String effectiveDate;
+    private String expireTime;
     /**
-     * 拼接地址
+     * 短链接
      */
-    private String printUrl;
+    private String shortUrl;
 }
