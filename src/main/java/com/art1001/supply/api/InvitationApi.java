@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ import java.io.IOException;
  */
 @Slf4j
 @RestController
-@RequestMapping("/invite")
+//@RequestMapping("/invite")
 public class InvitationApi {
 
     @Resource
@@ -35,4 +36,13 @@ public class InvitationApi {
         response.sendRedirect(invitationLink.getCompleteUrl());
         return "";
     }
+
+//    @GetMapping("/{hash}")
+//        public String setReferer(HttpServletRequest request,HttpServletResponse response,@PathVariable String hash){
+//        InvitationLink invitationLink = invitationLinkService.getRedrectUrl(hash);
+//        if (invitationLink == null) {
+//            return "链接已过期，请联系邀请人重新发送";
+//        }
+//
+//    }
 }
