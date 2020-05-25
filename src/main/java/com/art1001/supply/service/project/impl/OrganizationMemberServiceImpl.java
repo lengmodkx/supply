@@ -1,6 +1,8 @@
 package com.art1001.supply.service.project.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.organization.OrganizationMember;
@@ -20,21 +22,30 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatedUtil;
+import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.lang.System.currentTimeMillis;
 
 /**
  * projectServiceImpl
@@ -74,6 +85,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 	@Resource
 	private OrganizationMemberInfoService organizationMemberInfoService;
+
+	@Resource
+	private RedisUtil redisUtil;
 
 	private String orgId;
 	private String userId;
@@ -139,8 +153,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 	public void saveOrganizationMember(OrganizationMember organizationMember){
 		OrganizationMember organizationMember1 = getOne(new QueryWrapper<OrganizationMember>().eq("member_id", organizationMember.getMemberId()).eq("organization_id", organizationMember.getOrganizationId()));
 		if(organizationMember1==null){
-			organizationMember.setCreateTime(System.currentTimeMillis());
-			organizationMember.setUpdateTime(System.currentTimeMillis());
+			organizationMember.setCreateTime(currentTimeMillis());
+			organizationMember.setUpdateTime(currentTimeMillis());
 			organizationMemberMapper.insert(organizationMember);
 			String orgId = organizationMemberService.findOrgByUserId(organizationMember.getMemberId());
 			if(StringUtils.isEmpty(orgId)){
@@ -196,7 +210,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		//构造修改数据信息
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setUserDefault(false);
-		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setUpdateTime(currentTimeMillis());
 
 		//构造出条件对象(清除当前用户的企业记录)
 		LambdaQueryWrapper<OrganizationMember> clear = new QueryWrapper<OrganizationMember>().lambda()
@@ -231,8 +245,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		OrganizationMember organizationMember = new OrganizationMember();
 		organizationMember.setOrganizationId(orgId);
 		organizationMember.setMemberId(userId);
-		organizationMember.setCreateTime(System.currentTimeMillis());
-		organizationMember.setUpdateTime(System.currentTimeMillis());
+		organizationMember.setCreateTime(currentTimeMillis());
+		organizationMember.setUpdateTime(currentTimeMillis());
 		organizationMember.setOrganizationLable(1);
 
 		UserEntity user = userService.findById(userId);
@@ -347,6 +361,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 		return organizationMember.getOrganizationLable() == label;
 	}
+
 
 
 }
