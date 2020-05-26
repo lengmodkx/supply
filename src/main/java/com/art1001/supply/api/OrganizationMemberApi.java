@@ -376,6 +376,8 @@ public class OrganizationMemberApi {
         return Result.success(orgMemberByKeyword);
     }
 
+
+
     //停用/启用企业成员
     @PutMapping("/{orgId}/lock")
     public Result lockUser(@PathVariable String orgId,
@@ -406,6 +408,38 @@ public class OrganizationMemberApi {
         }
         return jsonObject;
     }
+
+
+    /**
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @param keyword   关键字
+     * @return 用户列表
+     * @Description: 根据电话号模糊搜索用户判断是否在项目
+     * @create: 15:41 2020/5/26
+     */
+    @GetMapping("/getProjectMemberByKeyword")
+    public JSONObject getProjectMemberByKeyword(String keyword,@NotNull(message = "项目id不能为空!")String projectId) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().lambda().like(UserEntity::getAccountName, keyword));
+            Optional.ofNullable(list).ifPresent(s->s.stream().forEach(r->{
+                if(projectMemberService.findMemberIsExist(projectId, r.getUserId())!=0){
+                    r.setExistId(1);
+                }else {
+                    r.setExistId(0);
+                }
+            }));
+            jsonObject.put("result",1);
+            jsonObject.put("data",list);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+    }
+
 
 
 }

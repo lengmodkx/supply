@@ -142,4 +142,12 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 */
     Boolean checkUserIdIsOrgMaster(String orgId, String userId);
 
+	/**
+	 * 判断该用户是否存在于企业中
+	 * @param orgId
+	 * @param memberId
+	 * @return
+	 */
+    int findOrgMemberIsExist(String orgId, String memberId);
+
 }
