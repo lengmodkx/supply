@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.template;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
+@TableName("template_data")
 public class TemplateData extends Model<TemplateData> {
 	
 	private static final long serialVersionUID = 1L;
