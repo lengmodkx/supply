@@ -71,7 +71,6 @@ public class OrganizationApi {
             ValidatorUtils.validateEntity(organization, SaveOrg.class);
             organization.setOrganizationImage("https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/upload/org-img.jpg");
             organizationService.saveOrganization(organization);
-
             jsonObject.put("result",1);
             jsonObject.put("data", organization.getOrganizationId());
         } catch (ApiParamsCheckException e){
@@ -218,9 +217,10 @@ public class OrganizationApi {
     @GetMapping
     public Result<Organization> orgInfo(@RequestParam(value = "orgId") String orgId){
         Organization organization = organizationService.getById(orgId);
-        OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
-        UserEntity userById = userService.findById(organizationMember.getMemberId());
-        organization.setUserImg(userById.getImage());
+        OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("organization_lable",1));
+        UserEntity userEntity = userService.findById(organizationMember.getMemberId());
+        organization.setUserImg(userEntity.getImage());
+        organization.setContact(userEntity.getUserName());
         return Result.success(organization);
     }
 
