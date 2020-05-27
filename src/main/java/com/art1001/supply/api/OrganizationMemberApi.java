@@ -415,7 +415,7 @@ public class OrganizationMemberApi {
      * @Email：dengkaixin@art1001.com
      * @param keyword   关键字
      * @return 用户列表
-     * @Description: 根据电话号模糊搜索用户判断是否在项目
+     * @Description: 根据关键字模糊搜索用户判断是否在项目
      * @create: 15:41 2020/5/26
      */
     @GetMapping("/getProjectMemberByKeyword")
