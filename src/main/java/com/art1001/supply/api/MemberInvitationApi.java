@@ -52,11 +52,6 @@ public class MemberInvitationApi extends BaseController {
     @Resource
     private ProRoleUserService proRoleUserService;
 
-    @Resource
-    private OrganizationMemberService organizationMemberService;
-
-    @Resource
-    private OrganizationMemberInfoService organizationMemberInfoService;
     /**
      * 通过用户账户查询用户
      * @param keyword 关键字
@@ -123,8 +118,8 @@ public class MemberInvitationApi extends BaseController {
             proRoleUserService.remove(new QueryWrapper<ProRoleUser>().lambda()
                     .eq(ProRoleUser::getUId,memberId).eq(ProRoleUser::getProjectId, projectId));
 
-            organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>()
-                    .eq("member_id",memberId).eq("project_id", projectId));
+//            organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>()
+//                    .eq("member_id",memberId).eq("project_id", projectId));
 
             object.put("result",1);
             object.put("msg","移除成功");
