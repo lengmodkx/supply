@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRoleUser;
@@ -248,4 +249,44 @@ public class MemberInvitationApi extends BaseController {
 
         return success(projectMemberService.getProjectUserInfo(projectId, keyWord));
     }
+
+
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 添加项目成员
+    * @create: 17:05 2020/5/26
+    */
+    @PostMapping("/addMember2")
+    public JSONObject addMember2(@RequestParam(value = "projectId") String projectId,
+                                @RequestParam(value = "memberId") String memberId,
+                                @RequestParam(value = "orgId") String orgId){
+        JSONObject object = new JSONObject();
+
+        try {
+            //判断用户是否在企业
+            if (organizationMemberService.findOrgMemberIsExist(orgId,memberId)!=0) {
+                projectMemberService.saveMember(projectId,memberId,orgId);
+            }else {
+                UserEntity byId = userService.findById(memberId);
+                OrganizationMember organizationMember= OrganizationMember.builder().job(byId.getJob())
+                        .createTime(System.currentTimeMillis()).image(byId.getImage()).memberEmail(byId.getEmail())
+                        .memberId(memberId).organizationId(orgId).phone(byId.getAccountName()).updateTime(System.currentTimeMillis())
+                        .userName(byId.getUserName()).build();
+                organizationMemberService.save(organizationMember);
+                projectMemberService.saveMember(projectId,memberId,orgId);
+            }
+            object.put("result",1);
+            object.put("msg","添加成功");
+            return object;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException("系统异常，请稍后再试");
+        }
+
+    }
+
 }

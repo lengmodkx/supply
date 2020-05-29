@@ -362,6 +362,16 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 		return organizationMember.getOrganizationLable() == label;
 	}
 
+	/**
+	 * 查询成员是否存在于项目中
+	 * @param orgId
+	 * @param memberId
+	 * @return
+	 */
+	@Override
+	public int findOrgMemberIsExist(String orgId, String memberId) {
+		return organizationMemberMapper.findMemberIsExist(orgId, memberId);
+	}
 
 
 }

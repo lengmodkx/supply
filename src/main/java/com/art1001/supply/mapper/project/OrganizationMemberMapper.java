@@ -7,6 +7,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -95,4 +96,12 @@ public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember>
 
     List<ProjectMemberInfo> getOrgMemberList(@Param("orgId") String orgId);
 
+	/**
+	 * 查询成员是否存在于项目中
+	 * @param orgId
+	 * @param memberId
+	 * @return
+	 */
+	@Select("select count(0) from prm_organization_member where organization_id = #{orgId} and member_id = #{memberId}")
+	int findMemberIsExist(String orgId, String memberId);
 }

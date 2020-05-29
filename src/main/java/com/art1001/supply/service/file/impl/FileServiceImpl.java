@@ -1515,11 +1515,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
-        memberDownloadService.save(
-                MemberDownload.builder().fileId(folder.getFileId())
-                        .memberId(ShiroAuthenticationManager.getUserId())
-                        .isDelete(folder.getFileDel())
-                        .downloadTime(String.valueOf(System.currentTimeMillis())).build());
+
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
         if (files != null && files.size() > 0) {
             for (File inFile : files) {
@@ -1530,6 +1526,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     }
                     compress(inFile, out, name);
                 } else {
+                    saveDownloadFileInfo(inFile);
                     AliyunOss.doZip(inFile, out, dir);
                 }
             }
@@ -1539,6 +1536,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             // 没有文件，不需要文件的copy
             out.closeEntry();
         }
+    }
+
+    /**
+     * 保存下载文件信息
+     * @param inFile
+     */
+    private void saveDownloadFileInfo(File inFile) {
+        memberDownloadService.save(
+                MemberDownload.builder().fileId(inFile.getFileId())
+                        .memberId(ShiroAuthenticationManager.getUserId())
+                        .isDelete(inFile.getFileDel())
+                        .downloadTime(String.valueOf(System.currentTimeMillis())).build());
     }
 
     @Override
@@ -1551,14 +1560,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
             for (File file : files) {
-
                 //将数据存储到成员下载表
-                memberDownloadService.save(
-                        MemberDownload.builder().fileId(file.getFileId())
-                                .memberId(ShiroAuthenticationManager.getUserId())
-                                .isDelete(file.getFileDel())
-                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
-
+                saveDownloadFileInfo(file);
                 if (file.getCatalog() == 0) {
                     AliyunOss.doZip(file, zos, "");
                 } else {
