@@ -53,6 +53,8 @@ public class MemberInvitationApi extends BaseController {
     @Resource
     private ProRoleUserService proRoleUserService;
 
+    @Resource
+    private OrganizationMemberService organizationMemberService;
     /**
      * 通过用户账户查询用户
      * @param keyword 关键字
