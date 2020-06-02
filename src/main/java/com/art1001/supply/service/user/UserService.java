@@ -124,4 +124,7 @@ public interface UserService extends IService<UserEntity> {
 
 	//通过电话或姓名搜索企业成员
 	List<UserEntity> getUserByOrgId(String phone, String orgId);
+
+	List<UserEntity> selectAll();
+
 }

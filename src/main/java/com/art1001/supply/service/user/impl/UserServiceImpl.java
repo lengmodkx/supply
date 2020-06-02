@@ -7,6 +7,7 @@ import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
@@ -22,6 +23,8 @@ import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.client.model.RegisterUsers;
+import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpEntity;
@@ -54,6 +57,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private IMUserService imUserService;
 
     @Resource
     FileMapper fileMapper;
@@ -491,6 +497,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         return userMapper.getUserByOrgId(phone,orgId);
     }
 
+    @Override
+    public List<UserEntity> selectAll() {
+        return userMapper.selectAll();
+    }
 
 
 }

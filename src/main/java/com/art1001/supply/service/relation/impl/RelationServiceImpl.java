@@ -642,7 +642,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	 */
 	@Override
 	public boolean copyAllTask(String menuId, String projectId, String groupId, String toMenuId) {
-		List<Task> taskByMenuId = taskService.findTaskByMenuId(menuId);
+		List<Task> taskByMenuId = taskService.findTaskByMenuId(menuId                                                                                    );
 		if(CollectionUtils.isEmpty(taskByMenuId)){
 			throw new ServiceException("此列表下的任务为0,无法复制!");
 		}

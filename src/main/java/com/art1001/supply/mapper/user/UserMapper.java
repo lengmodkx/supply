@@ -5,6 +5,7 @@ import com.art1001.supply.entity.user.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -86,5 +87,8 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 	 */
 	List<UserEntity> getUserByOrgId(@Param("phone")String phone, @Param("orgId")String orgId);
 
+
+	@Select("select user_name,password from tb_user where delete_status=0")
+    List<UserEntity> selectAll();
 
 }

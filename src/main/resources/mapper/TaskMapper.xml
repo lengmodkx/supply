@@ -855,7 +855,8 @@
 		left join tb_user u on t.executor = u.user_id
 		LEFT JOIN prm_binding as bd on bd.public_id = t.task_id
 		LEFT JOIN prm_file as f on f.public_id = t.task_id
-		where t.task_menu_id = #{menuId} and t.task_del = 0 order by t.`order` asc
+		where t.task_menu_id = #{menuId} and t.task_del = 0
+        order by t.`order` asc
 	</select>
 
     <!-- 查询某个执行者的所有任务 -->

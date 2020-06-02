@@ -69,6 +69,8 @@ public class Relation extends Model<Relation> {
 	@TableField(exist = false)
 	private List<Task> taskList;
 
+
+
 	/**
 	 * 菜单的当前顺序
 	 */

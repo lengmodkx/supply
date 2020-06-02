@@ -1,95 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.relation.RelationMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.relation.Relation">
-		<result column="relation_id" property="relationId" jdbcType="VARCHAR" />
-		<result column="relation_name" property="relationName" jdbcType="VARCHAR" />
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="lable" property="lable" jdbcType="INTEGER" />
-		<result column="relation_del" property="relationDel" jdbcType="INTEGER" />
-		<result column="order" property="order" jdbcType="INTEGER" />
-		<result column="creator" property="creator" jdbcType="VARCHAR" />
-		<result column="default_group" property="defaultGroup" jdbcType="INTEGER" />
-	</resultMap>
 
-	<resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">
-		<id column="relation_id" property="groupId"/>
-		<result column="relation_name" property="groupName"/>
-		<result column="project_id" property="projectId"/>
-		<collection property="tasks" ofType="com.art1001.supply.entity.task.Task">
-			<id column="task_id" property="taskId"/>
-			<result column="task_status" property="taskStatus"/>
-			<result column="priority" property="priority"/>
-			<result column="end_time" property="endTime"/>
-		</collection>
-	</resultMap>
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.relation.Relation">
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR"/>
+        <result column="relation_name" property="relationName" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="lable" property="lable" jdbcType="INTEGER"/>
+        <result column="relation_del" property="relationDel" jdbcType="INTEGER"/>
+        <result column="order" property="order" jdbcType="INTEGER"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="default_group" property="defaultGroup" jdbcType="INTEGER"/>
+    </resultMap>
 
-	<!-- 回收站专用 -->
-	<resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
-		<id column="relation_id" property="id" />
-		<result column="relation_name" property="name" jdbcType="VARCHAR" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-	</resultMap>
+    <resultMap id="groupInfo" type="com.art1001.supply.entity.relation.GroupVO">
+        <id column="relation_id" property="groupId"/>
+        <result column="relation_name" property="groupName"/>
+        <result column="project_id" property="projectId"/>
+        <collection property="tasks" ofType="com.art1001.supply.entity.task.Task">
+            <id column="task_id" property="taskId"/>
+            <result column="task_status" property="taskStatus"/>
+            <result column="priority" property="priority"/>
+            <result column="end_time" property="endTime"/>
+        </collection>
+    </resultMap>
 
-	<!-- 关联专用  用于获取一个分组下的所有菜单以及菜单下的所有任务的简短信息 -->
-	<resultMap id="bindingResultMap" type="com.art1001.supply.entity.relation.Relation">
-		<id column="menu_id" property="relationId"/>
-		<result column="r_name" property="relationName"/>
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id column="t_id" property="taskId"/>
-			<result column="t_name" property="taskName"/>
-			<result column="u_image" property="executorImg"/>
-		</collection>
-	</resultMap>
+    <!-- 回收站专用 -->
+    <resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
+        <id column="relation_id" property="id"/>
+        <result column="relation_name" property="name" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
 
-	<!-- 根据菜单查询 分组,项目信息的resultMap -->
-	<resultMap id="MenuVOMap" type="com.art1001.supply.entity.task.TaskMenuVO">
-		<result column="relation_id" property="taskGroupId" jdbcType="VARCHAR" />
-		<result column="relation_name" property="taskGroupName" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
-	</resultMap>
+    <!-- 关联专用  用于获取一个分组下的所有菜单以及菜单下的所有任务的简短信息 -->
+    <resultMap id="bindingResultMap" type="com.art1001.supply.entity.relation.Relation">
+        <id column="menu_id" property="relationId"/>
+        <result column="r_name" property="relationName"/>
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id column="t_id" property="taskId"/>
+            <result column="t_name" property="taskName"/>
+            <result column="u_image" property="executorImg"/>
+        </collection>
+    </resultMap>
 
-	<resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
-			<collection property="taskList" column="relation_id" javaType="ArrayList"
-					ofType="com.art1001.supply.entity.task.Task" select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId"/>
-	</resultMap>
+    <!-- 根据菜单查询 分组,项目信息的resultMap -->
+    <resultMap id="MenuVOMap" type="com.art1001.supply.entity.task.TaskMenuVO">
+        <result column="relation_id" property="taskGroupId" jdbcType="VARCHAR"/>
+        <result column="relation_name" property="taskGroupName" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+    </resultMap>
 
-	<!-- 映射菜单信息,任务信息 -->
-	<resultMap id="MenuTask" type="com.art1001.supply.entity.relation.Relation">
-		<id property="relationId" column="menu_id" />
-		<result property="relationName" column="menu_name"/>
-		<collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-			<id property="taskId" column="task_id"/>
-			<result property="taskName" column="task_name"/>
-			<result property="repeat" column="task_repeat"/>
-			<result property="priority" column="task_priority"/>
-			<result property="memberId" column="member_id"/>
-			<result property="taskStatus" column="status"/>
-			<result property="executor" column="executor_id"/>
-			<result property="executorName" column="executor_name"/>
-			<result property="executorImg" column="executor_image"/>
-			<result property="childCount" column="child_count"/>
-			<result property="completeCount" column="complete_count"/>
-			<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
-				<id property="tagId" column="tag_id"/>
-				<result property="tagName" column="tag_name"/>
-			</collection>
-		</collection>
-	</resultMap>
+    <resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
+        <collection property="taskList" column="relation_id" javaType="ArrayList"
+                    ofType="com.art1001.supply.entity.task.Task"
+                    select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId">
+        </collection>
+    </resultMap>
 
-	<!-- 菜单、分组、项目 名称 映射 -->
-	<resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
-		<result property="projectName" column="project_name"/>
-		<result property="taskMenuName" column="menu_name"/>
-		<result property="taskGroupName" column="group_name"/>
-	</resultMap>
+    <!-- 映射菜单信息,任务信息 -->
+    <resultMap id="MenuTask" type="com.art1001.supply.entity.relation.Relation">
+        <id property="relationId" column="menu_id"/>
+        <result property="relationName" column="menu_name"/>
+        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
+            <id property="taskId" column="task_id"/>
+            <result property="taskName" column="task_name"/>
+            <result property="repeat" column="task_repeat"/>
+            <result property="priority" column="task_priority"/>
+            <result property="memberId" column="member_id"/>
+            <result property="taskStatus" column="status"/>
+            <result property="executor" column="executor_id"/>
+            <result property="executorName" column="executor_name"/>
+            <result property="executorImg" column="executor_image"/>
+            <result property="childCount" column="child_count"/>
+            <result property="completeCount" column="complete_count"/>
+            <collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+                <id property="tagId" column="tag_id"/>
+                <result property="tagName" column="tag_name"/>
+            </collection>
+        </collection>
+    </resultMap>
 
-	<sql id="Base_Column_List">
+    <!-- 菜单、分组、项目 名称 映射 -->
+    <resultMap id="BaseResultMap4" type="com.art1001.supply.entity.task.TaskMenuVO">
+        <result property="projectName" column="project_name"/>
+        <result property="taskMenuName" column="menu_name"/>
+        <result property="taskGroupName" column="group_name"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 				relation_id,
 				relation_name,
 				parent_id,
@@ -101,209 +103,214 @@
 				creator
 	</sql>
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
 
-	<select id="findRelationAllList" resultMap="BaseResultMapVo"
-		parameterType="com.art1001.supply.entity.relation.Relation">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_relation
-		where 1=1
-		<if test="projectId != null and projectId !=''">
-			and project_id = #{projectId}
-		</if>
-		<if test="lable != null">
-			and lable = #{lable}
-		</if>
-		<if test="parentId != null and parentId != ''">
-			and parent_id = #{parentId}
-		</if>
-		order by `order` asc
-	</select>
+    <select id="findRelationAllList" resultMap="BaseResultMapVo"
+            parameterType="com.art1001.supply.entity.relation.Relation">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_relation
+        where 1=1
+        <if test="projectId != null and projectId !=''">
+            and project_id = #{projectId}
+        </if>
+        <if test="lable != null">
+            and lable = #{lable}
+        </if>
+        <!--<if test="parentId != null and parentId != ''">-->
+            <!--and parent_id = #{relation.parentId}-->
+        <!--</if>-->
+        order by `order` asc
+    </select>
 
-	<insert id="saveRelation" parameterType="com.art1001.supply.entity.relation.Relation">
+    <insert id="saveRelation" parameterType="com.art1001.supply.entity.relation.Relation">
 
-		insert into prm_relation
-		<trim prefix="(" suffix=")" suffixOverrides=",">
+        insert into prm_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
 
-			<if test="relationId != null and relationId != ''">
-			relation_id,
-			</if>
-			<if test="relationName != null and relationName != ''">
-			relation_name,
-			</if>
-			<if test="parentId != null and parentId != ''">
-			parent_id,
-			</if>
-			<if test="projectId != null and projectId != ''">
-			project_id,
-			</if>
-			<if test="createTime != null ">
-			create_time,
-			</if>
-			<if test="updateTime != null ">
-			update_time,
-			</if>
-			<if test="lable != null ">
-				lable,
-			</if>
-			<if test="relationDel != null ">
-				relation_del,
-			</if>
-			<if test="order != null ">
-				`order`,
-			</if>
-			<if test="creator != null ">
-				`creator`,
-			</if>
-		</trim>
+            <if test="relationId != null and relationId != ''">
+                relation_id,
+            </if>
+            <if test="relationName != null and relationName != ''">
+                relation_name,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="lable != null ">
+                lable,
+            </if>
+            <if test="relationDel != null ">
+                relation_del,
+            </if>
+            <if test="order != null ">
+                `order`,
+            </if>
+            <if test="creator != null ">
+                `creator`,
+            </if>
+        </trim>
 
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
 
-			<if test="relationId != null and relationId != ''">
-				#{relationId},
-			</if>
-			<if test="relationName != null and relationName != ''">
-				#{relationName},
-			</if>
-			<if test="parentId != null and parentId != ''">
-				#{parentId},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				#{projectId},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="lable != null ">
-				#{lable},
-			</if>
-			<if test="relationDel != null ">
-				#{relationDel},
-			</if>
-			<if test="order != null ">
-				#{order},
-			</if>
-			<if test="creator != null ">
-				#{creator},
-			</if>
-		</trim>
+            <if test="relationId != null and relationId != ''">
+                #{relationId},
+            </if>
+            <if test="relationName != null and relationName != ''">
+                #{relationName},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="lable != null ">
+                #{lable},
+            </if>
+            <if test="relationDel != null ">
+                #{relationDel},
+            </if>
+            <if test="order != null ">
+                #{order},
+            </if>
+            <if test="creator != null ">
+                #{creator},
+            </if>
+        </trim>
 
-	</insert>
-
-
-	<insert id="saveRelationBatch">
-		  insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable, relation_del, `order`) VALUES
-
-		   <foreach collection="relationList" item="relation" index="index" separator=",">
-			   ( REPLACE(UUID(), '-', '') ,#{relation},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
-		   </foreach>
-
-	</insert>
-
-	<insert id="saveRelationBatch2">
-		insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable, relation_del, `order`) VALUES
-
-		<foreach collection="templateDataList" item="templateData" index="index" separator=",">
-			( REPLACE(UUID(), '-', '') ,#{templateData.menuName},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
-		</foreach>
-
-	</insert>
-	
-	<update id="updateRelation" parameterType="com.art1001.supply.entity.relation.Relation">
-
-		update prm_relation
-		<set>
-			<if test="relationId != null and relationId != ''">
-				relation_id = #{relationId},
-			</if>
-			<if test="relationName != null and relationName != ''">
-				relation_name = #{relationName},
-			</if>
-			<if test="parentId != null and parentId != ''">
-				parent_id = #{parentId},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				project_id = #{projectId},
-			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
-			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
-			</if>
-			<if test="lable != null ">
-				lable = #{lable},
-			</if>
-			<if test="relationDel != null ">
-				relation_del = #{relationDel},
-			</if>
-			<if test="order != null ">
-				`order` = #{order},
-			</if>
-			<if test="creator != null ">
-				`creator` = #{creator},
-			</if>
-			<if test="defaultGroup != null ">
-				default_group = #{defaultGroup},
-			</if>
-		</set>
-		WHERE relation_id = #{relationId}
-	</update>
+    </insert>
 
 
-	<delete id="deletenMenuByRelationId" parameterType="java.lang.String">
+    <insert id="saveRelationBatch">
+        insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable,
+        relation_del, `order`) VALUES
+
+        <foreach collection="relationList" item="relation" index="index" separator=",">
+            ( REPLACE(UUID(), '-', '')
+            ,#{relation},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index} )
+        </foreach>
+
+    </insert>
+
+    <insert id="saveRelationBatch2">
+        insert into prm_relation(relation_id, relation_name, parent_id, project_id, create_time, update_time, lable,
+        relation_del, `order`) VALUES
+
+        <foreach collection="templateDataList" item="templateData" index="index" separator=",">
+            ( REPLACE(UUID(), '-', '')
+            ,#{templateData.menuName},#{parentId},#{projectId},unix_timestamp(now()),unix_timestamp(now()),1,0,#{index}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="updateRelation" parameterType="com.art1001.supply.entity.relation.Relation">
+
+        update prm_relation
+        <set>
+            <if test="relationId != null and relationId != ''">
+                relation_id = #{relationId},
+            </if>
+            <if test="relationName != null and relationName != ''">
+                relation_name = #{relationName},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id = #{parentId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="lable != null ">
+                lable = #{lable},
+            </if>
+            <if test="relationDel != null ">
+                relation_del = #{relationDel},
+            </if>
+            <if test="order != null ">
+                `order` = #{order},
+            </if>
+            <if test="creator != null ">
+                `creator` = #{creator},
+            </if>
+            <if test="defaultGroup != null ">
+                default_group = #{defaultGroup},
+            </if>
+        </set>
+        WHERE relation_id = #{relationId}
+    </update>
+
+
+    <delete id="deletenMenuByRelationId" parameterType="java.lang.String">
 		delete from
 			prm_relation where parent_id = #{relationId}
 	</delete>
 
-	<!-- 排序菜单内的任务  按照日期 -->
-	<select id="taskSort" resultMap="BaseResultMapVo">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_relation where relation_id = #{relationId}
-	</select>
+    <!-- 排序菜单内的任务  按照日期 -->
+    <select id="taskSort" resultMap="BaseResultMapVo">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation where relation_id = #{relationId}
+    </select>
 
-	<!-- 排序分组内的菜单 -->
-	<select id="menuSort" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List"/>
-		from prm_relation where parent_id = #{relationId}
-		order by create_time desc
-	</select>
+    <!-- 排序分组内的菜单 -->
+    <select id="menuSort" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation where parent_id = #{relationId}
+        order by create_time desc
+    </select>
 
-	<!-- 将分组移动至回收站 -->
-	<update id="moveRecycleBin">
-		update prm_relation
-		<set>
-			<if test="relationId != null and relationId != ''">
-				<if test="relationDel == 0">
-					relation_del = 1,
-				</if>
-				<if test="relationDel == 1">
-					relation_del = 0,
-				</if>
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime},
-			</if>
-		</set>
-		<where>
-			relation_id = #{relationId}
-		</where>
-	</update>
+    <!-- 将分组移动至回收站 -->
+    <update id="moveRecycleBin">
+        update prm_relation
+        <set>
+            <if test="relationId != null and relationId != ''">
+                <if test="relationDel == 0">
+                    relation_del = 1,
+                </if>
+                <if test="relationDel == 1">
+                    relation_del = 0,
+                </if>
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            relation_id = #{relationId}
+        </where>
+    </update>
 
-	<!-- 根据菜单id 查询出 任务 项目等信息 -->
-	<select id="findProjectAndGroupInfoByMenuId" resultMap="MenuVOMap">
+    <!-- 根据菜单id 查询出 任务 项目等信息 -->
+    <select id="findProjectAndGroupInfoByMenuId" resultMap="MenuVOMap">
 			SELECT
 				prm_project.project_id,
 				prm_project.project_name,
@@ -323,66 +330,68 @@
 	)		and prm_relation.project_id = prm_project.project_id
 	</select>
 
-	<!-- 查询当前菜单下的任务序号 -->
-	<select id="findMenuTaskMaxOrder" resultType="java.lang.Integer">
+    <!-- 查询当前菜单下的任务序号 -->
+    <select id="findMenuTaskMaxOrder" resultType="java.lang.Integer">
 		select IFNULL(max(`order`),0) from prm_task where prm_task.task_menu_id = #{taskMenuId}
 	</select>
-	<!-- 查询出某个项目下的某个分组信息 -->
-	<select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
-		select
-		<include refid="Base_Column_List" />
-		from prm_relation
-		where parent_id = '0' and project_id = #{projectId}
-	</select>
+    <!-- 查询出某个项目下的某个分组信息 -->
+    <select id="findAllGroupInfoByProjectId" resultMap="BaseResultMapVo">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation
+        where parent_id = '0' and project_id = #{projectId}
+    </select>
 
-	<!-- 查询出某个分组中的所有菜单 -->
-	<select id="findAllMenuInfoByGroupId" resultMap="BaseResultMapVo">
-		select
-		<include refid="Base_Column_List" />
-		from prm_relation
-		where parent_id = #{groupId} and relation_del = 0
-	</select>
+    <!-- 查询出某个分组中的所有菜单 -->
+    <select id="findAllMenuInfoByGroupId" resultMap="BaseResultMapVo">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation
+        where parent_id = #{groupId} and relation_del = 0
+    </select>
 
-	<!-- 根据菜单id 查询出该菜单的id 及菜单下的所有任务信息 -->
-	<select id="getRelationAndAllTaskInfo" resultMap="BaseResultMapVo">
-		select <include refid="Base_Column_List"/>
-		from prm_relation where relation_id = #{id}
-	</select>
+    <!-- 根据菜单id 查询出该菜单的id 及菜单下的所有任务信息 -->
+    <select id="getRelationAndAllTaskInfo" resultMap="BaseResultMapVo">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation where relation_id = #{id}
+    </select>
 
-	<!-- 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息) -->
-	<select id="findMenusByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-		  select <include refid="Base_Column_List"/>
-		  from prm_relation where project_id = #{projectId} and lable = 1
-	</select>
+    <!-- 根据项目的id 查询出该项目下的所有菜单信息 (不保括分组信息) -->
+    <select id="findMenusByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_relation where project_id = #{projectId} and lable = 1
+    </select>
 
-	<!-- 加载所有分组信息 -->
-	<select id="loadGroupInfo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <!-- 加载所有分组信息 -->
+    <select id="loadGroupInfo" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select relation_id,relation_name,creator from prm_relation where project_id = #{projectId} and relation_del = 0 and lable = 0 order by `order`
 	</select>
 
 
-	<!-- 查询出项目下回收站中的所有任务分组 -->
-	<select id="findRecycleBin" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+    <!-- 查询出项目下回收站中的所有任务分组 -->
+    <select id="findRecycleBin" resultType="com.art1001.supply.entity.base.RecycleBinVO">
 		select relation_id as id,relation_name as publicName,update_time from prm_relation where project_id = #{projectId} and `lable` = 1 and relation_del = 1
 	</select>
 
-	<!-- 根据分组id 查询出 分组下所有菜单的id -->
-	<select id="findMenuIdByGroup" resultType="java.lang.String">
+    <!-- 根据分组id 查询出 分组下所有菜单的id -->
+    <select id="findMenuIdByGroup" resultType="java.lang.String">
 		select relation_id from prm_relation where parent_id = #{relationId}
 	</select>
 
-	<!-- 分组下菜单的所有任务id -->
-	<select id="findTaskIdByMenus" resultType="java.lang.String">
-		select task_id from prm_task where task_menu_id in
-		(
-		<foreach collection="list" item="menuId" separator=",">
-			#{menuId}
-		</foreach>
-		)
-	</select>
+    <!-- 分组下菜单的所有任务id -->
+    <select id="findTaskIdByMenus" resultType="java.lang.String">
+        select task_id from prm_task where task_menu_id in
+        (
+        <foreach collection="list" item="menuId" separator=",">
+            #{menuId}
+        </foreach>
+        )
+    </select>
 
-	<!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
-	<select id="findRelationNameAndProjectName" resultMap="BaseResultMap4">
+    <!-- 查询一个菜单的名称 和  该菜单所属项目的名称 -->
+    <select id="findRelationNameAndProjectName" resultMap="BaseResultMap4">
 		SELECT
 			r.relation_name as menu_name,
 			project_name,
@@ -395,22 +404,22 @@
 			r.relation_id = #{menuId}
 	</select>
 
-	<!-- 查询出分组 或者 菜单的最大排序 -->
-	<select id="findMaxOrder" resultType="java.lang.Integer">
-		select IFNULL(MAX(`order`),0) from prm_relation
-		<where>
-			<if test="lable == 1">
-				parent_id = #{publicId} AND lable = 1
-			</if>
-			<if test="lable == 0">
-				project_id = #{publicId} AND lable = 0
-			</if>
-		</where>
+    <!-- 查询出分组 或者 菜单的最大排序 -->
+    <select id="findMaxOrder" resultType="java.lang.Integer">
+        select IFNULL(MAX(`order`),0) from prm_relation
+        <where>
+            <if test="lable == 1">
+                parent_id = #{publicId} AND lable = 1
+            </if>
+            <if test="lable == 0">
+                project_id = #{publicId} AND lable = 0
+            </if>
+        </where>
 
-	</select>
+    </select>
 
-	<!-- 获取分组下所有菜单以及任务信息数据 -->
-	<select id="selectMenuTask" resultMap="MenuTask">
+    <!-- 获取分组下所有菜单以及任务信息数据 -->
+    <select id="selectMenuTask" resultMap="MenuTask">
 		SELECT
 			me.relation_id AS menu_id,
 			me.relation_name AS menu_name,
@@ -442,8 +451,8 @@
 			task.ORDER
 	</select>
 
-	<!-- 获取一个分组下的菜单信息 -->
-	<select id="bindMenuInfo" resultMap="bindingResultMap">
+    <!-- 获取一个分组下的菜单信息 -->
+    <select id="bindMenuInfo" resultMap="bindingResultMap">
 		SELECT
 			r.relation_id AS menu_id,
 			r.relation_name AS r_name,
@@ -458,7 +467,7 @@
 			r.parent_id = #{groupId}  order by r.order,t.order desc
 	</select>
 
-	<!-- 获取项目下的全部分组信息 -->
+    <!-- 获取项目下的全部分组信息 -->
     <select id="getGroupsInfo" resultMap="groupInfo">
 		SELECT
 			relation_id,

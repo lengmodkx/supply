@@ -5,6 +5,7 @@ import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserEntity;
@@ -21,12 +22,15 @@ import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
+import io.swagger.client.model.RegisterUsers;
+import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
+import org.junit.Test;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户
@@ -71,6 +76,12 @@ public class UserApi {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private IMUserService imUserService;
+
+    private final static String ONE="1";
+    private final static String ZERO="0";
 
     /**
      * 用户登陆
@@ -136,6 +147,11 @@ public class UserApi {
         userEntity.setPassword(user.getPassword());
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
         try {
+            //向第三方环信注册用户
+            RegisterUsers users = new RegisterUsers();
+            User user1 = new User().username(accountName).password(userEntity.getPassword());
+            users.add(user1);
+            imUserService.createNewIMUserSingle(users);
             // 保存用户注册信息
             userService.insert(userEntity, password);
             return Result.success();
@@ -503,4 +519,27 @@ public class UserApi {
         log.info("Check user accountName is exist. [{}]", accountName);
         return Result.success(userService.checkUserIsExistByAccountName(accountName));
     }
+
+
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description: 向第三方环信批量注册用户
+    * @create: 17:42 2020/6/2
+    */
+/*    @GetMapping("/registerAll")
+    public void registerAll(){
+//        List<UserEntity> list = userService.selectAll();
+        List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().eq("delete_status", 0));
+        RegisterUsers users = new RegisterUsers();
+
+        Optional.ofNullable(list).ifPresent(l->l.stream().forEach(r->{
+            User user1 = new User().username(r.getAccountName()).password(r.getPassword());
+            users.add(user1);
+        }));
+        imUserService.createNewIMUserBatch(users);
+    }*/
+
 }
