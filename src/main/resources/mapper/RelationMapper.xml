@@ -57,8 +57,9 @@
     <resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.relation.Relation" extends="BaseResultMap">
         <collection property="taskList" column="relation_id" javaType="ArrayList"
                     ofType="com.art1001.supply.entity.task.Task"
-                    select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId">
-        </collection>
+                    select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId"/>
+
+        
     </resultMap>
 
     <!-- 映射菜单信息,任务信息 -->
@@ -123,9 +124,9 @@
         <if test="lable != null">
             and lable = #{lable}
         </if>
-        <!--<if test="parentId != null and parentId != ''">-->
-            <!--and parent_id = #{relation.parentId}-->
-        <!--</if>-->
+        <if test="parentId != null and parentId != ''">
+            and parent_id = #{parentId}
+        </if>
         order by `order` asc
     </select>
 

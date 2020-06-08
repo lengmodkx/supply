@@ -9,6 +9,7 @@ import com.art1001.supply.service.task.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 
 /**
  * @Description
@@ -56,7 +57,7 @@ public class MyApi {
      * 获取近期的事儿
      * @return 任务和日程的集合
      */
-    @GetMapping("recentThing")
+    @GetMapping("/recentThing")
     public JSONObject getRecentThing(){
         JSONObject jsonObject = new JSONObject();
         try {

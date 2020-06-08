@@ -149,7 +149,7 @@ public class UserApi {
         try {
             //向第三方环信注册用户
             RegisterUsers users = new RegisterUsers();
-            User user1 = new User().username(accountName).password(userEntity.getPassword());
+            User user1 = new User().username(accountName).password(userEntity.getPassword() );
             users.add(user1);
             imUserService.createNewIMUserSingle(users);
             // 保存用户注册信息

@@ -1,6 +1,8 @@
 package com.art1001.supply.mapper.schedule;
 
 import java.util.List;
+
+import com.art1001.supply.entity.Dto.SheduleTimeoutDTO;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.schedule.Schedule;
@@ -210,7 +212,7 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @param currentTimeMillis 当前时间
 	 * @return 月份集合
 	 */
-	List<String> findScheduleMonth(@Param("userId") String userId, @Param("currTime") long currentTimeMillis);
+	List<SheduleTimeoutDTO> findScheduleMonth(@Param("userId") String userId, @Param("currTime") long currentTimeMillis);
 
 	/**
 	 * 根据月份获取日程信息

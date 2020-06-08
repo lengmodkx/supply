@@ -1,5 +1,6 @@
 package com.art1001.supply.service.schedule;
 
+import com.art1001.supply.entity.Dto.SheduleTimeoutDTO;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.log.Log;
@@ -217,7 +218,7 @@ public interface ScheduleService extends IService<Schedule> {
 	 * 查询出和当前登录用户有关日程的月份信息
 	 * @return 月份集合
 	 */
-	List<String> findScheduleMonth();
+	List<SheduleTimeoutDTO> findScheduleMonth();
 
 	/**
 	 * 根据日程的月份信息获取日程
@@ -270,4 +271,8 @@ public interface ScheduleService extends IService<Schedule> {
 	 * @return
 	 */
     List<ScheduleListVO> getScheduleList(String projectId, String memberId);
+
+    List<Schedule> getCreatedSchedules(String projectId);
+
+	List<Schedule> getJoinMeetings(String projectId);
 }

@@ -1,5 +1,7 @@
 package com.art1001.supply.service.schedule.impl;
 
+import com.alibaba.druid.sql.visitor.functions.If;
+import com.art1001.supply.entity.Dto.SheduleTimeoutDTO;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
@@ -23,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
  * scheduleServiceImpl
  */
 @Service
-public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> implements ScheduleService {
+public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> implements ScheduleService {
 
     /**
      * scheduleMapper接口
@@ -78,10 +81,10 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     @Override
     public Schedule findScheduleById(String id) {
         Schedule scheduleById = scheduleMapper.findScheduleById(id);
-        List<Tag> tags =new ArrayList<>();
-        List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(id);
-        if (tagRelations!=null&&tagRelations.size()>0){
-            for (TagRelation tagr: tagRelations) {
+        List<Tag> tags = new ArrayList<>();
+        List<TagRelation> tagRelations = tagRelationService.findTagRelationByScheduleId(id);
+        if (tagRelations != null && tagRelations.size() > 0) {
+            for (TagRelation tagr : tagRelations) {
                 tags.add(tagService.findById((int) tagr.getTagId()));
             }
         }
@@ -138,6 +141,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 保存schedule数据
+     *
      * @param schedule
      */
     @Override
@@ -170,6 +174,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 查询出该用户参与的近三天的日程
+     *
      * @return
      */
     @Override
@@ -179,6 +184,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 数据:根据项目查询出该项目下的所有日程信息
+     *
      * @param projectId 项目id
      * @return 日程的实体集合
      */
@@ -187,21 +193,21 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         List<Schedule> schedules = scheduleMapper.findScheduleListByProjectId(projectId);
 
         Iterator<Schedule> iterator = schedules.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Schedule next = iterator.next();
 
             //查询日程的标签
-            List<Tag> tags =new ArrayList<>();
-            List<TagRelation>  tagRelations =tagRelationService.findTagRelationByScheduleId(next.getScheduleId());
-            if (tagRelations!=null&&tagRelations.size()>0){
-                for (TagRelation tagr: tagRelations) {
+            List<Tag> tags = new ArrayList<>();
+            List<TagRelation> tagRelations = tagRelationService.findTagRelationByScheduleId(next.getScheduleId());
+            if (tagRelations != null && tagRelations.size() > 0) {
+                for (TagRelation tagr : tagRelations) {
                     tags.add(tagService.findById((int) tagr.getTagId()));
                 }
             }
             next.setTagList(tags);
 
-            if(next.getPrivacyPattern() == 1){
-                if(!Arrays.asList(next.getMemberIds().split(",")).contains(ShiroAuthenticationManager.getUserId())){
+            if (next.getPrivacyPattern() == 1) {
+                if (!Arrays.asList(next.getMemberIds().split(",")).contains(ShiroAuthenticationManager.getUserId())) {
                     iterator.remove();
                 }
             }
@@ -421,6 +427,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 根据月份分组查询日程
+     *
      * @param projectId 项目id
      * @return
      */
@@ -445,9 +452,10 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 检测成员时间范围的合法性
-     * @param userId 用户id
+     *
+     * @param userId    用户id
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 是否合法
      */
     @Override
@@ -456,9 +464,9 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         //查询出和该用户关联的日程id集合
         List<String> scheduleIds = scheduleMapper.selectList(new QueryWrapper<Schedule>().select("schedule_id").eq("member_id", userId).or().apply("FIND_IN_SET({0},member_ids)", userId)).stream().map(Schedule::getScheduleId).collect(Collectors.toList());
         //查询出和改用和关联的日程信息
-        List<Schedule> schedules = scheduleMapper.selectList(new QueryWrapper<Schedule>().select("schedule_id","schedule_name","start_time","end_time").in("schedule_id",scheduleIds));
+        List<Schedule> schedules = scheduleMapper.selectList(new QueryWrapper<Schedule>().select("schedule_id", "schedule_name", "start_time", "end_time").in("schedule_id", scheduleIds));
         schedules.forEach(item -> {
-            if(!(startTime > item.getEndTime() || endTime < item.getStartTime())){
+            if (!(startTime > item.getEndTime() || endTime < item.getStartTime())) {
                 conflictSchedules.add(item);
             }
         });
@@ -467,6 +475,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 获取日程信息 根据月份分组
+     *
      * @param projectId 项目id
      * @return 日程信息
      */
@@ -477,6 +486,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 获取日程信息 根据月份分组
+     *
      * @param projectId 项目id
      * @return 日程信息集合
      */
@@ -487,34 +497,38 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 查询出关于用户的所有未来日程信息 按照日分组
+     *
      * @return 日程VO集合
      */
     @Override
     public List<ScheduleVo> findMe() {
-        return scheduleMapper.selectMe(ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+        return scheduleMapper.selectMe(ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
     }
 
     /**
      * 查询出和当前登录用户有关日程的月份信息
+     *
      * @return 月份集合
      */
     @Override
-    public List<String> findScheduleMonth() {
-        return scheduleMapper.findScheduleMonth(ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+    public List<SheduleTimeoutDTO> findScheduleMonth() {
+        return scheduleMapper.findScheduleMonth(ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
     }
 
     /**
      * 根据日程的月份信息获取日程
+     *
      * @param month 月份
      * @return 日程集合
      */
     @Override
     public List<Schedule> findByMonth(String month) {
-        return scheduleMapper.findByMonth(month,ShiroAuthenticationManager.getUserId(),System.currentTimeMillis());
+        return scheduleMapper.findByMonth(month, ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
     }
 
     /**
      * 获取一个项目的日历日程信息 (version 2.0)
+     *
      * @param projectId 项目id
      * @return 日历日程信息
      */
@@ -525,6 +539,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 获取一个用户的日历日程信息
+     *
      * @param userId 用户id
      * @return 日程信息
      */
@@ -535,6 +550,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 获取绑定该标签的所有日程信息
+     *
      * @param tagId 标签id
      * @return 日程集合
      */
@@ -545,6 +561,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 检查该日程存不存在
+     *
      * @param scheduleId 日程id
      * @return 是否存在
      */
@@ -556,12 +573,13 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     /**
      * 根据日程id查询出该日程的项目id
      * 如果没有项目id 则返回null
+     *
      * @param scheduleId 日程id
      * @return 项目id
      */
     @Override
     public String getProjectId(String scheduleId) {
-        if(!this.checkIsExist(scheduleId)){
+        if (!this.checkIsExist(scheduleId)) {
             throw new ServiceException("该日程不存在!");
         }
         //生成条件表达式对象
@@ -577,14 +595,14 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                 .eq(Schedule::getScheduleId, publicId);
 
         Schedule one = this.getOne(select);
-        if(one != null){
-            if(one.getMemberIds() != null){
+        if (one != null) {
+            if (one.getMemberIds() != null) {
                 StringBuilder userIds = new StringBuilder(one.getMemberIds());
-                if(StringUtils.isNotEmpty(one.getMemberId())){
+                if (StringUtils.isNotEmpty(one.getMemberId())) {
                     userIds.append(",").append(one.getMemberId());
                 }
                 return userIds.toString().split(",");
-            } else if(one.getMemberId() != null){
+            } else if (one.getMemberId() != null) {
                 return new String[]{one.getMemberId()};
             }
         }
@@ -593,21 +611,22 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
 
     /**
      * 获取日程列表
+     *
      * @param projectId
      * @param memberId
      * @return
      */
     @Override
     public List<ScheduleListVO> getScheduleList(String projectId, String memberId) {
-        List<Schedule>scheduleList=scheduleMapper.getScheduleList(projectId,memberId);
-        List<ScheduleListVO>scheduleListVOS= Lists.newArrayList();
+        List<Schedule> scheduleList = scheduleMapper.getScheduleList(projectId, memberId);
+        List<ScheduleListVO> scheduleListVOS = Lists.newArrayList();
 
 
-        Optional.ofNullable(scheduleList).ifPresent(schedules->{
-            List<ScheduleSimpleInfoVO>scheduleSimpleInfoVOS=Lists.newArrayList();
-            ScheduleListVO scheduleListVO=new ScheduleListVO();
+        Optional.ofNullable(scheduleList).ifPresent(schedules -> {
+            List<ScheduleSimpleInfoVO> scheduleSimpleInfoVOS = Lists.newArrayList();
+            ScheduleListVO scheduleListVO = new ScheduleListVO();
             schedules.forEach(schedule -> {
-                ScheduleSimpleInfoVO scheduleSimpleInfoVO=ScheduleSimpleInfoVO.builder().build();
+                ScheduleSimpleInfoVO scheduleSimpleInfoVO = ScheduleSimpleInfoVO.builder().build();
                 //日期处理，Long转换成MM-dd类型
                 DateTimeFormatter time = DateTimeFormatter.ofPattern("MM月dd日");
                 DateTimeFormatter time2 = DateTimeFormatter.ofPattern("HH:mm");
@@ -616,9 +635,9 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                 String endTime = time2.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(schedule.getEndTime()), ZoneId.systemDefault()));
 
                 //赋值
-                if (schedule.getIsAllday()==1) {
+                if (schedule.getIsAllday() == 1) {
                     scheduleSimpleInfoVO.setStartTime("全天");
-                }else{
+                } else {
                     scheduleSimpleInfoVO.setStartTime(startTime);
                     scheduleSimpleInfoVO.setEndTime(endTime);
                 }
@@ -629,9 +648,27 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
                 scheduleSimpleInfoVOS.add(scheduleSimpleInfoVO);
                 scheduleListVO.setCreateTime(createTime);
                 scheduleListVO.setScheduleSimpleInfoVOS(scheduleSimpleInfoVOS);
-                });
+            });
             scheduleListVOS.add(scheduleListVO);
         });
         return scheduleListVOS;
+    }
+
+    @Override
+    public List<Schedule> getCreatedSchedules(String projectId) {
+        return scheduleMapper.selectList(new QueryWrapper<Schedule>().eq("project_id", projectId).eq("member_id", ShiroAuthenticationManager.getUserId()));
+    }
+
+    @Override
+    public List<Schedule> getJoinMeetings(String projectId) {
+        List<Schedule> list = scheduleMapper.selectList(new QueryWrapper<Schedule>().eq("project_id", projectId));
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Schedule schedule : list) {
+                if (StringUtils.contains(schedule.getMemberIds(), ShiroAuthenticationManager.getUserId())) {
+                    return list;
+                }
+            }
+        }
+        return list;
     }
 }

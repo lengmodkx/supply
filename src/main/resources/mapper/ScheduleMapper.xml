@@ -584,9 +584,10 @@
 	</select>
 
 	<!-- 查询出和当前登录用户有关日程的月份信息 -->
-	<select id="findScheduleMonth" resultType="java.lang.String">
+	<select id="findScheduleMonth" resultType="com.art1001.supply.entity.Dto.SheduleTimeoutDTO">
 		SELECT
-			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date
+			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date,
+			COUNT(end_time) as timeoutNum
 		FROM
 			prm_schedule
 		WHERE
