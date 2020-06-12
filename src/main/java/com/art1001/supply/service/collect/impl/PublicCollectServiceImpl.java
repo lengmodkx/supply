@@ -193,7 +193,8 @@ public class PublicCollectServiceImpl extends ServiceImpl<PublicCollectMapper, P
 		List<PublicCollect> publicCollects = publicCollectMapper.selectList(eq);
 		publicCollects.forEach(item -> {
 			if(Constants.TASK.equals(item.getCollectType())){
-				item.setItem(JSONObject.parseObject(item.getCollectContent(), TaskApiBean.class));
+				TaskApiBean taskApiBean = JSONObject.parseObject(item.getCollectContent(), TaskApiBean.class);
+				item.setItem(taskApiBean);
 			}
 			if(Constants.FILE.equals(item.getCollectType())){
 				item.setItem(JSONObject.parseObject(item.getCollectContent(), File.class));

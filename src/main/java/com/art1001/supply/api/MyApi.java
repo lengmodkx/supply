@@ -55,13 +55,40 @@ public class MyApi {
 
     /**
      * 获取近期的事儿
-     * @return 任务和日程的集合
+     * @return 日程的集合
      */
-    @GetMapping("/recentThing")
+/**    @GetMapping("/recentThing")
     public JSONObject getRecentThing(){
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("data",new JSONObject().fluentPut("task",taskService.findByUserIdAndByTreeDay()).fluentPut("schedule",scheduleService.findScheduleByUserIdAndByTreeDay()));
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取信息失败!",e);
+        }
+    }*/
+    @GetMapping("/recentThing")
+    public JSONObject getRecentThing(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",scheduleService.findScheduleByUserIdAndByTreeDay());
+            jsonObject.put("result",1);
+            return jsonObject;
+        } catch (Exception e){
+            throw new AjaxException("系统异常,获取信息失败!",e);
+        }
+    }
+
+    /**
+     * 获取近期的事儿
+     * @return 任务的集合
+     */
+    @GetMapping("/recentThingByTask")
+    public JSONObject getRecentThingByTask(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("data",taskService.findByUserIdAndByTreeDay());
             jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e){

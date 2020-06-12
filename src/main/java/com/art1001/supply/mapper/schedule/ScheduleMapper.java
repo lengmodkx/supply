@@ -212,7 +212,7 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @param currentTimeMillis 当前时间
 	 * @return 月份集合
 	 */
-	List<SheduleTimeoutDTO> findScheduleMonth(@Param("userId") String userId, @Param("currTime") long currentTimeMillis);
+	List<Schedule> findScheduleMonth(@Param("userId") String userId, @Param("currTime") long currentTimeMillis);
 
 	/**
 	 * 根据月份获取日程信息

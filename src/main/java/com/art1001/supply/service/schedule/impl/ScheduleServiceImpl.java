@@ -511,7 +511,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
      * @return 月份集合
      */
     @Override
-    public List<SheduleTimeoutDTO> findScheduleMonth() {
+    public List<Schedule> findScheduleMonth() {
         return scheduleMapper.findScheduleMonth(ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
     }
 

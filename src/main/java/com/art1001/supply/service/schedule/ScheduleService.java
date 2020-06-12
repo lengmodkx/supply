@@ -218,7 +218,7 @@ public interface ScheduleService extends IService<Schedule> {
 	 * 查询出和当前登录用户有关日程的月份信息
 	 * @return 月份集合
 	 */
-	List<SheduleTimeoutDTO> findScheduleMonth();
+	List<Schedule> findScheduleMonth();
 
 	/**
 	 * 根据日程的月份信息获取日程

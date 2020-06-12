@@ -45,4 +45,14 @@ public class TaskApiBean {
      * 任务备注
      */
     private String remarks;
+
+    /**
+     * 开始时间
+     */
+    private Long startTime;
+
+    /**
+     * 结束时间
+     */
+    private Long endTime;
 }

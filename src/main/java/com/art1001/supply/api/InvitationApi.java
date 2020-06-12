@@ -43,6 +43,5 @@ public class InvitationApi {
 //        if (invitationLink == null) {
 //            return "链接已过期，请联系邀请人重新发送";
 //        }
-//
 //    }
 }

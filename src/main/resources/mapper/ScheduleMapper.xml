@@ -2,140 +2,159 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.schedule.ScheduleMapper">
 
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.schedule.Schedule">
-		<id column="schedule_id" property="scheduleId"/>
-		<result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="start_time" property="startTime" jdbcType="BIGINT" />
-		<result column="end_time" property="endTime" jdbcType="BIGINT" />
-		<result column="repeat" property="repeat" jdbcType="VARCHAR" />
-		<result column="remind" property="remind" jdbcType="VARCHAR" />
-		<result column="address" property="address" jdbcType="VARCHAR" />
-		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_ids" property="memberIds" jdbcType="CLOB" />
-		<result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER" />
-		<result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER" />
-		<result column="is_del" property="isDel" jdbcType="INTEGER" />
-		<result column="isAllday" property="isAllday" jdbcType="INTEGER" />
-		<result column="meeting_code" property="meetingCode" jdbcType="VARCHAR" />
-		<!--关联项目-->
-		<association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
-					 select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
-		<!--创建者-->
-		<association property="userEntity"  column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
-					 select = "com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
-		<!--查询参与者-->
-		<collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
-					 select = "com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
-		<!--查询标签-->
-		<collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
-			<id property="tagId" column="tag_id"/>
-			<result property="tagName" column="tag_name"/>
-			<result property="bgColor" column="bg_color"/>
-		</collection>
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.schedule.Schedule">
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="repeat" property="repeat" jdbcType="VARCHAR"/>
+        <result column="remind" property="remind" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="member_ids" property="memberIds" jdbcType="CLOB"/>
+        <result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+        <result column="schedule_calendar" property="scheduleCalendar" jdbcType="INTEGER"/>
+        <result column="is_del" property="isDel" jdbcType="INTEGER"/>
+        <result column="isAllday" property="isAllday" jdbcType="INTEGER"/>
+        <result column="meeting_code" property="meetingCode" jdbcType="VARCHAR"/>
+        <!--关联项目-->
+        <association property="project" column="project_id" javaType="com.art1001.supply.entity.project.Project"
+                     select="com.art1001.supply.mapper.project.ProjectMapper.findProjectByProjectId"/>
+        <!--创建者-->
+        <association property="userEntity" column="member_id" javaType="com.art1001.supply.entity.user.UserEntity"
+                     select="com.art1001.supply.mapper.user.UserMapper.findUserInfoById"/>
+        <!--查询参与者-->
+        <collection property="joinInfo" column="{memberIds=member_ids}" javaType="java.util.ArrayList"
+                    select="com.art1001.supply.mapper.user.UserMapper.findManyUserById"/>
+        <!--查询标签-->
+        <collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
 
 
-	</resultMap>
+    </resultMap>
 
-	<!-- 映射回收站数据 -->
-	<resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
-		<id column="schedule_id" property="id"/>
-		<result column="schedule_name" property="publicName" jdbcType="VARCHAR" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-	</resultMap>
+    <!-- 映射回收站数据 -->
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.base.RecycleBinVO">
+        <id column="schedule_id" property="id"/>
+        <result column="schedule_name" property="publicName" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
 
-	<!-- 用于关联、收藏的数据 -->
-	<resultMap id="ScheduleApiBean" type="com.art1001.supply.entity.schedule.ScheduleApiBean">
-		<id column="schedule_id" property="scheduleId"/>
-		<result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
-		<result column="start_time" property="startTime" jdbcType="BIGINT" />
-		<result column="end_time" property="endTime" jdbcType="BIGINT" />
-		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
-	</resultMap>
+    <!-- 用于关联、收藏的数据 -->
+    <resultMap id="ScheduleApiBean" type="com.art1001.supply.entity.schedule.ScheduleApiBean">
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+    </resultMap>
 
-	<!-- 用于获取日程的绑定信息 -->
-	<resultMap id="bindInfoMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
-		<id property="date" column="date"/>
-		<collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
-			<id property="scheduleId" column="schedule_id"/>
-			<result property="scheduleName" column="schedule_name"/>
-			<result property="startTime" column="start_time"/>
-			<result property="endTime" column="end_time"/>
-		</collection>
-	</resultMap>
+    <!-- 用于获取日程的绑定信息 -->
+    <resultMap id="bindInfoMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
+        <id property="date" column="date"/>
+        <collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
+            <id property="scheduleId" column="schedule_id"/>
+            <result property="scheduleName" column="schedule_name"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+        </collection>
+    </resultMap>
 
-	<resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
-		<id property="date" column="date" />
-		<result property="proejctId" column="project_id" />
-		<collection property="scheduleList" column="{date=date,projectId=project_id}" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
-		select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
-	</resultMap>
+    <resultMap id="resultMap" type="com.art1001.supply.entity.schedule.ScheduleVo">
+        <id property="date" column="date"/>
+        <result property="proejctId" column="project_id"/>
+        <collection property="scheduleList" column="{date=date,projectId=project_id}"
+                    ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
+                    select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleList"/>
+    </resultMap>
 
-	<resultMap id="resultMap1" type="com.art1001.supply.entity.schedule.ScheduleVo">
-		<id property="date" column="date" />
-		<id property="userId" column="member_id" />
-		<collection property="scheduleList" column="{date=date,userId=member_id}" ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
-					select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleListByDay"/>
-	</resultMap>
+    <resultMap id="resultMap1" type="com.art1001.supply.entity.schedule.ScheduleVo">
+        <id property="date" column="date"/>
+        <id property="userId" column="member_id"/>
+        <collection property="scheduleList" column="{date=date,userId=member_id}"
+                    ofType="com.art1001.supply.entity.schedule.Schedule" javaType="ArrayList"
+                    select="com.art1001.supply.mapper.schedule.ScheduleMapper.findScheduleListByDay"/>
+    </resultMap>
 
-	<!-- 我的模块 近期的事儿 -->
-	<resultMap id="meRecentThing" type="com.art1001.supply.entity.schedule.Schedule">
-		<id column="schedule_id" property="scheduleId"/>
-		<result column="schedule_name" property="scheduleName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<association property="project" javaType="com.art1001.supply.entity.project.Project">
-			<id column="p_id" property="projectId"/>
-			<result column="project_name" property="projectName"/>
-		</association>
-	</resultMap>
+    <!-- 我的模块 近期的事儿 -->
+    <resultMap id="meRecentThing" type="com.art1001.supply.entity.schedule.Schedule">
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <association property="project" javaType="com.art1001.supply.entity.project.Project">
+            <id column="p_id" property="projectId"/>
+            <result column="project_name" property="projectName"/>
+        </association>
+    </resultMap>
 
-	<!-- 我的模块 根据月份查询信息 -->
-	<resultMap id="byMonth" type="com.art1001.supply.entity.schedule.Schedule">
-		<id column="schedule_id" property="scheduleId"/>
-		<result column="schedule_name" property="scheduleName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="date" property="date"/>
-		<association property="project" javaType="com.art1001.supply.entity.project.Project">
-			<id column="p_id" property="projectId"/>
-			<result column="project_name" property="projectName"/>
-		</association>
-	</resultMap>
+    <!-- 我的模块 根据月份查询信息 -->
+    <resultMap id="byMonth" type="com.art1001.supply.entity.schedule.Schedule">
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="date" property="date"/>
+        <association property="project" javaType="com.art1001.supply.entity.project.Project">
+            <id column="p_id" property="projectId"/>
+            <result column="project_name" property="projectName"/>
+        </association>
+    </resultMap>
 
-	<!-- 我的模块 日程数据获取 -->
-	<resultMap id="selectMe" type="com.art1001.supply.entity.schedule.ScheduleVo">
-		<id column="date" property="date"/>
-		<collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
-			<id column="schedule_id" property="scheduleId"/>
-			<result column="schedule_name" property="scheduleName"/>
-			<result column="start_time" property="startTime"/>
-			<result column="end_time" property="endTime"/>
-			<result column="member_ids" property="memberIds"/>
-			<association property="project" javaType="com.art1001.supply.entity.project.Project">
-				<id column="p_id" property="projectId"/>
-				<result column="project_name" property="projectName"/>
-			</association>
- 		</collection>
-	</resultMap>
+    <!-- 我的模块 日程数据获取 -->
+    <resultMap id="findScheduleMonth" type="com.art1001.supply.entity.schedule.Schedule">
+            <id column="schedule_id" property="scheduleId"/>
+            <result column="schedule_name" property="scheduleName"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="member_ids" property="memberIds"/>
+            <result column="image" property="img"/>
+            <result column="user_name" property="userName"/>
+            <association property="project" javaType="com.art1001.supply.entity.project.Project">
+                <id column="p_id" property="projectId"/>
+                <result column="project_name" property="projectName"/>
+            </association>
+    </resultMap>
 
-	<!-- 日历专用 -->
-	<resultMap id="scheduleCalendar" type="com.art1001.supply.entity.schedule.Schedule">
-		<id column="schedule_id" property="scheduleId"/>
-		<result column="schedule_name" property="scheduleName"/>
-		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
-			<id column="user_id" property="userId"/>
-			<result column="user_name" property="userName"/>
-			<result column="image" property="image"/>
-		</association>
-	</resultMap>
+    <resultMap id="selectMe" type="com.art1001.supply.entity.schedule.ScheduleVo">
+        <id column="date" property="date"/>
+        <collection property="scheduleList" ofType="com.art1001.supply.entity.schedule.Schedule">
+            <id column="schedule_id" property="scheduleId"/>
+            <result column="schedule_name" property="scheduleName"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="member_ids" property="memberIds"/>
+            <result column="image" property="img"/>
+            <result column="user_name" property="userName"/>
+            <association property="project" javaType="com.art1001.supply.entity.project.Project">
+                <id column="p_id" property="projectId"/>
+                <result column="project_name" property="projectName"/>
+            </association>
+        </collection>
+    </resultMap>
 
-	<sql id="Base_Column_List">
+
+    <!-- 日历专用 -->
+    <resultMap id="scheduleCalendar" type="com.art1001.supply.entity.schedule.Schedule">
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="image" property="image"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 				schedule_id,
 				schedule_name,
 				project_id,
@@ -155,7 +174,7 @@
 				meeting_code
 	</sql>
 
-	<sql id="Base_Column_List2">
+    <sql id="Base_Column_List2">
 				s.schedule_id,
 				s.schedule_name,
 				s.project_id,
@@ -179,293 +198,296 @@
 				tg.bg_color
 	</sql>
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
 
-	<select id="findSchedulePagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
+    <select id="findSchedulePagerList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.base.Pager">
 
-		select * from prm_schedule
-		<include refid="whereStatement" />
+        select * from prm_schedule
+        <include refid="whereStatement"/>
 
-		<if test="orderBy == 0">
-			order by schedule_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by schedule_id asc
-		</if>
+        <if test="orderBy == 0">
+            order by schedule_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by schedule_id asc
+        </if>
 
-	</select>
+    </select>
 
-	<select id="findScheduleAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.schedule.Schedule">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_schedule
-		<if test="orderBy == 0">
-			order by schedule_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by schedule_id asc
-		</if>
-	</select>
+    <select id="findScheduleAllList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.schedule.Schedule">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_schedule
+        <if test="orderBy == 0">
+            order by schedule_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by schedule_id asc
+        </if>
+    </select>
 
-	<select id="findScheduleById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="findScheduleById" resultMap="BaseResultMap" parameterType="java.lang.String">
 
-		select
-		<include refid="Base_Column_List2" />
-		from prm_schedule s left join prm_tag_relation tr on s.schedule_id = tr.schedule_id left join prm_tag tg on tr.tag_id = tg.tag_id
-		where s.schedule_id = #{id}
-	</select>
+        select
+        <include refid="Base_Column_List2"/>
+        from prm_schedule s left join prm_tag_relation tr on s.schedule_id = tr.schedule_id left join prm_tag tg on
+        tr.tag_id = tg.tag_id
+        where s.schedule_id = #{id}
+    </select>
 
-	<select id="findByIds" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from prm_schedule
-		where schedule_id in
-		<foreach collection="array" open="(" separator="," close=")" item="id" index="index">
-			#{id}
-		</foreach>
-	</select>
+    <select id="findByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_schedule
+        where schedule_id in
+        <foreach collection="array" open="(" separator="," close=")" item="id" index="index">
+            #{id}
+        </foreach>
+    </select>
 
-	<delete id="deleteScheduleById" parameterType="java.lang.String">
+    <delete id="deleteScheduleById" parameterType="java.lang.String">
 		delete from
 		prm_schedule where schedule_id = #{id}
 	</delete>
 
-	<insert id="saveSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
-		insert into prm_schedule
-		<trim prefix="(" suffix=")" suffixOverrides=",">
+    <insert id="saveSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
+        insert into prm_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
 
-			<if test="scheduleId != null and scheduleId != ''">
-			schedule_id,
-			</if>
-			<if test="scheduleName != null and scheduleName != ''">
-			schedule_name,
-			</if>
-			<if test="projectId != null and projectId != ''">
-			project_id,
-			</if>
-			<if test="startTime != null ">
-			start_time,
-			</if>
-			<if test="endTime != null ">
-			end_time,
-			</if>
-			<if test="repeat != null and repeat != ''">
-			`repeat`,
-			</if>
-			<if test="remind != null and remind != ''">
-			remind,
-			</if>
-			<if test="address != null and address != ''">
-			address,
-			</if>
-			<if test="remarks != null and remarks != ''">
-			remarks,
-			</if>
-			<if test="createTime != null ">
-			create_time,
-			</if>
-			<if test="updateTime != null ">
-			update_time,
-			</if>
-			<if test="memberId != null ">
-				member_id,
-			</if>
-			<if test="memberIds != null and memberIds != ''">
-				member_ids,
-			</if>
-			<if test="privacyPattern != null and privacyPattern != ''">
-				privacy_pattern,
-			</if>
-			<if test="scheduleCalendar != null and scheduleCalendar != ''">
-				schedule_calendar,
-			</if>
-		</trim>
+            <if test="scheduleId != null and scheduleId != ''">
+                schedule_id,
+            </if>
+            <if test="scheduleName != null and scheduleName != ''">
+                schedule_name,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="startTime != null ">
+                start_time,
+            </if>
+            <if test="endTime != null ">
+                end_time,
+            </if>
+            <if test="repeat != null and repeat != ''">
+                `repeat`,
+            </if>
+            <if test="remind != null and remind != ''">
+                remind,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+            <if test="remarks != null and remarks != ''">
+                remarks,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="memberId != null ">
+                member_id,
+            </if>
+            <if test="memberIds != null and memberIds != ''">
+                member_ids,
+            </if>
+            <if test="privacyPattern != null and privacyPattern != ''">
+                privacy_pattern,
+            </if>
+            <if test="scheduleCalendar != null and scheduleCalendar != ''">
+                schedule_calendar,
+            </if>
+        </trim>
 
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
 
-			<if test="scheduleId != null and scheduleId != ''">
-				#{scheduleId},
-			</if>
-			<if test="scheduleName != null and scheduleName != ''">
-				#{scheduleName},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				#{projectId},
-			</if>
-			<if test="startTime != null ">
-				#{startTime},
-			</if>
-			<if test="endTime != null ">
-				#{endTime},
-			</if>
-			<if test="repeat != null and repeat != ''">
-				#{repeat},
-			</if>
-			<if test="remind != null and remind != ''">
-				#{remind},
-			</if>
-			<if test="address != null and address != ''">
-				#{address},
-			</if>
-			<if test="remarks != null and remarks != ''">
-				#{remarks},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="memberId != null ">
-				#{memberId},
-			</if>
-			<if test="memberIds != null and memberIds != ''">
-				#{memberIds},
-			</if>
-			<if test="privacyPattern != null and privacyPattern != ''">
-				#{privacyPattern},
-			</if>
-			<if test="scheduleCalendar != null and scheduleCalendar != ''">
-				#{scheduleCalendar},
-			</if>
-		</trim>
+            <if test="scheduleId != null and scheduleId != ''">
+                #{scheduleId},
+            </if>
+            <if test="scheduleName != null and scheduleName != ''">
+                #{scheduleName},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="startTime != null ">
+                #{startTime},
+            </if>
+            <if test="endTime != null ">
+                #{endTime},
+            </if>
+            <if test="repeat != null and repeat != ''">
+                #{repeat},
+            </if>
+            <if test="remind != null and remind != ''">
+                #{remind},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+            <if test="remarks != null and remarks != ''">
+                #{remarks},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="memberId != null ">
+                #{memberId},
+            </if>
+            <if test="memberIds != null and memberIds != ''">
+                #{memberIds},
+            </if>
+            <if test="privacyPattern != null and privacyPattern != ''">
+                #{privacyPattern},
+            </if>
+            <if test="scheduleCalendar != null and scheduleCalendar != ''">
+                #{scheduleCalendar},
+            </if>
+        </trim>
 
-	</insert>
+    </insert>
 
-	<update id="updateSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
+    <update id="updateSchedule" parameterType="com.art1001.supply.entity.schedule.Schedule">
 
-		update prm_schedule
-		<set>
-			<if test="scheduleId != null and scheduleId != ''">
-				schedule_id = #{scheduleId},
-			</if>
-			<if test="scheduleName != null and scheduleName != ''">
-				schedule_name = #{scheduleName},
-			</if>
-			<if test="projectId != null and projectId != ''">
-				project_id = #{projectId},
-			</if>
-			<if test="startTime != null ">
-				start_time = #{startTime},
-			</if>
-			<if test="endTime != null ">
-				end_time = #{endTime},
-			</if>
-			<if test="repeat != null and repeat != ''">
-				`repeat` = #{repeat},
-			</if>
-			<if test="remind != null and remind != ''">
-				remind = #{remind},
-			</if>
-			<if test="address != null and address != ''">
-				address = #{address},
-			</if>
-			<if test="remarks != null and remarks != ''">
-				remarks = #{remarks},
-			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
-			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
-			</if>
-			<if test="memberId != null ">
-				member_id = #{memberId},
-			</if>
-			<if test="memberIds != null and memberIds != ''">
-				member_ids = #{memberIds},
-			</if>
-			<if test="privacyPattern != null">
-				privacy_pattern = #{privacyPattern},
-			</if>
-			<if test="scheduleCalendar != null">
-				schedule_calendar = #{scheduleCalendar},
-			</if>
-			<if test="isDel != null">
-				is_del = #{isDel},
-			</if>
-		</set>
-		WHERE schedule_id = #{scheduleId}
-	</update>
+        update prm_schedule
+        <set>
+            <if test="scheduleId != null and scheduleId != ''">
+                schedule_id = #{scheduleId},
+            </if>
+            <if test="scheduleName != null and scheduleName != ''">
+                schedule_name = #{scheduleName},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="startTime != null ">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null ">
+                end_time = #{endTime},
+            </if>
+            <if test="repeat != null and repeat != ''">
+                `repeat` = #{repeat},
+            </if>
+            <if test="remind != null and remind != ''">
+                remind = #{remind},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="remarks != null and remarks != ''">
+                remarks = #{remarks},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="memberId != null ">
+                member_id = #{memberId},
+            </if>
+            <if test="memberIds != null and memberIds != ''">
+                member_ids = #{memberIds},
+            </if>
+            <if test="privacyPattern != null">
+                privacy_pattern = #{privacyPattern},
+            </if>
+            <if test="scheduleCalendar != null">
+                schedule_calendar = #{scheduleCalendar},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+        </set>
+        WHERE schedule_id = #{scheduleId}
+    </update>
 
-	<select id="findScheduleGroupByCreateTime" resultMap="resultMap">
-		SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') as date,project_id from prm_schedule
-		<where>
-			<if test="currTime != null and currTime != ''">
-				and start_time > #{currTime}
-			</if>
-			<if test="projectId != null and projectId != ''">
-				and project_id = #{projectId}
-			</if>
-		</where>
-		GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
-	</select>
+    <select id="findScheduleGroupByCreateTime" resultMap="resultMap">
+        SELECT FROM_UNIXTIME(create_time / 1000,'%Y-%m') as date,project_id from prm_schedule
+        <where>
+            <if test="currTime != null and currTime != ''">
+                and start_time > #{currTime}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                and project_id = #{projectId}
+            </if>
+        </where>
+        GROUP BY FROM_UNIXTIME(create_time / 1000,'%Y-%m');
+    </select>
 
-	<select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    <select id="findScheduleList" resultMap="BaseResultMap" parameterType="java.util.Map">
 		SELECT * from prm_schedule where FROM_UNIXTIME(end_time / 1000,'%Y-%m') = #{date} and is_del = 0 and project_id = #{projectId}
 	</select>
 
-	<!-- 根据项目id 查询出该项目下的所有日程信息 -->
-	<select id="findScheduleListByProjectId" resultType="java.lang.String" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_schedule where project_id = #{projectId} and is_del = 0
-	</select>
+    <!-- 根据项目id 查询出该项目下的所有日程信息 -->
+    <select id="findScheduleListByProjectId" resultType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_schedule where project_id = #{projectId} and is_del = 0
+    </select>
 
-	<!-- 查询出未来的日程 或者 过去的日程 -->
-	<select id="findBeforeSchedule" resultMap="BaseResultMap" >
-		select <include refid="Base_Column_List" />
-		from prm_schedule where project_id = #{projectId}
-		<if test="ident != null">
-			<if test="ident == 0">
-	  			and start_time <![CDATA[>]]> #{currTime}
-			</if>
-			<if test="ident == 1">
-				and start_time <![CDATA[<]]> #{currTime}
-			</if>
-		</if>
-		and is_del = 0
-	</select>
+    <!-- 查询出未来的日程 或者 过去的日程 -->
+    <select id="findBeforeSchedule" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_schedule where project_id = #{projectId}
+        <if test="ident != null">
+            <if test="ident == 0">
+                and start_time <![CDATA[>]]> #{currTime}
+            </if>
+            <if test="ident == 1">
+                and start_time <![CDATA[<]]> #{currTime}
+            </if>
+        </if>
+        and is_del = 0
+    </select>
 
-	<!-- 查询出未来的日程 (根据 日 存放) -->
-	<select id="afterSchedule" resultMap="resultMap1">
-		SELECT
-			FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d') AS date,member_id
-		FROM
-			prm_schedule
-		WHERE
-		(
-			FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d')
-		)
-		 <if test="lable == 1">
-			 &gt;= (
-				FROM_UNIXTIME(
-			 #{currdate} / 1000,
-					'%Y-%m-%d'
-				)
-			)
-		 </if>
-		<if test="lable == 0">
-			&lt;(
-			FROM_UNIXTIME(
-			#{currdate} / 1000,
-			'%Y-%m-%d'
-			)
-			)
-		</if>
-	and member_id = #{userId}
-	GROUP BY
-		FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d');
-	</select>
+    <!-- 查询出未来的日程 (根据 日 存放) -->
+    <select id="afterSchedule" resultMap="resultMap1">
+        SELECT
+        FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d') AS date,member_id
+        FROM
+        prm_schedule
+        WHERE
+        (
+        FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d')
+        )
+        <if test="lable == 1">
+            &gt;= (
+            FROM_UNIXTIME(
+            #{currdate} / 1000,
+            '%Y-%m-%d'
+            )
+            )
+        </if>
+        <if test="lable == 0">
+            &lt;(
+            FROM_UNIXTIME(
+            #{currdate} / 1000,
+            '%Y-%m-%d'
+            )
+            )
+        </if>
+        and member_id = #{userId}
+        GROUP BY
+        FROM_UNIXTIME(start_time / 1000, '%Y-%m-%d');
+    </select>
 
-	<select id="findScheduleByUserIdAndByTreeDay" resultMap="meRecentThing">
+    <select id="findScheduleByUserIdAndByTreeDay" resultMap="meRecentThing">
 		SELECT
 		s.schedule_id,
 		s.schedule_name,
@@ -493,19 +515,21 @@
 		) &gt;= (SELECT curdate())
 	</select>
 
-	<!-- 查询该用户在日历上创建的所有日程 -->
-	<select id="findCalendarSchedule" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_schedule where schedule_calendar is not null  and member_id = #{uId}
-	</select>
+    <!-- 查询该用户在日历上创建的所有日程 -->
+    <select id="findCalendarSchedule" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_schedule where schedule_calendar is not null and member_id = #{uId}
+    </select>
 
-	<!-- 查询出在该项目回收站中的日程 -->
-	<select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
+    <!-- 查询出在该项目回收站中的日程 -->
+    <select id="findRecycleBin" parameterType="java.lang.String"
+            resultType="com.art1001.supply.entity.base.RecycleBinVO">
 		select schedule_id as id ,schedule_name as publicName,update_time
 		from prm_schedule where is_del = 1 and project_id = #{projectId}
 	</select>
 
-	<!-- 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称) -->
+    <!-- 查询日程的部分信息 (日程名称,开始时间,结束时间,项目名称) -->
     <select id="selectScheduleApiBean" resultMap="ScheduleApiBean">
 		SELECT
 			schedule_id,
@@ -518,18 +542,18 @@
 		LEFT JOIN prm_project p ON s.project_id = p.project_id WHERE schedule_id = #{id}
 	</select>
 
-	<!--  月份分组查询每月已过去的日程 -->
-	<select id="findScheduleGroup" resultMap="resultMap">
-		SELECT FROM_UNIXTIME(end_time / 1000,'%Y-%m') as date,project_id from prm_schedule
-		<where>
-			end_time &lt; #{currTime}
-			and project_id = #{projectId}
-		</where>
-		GROUP BY FROM_UNIXTIME(end_time / 1000,'%Y-%m');
-	</select>
+    <!--  月份分组查询每月已过去的日程 -->
+    <select id="findScheduleGroup" resultMap="resultMap">
+        SELECT FROM_UNIXTIME(end_time / 1000,'%Y-%m') as date,project_id from prm_schedule
+        <where>
+            end_time &lt; #{currTime}
+            and project_id = #{projectId}
+        </where>
+        GROUP BY FROM_UNIXTIME(end_time / 1000,'%Y-%m');
+    </select>
 
-	<!-- 获取日程信息根据月份分组 -->
-	<select id="getBeforeByMonth" resultMap="bindInfoMap">
+    <!-- 获取日程信息根据月份分组 -->
+    <select id="getBeforeByMonth" resultMap="bindInfoMap">
 		SELECT
 			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date,
 			schedule_id,
@@ -547,8 +571,8 @@
 			create_time DESC
 	</select>
 
-	<!-- 获取日程绑定信息 -->
-	<select id="getAfterBind" resultType="com.art1001.supply.entity.schedule.Schedule">
+    <!-- 获取日程绑定信息 -->
+    <select id="getAfterBind" resultType="com.art1001.supply.entity.schedule.Schedule">
 		SELECT
 			schedule_id AS scheduleId,
 			schedule_name AS scheduleName,
@@ -561,8 +585,8 @@
 			AND start_time > unix_timestamp( ) * 1000
 	</select>
 
-	<!-- 查询关于用户的所有未来日程信息按照日期分组 -->
-	<select id="selectMe" resultMap="selectMe">
+    <!-- 查询关于用户的所有未来日程信息按照日期分组 -->
+    <select id="selectMe" resultMap="selectMe">
 		SELECT
 			s.schedule_id,
 			s.schedule_name,
@@ -583,25 +607,33 @@
 
 	</select>
 
-	<!-- 查询出和当前登录用户有关日程的月份信息 -->
-	<select id="findScheduleMonth" resultType="com.art1001.supply.entity.Dto.SheduleTimeoutDTO">
-		SELECT
-			FROM_UNIXTIME( end_time / 1000, '%Y-%m' ) AS date,
-			COUNT(end_time) as timeoutNum
+    <!-- 查询出和当前登录用户有关日程的月份信息 -->
+    <select id="findScheduleMonth" resultMap="findScheduleMonth">
+SELECT
+			s.schedule_id,
+			s.schedule_name,
+			s.start_time,
+			s.end_time,
+			s.member_ids,
+			p.project_id as p_id,
+			p.project_name,
+			u.user_name  ,
+			u.image
 		FROM
-			prm_schedule
+			prm_schedule AS s
+			join prm_project as p
+			join tb_user as u
+			on s.project_id = p.project_id
+			and s.member_id=u.user_id
 		WHERE
-			(member_id = #{userId}
-			OR member_ids = #{userId})
-		AND end_time  <![CDATA[<]]> #{currTime}
-		GROUP BY
-			date
-		ORDER BY
-			date DESC
+				(s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids))
+		AND
+			s.start_time <![CDATA[<]]> #{currTime}
+		 GROUP BY s.start_time ORDER BY s.start_time DESC
 	</select>
 
-	<!-- 根据月份获取日程信息 -->
-	<select id="findByMonth" resultMap="byMonth">
+    <!-- 根据月份获取日程信息 -->
+    <select id="findByMonth" resultMap="byMonth">
 		SELECT
 			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date,
 			s.start_time,
@@ -621,7 +653,7 @@
 			AND s.end_time <![CDATA[<]]> #{currTime}
 	</select>
 
-	<!-- 获取一个项目的日历日程信息 (version 2.0) -->
+    <!-- 获取一个项目的日历日程信息 (version 2.0) -->
     <select id="selectCalendarSchedule" resultMap="scheduleCalendar">
 		SELECT
 			s.schedule_id,
@@ -639,8 +671,8 @@
 			AND s.is_del = 0
 	</select>
 
-	<!-- 获取一个用户的日历日程信息 -->
-	<select id="relevant" resultType="com.art1001.supply.entity.schedule.Schedule">
+    <!-- 获取一个用户的日历日程信息 -->
+    <select id="relevant" resultType="com.art1001.supply.entity.schedule.Schedule">
 		SELECT
 			s.schedule_id,
 			s.schedule_name,
@@ -657,7 +689,7 @@
 			OR find_in_set( #{userId}, s.member_ids )
 	</select>
 
-	<!-- 获取绑定该标签的所有日程信息 -->
+    <!-- 获取绑定该标签的所有日程信息 -->
     <select id="selectBindTagInfo" resultType="com.art1001.supply.entity.schedule.Schedule">
 		SELECT
 			s.schedule_id,
@@ -675,7 +707,7 @@
 			s.is_del = '0'
 	</select>
 
-	<select id="getScheduleList" resultType="com.art1001.supply.entity.schedule.Schedule">
+    <select id="getScheduleList" resultType="com.art1001.supply.entity.schedule.Schedule">
 		SELECT
         	sc.start_time,
         	sc.end_time,

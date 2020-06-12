@@ -142,6 +142,8 @@
         <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
         <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
         <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
     </resultMap>
 
     <!-- 统计页面数据 ResultMap -->
@@ -1223,7 +1225,9 @@
 			u.image,
 			p.project_name,
 			r.relation_name as menu_name,
-			r1.relation_name as group_name
+			r1.relation_name as group_name,
+			t.start_time ,
+			t.end_time
 		FROM
 			prm_task t
 			LEFT JOIN tb_user u ON t.executor = u.user_id
