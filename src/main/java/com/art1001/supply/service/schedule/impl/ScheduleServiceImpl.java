@@ -501,7 +501,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
      * @return 日程VO集合
      */
     @Override
-    public List<ScheduleVo> findMe() {
+    public List<Schedule> findMe() {
         return scheduleMapper.selectMe(ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
     }
 

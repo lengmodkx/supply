@@ -212,7 +212,7 @@ public interface ScheduleService extends IService<Schedule> {
 	 * 查询出关于用户的所有未来日程信息 按照日分组
 	 * @return 日程VO集合
 	 */
-    List<ScheduleVo> findMe();
+    List<Schedule> findMe();
 
 	/**
 	 * 查询出和当前登录用户有关日程的月份信息

@@ -138,7 +138,7 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
 	 * @param userId 用户id
 	 * @return
 	 */
-	List<ScheduleVo> selectMe(@Param("userId") String userId, @Param("currTime") Long currTime);
+	List<Schedule> selectMe(@Param("userId") String userId, @Param("currTime") Long currTime);
 
 	/**
 	 * 查询出日历上的所有日程

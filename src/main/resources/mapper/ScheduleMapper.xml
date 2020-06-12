@@ -110,17 +110,17 @@
 
     <!-- 我的模块 日程数据获取 -->
     <resultMap id="findScheduleMonth" type="com.art1001.supply.entity.schedule.Schedule">
-            <id column="schedule_id" property="scheduleId"/>
-            <result column="schedule_name" property="scheduleName"/>
-            <result column="start_time" property="startTime"/>
-            <result column="end_time" property="endTime"/>
-            <result column="member_ids" property="memberIds"/>
-            <result column="image" property="img"/>
-            <result column="user_name" property="userName"/>
-            <association property="project" javaType="com.art1001.supply.entity.project.Project">
-                <id column="p_id" property="projectId"/>
-                <result column="project_name" property="projectName"/>
-            </association>
+        <id column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="member_ids" property="memberIds"/>
+        <result column="image" property="img"/>
+        <result column="user_name" property="userName"/>
+        <association property="project" javaType="com.art1001.supply.entity.project.Project">
+            <id column="p_id" property="projectId"/>
+            <result column="project_name" property="projectName"/>
+        </association>
     </resultMap>
 
     <resultMap id="selectMe" type="com.art1001.supply.entity.schedule.ScheduleVo">
@@ -586,24 +586,28 @@
 	</select>
 
     <!-- 查询关于用户的所有未来日程信息按照日期分组 -->
-    <select id="selectMe" resultMap="selectMe">
+    <select id="selectMe" resultMap="findScheduleMonth">
 		SELECT
 			s.schedule_id,
 			s.schedule_name,
 			s.start_time,
 			s.end_time,
-			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date,
 			s.member_ids,
 			p.project_id as p_id,
-			p.project_name
+			p.project_name,
+			u.user_name  ,
+			u.image
 		FROM
-			prm_schedule AS s left join prm_project as p on s.project_id = p.project_id
+			prm_schedule AS s
+			join prm_project as p
+			join tb_user as u
+			on s.project_id = p.project_id
+			and s.member_id=u.user_id
 		WHERE
 				(s.member_id = #{userId} or find_in_set(#{userId}, s.member_ids))
 		AND
 			s.start_time <![CDATA[>]]> #{currTime}
-		AND
-			FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) IN ( SELECT FROM_UNIXTIME( s.end_time / 1000, '%Y-%m-%d' ) AS date FROM prm_schedule GROUP BY date ORDER BY date DESC )
+		 GROUP BY s.start_time ORDER BY s.start_time DESC
 
 	</select>
 
