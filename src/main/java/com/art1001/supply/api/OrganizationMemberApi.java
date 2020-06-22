@@ -293,7 +293,6 @@ public class OrganizationMemberApi {
 
     /**
      * 获取企业所有成员
-     *
      * @param orgId 企业id
      * @returnp
      */
@@ -308,6 +307,7 @@ public class OrganizationMemberApi {
                 jsonObject.put("msg", "还未添加员工");
             } else {
                 jsonObject.put("result", 1);
+                jsonObject.put("msg",memberList.size());
                 jsonObject.put("data", memberList);
             }
             return jsonObject;

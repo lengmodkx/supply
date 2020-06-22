@@ -87,4 +87,6 @@ public interface LogMapper extends BaseMapper<Log> {
 	 * @return 剩余消息数据
 	 */
 	List<Log> selectSurplusMsg(@Param("publicId") String publicId, @Param("surpluscount") Integer surpluscount);
+
+    List<Log> getMyDynamic(@Param("userId") String userId);
 }

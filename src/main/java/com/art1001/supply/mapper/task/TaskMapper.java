@@ -646,7 +646,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param userId 当前用户id
 	 * @return 任务集合
 	 */
-	List<Task> selectExecuteAndOrder(@Param("isDone") Integer isDone, @Param("order") String order, @Param("userId") String userId);
+	List<Task> selectExecuteAndOrder(@Param("isDone") Integer isDone, @Param("userId") String userId, @Param("order") String order);
 
 	/**
 	 * 查询出我参与的任务并且排序
@@ -655,7 +655,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param userId 当前用户id
 	 * @return 任务集合
 	 */
-	List<Task> selectJoinAndOrder(@Param("isDone") Integer isDone, @Param("order") String order, @Param("userId") String userId);
+	List<Task> selectJoinAndOrder(@Param("isDone") Integer isDone, @Param("userId") String userId,@Param("order") String order);
 
 	/**
 	 * 查询出我创建的任务并且排序
@@ -664,7 +664,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @param userId 当前用户id
 	 * @return 任务集合
 	 */
-	List<Task> selectCreatedAndOrder(@Param("isDone") Integer isDone, @Param("order") String order, @Param("userId") String userId);
+	List<Task> selectCreatedAndOrder(@Param("isDone") Integer isDone, @Param("userId") String userId, @Param("order") String order);
 
 	/**
 	 * 查询出我执行的任务并且按照项目排序

@@ -179,8 +179,10 @@
         <result column="end_time" property="endTime"/>
         <result column="level" property="level"/>
         <result column="image" property="executorImg"/>
+        <result column="task_group_id" property="groupId"/>
+        <result column="project_id" property="projectId"/>
         <association property="project" javaType="com.art1001.supply.entity.project.Project">
-            <id column="p_id" property="projectId"/>
+            <id column="project_id" property="projectId"/>
             <result column="project_name" property="projectName"/>
         </association>
         <association property="parentTask" javaType="com.art1001.supply.entity.task.Task">
@@ -1259,17 +1261,18 @@
 	</select>
 
     <!-- 查询我执行的任务并且筛选 -->
-    <select id="selectExecuteAndOrder" resultMap="meTask">
+    <select id="selectExecuteAndOrder" resultType="com.art1001.supply.entity.task.Task"
+            parameterType="com.art1001.supply.entity.base.Pager">
         SELECT
-        t.task_id,
-        t.task_name,
-        t.start_time,
-        t.end_time,
-        t.`level`,
-        p.project_id AS p_id,
-        p.project_name,
-        f.task_name AS f_name,
-        u.image
+        t.task_id as taskId,
+        t.task_name as taskName,
+        t.start_time as startTime,
+        t.end_time as endTime,
+        t.`level` as level,
+        p.project_id AS projectId,
+        p.project_name as projectName,
+        u.image as executorImg,
+        t.task_group_id as groupId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON t.project_id = p.project_id
@@ -1292,17 +1295,18 @@
     </select>
 
     <!-- 查询我参与的任务并且筛选 -->
-    <select id="selectJoinAndOrder" resultMap="meTask">
+    <select id="selectJoinAndOrder" resultType="com.art1001.supply.entity.task.Task"
+            parameterType="com.art1001.supply.entity.base.Pager">
         select
-        t.task_id,
-        t.task_name,
-        t.start_time,
-        t.end_time,
-        t.`level`,
-        p.project_id AS p_id,
-        p.project_name,
-        f.task_name AS f_name,
-        u.image
+        t.task_id as taskId,
+        t.task_name as taskName,
+        t.start_time as startTime,
+        t.end_time as endTime,
+        t.`level` as level,
+        p.project_id AS projectId,
+        p.project_name as projectName,
+        u.image as executorImg,
+        t.task_group_id as groupId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON
@@ -1310,7 +1314,7 @@
         LEFT JOIN tb_user as u on u.user_id = t.executor
         LEFT JOIN prm_task f ON t.parent_id = f.task_id
         <where>
-            find_in_set(#{userId}, t.task_uids)
+            t.executor = #{userId}
             AND
             t.task_status = #{isDone}
         </where>
@@ -1326,17 +1330,18 @@
     </select>
 
     <!-- 查询我创建的任务并且筛选 -->
-    <select id="selectCreatedAndOrder" resultMap="meTask">
+    <select id="selectCreatedAndOrder" resultType="com.art1001.supply.entity.task.Task"
+            parameterType="com.art1001.supply.entity.base.Pager">
         select
-        t.task_id,
-        t.task_name,
-        t.start_time,
-        t.end_time,
-        t.`level`,
-        p.project_id AS p_id,
-        p.project_name,
-        f.task_name AS f_name,
-        u.image
+        t.task_id as taskId,
+        t.task_name as taskName,
+        t.start_time as startTime,
+        t.end_time as endTime,
+        t.`level` as level,
+        p.project_id AS projectId,
+        p.project_name as projectName,
+        u.image as executorImg,
+        t.task_group_id as groupId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON
@@ -1344,7 +1349,7 @@
         LEFT JOIN tb_user as u on u.user_id = t.executor
         LEFT JOIN prm_task f ON t.parent_id = f.task_id
         <where>
-            t.member_id = #{userId}
+            t.executor = #{userId}
             AND
             t.task_status = #{isDone}
         </where>

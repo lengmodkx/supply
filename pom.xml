@@ -26,6 +26,7 @@
         <jedis.version>2.9.0</jedis.version>
         <redisson.version>3.7.0</redisson.version>
         <pagehelper.version>5.0.3</pagehelper.version>
+        <pagehelper-starter.version>1.2.10</pagehelper-starter.version>
         <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
         <docker.image.prefix>supply</docker.image.prefix>
         <docker.repository>registry.cn-beijing.aliyuncs.com</docker.repository>
@@ -320,6 +321,20 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+
+        <!--MyBatis分页插件-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>${pagehelper.version}</version>
+        </dependency>
+
+        <!--MyBatis分页插件starter-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper-starter.version}</version>
         </dependency>
     </dependencies>
     <profiles>

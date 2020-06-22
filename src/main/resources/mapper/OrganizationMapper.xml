@@ -247,10 +247,17 @@
 		   p.project_del,
 		   p.project_status,
 		   pm.member_label as member_label,
-			pm.default_group as group_id,
-		   p.func
-		from prm_project p left join prm_project_member pm on p.project_id = pm.project_id
+		   pm.default_group as group_id,
+		   p.func,
+		   p.create_time as createTime,
+		   u.user_name as memberName
+		from prm_project p
+		join prm_project_member pm
+		join tb_user u
+		on p.project_id = pm.project_id
+		and u.user_id=p.member_id
 		where pm.member_id = #{userId} and p.organization_id = #{orgId}
+		and p.project_del=0
 		<!-- and p.project_del = 0 -->
 		order by pm.create_time asc
 	</select>

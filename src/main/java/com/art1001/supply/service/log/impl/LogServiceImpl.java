@@ -119,4 +119,9 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 		this.save(log);
 		return log;
 	}
+
+	@Override
+	public List<Log> getMyDynamic(String userId) {
+		return logMapper.getMyDynamic(userId);
+	}
 }

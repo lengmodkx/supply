@@ -25,8 +25,6 @@ import java.util.Date;
 public class Log extends Model<Log> {
 	
 	private static final long serialVersionUID = 1L;
-
-
 	/**
 	 * id
 	 */
@@ -41,10 +39,32 @@ public class Log extends Model<Log> {
 	private String publicId;
 
 	/**
+	 * 任务id
+	 */
+	@TableField(exist = false)
+	private String taskId;
+
+	@TableField(exist = false)
+	private String groupId;
+	/**
+	 * 任务名
+	 */
+	@TableField(exist = false)
+	private String taskName;
+
+	@NotNull(message = "logFlag不能为空")
+	private Integer logFlag;
+	/**
 	 * 项目id
 	 */
 	@NotNull(message = "项目id不能为空")
 	private String projectId;
+
+	/**
+	 * 项目名
+	 */
+	@TableField(exist = false)
+	private String projectName;
 
 	/**
 	 * 用户id

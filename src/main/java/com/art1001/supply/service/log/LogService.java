@@ -54,4 +54,6 @@ public interface LogService extends IService<Log> {
 	 * @return 消息信息
 	 */
     Log sendChat(LogSendParam logSendParam);
+
+	List<Log> getMyDynamic(String userId);
 }

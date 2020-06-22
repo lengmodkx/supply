@@ -103,4 +103,30 @@
 			</foreach>
 		)
 	</delete>
+
+	<select id="getMyDynamic" resultType="com.art1001.supply.entity.log.Log">
+		SELECT
+		l.member_id as memberId,
+		u.image as memberImg,
+		l.content,
+		l.create_time as createTime,
+		l.project_id,
+		p.project_name as projectName,
+		l.public_id,
+		t.task_id as taskId,
+		t.task_name as taskName,
+		t.task_group_id as groupId
+		FROM
+		prm_log l
+		JOIN tb_user u
+		JOIN prm_task t
+		JOIN prm_project p ON l.member_id = u.user_id
+		AND l.public_id = t.task_id
+		AND l.project_id = p.project_id
+		WHERE
+		l.log_flag = 1
+		AND l.member_id = #{userId}
+		ORDER BY
+		l.create_time DESC
+	</select>
 </mapper>

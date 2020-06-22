@@ -19,6 +19,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
@@ -113,6 +114,8 @@ public class ProjectApi extends BaseController {
 
     @Resource
     private ProjectSimpleInfoService projectSimpleInfoService;
+
+
 
     /**
      * 创建项目
@@ -1008,5 +1011,7 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常，请稍后再试");
         }
     }
+
+
 
 }

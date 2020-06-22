@@ -184,5 +184,20 @@
 		and (u.account_name like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>  or  u.user_name like  <![CDATA[ CONCAT('%',#{phone},'%') ]]>)
 	</select>
 
-
+	<select id="getHeadUserInfo" resultType="com.art1001.supply.entity.user.UserVO">
+		SELECT
+		u.user_id as userId,
+		u.user_name as userName,
+		u.image as image,
+		u.job as job,
+		p.partment_name as partmemt
+		FROM
+		tb_user u
+		JOIN prm_partment p
+		JOIN prm_partment_member pm ON u.user_id = pm.member_id
+		AND p.partment_id = pm.partment_id
+		WHERE
+		pm.member_id = #{userId}
+		AND p.organization_id = #{orgId}
+	</select>
 </mapper>

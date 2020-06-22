@@ -107,9 +107,6 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return
 	 */
 	String findOrgByUserId(String memberId);
-
-
-
 	/**
 	 * 移交企业权限
 	 *

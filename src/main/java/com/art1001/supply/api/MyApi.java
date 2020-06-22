@@ -1,15 +1,26 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.CommonPage;
+import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.base.Pager;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Description
@@ -30,26 +41,50 @@ public class MyApi {
     @Resource
     private FileService fileService;
 
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private LogService logService;
+
     /**
      * 根据筛选条件获取我的任务信息
+     *
      * @param isDone 是否完成
-     * @param order 根据 (最近创建时间,截止时间,优先级) 排序
-     * @param type 类型 (我执行的,我创建的,我参与的)
+     * @param order  根据 (最近创建时间,截止时间,优先级) 排序
+     * @param type   类型 (我执行的,我创建的,我参与的)
      * @return 任务 或者 项目的集合
      */
-    @GetMapping("/task")
-    public JSONObject getExecute(@RequestParam Integer isDone,@RequestParam String order,@RequestParam String type){
+   /* @GetMapping("/task")
+    public JSONObject getExecute(@RequestParam Integer isDone, @RequestParam String order, @RequestParam String type) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(Constants.PROJECT.equals(order)){
-                jsonObject.put("data",taskService.findExecuteOrderProject(isDone));
-            } else{
-                jsonObject.put("data",taskService.findMeAndOrder(isDone,order,type));
+            if (Constants.PROJECT.equals(order)) {
+                jsonObject.put("data", taskService.findExecuteOrderProject(isDone));
+            } else {
+                jsonObject.put("data", taskService.findMeAndOrder(isDone, type));
             }
-            jsonObject.put("result",1);
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取信息失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取信息失败!", e);
+        }
+    }*/
+
+    @GetMapping("/task")
+    public CommonResult<CommonPage<Task>> getExecute2(@RequestParam(value = "pageSize", defaultValue = "999") Integer pageSize,
+                                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                      @RequestParam(required = false) String order,
+                                                      @RequestParam Integer isDone,
+                                                      @RequestParam String type) {
+        try {
+//            if (Constants.PROJECT.equals(order)) {
+//                return CommonResult.success(CommonPage.restPage(taskService.findExecuteOrderProject(isDone,pageNum,pageSize)));
+//            } else {
+                return CommonResult.success(CommonPage.restPage(taskService.findMeAndOrder(isDone, type,order,pageSize,pageNum)));
+//            }
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取信息失败!", e);
         }
     }
 
@@ -57,117 +92,136 @@ public class MyApi {
      * 获取近期的事儿
      * @return 日程的集合
      */
-/**    @GetMapping("/recentThing")
-    public JSONObject getRecentThing(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("data",new JSONObject().fluentPut("task",taskService.findByUserIdAndByTreeDay()).fluentPut("schedule",scheduleService.findScheduleByUserIdAndByTreeDay()));
-            jsonObject.put("result",1);
-            return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取信息失败!",e);
-        }
-    }*/
+    /**
+     * @GetMapping("/recentThing") public JSONObject getRecentThing(){
+     * JSONObject jsonObject = new JSONObject();
+     * try {
+     * jsonObject.put("data",new JSONObject().fluentPut("task",taskService.findByUserIdAndByTreeDay()).fluentPut("schedule",scheduleService.findScheduleByUserIdAndByTreeDay()));
+     * jsonObject.put("result",1);
+     * return jsonObject;
+     * } catch (Exception e){
+     * throw new AjaxException("系统异常,获取信息失败!",e);
+     * }
+     * }
+     */
     @GetMapping("/recentThing")
-    public JSONObject getRecentThing(){
+    public JSONObject getRecentThing() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",scheduleService.findScheduleByUserIdAndByTreeDay());
-            jsonObject.put("result",1);
+            jsonObject.put("data", scheduleService.findScheduleByUserIdAndByTreeDay());
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取信息失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取信息失败!", e);
         }
     }
 
     /**
      * 获取近期的事儿
+     *
      * @return 任务的集合
      */
     @GetMapping("/recentThingByTask")
-    public JSONObject getRecentThingByTask(){
+    public JSONObject getRecentThingByTask() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",taskService.findByUserIdAndByTreeDay());
-            jsonObject.put("result",1);
+            jsonObject.put("data", taskService.findByUserIdAndByTreeDay());
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取信息失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取信息失败!", e);
         }
     }
 
     /**
      * 获取未来的日程
+     *
      * @return
      */
     @GetMapping("/schedule/after")
-    public JSONObject getScheduleAfter(){
+    public JSONObject getScheduleAfter() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",scheduleService.findMe());
-            jsonObject.put("result",1);
+            jsonObject.put("data", scheduleService.findMe());
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取数据失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取数据失败!", e);
         }
     }
 
     /**
      * 获取和用户有关的日程的月份信息
+     *
      * @return 月份集合
      */
     @GetMapping("/schedule/before")
-    public JSONObject getScheduleBefore(){
+    public JSONObject getScheduleBefore() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",scheduleService.findScheduleMonth());
-            jsonObject.put("result",1);
+            jsonObject.put("data", scheduleService.findScheduleMonth());
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,数据获取失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,数据获取失败!", e);
         }
     }
 
     /**
      * 根据月份获取日程信息
+     *
      * @param month 月份
      * @return
      */
     @GetMapping("schedule/{month}")
-    public JSONObject getScheduleByMonth(@PathVariable String month){
+    public JSONObject getScheduleByMonth(@PathVariable String month) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",scheduleService.findByMonth(month));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", scheduleService.findByMonth(month));
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,数据获取失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,数据获取失败!", e);
         }
     }
 
     /**
      * 获取我创建的文件并且排序
+     *
      * @param order 排序规则(名称,大小,创建时间)
      * @return 我创建的文件数据
      */
     @GetMapping("file")
-    public JSONObject meCreated(@RequestParam(required = false) String order,String type){
+    public JSONObject meCreated(@RequestParam(required = false) String order, String type) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if ("create".equals(type)){
-                jsonObject.put("data",fileService.created(order));
-                jsonObject.put("result",1);
-            }else if ("join".equals(type)){
-                jsonObject.put("data",fileService.join(order));
-                jsonObject.put("result",1);
-            }else {
-                jsonObject.put("result",0);
+            if ("create".equals(type)) {
+                jsonObject.put("data", fileService.created(order));
+                jsonObject.put("result", 1);
+            } else if ("join".equals(type)) {
+                jsonObject.put("data", fileService.join(order));
+                jsonObject.put("result", 1);
+            } else {
+                jsonObject.put("result", 0);
             }
-
-
             return jsonObject;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new AjaxException("系统异常,获取数据失败!");
+        }
+    }
+    /**
+     * 获取当前登录人的首页动态
+     * @return
+     */
+    @GetMapping("/getMyDynamic")
+    public JSONObject getMyDynamic(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",logService.getMyDynamic(ShiroAuthenticationManager.getUserId()));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
         }
     }
 

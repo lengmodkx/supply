@@ -560,7 +560,7 @@ public interface TaskService extends IService<Task> {
 	 * @param type 查询类型 (我执行的,我创建的,我参与的)
 	 * @return 任务集合
 	 */
-	List<Task> findMeAndOrder(Integer isDone, String order, String type);
+	List<Task> findMeAndOrder(Integer isDone,String type,String order,Integer pageSize,Integer pageNum);
 
 	/**
 	 * 查询出我执行的任务并且按照项目排序
@@ -568,7 +568,7 @@ public interface TaskService extends IService<Task> {
 	 * @param isDone 是否完成 (筛选条件)
 	 * @return 项目集合
 	 */
-	List<Project> findExecuteOrderProject(Integer isDone);
+	List<Project> findExecuteOrderProject(Integer isDone,Integer pageNum,Integer pageSize);
 
 	/**
 	 * 根据id集合 查询出对应的任务信息 以及执行者信息
@@ -732,5 +732,7 @@ public interface TaskService extends IService<Task> {
 	 */
 	List<ExecutorVo> getExecutors(String projectId);
 
+
+	List<Task> findTaskIsOk(String projectId);
 
 }

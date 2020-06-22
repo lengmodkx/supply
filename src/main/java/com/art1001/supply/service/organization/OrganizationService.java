@@ -96,6 +96,4 @@ public interface OrganizationService extends IService<Organization> {
 	 */
 	void personalProject(String userId);
 
-
-
 }

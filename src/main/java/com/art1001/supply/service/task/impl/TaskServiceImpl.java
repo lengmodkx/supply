@@ -2,6 +2,7 @@ package com.art1001.supply.service.task.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -57,6 +58,7 @@ import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -83,75 +85,107 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements TaskService {
+public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
     @Resource
     private TaskService taskService;
 
-    /** taskMapper接口*/
+    /**
+     * taskMapper接口
+     */
     @Resource
     private TaskMapper taskMapper;
 
-    /** userMapper接口 */
+    /**
+     * userMapper接口
+     */
     @Resource
     private UserMapper userMapper;
 
     @Resource
     private ProjectService projectService;
 
-    /** FablousMapper接口*/
+    /**
+     * FablousMapper接口
+     */
     @Resource
     private FabulousMapper fabulousMapper;
 
-	/** TaskCollectService接口  */
-	@Resource
+    /**
+     * TaskCollectService接口
+     */
+    @Resource
     private PublicCollectService publicCollectService;
 
-    /** 用户逻辑层接口 */
+    /**
+     * 用户逻辑层接口
+     */
     @Resource
     private UserService userService;
 
-    /** 关系层逻辑接口 */
+    /**
+     * 关系层逻辑接口
+     */
     @Resource
     private RelationService relationService;
 
-    /** 标签的逻辑层接口 */
+    /**
+     * 标签的逻辑层接口
+     */
     @Resource
     private TagService tagService;
 
-    /** 用户消息的逻辑层接口 */
+    /**
+     * 用户消息的逻辑层接口
+     */
     @Resource
     private UserNewsService userNewsService;
 
-    /** 日志逻辑层接口 */
+    /**
+     * 日志逻辑层接口
+     */
     @Resource
     private LogService logService;
 
-    /** 关联信息的逻辑层接口 */
+    /**
+     * 关联信息的逻辑层接口
+     */
     @Resource
     private BindingService bindingService;
 
-    /** 项目成员逻辑层接口 */
+    /**
+     * 项目成员逻辑层接口
+     */
     @Resource
     private ProjectMemberService projectMemberService;
 
-    /** 标签标签的逻辑层接口 */
+    /**
+     * 标签标签的逻辑层接口
+     */
     @Resource
     private TagRelationService tagRelationService;
 
-    /** 用户更新json信息的接口 */
+    /**
+     * 用户更新json信息的接口
+     */
     @Resource
     private ApiBeanService apiBeanService;
 
-    /** 任务的提醒规则接口 */
+    /**
+     * 任务的提醒规则接口
+     */
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
 
-    /** quartz 信息的接口 */
+    /**
+     * quartz 信息的接口
+     */
     @Resource
     private QuartzInfoService quartzInfoService;
 
-    /** quartz操作接口 */
+    /**
+     * quartz操作接口
+     */
     @Resource
     private QuartzService quartzService;
 
@@ -161,12 +195,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Resource
     private ProjectMapper projectMapper;
 
-    private static final String CLASSIFY_TODAY="今天";
-    private static final String CLASSIFY_WEEK="最近一周";
-    private static final String CLASSIFY_MONTH="最近一个月";
-    private static final String CLASSIFY_ALL="全部";
-    private static final String CLASSIFY_NOTALL="未完成的任务";
-    private static final String ZERO="0";
+    private static final String CLASSIFY_TODAY = "今天";
+    private static final String CLASSIFY_WEEK = "最近一周";
+    private static final String CLASSIFY_MONTH = "最近一个月";
+    private static final String CLASSIFY_ALL = "全部";
+    private static final String CLASSIFY_NOTALL = "未完成的任务";
+    private static final String ZERO = "0";
 
     /**
      * 用户点赞接口
@@ -174,18 +208,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Resource
     private FabulousService fabulousService;
 
-	/**
-	 * 通过taskId获取单条task数据
-	 * @param taskId
-	 * @return
-	 */
-	@Override
-	public Task findTaskByTaskId(String taskId){
-		return taskMapper.findTaskByTaskId(taskId);
-	}
+    /**
+     * 通过taskId获取单条task数据
+     *
+     * @param taskId
+     * @return
+     */
+    @Override
+    public Task findTaskByTaskId(String taskId) {
+        return taskMapper.findTaskByTaskId(taskId);
+    }
 
     /**
      * 获取子任务的项目id
+     *
      * @param taskId 子任务id
      * @return 项目id
      */
@@ -196,6 +232,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 将添加的任务信息保存至数据库
+     *
      * @param task task信息
      */
     @Override
@@ -215,14 +252,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 批量生成任务
-     * @param projectId 项目id
-     * @param menuId 列表id
+     *
+     * @param projectId        项目id
+     * @param menuId           列表id
      * @param templateDataList 数据
      */
     @Override
     public void saveTaskBatch(String projectId, String menuId, List<TemplateData> templateDataList) {
         String id = ShiroAuthenticationManager.getUserId();
-        taskMapper.saveTaskBatch(projectId,menuId,templateDataList,id);
+        taskMapper.saveTaskBatch(projectId, menuId, templateDataList, id);
     }
 
     @Override
@@ -232,33 +270,35 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
 
     /**
-	 * 重写方法
+     * 重写方法
      * 移入回收站
+     *
      * @param taskId 当前任务id
      * @return
      */
     @Override
     public Log moveToRecycleBin(String taskId) {
         //把该任务放到回收站
-        int result = taskMapper.moveToRecycleBin(taskId,System.currentTimeMillis());
+        int result = taskMapper.moveToRecycleBin(taskId, System.currentTimeMillis());
         Task task = new Task();
         task.setTaskId(taskId);
         //任务状态为0 日志打印内容为 xxx把任务移入了回收站
-        Log log = logService.saveLog(taskId,TaskLogFunction.P.getName(),1);
+        Log log = logService.saveLog(taskId, TaskLogFunction.P.getName(), 1);
         return log;
     }
 
 
     /**
      * 移动任务至 ( 项目、分组、菜单 )
-     * @param taskId 任务id
+     *
+     * @param taskId    任务id
      * @param projectId 项目id
-     * @param groupId 组id
-     * @param menuId 菜单id
+     * @param groupId   组id
+     * @param menuId    菜单id
      * @return
      */
     @Override
-    public void mobileTask(String taskId, String projectId, String groupId,String menuId) {
+    public void mobileTask(String taskId, String projectId, String groupId, String menuId) {
         Task task = taskMapper.selectById(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
@@ -267,11 +307,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         task.setTaskUIds(null);
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(menuId);
-        task.setOrder(++ maxOrder);
+        task.setOrder(++maxOrder);
         updateById(task);
         //移动子任务
-        if(CollectionUtils.isNotEmpty(task.getTaskList())){
-            task.getTaskList().forEach(subTask->{
+        if (CollectionUtils.isNotEmpty(task.getTaskList())) {
+            task.getTaskList().forEach(subTask -> {
                 subTask.setTaskUIds(null);
                 updateById(subTask);
             });
@@ -280,6 +320,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务id 数组查询出多条任务信息
+     *
      * @param taskId 任务id数组
      * @return
      */
@@ -290,6 +331,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 转换子任务为顶级任务
+     *
      * @param task 包含任务的id,名称
      * @return
      */
@@ -308,12 +350,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //拼接日志内容
         content.append(TaskLogFunction.A8.getName()).append(" ").append(task.getTaskName()).append(" ").append(TaskLogFunction.A9.getName());
         //保存日志
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        Log log = logService.saveLog(task.getTaskId(), content.toString(), 1);
         return log;
     }
 
     /**
      * 清除任务的开始时间
+     *
      * @param task 任务的实体信息
      * @return
      */
@@ -326,13 +369,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         result = taskMapper.removeTaskStartTime(task);
         content.append(TaskLogFunction.J.getName());
         //保存操作日志
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        Log log = logService.saveLog(task.getTaskId(), content.toString(), 1);
 
         return log;
     }
 
     /**
      * 清除任务的结束时间
+     *
      * @param task 任务的实体信息
      * @return
      */
@@ -345,17 +389,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         result = taskMapper.removeTaskEndTime(task);
         content.append(TaskLogFunction.K.getName());
         //保存操作日志
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        Log log = logService.saveLog(task.getTaskId(), content.toString(), 1);
 
         return log;
     }
 
     /**
      * 添加项目成员
+     *
      * @return
      */
     @Override
-    public Log addAndRemoveTaskMember(String taskId,String memberIds) {
+    public Log addAndRemoveTaskMember(String taskId, String memberIds) {
         Log log = null;
         StringBuilder content = new StringBuilder();
         Task task = taskMapper.findTaskByTaskId(taskId);
@@ -364,20 +409,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         List<String> list2 = Arrays.asList(memberIds.split(","));
 
         List<String> subtract1 = ListUtils.subtract(list1, list2);
-        if(subtract1 != null && subtract1.size() > 0){
+        if (subtract1 != null && subtract1.size() > 0) {
             content.append(TaskLogFunction.B.getName());
             for (Object aSubtract1 : subtract1) {
                 UserEntity user = userMapper.findUserById(aSubtract1.toString());
                 content.append(user.getUserName()).append(",");
             }
             //保存被移除的参与者的消息信息
-            userNewsService.saveUserNews(subtract1.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.B.getName(), null);
+            userNewsService.saveUserNews(subtract1.toArray(new String[0]), taskId, BindingConstants.BINDING_TASK_NAME, TaskLogFunction.B.getName(), null);
         }
 
         List<String> subtract2 = ListUtils.subtract(list2, list1);
         //保存被添加进来的参与者的消息信息
-        userNewsService.saveUserNews(subtract2.toArray(new String[0]),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.C.getName(), null);
-        if(subtract2 != null && subtract2.size() > 0){
+        userNewsService.saveUserNews(subtract2.toArray(new String[0]), taskId, BindingConstants.BINDING_TASK_NAME, TaskLogFunction.C.getName(), null);
+        if (subtract2 != null && subtract2.size() > 0) {
             content.append(TaskLogFunction.C.getName());
             for (Object aSubtract2 : subtract2) {
                 UserEntity user = userMapper.findUserById(aSubtract2.toString());
@@ -385,16 +430,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             }
         }
         task.setTaskUIds(memberIds);
-        if(subtract1.size()>0||subtract2.size()>0){
+        if (subtract1.size() > 0 || subtract2.size() > 0) {
             taskMapper.updateTask(task);
-            log = logService.saveLog(taskId,content.deleteCharAt(content.length()-1).toString(),1);
+            log = logService.saveLog(taskId, content.deleteCharAt(content.length() - 1).toString(), 1);
         }
-        
+
         return log;
     }
 
     /**
      * 给当前任务点赞
+     *
      * @param task 任务的实体信息
      * @return
      */
@@ -414,6 +460,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 用户取消赞
+     *
      * @param task 当前任务信息
      * @return
      */
@@ -425,13 +472,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //这里要把当前任务的赞 - 1
         task.setFabulousCount(taskFabulousCount - 1);
         taskMapper.updateTask(task);
-        return fabulousMapper.cancelFabulous(task.getTaskId(),memberId);
+        return fabulousMapper.cancelFabulous(task.getTaskId(), memberId);
     }
 
     /**
      * 给当前任务添加子任务
+     *
      * @param parentTaskId 父任务的id
-     * @param subLevel 子级任务信息
+     * @param subLevel     子级任务信息
      * @return
      */
     @Override
@@ -459,56 +507,58 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //保存日志信息至数据库
         Task task = new Task();
         task.setTaskId(parentTaskId);
-        Log log = logService.saveLog(task.getTaskId(), content.toString(),1);
+        Log log = logService.saveLog(task.getTaskId(), content.toString(), 1);
 
         //查询父任务的任务名称
         String parentTask = taskMapper.findTaskNameById(parentTaskId);
         content = new StringBuilder("");
         content.append(TaskLogFunction.A15.getName()).append(" ").append(parentTask).append(TaskLogFunction.A16.getName()).append(" ").append(subLevel.getTaskName());
-        logService.saveLog(task.getTaskId(), content.toString(),1);
+        logService.saveLog(task.getTaskId(), content.toString(), 1);
         return log;
     }
 
     /**
      * 完成和重做子任务
+     *
      * @param task 当前任务信息
      * @return
      */
     @Override
     public Log resetAndCompleteSubLevelTask(Task task) {
         Task parentTask = taskMapper.findTaskBySubTaskId(task.getTaskId());
-        if(parentTask.getTaskStatus()){
+        if (parentTask.getTaskStatus()) {
             throw new ServiceException();
         }
         StringBuilder content = new StringBuilder("");
 
         //拼接日志
-        if(task.getTaskStatus()){
+        if (task.getTaskStatus()) {
             content.append(TaskLogFunction.A12.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         } else {
             content.append(TaskLogFunction.I.getName()).append(" ").append("\"").append(task.getTaskName()).append("\"");
         }
         //更新任务信息
-        int result = taskMapper.changeTaskStatus(task.getTaskId(),task.getTaskStatus(),System.currentTimeMillis());
-        logService.saveLog(task.getTaskId(),content.toString(),1);
-        Log log = logService.saveLog(parentTask.getTaskId(),content.toString(),1);
+        int result = taskMapper.changeTaskStatus(task.getTaskId(), task.getTaskStatus(), System.currentTimeMillis());
+        logService.saveLog(task.getTaskId(), content.toString(), 1);
+        Log log = logService.saveLog(parentTask.getTaskId(), content.toString(), 1);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type","子任务完成/重做");
-        jsonObject.put("taskId",task.getTaskId());
-        jsonObject.put("result",task.getTaskStatus());
+        jsonObject.put("type", "子任务完成/重做");
+        jsonObject.put("taskId", task.getTaskId());
+        jsonObject.put("result", task.getTaskStatus());
         return log;
     }
 
     /**
      * 复制任务
-     * @param taskId 当前任务信息
+     *
+     * @param taskId    当前任务信息
      * @param projectId 当前任务所在的项目id
      * @return 新生成的任务实体信息
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Task copyTask(String taskId, String projectId, String groupId,String menuId) {
+    public Task copyTask(String taskId, String projectId, String groupId, String menuId) {
         Task task = taskService.findTaskByTaskId(taskId);
         List<Task> child = task.getTaskList();
         try {
@@ -527,8 +577,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
             task.setOrder(++maxOrder);
             this.save(task);
-            if(CollectionUtils.isNotEmpty(child)){
-                child.forEach(item ->{
+            if (CollectionUtils.isNotEmpty(child)) {
+                child.forEach(item -> {
                     item.setTaskStatus(false);
                     item.setTaskId(IdGen.uuid());
                     //设置新的子任务id
@@ -550,6 +600,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 收藏任务
+     *
      * @param task 任务实体信息
      * @return
      */
@@ -574,53 +625,57 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 取消收藏的任务
+     *
      * @param task 任务的信息
      * @return
      */
     @Override
     public int cancelCollectTask(Task task) {
         String memberId = ShiroAuthenticationManager.getUserId();
-        int result = publicCollectService.deletePublicCollectById(memberId,task.getTaskId());
+        int result = publicCollectService.deletePublicCollectById(memberId, task.getTaskId());
         return result;
     }
 
     /**
      * 查询该项目下的所有成员信息
+     *
      * @param projectId 当前项目的id
-     * @param executor 当前任务的执行者信息
+     * @param executor  当前任务的执行者信息
      * @return
      */
     @Override
-    public List<UserEntity> findProjectAllMember(String projectId,String executor) {
+    public List<UserEntity> findProjectAllMember(String projectId, String executor) {
         List<UserEntity> projectAllMember = userService.findProjectAllMember(projectId);
         return projectAllMember;
     }
 
     /**
      * 智能分组 分别为  查询 今天的任务 , 完成的任务, 未完成的任务
-     * @param status 任务状态条件
+     *
+     * @param status    任务状态条件
      * @param projectId 项目id
      * @return
      */
     @Override
-    public List<Task> intelligenceGroup(String status,String projectId) {
+    public List<Task> intelligenceGroup(String status, String projectId) {
         List<Task> taskList = new ArrayList<Task>();
         //如果状态为空,就查询今天的任务 否则 按照任务的状态查询任务
-        if(TaskStatusConstant.CURRENT_DAY_TASK.equals(status)){
+        if (TaskStatusConstant.CURRENT_DAY_TASK.equals(status)) {
             taskList = taskMapper.findTaskByToday(projectId);
-        } else{
-            if(TaskStatusConstant.HANG_IN_THE_AIR_TASK.equals(status)){
+        } else {
+            if (TaskStatusConstant.HANG_IN_THE_AIR_TASK.equals(status)) {
                 status = "未完成";
-            } else{
+            } else {
                 status = "完成";
             }
-            taskList = taskMapper.findTaskByStatus(status,projectId);
+            taskList = taskMapper.findTaskByStatus(status, projectId);
         }
         return taskList;
     }
 
     /**
      * 查询某个菜单下的所有任务的信息 包括执行者信息
+     *
      * @param menuId 菜单id
      * @return
      */
@@ -631,6 +686,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询某个菜单下的所有任务的信息 不包括执行者信息
+     *
      * @param menuId
      * @return
      */
@@ -641,26 +697,29 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务的id 获取当前所属的项目id
+     *
      * @param taskId 任务id
      * @return 项目id
      */
     @Override
     public String findProjectIdByTaskId(String taskId) {
-        return taskMapper.selectOne(new QueryWrapper<Task>().select("project_id").eq("task_id",taskId)).getProjectId();
+        return taskMapper.selectOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId)).getProjectId();
     }
 
     /**
      * 查询某个人执行的所有任务
+     *
      * @param uId 执行者的id
      * @return
      */
     @Override
-    public List<Task> findTaskByExecutor(String uId,String orderType) {
-        return taskMapper.findTaskByExecutor(uId,orderType);
+    public List<Task> findTaskByExecutor(String uId, String orderType) {
+        return taskMapper.findTaskByExecutor(uId, orderType);
     }
 
     /**
      * 查询该项目下所有未被认领的任务
+     *
      * @param projectId 项目id
      * @return
      */
@@ -671,6 +730,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 移除该任务的执行者 改为待认领状态
+     *
      * @param taskId 任务的id
      * @return
      */
@@ -682,22 +742,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Task task = taskMapper.findTaskByTaskId(taskId);
         //先将任务成员关系表的执行者清掉
         taskMapper.clearExecutor(taskId);
-        return logService.saveLog(taskId,content,1);
+        return logService.saveLog(taskId, content, 1);
     }
 
     /**
      * 查询项目下的指定的优先级的任务
+     *
      * @param projectId 项目id
-     * @param priority 优先级别
+     * @param priority  优先级别
      * @return
      */
     @Override
     public List<Task> findTaskByPriority(String projectId, String priority) {
-        return taskMapper.findTaskByPriority(projectId,priority);
+        return taskMapper.findTaskByPriority(projectId, priority);
     }
 
     /**
      * 查询该项目下的所有任务
+     *
      * @param projectId 项目id
      * @return
      */
@@ -708,13 +770,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 更新任务的执行者
-     * @param taskId 该任务的id
+     *
+     * @param taskId    该任务的id
      * @param execcutor 执行者id
-     * @param uName 用户名
+     * @param uName     用户名
      * @return
      */
     @Override
-    public Log updateTaskExecutor(String taskId, String execcutor,String uName) {
+    public Log updateTaskExecutor(String taskId, String execcutor, String uName) {
         Task task = new Task();
         task.setTaskId(taskId);
         task.setExecutor(execcutor);
@@ -722,12 +785,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         StringBuilder content = new StringBuilder();
         content.append(TaskLogFunction.U.getName()).append(" ").append(uName);
         //保存被移除的参与者的消息信息
-        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","),taskId,BindingConstants.BINDING_TASK_NAME,TaskLogFunction.A22.getName() + " " + uName, null);
-        return logService.saveLog(task.getTaskId(),content.toString(),1);
+        userNewsService.saveUserNews(taskMapper.findTaskByTaskId(taskId).getTaskUIds().split(","), taskId, BindingConstants.BINDING_TASK_NAME, TaskLogFunction.A22.getName() + " " + uName, null);
+        return logService.saveLog(task.getTaskId(), content.toString(), 1);
     }
 
     /**
      * 查询某个任务下的所有子任务
+     *
      * @param taskId 父级任务id
      * @return
      */
@@ -770,16 +834,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询此任务的关联
+     *
      * @param taskId 任务id
      */
     @Override
     public Map<String, List> findTaskRelation(String taskId) {
-        Map<String, List> map = new HashMap<String,List>();
+        Map<String, List> map = new HashMap<String, List>();
         return map;
     }
 
     /**
      * 根据任务的id查询该任务的创建人id
+     *
      * @param taskId 任务的id
      * @return
      */
@@ -790,22 +856,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 重新排序该任务菜单的id
+     *
      * @param oldMenuTaskId 旧任务菜单的所有任务id
      * @param newMenuTaskId 新任务菜单的所有任务id
-     * @param oldMenuId  旧任务菜单的id
-     * @param newMenuId 新任务菜单id
-     * @param taskId 任务id
+     * @param oldMenuId     旧任务菜单的id
+     * @param newMenuId     新任务菜单id
+     * @param taskId        任务id
      */
     @Override
-    public void orderOneTaskMenu(String[]oldMenuTaskId,String[] newMenuTaskId,String oldMenuId,String newMenuId,String taskId) {
+    public void orderOneTaskMenu(String[] oldMenuTaskId, String[] newMenuTaskId, String oldMenuId, String newMenuId, String taskId) {
         //重新排序任务的顺序 如果拖动的任务不跨越菜单,则不需要更新任务的菜单id
         for (int i = 0; i < oldMenuTaskId.length; i++) {
-            taskMapper.orderOneTaskMenu(oldMenuTaskId[i],oldMenuTaskId.length-i);
+            taskMapper.orderOneTaskMenu(oldMenuTaskId[i], oldMenuTaskId.length - i);
         }
         //如果旧菜单id 和新菜单id 不相等,说明这次移动跨越了菜单.1 需要编排新菜单的所有任务id 2.需要更新任务的菜单id
-        if(!newMenuId.equals(oldMenuId)){
+        if (!newMenuId.equals(oldMenuId)) {
             for (int i = 0; i < newMenuTaskId.length; i++) {
-                taskMapper.orderOneTaskMenu(newMenuTaskId[i],newMenuTaskId.length-i);
+                taskMapper.orderOneTaskMenu(newMenuTaskId[i], newMenuTaskId.length - i);
             }
             //更新任务的菜单id
             Task task = new Task();
@@ -820,6 +887,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
      * 查询出任务的所有标签
      * 1.先拿出该任务绑定的所有标签id
      * 2.把标签id 转换成数组 再根据数据去查询标签
+     *
      * @param taskId 任务id
      * @return
      */
@@ -828,8 +896,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //根据任务的id查询出该任务所绑定的标签id
         String tagId = taskMapper.findTagIdByTaskId(taskId);
         //把任务的id字符串拆成数组形式
-        if(StringUtils.isEmpty(tagId)){
-                return null;
+        if (StringUtils.isEmpty(tagId)) {
+            return null;
         }
         String[] split = tagId.split(",");
         Integer[] tags = new Integer[split.length];
@@ -841,6 +909,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出该用户参与的近三天的任务
+     *
      * @return
      */
     @Override
@@ -850,6 +919,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出在回收站中的任务
+     *
      * @param projectId 项目id
      * @return 该项目下所有在回收站的任务集合
      */
@@ -860,6 +930,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出我创建的任务id
+     *
      * @param memberId 创建者的id
      * @return
      */
@@ -870,18 +941,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出我参与的任务
-     * @param id 当前用户id
+     *
+     * @param id        当前用户id
      * @param orderType 排序类型
      * @return
      */
     @Override
-    public List<Task> findTaskByUserId(String id,String orderType) {
-        return taskMapper.findTaskByUserId(id,orderType);
+    public List<Task> findTaskByUserId(String id, String orderType) {
+        return taskMapper.findTaskByUserId(id, orderType);
     }
 
 
     /**
      * 查询出该用户执行的 已经完成的任务
+     *
      * @param id 用户id
      * @return
      */
@@ -892,61 +965,67 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出该用所参与的所有任务(按照任务的状态)
-     * @param id 用户id
+     *
+     * @param id     用户id
      * @param status 任务的状态
      * @return
      */
     @Override
     public List<Task> findTaskByUserIdByStatus(String id, String status) {
-        return taskMapper.findTaskByUserIdByStatus(id,status);
+        return taskMapper.findTaskByUserIdByStatus(id, status);
     }
 
     /**
      * 查询出该用户所参与的任务 按照时间排序
-     * @param id 用户id
+     *
+     * @param id        用户id
      * @param orderType 比较类型
      * @return
      */
     @Override
     public List<Task> findTaskByUserAndTime(String id, String orderType) {
-        return taskMapper.findTaskByUserAndTime(id,orderType);
+        return taskMapper.findTaskByUserAndTime(id, orderType);
     }
 
     /**
      * 查询出该用户创建的任务 (根据任务状态查询)
-     * @param id 用户id
+     *
+     * @param id     用户id
      * @param status 任务的状态
      * @return
      */
     @Override
     public List<Task> findTaskByCreateMemberByStatus(String id, String status) {
-        return taskMapper.findTaskByCreateMemberByStatus(id,status);
+        return taskMapper.findTaskByCreateMemberByStatus(id, status);
     }
 
     /**
-     *查询出我创建的任务 只要未完成
-     * @param id 当前用户id
+     * 查询出我创建的任务 只要未完成
+     *
+     * @param id        当前用户id
      * @param orderType 排序类型
      * @return
      */
     @Override
-    public List<Task> findTaskByCreateMember(String id,String orderType) {
-        return taskMapper.findTaskByCreateMember(id,orderType);
+    public List<Task> findTaskByCreateMember(String id, String orderType) {
+        return taskMapper.findTaskByCreateMember(id, orderType);
     }
 
     /**
      * 查询出用户创建的所有任务并且按照时间排序
-     * @param id 用户id
+     *
+     * @param id        用户id
      * @param orderType 排序类型
      * @return
      */
     @Override
     public List<Task> findTaskByCreateMemberAndTime(String id, String orderType) {
-        return taskMapper.findTaskByCreateMemberAndTime(id,orderType);
+        return taskMapper.findTaskByCreateMemberAndTime(id, orderType);
     }
 
     /**
      * 查询该用户在日历上创建的所有任务
+     *
      * @param uId 用户id
      * @return
      */
@@ -957,6 +1036,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务的id查询任务的名称
+     *
      * @param taskId 任务id
      * @return 任务的名称
      */
@@ -967,6 +1047,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 清空任务的标签
+     *
      * @param publicId 任务id
      */
     @Override
@@ -976,6 +1057,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务的id 查询出该任务的名称
+     *
      * @param taskId 任务id
      * @return
      */
@@ -986,16 +1068,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 取消收藏任务
+     *
      * @param taskId 任务id
      */
     @Override
     public void cancleCollectTask(String taskId) {
-        taskMapper.cancleCollectTask(taskId,ShiroAuthenticationManager.getUserId());
+        taskMapper.cancleCollectTask(taskId, ShiroAuthenticationManager.getUserId());
     }
 
     /**
      * 查询出该项目下的所有任务 状态数量概览
      * (多次连库查询比筛选集合效率略高 所以 使用多次按照关键字查库的方式 取出数据)
+     *
      * @param projectId 项目id
      * @return
      */
@@ -1003,7 +1087,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public List<Statistics> findTaskCountOverView(String projectId) {
         int total = taskMapper.findTaskTotalByProjectId(projectId);
         int taskCount = 0;
-        String[] overViewName = {"未完成","已完成","任务总量","今日到期","已逾期","待认领","按时完成","逾期完成"};
+        String[] overViewName = {"未完成", "已完成", "任务总量", "今日到期", "已逾期", "待认领", "按时完成", "逾期完成"};
         List<Statistics> list = new ArrayList<Statistics>();
         List<String> chartsList = new ArrayList<String>();
 
@@ -1013,45 +1097,45 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             statictics.setName(names);
 
             //查询出未完成的任务数量
-            if(StaticticsVO.HANGINTHEAIR.equals(names)){
+            if (StaticticsVO.HANGINTHEAIR.equals(names)) {
                 taskCount = taskMapper.findHangInTheAirTaskCount(projectId);
 
 
             }
 
             //查询出已完成的任务
-            if(StaticticsVO.COMPLETED.equals(names)){
+            if (StaticticsVO.COMPLETED.equals(names)) {
                 taskCount = taskMapper.findCompletedTaskCount(projectId);
 
             }
 
             //查询出今日到期的任务
-            if(StaticticsVO.MATURINGTODAY.equals(names)){
-                taskCount = taskMapper.currDayTaskCount(projectId,System.currentTimeMillis()/1000);
+            if (StaticticsVO.MATURINGTODAY.equals(names)) {
+                taskCount = taskMapper.currDayTaskCount(projectId, System.currentTimeMillis() / 1000);
             }
 
             //查询出已逾期的任务
-            if(StaticticsVO.BEOVERDUE.equals(names)){
-                taskCount = taskMapper.findBeoberdueTaskCount(projectId,System.currentTimeMillis()/1000);
+            if (StaticticsVO.BEOVERDUE.equals(names)) {
+                taskCount = taskMapper.findBeoberdueTaskCount(projectId, System.currentTimeMillis() / 1000);
             }
 
             //查询出待认领的任务
-            if(StaticticsVO.TOBECLAIMED.equals(names)){
+            if (StaticticsVO.TOBECLAIMED.equals(names)) {
                 taskCount = taskMapper.findTobeclaimedTaskCount(projectId);
             }
 
             //查询出按时完成的任务
-            if(StaticticsVO.FINISHONTIME.equals(names)){
-                taskCount = taskMapper.findFinishontTimeTaskCount(projectId,System.currentTimeMillis()/1000);
+            if (StaticticsVO.FINISHONTIME.equals(names)) {
+                taskCount = taskMapper.findFinishontTimeTaskCount(projectId, System.currentTimeMillis() / 1000);
             }
 
             //查询出逾期完成任务
-            if(StaticticsVO.OVERDUECOMPLETION.equals(names)){
-                taskCount = taskMapper.findOverdueCompletion(projectId,System.currentTimeMillis()/1000);
+            if (StaticticsVO.OVERDUECOMPLETION.equals(names)) {
+                taskCount = taskMapper.findOverdueCompletion(projectId, System.currentTimeMillis() / 1000);
             }
 
             //如果非任务总量,执行以下逻辑
-            if (!StaticticsVO.TASKTOTALCOUNT.equals(names)){
+            if (!StaticticsVO.TASKTOTALCOUNT.equals(names)) {
                 //设置百分比
                 NumberFormat numberFormat = NumberFormat.getInstance();
                 numberFormat.setMaximumFractionDigits(2);
@@ -1062,9 +1146,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 statictics.setCount(total);
-                statictics.setPercentage((double)100);
+                statictics.setPercentage((double) 100);
             }
             list.add(statictics);
 
@@ -1074,25 +1158,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询chart饼图数据
-     * @param  projectId 项目id
-     * @return  list
+     *
+     * @param projectId 项目id
+     * @return list
      */
     @Override
     public List<StringBuilder> findPieChartOverView(String projectId) {
-        List<StringBuilder> result=new ArrayList<>();
+        List<StringBuilder> result = new ArrayList<>();
         //按执行者分布
-        List<StatisticsResultVO> taskByExecutor=this.taskMapper.selectTaskByExecutor(projectId);
-        StringBuilder builderByExecutor=new StringBuilder();
-        result.add(taskStringJoint(taskByExecutor,builderByExecutor)) ;
+        List<StatisticsResultVO> taskByExecutor = this.taskMapper.selectTaskByExecutor(projectId);
+        StringBuilder builderByExecutor = new StringBuilder();
+        result.add(taskStringJoint(taskByExecutor, builderByExecutor));
         //按优先级分布
-        List<StatisticsResultVO> taskByPriority=this.taskMapper.selectTaskByPriority(projectId);
-        StringBuilder builderByPriority=new StringBuilder();
-        result.add(taskStringJoint(taskByPriority,builderByPriority)) ;
-        StringBuilder builderByTime=new StringBuilder();
+        List<StatisticsResultVO> taskByPriority = this.taskMapper.selectTaskByPriority(projectId);
+        StringBuilder builderByPriority = new StringBuilder();
+        result.add(taskStringJoint(taskByPriority, builderByPriority));
+        StringBuilder builderByTime = new StringBuilder();
         // 期间已完成项目任务数
-        int finishByTime=this.taskMapper.finishByTime(projectId,System.currentTimeMillis()/1000);
+        int finishByTime = this.taskMapper.finishByTime(projectId, System.currentTimeMillis() / 1000);
         // 期间未完成项目任务数
-        int unfinishByTime=this.taskMapper.unfinishBytime(projectId,System.currentTimeMillis()/1000);
+        int unfinishByTime = this.taskMapper.unfinishBytime(projectId, System.currentTimeMillis() / 1000);
         builderByTime.append("[").append(finishByTime).append(",").append(unfinishByTime).append("]");
         result.add(builderByTime);
         return result;
@@ -1100,55 +1185,56 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询统计页面柱状图数据
-     * @param  projectId 项目id
-     * @return  list
+     *
+     * @param projectId 项目id
+     * @return list
      */
     @Override
     public List<StringBuilder> findHistogramOverView(String projectId) {
-        List<StringBuilder> result=new ArrayList<>();
-        long totalMillisSeconds=System.currentTimeMillis();
-        long totalSeconds=totalMillisSeconds/1000;
+        List<StringBuilder> result = new ArrayList<>();
+        long totalMillisSeconds = System.currentTimeMillis();
+        long totalSeconds = totalMillisSeconds / 1000;
         //期间完成的任务
-        List<StatisticsResultVO> taskByFinishTime=this.taskMapper.selectTaskByFinishTime(projectId,totalSeconds);
-        StringBuilder builderByFinishTime=new StringBuilder();
-        result.add(taskStringJoint(taskByFinishTime,builderByFinishTime)) ;
+        List<StatisticsResultVO> taskByFinishTime = this.taskMapper.selectTaskByFinishTime(projectId, totalSeconds);
+        StringBuilder builderByFinishTime = new StringBuilder();
+        result.add(taskStringJoint(taskByFinishTime, builderByFinishTime));
         //期间未完成的任务
-        List<StatisticsResultVO> taskByUnfinishTime=this.taskMapper.taskByUnfinishTime(projectId,totalSeconds);
-        StringBuilder builderByUnfinishTime=new StringBuilder();
-        result.add(taskStringJoint(taskByUnfinishTime,builderByUnfinishTime)) ;
+        List<StatisticsResultVO> taskByUnfinishTime = this.taskMapper.taskByUnfinishTime(projectId, totalSeconds);
+        StringBuilder builderByUnfinishTime = new StringBuilder();
+        result.add(taskStringJoint(taskByUnfinishTime, builderByUnfinishTime));
         //期间逾期的任务
-        List<StatisticsResultVO> taskByOverdue=this.taskMapper.taskByOverdue(projectId,totalSeconds);
-        StringBuilder builderByOverdue=new StringBuilder();
-        result.add(taskStringJoint(taskByOverdue,builderByOverdue)) ;
+        List<StatisticsResultVO> taskByOverdue = this.taskMapper.taskByOverdue(projectId, totalSeconds);
+        StringBuilder builderByOverdue = new StringBuilder();
+        result.add(taskStringJoint(taskByOverdue, builderByOverdue));
         //期间更新截止时间的任务
-        List<StatisticsResultVO> taskByEndTime=this.taskMapper.taskByEndTime(projectId,totalSeconds);
-        StringBuilder builderByEndTime=new StringBuilder();
-        result.add(taskStringJoint(taskByEndTime,builderByEndTime)) ;
+        List<StatisticsResultVO> taskByEndTime = this.taskMapper.taskByEndTime(projectId, totalSeconds);
+        StringBuilder builderByEndTime = new StringBuilder();
+        result.add(taskStringJoint(taskByEndTime, builderByEndTime));
         //期间高频参与的任务
-        List<StatisticsResultVO> taskByLogCount=this.taskMapper.taskByLogCount(projectId,totalSeconds);
-        StringBuilder builderByLogCount=new StringBuilder();
-        result.add(taskStringJoint(taskByLogCount,builderByLogCount)) ;
+        List<StatisticsResultVO> taskByLogCount = this.taskMapper.taskByLogCount(projectId, totalSeconds);
+        StringBuilder builderByLogCount = new StringBuilder();
+        result.add(taskStringJoint(taskByLogCount, builderByLogCount));
         //不同任务分组已完成数据量
         return result;
     }
 
     @Override
     public List findDoubleHistogramOverView(String projectId) {
-        List result=new ArrayList<>();
+        List result = new ArrayList<>();
         //按任务分组分布查询
-        List<StatisticsResultVO> taskByTaskGroup=this.taskMapper.taskByTaskGroup(projectId);
+        List<StatisticsResultVO> taskByTaskGroup = this.taskMapper.taskByTaskGroup(projectId);
         //期间截止任务分成员完成情况
-        List<StatisticsResultVO> taskByMember=this.taskMapper.taskByMember(projectId,System.currentTimeMillis()/1000);
+        List<StatisticsResultVO> taskByMember = this.taskMapper.taskByMember(projectId, System.currentTimeMillis() / 1000);
         //期间截止任务按截止时间分布
-        List<StatisticsResultVO> taskByEndTaskOfEndTime=this.taskMapper.taskByEndTaskOfEndTime(projectId,System.currentTimeMillis()/1000);
-        result.add( doubleHistogramData(taskByTaskGroup));
-        result.add( doubleHistogramData(taskByMember));
-        result.add( doubleHistogramData(taskByEndTaskOfEndTime));
+        List<StatisticsResultVO> taskByEndTaskOfEndTime = this.taskMapper.taskByEndTaskOfEndTime(projectId, System.currentTimeMillis() / 1000);
+        result.add(doubleHistogramData(taskByTaskGroup));
+        result.add(doubleHistogramData(taskByMember));
+        result.add(doubleHistogramData(taskByEndTaskOfEndTime));
         return result;
     }
 
 
-   //组装双容器柱状图需要的数据
+    //组装双容器柱状图需要的数据
     private Object doubleHistogramData(List<StatisticsResultVO> taskType) {
         ChartsVO chartsVO = new ChartsVO();
         List finish = new ArrayList<>();
@@ -1163,19 +1249,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         }
         return JSONObject.toJSON(chartsVO);
     }
+
     /**
-     *数据字符串拼接
+     * 数据字符串拼接
      */
-    private StringBuilder taskStringJoint(List<StatisticsResultVO> taskName,StringBuilder builder){
-        if (taskName!=null && taskName.size()>0){
+    private StringBuilder taskStringJoint(List<StatisticsResultVO> taskName, StringBuilder builder) {
+        if (taskName != null && taskName.size() > 0) {
             builder.append("[");
-            for (StatisticsResultVO svo:taskName){
+            for (StatisticsResultVO svo : taskName) {
                 builder.append(svo.getTaskCountInt()).append(",");
             }
-            builder.delete(builder.length()-1,builder.length());
+            builder.delete(builder.length() - 1, builder.length());
             builder.append("]");
             return builder;
-        }else{
+        } else {
             return null;
         }
     }
@@ -1183,13 +1270,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /**
      * 设置移动任务的信息
      */
-    public void updateMoveTaskInfo(Task task, TaskMenuVO oldTaskMenuVO,TaskMenuVO newTaskMenuVO){
+    public void updateMoveTaskInfo(Task task, TaskMenuVO oldTaskMenuVO, TaskMenuVO newTaskMenuVO) {
         //设置新的项目id
         task.setProjectId(newTaskMenuVO.getProjectId());
         //设置更新时间
         task.setUpdateTime(System.currentTimeMillis());
         //如果复制到其他项目 移除掉 不在 移动到的新项目中的成员信息
-        if(!Objects.equals(oldTaskMenuVO.getProjectId(),newTaskMenuVO.getProjectId())){
+        if (!Objects.equals(oldTaskMenuVO.getProjectId(), newTaskMenuVO.getProjectId())) {
             List<ProjectMember> byProjectId = projectMemberService.findByProjectId(oldTaskMenuVO.getProjectId());
 
             //把每个成员的id 取出来 抽成集合 方便比较
@@ -1197,10 +1284,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
             //判断此任务的执行者 在不在新项目中
             for (String executorId : members) {
-                if(executorId.equals(task.getExecutor())){
+                if (executorId.equals(task.getExecutor())) {
                     task.setExecutor(task.getExecutor());
                     break;
-                } else{
+                } else {
                     task.setExecutor("");
                 }
             }
@@ -1217,16 +1304,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             //标签设置
             //被复制的任务的标签信息
             List<Tag> tagList = task.getTagList();
-            if(tagList != null && tagList.size() > 0 ){
+            if (tagList != null && tagList.size() > 0) {
                 //复制到新项目里的所有标签
                 List<Tag> byProjectIdTag = tagService.findByProjectId(newTaskMenuVO.getProjectId());
 
                 List<Tag> newTagListAfter = new ArrayList<Tag>();
                 List<Long> newTagIds = new ArrayList<Long>();
 
-                if(byProjectIdTag != null && byProjectIdTag.size() > 0){
+                if (byProjectIdTag != null && byProjectIdTag.size() > 0) {
                     boolean flag = false;
-                    for(int i = 0;i < tagList.size() ;i++) {
+                    for (int i = 0; i < tagList.size(); i++) {
                         for (Tag t : byProjectIdTag) {
                             if (tagList.get(i).getTagName().equals(t.getTagName())) {
                                 newTagIds.add(t.getTagId());
@@ -1238,7 +1325,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                         }
                         flag = false;
                     }
-                } else{
+                } else {
                     newTagListAfter = tagList;
                 }
                 for (Tag t : newTagListAfter) {
@@ -1249,7 +1336,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
                     t.setCreateTime(System.currentTimeMillis());
                     t.setUpdateTime(System.currentTimeMillis());
                 }
-                if(!newTagListAfter.isEmpty()){
+                if (!newTagListAfter.isEmpty()) {
                     tagService.saveMany(newTagListAfter);
                     for (Tag t : newTagListAfter) {
                         newTagIds.add(t.getTagId());
@@ -1274,6 +1361,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 删除一个任务的所有子任务
+     *
      * @param taskId 任务id
      */
     @Override
@@ -1283,6 +1371,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务的id 查询出该任务的 所有参与者信息
+     *
      * @param taskId 任务id
      * @return
      */
@@ -1293,7 +1382,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 更新任务的开始时间
-     * @param taskId 任务id
+     *
+     * @param taskId    任务id
      * @param startTime 新的开始时间
      */
     @Override
@@ -1306,7 +1396,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         taskRemindRules.forEach(item -> {
             String cron = remindCron(taskId, item.getRemindType(), item.getNum(), item.getTimeType(), item.getCustomTime());
             try {
-                quartzService.modifyJobTime(item.getQuartzInfo().getJobName(),"task",cron);
+                quartzService.modifyJobTime(item.getQuartzInfo().getJobName(), "task", cron);
             } catch (SchedulerException e) {
                 e.printStackTrace();
             }
@@ -1315,14 +1405,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 任务排序
+     *
      * @param taskIds 排序后的菜单下所有任务id
-     * @param taskId 拖动的任务id
+     * @param taskId  拖动的任务id
      * @param newMenu 推动到的任务菜单id
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void orderTask(String taskIds, String taskId, String newMenu) {
-        if(StringUtils.isNotEmpty(newMenu)){
+        if (StringUtils.isNotEmpty(newMenu)) {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskMenuId(newMenu);
@@ -1342,6 +1433,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 永久删除多个任务
+     *
      * @param taskIds 任务id 的集合
      */
     @Override
@@ -1351,21 +1443,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 查询出需要被关联的任务信息
+     *
      * @param id 任务id集合
      */
     @Override
     public TaskApiBean findTaskApiBean(String id) {
-       return taskMapper.findTaskApiBean(id);
+        return taskMapper.findTaskApiBean(id);
     }
 
     /**
      * 添加任务的提醒规则
+     *
      * @param taskRemindRule 规则实体
-     * @param users 提醒的用户id字符串
+     * @param users          提醒的用户id字符串
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void addTaskRemind(TaskRemindRule taskRemindRule, String users) throws ServiceException{
+    public void addTaskRemind(TaskRemindRule taskRemindRule, String users) throws ServiceException {
         //生成cron 字符串
         String cronStr = remindCron(taskRemindRule.getTaskId(), taskRemindRule.getRemindType(), taskRemindRule.getNum(), taskRemindRule.getTimeType(), taskRemindRule.getCustomTime());
 
@@ -1391,34 +1485,36 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         try {
             //生成cron表达式
             myJob.setCronTime(cronStr);
-        } catch (ServiceException e){
-           throw new ServiceException(e);
+        } catch (ServiceException e) {
+            throw new ServiceException(e);
         }
         //额外信息
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("users",users);
+        jobDataMap.put("users", users);
         myJob.setJobDataMap(jobDataMap);
 
         //把任务的提醒规则加入quartz中
-        quartzService.addJobByCronTrigger(RemindJob.class,myJob);
+        quartzService.addJobByCronTrigger(RemindJob.class, myJob);
     }
 
     /**
      * 更新任务的提醒规则
+     *
      * @param taskRemindRule 提醒规则实体信息
      */
     @Override
     public void updateTaskRemind(TaskRemindRule taskRemindRule) throws SchedulerException {
         String cronStr = remindCron(taskRemindRule.getTaskId(), taskRemindRule.getRemindType(), taskRemindRule.getNum(), taskRemindRule.getTimeType(), taskRemindRule.getCustomTime());
         taskRemindRule.setCronStr(cronStr);
-        taskRemindRuleService.update(taskRemindRule,new QueryWrapper<TaskRemindRule>().eq("id",taskRemindRule.getId()));
+        taskRemindRuleService.update(taskRemindRule, new QueryWrapper<TaskRemindRule>().eq("id", taskRemindRule.getId()));
         QuartzInfo quartzInfo = quartzInfoService.getOne(new QueryWrapper<QuartzInfo>().eq("remind_id", taskRemindRule.getId()));
         //更新quartz定时任务
-        quartzService.modifyJobTime(quartzInfo.getJobName(),quartzInfo.getTriggerGroup(),cronStr);
+        quartzService.modifyJobTime(quartzInfo.getJobName(), quartzInfo.getTriggerGroup(), cronStr);
     }
 
     /**
      * 移除这条任务的提醒规则 并且从quartz移除
+     *
      * @param id 规则的id
      */
     @Transactional(rollbackFor = Exception.class)
@@ -1426,7 +1522,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public void removeRemind(String id) throws SchedulerException {
         QuartzInfo quartzInfo = quartzInfoService.getOne(new QueryWrapper<QuartzInfo>().eq("remind_id", id));
         //从quartz 中移除该任务
-        quartzService.removeJob(quartzService.getScheduler(),new TriggerKey(quartzInfo.getJobName(),"task"), new JobKey(quartzInfo.getJobName(),"task"));
+        quartzService.removeJob(quartzService.getScheduler(), new TriggerKey(quartzInfo.getJobName(), "task"), new JobKey(quartzInfo.getJobName(), "task"));
         //移除掉该条规则
         taskRemindRuleService.removeById(id);
         //移除quartz信息
@@ -1435,11 +1531,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 更新任务要提醒的成员信息
+     *
      * @param taskId 任务id
-     * @param users 成员id 信息
+     * @param users  成员id 信息
      */
     @Override
-    public void updateRemindUsers(String taskId, String users){
+    public void updateRemindUsers(String taskId, String users) {
         List<TaskRemindRule> taskRemindRules = taskRemindRuleService.listRuleAndQuartz(taskId);
         taskRemindRules.forEach(item -> {
             QuartzInfo quartzInfo = item.getQuartzInfo();
@@ -1449,7 +1546,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
             myJob.setCronTime(item.getCronStr());
             myJob.setTriggerGroupName(quartzInfo.getTriggerGroup());
             JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("users",users);
+            jobDataMap.put("users", users);
             myJob.setJobDataMap(jobDataMap);
             quartzService.modifyJobDateMap(RemindJob.class, myJob);
         });
@@ -1457,6 +1554,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 完成任务
+     *
      * @param taskId 任务id
      */
     @Override
@@ -1466,7 +1564,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //这里判断是否有子任务未完成
         List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId).eq("task_del", 0));
         subTask.forEach(t -> {
-            if(!t.getTaskStatus()){
+            if (!t.getTaskStatus()) {
                 throw new ServiceException("有子任务未完成!");
             }
         });
@@ -1479,14 +1577,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         taskMapper.updateById(completeTask);
 
         //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且遍历是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
-        if(!task.getParentId().equals("0")) {
+        if (!task.getParentId().equals("0")) {
             int flag = 1;
             for (Task t : taskMapper.selectList(new QueryWrapper<Task>().select("task_id", "task_status").eq("parent_id", task.getParentId()))) {
-                if(!t.getTaskStatus()){
+                if (!t.getTaskStatus()) {
                     flag = 0;
                 }
             }
-            if(flag == 1){
+            if (flag == 1) {
                 Task pTask = new Task();
                 pTask.setTaskId(task.getParentId());
                 pTask.setUpdateTime(System.currentTimeMillis());
@@ -1499,44 +1597,44 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Long endTime = task.getEndTime();
         Long newStartTime = null;
         Long newEndTime = null;
-        if(TaskStatusConstant.DAY_REPEAT.equals(task.getRepeat())){
+        if (TaskStatusConstant.DAY_REPEAT.equals(task.getRepeat())) {
             //每天重复后的时间
-            if(startTime != null){
+            if (startTime != null) {
                 newStartTime = afterDaysTime(startTime, 1);
             }
-            if(endTime != null){
+            if (endTime != null) {
                 newEndTime = afterDaysTime(endTime, 1);
             }
-        } else if (TaskStatusConstant.WEEK_REPEAT.equals(task.getRepeat())){
+        } else if (TaskStatusConstant.WEEK_REPEAT.equals(task.getRepeat())) {
             //每周重复后的时间
-            if(startTime != null){
-                newStartTime = afterDaysTime(startTime,7);
+            if (startTime != null) {
+                newStartTime = afterDaysTime(startTime, 7);
             }
-            if(endTime != null){
-                newEndTime = afterDaysTime(endTime,7);
+            if (endTime != null) {
+                newEndTime = afterDaysTime(endTime, 7);
             }
-        } else if (TaskStatusConstant.MONTH_REPEAT.equals(task.getRepeat())){
+        } else if (TaskStatusConstant.MONTH_REPEAT.equals(task.getRepeat())) {
             //每月重复后的时间
-            if(startTime != null){
+            if (startTime != null) {
                 newStartTime = afterMonthTime(startTime);
             }
-            if(endTime != null){
+            if (endTime != null) {
                 newEndTime = afterMonthTime(endTime);
             }
-        } else if (TaskStatusConstant.YEAR_REPEAT.equals(task.getRepeat())){
+        } else if (TaskStatusConstant.YEAR_REPEAT.equals(task.getRepeat())) {
             //每年重复后的时间
-            if(startTime != null){
-                newStartTime = DateUtils.afterYearTime(1,new Date(startTime));
+            if (startTime != null) {
+                newStartTime = DateUtils.afterYearTime(1, new Date(startTime));
             }
-            if(endTime != null){
-                newEndTime = DateUtils.afterYearTime(1,new Date(endTime));
+            if (endTime != null) {
+                newEndTime = DateUtils.afterYearTime(1, new Date(endTime));
             }
-        } else if (TaskStatusConstant.WORKING_DAY_REPEAT.equals(task.getRepeat())){
+        } else if (TaskStatusConstant.WORKING_DAY_REPEAT.equals(task.getRepeat())) {
             //工作日重复后的时间
-            if(startTime != null){
+            if (startTime != null) {
                 newStartTime = DateUtils.afterWorkDay(new Date(startTime));
             }
-            if(endTime != null){
+            if (endTime != null) {
                 newEndTime = DateUtils.afterWorkDay(new Date(startTime));
             }
         } else {
@@ -1553,35 +1651,36 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 生成任务提醒的规则
-     * @param taskId 任务id
+     *
+     * @param taskId     任务id
      * @param remindType 提醒类型
-     * @param num 数量
-     * @param timeType 时间类型
+     * @param num        数量
+     * @param timeType   时间类型
      * @param customTime 自定义时间的字符串
      * @return cron 表达式
      */
     @Override
-    public String remindCron(String taskId,String remindType, Integer num, String timeType, String customTime) throws ServiceException{
+    public String remindCron(String taskId, String remindType, Integer num, String timeType, String customTime) throws ServiceException {
         SimpleDateFormat format = new SimpleDateFormat("ss mm HH dd MM ? yyyy");
         //查询出该任务的开始时间
-        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("start_time startTime","end_time endTime"));
+        Task task = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("start_time startTime", "end_time endTime"));
         //生成自定义时间表达式
-        if(!StringUtils.isEmpty(customTime)){
-            return DateUtils.cronStr(DateUtils.parse(customTime,"yyyy-MM-dd HH:mm:ss"));
+        if (!StringUtils.isEmpty(customTime)) {
+            return DateUtils.cronStr(DateUtils.parse(customTime, "yyyy-MM-dd HH:mm:ss"));
         }
-        if(task == null){
+        if (task == null) {
             throw new ServiceException("该任务时间不合则规则设定,或者没有时间!");
         }
         //任务开始时
-        if(TaskStatusConstant.BEGIN.equals(remindType)){
-            if(task.getStartTime() == null){
+        if (TaskStatusConstant.BEGIN.equals(remindType)) {
+            if (task.getStartTime() == null) {
                 throw new ServiceException("该任务没有开始时间!");
             }
             return DateUtils.cronStr(new Date(task.getStartTime()));
         }
         //任务截止时
-        if(TaskStatusConstant.END.equals(remindType)){
-            if(task.getEndTime() == null){
+        if (TaskStatusConstant.END.equals(remindType)) {
+            if (task.getEndTime() == null) {
                 throw new ServiceException("该任务没有结束时间!");
             }
             return DateUtils.cronStr(new Date(task.getEndTime()));
@@ -1591,34 +1690,34 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         Long minute = 60000L * num;
         //算出各单位的毫秒数
         Long times = 0L;
-        if(TaskStatusConstant.DAY.equals(timeType)){
+        if (TaskStatusConstant.DAY.equals(timeType)) {
             times = day;
         }
-        if(TaskStatusConstant.HOUR.equals(timeType)){
+        if (TaskStatusConstant.HOUR.equals(timeType)) {
             times = hour;
         }
-        if(TaskStatusConstant.MINUTE.equals(timeType)){
+        if (TaskStatusConstant.MINUTE.equals(timeType)) {
             times = minute;
         }
-        if(task.getStartTime() != null){
+        if (task.getStartTime() != null) {
             //任务开始前
-            if(TaskStatusConstant.BEGIN_BEORE.equals(remindType)){
+            if (TaskStatusConstant.BEGIN_BEORE.equals(remindType)) {
                 task.setStartTime(task.getStartTime() - times);
             }
             //任务开始后
-            if(TaskStatusConstant.BEGIN_AFTER.equals(remindType)){
+            if (TaskStatusConstant.BEGIN_AFTER.equals(remindType)) {
                 task.setStartTime(task.getStartTime() + times);
             }
             return DateUtils.cronStr(new Date(task.getStartTime()));
         }
-        if(task.getEndTime() != null){
+        if (task.getEndTime() != null) {
             Long end = 0L;
             //任务截止后
-            if(TaskStatusConstant.END_AFTER.equals(remindType)){
+            if (TaskStatusConstant.END_AFTER.equals(remindType)) {
                 end = task.getEndTime() + times;
             }
             //任务截止前
-            if(TaskStatusConstant.END_BEFORE.equals(remindType)){
+            if (TaskStatusConstant.END_BEFORE.equals(remindType)) {
                 end = task.getEndTime() - times;
             }
             return DateUtils.cronStr(new Date(end));
@@ -1628,12 +1727,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 保存多个任务的标签
+     *
      * @param tagIds 标签的id字符串
      * @param taskId 任务id
      */
-    private void saveBatchTaskTag(String tagIds, String taskId){
-        if(StringUtils.isNotEmpty(tagIds)){
-            Arrays.stream(tagIds.split(",")).forEach(tagId->{
+    private void saveBatchTaskTag(String tagIds, String taskId) {
+        if (StringUtils.isNotEmpty(tagIds)) {
+            Arrays.stream(tagIds.split(",")).forEach(tagId -> {
                 TagRelation tagRelation = new TagRelation();
                 tagRelation.setTagId(Long.valueOf(tagId));
                 tagRelation.setTaskId(taskId);
@@ -1644,24 +1744,27 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 获取给定时间指定天数后的时间戳
+     *
      * @param time 时间毫秒数
      * @param days 天数
      */
-    private long afterDaysTime(Long time, int days){
+    private long afterDaysTime(Long time, int days) {
         return DateUtils.strToLong(DateUtils.getAfterDay(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), days, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss"));
     }
 
     /**
      * 获取给定时间的下个月的时间戳
+     *
      * @param time 给定的时间
      * @return
      */
-    private long afterMonthTime(Long time){
+    private long afterMonthTime(Long time) {
         return DateUtils.strToLong(DateUtils.getMonth(DateUtils.getDateStr(new Date(time), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", 1));
     }
 
     /**
      * 返回任务的视图信息
+     *
      * @param taskId 任务id
      * @return 任务视图信息
      */
@@ -1676,20 +1779,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /**
      * 获取一个任务的人员信息
      * 人员信息 参与者+执行者 的id
+     *
      * @param taskId 任务id
      * @return 参与者 + 执行者的id数组
      */
     @Override
-    public String[] getTaskJoinAndExecutorId(String taskId){
+    public String[] getTaskJoinAndExecutorId(String taskId) {
         Task one = taskMapper.selectOne(new QueryWrapper<Task>().eq("task_id", taskId).select("executor", "task_uids"));
-        if(one != null){
-            if(one.getTaskUIds() != null){
+        if (one != null) {
+            if (one.getTaskUIds() != null) {
                 StringBuilder userIds = new StringBuilder(one.getTaskUIds());
-                if(StringUtils.isNotEmpty(one.getExecutor())){
+                if (StringUtils.isNotEmpty(one.getExecutor())) {
                     userIds.append(",").append(one.getExecutor());
                 }
                 return userIds.toString().split(",");
-            } else if(one.getExecutor() != null){
+            } else if (one.getExecutor() != null) {
                 return new String[]{one.getExecutor()};
             }
         }
@@ -1698,6 +1802,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 获取绑定子任务信息
+     *
      * @param taskId 任务id
      * @return 子任务集合
      */
@@ -1709,39 +1814,46 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /**
      * 查询" 我的" 任务并且按照筛选条件进行筛选
      * 我的任务就是(当前用户 参与,创建 项目中和当前用户有关的所有任务)
+     *
      * @param isDone 是否完成
-     * @param order 根据 (最近创建时间,截止时间,优先级) 排序
-     * @param type 查询类型(我执行的,我创建的,我参与的)
+     * @param order  根据 (最近创建时间,截止时间,优先级) 排序
+     * @param type   查询类型(我执行的,我创建的,我参与的)
      * @return 任务集合
      */
     @Override
-    public List<Task> findMeAndOrder(Integer isDone, String order, String type) {
-        if(Constants.EXECUTE.equals(type)){
-            return taskMapper.selectExecuteAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+    public List<Task> findMeAndOrder(Integer isDone, String type,String order,Integer pageSize,Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Task> tasks=Lists.newArrayList();
+        if (Constants.EXECUTE.equals(type)) {
+             tasks = taskMapper.selectExecuteAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
+            return tasks;
         }
-        if(Constants.JOIN.equals(type)){
-            return taskMapper.selectJoinAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+        if (Constants.JOIN.equals(type)) {
+            tasks = taskMapper.selectJoinAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
         }
-        if(Constants.CREATED.equals(type)){
-            return taskMapper.selectCreatedAndOrder(isDone,order,ShiroAuthenticationManager.getUserId());
+         if (Constants.CREATED.equals(type)) {
+             tasks= taskMapper.selectCreatedAndOrder(isDone, ShiroAuthenticationManager.getUserId(),order);
         }
-        return null;
+        return tasks;
     }
 
     /**
      * 查询出我执行的任务并且按照项目排序
      * 每个项目对象下包括一个任务集合 项目:任务 一对多
+     *
      * @param isDone 是否完成 (筛选条件)
      * @return 项目集合
      */
     @Override
-    public List<Project> findExecuteOrderProject(Integer isDone) {
-        return taskMapper.selectExecuteOrderProject(isDone,ShiroAuthenticationManager.getUserId());
+    public List<Project> findExecuteOrderProject(Integer isDone,Integer pageNum,Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return taskMapper.selectExecuteOrderProject(isDone, ShiroAuthenticationManager.getUserId());
     }
 
     /**
      * 查询出一个任务基本信息
      * 用户任务简便信息的显示
+     *
      * @param taskId 任务id
      * @return 任务信息
      */
@@ -1752,6 +1864,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据id集合 查询出对应的任务信息 以及执行者信息
+     *
      * @param idList id集合
      * @return
      */
@@ -1762,6 +1875,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 把该子任务向上递归直到获取到顶级父任务的项目id
+     *
      * @param id 子任务id
      * @return 项目id
      */
@@ -1772,13 +1886,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 获取任务的列表看板模式
+     *
      * @param projectId 项目id
      * @return 任务数据
      */
     @Override
     public List<Task> getTaskPanel(String projectId) {
         String projectAllTask = projectService.findProjectAllTask(projectId);
-        if(StringUtils.isEmpty(projectAllTask)){
+        if (StringUtils.isEmpty(projectAllTask)) {
             return new ArrayList<>();
         }
         List<String> taskIds = Arrays.asList(projectAllTask.split(","));
@@ -1787,14 +1902,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     @Override
-    public List<GantChartVO> buildFatherSon(List<Task> tasks, List<Relation> relations){
+    public List<GantChartVO> buildFatherSon(List<Task> tasks, List<Relation> relations) {
         List<GantChartVO> gants = new ArrayList<>();
         int order = 2;
         int index = relations.size() + 2;
-        for (Relation r : relations){
+        for (Relation r : relations) {
             String rId = r.getRelationId();
             for (Task t : tasks) {
-                if(t.getTaskMenuId().equals(r.getRelationId())){
+                if (t.getTaskMenuId().equals(r.getRelationId())) {
                     //将任务信息循环映射进GantChartsVO
                     GantChartVO gantChartVO = new GantChartVO();
                     gantChartVO.setPublicId(t.getTaskId());
@@ -1826,18 +1941,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     }
 
     @Override
-    public void completionTaskInfo(Task task){
+    public void completionTaskInfo(Task task) {
         //todo 问题待解决
         //判断当前用户有没有对该任务点赞
 //        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
         //查询任务得赞数
 //        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
-        if(task.getTaskGroupId() != null &&  ! "undefined".equals(task.getTaskGroupId())){
+        if (task.getTaskGroupId() != null && !"undefined".equals(task.getTaskGroupId())) {
             //获取任务名称
             task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
         }
-        if(StringUtils.isNotEmpty(task.getTaskMenuId())){
-            task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id",task.getTaskMenuId()).select("relation_name")).getRelationName());
+        if (StringUtils.isNotEmpty(task.getTaskMenuId())) {
+            task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskMenuId()).select("relation_name")).getRelationName());
 
         }
         //判断当前用户有没有收藏该任务
@@ -1848,13 +1963,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         //查询出  该任务的日志信息
         task.setLogs(logService.initLog(task.getTaskId()));
         //任务的附件
-        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1).eq("file_del",0)));
+        task.setFileList(fileService.list(new QueryWrapper<File>().eq("public_id", task.getTaskId()).eq("public_lable", 1).eq("file_del", 0)));
         //设置关联信息
-        bindingService.setBindingInfo(task.getTaskId(),null,task,null,null);
+        bindingService.setBindingInfo(task.getTaskId(), null, task, null, null);
     }
 
     /**
      * 获取项目中的日历任务信息 (version2.0)
+     *
      * @param projectId 项目id
      * @return 项目日历的任务信息
      */
@@ -1865,6 +1981,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 获取和当前用户相关的任务信息 (version2.0)
+     *
      * @param userId 用户id
      * @return 任务信息
      */
@@ -1876,6 +1993,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     /**
      * 查询任务的 (id,projectid,子任务的taskId)
      * 注意此接口  仅用于移动列表下所有任务时提供数据
+     *
      * @param menuId 列表id
      * @return 任务集合信息
      */
@@ -1886,6 +2004,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 获取绑定该标签的任务信息
+     *
      * @param tagId 标签id
      * @return 任务集合
      */
@@ -1896,7 +2015,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     /**
      * 根据任务名称模糊搜索任务
-     * @param name 任务名称
+     *
+     * @param name      任务名称
      * @param projectId 项目id
      * @return 任务集合
      */
@@ -1916,7 +2036,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public String getExecutorByTaskId(String taskId) {
         LambdaQueryWrapper<Task> eq = new QueryWrapper<Task>().lambda().select(Task::getExecutor).eq(Task::getTaskId, taskId);
         Task one = this.getOne(eq);
-        if(ObjectsUtil.isNotEmpty(one)){
+        if (ObjectsUtil.isNotEmpty(one)) {
             return one.getExecutor();
         }
         return "";
@@ -1924,23 +2044,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
 
     @Override
     public void updateAll(String userId, String id) {
-        taskMapper.updateAll(userId,id);
+        taskMapper.updateAll(userId, id);
     }
 
     @Override
     public List<MemberViewResult> memberView(String projectId) {
-        if(!projectService.checkIsExist(projectId)){
+        if (!projectService.checkIsExist(projectId)) {
             log.error("project not exist ->>> [{}]", projectId);
             throw new ServiceException("项目不存在!");
         }
 
         List<MemberViewResult> groups = new ArrayList<>();
         List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
-        projectMembers.forEach(v->{
+        projectMembers.forEach(v -> {
             MemberViewResult result = new MemberViewResult();
             result.setUserId(v.getMemberId());
             result.setUserName(v.getMemberName());
-            result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(),v.getProjectId()));
+            result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(), v.getProjectId()));
             groups.add(result);
         });
 
@@ -1950,7 +2070,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     @Override
     public List<Task> getNotExecutorTaskByProjectId(String projectId) {
         ValidatedUtil.filterNullParam(projectId);
-        if(!projectService.checkIsExist(projectId)){
+        if (!projectService.checkIsExist(projectId)) {
             log.error("project not exist ->>> [{}]", projectId);
             throw new ServiceException("项目不存在!");
         }
@@ -1970,7 +2090,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         this.updateById(task);
 
         String content = TaskLogFunction.A34.getName() + progress + "%";
-        logService.saveLog(taskId,content,1);
+        logService.saveLog(taskId, content, 1);
     }
 
     @Override
@@ -1982,79 +2102,82 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         this.updateById(task);
 
         String content = TaskLogFunction.A35.getName() + workingHours + "小时";
-        logService.saveLog(taskId,content, 1);
+        logService.saveLog(taskId, content, 1);
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email： dengkaixin@art1001.com
-    * @Param: projectId 项目id startTime每月第一天 endTime 每月最后一天
-    * @return: List<Task>
-    * @Description: 根据项目id，开始时间，结束时间查询任务集合
-    * @create: 14:11 2020/4/26
-    */
+     * @Author: 邓凯欣
+     * @Email： dengkaixin@art1001.com
+     * @Param: projectId 项目id startTime每月第一天 endTime 每月最后一天
+     * @return: List<Task>
+     * @Description: 根据项目id，开始时间，结束时间查询任务集合
+     * @create: 14:11 2020/4/26
+     */
     @Override
     public List<Task> getTaskPanelByStartAndEndTime(String projectId, String startTime, String endTime) {
 
-        return taskMapper.getTaskPanelByStartAndEndTime(projectId,startTime,endTime);
+        return taskMapper.getTaskPanelByStartAndEndTime(projectId, startTime, endTime);
     }
 
     /**
      * 任务安排-查询任务列表
-     * @param memberId 成员id
+     *
+     * @param memberId  成员id
      * @param projectId 项目id
      * @return List<TaskDynamicVO>
      */
     @Override
-    public List<Task> getTaskInfoList(String memberId, String projectId,String classify) throws ParseException {
+    public List<Task> getTaskInfoList(String memberId, String projectId, String classify) throws ParseException {
 
         List<Task> taskInfoList = Lists.newArrayList();
         Long startTime;
         Long endTime;
         if (CLASSIFY_TODAY.equals(classify)) {
             startTime = DateUtils.getStartOfDay(new Date()).getTime();
-            endTime=DateUtils.getEndOfDay(new Date()).getTime();
-            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
+            endTime = DateUtils.getEndOfDay(new Date()).getTime();
+            taskInfoList = taskMapper.getTaskInfoListByTime(memberId, projectId, startTime, endTime);
         }
         if (CLASSIFY_WEEK.equals(classify)) {
             startTime = DateUtils.getFirstDayOfWeek(new Date()).getTime();
-            endTime=DateUtils.getLastDayOfWeek(new Date()).getTime();
-            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,startTime,endTime);
+            endTime = DateUtils.getLastDayOfWeek(new Date()).getTime();
+            taskInfoList = taskMapper.getTaskInfoListByTime(memberId, projectId, startTime, endTime);
         }
         if (CLASSIFY_MONTH.equals(classify)) {
             Calendar instance = Calendar.getInstance();
             instance.setTime(new Date());
-            int month = instance.get(Calendar.MONTH)+1;
+            int month = instance.get(Calendar.MONTH) + 1;
             int year = instance.get(Calendar.YEAR);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date start = sdf.parse(DateUtils.getFisrtDayOfMonth(year, month));
             Date end = sdf.parse(DateUtils.getLastDayOfMonth(year, month));
-            taskInfoList=taskMapper.getTaskInfoListByTime(memberId, projectId,start.getTime(),end.getTime());
+            taskInfoList = taskMapper.getTaskInfoListByTime(memberId, projectId, start.getTime(), end.getTime());
 
         }
         if (CLASSIFY_NOTALL.equals(classify)) {
-            taskInfoList=taskMapper.getUnfinishedTask(memberId,projectId);
+            taskInfoList = taskMapper.getUnfinishedTask(memberId, projectId);
         }
         if (CLASSIFY_ALL.equals(classify)) {
-            taskInfoList=taskMapper.getTaskInfoList(memberId, projectId);
+            taskInfoList = taskMapper.getTaskInfoList(memberId, projectId);
         }
-            return taskInfoList;
+        return taskInfoList;
 
     }
 
     /**
      * 根据项目id和用户id查询任务
+     *
      * @param memberId
      * @param projectId
      * @return
      */
     @Override
-    public List<Task> getTasksByProjectIdAndMemberId(String memberId,String projectId) {
-        return taskMapper.getUnfinishedTaskAndExecutor0(memberId,projectId);
+    public List<Task> getTasksByProjectIdAndMemberId(String memberId, String projectId) {
+        return taskMapper.getUnfinishedTaskAndExecutor0(memberId, projectId);
     }
 
     /**
      * 根据项目id获取执行者列表
+     *
      * @param projectId
      * @return
      */
@@ -2062,8 +2185,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
     public List<ExecutorVo> getExecutors(String projectId) {
         List<ExecutorVo> executors = taskMapper.getExecutors(projectId);
 
-        Optional.ofNullable(executors).ifPresent(es->{
-            es.forEach(e->{
+        Optional.ofNullable(executors).ifPresent(es -> {
+            es.forEach(e -> {
                 if (ZERO.equals(e.getExecutor())) {
                     e.setExecutorName("待认领");
                 }
@@ -2072,6 +2195,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper,Task> implements Tas
         return executors;
     }
 
+    @Override
+    public List<Task> findTaskIsOk(String projectId) {
+        return taskMapper.selectList(new QueryWrapper<Task>().eq("project_id",projectId).eq("task_status",1));
+    }
 
 
 }

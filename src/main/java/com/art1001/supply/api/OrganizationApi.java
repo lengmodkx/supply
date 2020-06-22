@@ -1,6 +1,7 @@
 package com.art1001.supply.api;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.Organization;
@@ -166,7 +167,6 @@ public class OrganizationApi {
         }
         return jsonObject;
     }
-
     /**
      * 更新企业
      * @param orgId 企业id
@@ -236,5 +236,21 @@ public class OrganizationApi {
         return Result.success();
     }
 
+    /**
+     *查询首页所需用户信息
+     * @param orgId
+     * @return
+     */
+    @GetMapping("/getUserInfo/{orgId}")
+    public JSONObject getHeadUserInfo(@PathVariable String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",userService.getHeadUserInfo(ShiroAuthenticationManager.getUserId(),orgId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
 }

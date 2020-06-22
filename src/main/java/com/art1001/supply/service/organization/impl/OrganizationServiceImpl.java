@@ -1,17 +1,23 @@
 package com.art1001.supply.service.organization.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.role.RoleUser;
+import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,11 +26,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * organizationServiceImpl
@@ -47,6 +57,12 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 	@Resource
 	private RoleUserService roleUserService;
+
+	@Resource
+	private TaskService taskService;
+
+	@Resource
+	private UserService userService;
 
 	/**
 	 * 查询分页organization数据
@@ -194,12 +210,21 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public List<Project> getProject(String orgId) {
+		//todo
 		if(!this.checkOrgIsExist(orgId)){
 			return new ArrayList<>();
 		}
-
-		String userId = ShiroAuthenticationManager.getUserId();
-		return organizationMapper.selectProject(orgId,userId);
+		List<Project> myJoinProject = organizationMapper.selectProject(orgId, ShiroAuthenticationManager.getUserId());
+		Optional.ofNullable(myJoinProject).ifPresent(projects -> {
+			projects.stream().forEach(r->{
+				List<Task> taskByProject = taskService.findTaskByProject(r.getProjectId());
+				List<Task> collect = taskService.findTaskIsOk(r.getProjectId());
+				DecimalFormat df = new DecimalFormat("0.00");//格式化小数，不足的补0
+				float v = ((float) collect.size() / taskByProject.size()) * 100;
+				r.setProjectSchedule((int) v);
+			});
+		});
+		return myJoinProject;
 	}
 
 	@Override
@@ -217,8 +242,5 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 		organizationMemberService.update(one, new QueryWrapper<OrganizationMember>().lambda().eq(OrganizationMember::getMemberId, userId).eq(OrganizationMember::getOrganizationId,one.getOrganizationId()));
 	}
-
-
-
 
 }

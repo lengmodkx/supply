@@ -76,6 +76,8 @@ public class PushAspect extends BaseController {
     private final static String PROJECT_ID = "projectId";
     private final static String NAME = "name";
     private final static String SEPARATOR = ",";
+    private final static String MSG_ID="msgId";
+    private final static String PUBLICTYPE="publicType";
 
     /**
      * 推送的切点
@@ -109,13 +111,13 @@ public class PushAspect extends BaseController {
         } else if(push.type() == 3){
             noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
             Log log = this.saveLog(object, push);
-            if(Constants.TASK.equals(object.getString("publicType"))){
+            if(Constants.TASK.equals(object.getString(PUBLICTYPE))){
                 String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
                 if(ids != null && ids.length > 0){
                     userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent(), null);
                 }
             }
-            if(Constants.PROJECT.equals(object.getString("publicType"))){
+            if(Constants.PROJECT.equals(object.getString(PUBLICTYPE))){
                 List<String> ids = projectMemberService.getProjectAllMemberId(object.getString("id"));
                 if(!CollectionUtils.isEmpty(ids)){
                     String[] arrIds = new String[ids.size()];
@@ -147,10 +149,20 @@ public class PushAspect extends BaseController {
     private Log saveLog(JSONObject object,Push push){
         Log systemLog = new Log();
         systemLog.setPublicId(object.getString(ID));
-        systemLog.setProjectId(object.getString(PROJECT_ID));
+        systemLog.setProjectId(object.getString(MSG_ID));
         systemLog.setCreateTime(System.currentTimeMillis());
         String name = object.getString(NAME) != null ? object.getString(NAME):"";
-
+        if(Constants.TASK.equals(object.getString(PUBLICTYPE))){
+            systemLog.setLogFlag(1);
+        }else if(Constants.FILE.equals(object.getString(PUBLICTYPE))){
+            systemLog.setLogFlag(2);
+        }
+        else if(Constants.SHARE.equals(object.getString(PUBLICTYPE))){
+            systemLog.setLogFlag(3);
+        }
+        else if(Constants.SCHEDULE.equals(object.getString(PUBLICTYPE))){
+            systemLog.setLogFlag(4);
+        }
         UserInfo userInfo = (UserInfo) redisUtil.getObj(Constants.USER_INFO+ShiroAuthenticationManager.getUserId());
         systemLog.setContent(userInfo.getUserName() + " " + push.value().getName()+" "+ name);
         systemLog.setMemberId(ShiroAuthenticationManager.getUserId());

@@ -164,6 +164,11 @@ Task extends Model<Task> {
 	private String taskGroupId;
 
 	/**
+	 * 任务分组id
+	 */
+	@TableField(exist = false)
+	private String groupId;
+	/**
 	 * 任务状态
 	 */
 	private Boolean taskStatus;

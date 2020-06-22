@@ -502,5 +502,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         return userMapper.selectAll();
     }
 
+    @Override
+    public UserVO getHeadUserInfo(String userId,String orgId) {
+        return userMapper.getHeadUserInfo(userId,orgId);
+    }
+
 
 }
