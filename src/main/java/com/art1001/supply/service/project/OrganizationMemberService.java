@@ -3,8 +3,11 @@ package com.art1001.supply.service.project;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -147,4 +150,41 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 */
     int findOrgMemberIsExist(String orgId, String memberId);
 
+	List<OrganizationMember> getMembersAndPartment(String orgId,Integer flag);
+
+	List<PartmentMember> getOrgPartment(String orgId);
+
+	/**
+	 * 根据部门成员分类
+	 * @param partmentId
+	 * @param memberLebel
+	 * @param flag
+	 * @param orgId
+	 * @return
+	 */
+	List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag,String orgId);
+
+	/**
+	 * 根据电话号或邮箱邀请企业成员
+	 * @param orgId
+	 * @param phone
+	 * @param memberEmail
+	 * @return
+	 */
+    List<String> inviteOrgMemberByPhone(String orgId, List<String> phone,List<String>memberEmail);
+
+	/**
+	 * 根据部门id获取部门成员
+	 * @param partmentId
+	 * @return
+	 */
+	List<OrganizationMember> getMemberByPartmentId(String partmentId);
+
+	/**
+	 * 根据用户id及企业id查询企业成员
+	 * @param userId
+	 * @param orgId
+	 * @return
+	 */
+	OrganizationMember findOrgMembersByUserId(String userId, String orgId);
 }

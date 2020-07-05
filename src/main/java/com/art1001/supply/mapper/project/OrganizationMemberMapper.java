@@ -104,4 +104,5 @@ public interface OrganizationMemberMapper extends BaseMapper<OrganizationMember>
 	 */
 	@Select("select count(0) from prm_organization_member where organization_id = #{orgId} and member_id = #{memberId}")
 	int findMemberIsExist(String orgId, String memberId);
+
 }

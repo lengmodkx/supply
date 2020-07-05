@@ -44,7 +44,7 @@ public class OrganizationGroupMemberApi {
      * @param memberId 成员id
      * @return 结果
      */
-    @RequiresPermissions("create:group:member")
+//    @RequiresPermissions("create:group:member")
     @PostMapping("/{groupId}")
     public JSONObject addGroupMember(@PathVariable String groupId, @RequestParam String memberId){
         JSONObject jsonObject = new JSONObject();

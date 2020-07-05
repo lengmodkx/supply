@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.partment;
 
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

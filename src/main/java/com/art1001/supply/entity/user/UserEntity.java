@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.netty.handler.codec.compression.FastLzFrameEncoder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-/**
+/***
  * 
  * @ClassName: UserEntity
  * @Description: 用户账户信息
@@ -34,97 +35,109 @@ public class UserEntity extends Model<UserEntity> {
 	@TableId(value = "user_id",type = IdType.UUID)
 	public String userId;
 
-	/*
+	/**
 	 * 用户真实姓名
 	 */
 	private String userName;
 
-	/*
+	/**
 	 * 这里账户名称统一使用邮箱/手机号
 	 */
 	private String accountName;
 
-	/**
+	/***
 	 * 用户地址
 	 */
 	private String address;
 
-	/*
+	/**
 	 * 密码
 	 */
 	@JsonIgnore
 	private String password;
-	/*
+	/**
 	 * 逻辑删除状态：0：正常；1：删除
 	 */
 	@JsonIgnore
 	private Integer deleteStatus;
-	/*
+	/**
 	 * 是否锁定：0：正常；1：锁定
 	 */
 	@JsonIgnore
 	private Integer locked;
-	/*
+	/**
 	 * 描述
 	 */
 	@JsonIgnore
 	private String description;
-	/*
+	/**
 	 * 加密盐
 	 */
 	@JsonIgnore
 	private String credentialsSalt;
-	/*
+	/**
 	 * 这里使用accountName
 	 */
 	@JsonIgnore
 	private String creatorName;
-	/*
+	/**
 	 * 创建时间
 	 */
 	private Date createTime;
-	/*
+	/**
 	 * 更新时间
 	 */
 	private Date updateTime;
 
-	/**
+	/***
 	 * 用户头像
 	 */
 	private String image;
 
-	/**
+	/***
 	 * 用户默认头像
 	 */
 	private String defaultImage;
 
-	/**
+	/***
 	 * 用户职位
 	 */
 	private String job;
+
+	/**
+	 * 部门名称
+	 */
+	@TableField(exist = false)
+	private String partmentName;
+
+	/**
+	 * 角色名
+	 */
+	@TableField(exist = false)
+	private Integer role;
 
 	/**
 	 * 用户性别
 	 */
 	private Integer sex;
 
-	/**
+	/***
 	 * 用户出生日期
 	 */
 	@JsonFormat(pattern="yyyy-MM-dd",timezone="GMT+8")
 	private Date birthday;
 
-	/**
+	/***
 	 * 用户手机号
 	 */
 	private String telephone;
 
-	/**
+	/***
 	 * 用户邮箱
 	 */
 	private String email;
 
-	/**
+	/***
 	 * 用户vip类型
 	 * 0.普通会员
 	 * 1.专业版会员
@@ -149,7 +162,7 @@ public class UserEntity extends Model<UserEntity> {
 
 	@TableField(exist = false)
 	private Boolean visible = false;
-	/**
+	/***
 	 * 用户默认所在的企业
 	 */
 	@TableField(exist = false)

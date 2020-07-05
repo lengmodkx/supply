@@ -20,6 +20,7 @@
 		<result column="func" property="func" jdbcType="VARCHAR" />
 		<result column="start_time" property="startTime" />
 		<result column="end_time" property="endTime" />
+		<result column="project_schedule" property="projectSchedule" jdbcType="VARCHAR"/>
 
 		<!--<collection property="projectMemberList" column="project_id" javaType="java.util.ArrayList"-->
 					 <!--select="com.art1001.supply.mapper.project.ProjectMemberMapper.findByProjectId"/>-->
@@ -74,7 +75,8 @@
 		update_time,
 		is_public,
 		project_remind,
-		func
+		func,
+		project_schedule
 	</sql>
 
 	<sql id="whereStatement">
@@ -131,8 +133,8 @@
 
 		update prm_project
 		<set>
-			<if test="projectId != null and projectId != ''">
-				project_id = #{projectId},
+			<if test="newProjectId != null and newProjectId != ''">
+				project_id = #{newProjectId},
 			</if>
 			<if test="projectName != null and projectName != ''">
 				project_name = #{projectName},
@@ -161,12 +163,6 @@
 			<if test="createTime != null ">
 				create_time = #{createTime},
 			</if>
-			<if test="startTime != null ">
-				start_time = #{startTime},
-			</if>
-			<if test="endTime != null ">
-				end_time = #{end_time},
-			</if>
 			<if test="updateTime != null ">
 				update_time = #{updateTime},
 			</if>
@@ -176,6 +172,9 @@
 
 			<if test="projectRemind != null ">
 				project_remind = #{projectRemind},
+			</if>
+			<if test="projectSchedule != null ">
+				project_schedule = #{projectSchedule},
 			</if>
 		</set>
 

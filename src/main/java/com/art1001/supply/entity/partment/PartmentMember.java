@@ -1,10 +1,12 @@
 package com.art1001.supply.entity.partment;
 
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -62,6 +64,14 @@ private static final long serialVersionUID=1L;
      */
     private Long updateTime;
 
+    @TableField(exist = false)
+    private String parentId;
+
+    /**
+     * 企业名称
+     */
+    @TableField(exist = false)
+    private String organizationName;
     /**
      * 成员的基本信息
      */
@@ -70,5 +80,8 @@ private static final long serialVersionUID=1L;
 
     @TableField(value = "member_type")
     private String memberType;
+
+    @TableField(exist = false)
+    private List<OrganizationMember> organizationMembers;
 
 }

@@ -1,17 +1,20 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.InvitationLink;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.organization.InvitationLinkService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 /**
  * @ClassName InvitationApi
@@ -21,11 +24,14 @@ import java.io.IOException;
  */
 @Slf4j
 @RestController
-//@RequestMapping("/invite")
+@RequestMapping("/invite")
 public class InvitationApi {
 
     @Resource
     private InvitationLinkService invitationLinkService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @GetMapping("/{hash}")
     public String redirectUrl(HttpServletResponse response, @PathVariable String hash) throws IOException {
@@ -37,11 +43,24 @@ public class InvitationApi {
         return "";
     }
 
-//    @GetMapping("/{hash}")
-//        public String setReferer(HttpServletRequest request,HttpServletResponse response,@PathVariable String hash){
-//        InvitationLink invitationLink = invitationLinkService.getRedrectUrl(hash);
-//        if (invitationLink == null) {
-//            return "链接已过期，请联系邀请人重新发送";
-//        }
-//    }
+    /**
+     * 设置保存时间
+     * @param longUrl
+     * @return
+     */
+    @GetMapping("/saveTime")
+    public JSONObject saveTime(String longUrl){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            LocalDate localDate = LocalDate.now().plusDays(1);
+            long time = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            redisUtil.set("saveTime:"+ ShiroAuthenticationManager.getUserId(),longUrl,time);
+            jsonObject.put("result",1);
+            jsonObject.put("data",localDate+"");
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
 }

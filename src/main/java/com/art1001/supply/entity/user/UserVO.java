@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -38,4 +40,5 @@ public class UserVO {
      * 部门
      */
     private String partmemt;
+
 }

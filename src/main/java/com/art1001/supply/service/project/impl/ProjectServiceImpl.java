@@ -36,6 +36,7 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
@@ -118,6 +119,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private ProjectSimpleInfoService projectSimpleInfoService;
 
+    @Resource
+    private UserService userService;
+
     private static final String ZERO = "0";
 
     /**
@@ -139,8 +143,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public Project findProjectByProjectId(String projectId) {
-        return Optional.ofNullable(projectMapper.findProjectByProjectId(projectId))
-                .orElseThrow(() -> new ServiceException("项目不存在"));
+        Project project1 = projectMapper.findProjectByProjectId(projectId);
+        Optional.ofNullable(project1).ifPresent(project -> {
+            UserEntity byId = userService.findById(project.getMemberId());
+            project.setImage(byId.getImage());
+            project.setMemberName(byId.getUserName());
+        });
+        return project1;
     }
 
     /**
@@ -158,7 +167,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public void updateProject(Project project) {
-        projectMapper.updateById(project);
+//        projectMapper.updateById(project);
+        projectMapper.updateProject(project);
     }
 
     /**
@@ -431,24 +441,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @return
      */
     @Override
-    public List<Project> seachByName(String projectName, String condition,String orgId) {
+    public List<Project> seachByName(String projectName, String condition, String orgId) {
         if (Constants.ALL.equals(condition)) {
-            return projectMapper.selectAllByName(projectName, ShiroAuthenticationManager.getUserId(),orgId);
+            return projectMapper.selectAllByName(projectName, ShiroAuthenticationManager.getUserId(), orgId);
         }
         if (Constants.TRASH.equals(condition)) {
-            return projectMapper.selectTrashByName(projectName,ShiroAuthenticationManager.getUserId(),orgId);
+            return projectMapper.selectTrashByName(projectName, ShiroAuthenticationManager.getUserId(), orgId);
         }
         if (Constants.COMPLETE.equals(condition)) {
-            return projectMapper.selectCompleteByName(projectName,ShiroAuthenticationManager.getUserId(),orgId);
+            return projectMapper.selectCompleteByName(projectName, ShiroAuthenticationManager.getUserId(), orgId);
         }
         if (Constants.STAR.equals(condition)) {
-            return projectMapper.selectStarByName(projectName, ShiroAuthenticationManager.getUserId(),orgId);
+            return projectMapper.selectStarByName(projectName, ShiroAuthenticationManager.getUserId(), orgId);
         }
         if (Constants.CREATED.equals(condition)) {
-            return projectMapper.selectCreatedByName(ShiroAuthenticationManager.getUserId(), projectName,orgId);
+            return projectMapper.selectCreatedByName(ShiroAuthenticationManager.getUserId(), projectName, orgId);
         }
         if (Constants.JOIN.equals(condition)) {
-            return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(), projectName,orgId);
+            return projectMapper.selectJoin(ShiroAuthenticationManager.getUserId(), projectName, orgId);
         }
         return new ArrayList<>();
     }
@@ -571,9 +581,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         OrganizationMember memberInfo = new OrganizationMember();
 
         try {
-
             memberInfo.setOrganizationId(orgId);
-            if(StringUtils.isNotEmpty(userName)){
+            if (StringUtils.isNotEmpty(userName)) {
                 memberInfo.setUserName(userName);
             }
             if (StringUtils.isNotEmpty(birthday)) {
@@ -694,6 +703,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     /**
      * 查询企业下该成员所有的项目信息
+     *
      * @param memberId
      * @param organizationId
      * @return

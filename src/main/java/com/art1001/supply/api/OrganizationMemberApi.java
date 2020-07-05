@@ -7,6 +7,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
@@ -14,6 +15,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.InvitationLinkService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.role.RoleService;
@@ -24,7 +26,9 @@ import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import io.netty.handler.codec.compression.FastLzFrameEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.misc.Hash;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +71,9 @@ public class OrganizationMemberApi {
     @Resource
     private InvitationLinkService invitationLinkService;
 
+    @Resource
+    private PartmentService partmentService;
+
     /**
      * 未分配部门的员工
      */
@@ -90,6 +97,15 @@ public class OrganizationMemberApi {
      */
     private static final int IS_OTHER = 5;
 
+    /**
+     * 外部成员
+     */
+    private static final int EXTERNAL=1;
+
+    /**
+     * 内部成员
+     */
+    private static final int INTERNAL = 0;
 
     /**
      * 给企业添加员工/给成员添加部门
@@ -111,6 +127,20 @@ public class OrganizationMemberApi {
             organizationMember.setPartmentId(parmentId);
             organizationMember.setMemberId(memberId);
             organizationMember.setOther(1);
+            organizationMember.setCreateTime(System.currentTimeMillis());
+            organizationMember.setUpdateTime(System.currentTimeMillis());
+            UserEntity byId = userService.findById(memberId);
+            if (byId!=null) {
+                organizationMember.setUserName(byId.getUserName());
+                organizationMember.setMemberEmail(byId.getEmail());
+                if (byId.getBirthday()!=null) {
+                    organizationMember.setBirthday(byId.getBirthday()+"");
+                }
+                organizationMember.setPhone(byId.getAccountName());
+                organizationMember.setJob(byId.getJob());
+                organizationMember.setImage(byId.getImage());
+                organizationMember.setAddress(byId.getAddress());
+            }
             if (member == null) {
                 //新增成员的部门id统一为0
                 organizationMember.setPartmentId("0");
@@ -120,15 +150,8 @@ public class OrganizationMemberApi {
                 jsonObject.put("msg", "添加成功");
                 jsonObject.put("data", organizationMemberService.findOrgByMemberId(memberId, orgId));
             } else {
-               /* if(member.getMemberLock()==1){
-                    organizationMember.setId(member.getId());
-                    organizationMemberService.updateOrganizationMember(organizationMember);
-                    jsonObject.put("result",1);
-                    jsonObject.put("msg","添加成功");
-                }else{*/
                 jsonObject.put("result", 0);
                 jsonObject.put("msg", "邀请失败，该成员已在企业中");
-                //}
             }
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -223,18 +246,29 @@ public class OrganizationMemberApi {
 
     //搜索企业成员
     @GetMapping("/{phone}/searchOrgUser")
-    public JSONObject searchMembers(@PathVariable String phone, String orgId) {
+    public JSONObject searchMembers(@PathVariable String phone,
+                                    @RequestParam(value = "orgId") String orgId,
+                                    @RequestParam(value = "projectId",required = false) String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-
             List<UserEntity> users = userService.getUserByOrgId(phone, orgId);
-
             if (!users.isEmpty()) {
                 List<OrganizationMember> memberList = new ArrayList<>();
                 for (UserEntity u : users) {
-                    OrganizationMember organizationMember = new OrganizationMember();
+                    OrganizationMember organizationMember=organizationMemberService.findOrgMembersByUserId(u.getUserId(),orgId);
+                    if (StringUtils.isNotEmpty(projectId)) {
+                        int memberIsExist = projectMemberService.findMemberIsExist(projectId, u.userId);
+                        if (memberIsExist==0) {
+                            u.setExistId(0);
+                        }else{
+                            u.setExistId(1);
+                        }
+                    }
                     organizationMember.setUserEntity(u);
+                    Partment partment = partmentService.findPartmentByPartmentId(organizationMember.getPartmentId());
+                    if (partment!=null) {
+                        organizationMember.setDeptName(partment.getPartmentName());
+                    }
                     memberList.add(organizationMember);
                 }
                 jsonObject.put("data", memberList);
@@ -244,10 +278,7 @@ public class OrganizationMemberApi {
                 jsonObject.put("msg", "搜索失败");
                 jsonObject.put("result", 0);
             }
-
-
             return jsonObject;
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new SystemException("系统异常,获取用户信息失败!", e);
@@ -440,6 +471,85 @@ public class OrganizationMemberApi {
         }
     }
 
+    /**
+     * 成员和部门功能接口
+     * @param orgId
+     * @param flag  1全部成员 0外部成员
+     * @return
+     */
+    @GetMapping("/{orgId}/getOrgPartment")
+    public JSONObject getOrgPartment(@PathVariable(value = "orgId") String orgId,
+                                     @RequestParam(value = "flag",defaultValue = "0") Integer flag){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",new JSONObject().fluentPut("members",organizationMemberService.getMembersAndPartment(orgId,flag)).fluentPut("partment",organizationMemberService.getOrgPartment(orgId)));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
+    /**
+     * 根据部门成员分类
+     * @param partmentId
+     * @param memberLebel 成员身份 1:成员 2:拥有者 3:管理员
+     * @param flag 是否是企业内员工 1全部成员 0外部成员
+     * @return
+     */
+    @GetMapping("/getOrgPartmentByMemberLebel")
+    public JSONObject getOrgPartmentByMemberLebel(@RequestParam(value = "partmentId",required = false) String partmentId,
+                                                  @RequestParam(value ="memberLebel" ,required = false)String memberLebel,
+                                                  @RequestParam(value = "flag",defaultValue = "1") String flag,
+                                                  @RequestParam(value = "orgId") String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",organizationMemberService.getOrgPartmentByMemberLebel(partmentId,memberLebel,flag,orgId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
+    /**
+     * 检查被邀请人电话号是否注册过账号
+     * @param phone 电话号列联表
+     * @param memberEmail 邮箱列表
+     * @return
+     */
+    @GetMapping("/checkMemberIsRegister/{orgId}")
+    public JSONObject checkMemberIsRegister(@PathVariable(value = "orgId") String orgId,
+                                            @RequestParam(value = "phone",required = false) String phone,
+                                            @RequestParam(value = "memberEmail",required = false)String memberEmail){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",userService.checkMemberIsRegister(phone,memberEmail,orgId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 根据电话号/邮箱邀请企业成员
+     * @param orgId
+     * @param phone 电话号列联表
+     * @param memberEmail 邮箱列表
+     * @return
+     */
+    @GetMapping("/inviteOrgMemberByPhone/{orgId}")
+    public JSONObject inviteOrgMemberByPhone(@PathVariable(value = "orgId") String orgId,
+                                             @RequestParam(value = "phone",required = false) List<String> phone,
+                                             @RequestParam(value = "memberEmail",required = false)List<String>memberEmail){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",organizationMemberService.inviteOrgMemberByPhone(orgId,phone,memberEmail));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 }

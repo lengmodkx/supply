@@ -21,6 +21,23 @@
 		description
 	</sql>
 
+	<sql id="userAttributes2">
+		u.user_id,
+		u.user_name,
+		u.sex,
+		u.birthday,
+		u.telephone,
+		u.email,
+		u.image,
+		u.address,
+		u.job,
+		u.default_image,
+		u.account_name,
+		u.description,
+		p.partment_name as partmentName,
+		pm.member_label as role
+	</sql>
+
 	<sql id="join">
 		user_id,
 		user_name,

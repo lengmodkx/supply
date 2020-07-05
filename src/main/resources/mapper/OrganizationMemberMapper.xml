@@ -238,8 +238,8 @@
 			<if test="memberLock != null ">
 				member_lock = #{memberLock},
 			</if>
-			<if test="memberLock != null ">
-				member_lock = #{memberLock},
+			<if test="memberType != null ">
+				member_type = #{memberType},
 			</if>
 		</set>
 

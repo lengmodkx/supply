@@ -6,6 +6,7 @@ import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
@@ -116,7 +117,6 @@ public class ProjectApi extends BaseController {
     private ProjectSimpleInfoService projectSimpleInfoService;
 
 
-
     /**
      * 创建项目
      *
@@ -132,7 +132,8 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(value = "projectDes") String projectDes,
                                     @RequestParam(value = "startTime") Long startTime,
                                     @RequestParam(required = false) @Length(max = 32, message = "parentId参数不正确!") String parentId,
-                                    @RequestParam(value = "endTime") Long endTime) {
+                                    @RequestParam(value = "endTime") Long endTime,
+                                    @RequestParam(value = "templateId", required = false) String templateId) {
         JSONObject object = new JSONObject();
         if (endTime < startTime) {
             object.put("result", 1);
@@ -190,6 +191,9 @@ public class ProjectApi extends BaseController {
      * @param projectCover  项目封面
      * @param projectDel    是否移入回收站
      * @param projectStatus 是否归档
+     * @param newProjectId 修改的项目id
+     * @param projectSchedule 项目进度 默认0
+     * @param updateSchedule 自动更新项目进度 0不自动更新 1自动更新 默认0
      * @return json
      */
     @PutMapping("/{projectId}")
@@ -201,11 +205,15 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(value = "projectDel", required = false) Integer projectDel,
                                     @RequestParam(value = "projectStatus", required = false) Integer projectStatus,
                                     @RequestParam(value = "startTime", required = false) Long startTime,
-                                    @RequestParam(value = "endTime", required = false) Long endTime
+                                    @RequestParam(value = "endTime", required = false) Long endTime,
+                                    @RequestParam(value = "newProjectId", required = false) String newProjectId,
+                                    @RequestParam(value = "projectSchedule",defaultValue = "0",required = false) Integer projectSchedule,
+                                    @RequestParam(value = "updateSchedule",defaultValue = "0",required = false)Integer updateSchedule
     ) {
         JSONObject object = new JSONObject();
         try {
             Project project = new Project();
+            project.setProjectId(projectId);
             project.setProjectId(projectId);
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
@@ -219,7 +227,16 @@ public class ProjectApi extends BaseController {
             project.setProjectDel(projectDel);
             project.setProjectStatus(projectStatus);
             project.setUpdateTime(System.currentTimeMillis());
+            if (StringUtils.isNotEmpty(newProjectId)) {
+                project.setNewProjectId(newProjectId);
+            }
+            if (Constants.ONE.equals(updateSchedule)) {
+                project.setProjectSchedule(organizationService.automaticUpdateProjectSchedule(project));
+            }else {
+                project.setProjectSchedule(projectSchedule);
+            }
             projectService.updateProject(project);
+            project.setProjectId(newProjectId);
             object.put("result", 1);
             object.put("msg", "更新成功");
             object.put("data", project);
@@ -340,7 +357,7 @@ public class ProjectApi extends BaseController {
             List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
             redisUtil.remove("perms:" + userId);
             redisUtil.lset("perms:" + userId, keyList);
-            redisUtil.set("userId:"+userId,projectId);
+            redisUtil.set("userId:" + userId, projectId);
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
             Relation relation = new Relation();
@@ -359,7 +376,6 @@ public class ProjectApi extends BaseController {
         }
         return object;
     }
-
 
 
     /**
@@ -556,15 +572,15 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param:
-    * @return:
-    * @Description: 根据成员名称或成员电话模糊查询项目成员
-    * @create: 16:12 2020/5/15
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param:
+     * @return:
+     * @Description: 根据成员名称或成员电话模糊查询项目成员
+     * @create: 16:12 2020/5/15
+     */
     @GetMapping("/searchMemberByName/{projectId}")
-    public JSONObject searchMemberByName(@RequestParam(required = false) String condition,@PathVariable String projectId){
+    public JSONObject searchMemberByName(@RequestParam(required = false) String condition, @PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
@@ -1011,7 +1027,6 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常，请稍后再试");
         }
     }
-
 
 
 }

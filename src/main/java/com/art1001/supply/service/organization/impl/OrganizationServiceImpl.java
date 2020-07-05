@@ -217,14 +217,23 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		List<Project> myJoinProject = organizationMapper.selectProject(orgId, ShiroAuthenticationManager.getUserId());
 		Optional.ofNullable(myJoinProject).ifPresent(projects -> {
 			projects.stream().forEach(r->{
-				List<Task> taskByProject = taskService.findTaskByProject(r.getProjectId());
-				List<Task> collect = taskService.findTaskIsOk(r.getProjectId());
-				DecimalFormat df = new DecimalFormat("0.00");//格式化小数，不足的补0
-				float v = ((float) collect.size() / taskByProject.size()) * 100;
-				r.setProjectSchedule((int) v);
+				r.setProjectSchedule(automaticUpdateProjectSchedule(r));
 			});
 		});
 		return myJoinProject;
+	}
+
+	/**
+	 * 自动更新项目进度
+	 * @param r
+	 */
+	@Override
+	public Integer automaticUpdateProjectSchedule(Project r) {
+		List<Task> taskByProject = taskService.findTaskByProject(r.getProjectId());
+		List<Task> collect = taskService.findTaskIsOk(r.getProjectId());
+		DecimalFormat df = new DecimalFormat("0.00");//格式化小数，不足的补0
+		float v = ((float) collect.size() / taskByProject.size()) * 100;
+		return  (int) v;
 	}
 
 	@Override

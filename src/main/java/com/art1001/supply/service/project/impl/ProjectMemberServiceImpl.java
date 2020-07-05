@@ -169,8 +169,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
         try {
             OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
-
-
             if (memberInfo!=null) {
                 if (memberInfo.getEntryTime() != null) {
                     memberInfo.setEntryTime(memberInfo.getEntryTime());
@@ -178,8 +176,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
                     memberInfo.setBirthday(memberInfo.getBirthday());
                 }
-
-
                 PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
                 if (partmentMember != null) {
                     memberInfo.setDeptName(partmentMember.getPartmentName());

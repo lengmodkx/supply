@@ -130,4 +130,24 @@ public interface UserService extends IService<UserEntity> {
 
 	UserVO getHeadUserInfo(String userId,String orgId);
 
+	/**
+	 * 检查电话号是否注册
+	 * @param phone
+	 * @return
+	 */
+	String checkMemberIsRegister(String phone,String memberEmail,String orgId);
+
+	/**
+	 * 根据电话号查询用户
+	 * @param phone
+	 * @return
+	 */
+	UserEntity selectUserByPhone(String phone);
+
+	/**
+	 * 根据邮箱查询用户
+	 * @param email
+	 * @return
+	 */
+	UserEntity selectUserByEmail(String email);
 }

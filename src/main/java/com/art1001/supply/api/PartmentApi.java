@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-    @RequestMapping("partments")
+@RequestMapping("partments")
 public class PartmentApi {
 
     @Resource
@@ -58,6 +58,8 @@ public class PartmentApi {
             partment.setOrganizationId(orgId);
             partment.setPartmentName(partmentName);
             partment.setPartmentLogo(partmentLogo);
+            partment.setCreateTime(System.currentTimeMillis());
+            partment.setUpdateTime(System.currentTimeMillis());
             partmentService.savePartment(partment);
             jsonObject.put("data", partment);
             jsonObject.put("result", 1);

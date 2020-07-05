@@ -8,7 +8,9 @@ import java.lang.annotation.*;
  * @Author ddm
  **/
 @Documented
+//用来修饰注解，是注解的注解，称为元注解
 @Retention(RetentionPolicy.RUNTIME)
+//在执行对象的类具有给定类型的注释的情况下，将匹配限制为连接点
 @Target(ElementType.METHOD)
 public @interface AutomationRule {
 

@@ -62,9 +62,12 @@ public class AutomationRuleAspect {
     @Transactional(rollbackFor = Exception.class)
     @AfterReturning(value = "test()")
     public void before(JoinPoint joinPoint) {
+        //获取切点的方法签名
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        //方法注解
         com.art1001.supply.annotation.AutomationRule annotation = methodSignature.getMethod().getAnnotation(com.art1001.supply.annotation.AutomationRule.class);
         AutomationAnnotationValue automationAnnotationValue = genValue(methodSignature, joinPoint);
+        //检测当前接口是否是该条规则的启动条件 如果是返回 1 否则返回0
         Integer result = automationRuleTriggerCheck.checkAutomationCanStartup(automationAnnotationValue, annotation.trigger());
         if(result >= 1){
             Task task = taskService.getById(automationAnnotationValue.getTaskId());
@@ -74,14 +77,18 @@ public class AutomationRuleAspect {
     }
 
     private AutomationAnnotationValue genValue(MethodSignature methodSignature, JoinPoint joinPoint){
+        //获取方法上注解的值
         com.art1001.supply.annotation.AutomationRule annotation = methodSignature.getMethod().getAnnotation(com.art1001.supply.annotation.AutomationRule.class);
+        //获取方法参数定义名字
         String[] paramNames = nameDiscoverer.getParameterNames(methodSignature.getMethod());
         Expression expression = parser.parseExpression(annotation.value());
+        //此上下文基于反射来解析属性，方法和字段，使用所有适用策略的标准实现。
         EvaluationContext context = new StandardEvaluationContext();
         Object[] args = joinPoint.getArgs();
         if(paramNames != null && paramNames.length > 0){
             for(int i = 0 ; i < args.length ; i++) {
                 if(StringUtils.isNotEmpty(paramNames[i])){
+                    //在此评估上下文中将命名变量设置为指定值
                     context.setVariable(paramNames[i], args[i]);
                 } else {
                     context.setVariable(null, args[i]);

@@ -38,6 +38,12 @@ public class Project extends Model<Project> {
      * 用户id，项目创建人
      */
     private String memberId;
+
+    /**
+     * 创建人头像
+     */
+    @TableField(exist = false)
+    private String image;
     /**
      * 项目开始时间
      */
@@ -154,10 +160,12 @@ public class Project extends Model<Project> {
     @TableField(exist = false)
     private Integer isAdd;
 
+    @TableField(exist = false)
+    private String newProjectId;
+
     /**
      * 项目进度
      */
-    @TableField(exist = false)
     private Integer projectSchedule;
 
     @Override

@@ -31,17 +31,19 @@
     <!-- 获取群组下的所有成员信息 -->
     <select id="selectGroupMembes" resultType="com.art1001.supply.entity.organization.OrganizationGroupMember">
         SELECT
-            u.user_id AS userId,
-            u.user_name AS userName,
-            u.image AS image
+        u.user_id AS userId,
+        u.user_name AS userName,
+        u.image AS image
         FROM
-            prm_organization_group_member AS ogm
-            LEFT JOIN prm_organization_group AS og ON ogm.group_id = og.group_id
-            LEFT JOIN tb_user AS u ON ogm.member_id = u.user_id
+        prm_organization_group_member AS ogm
+        JOIN prm_organization_group AS og
+        JOIN tb_user AS u
+        ON ogm.group_id = og.group_id
+        AND ogm.member_id = u.user_id
         WHERE
-            ogm.group_id = #{groupId}
+        ogm.group_id = #{groupId}
         ORDER BY
-            ogm.create_time
+        ogm.create_time
     </select>
 
 </mapper>

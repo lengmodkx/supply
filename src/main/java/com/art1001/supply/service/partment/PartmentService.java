@@ -4,6 +4,7 @@ import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.tree.Tree;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -98,4 +99,5 @@ public interface PartmentService extends IService<Partment> {
     Partment getSimpleDeptInfo(String memberId,String orgId);
 
 	List<Partment> findOrgParentByOrgId(String orgId);
+
 }

@@ -9,6 +9,7 @@ import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -23,10 +24,13 @@ import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
+import io.netty.handler.codec.compression.FastLzFrameEncoder;
 import io.swagger.client.model.RegisterUsers;
 import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -41,6 +45,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,6 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Resource
     FileMapper fileMapper;
+
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
         return null;
@@ -78,7 +85,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public UserInfo findInfo(String accountName){
+    public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
         info.setOrgId(orgByUserId);
@@ -103,7 +110,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void insert(UserEntity userEntity, String password) throws AjaxException {
-        if (userMapper.selectCount(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,userEntity.getAccountName())) > 0){
+        if (userMapper.selectCount(new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, userEntity.getAccountName())) > 0) {
             throw new ServiceException("用户已存在!");
         }
         // 图片byte数组
@@ -111,8 +118,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         // oss上传
         String fileName = System.currentTimeMillis() + ".jpg";
         AliyunOss.uploadByte(Constants.MEMBER_IMAGE_URL + fileName, bytes);
-        userEntity.setImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
-        userEntity.setDefaultImage(Constants.OSS_URL+Constants.MEMBER_IMAGE_URL + fileName);
+        userEntity.setImage(Constants.OSS_URL + Constants.MEMBER_IMAGE_URL + fileName);
+        userEntity.setDefaultImage(Constants.OSS_URL + Constants.MEMBER_IMAGE_URL + fileName);
         userEntity.setCreateTime(new Date());
         userEntity.setUpdateTime(new Date());
         userMapper.insert(userEntity);
@@ -131,12 +138,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public int updatePassword(UserEntity userEntity, String password){
+    public int updatePassword(UserEntity userEntity, String password) {
         try {
             boolean s = updateById(userEntity);
             //发送邮件
             emailUtil.send126Mail(userEntity.getAccountName(), "系统密码重置", "您好，您的密码已重置，新密码是:" + password);
-            return s?1:0;
+            return s ? 1 : 0;
         } catch (Exception e) {
             throw new ServiceException(e);
         }
@@ -144,6 +151,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     /**
      * 根据用户id查询多条用户记录
+     *
      * @param memberIds 用户id的数组
      * @return
      */
@@ -154,6 +162,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     /**
      * 查询该项目下所有的成员信息
+     *
      * @param projectId 项目编号
      * @return
      */
@@ -169,6 +178,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     /**
      * 查询出某个项目下的所有成员信息(去除当前请求者的信息)
+     *
      * @param projectId 项目id
      * @return
      */
@@ -184,8 +194,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id",info.getOpenId()));
-        if(userEntity == null){//微信用户不存在，保存微信返回的信息
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id", info.getOpenId()));
+        if (userEntity == null) {//微信用户不存在，保存微信返回的信息
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
             user.setWxOpenId(info.getOpenId());
@@ -203,7 +213,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             userInfo.setUserName(user.getUserName());
             userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
         } else {
-            BeanUtils.copyProperties(userEntity,userInfo);
+            BeanUtils.copyProperties(userEntity, userInfo);
             userInfo.setBindPhone(false);
             String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
             userInfo.setOrgId(orgByUserId);
@@ -221,7 +231,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public List<UserEntity> getUserListByIdList(Collection<String> idList) {
-        if(CollectionUtils.isEmpty(idList)){
+        if (CollectionUtils.isEmpty(idList)) {
             return new ArrayList();
         }
 
@@ -234,7 +244,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public void resetPassword(String accountname, String newPassword) {
-        if(!this.checkUserIsExistByAccountName(accountname)){
+        if (!this.checkUserIsExistByAccountName(accountname)) {
             throw new ServiceException("用户名不存在！");
         }
 
@@ -243,8 +253,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         UserEntity one = this.getOne(eq);
 
         //组合username,两次迭代，对密码进行加密
-        String password_cryto = new Md5Hash(newPassword,accountname+one.getCredentialsSalt(),2).toBase64();
-        UserEntity user=new UserEntity();
+        String password_cryto = new Md5Hash(newPassword, accountname + one.getCredentialsSalt(), 2).toBase64();
+        UserEntity user = new UserEntity();
         user.setPassword(password_cryto);
         user.setUserName(accountname);
 
@@ -254,19 +264,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public void bindPhone(String phone, String code, String userId, String nickName) {
 
-        if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userId)){
+        if (!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userId)) {
             throw new CodeNotFoundException("验证码已经失效");
         }
 
         String redisCode = redisUtil.get(KeyWord.PREFIX.getCodePrefix() + userId);
-        if(!Objects.equals(code, redisCode)){
+        if (!Objects.equals(code, redisCode)) {
             throw new CodeMismatchException("验证码错误！");
         }
 
         UserEntity byId = this.getById(userId);
 
         UserEntity userEntity = new UserEntity();
-        if(this.checkUserIsExistByAccountName(phone)){
+        if (this.checkUserIsExistByAccountName(phone)) {
             UserEntity byName = this.findByName(phone);
             userEntity.setUserId(byName.getUserId());
             userEntity.setWxUnionId(byId.getWxUnionId());
@@ -318,7 +328,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
         UserEntity one = this.getOne(getSingleUserByWxUnionId);
 
         //如果pc微信已经注册
-        if(ObjectsUtil.isNotEmpty(one)){
+        if (ObjectsUtil.isNotEmpty(one)) {
             UserEntity saveUserInfo = new UserEntity();
             saveUserInfo.setUserId(one.getUserId());
             saveUserInfo.setWxOpenId(res.getOpenId());
@@ -334,12 +344,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public void bindWeChat(String code,String userId) {
+    public void bindWeChat(String code, String userId) {
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         LambdaQueryWrapper<UserEntity> queryWrapper = new QueryWrapper<UserEntity>()
                 .lambda().eq(UserEntity::getWxOpenId, info.getOpenId());
-        if(this.getOne(queryWrapper) != null){
+        if (this.getOne(queryWrapper) != null) {
             throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
         }
 
@@ -364,7 +374,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         Map<String, Object> map = this.getMap(getWxAppOpenIdByUserId);
 
-        if(map.containsKey(wxAppOpenid)){
+        if (map.containsKey(wxAppOpenid)) {
             return String.valueOf(map.get(wxAppOpenid));
         }
 
@@ -377,9 +387,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
         UserEntity byId = Optional.ofNullable(this.getById(userId)).orElseThrow(() -> new ServiceException("用户不存在!"));
 
-        String oldEncryptionPassword = new Md5Hash(oldPassword,byId.getAccountName() + byId.getCredentialsSalt(),2).toBase64();
+        String oldEncryptionPassword = new Md5Hash(oldPassword, byId.getAccountName() + byId.getCredentialsSalt(), 2).toBase64();
 
-        if(!oldEncryptionPassword.equals(byId.getPassword())){
+        if (!oldEncryptionPassword.equals(byId.getPassword())) {
             throw new ServiceException("原密码错误！");
         }
         UserEntity upd = new UserEntity();
@@ -392,10 +402,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
 
-
-
     /**
      * 获取网页授权凭证
+     *
      * @param code
      * @return WeixinAouth2Token
      */
@@ -439,7 +448,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
      * 通过网页授权获取用户信息
      *
      * @param accessToken 网页授权接口调用凭证
-     * @param openId 用户标识
+     * @param openId      用户标识
      * @return SNSUserInfo
      */
     private WeChatUser getSNSUserInfo(String accessToken, String openId) {
@@ -455,7 +464,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
             CloseableHttpResponse execute = null;
             execute = httpClient.execute(httpGet);
             HttpEntity entity = execute.getEntity();
-            jsonObject = JSONObject.parseObject(new String(EntityUtils.toString(entity).getBytes(),"utf-8"));
+            jsonObject = JSONObject.parseObject(new String(EntityUtils.toString(entity).getBytes(), "utf-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -465,7 +474,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
                 // 用户的标识
                 snsUserInfo.setOpenId(jsonObject.getString("openid"));
                 // 昵称
-                snsUserInfo.setNickname(new String(jsonObject.getString("nickname").getBytes("ISO-8859-1"),"utf-8"));
+                snsUserInfo.setNickname(new String(jsonObject.getString("nickname").getBytes("ISO-8859-1"), "utf-8"));
                 // 性别（1是男性，2是女性，0是未知）
                 snsUserInfo.setSex(jsonObject.getInteger("sex"));
                 // 用户所在国家
@@ -477,7 +486,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
                 // 用户头像
                 snsUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
                 // 用户特权信息
-                List<String> list = JSON.parseArray(jsonObject.getString("privilege"),String.class);
+                List<String> list = JSON.parseArray(jsonObject.getString("privilege"), String.class);
                 snsUserInfo.setPrivilegeList(list);
                 //与开放平台共用的唯一标识，只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
                 snsUserInfo.setUnionid(jsonObject.getString("unionid"));
@@ -494,7 +503,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     //通过电话或姓名搜索所有企业员工
     @Override
     public List<UserEntity> getUserByOrgId(String phone, String orgId) {
-        return userMapper.getUserByOrgId(phone,orgId);
+        return userMapper.getUserByOrgId(phone, orgId);
     }
 
     @Override
@@ -503,8 +512,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public UserVO getHeadUserInfo(String userId,String orgId) {
-        return userMapper.getHeadUserInfo(userId,orgId);
+    public UserVO getHeadUserInfo(String userId, String orgId) {
+        return userMapper.getHeadUserInfo(userId, orgId);
+    }
+
+    @Override
+    public String checkMemberIsRegister(String phone, String memberEmail,String orgId) {
+        UserEntity users;
+        String result = "false";
+        if (StringUtils.isNotEmpty(phone)) {
+            users = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name", phone));
+            if (users!=null) {
+                int orgMemberIsExist = organizationMemberService.findOrgMemberIsExist(orgId, users.getUserId());
+                if(orgMemberIsExist==0){
+                    result="0";
+                }else{
+                    result="1";
+                }
+            }
+            return result;
+        }
+        if (StringUtils.isNotEmpty(memberEmail)) {
+            users = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("email", memberEmail));
+            if (users!=null) {
+                int orgMemberIsExist = organizationMemberService.findOrgMemberIsExist(orgId, users.getUserId());
+                if(orgMemberIsExist==0){
+                    result="0";
+                }else{
+                    result="1";
+                }
+            }
+            return result;
+        }
+        return result;
+    }
+
+
+    @Override
+    public UserEntity selectUserByPhone(String phone) {
+        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",phone));
+    }
+
+    @Override
+    public UserEntity selectUserByEmail(String email) {
+        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("email",email));
     }
 
 

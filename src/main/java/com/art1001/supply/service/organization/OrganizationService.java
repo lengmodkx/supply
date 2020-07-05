@@ -96,4 +96,11 @@ public interface OrganizationService extends IService<Organization> {
 	 */
 	void personalProject(String userId);
 
+	/**
+	 * 自动更新项目进度
+	 * @param r
+	 * @return
+	 */
+	Integer automaticUpdateProjectSchedule(Project r);
+
 }

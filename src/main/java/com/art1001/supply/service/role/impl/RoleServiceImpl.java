@@ -1,11 +1,13 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.ResourcesRoleService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
@@ -43,6 +45,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 
 	@Resource
 	private ResourcesRoleService resourcesRoleService;
+
+	@Resource
+	private OrganizationMemberService organizationMemberService;
+
+	private static final String ONE="成员";
 
 	@Override
 	public Page<Role> selectListPage(long current, long size, Role role, String orgId){
@@ -225,6 +232,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 			RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id",userId).eq("org_id",orgId));
 			if(roleUser != null){
 				if(roleUser.getRoleId().equals(role.getRoleId())){
+					OrganizationMember organizationMember=new OrganizationMember();
+					organizationMember.setMemberLabel(role.getRoleName());
+					organizationMember.setUpdateTime(System.currentTimeMillis());
+					organizationMemberService.update(organizationMember,new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
 					role.setCurrentCheck(true);
 				} else {
 					role.setCurrentCheck(false);

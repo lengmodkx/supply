@@ -39,6 +39,17 @@ public class OrganizationGroupMember implements Serializable {
     private String memberId;
 
     /**
+     * 手机号
+     */
+    @TableField(exist = false)
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    @TableField(exist = false)
+    private String memberEmail;
+    /**
      * 更新时间
      */
     private Long updateTime;

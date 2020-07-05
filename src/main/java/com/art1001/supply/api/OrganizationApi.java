@@ -141,7 +141,7 @@ public class OrganizationApi {
     /**
      * 获取该企业下的项目信息
      * @author heShaoHua
-     * @describe todo 后端正常显示，前端取值异常
+     * @describe
      * @param orgId 企业id
      * @updateInfo 暂无
      * @date 2019/5/29 10:13

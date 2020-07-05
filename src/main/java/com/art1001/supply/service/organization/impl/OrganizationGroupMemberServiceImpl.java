@@ -2,10 +2,12 @@ package com.art1001.supply.service.organization.impl;
 
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
+import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.util.CollectionUtils;
@@ -32,6 +34,9 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
 
     @Resource
     private OrganizationGroupService organizationGroupService;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 群组中添加组成员
@@ -118,6 +123,10 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
         }else {
             //标记该群组的拥有者成员
             organizationGroupMembers.forEach(item -> {
+                UserEntity byId = userService.findById(item.getUserId());
+                item.setMemberEmail(byId.getEmail());
+                item.setPhone(byId.getAccountName());
+                item.setMemberId(byId.getUserId());
                 if(item.getUserId().equals(groupOwnerInfo.getUserId())){
                     item.setIsOwner(true);
                 } else{

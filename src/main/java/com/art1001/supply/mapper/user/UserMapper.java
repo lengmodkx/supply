@@ -94,4 +94,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     List<UserEntity> selectAll();
 
     UserVO getHeadUserInfo(@Param("userId") String userId,@Param("orgId") String orgId);
+
+
 }

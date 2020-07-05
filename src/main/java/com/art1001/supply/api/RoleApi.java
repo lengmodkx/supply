@@ -1,9 +1,11 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.exception.AjaxException;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,6 +40,9 @@ public class RoleApi {
 
     @Resource
     private RoleUserService roleUserService;
+
+    @Resource
+    private OrganizationMemberService organizationMemberService;
 
     private static final String ROLENAME = "拥有者";
 
@@ -92,10 +97,12 @@ public class RoleApi {
      */
     @DeleteMapping("/{roleId}/org")
     public JSONObject deleteRole(@PathVariable(value = "roleId") Integer roleId,
-                                 @NotEmpty(message = "orgId不能为空") @RequestParam(required = false) String orgId) {
+                                 @NotEmpty(message = "orgId不能为空")String orgId,
+                                 @RequestParam(value = "memberId")String memberId) {
         JSONObject object = new JSONObject();
         int result = roleService.removeOrgRole(roleId, orgId);
-        if (result == 1) {
+        boolean remove = organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_Id", memberId));
+        if (result == 1&& remove) {
             object.put("result", result);
             object.put("msg", "删除成功");
         } else {

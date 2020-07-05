@@ -32,22 +32,6 @@
             LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
             WHERE pm.partment_id = #{partmentId} AND pm.member_id = #{memberId}
     </select>
-
-    <!-- 获取一个部门的全部成员信息 -->
-    <select id="selectMemberByPartmentId" resultMap="BaseResultMap">
-        SELECT
-            u.user_id,
-            u.image,
-            u.user_name,
-            pm.is_master,
-            pm.member_label
-        FROM
-            prm_partment_member AS pm
-            LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
-        WHERE pm.partment_id = #{partmentId}
-    </select>
-
-
     <select id="getSimplePartmentMemberInfo" resultType="com.art1001.supply.entity.partment.PartmentMember">
          SELECT
          	pm.is_master,
@@ -64,4 +48,15 @@
          	AND pm.member_id = #{memberId}
     </select>
 
+    <select id="getPartmentByOrgId" resultType="com.art1001.supply.entity.partment.PartmentMember">
+        SELECT
+        p.partment_name as partmentName,
+        p.parent_id as parentId,
+        p.partment_id as partmentId
+        FROM
+        prm_partment p
+        WHERE
+        p.organization_id =#{orgId}
+        GROUP BY p.partment_id
+    </select>
 </mapper>
