@@ -40,5 +40,29 @@ public class UserVO {
      * 部门
      */
     private String partmemt;
+    /**
+     * 电话号
+     */
+    private String phone;
+    /**
+     * 企业id
+     */
+    private String organizationId;
+    /**
+     * 企业名
+     */
+    private String organizationName;
+    /**
+     * 项目id
+     */
+    private String projectId;
+    /**
+     * 项目名
+     */
+    private String projectName;
+    /**
+     * 分组id
+     */
+    private String groupId;
 
 }

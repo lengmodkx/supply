@@ -50,6 +50,7 @@ import java.util.Optional;
 
 /**
  * 用户
+ *
  * @author 汪亚锋
  * [POST]   // 新增
  * [GET]    // 查询
@@ -80,44 +81,46 @@ public class UserApi {
     @Resource
     private IMUserService imUserService;
 
-    private final static String ONE="1";
-    private final static String ZERO="0";
+    private final static String ONE = "1";
+    private final static String ZERO = "0";
 
     /**
      * 用户登陆
+     *
      * @param accountName 账户名称
-     * @param password 密码
-     * @param rememberMe 记住我
+     * @param password    密码
+     * @param rememberMe  记住我
      */
     @PostMapping("/login")
-     public Result<UserInfo> login(@RequestParam String accountName,
-                                   @RequestParam String password,
-                                   @RequestParam(required = false, defaultValue = "true") Boolean rememberMe){
-         try {
-             Subject subject = SecurityUtils.getSubject();
-             UsernamePasswordToken token = new UsernamePasswordToken(accountName,password,rememberMe);
-             subject.login(token);
-             if(subject.isAuthenticated()) {
-                 UserInfo userInfo = userService.findInfo(accountName);
-                 redisUtil.set(Constants.USER_INFO + userInfo.getUserId(), userInfo);
-                 return Result.success(userInfo);
-             } else {
-                 return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
-             }
-         } catch (Exception e) {
+    public Result<UserInfo> login(@RequestParam String accountName,
+                                  @RequestParam String password,
+                                  @RequestParam(required = false, defaultValue = "true") Boolean rememberMe) {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(accountName, password, rememberMe);
+            subject.login(token);
+            if (subject.isAuthenticated()) {
+                UserInfo userInfo = userService.findInfo(accountName);
+                redisUtil.set(Constants.USER_INFO + userInfo.getUserId(), userInfo);
+                return Result.success(userInfo);
+            } else {
+                return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
+            }
+        } catch (Exception e) {
             // 登录异常，请联系管理员！
             log.error("登录异常，请联系管理员！", e);
             return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
-         }
-     }
+        }
+    }
 
     /**
      * 用户注册
-     * @param captcha 推行验证码
+     *
+     * @param captcha     推行验证码
      * @param accountName 用户名
-     * @param password 密码
-     * @param userName 昵称
-     * @param job 职务
+     * @param password    密码
+     * @param userName    昵称
+     * @param job         职务
      * @return
      */
     @PostMapping("/register")
@@ -127,11 +130,11 @@ public class UserApi {
                            @RequestParam String userName,
                            @RequestParam String job,
                            HttpServletRequest request) {
-        if(!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))){
+        if (!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))) {
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
         UserEntity entity = userService.findByName(accountName);
-        if(entity!=null){
+        if (entity != null) {
             return Result.fail("用户已存在");
         }
         //设置创建者姓名
@@ -149,11 +152,79 @@ public class UserApi {
         try {
             //向第三方环信注册用户
             RegisterUsers users = new RegisterUsers();
-            User user1 = new User().username(accountName).password(userEntity.getPassword() );
+            User user1 = new User().username(accountName).password(userEntity.getPassword());
             users.add(user1);
             imUserService.createNewIMUserSingle(users);
             // 保存用户注册信息
             userService.insert(userEntity, password);
+            return Result.success();
+        } catch (Exception e) {
+            log.error("注册失败:", e);
+            return Result.fail(CodeMsg.REGISTER_FAIL);
+        }
+    }
+
+    /**
+     * 用户注册且加入项目
+     *
+     * @param captcha     推行验证码
+     * @param accountName 用户名
+     * @param password    密码
+     * @param userName    昵称
+     * @param job         职务
+     * @return
+     */
+    @PostMapping("/register/projectMember")
+        public Result registerAndProjectMember(@RequestParam String captcha,
+                                           @RequestParam String accountName,
+                                           @RequestParam String password,
+                                           @RequestParam String userName,
+                                           @RequestParam(value = "job",required = false) String job,
+                                           @RequestParam String projectId,
+                                           HttpServletRequest request) {
+        if (!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))) {
+            return Result.fail(CodeMsg.CAPTCHA_ERROR);
+        }
+        UserEntity entity = userService.findByName(accountName);
+        if (entity != null) {
+            return Result.fail("用户已存在");
+        }
+        try {
+            String result = userService.registerAndProjectMember(captcha, accountName, password, userName, job, projectId);
+            return Result.success();
+        } catch (Exception e) {
+            log.error("注册失败:", e);
+            return Result.fail(CodeMsg.REGISTER_FAIL);
+        }
+    }
+
+    /**
+     * 用户注册且加入企业
+     *
+     * @param captcha     推行验证码
+     * @param accountName 用户名
+     * @param password    密码
+     * @param userName    昵称
+     * @param job         职务
+     * @return
+     */
+    @PostMapping("/register/orgMember")
+    public Result registerAndOrgMember(@RequestParam String captcha,
+                                           @RequestParam String accountName,
+                                           @RequestParam String password,
+                                           @RequestParam String userName,
+                                           @RequestParam(value = "job",required = false) String job,
+                                           @RequestParam String orgId,
+                                           HttpServletRequest request) {
+        if (!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))) {
+            return Result.fail(CodeMsg.CAPTCHA_ERROR);
+        }
+        UserEntity entity = userService.findByName(accountName);
+        if (entity != null) {
+            return Result.fail("用户已存在");
+        }
+        try {
+            String result = userService.registerAndOrgMember(captcha, accountName, password, userName, job, orgId);
             return Result.success();
         } catch (Exception e) {
             log.error("注册失败:", e);
@@ -180,13 +251,11 @@ public class UserApi {
             out = response.getOutputStream();
             ImageIO.write(image, "jpg", out);
             out.flush();
-        }catch(IOException e)
-        {
+        } catch (IOException e) {
             throw new AjaxException(e);
         } finally {
             try {
-                if(null != out)
-                {
+                if (null != out) {
                     out.close();
                 }
             } catch (IOException e) {
@@ -197,23 +266,24 @@ public class UserApi {
 
     /**
      * 获取验证码
+     *
      * @param accountName 用户名
-     * @param captcha 图形验证码
+     * @param captcha     图形验证码
      * @return
      */
     @GetMapping("/code")
-    public Result code(@RequestParam String accountName,@RequestParam String captcha,HttpServletRequest request){
+    public Result code(@RequestParam String accountName, @RequestParam String captcha, HttpServletRequest request) {
         String kaptcha = String.valueOf(request.getSession().getAttribute("captcha"));
-        if(!kaptcha.equalsIgnoreCase(captcha)){
+        if (!kaptcha.equalsIgnoreCase(captcha)) {
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
         //通过短信发送验证码
-        if(RegexUtils.checkMobile(accountName)){
+        if (RegexUtils.checkMobile(accountName)) {
             UserEntity byName = userService.findByName(accountName);
-            if(byName == null){
+            if (byName == null) {
                 return Result.fail("用户不存在, 无法获取短信验证码。");
             }
-            aliyunMessageService.sendCode( byName.getUserId(), accountName);
+            aliyunMessageService.sendCode(byName.getUserId(), accountName);
         } else {
             return Result.fail(CodeMsg.PHONE_ERROR);
         }
@@ -223,27 +293,28 @@ public class UserApi {
 
     /**
      * 忘记密码
+     *
      * @param accountName 用户名
-     * @param password 密码
-     * @param code 验证码
+     * @param password    密码
+     * @param code        验证码
      * @return
      */
     @PutMapping("/forget")
     public Result forget(@RequestParam String accountName,
                          @RequestParam String password,
-                         @RequestParam String code){
+                         @RequestParam String code) {
         try {
             UserEntity userEntity = userService.findByName(accountName);
-            if(userEntity==null){
+            if (userEntity == null) {
                 return Result.fail(CodeMsg.USER_NO);
             }
 
-            if(!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId())){
+            if (!redisUtil.exists(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId())) {
                 return Result.fail(CodeMsg.CAPTCHA_NO_USE);
             }
 
             String redisCode = redisUtil.get(KeyWord.PREFIX.getCodePrefix() + userEntity.getUserId());
-            if(!Objects.equals(code, redisCode)){
+            if (!Objects.equals(code, redisCode)) {
                 return Result.fail(CodeMsg.CAPTCHA_ERROR);
             }
 
@@ -254,14 +325,16 @@ public class UserApi {
             userEntity.setCredentialsSalt(user.getCredentialsSalt());
             userService.updateById(userEntity);
             return Result.success();
-        }catch (Exception e){
-            log.error("系统异常,密码修改失败:",e);
+        } catch (Exception e) {
+            log.error("系统异常,密码修改失败:", e);
             return Result.fail(CodeMsg.SERVER_ERROR);
         }
     }
+
     /**
      * 用户退出
-     * @return	视图信息
+     *
+     * @return 视图信息
      */
     @GetMapping(value = "/logout")
     public void logout() {
@@ -274,7 +347,7 @@ public class UserApi {
      * 微信登录
      */
     @GetMapping("wechatcode")
-    public Result<String> weChatLogin(@Validated @NotNull(message = "回调地址不能为空！")@RequestParam String redirectUri){
+    public Result<String> weChatLogin(@Validated @NotNull(message = "回调地址不能为空！") @RequestParam String redirectUri) {
         try {
             return Result.success(WeChatLoginUtils.genUrl(redirectUri));
         } catch (Exception e) {
@@ -284,12 +357,13 @@ public class UserApi {
 
     /**
      * 微信登录保存用户信息
+     *
      * @param code
      * @return
      */
     @RequestMapping("wechattoken")
-    public Result<UserInfo> getWeChatToken(@RequestParam String code){
-        log.info("weChat token code is [{}]",code);
+    public Result<UserInfo> getWeChatToken(@RequestParam String code) {
+        log.info("weChat token code is [{}]", code);
         UserInfo userInfo = userService.saveWeChatUserInfo(code);
         return Result.success(userInfo);
     }
@@ -298,18 +372,18 @@ public class UserApi {
      * 获取用户信息
      */
     @GetMapping("/getUserInfo/{userId}")
-    public  JSONObject  getUserInfo(@PathVariable String userId){
-        JSONObject jsonObject=new JSONObject();
+    public JSONObject getUserInfo(@PathVariable String userId) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",userService.findById(userId));
-            jsonObject.put("msg","用户信息获取成功");
-            jsonObject.put("result","1");
+            jsonObject.put("data", userService.findById(userId));
+            jsonObject.put("msg", "用户信息获取成功");
+            jsonObject.put("result", "1");
         } catch (Exception e) {
             e.printStackTrace();
-            jsonObject.put("msg","信息获取失败,请稍后再试");
-            jsonObject.put("result","0");
+            jsonObject.put("msg", "信息获取失败,请稍后再试");
+            jsonObject.put("result", "0");
         }
-        return  jsonObject;
+        return jsonObject;
     }
 
 
@@ -317,75 +391,76 @@ public class UserApi {
      * 修改用户信息
      */
     @PostMapping("/updateUserInfo")
-    public  JSONObject  updateUserInfo(@RequestParam(value = "userId") String userId,
-                                       @RequestParam(value = "image",required = false) String image,
-                                       @RequestParam(value = "userName",required = false) String userName,
-                                       @RequestParam(value = "job",required = false) String job,
-                                       @RequestParam(value = "telephone",required = false) String telephone,
-                                       @RequestParam(value = "birthday",required = false) String birthday,
-                                       @RequestParam(value = "address",required = false) String address,
-                                       @RequestParam(value = "email",required = false) String email
-                                       ){
-        JSONObject jsonObject=new JSONObject();
+    public JSONObject updateUserInfo(@RequestParam(value = "userId") String userId,
+                                     @RequestParam(value = "image", required = false) String image,
+                                     @RequestParam(value = "userName", required = false) String userName,
+                                     @RequestParam(value = "job", required = false) String job,
+                                     @RequestParam(value = "telephone", required = false) String telephone,
+                                     @RequestParam(value = "birthday", required = false) String birthday,
+                                     @RequestParam(value = "address", required = false) String address,
+                                     @RequestParam(value = "email", required = false) String email
+    ) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            UserEntity userEntity=new UserEntity();
+            UserEntity userEntity = new UserEntity();
             userEntity.setUserId(userId);
-            if(StringUtils.isNotEmpty(image)){
+            if (StringUtils.isNotEmpty(image)) {
                 userEntity.setImage(image);
                 userEntity.setDefaultImage(image);
             }
 
-            if(StringUtils.isNotEmpty(userName)){
+            if (StringUtils.isNotEmpty(userName)) {
                 userEntity.setUserName(userName);
             }
 
-            if(StringUtils.isNotEmpty(job)){
+            if (StringUtils.isNotEmpty(job)) {
                 userEntity.setJob(job);
             }
 
-            if(StringUtils.isNotEmpty(telephone)){
+            if (StringUtils.isNotEmpty(telephone)) {
                 userEntity.setTelephone(telephone);
             }
 
-            if(StringUtils.isNotEmpty(birthday)){
-                SimpleDateFormat myFmt2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            if (StringUtils.isNotEmpty(birthday)) {
+                SimpleDateFormat myFmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date birthDay = myFmt2.parse(birthday);
                 userEntity.setBirthday(birthDay);
             }
-            if(StringUtils.isNotEmpty(address)){
+            if (StringUtils.isNotEmpty(address)) {
                 userEntity.setAddress(address);
             }
-            if(StringUtils.isNotEmpty(email)){
+            if (StringUtils.isNotEmpty(email)) {
                 userEntity.setEmail(email);
             }
 
             userEntity.setUpdateTime(new Date());
             userService.updateById(userEntity);
-            jsonObject.put("msg","用户信息修改成功");
-            jsonObject.put("result",1);
+            jsonObject.put("msg", "用户信息修改成功");
+            jsonObject.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
-            jsonObject.put("msg","信息修改失败,请稍后再试");
-            jsonObject.put("result","0");
+            jsonObject.put("msg", "信息修改失败,请稍后再试");
+            jsonObject.put("result", "0");
         }
-        return  jsonObject;
+        return jsonObject;
     }
 
     /**
      * 用户绑定手机号码
+     *
      * @param phone 手机号码
-     * @param code 验证码
+     * @param code  验证码
      * @return 结果
      */
     @PostMapping("/bind/phone")
     public Result<UserInfo> bindPhone(
-                                @Validated @NotNull(message = "手机号不能为空！") String phone,
-                                @Validated @NotNull(message = "code码不能为空！") String code,
-                                @Validated @NotNull(message = "用户id不能为空！") String userId,
-                                @RequestParam(required = false) String nickName){
+            @Validated @NotNull(message = "手机号不能为空！") String phone,
+            @Validated @NotNull(message = "code码不能为空！") String code,
+            @Validated @NotNull(message = "用户id不能为空！") String userId,
+            @RequestParam(required = false) String nickName) {
 
 
-        log.info("bind phone. [{},{},{},{}]", phone, code ,userId, nickName);
+        log.info("bind phone. [{},{},{},{}]", phone, code, userId, nickName);
 
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code, userId, nickName);
@@ -396,7 +471,7 @@ public class UserApi {
     }
 
     @GetMapping("/is_bind_phone")
-    public Object isBindPhone(){
+    public Object isBindPhone() {
         JSONObject jsonObject = new JSONObject();
         UserEntity userEntity = ShiroAuthenticationManager.getUserEntity();
         jsonObject.put("bindPhone", userEntity.getAccountName().length() > 11);
@@ -409,7 +484,7 @@ public class UserApi {
 //    }
 
     @PostMapping("/qianyi")
-    public Object qianyi(){
+    public Object qianyi() {
         List<String> userIds = userService.getAllUserId();
 
         List<String> phoneList = userService.getPhoneList();
@@ -417,14 +492,14 @@ public class UserApi {
 
         userIds.forEach(id -> {
             phoneList.forEach(phone -> {
-                LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName,phone);
+                LambdaQueryWrapper<UserEntity> eq = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, phone);
                 UserEntity one = userService.getOne(eq);
-                if(one != null){
+                if (one != null) {
 //                    projectService.updateAllProject(one.getUserId(), id);
 //                    projectMemberService.updateAll(one.getUserId(),id);
 //                    taskService.updateAll(one.getUserId(),id);
 //                    fileService.updateAll(one.getUserId(),id);
-                    fileService.updateAllUser(one.getUserId(),id);
+                    fileService.updateAllUser(one.getUserId(), id);
                 }
 
             });
@@ -434,20 +509,21 @@ public class UserApi {
 
     /**
      * 原有平台账号绑定微信号
-     * @param code 微信code码
+     *
+     * @param code  微信code码
      * @param useId 用户id
      */
     @PostMapping("/bind/wechat")
     public Result bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
-                                 @Validated @NotNull(message = "useId不能为空！") String useId){
+                             @Validated @NotNull(message = "useId不能为空！") String useId) {
 
         log.info("bind weChat [{},{}]", code, useId);
-        userService.bindWeChat(code,useId);
+        userService.bindWeChat(code, useId);
         return Result.success();
     }
 
     @PostMapping("/notbind/wechat")
-    public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId){
+    public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId) {
 
         log.info("bind weChat [{}]", useId);
         UserEntity userEntity = new UserEntity();
@@ -459,9 +535,9 @@ public class UserApi {
     }
 
     @PostMapping("reset_password")
-    public Result resetPassword(@Validated @NotNull(message = "密码不能为空") String password,String accountName){
+    public Result resetPassword(@Validated @NotNull(message = "密码不能为空") String password, String accountName) {
         UserEntity byName = userService.findByName(accountName);
-        String password_cryto = new Md5Hash(password,byName.getAccountName()+byName.getCredentialsSalt(),2).toBase64();
+        String password_cryto = new Md5Hash(password, byName.getAccountName() + byName.getCredentialsSalt(), 2).toBase64();
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(byName.getUserId());
         userEntity.setUpdateTime(new Date());
@@ -473,30 +549,32 @@ public class UserApi {
 
     @PostMapping("change_password")
     public Result changePassword(@Validated @NotNull(message = "原密码不能为空") String oldPassword,
-                                 @Validated @NotNull(message = "新密码不能为空") String newPassword){
+                                 @Validated @NotNull(message = "新密码不能为空") String newPassword) {
         log.info("Change current user password. [{},{},{}]", oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
         userService.changePasswordByUserId(oldPassword, newPassword, ShiroAuthenticationManager.getUserId());
 
         return Result.success();
     }
+
     /**
      * 管理员登陆
+     *
      * @param accountName 账户名称
-     * @param password 密码
+     * @param password    密码
      */
     @PostMapping("/adminlogin")
     public JSONObject adminLogin(@RequestParam String accountName,
-                                 @RequestParam String password){
+                                 @RequestParam String password) {
         JSONObject object = new JSONObject();
         try {
             Subject subject = SecurityUtils.getSubject();
-            UsernamePasswordToken token = new UsernamePasswordToken(accountName,password);
+            UsernamePasswordToken token = new UsernamePasswordToken(accountName, password);
             subject.login(token);
-            if(subject.isAuthenticated()) {
+            if (subject.isAuthenticated()) {
                 object.put("fileId", Constants.MATERIAL_BASE);
                 object.put("result", 1);
-                object.put("userInfo",ShiroAuthenticationManager.getUserEntity());
-                object.put("accessToken",JwtUtil.sign(ShiroAuthenticationManager.getUserId(),"1qaz2wsx#EDC"));
+                object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
+                object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
             } else {
                 object.put("result", 0);
                 object.put("msg", "账号或密码错误");
@@ -512,23 +590,24 @@ public class UserApi {
 
     /**
      * 查询用户名是否已经存在
+     *
      * @return 是否存在
      */
-    @GetMapping("check_account_exist")
-    public Result checkAccountNameIsExist(@NotNull(message = "用户名不能为空") String accountName){
+    @GetMapping("/check_account_exist")
+    public Result checkAccountNameIsExist(@NotNull(message = "用户名不能为空") String accountName) {
         log.info("Check user accountName is exist. [{}]", accountName);
         return Result.success(userService.checkUserIsExistByAccountName(accountName));
     }
 
 
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param:
-    * @return:
-    * @Description: 向第三方环信批量注册用户
-    * @create: 17:42 2020/6/2
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param:
+     * @return:
+     * @Description: 向第三方环信批量注册用户
+     * @create: 17:42 2020/6/2
+     */
 /*    @GetMapping("/registerAll")
     public void registerAll(){
 //        List<UserEntity> list = userService.selectAll();

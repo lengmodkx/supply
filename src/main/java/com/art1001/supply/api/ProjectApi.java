@@ -1028,5 +1028,22 @@ public class ProjectApi extends BaseController {
         }
     }
 
+    /**
+     * 项目角色判断 成员1 拥有者或管理员0
+     * @param projectId
+     * @return
+     */
+    @GetMapping("/judgmentRoles/{projectId}")
+    public JSONObject judgmentRoles(@PathVariable("projectId") String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",projectService.judgmentRoles(projectId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
 
 }

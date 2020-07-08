@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.role;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -29,6 +30,12 @@ public class ProRoleUser implements Serializable {
      * 角色id
      */
     private Integer roleId;
+
+    /**
+     * 角色名
+     */
+    @TableField(exist = false)
+    private String roleName;
 
     /**
      * 用户id

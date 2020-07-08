@@ -2,6 +2,7 @@ package com.art1001.supply.service.organization;
 
 import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.InvitationLinkVO;
+import com.art1001.supply.entity.user.UserVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface InvitationLinkService extends IService<InvitationLink> {
@@ -19,4 +20,7 @@ public interface InvitationLinkService extends IService<InvitationLink> {
      * @return
      */
     InvitationLink getRedrectUrl(String hash);
+
+    UserVO getInviteMemberInfo(String memberId, String orgId, String projectId);
+
 }

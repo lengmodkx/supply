@@ -90,17 +90,23 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeMember(String memberId, String groupId) {
+
+        //移除企业群组成员
         organizationGroupMemberMapper.delete(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId).eq("member_id", memberId));
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
             organizationGroupService.removeById(groupId);
         } else {
             if(memberId.equals(organizationGroupService.getById(groupId).getOwner())){
-                OrganizationGroup organizationGroup = new OrganizationGroup();
-                organizationGroup.setGroupId(groupId);
-                organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
-                organizationGroup.setUpdateTime(System.currentTimeMillis());
-                organizationGroupService.updateById(organizationGroup);
+//                OrganizationGroup organizationGroup = new OrganizationGroup();
+//                organizationGroup.setGroupId(groupId);
+//                //获取到最早加入到该群组的成员id
+//                organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
+//                organizationGroup.setUpdateTime(System.currentTimeMillis());
+//                organizationGroupService.updateById(organizationGroup);
+
+                //群组拥有者退出则移除群组
+                organizationGroupService.removeById(groupId);
             }
         }
         return true;

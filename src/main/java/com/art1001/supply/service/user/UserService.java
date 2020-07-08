@@ -150,4 +150,27 @@ public interface UserService extends IService<UserEntity> {
 	 * @return
 	 */
 	UserEntity selectUserByEmail(String email);
+
+	/**
+	 * 注册并加入项目
+	 * @param captcha
+	 * @param accountName
+	 * @param password
+	 * @param userName
+	 * @param job
+	 * @return
+	 */
+    String registerAndProjectMember(String captcha, String accountName, String password, String userName, String job,String projectId);
+
+	/**
+	 * 注册并加入企业
+	 * @param captcha
+	 * @param accountName
+	 * @param password
+	 * @param userName
+	 * @param job
+	 * @param orgId
+	 * @return
+	 */
+    String registerAndOrgMember(String captcha, String accountName, String password, String userName, String job, String orgId);
 }

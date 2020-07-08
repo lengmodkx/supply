@@ -187,4 +187,19 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return
 	 */
 	OrganizationMember findOrgMembersByUserId(String userId, String orgId);
+
+	/**
+	 * 查询企业外部成员
+	 * @param memberId
+	 * @param orgId
+	 * @return
+	 */
+	Integer findOrgOtherByMemberId(String memberId, String orgId);
+
+	/**
+	 * 保存企业成员信息
+	 * @param orgId
+	 * @param userEntity
+	 */
+	void saveOrganizationMember2(String orgId, UserEntity userEntity);
 }

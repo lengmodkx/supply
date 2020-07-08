@@ -2,11 +2,18 @@ package com.art1001.supply.service.organization.impl;
 
 import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.InvitationLinkVO;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserVO;
 import com.art1001.supply.mapper.organization.InvitationLinkMapper;
 import com.art1001.supply.service.organization.InvitationLinkService;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.crypto.ShortCodeUtils;
@@ -14,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -49,6 +57,18 @@ public class InvitationLinkServiceImpl extends ServiceImpl<InvitationLinkMapper,
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrganizationService organizationService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
+
     @Override
     public InvitationLinkVO getOrganizationMemberByUrl(String orgId) {
         List<UserEntity> userList = organizationMemberService.getUserList(orgId);
@@ -81,6 +101,38 @@ public class InvitationLinkServiceImpl extends ServiceImpl<InvitationLinkMapper,
              invitationLink = invitationLinkMapper.selectOne(new QueryWrapper<InvitationLink>().eq("hash", redisUtil.get("shortUrl:" + value)));
         }
         return invitationLink;
+
+    }
+
+    /**
+     * 获取
+     * @param memberId
+     * @param orgId
+     * @param projectId
+     * @return
+     */
+    @Override
+    public UserVO getInviteMemberInfo(String memberId, String orgId, String projectId) {
+        UserVO userVO = new UserVO();
+        UserEntity byId = userService.findById(memberId);
+        userVO.setUserId(memberId);
+        userVO.setUserName(byId.getUserName());
+        userVO.setImage(byId.getImage());
+        userVO.setJob(byId.getJob());
+        userVO.setPhone(byId.getAccountName());
+        if (StringUtils.isNotEmpty(orgId)) {
+            Organization organization = organizationService.getById(orgId);
+            userVO.setOrganizationId(orgId);
+            userVO.setOrganizationName(organization.getOrganizationName());
+        }
+        if (StringUtils.isNotEmpty(projectId)) {
+            Project project = projectService.getById(projectId);
+            userVO.setProjectId(projectId);
+            userVO.setProjectName(project.getProjectName());
+            String defaultGroup = projectMemberService.findDefaultGroup(projectId, memberId);
+            userVO.setGroupId(defaultGroup);
+        }
+        return userVO;
 
     }
 }

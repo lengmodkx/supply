@@ -48,6 +48,12 @@ public class MemberDownload extends Model<MemberDownload> {
   private String downloadTime;
 
   /**
+   * 文件后缀名
+   */
+  @TableField(exist = false)
+  private String ext;
+
+  /**
    * 文件路径
    */
   @TableField(exist = false)

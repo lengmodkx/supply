@@ -526,6 +526,22 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     }
 
     /**
+     * 查询企业外部成员
+     * @param memberId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Integer findOrgOtherByMemberId(String memberId, String orgId) {
+        return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id",memberId).eq("organization_id",orgId).eq("other","0"));
+    }
+
+    @Override
+    public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
+        saveOrganizationMemberInfo(orgId,userEntity);
+    }
+
+    /**
      * 保存企业成员信息
      *
      * @param orgId
@@ -551,10 +567,17 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         organizationMember.setMemberLock(1);
         organizationMember.setOther(1);
-        organizationMember.setMemberLabel("成员");
+        organizationMember.setMemberLabel("外部成员");
         organizationMember.setUserDefault(true);
         organizationMember.setPartmentId("0");
         this.save(organizationMember);
+        RoleUser roleUser=new RoleUser();
+        roleUser.setOrgId(orgId);
+        roleUser.setUId(userEntity.getUserId());
+        roleUser.setTCreateTime(LocalDateTime.now());
+        Role one = roleService.getOne(new QueryWrapper<Role>().eq("organization_id", orgId).eq("role_name", "外部成员"));
+        roleUser.setRoleId(one.getRoleId());
+        roleUserService.save(roleUser);
         return "邀请成功";
     }
 

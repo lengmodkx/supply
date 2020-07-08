@@ -264,4 +264,19 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
 	List<Project> getExperience(String memberId, String organizationId);
+
+	/**
+	 * 项目角色判断
+	 * @param projectId
+	 * @return
+	 */
+    Integer judgmentRoles(String projectId);
+
+	/**
+	 * 添加项目成员
+	 * @param projectId
+	 * @param memberId
+	 * @return
+	 */
+    String addMember(String projectId, String memberId);
 }

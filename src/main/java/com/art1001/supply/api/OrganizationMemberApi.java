@@ -552,4 +552,5 @@ public class OrganizationMemberApi {
             throw new AjaxException(e);
         }
     }
+
 }

@@ -2,9 +2,12 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
@@ -12,22 +15,28 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
  * 项目成员邀请
+ *
  * @author 汪亚锋
  * [POST]   // 新增
  * [GET]    // 查询
@@ -54,44 +63,49 @@ public class MemberInvitationApi extends BaseController {
     private ProRoleUserService proRoleUserService;
 
     @Resource
+    private ProjectService projectService;
+
+    @Resource
     private OrganizationMemberService organizationMemberService;
+
     /**
      * 通过用户账户查询用户
+     *
      * @param keyword 关键字
      * @return
      */
     @GetMapping("/{keyword}")
     public JSONObject searchMember(@PathVariable(value = "keyword") String keyword,
-                                   @RequestParam(value = "orgId",required = false) String orgId){
+                                   @RequestParam(value = "orgId", required = false) String orgId) {
         JSONObject object = new JSONObject();
-        try{
+        try {
 
             List<UserEntity> userEntityList = userService.findByKey(keyword);
 
-            object.put("result",1);
-            object.put("data",userEntityList);
-        }catch(Exception e){
-            log.error("系统异常:",e);
+            object.put("result", 1);
+            object.put("data", userEntityList);
+        } catch (Exception e) {
+            log.error("系统异常:", e);
             throw new AjaxException(e);
         }
         return object;
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email： dengkaixin@art1001.com
-    * @Param: projectId 项目id
-    * @param： memberId 用户id
-    * @param： orgId 企业id
-    * @return:
-    * @Description: 给项目添加成员，同时将数据存储到企业详情信息表
-    * @create: 15:33 2020/4/22
-    */
+     * @Author: 邓凯欣
+     * @Email： dengkaixin@art1001.com
+     * @Param: projectId 项目id
+     * @param： memberId 用户id
+     * @param： orgId 企业id
+     * @return:
+     * @Description: 给项目添加成员，同时将数据存储到企业详情信息表
+     * @create: 15:33 2020/4/22
+     */
     //@RequiresPermissions("create:member")
     @PostMapping
     public JSONObject addMember(@RequestParam(value = "projectId") String projectId,
                                 @RequestParam(value = "memberId") String memberId,
-                                @RequestParam(value = "orgId") String orgId){
+                                @RequestParam(value = "orgId") String orgId) {
         JSONObject object = new JSONObject();
         int exist = projectMemberService.findMemberIsExist(projectId,memberId);
         if(exist>0){
@@ -104,44 +118,55 @@ public class MemberInvitationApi extends BaseController {
         return object;
     }
 
+    @PostMapping("/addMember1")
+    public JSONObject addMember1(@RequestParam(value = "projectId") String projectId,
+                                    @RequestParam(value = "memberId") String memberId) {
+        JSONObject object = new JSONObject();
+        int exist = projectMemberService.findMemberIsExist(projectId,memberId);
+        if(exist>0){
+            object.put("result",0);
+            object.put("msg","项目成员已存在，请勿重复添加");
+            return  object;
+        }
+        object.put("result",projectService.addMember(projectId,memberId));
+        object.put("msg","添加成功");
+        return object;
+    }
+
     /**
      * 移除项目参与者
+     *
      * @param memberId 成员id
      * @return
      */
     @DeleteMapping("/{memberId}")
     public JSONObject deleteMember(@PathVariable(value = "memberId") String memberId,
-                                   @NotNull(message = "projectId不能为空!") String projectId){
+                                   @NotNull(message = "projectId不能为空!") String projectId) {
         JSONObject object = new JSONObject();
-        try{
-            projectMemberService.remove(new QueryWrapper<ProjectMember>()
-                    .lambda().eq(ProjectMember::getMemberId,memberId)
-                    .eq(ProjectMember::getProjectId, projectId));
-
-            proRoleUserService.remove(new QueryWrapper<ProRoleUser>().lambda()
-                    .eq(ProRoleUser::getUId,memberId).eq(ProRoleUser::getProjectId, projectId));
-
-//            organizationMemberInfoService.remove(new QueryWrapper<OrganizationMemberInfo>()
-//                    .eq("member_id",memberId).eq("project_id", projectId));
-
-            object.put("result",1);
-            object.put("msg","移除成功");
-        }catch(Exception e){
-            log.error("系统异常,成员移除失败:",e);
+        try {
+            if (projectMemberService.deleteMember(memberId,projectId)==1) {
+                object.put("result", 1);
+                object.put("msg", "移除成功");
+            }else{
+                object.put("result", 0);
+                object.put("msg", "移除失败，项目当前只有一个拥有着，不能退出");
+            }
+            return object;
+        } catch (Exception e) {
+            log.error("系统异常,成员移除失败:", e);
             throw new AjaxException(e);
         }
-        return object;
     }
 
     @PutMapping("/{memberId}")
-    public JSONObject upadteMemberRole(@PathVariable(value = "memberId") String memberId,@RequestParam(value = "projectId") String projectId){
+    public JSONObject upadteMemberRole(@PathVariable(value = "memberId") String memberId, @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
-        try{
-            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name","成员"));
+        try {
+            Role roleEntity = roleService.getOne(new QueryWrapper<Role>().eq("name", "成员"));
 
-            object.put("result",1);
-            object.put("msg","更新成功");
-        }catch(Exception e){
+            object.put("result", 1);
+            object.put("msg", "更新成功");
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
         return object;
@@ -149,19 +174,20 @@ public class MemberInvitationApi extends BaseController {
 
     /**
      * 更新项目成员的默认分组
-     * @param groupId 分组id
+     *
+     * @param groupId   分组id
      * @param projectId 项目id
      * @return
      */
     @PutMapping("/{groupId}/group")
-    public JSONObject updateMemberGroup(@PathVariable(value = "groupId")String groupId,@RequestParam(value = "projectId") String projectId){
+    public JSONObject updateMemberGroup(@PathVariable(value = "groupId") String groupId, @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
-        try{
+        try {
             String userId = ShiroAuthenticationManager.getUserId();
-            projectMemberService.updateDefaultGroup(projectId,userId,groupId);
-            object.put("result",1);
-            object.put("msg","更新成功");
-        }catch(Exception e){
+            projectMemberService.updateDefaultGroup(projectId, userId, groupId);
+            object.put("result", 1);
+            object.put("msg", "更新成功");
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
         return object;
@@ -169,18 +195,19 @@ public class MemberInvitationApi extends BaseController {
 
     /**
      * 获取某个项目的所有成员
+     *
      * @param projectId 项目id
      * @return
      */
     @GetMapping("/{projectId}/member")
-    public JSONObject getProjectMembers(@PathVariable("projectId") String projectId){
+    public JSONObject getProjectMembers(@PathVariable("projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
-        try{
+        try {
             List<UserEntity> users = userService.getProjectMembers(projectId);
-            jsonObject.put("data",users);
-            jsonObject.put("result",1);
-            jsonObject.put("msg","获取成功!");
-        }catch(Exception e){
+            jsonObject.put("data", users);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "获取成功!");
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -188,18 +215,19 @@ public class MemberInvitationApi extends BaseController {
 
     /**
      * 获取到模块在当前项目的的参与者信息与非参与者信息
-     * @param type 模块类型
-     * @param id 信息id
+     *
+     * @param type      模块类型
+     * @param id        信息id
      * @param projectId 所在项目id
      * @return 该项目成员在当前模块信息中的参与者信息与非参与者信息
      */
     @GetMapping("/member_info")
-    public JSONObject getModelProjectMember(String type, String id, String projectId){
+    public JSONObject getModelProjectMember(String type, String id, String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("joinInfo",projectMemberService.getModelProjectMember(type,id,projectId));
-            jsonObject.put("result",1);
-        } catch (Exception e){
+            jsonObject.put("joinInfo", projectMemberService.getModelProjectMember(type, id, projectId));
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
             log.error("系统异常,项目成员信息获取失败!");
             throw new AjaxException(e);
         }
@@ -208,36 +236,39 @@ public class MemberInvitationApi extends BaseController {
 
     /**
      * 获取一个用户的星标项目和非星标项目
+     *
      * @return 项目集合
      */
     @GetMapping("/star")
-    public JSONObject getStarProject(){
+    public JSONObject getStarProject() {
         JSONObject jsonObject = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-            jsonObject.put("starProject",projectMemberService.getStarProject(userId));
-            jsonObject.put("notStarProject",projectMemberService.getNotStarProject(userId));
-            jsonObject.put("result",1);
+            jsonObject.put("starProject", projectMemberService.getStarProject(userId));
+            jsonObject.put("notStarProject", projectMemberService.getNotStarProject(userId));
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
     }
 
     /**
      * 获取当前用户参加或者创建的项目中的所有成员信息
+     *
      * @return 项目成员信息
      */
     @GetMapping
-    public JSONObject getMembers(){
+    public JSONObject getMembers() {
         String userId = ShiroAuthenticationManager.getUserId();
         return success(projectMemberService.getMembers(userId));
     }
 
     /**
      * 获取项目中的某个成员信息
+     *
      * @param projectId 项目id
-     * @param keyWord 用户名
+     * @param keyWord   用户名
      * @return 用户信息
      */
     @GetMapping("/project/{projectId}")
@@ -245,44 +276,43 @@ public class MemberInvitationApi extends BaseController {
                                      @NotNull(message = "项目id不能为空！") String projectId,
 
                                      @Validated @RequestParam
-                                     @NotNull(message = "用户名不能为空") String keyWord){
+                                     @NotNull(message = "用户名不能为空") String keyWord) {
 
-        log.info("Get project user Info. [{},{}]",projectId, keyWord);
+        log.info("Get project user Info. [{},{}]", projectId, keyWord);
 
         return success(projectMemberService.getProjectUserInfo(projectId, keyWord));
     }
 
 
-
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param:
-    * @return:
-    * @Description: 添加项目成员
-    * @create: 17:05 2020/5/26
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param:
+     * @return:
+     * @Description: 添加项目成员
+     * @create: 17:05 2020/5/26
+     */
     @PostMapping("/addMember2")
     public JSONObject addMember2(@RequestParam(value = "projectId") String projectId,
-                                @RequestParam(value = "memberId") String memberId,
-                                @RequestParam(value = "orgId") String orgId){
+                                 @RequestParam(value = "memberId") String memberId,
+                                 @RequestParam(value = "orgId") String orgId) {
         JSONObject object = new JSONObject();
 
         try {
             //判断用户是否在企业
-            if (organizationMemberService.findOrgMemberIsExist(orgId,memberId)!=0) {
-                projectMemberService.saveMember(projectId,memberId,orgId);
-            }else {
+            if (organizationMemberService.findOrgMemberIsExist(orgId, memberId) != 0) {
+                projectMemberService.saveMember(projectId, memberId, orgId);
+            } else {
                 UserEntity byId = userService.findById(memberId);
-                OrganizationMember organizationMember= OrganizationMember.builder().job(byId.getJob())
+                OrganizationMember organizationMember = OrganizationMember.builder().job(byId.getJob())
                         .createTime(System.currentTimeMillis()).image(byId.getImage()).memberEmail(byId.getEmail())
                         .memberId(memberId).organizationId(orgId).phone(byId.getAccountName()).updateTime(System.currentTimeMillis())
                         .userName(byId.getUserName()).build();
                 organizationMemberService.save(organizationMember);
-                projectMemberService.saveMember(projectId,memberId,orgId);
+                projectMemberService.saveMember(projectId, memberId, orgId);
             }
-            object.put("result",1);
-            object.put("msg","添加成功");
+            object.put("result", 1);
+            object.put("msg", "添加成功");
             return object;
         } catch (Exception e) {
             e.printStackTrace();

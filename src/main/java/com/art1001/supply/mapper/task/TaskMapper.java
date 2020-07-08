@@ -778,4 +778,8 @@ public interface TaskMapper extends BaseMapper<Task> {
     List<ExecutorVo> getExecutors(@Param("projectId") String projectId);
 
 	List<Task> getUnfinishedTaskAndExecutor0(String memberId, String projectId);
+
+    List<Task> findCompleteTask(@Param("projectId") String projectId);
+
+	List<Task> findTaskByProjectInfo( @Param("projectId") String projectId);
 }

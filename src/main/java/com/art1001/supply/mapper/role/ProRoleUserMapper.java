@@ -2,6 +2,9 @@ package com.art1001.supply.mapper.role;
 
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ProRoleUserMapper extends BaseMapper<ProRoleUser> {
 
+    Integer getManagersByProject(@Param("projectId") String projectId);
+
+    ProRoleUser findProRoleUser(@Param("projectId")String projectId, @Param("memberId")String memberId);
 }

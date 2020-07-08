@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * 角色api
@@ -97,12 +98,12 @@ public class RoleApi {
      */
     @DeleteMapping("/{roleId}/org")
     public JSONObject deleteRole(@PathVariable(value = "roleId") Integer roleId,
-                                 @NotEmpty(message = "orgId不能为空")String orgId,
-                                 @RequestParam(value = "memberId")String memberId) {
+                                 @NotEmpty(message = "orgId不能为空") String orgId,
+                                 @RequestParam(value = "memberId") String memberId) {
         JSONObject object = new JSONObject();
         int result = roleService.removeOrgRole(roleId, orgId);
         boolean remove = organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_Id", memberId));
-        if (result == 1&& remove) {
+        if (result == 1 && remove) {
             object.put("result", result);
             object.put("msg", "删除成功");
         } else {
@@ -203,14 +204,24 @@ public class RoleApi {
         JSONObject object = new JSONObject();
         try {
             RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
-            Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id",roleId));
+            Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
             if (!ROLENAME.equals(role.getRoleName())) {
-                roleUser.setUId(userId);
-                roleUser.setOrgId(orgId);
-                roleUser.setRoleId(roleId);
-                roleUserService.updateById(roleUser);
-                object.put("result", 1);
-                object.put("msg", "");
+                if (roleUser == null) {
+                    RoleUser roleUser1 = new RoleUser();
+                    roleUser1.setUId(userId);
+                    roleUser1.setOrgId(orgId);
+                    roleUser1.setRoleId(roleId);
+                    roleUser1.setTCreateTime(LocalDateTime.now());
+                    roleUserService.save(roleUser1);
+                }else{
+                    roleUser.setUId(userId);
+                    roleUser.setOrgId(orgId);
+                    roleUser.setRoleId(roleId);
+                    roleUserService.updateById(roleUser);
+                }
+                object.put("result",1);
+                object.put("msg","更新成功");
+
             } else {
                 object.put("result", 0);
                 object.put("msg", "企业拥有着只能有一个");

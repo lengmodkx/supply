@@ -122,6 +122,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private UserService userService;
 
+    @Resource
+    private RoleService roleService;
+
     private static final String ZERO = "0";
 
     /**
@@ -727,5 +730,35 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return projects;
 
+    }
+
+    /**
+     * 项目角色判断 成员1 拥有者或管理员0
+     *
+     * @param projectId
+     * @return
+     */
+    @Override
+    public Integer judgmentRoles(String projectId) {
+        Integer result = 1;
+        ProRoleUser proRoleUser = proRoleUserService.findProRoleUser(projectId, ShiroAuthenticationManager.getUserId());
+        if (!Constants.MEMBER_CN.equals(proRoleUser.getRoleName())) {
+            result = 0;
+        }
+        return result;
+    }
+
+    @Override
+    public String addMember(String projectId, String memberId) {
+        Project project = projectService.getById(projectId);
+        int orgExist = organizationMemberService.findOrgMemberIsExist(project.getOrganizationId(), ShiroAuthenticationManager.getUserId());
+        if (orgExist == 0) {
+            UserEntity byId = userService.findById(memberId);
+            organizationMemberService.saveOrganizationMember2(project.getOrganizationId(), byId);
+
+        }
+        projectMemberService.saveMember(projectId, memberId, project.getOrganizationId());
+
+        return "1";
     }
 }
