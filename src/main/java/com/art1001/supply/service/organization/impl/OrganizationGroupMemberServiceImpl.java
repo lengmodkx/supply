@@ -133,6 +133,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
                 item.setMemberEmail(byId.getEmail());
                 item.setPhone(byId.getAccountName());
                 item.setMemberId(byId.getUserId());
+                item.setUserEntity(byId);
                 if(item.getUserId().equals(groupOwnerInfo.getUserId())){
                     item.setIsOwner(true);
                 } else{

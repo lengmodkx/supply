@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.organization;
 
+import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -82,6 +83,9 @@ public class OrganizationGroupMember implements Serializable {
      */
     @TableField(exist = false)
     private Boolean isOwner;
+
+    @TableField(exist = false)
+    private UserEntity userEntity;
 
 
 }
