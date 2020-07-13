@@ -58,6 +58,7 @@ public class Constants {
     public static final String ZERO ="0";
     public static final String ONE ="1";
     public static final String TWO ="2";
+    public static final String THREE ="3";
 
     //模块小写英文
     public static final String TASK_EN = "task";

@@ -159,6 +159,28 @@ public class OrganizationMemberApi {
         return jsonObject;
     }
 
+    @PostMapping("/addMember1")
+    public JSONObject addMember1(@RequestParam(value = "orgId", required = false) String orgId,
+                                @RequestParam(value = "parmentId", required = false) String parmentId,
+                                @RequestParam(value = "memberId") String memberId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (StringUtils.isNotEmpty(orgId)) {
+                UserEntity byId = userService.findById(memberId);
+                organizationMemberService.saveOrganizationMember2(orgId,byId);
+                jsonObject.put("result", 1);
+                jsonObject.put("msg", "添加成功");
+            } else {
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "邀请失败，该成员已在企业中");
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
+
     /**
      * 企业成员
      *
@@ -426,14 +448,15 @@ public class OrganizationMemberApi {
      * @Param:
      * @return:
      * @Description: 生成链接邀请成员
-     * @create: 15:14 2020/5/18
+     * @create: 15:14 2020/5/18  todo
      */
     @GetMapping("/getOrganizationMemberByUrl")
-    public JSONObject getOrganizationMemberByUrl(String orgId) {
+    public JSONObject getOrganizationMemberByUrl(@RequestParam(value = "orgId",required = false) String orgId,
+                                                 @RequestParam(value = "projectId",required = false) String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
-            jsonObject.put("data", invitationLinkService.getOrganizationMemberByUrl(orgId));
+            jsonObject.put("data", invitationLinkService.getOrganizationMemberByUrl(orgId,projectId));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -499,7 +522,7 @@ public class OrganizationMemberApi {
      */
     @GetMapping("/getOrgPartmentByMemberLebel")
     public JSONObject getOrgPartmentByMemberLebel(@RequestParam(value = "partmentId",required = false) String partmentId,
-                                                  @RequestParam(value ="memberLebel" ,required = false)String memberLebel,
+                                                  @RequestParam(value ="memberLabel" ,required = false)String memberLebel,
                                                   @RequestParam(value = "flag",defaultValue = "1") String flag,
                                                   @RequestParam(value = "orgId") String orgId){
         JSONObject jsonObject = new JSONObject();

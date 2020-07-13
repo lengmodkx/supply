@@ -202,4 +202,11 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @param userEntity
 	 */
 	void saveOrganizationMember2(String orgId, UserEntity userEntity);
+
+	/**
+	 * 根据部门成员id查询企业成员
+	 * @param ids
+	 * @return
+	 */
+	List<OrganizationMember> getMemberByPartmentIds(List<String> ids,String orgId);
 }

@@ -28,4 +28,15 @@ public class InvitationLinkVO {
      * 短链接
      */
     private String shortUrl;
+
+    /**
+     * hash
+     */
+    private String hash;
+
+    private String orgId;
+
+    private String projectId;
+
+    private String memberId;
 }

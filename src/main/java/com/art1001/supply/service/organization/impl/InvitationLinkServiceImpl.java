@@ -20,6 +20,7 @@ import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -69,28 +70,54 @@ public class InvitationLinkServiceImpl extends ServiceImpl<InvitationLinkMapper,
     @Resource
     private ProjectMemberService projectMemberService;
 
-    @Override
-    public InvitationLinkVO getOrganizationMemberByUrl(String orgId) {
-        List<UserEntity> userList = organizationMemberService.getUserList(orgId);
+    @Value("${http.short}")
+    private String httpShort;
 
-        String encode = shortCodeUtils.encode(orgId);
+    @Override
+    public InvitationLinkVO getOrganizationMemberByUrl(String orgId,String projectId) {
+        String encode="";
+        String organization_id="";
+        if (StringUtils.isNotEmpty(orgId)) {
+            encode = shortCodeUtils.encode(orgId);
+        }
+        if (StringUtils.isNotEmpty(projectId)) {
+            encode = shortCodeUtils.encode(projectId);
+        }
         long twoDayLater = LocalDateTime.now().withNano(0).plusHours(48).toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
-        InvitationLink inviteVO=InvitationLink.builder().organizationId(orgId)
-                .shortUrl("http://aldbim.in/invite/"+encode)
-                .completeUrl("http://www.aldbim.com/invite_from_link/"+orgId)
+        InvitationLink inviteVO=InvitationLink.builder()
+                .shortUrl(httpShort+"/api/invite/"+encode)
                 .createTime(currentTimeMillis())
                 .expireTime(twoDayLater).isExpire(0)
                 .memberId(ShiroAuthenticationManager.getUserId())
                 .updateTime(System.currentTimeMillis()).hash(encode).build();
+        if (StringUtils.isNotEmpty(orgId)) {
+            inviteVO.setOrganizationId(orgId);
+            inviteVO.setCompleteUrl(httpShort+"/loginCompany?companyId="+orgId+"&memberId="+ShiroAuthenticationManager.getUserId()+"&from=members");
+        }
+        if (StringUtils.isNotEmpty(projectId)) {
+            inviteVO.setCompleteUrl(httpShort+"/loginCompany?id="+projectId+"&memberId="+ShiroAuthenticationManager.getUserId()+"&from=project");
+            organization_id=projectService.getById(projectId).getOrganizationId();
+            inviteVO.setProjectId(projectId);
+            inviteVO.setOrganizationId(organization_id);
+        }
+        List<UserEntity> userList = organizationMemberService.getUserList(orgId);
         this.save(inviteVO);
 
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(twoDayLater), ZoneId.systemDefault());
         DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return InvitationLinkVO.builder().memberNum(userList.size())
-                .expireTime(dateTimeFormatter1.format(localDateTime))
-                .shortUrl("http://aldbim.in/invite/"+encode).build();
 
+        InvitationLinkVO linkVO= InvitationLinkVO.builder().memberNum(userList.size())
+                .expireTime(dateTimeFormatter1.format(localDateTime))
+                .shortUrl(httpShort+"/api/invite/"+encode)
+                .hash(encode)
+                .orgId(orgId)
+                .projectId(projectId)
+                .memberId(ShiroAuthenticationManager.getUserId()).build();
+        if (StringUtils.isNotEmpty(orgId)) {
+            linkVO.setOrgId(organization_id);
+        }
+        return linkVO;
     }
 
     @Override

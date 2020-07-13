@@ -34,6 +34,13 @@ public class InvitationApi {
     @Resource
     private RedisUtil redisUtil;
 
+    /**
+     * 跳转
+     * @param response
+     * @param hash
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/{hash}")
     public String redirectUrl(HttpServletResponse response, @PathVariable String hash) throws IOException {
         InvitationLink invitationLink = invitationLinkService.getRedrectUrl(hash);

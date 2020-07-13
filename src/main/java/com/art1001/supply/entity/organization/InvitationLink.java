@@ -26,6 +26,8 @@ public class InvitationLink extends Model<InvitationLink> {
    */
   private String organizationId;
 
+  private String projectId;
+
   /**
    * 短链接
    */

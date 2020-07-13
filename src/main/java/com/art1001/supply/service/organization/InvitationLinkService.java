@@ -12,7 +12,7 @@ public interface InvitationLinkService extends IService<InvitationLink> {
      * @param orgId
      * @return
      */
-    InvitationLinkVO getOrganizationMemberByUrl(String orgId);
+    InvitationLinkVO getOrganizationMemberByUrl(String orgId,String projectId);
 
     /**
      * 获取邀请链接的详细信息
