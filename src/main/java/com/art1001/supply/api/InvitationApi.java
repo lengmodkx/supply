@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.organization.InvitationLink;
+import com.art1001.supply.entity.user.UserVO;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.organization.InvitationLinkService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -33,6 +34,13 @@ public class InvitationApi {
     @Resource
     private RedisUtil redisUtil;
 
+    /**
+     * 跳转
+     * @param response
+     * @param hash
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/{hash}")
     public String redirectUrl(HttpServletResponse response, @PathVariable String hash) throws IOException {
         InvitationLink invitationLink = invitationLinkService.getRedrectUrl(hash);
@@ -61,6 +69,28 @@ public class InvitationApi {
         } catch (Exception e) {
             throw new AjaxException(e);
         }
+    }
+
+    /**
+     * 获取 项目/企业邀请人信息
+     * @param memberId
+     * @param orgId
+     * @param projectId
+     * @return
+     */
+    @GetMapping("/getInviteMemberInfo/{memberId}")
+    public JSONObject getInviteMemberInfo(@PathVariable(value = "memberId") String memberId,
+                                          @RequestParam(value = "orgId",required = false)String orgId,
+                                          @RequestParam(value = "projectId",required = false)String projectId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",invitationLinkService.getInviteMemberInfo(memberId,orgId,projectId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
     }
 
 }

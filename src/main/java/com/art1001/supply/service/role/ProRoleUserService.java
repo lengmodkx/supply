@@ -54,4 +54,13 @@ public interface ProRoleUserService extends IService<ProRoleUser> {
      * @return 用户id列表
      */
     List<String> getRoleUserIdListByRoleId(Integer roleId);
+
+    /**
+     * 获取项目所有角色
+     * @param projectId
+     * @return
+     */
+    Integer getManagersByProject(String projectId);
+
+    ProRoleUser findProRoleUser(String projectId, String memberId);
 }

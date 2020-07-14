@@ -5,6 +5,7 @@
     <resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.InvitationLink">
         <result column="id" property="id" jdbcType="VARCHAR" />
         <result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
         <result column="short_url" property="shortUrl" jdbcType="VARCHAR" />
         <result column="complete_url" property="completeUrl" jdbcType="VARCHAR" />
         <result column="member_id" property="memberId" jdbcType="VARCHAR" />

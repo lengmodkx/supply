@@ -266,4 +266,6 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	 * @return
 	 */
 	List<ProjectMember> searchMemberByName(String condition,String projectId);
+
+    Integer deleteMember(String memberId, String projectId);
 }

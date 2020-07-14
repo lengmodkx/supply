@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.log.LogMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.log.Log">
-		<result column="id" property="id" jdbcType="VARCHAR" />
-		<result column="public_id" property="publicId" jdbcType="VARCHAR" />
-		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
-		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
-		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
-		<result column="member_img" property="memberImg" jdbcType="VARCHAR" />
-		<result column="content" property="content" jdbcType="VARCHAR" />
-		<result column="log_type" property="logType" jdbcType="INTEGER" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-	</resultMap>
-    
-	<sql id="Base_Column_List">
+
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.log.Log">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="public_id" property="publicId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="member_name" property="memberName" jdbcType="VARCHAR"/>
+        <result column="member_img" property="memberImg" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="log_type" property="logType" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 		l.id,
 		l.public_id,
 		l.project_id,
@@ -26,39 +26,39 @@
 		l.create_time
 	</sql>
 
-	<select id="findLogAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.log.Log">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_log l
-		left join tb_user u on l.member_id = u.user_id
-		where 1=1
-		<if test="projectId != null and projectId!=''">
-			and project_id = #{projectId}
-		</if>
-		<if test="logFlag != null ">
-			and log_flag = #{logFlag}
-		</if>
-		<if test="logType != null ">
-			and log_type = #{logType}
-		</if>
-	</select>
-	
-	<select id="findLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="findLogAllList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.log.Log">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_log l
+        left join tb_user u on l.member_id = u.user_id
+        where 1=1
+        <if test="projectId != null and projectId!=''">
+            and project_id = #{projectId}
+        </if>
+        <if test="logFlag != null ">
+            and log_flag = #{logFlag}
+        </if>
+        <if test="logType != null ">
+            and log_type = #{logType}
+        </if>
+    </select>
 
-		select
-		<include refid="Base_Column_List" />
-		from prm_log l left join tb_user u on l.member_id = u.user_id where id = #{id}
+    <select id="findLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
 
-	</select>
-	
-	<delete id="deleteLogById" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_log l left join tb_user u on l.member_id = u.user_id where id = #{id}
+
+    </select>
+
+    <delete id="deleteLogById" parameterType="java.lang.String">
 		delete from
 		prm_log where id = #{id}
 	</delete>
 
-	<!-- 查询出最近的五条日志记录 -->
-	<select id="initLog" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!-- 查询出最近的五条日志记录 -->
+    <select id="initLog" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 			l.id,
 			l.public_id,
@@ -74,37 +74,38 @@
 		where public_id = #{publicId} order by create_time desc limit 0,10
 	</select>
 
-	<select id="findLogByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="findLogByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
 
-		select
-		<include refid="Base_Column_List" />
-		from prm_log where project_id = #{projectId} and log_type = 0
+        select
+        <include refid="Base_Column_List"/>
+        from prm_log where project_id = #{projectId} and log_type = 0
 
-	</select>
+    </select>
 
-	<!-- 初始一个信息下的所有 日志信息 和聊天信息 -->
-	<select id="initAllLog" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List"/>
-		from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
-	</select>
+    <!-- 初始一个信息下的所有 日志信息 和聊天信息 -->
+    <select id="initAllLog" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_log where public_id = #{publicId} and log_type = 1 order by create_time
+    </select>
 
-	<!-- 加载剩余消息的数据 -->
-	<select id="selectSurplusMsg" resultType="com.art1001.supply.entity.log.Log">
+    <!-- 加载剩余消息的数据 -->
+    <select id="selectSurplusMsg" resultType="com.art1001.supply.entity.log.Log">
 		select id,public_id as publicId,project_id as projectId,member_id as memberId,content,log_type as logType,l.create_time as createTime,image as memberImg
 		from prm_log l left join tb_user u on u.user_id = l.member_id where public_id = #{publicId} order by l.create_time desc limit 10,#{surpluscount}
 	</select>
 
-	<!-- 删除多个任务的日志信息 -->
-	<delete id="deleteManyByPublicId">
-		delete from prm_log where public_id in
-		(
-			<foreach collection="list" item="publicId" separator=",">
-				#{publicId}
-			</foreach>
-		)
-	</delete>
+    <!-- 删除多个任务的日志信息 -->
+    <delete id="deleteManyByPublicId">
+        delete from prm_log where public_id in
+        (
+        <foreach collection="list" item="publicId" separator=",">
+            #{publicId}
+        </foreach>
+        )
+    </delete>
 
-	<select id="getMyDynamic" resultType="com.art1001.supply.entity.log.Log">
+    <select id="getMyDynamic" resultType="com.art1001.supply.entity.log.Log">
 		SELECT
 		l.member_id as memberId,
 		u.image as memberImg,
@@ -129,4 +130,32 @@
 		ORDER BY
 		l.create_time DESC
 	</select>
+
+    <select id="selectLogByCondition" resultType="com.art1001.supply.entity.log.Log">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_log l join tb_user u on l.member_id=u.user_id
+        <!--<if test="startTime != null">-->
+           <!--and  l.create_time <![CDATA[ >= ]]> #{startTime}-->
+        <!--</if>-->
+        <!--<if test="endTime != null and startTime != null">-->
+           <!--and l.create_time <![CDATA[ <= ]]> #{startTime}-->
+        <!--</if>-->
+
+        <if test="startTime!=null and startTime!=''">
+            AND l.create_time &gt;= #{startTime}
+        </if>
+
+        <!-- 查询条件：创建结束时间 -->
+        <if test="endTime!=null and endTime!=''">
+            AND l.create_time &lt;= #{endTime}
+        </if>
+        <if test="memberId != null">
+           and l.member_id=#{memberId}
+        </if>
+        where l.project_id in(
+        <foreach collection="projectIds" item="projectId" separator=",">
+            #{projectId}
+        </foreach>)
+    </select>
 </mapper>

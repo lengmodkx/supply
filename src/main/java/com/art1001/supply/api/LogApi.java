@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 日志消息api
@@ -137,6 +138,30 @@ public class LogApi extends BaseController {
     private void msgTypeCheck(String publicType){
         if(!(Constants.TASK.equals(publicType) || Constants.FILE.equals(publicType) || Constants.SHARE.equals(publicType) || Constants.SCHEDULE.equals(publicType))){
             throw new AjaxException("消息类型不合法!");
+        }
+    }
+
+
+    /**
+     * 根据条件筛选日志信息
+     * @param orgId
+     * @param memberId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping("/operatingLog/{orgId}")
+    public JSONObject operatingLog(@PathVariable(value = "orgId") String orgId,
+                                   @RequestParam(value = "memberId",required = false) String memberId,
+                                   @RequestParam(value = "startTime",required = false) Long startTime,
+                                   @RequestParam(value = "endTime",required = false) Long endTime){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",logService.selectLogByCondition(orgId,memberId,startTime,endTime));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
         }
     }
 }

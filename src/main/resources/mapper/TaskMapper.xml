@@ -1701,5 +1701,20 @@ select
         and task_status=0 and prm_task.executor=0  ORDER by create_time DESC
     </select>
 
+    <select id="findCompleteTask" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        task_id
+        FROM
+        prm_task
+        WHERE
+        prm_task.project_id=#{projectId}
+        and task_status=1 ORDER by create_time DESC
+    </select>
+
+    <select id="findTaskByProjectInfo" resultType="com.art1001.supply.entity.task.Task">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_project where prm_project.project_id=#{projectId}
+    </select>
 
 </mapper>

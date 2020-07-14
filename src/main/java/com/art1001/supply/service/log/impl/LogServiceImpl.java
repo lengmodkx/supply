@@ -3,19 +3,26 @@ package com.art1001.supply.service.log.impl;
 import com.art1001.supply.application.assembler.LogAssembler;
 import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.log.LogSendParam;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -36,6 +43,12 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 
 	@Resource
 	private LogAssembler logAssembler;
+
+	@Resource
+	private OrganizationService  organizationService;
+
+	@Resource
+	private ProjectService projectService;
 	/**
 	 * 保存数据
 	 *
@@ -123,5 +136,34 @@ public class LogServiceImpl extends ServiceImpl<LogMapper,Log> implements LogSer
 	@Override
 	public List<Log> getMyDynamic(String userId) {
 		return logMapper.getMyDynamic(userId);
+	}
+
+	/**
+	* @Author: 邓凯欣
+	* @Email：dengkaixin@art1001.com
+	* @param orgId
+	* @param memberId
+	* @param startTime
+	* @param endTime
+	* @return:
+	* @Description: 根据条件查询日志
+	* @create: 16:38 2020/7/13
+	*/
+	@Override
+	public List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime) {
+		List<String> projectIds = organizationService.getProject(orgId).stream().map(Project::getProjectId).collect(Collectors.toList());
+		List<Log>logs= Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(projectIds)) {
+			logs=logMapper.selectLogByCondition(projectIds,memberId,startTime,endTime);
+			Optional.ofNullable(logs).ifPresent(log -> {
+				log.stream().forEach(r->{
+					r.setProjectName(projectService.getById(r.getProjectId()).getProjectName());
+					if (r.getContent().contains(r.getMemberName())) {
+						r.setContent(r.getContent().replaceAll(r.getMemberName(),""));
+					}
+				});
+			});
+		}
+		return logs;
 	}
 }

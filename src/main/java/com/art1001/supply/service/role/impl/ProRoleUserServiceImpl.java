@@ -42,6 +42,10 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private ProRoleUserMapper proRoleUserMapper;
+
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
         ProRoleUser proRoleUser = new ProRoleUser();
@@ -107,5 +111,20 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         }
 
         return proRoleUserList.stream().map(ProRoleUser::getUId).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取项目所有角色
+     * @param projectId
+     * @return
+     */
+    @Override
+    public Integer getManagersByProject(String projectId) {
+        return proRoleUserMapper.getManagersByProject(projectId);
+    }
+
+    @Override
+    public ProRoleUser findProRoleUser(String projectId, String memberId) {
+        return proRoleUserMapper.findProRoleUser(projectId,memberId);
     }
 }

@@ -21,7 +21,7 @@ public interface OrganizationGroupMemberService extends IService<OrganizationGro
      * @param memberId 成员id
      * @return 结果
      */
-    Boolean addGroupMember(String groupId, String memberId);
+    Boolean addGroupMember(String groupId, List<String> memberId);
 
     /**
      * 该成员在分组中是否存在

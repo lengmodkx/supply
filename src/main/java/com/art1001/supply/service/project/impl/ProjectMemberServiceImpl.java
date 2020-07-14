@@ -12,6 +12,7 @@ import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.share.Share;
@@ -32,6 +33,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
@@ -52,6 +54,7 @@ import org.apache.commons.codec.language.bm.Languages;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,6 +147,11 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private OrganizationMemberMapper organizationMemberMapper;
 
+    @Resource
+    private RoleService roleService;
+
+    private static final String EXTERNALMEMBER="外部成员";
+
     @Override
     public List<Project> findProjectByMemberId(String memberId, Integer projectDel) {
         return projectMemberMapper.findProjectByMemberId(memberId, projectDel);
@@ -151,7 +159,18 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
     @Override
     public List<ProjectMember> findByProjectId(String projectId) {
-        return projectMemberMapper.findByProjectId(projectId);
+        List<ProjectMember> byProjectId = projectMemberMapper.findByProjectId(projectId);
+        Optional.ofNullable(byProjectId).ifPresent(projectMembers->{
+            projectMembers.forEach(r->{
+                ProRoleUser proRoleUser = proRoleUserService.findProRoleUser(r.getProjectId(), r.getMemberId());
+                if (Constants.MEMBER_CN.equals(proRoleUser.getRoleName())) {
+                    r.setIsManager(1);
+                }else{
+                    r.setIsManager(0);
+                }
+            });
+        });
+        return byProjectId;
     }
 
 
@@ -204,6 +223,44 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Override
     public List<ProjectMember> searchMemberByName(String condition,String projectId) {
         return projectMemberMapper.searchMemberByName(condition,projectId);
+    }
+
+    /**
+     * 删除成员
+     * @param memberId
+     * @param projectId
+     * @return
+     */
+    @Override
+    public Integer deleteMember(String memberId, String projectId) {
+        ProRole proRole = proRoleUserService.getRoleIdForProjectUser(projectId, memberId);
+        if (!Constants.OWNER_CN.equals(proRole.getRoleName())) {
+            return removeMemberAndRole(memberId, projectId);
+        }
+        Integer result=proRoleUserService.getManagersByProject(projectId);
+        if (result>1) {
+            return removeMemberAndRole(memberId, projectId);
+        }else{
+            return 0;
+        }
+
+    }
+
+    /**
+     * 移除项目成员
+     * @param memberId
+     * @param projectId
+     * @return
+     */
+    @NotNull
+    private Integer removeMemberAndRole(String memberId, String projectId) {
+        this.remove(new QueryWrapper<ProjectMember>()
+                .lambda().eq(ProjectMember::getMemberId, memberId)
+                .eq(ProjectMember::getProjectId, projectId));
+
+        proRoleUserService.remove(new QueryWrapper<ProRoleUser>().lambda()
+                .eq(ProRoleUser::getUId, memberId).eq(ProRoleUser::getProjectId, projectId));
+        return 1;
     }
 
     /**
@@ -337,60 +394,20 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         member.setRoleKey(byId.getRoleKey());
         projectMemberMapper.insert(member);
 
-
-       /* //新修改....
-        //根据用户id查询用户信息
-        UserEntity user = userService.findById(memberId);
-        //查询部门信息
-        Partment deptInfo = partmentService.getSimpleDeptInfo(user.getUserId(), orgId);
-        OrganizationMemberInfo info = new OrganizationMemberInfo();
-        if (deptInfo != null) {
-            PartmentMember partInfo = partmentMemberService.getPartmentMemberInfo(deptInfo.getPartmentId(), user.getUserId());
-            String parentName = "";
-            if (partInfo != null) {
-                if (deptInfo.getParentId().equals(ZERO) && !StringUtils.isEmpty(deptInfo.getParentId())) {
-                    parentName = partmentService.findPartmentByPartmentId(deptInfo.getParentId()).getPartmentName();
+        //如果是企业外部成员，权限变为外部成员权限
+        if (organizationMemberService.findOrgOtherByMemberId(memberId, orgId)==0) {
+            List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("organization_id", orgId));
+            Optional.ofNullable(roles).ifPresent(r->r.stream().forEach(e->{
+                if (e.getRoleName().equals(EXTERNALMEMBER)) {
+                    RoleUser roleUser=new RoleUser();
+                    roleUser.setUId(memberId);
+                    roleUser.setTCreateTime(LocalDateTime.now());
+                    roleUser.setRoleId(e.getRoleId());
+                    roleUser.setOrgId(orgId);
+                    roleUserService.save(roleUser);
                 }
-                info.setDeptId(deptInfo.getPartmentId());
-                info.setDeptName(deptInfo.getPartmentName());
-                info.setParentId(deptInfo.getParentId());
-                info.setParentName(parentName);
-                info.setMemberLabel(String.valueOf(partInfo.getMemberLabel()));
-            }
+            }));
         }
-        //查询部门成员信息
-
-        //上级名称
-
-
-        //邀请成功后将邀请成员的信息添加到企业用户详情表
-        info.setId(IdGen.uuid());
-        info.setProjectId(projectId);
-        info.setMemberId(memberId);
-        info.setOrganizationId(orgId);
-        if (user.getAddress() != null) {
-            info.setAddress(user.getAddress());
-        }
-        if (user.getBirthday() != null) {
-            info.setBirthday(String.valueOf(user.getBirthday().getTime()));
-        }
-        info.setCreateTime(String.valueOf(System.currentTimeMillis()));
-        info.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-
-        if (user.getEmail() != null) {
-            info.setMemberEmail(user.getEmail());
-        }
-        if (user.getJob() != null) {
-            info.setJob(user.getJob());
-        }
-        if (user.getUserName() != null) {
-            info.setUserName(user.getUserName());
-        }
-        if (user.getAccountName() != null) {
-            info.setPhone(user.getAccountName());
-        }
-        organizationMemberInfoService.save(info);
-*/
         return 1;
     }
 

@@ -14,8 +14,9 @@
         	f.file_id,
         	f.file_name,
         	f.size,
-        	f.file_del AS is_delete,
-        	f.create_time
+        	f.file_del AS isDelete,
+        	f.create_time,
+        	f.ext as ext
         FROM
         	prm_file f
         WHERE

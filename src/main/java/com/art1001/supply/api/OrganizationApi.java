@@ -24,7 +24,10 @@ import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -156,8 +159,17 @@ public class OrganizationApi {
             }
             List<Project> projects = organizationService.getProject(orgId);
             String userId = ShiroAuthenticationManager.getUserId();
+            //
+            List<String> memberResourceKey= Lists.newArrayList();
+
+            //默认企业可能为空
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
-            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
+            if (StringUtils.isNotEmpty(orgByUserId)) {
+                memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
+            }
+            else{
+                memberResourceKey = resourceService.getMemberResourceKey(userId, orgId);
+            }
             redisUtil.remove("orgms:" + userId);
             redisUtil.lset("orgms:"+userId, memberResourceKey);
             jsonObject.put("data", projects);

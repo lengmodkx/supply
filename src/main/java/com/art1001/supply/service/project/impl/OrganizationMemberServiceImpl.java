@@ -1,5 +1,6 @@
 package com.art1001.supply.service.project.impl;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.InvitationLink;
@@ -96,6 +97,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Resource
     private RedisUtil redisUtil;
+
 
     private String orgId;
     private String userId;
@@ -426,54 +428,67 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag, String orgId) {
         List<OrganizationMember> orgs = Lists.newArrayList();
         List<PartmentMember> partmentMembers = Lists.newArrayList();
+        OrganizationMember org = new OrganizationMember();
         if (StringUtils.isNotEmpty(partmentId)) {
             partmentMembers = partmentMemberService.getMemberInfoByPartmentId(partmentId);
             if (CollectionUtils.isNotEmpty(partmentMembers)) {
                 for (PartmentMember partmentMember : partmentMembers) {
-                    if (StringUtils.isNotEmpty(memberLebel)) {
-                        orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>()
-                                .eq("member_id", partmentMember.getMemberId())
-                                .eq("partment_id", partmentId)
-                                .eq("other", flag));
-                        orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
-                        if (CollectionUtils.isNotEmpty(orgs)) {
-                            if (Constants.ONE.equals(memberLebel)) {
-                                return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
-                            } else if (Constants.TWO.equals(memberLebel)) {
-                                return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
-                            } else {
-                                return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
-                            }
+                    org = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>()
+                            .eq("member_id", partmentMember.getMemberId())
+                            .eq("partment_id", partmentId)
+                            .eq("other", flag));
+                    if (org != null) {
+                        org.setUserEntity(userService.findById(partmentMember.getMemberId()));
+                        if (StringUtils.isEmpty(memberLebel)) {
+                            orgs.add(org);
                         }
-                    } else {
-                        orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>()
-                                .eq("partment_id", partmentId)
-                                .eq("other", flag));
-                        orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
-                        return orgs;
+                        OrganizationMember orgsResult = getOrgsResult(memberLebel, org);
+                        if (orgsResult != null) {
+                            orgs.add(orgsResult);
+                        }
                     }
                 }
             }
         } else {
-            if (StringUtils.isNotEmpty(memberLebel)) {
+            if (StringUtils.isEmpty(memberLebel)) {
                 orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
                 orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
-                if (Constants.ONE.equals(memberLebel)) {
-                    return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
-                } else if (Constants.TWO.equals(memberLebel)) {
-                    return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
-                } else {
-                    return orgs.stream().filter(f -> f.getMemberLabel() != null && f.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
-                }
-            } else {
-                orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
-                orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
-                return orgs;
             }
-
+            orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+            orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
+            Optional.ofNullable(orgs).ifPresent(os -> {
+                if (StringUtils.isNotEmpty(memberLebel)) {
+                    if (Constants.ONE.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
+                    else if (Constants.TWO.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
+                    else if (Constants.THREE.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
+                }
+            });
         }
-
         return orgs;
+    }
+
+    /**
+     * 获取筛选结果
+     *
+     * @param memberLebel
+     * @param org
+     */
+    private OrganizationMember getOrgsResult(String memberLebel, OrganizationMember org) {
+
+        if (Constants.ONE.equals(memberLebel)) {
+            if (org.getMemberLabel() != null && org.getMemberLabel().equals(Constants.MEMBER_CN)) {
+                return org;
+            }
+        } else if (Constants.TWO.equals(memberLebel)) {
+            if (org.getMemberLabel() != null && org.getMemberLabel().equals(Constants.OWNER_CN)) {
+                return org;
+            }
+        } else {
+            if (org.getMemberLabel() != null && org.getMemberLabel().equals(Constants.ADMIN_CN)) {
+                return org;
+            }
+        }
+        return null;
     }
 
     /**
@@ -517,12 +532,41 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public List<OrganizationMember> getMemberByPartmentId(String partmentId) {
-        return organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("partment_id", partmentId));
+        List<OrganizationMember> partment_id = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("partment_id", partmentId));
+        return partment_id;
     }
 
     @Override
     public OrganizationMember findOrgMembersByUserId(String userId, String orgId) {
-        return organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
+        return organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userId));
+    }
+
+    /**
+     * 查询企业外部成员
+     *
+     * @param memberId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Integer findOrgOtherByMemberId(String memberId, String orgId) {
+        return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId).eq("other", "0"));
+    }
+
+    @Override
+    public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
+        saveOrganizationMemberInfo(orgId, userEntity);
+    }
+
+    /**
+     * 根据部门成员id查询企业成员
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    public List<OrganizationMember> getMemberByPartmentIds(List<String> ids, String orgId) {
+        return organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().in("member_id", ids).eq("organization_id", orgId));
     }
 
     /**
@@ -543,6 +587,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         organizationMember.setUpdateTime(System.currentTimeMillis());
         organizationMember.setUserName(userEntity.getUserName());
         organizationMember.setAddress(userEntity.getAddress());
+        organizationMember.setPartmentId("0");
         if (userEntity.getBirthday() != null) {
             Instant instant = userEntity.getBirthday().toInstant();
             ZoneId zoneId = ZoneId.systemDefault();
@@ -551,10 +596,17 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         organizationMember.setMemberLock(1);
         organizationMember.setOther(1);
-        organizationMember.setMemberLabel("成员");
-        organizationMember.setUserDefault(true);
+        organizationMember.setMemberLabel("外部成员");
+        organizationMember.setUserDefault(false);
         organizationMember.setPartmentId("0");
         this.save(organizationMember);
+        RoleUser roleUser = new RoleUser();
+        roleUser.setOrgId(orgId);
+        roleUser.setUId(userEntity.getUserId());
+        roleUser.setTCreateTime(LocalDateTime.now());
+        Role one = roleService.getOne(new QueryWrapper<Role>().eq("organization_id", orgId).eq("role_name", "外部成员"));
+        roleUser.setRoleId(one.getRoleId());
+        roleUserService.save(roleUser);
         return "邀请成功";
     }
 

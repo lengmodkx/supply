@@ -5,24 +5,32 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
-import com.art1001.supply.api.OrganizationApi;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.IMUserService;
+import com.art1001.supply.entity.CodeMsg;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
+import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,6 +49,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +62,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
 
     @Resource
     private UserMapper userMapper;
@@ -71,10 +80,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     private IMUserService imUserService;
 
     @Resource
+    private ProRoleService proRoleService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
     FileMapper fileMapper;
 
     @Resource
-    OrganizationService organizationService;
+    private ProjectMemberService projectMemberService;
+
+    @Resource
+    private PartmentService partmentService;
 
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
@@ -93,10 +111,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
-        String orgId = organizationMemberService.findOrgByUserId(info.getUserId());
-        Organization organization = organizationService.getById(orgId);
-        info.setOrgId(orgId);
-        info.setOrgName(organization.getOrganizationName());
+        String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
+        info.setOrgId(orgByUserId);
         return info;
     }
 
@@ -520,34 +536,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     }
 
     @Override
-    public UserVO getHeadUserInfo(String userId, String orgId) {
-        return userMapper.getHeadUserInfo(userId, orgId);
+    public UserVO getHeadUserInfo(String userId,String orgId) {
+        UserVO headUserInfo = userMapper.getHeadUserInfo(userId);
+        List<Partment> orgPartmentInfo = partmentService.findOrgPartmentInfo(orgId);
+        Optional.ofNullable(orgPartmentInfo).ifPresent(headUserInfo::setPartments);
+        return headUserInfo;
+
     }
 
     @Override
-    public String checkMemberIsRegister(String phone, String memberEmail,String orgId) {
+    public String checkMemberIsRegister(String phone, String memberEmail, String orgId) {
         UserEntity users;
         String result = "false";
         if (StringUtils.isNotEmpty(phone)) {
             users = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name", phone));
-            if (users!=null) {
+            if (users != null) {
                 int orgMemberIsExist = organizationMemberService.findOrgMemberIsExist(orgId, users.getUserId());
-                if(orgMemberIsExist==0){
-                    result="0";
-                }else{
-                    result="1";
+                if (orgMemberIsExist == 0) {
+                    result = "0";
+                } else {
+                    result = "1";
                 }
             }
             return result;
         }
         if (StringUtils.isNotEmpty(memberEmail)) {
             users = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("email", memberEmail));
-            if (users!=null) {
+            if (users != null) {
                 int orgMemberIsExist = organizationMemberService.findOrgMemberIsExist(orgId, users.getUserId());
-                if(orgMemberIsExist==0){
-                    result="0";
-                }else{
-                    result="1";
+                if (orgMemberIsExist == 0) {
+                    result = "0";
+                } else {
+                    result = "1";
                 }
             }
             return result;
@@ -558,12 +578,106 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
 
     @Override
     public UserEntity selectUserByPhone(String phone) {
-        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name",phone));
+        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("account_name", phone));
     }
 
     @Override
     public UserEntity selectUserByEmail(String email) {
-        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("email",email));
+        return userMapper.selectOne(new QueryWrapper<UserEntity>().eq("email", email));
+    }
+
+    /**
+     * 注册并添加项目成员
+     *
+     * @param captcha
+     * @param accountName
+     * @param password
+     * @param userName
+     * @param job
+     * @param projectId
+     * @return
+     */
+    @Override
+    public String registerAndProjectMember(String captcha, String accountName, String password, String userName, String job, String projectId) {
+
+        //设置创建者姓名
+        UserEntity userEntity = registerUser(accountName, password, userName, job);
+
+        //加入企业
+        String organizationId = projectService.getById(projectId).getOrganizationId();
+        if (StringUtils.isNotEmpty(organizationId)) {
+            organizationMemberService.saveOrganizationMember2(organizationId, userEntity);
+        }
+        //加入项目
+        ProjectMember projectMember = new ProjectMember();
+        projectMember.setProjectId(projectId);
+        projectMember.setMemberPhone(accountName);
+        projectMember.setMemberId(this.findByName(accountName).getUserId());
+        projectMember.setCreateTime(System.currentTimeMillis());
+        projectMember.setUpdateTime(System.currentTimeMillis());
+        projectMember.setMemberLabel(0);
+        if (StringUtils.isNotEmpty(organizationId)) {
+            ProRole one = proRoleService.getOne(new QueryWrapper<ProRole>().eq("org_id", organizationId).eq("role_name", "成员"));
+            if (one != null) {
+                projectMember.setRoleId(one.getRoleId());
+                projectMember.setRoleKey(one.getRoleKey());
+            }
+        }
+
+        projectMemberService.save(projectMember);
+        return "1";
+
+    }
+
+    /**
+     * 注册并加入企业
+     * @param captcha
+     * @param accountName
+     * @param password
+     * @param userName
+     * @param job
+     * @param orgId
+     * @return
+     */
+    @Override
+    public String registerAndOrgMember(String captcha, String accountName, String password, String userName, String job, String orgId) {
+        UserEntity userEntity = registerUser(accountName, password, userName, job);
+        organizationMemberService.saveOrganizationMember2(orgId, userEntity);
+        return "1";
+
+    }
+
+    /**
+     * 注册用户
+     * @param accountName
+     * @param password
+     * @param userName
+     * @param job
+     * @return
+     */
+    @NotNull
+    private UserEntity registerUser(String accountName, String password, String userName, String job) {
+        //设置创建者姓名
+        UserEntity userEntity = new UserEntity();
+        userEntity.setCreatorName(accountName);
+        userEntity.setAccountName(accountName);
+        userEntity.setUserName(userName);
+        userEntity.setJob(job);
+        userEntity.setCreateTime(new Date(System.currentTimeMillis()));
+        // 加密用户输入的密码，得到密码和加密盐，保存到数据库
+        UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);
+        //设置添加用户的密码和加密盐
+        userEntity.setPassword(user.getPassword());
+        userEntity.setCredentialsSalt(user.getCredentialsSalt());
+
+        //向第三方环信注册用户
+        RegisterUsers users = new RegisterUsers();
+        User user1 = new User().username(accountName).password(userEntity.getPassword());
+        users.add(user1);
+        imUserService.createNewIMUserSingle(users);
+        // 保存用户注册信息
+        this.insert(userEntity, password);
+        return userEntity;
     }
 
 

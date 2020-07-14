@@ -10,6 +10,7 @@ import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,16 +46,22 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
      * @return 结果
      */
     @Override
-    public Boolean addGroupMember(String groupId, String memberId) {
-        if(this.checkMemberIsExist(groupId, memberId)){
-            throw new ServiceException("成员已经存在,不能重复添加!");
-        }
-        OrganizationGroupMember organizationGroupMember = new OrganizationGroupMember();
-        organizationGroupMember.setGroupId(groupId);
-        organizationGroupMember.setMemberId(memberId);
-        organizationGroupMember.setUpdateTime(System.currentTimeMillis());
-        organizationGroupMember.setCreateTime(System.currentTimeMillis());
-        return organizationGroupMemberMapper.insert(organizationGroupMember) > 0;
+    public Boolean addGroupMember(String groupId, List<String> memberId) {
+        memberId.forEach(r->{
+            if(!this.checkMemberIsExist(groupId, r)){
+//                throw new ServiceException("成员已经存在,不能重复添加!");
+                OrganizationGroupMember organizationGroupMember = new OrganizationGroupMember();
+                organizationGroupMember.setGroupId(groupId);
+                organizationGroupMember.setMemberId(r);
+                organizationGroupMember.setUpdateTime(System.currentTimeMillis());
+                organizationGroupMember.setCreateTime(System.currentTimeMillis());
+                organizationGroupMemberMapper.insert(organizationGroupMember);
+
+            }
+
+        });
+        return true;
+
     }
 
     /**
@@ -90,17 +97,23 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeMember(String memberId, String groupId) {
+
+        //移除企业群组成员
         organizationGroupMemberMapper.delete(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId).eq("member_id", memberId));
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
             organizationGroupService.removeById(groupId);
         } else {
             if(memberId.equals(organizationGroupService.getById(groupId).getOwner())){
-                OrganizationGroup organizationGroup = new OrganizationGroup();
-                organizationGroup.setGroupId(groupId);
-                organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
-                organizationGroup.setUpdateTime(System.currentTimeMillis());
-                organizationGroupService.updateById(organizationGroup);
+//                OrganizationGroup organizationGroup = new OrganizationGroup();
+//                organizationGroup.setGroupId(groupId);
+//                //获取到最早加入到该群组的成员id
+//                organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
+//                organizationGroup.setUpdateTime(System.currentTimeMillis());
+//                organizationGroupService.updateById(organizationGroup);
+
+                //群组拥有者退出则移除群组
+                organizationGroupService.removeById(groupId);
             }
         }
         return true;
@@ -127,6 +140,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
                 item.setMemberEmail(byId.getEmail());
                 item.setPhone(byId.getAccountName());
                 item.setMemberId(byId.getUserId());
+                item.setUserEntity(byId);
                 if(item.getUserId().equals(groupOwnerInfo.getUserId())){
                     item.setIsOwner(true);
                 } else{

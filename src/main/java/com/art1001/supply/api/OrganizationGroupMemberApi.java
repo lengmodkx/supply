@@ -12,6 +12,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -46,11 +47,11 @@ public class OrganizationGroupMemberApi {
      */
 //    @RequiresPermissions("create:group:member")
     @PostMapping("/{groupId}")
-    public JSONObject addGroupMember(@PathVariable String groupId, @RequestParam String memberId){
+    public JSONObject addGroupMember(@PathVariable String groupId, @RequestParam List<String> memberId){
         JSONObject jsonObject = new JSONObject();
         try {
             if(organizationGroupMemberService.addGroupMember(groupId,memberId)){
-                jsonObject.put("data",userService.getOne(new QueryWrapper<UserEntity>().eq("user_id", memberId).select("user_id","user_name","image")));
+                jsonObject.put("data",userService.list(new QueryWrapper<UserEntity>().in("user_id", memberId).select("user_id","user_name","image")));
                 jsonObject.put("result", 1);
             } else{
                 jsonObject.put("result", 0);

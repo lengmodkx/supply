@@ -1,6 +1,8 @@
 package com.art1001.supply.entity.log;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.task.Task;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -11,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author heshaohua
@@ -96,6 +99,10 @@ public class Log extends Model<Log> {
 	 */
 	private Integer logType;
 
+//	/**
+//	 * 类型 1:任务 2:文件 3:日程 4:分享
+//	 */
+//	private Integer logFlag;
 	/**
 	 * 创建时间
 	 */
@@ -112,6 +119,11 @@ public class Log extends Model<Log> {
 	 * 被@的用户id (逗号隔开)
 	 */
 	private String mentions;
+
+	/**
+	 * 任务列表
+	 */
+	private List<Task> tasks;
 
 	@Override
 	protected Serializable pkVal() {

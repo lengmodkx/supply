@@ -152,6 +152,12 @@ public class ProjectMember extends Model<ProjectMember> {
 	 */
 	private Boolean current;
 
+	/**
+	 * 是否是管理员或拥有者 0是 1不是
+	 */
+	@TableField(exist = false)
+	private Integer isManager;
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

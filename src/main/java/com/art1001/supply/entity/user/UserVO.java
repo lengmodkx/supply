@@ -8,12 +8,14 @@
  */
 package com.art1001.supply.entity.user;
 
+import com.art1001.supply.entity.partment.Partment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -40,5 +42,31 @@ public class UserVO {
      * 部门
      */
     private String partmemt;
+    /**
+     * 电话号
+     */
+    private String phone;
+    /**
+     * 企业id
+     */
+    private String organizationId;
+    /**
+     * 企业名
+     */
+    private String organizationName;
+    /**
+     * 项目id
+     */
+    private String projectId;
+    /**
+     * 项目名
+     */
+    private String projectName;
+    /**
+     * 分组id
+     */
+    private String groupId;
+
+    private List<Partment>partments;
 
 }

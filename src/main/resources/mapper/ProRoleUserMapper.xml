@@ -11,4 +11,30 @@
         <result column="t_create_time" property="tCreateTime" />
     </resultMap>
 
+    <select id="getManagersByProject" resultType="integer">
+        SELECT
+        	COUNT(1)
+        FROM
+        	sys_pro_role_user ru
+	        JOIN sys_pro_role pr ON ru.role_id = pr.role_id
+        WHERE
+        	ru.project_id = #{projectId} and pr.role_name="拥有者";
+    </select>
+
+    <select id="findProRoleUser" resultType="com.art1001.supply.entity.role.ProRoleUser">
+        SELECT
+        	ru.id,
+        	ru.project_id,
+        	ru.role_id,
+        	ru.u_id,
+        	ru.t_create_time,
+        	pr.role_name as roleName
+        FROM
+        	sys_pro_role_user ru
+        	JOIN sys_pro_role pr ON ru.role_id = pr.role_id
+        WHERE
+        	ru.project_id = #{projectId}
+        	AND ru.u_id = #{memberId}
+    </select>
+
 </mapper>

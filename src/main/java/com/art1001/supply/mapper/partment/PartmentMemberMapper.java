@@ -33,4 +33,6 @@ public interface PartmentMemberMapper extends BaseMapper<PartmentMember> {
      * @return
      */
     List<PartmentMember> getPartmentByOrgId(@Param("orgId") String orgId);
+
+    PartmentMember getpartmentMemberByOrgId(@Param("orgId")String orgId,@Param("memberId") String memberId);
 }

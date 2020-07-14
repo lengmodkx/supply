@@ -89,4 +89,6 @@ public interface LogMapper extends BaseMapper<Log> {
 	List<Log> selectSurplusMsg(@Param("publicId") String publicId, @Param("surpluscount") Integer surpluscount);
 
     List<Log> getMyDynamic(@Param("userId") String userId);
+
+    List<Log> selectLogByCondition(@Param("projectIds") List<String> projectIds, @Param("memberId") String memberId, @Param("startTime") Long startTime, @Param("endTime") Long endTime);
 }

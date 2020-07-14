@@ -1,4 +1,5 @@
 package com.art1001.supply.entity.user;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.role.Role;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -120,6 +121,9 @@ public class UserEntity extends Model<UserEntity> {
 	 * 用户性别
 	 */
 	private Integer sex;
+
+	@TableField(exist = false)
+	private Partment partment;
 
 	/***
 	 * 用户出生日期

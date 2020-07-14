@@ -11,11 +11,14 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -82,7 +85,13 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
         partmentMember.setPartmentId(partmentId);
         Partment part = partmentService.findPartmentByPartmentId(partmentId);
         partmentMember.setPartmentName(part.getPartmentName());
-        List<OrganizationMember>organizationMembers=organizationMemberService.getMemberByPartmentId(partmentId);
+        List<PartmentMember> partmentMembers = partmentMemberMapper.selectList(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId));
+        List<String>ids= Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(partmentMembers)) {
+            ids=partmentMembers.stream().map(PartmentMember::getMemberId).collect(Collectors.toList());
+        }
+
+        List<OrganizationMember>organizationMembers=organizationMemberService.getMemberByPartmentIds(ids,part.getOrganizationId());
         Optional.ofNullable(organizationMembers).ifPresent(orgs->{
             orgs.stream().forEach(org->{
                 org.setUserEntity(userService.findById(org.getMemberId()));
@@ -106,6 +115,11 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
     @Override
     public List<PartmentMember> getMemberInfoByPartmentId(String partmentId) {
        return partmentMemberMapper.selectList(new QueryWrapper<PartmentMember>().eq("partment_id",partmentId));
+    }
+
+    @Override
+    public PartmentMember getpartmentMemberByOrgId(String orgId, String memberId) {
+        return partmentMemberMapper.getpartmentMemberByOrgId(orgId,memberId);
     }
 
 
