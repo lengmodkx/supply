@@ -12,6 +12,7 @@ import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.OrganizationMember;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
@@ -20,6 +21,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -88,6 +90,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Resource
     private ProjectMemberService projectMemberService;
+
+    @Resource
+    private PartmentService partmentService;
 
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
@@ -531,8 +536,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public UserVO getHeadUserInfo(String userId, String orgId) {
-        return userMapper.getHeadUserInfo(userId, orgId);
+    public UserVO getHeadUserInfo(String userId,String orgId) {
+        UserVO headUserInfo = userMapper.getHeadUserInfo(userId);
+        List<Partment> orgPartmentInfo = partmentService.findOrgPartmentInfo(orgId);
+        Optional.ofNullable(orgPartmentInfo).ifPresent(headUserInfo::setPartments);
+        return headUserInfo;
+
     }
 
     @Override

@@ -617,7 +617,7 @@ public class ProjectApi extends BaseController {
      * @Email：dengkaixin@art1001.com
      * @Param: 企业详细信息DTO
      * @return:
-     * @Description: 修改企业详细信息
+     * @Description: 修改企业成员详细信息
      * @create: 11:32 2020/4/22
      */
     @PostMapping("/updateMembersInfo")
@@ -632,12 +632,12 @@ public class ProjectApi extends BaseController {
             @RequestParam(value = "memberEmail", required = false) String memberEmail,
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "birthday", required = false) String birthday,
-            @RequestParam(value = "deptId", required = false) String deptId,
-            @RequestParam(value = "deptName", required = false) String deptName
+            @RequestParam(value = "deptId", required = false) String deptId
+
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-            projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId, deptName);
+            projectService.updateMembersInfo(memberId, orgId, userName, entryTime, job, memberLabel, address, memberEmail, phone, birthday, deptId);
             jsonObject.put("data", projectMemberService.findMemberByProjectIdAndMemberId(orgId, memberId));
             jsonObject.put("result", 1);
             jsonObject.put("message", "修改成功");

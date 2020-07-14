@@ -4,14 +4,14 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.art1001.supply.entity.partment.PartmentMember">
-        <id column="id" property="id" />
-        <result column="partment_id" property="partmentId" />
-        <result column="member_id" property="memberId" />
-        <result column="is_master" property="isMaster" />
-        <result column="member_label" property="memberLabel" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="member_type" property="memberType" jdbcType="VARCHAR" />
+        <id column="id" property="id"/>
+        <result column="partment_id" property="partmentId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="is_master" property="isMaster"/>
+        <result column="member_label" property="memberLabel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="member_type" property="memberType" jdbcType="VARCHAR"/>
         <association property="userEntity" javaType="com.art1001.supply.entity.user.UserEntity">
             <id column="user_id" property="userId"/>
             <result column="image" property="image"/>
@@ -58,5 +58,16 @@
         WHERE
         p.organization_id =#{orgId}
         GROUP BY p.partment_id
+    </select>
+
+    <select id="getpartmentMemberByOrgId" resultType="com.art1001.supply.entity.partment.PartmentMember">
+SELECT
+	pm.*
+FROM
+	prm_partment p
+	JOIN prm_partment_member pm ON p.partment_id = pm.partment_id
+WHERE
+	p.organization_id = #{orgId}
+	AND pm.member_id = #{memberId}
     </select>
 </mapper>

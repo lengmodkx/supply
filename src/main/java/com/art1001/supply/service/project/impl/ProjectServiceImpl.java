@@ -14,6 +14,8 @@ import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.entity.role.Role;
+import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
@@ -32,6 +34,7 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.tag.TagService;
@@ -124,6 +127,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private RoleUserService roleUserService;
 
     private static final String ZERO = "0";
 
@@ -580,82 +586,60 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId, String deptName) {
+    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
         OrganizationMember memberInfo = new OrganizationMember();
-
-        try {
-            memberInfo.setOrganizationId(orgId);
-            if (StringUtils.isNotEmpty(userName)) {
-                memberInfo.setUserName(userName);
-            }
-            if (StringUtils.isNotEmpty(birthday)) {
-                memberInfo.setBirthday(birthday);
-            }
-            if (StringUtils.isNotEmpty(entryTime)) {
-                memberInfo.setEntryTime(entryTime);
-            }
-            if (StringUtils.isNotEmpty(job)) {
-                memberInfo.setJob(job);
-            }
-            if (StringUtils.isNotEmpty(memberLabel)) {
-                memberInfo.setMemberLabel(memberLabel);
-            }
-            if (StringUtils.isNotEmpty(address)) {
-                memberInfo.setAddress(address);
-            }
-            if (StringUtils.isNotEmpty(memberEmail)) {
-                memberInfo.setMemberEmail(memberEmail);
-            }
-            if (StringUtils.isNotEmpty(phone)) {
-                memberInfo.setPhone(phone);
-            }
-
-            //根据企业id和成员id查询企业成员
-            OrganizationMember organizationMember = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>()
-                    .eq("organization_id", orgId).eq("member_id", memberId));
-
-            Optional.ofNullable(organizationMember).ifPresent(r -> {
-                PartmentMember partmentMember = new PartmentMember();
-                Partment partment = new Partment();
-                //判断部门id是否为0
-                if (ZERO.equals(r.getPartmentId())) {
-                    partmentMember.setCreateTime(System.currentTimeMillis());
-                    partmentMember.setUpdateTime(System.currentTimeMillis());
-                    partmentMember.setMemberId(memberId);
-                    partmentMember.setMemberType(memberInfo.getMemberLabel());
-                    partmentMember.setIsMaster(false);
-
-                    Optional.ofNullable(deptId).ifPresent(d -> {
-                        partmentMember.setPartmentId(d);
-                        memberInfo.setPartmentId(d);
-                        partment.setPartmentId(d);
-                        if (!"".equals(deptName) && null != deptName) {
-                            partment.setPartmentName(deptName);
-                        }
-                        partment.setOrganizationId(orgId);
-                        partment.setUpdateTime(System.currentTimeMillis());
-                    });
-
-                    partmentMemberService.save(partmentMember);
-                    partmentService.save(partment);
-                } else {
-                    partmentMember.setUpdateTime(System.currentTimeMillis());
-
-                    Optional.ofNullable(deptId).ifPresent(d -> {
-                        partmentMember.setPartmentId(d);
-                        memberInfo.setPartmentId(d);
-                    });
-
-                    partmentMemberService.update(partmentMember, new QueryWrapper<PartmentMember>()
-                            .eq("member_id", memberId).eq("partment_id", deptId));
-                }
-            });
-            organizationMemberService.update(memberInfo, new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
+        memberInfo.setOrganizationId(orgId);
+        if (StringUtils.isNotEmpty(userName)) {
+            memberInfo.setUserName(userName);
         }
+        if (StringUtils.isNotEmpty(birthday)) {
+            memberInfo.setBirthday(birthday);
+        }
+        if (StringUtils.isNotEmpty(entryTime)) {
+            memberInfo.setEntryTime(entryTime);
+        }
+        if (StringUtils.isNotEmpty(job)) {
+            memberInfo.setJob(job);
+        }
+        if (StringUtils.isNotEmpty(memberLabel)) {
+            //修改企业角色
+            List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("organization_id", orgId));
+            Optional.ofNullable(roles).ifPresent(role -> {
+                role.stream().forEach(r -> {
+                    if (r.getRoleName().equals(memberLabel)) {
+                        RoleUser roleUser = new RoleUser();
+                        roleUser.setRoleId(r.getRoleId());
+                        roleUser.setUId(memberId);
+                        roleUser.setOrgId(orgId);
+                        roleUserService.updateById(roleUser);
+                        memberInfo.setMemberLabel(r.getRoleName());
+                    }
+                });
+            });
+        }
+        if (StringUtils.isNotEmpty(address)) {
+            memberInfo.setAddress(address);
+        }
+        if (StringUtils.isNotEmpty(memberEmail)) {
+            memberInfo.setMemberEmail(memberEmail);
+        }
+        if (StringUtils.isNotEmpty(phone)) {
+            memberInfo.setPhone(phone);
+        }
+        if (StringUtils.isNotEmpty(deptId)) {
+            PartmentMember partmentMember = new PartmentMember();
+            partmentMember.setUpdateTime(System.currentTimeMillis());
+            partmentMember.setMemberId(memberId);
+            partmentMember.setMemberType(memberInfo.getMemberLabel());
+            partmentMember.setIsMaster(false);
+            partmentMember.setPartmentId(deptId);
+            partmentMember.setPartmentId(deptId);
+            memberInfo.setPartmentId(deptId);
+
+            partmentMemberService.save(partmentMember);
+        }
+        organizationMemberService.update(memberInfo, new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
+        return 1;
     }
 
     /**

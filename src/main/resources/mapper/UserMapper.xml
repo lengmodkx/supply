@@ -206,15 +206,11 @@
 		u.user_id as userId,
 		u.user_name as userName,
 		u.image as image,
-		u.job as job,
-		p.partment_name as partmemt
+		u.job as job
 		FROM
 		tb_user u
-		JOIN prm_partment p
-		JOIN prm_partment_member pm ON u.user_id = pm.member_id
-		AND p.partment_id = pm.partment_id
 		WHERE
-		pm.member_id = #{userId}
-		AND p.organization_id = #{orgId}
+		u.user_id = #{userId}
+
 	</select>
 </mapper>

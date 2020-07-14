@@ -117,5 +117,10 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
        return partmentMemberMapper.selectList(new QueryWrapper<PartmentMember>().eq("partment_id",partmentId));
     }
 
+    @Override
+    public PartmentMember getpartmentMemberByOrgId(String orgId, String memberId) {
+        return partmentMemberMapper.getpartmentMemberByOrgId(orgId,memberId);
+    }
+
 
 }

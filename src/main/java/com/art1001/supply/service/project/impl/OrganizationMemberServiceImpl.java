@@ -597,7 +597,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         organizationMember.setMemberLock(1);
         organizationMember.setOther(1);
         organizationMember.setMemberLabel("外部成员");
-        organizationMember.setUserDefault(true);
+        organizationMember.setUserDefault(false);
         organizationMember.setPartmentId("0");
         this.save(organizationMember);
         RoleUser roleUser = new RoleUser();

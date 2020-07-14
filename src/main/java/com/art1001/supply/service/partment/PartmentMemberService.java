@@ -62,4 +62,12 @@ public interface PartmentMemberService extends IService<PartmentMember> {
     List<PartmentMember> getPartmentByOrgId(String orgId);
 
     List<PartmentMember> getMemberInfoByPartmentId(String partmentId);
+
+    /**
+     * 根据企业id获取部门成员id
+     * @param orgId
+     * @param memberId
+     * @return
+     */
+    PartmentMember getpartmentMemberByOrgId(String orgId, String memberId);
 }

@@ -56,4 +56,6 @@ public interface LogService extends IService<Log> {
     Log sendChat(LogSendParam logSendParam);
 
 	List<Log> getMyDynamic(String userId);
+
+    List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime);
 }
