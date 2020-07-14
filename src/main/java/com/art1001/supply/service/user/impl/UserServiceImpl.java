@@ -5,16 +5,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.exception.CodeMismatchException;
 import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
+import com.art1001.supply.api.OrganizationApi;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
@@ -70,6 +73,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Resource
     FileMapper fileMapper;
 
+    @Resource
+    OrganizationService organizationService;
+
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
         return null;
@@ -87,8 +93,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,UserEntity> implemen
     @Override
     public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
-        String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
-        info.setOrgId(orgByUserId);
+        String orgId = organizationMemberService.findOrgByUserId(info.getUserId());
+        Organization organization = organizationService.getById(orgId);
+        info.setOrgId(orgId);
+        info.setOrgName(organization.getOrganizationName());
         return info;
     }
 
