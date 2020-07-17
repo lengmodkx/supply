@@ -118,4 +118,6 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	 */
 	UserNews findUserNewsByToUser(@Param("userId") String userId, @Param("publicId") String publicId);
 
+	List<UserNews> userNewsByCondition(@Param("keyword") String keyword, @Param("startTime") Long startTime, @Param("endTime") Long endTime,@Param("userId") String userId);
+
 }

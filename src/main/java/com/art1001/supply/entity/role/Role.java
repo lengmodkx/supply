@@ -76,8 +76,8 @@ public class Role extends Model<Role> {
 	 */
 	private Boolean isDefault;
 
-	/**
-	 * 是否是系统默认的初始化角色
+	/**是否是系统默认的初始化角色
+	 *
 	 */
 	private Boolean isSystemInit;
 

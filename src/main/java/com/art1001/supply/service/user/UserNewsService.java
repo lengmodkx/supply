@@ -113,4 +113,13 @@ public interface UserNewsService extends IService<UserNews> {
 	 * @param publicId 信息id
 	 */
 	void deleteManyNewsByPublicId(List<String> publicId);
+
+	/**
+	 * 根据条件筛选用户消息
+	 * @param keyword
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime);
 }

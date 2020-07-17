@@ -64,7 +64,8 @@
 		u.description
 	</sql>
 
-	<resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
+
+    <resultMap id="userMap" type="com.art1001.supply.entity.user.UserEntity">
 		<id property="userId" column="user_id"/>
 		<result property="userName" column="user_name" />
 		<result property="accountName" column="account_name"/>
@@ -213,4 +214,6 @@
 		u.user_id = #{userId}
 
 	</select>
+
+
 </mapper>

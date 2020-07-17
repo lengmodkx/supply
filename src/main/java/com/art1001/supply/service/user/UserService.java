@@ -173,4 +173,6 @@ public interface UserService extends IService<UserEntity> {
 	 * @return
 	 */
     String registerAndOrgMember(String captcha, String accountName, String password, String userName, String job, String orgId);
+
+
 }

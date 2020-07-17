@@ -56,6 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -646,6 +647,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         return "1";
 
     }
+
 
     /**
      * 注册用户

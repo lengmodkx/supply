@@ -201,7 +201,6 @@
 				contact_phone = #{contactPhone},
 			</if>
 		</set>
-
 		WHERE organization_id = #{organizationId}
 
 	</update>

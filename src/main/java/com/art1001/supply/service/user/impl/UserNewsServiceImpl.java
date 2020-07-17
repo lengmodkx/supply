@@ -260,4 +260,9 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	public void deleteManyNewsByPublicId(List<String> publicId) {
 		userNewsMapper.deleteManyNewsByPublicId(publicId);
 	}
+
+	@Override
+	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime) {
+		return userNewsMapper.userNewsByCondition(keyword,startTime,endTime,ShiroAuthenticationManager.getUserId());
+	}
 }
