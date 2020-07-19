@@ -148,6 +148,7 @@ public class UserApi {
         userEntity.setCreatorName(accountName);
         userEntity.setAccountName(accountName);
         userEntity.setUserName(userName);
+        userEntity.setTelephone(accountName);
         userEntity.setJob(job);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
@@ -476,6 +477,19 @@ public class UserApi {
         return Result.success(userInfo);
     }
 
+    @GetMapping("/notBindPhone")
+    public JSONObject notBindPhone() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",userService.notBindPhone());
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
+
     @GetMapping("/is_bind_phone")
     public Object isBindPhone() {
         JSONObject jsonObject = new JSONObject();
@@ -626,7 +640,6 @@ public class UserApi {
             throw new AjaxException(e);
         }
     }
-
 
 
     /**

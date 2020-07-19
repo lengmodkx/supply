@@ -194,12 +194,6 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
      */
     @Override
     public List<Log> getMyLog() {
-        LogExportRecord logExportRecord = new LogExportRecord();
-        logExportRecord.setCommitTime(System.currentTimeMillis());
-        logExportRecord.setCommitMemberId(ShiroAuthenticationManager.getUserId());
-        logExportRecord.setCompleteTime(System.currentTimeMillis());
-        logExportRecord.setStatus(0);
-        logExportRecordService.save(logExportRecord);
        return logMapper.getMyLog(ShiroAuthenticationManager.getUserId());
 
 

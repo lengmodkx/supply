@@ -222,7 +222,8 @@
 		SELECT
 			o.organization_id,
 			organization_name,
-			o.organization_des
+			o.organization_des,
+		    om.organization_lable as organizationLabel
 		FROM
 			prm_organization o
 			LEFT JOIN prm_organization_member om ON o.organization_id = om.organization_id

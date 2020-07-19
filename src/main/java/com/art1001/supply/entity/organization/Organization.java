@@ -96,6 +96,12 @@ public class Organization extends Model<Organization> {
 	private Long createTime;
 
 	/**
+	 *是否是部门拥有者，0是成员 1是拥有者
+	 */
+	@TableField(exist = false)
+	private Integer organizationLabel;
+
+	/**
 	 * 修改时间
 	 */
 	private Long updateTime;

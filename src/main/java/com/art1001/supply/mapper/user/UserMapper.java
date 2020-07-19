@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -97,4 +98,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     UserVO getHeadUserInfo(@Param("userId") String userId);
 
 
+	@Update("update tb_user set telephone = null where user_id = #{userId}")
+    void notBindPhone(@Param("userId") String userId);
 }

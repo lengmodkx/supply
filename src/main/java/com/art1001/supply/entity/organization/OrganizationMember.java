@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.organization;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
+import javax.naming.Name;
 import java.io.Serializable;
 import java.util.List;
 
@@ -45,12 +47,11 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 */
 	private String partmentId;
 
-
 	/**
 	 * 会员id
 	 */
+	@Excel(name = "账号id")
 	private String memberId;
-
 
 	/**
 	 * 是否是企业拥有着，0是成员 1是拥有着
@@ -98,45 +99,53 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	/**
 	 * 名字
 	 */
+	@Excel(name = "姓名")
 	@TableField(value = "userName")
 	private String userName;
 
 	/**
 	 * 邮箱
 	 */
+	@Excel(name = "邮箱")
 	@TableField(value = "memberEmail")
 	private String memberEmail;
 
 	/**
 	 * 生日
 	 */
+	@Excel(name = "生日")
 	private String birthday;
 
 	/**
 	 * 入职时间
 	 */
+	@Excel(name = "入职时间")
 	@TableField(value = "entry_time")
 	private String entryTime;
 
 	/**
 	 * 电话号
 	 */
+	@Excel(name = "电话号")
 	private String phone;
 
 	/**
 	 * 办公地点
 	 */
+	@Excel(name = "办公地点")
 	private String address;
 
 	/**
 	 * 员工身份
 	 */
+	@Excel(name = "员工身份")
 	@TableField(value = "member_label")
 	private String memberLabel;
 
 	/**
 	 * 职位
 	 */
+	@Excel(name = "职位")
 	private String job;
 
 	/**
@@ -153,6 +162,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
     /**
      * 部门名称
      */
+	@Excel(name = "部门名")
 	@TableField(exist = false)
 	private String deptName;
 

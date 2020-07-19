@@ -28,6 +28,7 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
 import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
@@ -250,7 +251,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public Boolean checkUserIsExistByAccountName(String accountName) {
         //构造出查询用户是否存在的条件表达式
-        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getAccountName, accountName);
+        //新修改 绑定的手机号为telephone字段
+        LambdaQueryWrapper<UserEntity> selectUserIsExistQw = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getTelephone, accountName);
         return userMapper.selectCount(selectUserIsExistQw) > 0;
     }
 
@@ -302,19 +304,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
         UserEntity userEntity = new UserEntity();
         if (this.checkUserIsExistByAccountName(phone)) {
-            UserEntity byName = this.findByName(phone);
+     /*       UserEntity byName = this.findByName(phone);
             userEntity.setUserId(byName.getUserId());
             userEntity.setWxUnionId(byId.getWxUnionId());
             userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
             this.updateById(userEntity);
-            removeById(userId);
+            removeById(userId);*/
+            userEntity.setUserId(userId);
+            userEntity.setWxUnionId(byId.getWxUnionId());
+            userEntity.setWxOpenId(byId.getWxOpenId());
+            userEntity.setUpdateTime(new Date());
+            userEntity.setTelephone(phone);
+            this.updateById(userEntity);
         } else {
             userEntity.setUserId(userId);
             userEntity.setWxUnionId(byId.getWxUnionId());
             userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
-            userEntity.setAccountName(phone);
+            userEntity.setTelephone(phone);
             userEntity.setUserName(nickName);
             this.updateById(userEntity);
         }
@@ -648,6 +656,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     }
 
+    @Override
+    public Integer notBindPhone() {
+        userMapper.notBindPhone(ShiroAuthenticationManager.getUserId());
+        return 1;
+    }
+
 
     /**
      * 注册用户
@@ -665,6 +679,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         userEntity.setAccountName(accountName);
         userEntity.setUserName(userName);
         userEntity.setJob(job);
+        userEntity.setTelephone(accountName);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
         UserEntity user = EndecryptUtils.md5Password(accountName, password, 2);

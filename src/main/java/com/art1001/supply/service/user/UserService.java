@@ -175,4 +175,9 @@ public interface UserService extends IService<UserEntity> {
     String registerAndOrgMember(String captcha, String accountName, String password, String userName, String job, String orgId);
 
 
+	/**
+	 * 解绑电话号
+	 * @return
+	 */
+	Integer notBindPhone();
 }

@@ -179,20 +179,17 @@ public class LogApi extends BaseController {
     }
 
     @GetMapping("/expUser")
-    public JSONObject expUser(HttpServletResponse response) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            List<Log> logs = logService.getMyLog();
-            if (CollectionUtils.isNotEmpty(logs)) {
-                ExcelUtils.exportExcel(logs, null, "用户数据", Log.class, "日志信息.xlsx", response);
-                jsonObject.put("result", 1);
-            }
-
-            //todo
-            return jsonObject;
-        } catch (Exception e) {
-            throw new AjaxException(e);
+    public void expUser(HttpServletResponse response) {
+        LogExportRecord logExportRecord = new LogExportRecord();
+        logExportRecord.setCommitTime(System.currentTimeMillis());
+        logExportRecord.setCommitMemberId(ShiroAuthenticationManager.getUserId());
+        logExportRecord.setStatus(0);
+        List<Log> logs = logService.getMyLog();
+        if (CollectionUtils.isNotEmpty(logs)) {
+            ExcelUtils.exportExcel(logs, null, "用户数据", Log.class, "日志信息.xlsx", response);
+            logExportRecord.setStatus(1);
         }
-
+        logExportRecord.setCompleteTime(System.currentTimeMillis());
+        logExportRecordService.save(logExportRecord);
     }
 }

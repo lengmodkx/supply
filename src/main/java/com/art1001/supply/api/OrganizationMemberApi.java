@@ -22,6 +22,7 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ExcelUtils;
 import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -574,6 +575,26 @@ public class OrganizationMemberApi {
         } catch (Exception e) {
             throw new AjaxException(e);
         }
+    }
+
+    @GetMapping("/expOrgMember/{orgId}")
+    public void expOrgMember(HttpServletResponse response,@PathVariable(value = "orgId") String orgId){
+        List<OrganizationMember> memberList = organizationMemberService.list(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+        Optional.ofNullable(memberList).ifPresent(members->{
+            members.stream().forEach(member->{
+                if (!member.getPartmentId().equals(Constants.ZERO)) {
+                    Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", member.getPartmentId()));
+                    member.setDeptName(partment.getPartmentName());
+                    RoleUser one = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", member.getMemberId()));
+                    if (one!=null) {
+                        Role role_id = roleService.getOne(new QueryWrapper<Role>().eq("role_id", one.getRoleId()));
+                        member.setMemberLabel(role_id.getRoleName());
+                    }
+
+                }
+            });
+        });
+        ExcelUtils.exportExcel(memberList,null,"企业成员",OrganizationMember.class,"企业成员信息表.xlsx",response);
     }
 
 }
