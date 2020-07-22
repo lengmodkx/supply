@@ -170,7 +170,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
      * @create: 16:38 2020/7/13
      */
     @Override
-    public List<Log> selectLogByCondition(String orgId, List<String> memberId, Long startTime, Long endTime) {
+    public List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime) {
         List<String> projectIds = organizationService.getProject(orgId).stream().map(Project::getProjectId).collect(Collectors.toList());
         List<Log> logs = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(projectIds)) {
@@ -190,12 +190,26 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     /**
      * 处理导出的日志数据
+     *
      * @return
      */
     @Override
     public List<Log> getMyLog() {
-       return logMapper.getMyLog(ShiroAuthenticationManager.getUserId());
+        return logMapper.getMyLog(ShiroAuthenticationManager.getUserId());
+    }
 
+    @Override
+    public List<Log> exportLogByExcel(String orgId, String id) {
+        LogExportRecord exportRecord = logExportRecordService.getById(id);
+        List<Log> logs = this.selectLogByCondition(orgId, exportRecord.getExportMemberId(), exportRecord.getConditionStart(), exportRecord.getConditionEnd());
+        Optional.ofNullable(logs).ifPresent(logList -> {
+            logList.stream().forEach(log -> {
+                Assert.notNull(log.getCreateTime(), "time is null");
+                String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.ofInstant(Instant.ofEpochMilli(log.getCreateTime()), ZoneId.systemDefault()));
+                log.setOutPutTime(format);
 
+            });
+        });
+        return logs;
     }
 }

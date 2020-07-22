@@ -145,11 +145,8 @@
         <if test="endTime!=null and endTime!=''">
             AND l.create_time &lt;= #{endTime}
         </if>
-        <if test="memberIds != null and memberIds.size() != 0">
-            and l.member_id in
-            <foreach collection="memberIds" separator="," item="memberId" close=")" open="(">
-                #{memberId}
-            </foreach>
+        <if test="memberId != null">
+            and l.member_id = #{memberId}
         </if>
         where l.project_id in(
         <foreach collection="projectIds" item="projectId" separator=",">

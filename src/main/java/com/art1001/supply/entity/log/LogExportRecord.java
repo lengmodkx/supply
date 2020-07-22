@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @TableName("prm_log_export_record")
@@ -29,6 +30,21 @@ public class LogExportRecord extends Model<LogExportRecord> {
    * 申请人
    */
   private String commitMemberId;
+
+  /**
+   * 导出人
+   */
+  private String exportMemberId;
+
+  /**
+   * 筛选条件_开始时间
+   */
+  private Long conditionStart;
+
+  /**
+   * 筛选条件_结束时间
+   */
+  private Long conditionEnd;
   /**
    * 状态 0 未完成 1已完成
    */

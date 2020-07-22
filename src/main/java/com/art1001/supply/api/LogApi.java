@@ -24,12 +24,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,7 +170,7 @@ public class LogApi extends BaseController {
      */
     @GetMapping("/operatingLog/{orgId}")
     public JSONObject operatingLog(@PathVariable(value = "orgId") String orgId,
-                                   @RequestParam(value = "memberId", required = false) List<String> memberId,
+                                   @RequestParam(value = "memberId", required = false) String memberId,
                                    @RequestParam(value = "startTime", required = false) Long startTime,
                                    @RequestParam(value = "endTime", required = false) Long endTime) {
         JSONObject jsonObject = new JSONObject();
@@ -179,21 +184,55 @@ public class LogApi extends BaseController {
     }
 
     /**
-     * 导出用户日志数据
+     * 导出用户日志数据到导出表
+     */
+    @GetMapping("/expUser/{memberId}")
+    public JSONObject expUser(@PathVariable(value = "memberId") String memberId,
+                              @RequestParam(value = "startTime", required = false) Long startTime,
+                              @RequestParam(value = "endTime", required = false) Long endTime) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            logExportRecordService.saveInfo(memberId,startTime,endTime);
+            jsonObject.put("result",1);
+            jsonObject.put("data","导入成功");
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 获取导出详情
+     * @return
+     */
+    @GetMapping("/getExportInfo")
+    public JSONObject getExportInfo(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",logExportRecordService.getAll());
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 导出日志信息
+     * @param orgId
+     * @param id
      * @param response
      */
-    @GetMapping("/expUser")
-    public void expUser(HttpServletResponse response) {
-        LogExportRecord logExportRecord = new LogExportRecord();
-        logExportRecord.setCommitTime(System.currentTimeMillis());
-        logExportRecord.setCommitMemberId(ShiroAuthenticationManager.getUserId());
-        logExportRecord.setStatus(0);
-        List<Log> logs = logService.getMyLog();
+    @GetMapping("/exportLogByExcel/{orgId}")
+    public void exportLogByExcel(@PathVariable(value = "orgId")String orgId,
+                                 @RequestParam(value = "id") String id,
+                                 HttpServletResponse response){
+        List<Log> logs=logService.exportLogByExcel(orgId,id);
+
         if (CollectionUtils.isNotEmpty(logs)) {
-            ExcelUtils.exportExcel(logs, null, "用户数据", Log.class, "日志信息.xlsx", response);
-            logExportRecord.setStatus(1);
+            ExcelUtils.exportExcel(logs,null,"日志信息",Log.class,"成员日志信息表.xlsx",response);
         }
-        logExportRecord.setCompleteTime(System.currentTimeMillis());
-        logExportRecordService.save(logExportRecord);
+
     }
+
 }

@@ -8,11 +8,25 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.art1001.supply.entity.log.LogExportRecord">
-        <id column="id" property="id" />
-        <result column="commit_time" property="commitTime" />
-        <result column="complete_time" property="completeTime" />
-        <result column="commit_member_id" property="commitMemberId" />
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="commit_time" property="commitTime" jdbcType="VARCHAR"/>
+        <result column="complete_time" property="completeTime" jdbcType="VARCHAR"/>
+        <result column="commit_member_id" property="commitMemberId" jdbcType="VARCHAR"/>
+        <result column="export_member_id" property="exportMemberId" jdbcType="VARCHAR"/>
+        <result column="condition_start" property="conditionStart" jdbcType="VARCHAR"/>
+        <result column="condition_end" property="conditionEnd" jdbcType="VARCHAR"/>
         <result column="status" property="status" />
     </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        commit_time,
+        complete_time,
+        commit_member_id,
+        export_member_id,
+        condition_start,
+        condition_end,
+        status
+    </sql>
 
 </mapper>
