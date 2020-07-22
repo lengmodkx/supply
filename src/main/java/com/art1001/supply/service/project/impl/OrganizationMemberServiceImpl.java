@@ -25,6 +25,7 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.ExcelUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatedUtil;
 import com.art1001.supply.util.crypto.ShortCodeUtils;
@@ -39,6 +40,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.time.*;
@@ -392,8 +394,21 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public List<OrganizationMember> getMembersAndPartment(String orgId, Integer flag) {
-        List<OrganizationMember> orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", flag));
-        setParams(orgMembers);
+        List<OrganizationMember> orgMembers=Lists.newArrayList();
+        if (Constants.B_ZERO.equals(flag)) {
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+        }else if(Constants.B_ONE.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id",0));
+        }else if(Constants.B_TWO.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0));
+        }else if(Constants.B_THREE.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()));
+        }else{
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other",0));
+        }
+        if (CollectionUtils.isNotEmpty(orgMembers)) {
+            setParams(orgMembers);
+        }
         return orgMembers;
     }
 
@@ -406,11 +421,14 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      */
     @Override
     public List<PartmentMember> getOrgPartment(String orgId) {
+        //当前登陆人时否在企业
         Integer integer = organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", orgId).eq("organization_member", ShiroAuthenticationManager.getUserId()));
         List<PartmentMember> orgParentByOrgId = Lists.newArrayList();
         List<OrganizationMember> organizationMembers = Lists.newArrayList();
+        //查询企业
         Organization org = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", orgId));
         if (integer != 0) {
+            //根据企业id获取部门信息
             orgParentByOrgId = partmentMemberService.getPartmentByOrgId(orgId);
             if (CollectionUtils.isNotEmpty(orgParentByOrgId)) {
                 for (PartmentMember partment : orgParentByOrgId) {
@@ -418,6 +436,10 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     setParams(organizationMembers);
                     partment.setOrganizationName(org.getOrganizationName());
                     partment.setOrganizationMembers(organizationMembers);
+                    if (partment.getIsMaster().equals(true)) {
+                        partment.setUserEntity(userService.findById(partment.getMemberId()));
+                    }
+
                 }
             }
         }
@@ -569,6 +591,47 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         return organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().in("member_id", ids).eq("organization_id", orgId));
     }
 
+    @Override
+    public List<OrganizationMember> expOrgMember(String orgId) {
+        List<OrganizationMember> memberList = organizationMemberService.list(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+        Optional.ofNullable(memberList).ifPresent(members->{
+            members.stream().forEach(member->{
+                if (!member.getPartmentId().equals(Constants.ZERO)) {
+                    Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", member.getPartmentId()));
+                    if (partment!=null) {
+                        member.setDeptName(partment.getPartmentName());
+                    }
+                    RoleUser one = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", member.getMemberId()));
+                    if (one!=null) {
+                        Role role_id = roleService.getOne(new QueryWrapper<Role>().eq("role_id", one.getRoleId()));
+                        member.setMemberLabel(role_id.getRoleName());
+                    }
+
+                }
+            });
+        });
+        return memberList;
+    }
+
+    @Override
+    public Integer impOrgUser(String orgId, MultipartFile file) {
+        List<OrganizationMember> organizationMembers = ExcelUtils.importData(file, 1, OrganizationMember.class);
+        if (CollectionUtils.isNotEmpty(organizationMembers)) {
+            organizationMembers.stream().forEach(o->{
+                //判断成员是否在企业中
+                Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", o.getMemberId()));
+                if (integer==0) {
+                    o.setOrganizationId(orgId);
+                    o.setOrganizationLable(0);
+                    o.setCreateTime(System.currentTimeMillis());
+                    o.setUpdateTime(System.currentTimeMillis());
+                    organizationMemberMapper.insert(o);
+                }
+            });
+        }
+        return 1;
+    }
+
     /**
      * 保存企业成员信息
      *
@@ -618,14 +681,16 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             for (OrganizationMember r : orgMembers) {
                 UserEntity byId = userService.findById(r.getMemberId());
-                r.setJob(byId.getJob());
-                r.setImage(byId.getImage());
-                r.setMemberEmail(byId.getEmail());
-                r.setUserName(byId.getUserName());
-                r.setPhone(byId.getAccountName());
-                r.setUserEntity(byId);
-                if (StringUtils.isEmpty(r.getBirthday())) {
-                    r.setBirthday(byId.getBirthday() + "");
+                if (byId!=null) {
+                    r.setJob(byId.getJob());
+                    r.setImage(byId.getImage());
+                    r.setMemberEmail(byId.getEmail());
+                    r.setUserName(byId.getUserName());
+                    r.setPhone(byId.getAccountName());
+                    r.setUserEntity(byId);
+                    if (StringUtils.isEmpty(r.getBirthday())) {
+                        r.setBirthday(byId.getBirthday() + "");
+                    }
                 }
                 if (StringUtils.isNotEmpty(r.getEntryTime())) {
                     LocalDate todayDate = LocalDate.now();

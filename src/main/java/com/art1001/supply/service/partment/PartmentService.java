@@ -100,4 +100,6 @@ public interface PartmentService extends IService<Partment> {
 
 	List<Partment> findOrgParentByOrgId(String orgId);
 
+
+    List<Partment> searchDeptByKeyWord(String keyWord,String orgId);
 }

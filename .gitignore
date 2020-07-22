@@ -27,3 +27,16 @@
 /src/main/java/com/art1001/supply/SupplyApplication.java
 !/src/main/resources/application.properties
 /src/main/resources/application.properties
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+/src/main/resources/application.yml
+/src/main/resources/application-dev.yml
+/src/main/resources/application-prod.yml
+/src/main/resources/application-test.yml
+/.gitignore

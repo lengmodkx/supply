@@ -1,9 +1,13 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.mapper.role.RoleUserMapper;
+import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +34,9 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
 
     @Resource
     private RoleUserMapper roleUserMapper;
+
+    @Resource
+    private RoleService roleService;
 
     @Override
     public List<Integer> getUserOrgRoleIds(String userId, String orgId) {
@@ -77,5 +84,15 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
         }
 
         return proRoleUserList.stream().map(RoleUser::getUId).collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer isOwner(String orgId) {
+        RoleUser roleUser = roleUserMapper.selectOne(new QueryWrapper<RoleUser>().eq("u_id", ShiroAuthenticationManager.getUserId()).eq("org_id", orgId));
+        Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleUser.getRoleId()));
+        if (!Constants.OWNER_CN.equals(role.getRoleName())) {
+            return 0;
+        }
+        return 1;
     }
 }

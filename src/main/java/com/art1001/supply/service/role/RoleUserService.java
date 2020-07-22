@@ -41,4 +41,6 @@ public interface RoleUserService extends IService<RoleUser> {
     Boolean updateRoleTransfer(String orgId, String ownerId, String memberId);
 
     List<String> getRoleUserIdListByRoleId(Integer roleId);
+
+    Integer isOwner(String orgId);
 }

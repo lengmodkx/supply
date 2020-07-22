@@ -5,9 +5,12 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
+import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,9 @@ public class PartmentApi {
     @Resource
     private PartmentService partmentService;
 
+    @Resource
+    private PartmentMemberService partmentMemberService;
+
     /**
      * 添加部门/添加子部门
      *
@@ -39,11 +45,12 @@ public class PartmentApi {
      * @return 结果
      */
     @Push(value = PushType.P1, type = 1)
-    @PostMapping("/{orgId}")
+        @PostMapping("/{orgId}")
     public JSONObject addPartment(@PathVariable(value = "orgId") String orgId,
                                   @RequestParam(value = "partmentName") String partmentName,
                                   @RequestParam(value = "parentId", required = false) String parentId,
-                                  @RequestParam(value = "partmentLogo", required = false) String partmentLogo) {
+                                  @RequestParam(value = "partmentLogo", required = false) String partmentLogo,
+                                  @RequestParam(value = "memberId",required = false)String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
             Partment partment = new Partment();
@@ -61,7 +68,11 @@ public class PartmentApi {
             partment.setCreateTime(System.currentTimeMillis());
             partment.setUpdateTime(System.currentTimeMillis());
             partmentService.savePartment(partment);
-            jsonObject.put("data", partment);
+
+            //保存部门成员
+            partmentMemberService.savePartmentMember(partment.getPartmentId(),memberId);
+
+            jsonObject.put("msg", partment);
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("系统异常,部门创建失败:", e);
@@ -100,7 +111,8 @@ public class PartmentApi {
     @PutMapping("/{partmentId}")
     public JSONObject updatePartment(@PathVariable(value = "partmentId") String partmentId,
                                      @RequestParam(value = "partmentName", required = false) String partmentName,
-                                     @RequestParam(value = "partmentLogo", required = false) String partmentLogo) {
+                                     @RequestParam(value = "partmentLogo", required = false) String partmentLogo,
+                                     @RequestParam(value = "memberId",required = false)String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
             Partment partment = new Partment();
@@ -109,6 +121,9 @@ public class PartmentApi {
             partment.setPartmentLogo(partmentLogo);
             partment.setUpdateTime(System.currentTimeMillis());
             partmentService.updatePartment(partment);
+            if (StringUtils.isNotEmpty(memberId)) {
+                partmentMemberService.updatePartMentMaster(partmentId,memberId);
+            }
             jsonObject.put("result", 1);
         } catch (Exception e) {
             log.error("系统异常,部门信息更新失败:", e);
@@ -218,5 +233,23 @@ public class PartmentApi {
            throw new AjaxException("系统异常，获取失败");
         }
         return jsonObject;
+    }
+
+    /**
+     * 搜索部门
+     * @param keyWord
+     * @return
+     */
+    @GetMapping("/searchOrgByKeyWord/{orgId}")
+    public JSONObject searchOrgByKeyWord(@PathVariable(value = "orgId")String orgId,
+                                         @RequestParam(value = "keyWord") String keyWord){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data", partmentService.searchDeptByKeyWord(keyWord,orgId));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
     }
 }

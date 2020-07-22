@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.rmi.ServerException;
+import java.util.List;
 
 /**
  * <p>
@@ -59,22 +60,13 @@ public class PartmentMemberApi {
     @PostMapping("/{partmentId}/add")
     public JSONObject addPartmentMember(@PathVariable String partmentId,
                                         @RequestParam String orgId,
-                                        @RequestParam String memberId){
+                                        @RequestParam List<String> memberId){
         JSONObject jsonObject = new JSONObject();
         try {
-            PartmentMember partmentMember = new PartmentMember();
-            partmentMember.setPartmentId(partmentId);
-            partmentMember.setMemberId(memberId);
-            //新修改 添加部门成员时将用户信息存进去
-
-            partmentMemberService.addPartmentMember(partmentMember);
-            OrganizationMember member = new OrganizationMember();
-
-            member.setPartmentId(partmentId);
-            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
-
+             partmentMemberService.addDeptMember(partmentId, orgId, memberId);
             Partment partment = partmentService.getById(partmentId);
             jsonObject.put("data",partment);
+
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (ServiceException e){
@@ -118,13 +110,13 @@ public class PartmentMemberApi {
     @DeleteMapping("/{partmentId}/member")
     public JSONObject removePartmentMember(@PathVariable String partmentId,
                                            @RequestParam String orgId,
-                                           @RequestParam String memberId){
+                                           @RequestParam List<String> memberId){
         JSONObject jsonObject = new JSONObject();
         try {
             OrganizationMember member = new OrganizationMember();
             member.setPartmentId("0");
-            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",memberId));
-            partmentMemberService.remove(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", memberId));
+            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).in("member_id",memberId));
+            partmentMemberService.remove(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).in("member_id", memberId));
             Partment partment = partmentService.getById(partmentId);
             jsonObject.put("result", 1);
             jsonObject.put("data",partment);

@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import com.art1001.supply.application.assembler.DepartmentDataAssembler;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.tree.Tree;
@@ -15,9 +16,11 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
+import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
@@ -40,6 +43,9 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 
 	@Resource
 	private DepartmentDataAssembler dataAssembler;
+
+	@Resource
+	private OrganizationMemberService organizationMemberService;
 
 	/**
 	 * 查询分页partment数据
@@ -106,6 +112,7 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 		partment.setUpdateTime(System.currentTimeMillis());
 		partment.setCreateTime(System.currentTimeMillis());
 		partmentMapper.insert(partment);
+
 	}
 
 	/**
@@ -231,4 +238,10 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper,Partment> im
 	public List<Partment> findOrgParentByOrgId(String orgId) {
 		return partmentMapper.findOrgParentByOrgId(orgId);
 	}
+
+	@Override
+	public List<Partment> searchDeptByKeyWord(String keyWord,String orgId) {
+		return partmentMapper.searchDeptByKeyWord(keyWord,orgId);
+	}
+
 }

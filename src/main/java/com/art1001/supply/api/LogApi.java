@@ -178,6 +178,10 @@ public class LogApi extends BaseController {
         }
     }
 
+    /**
+     * 导出用户日志数据
+     * @param response
+     */
     @GetMapping("/expUser")
     public void expUser(HttpServletResponse response) {
         LogExportRecord logExportRecord = new LogExportRecord();

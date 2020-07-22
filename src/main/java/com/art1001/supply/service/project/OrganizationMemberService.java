@@ -8,6 +8,7 @@ import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -209,4 +210,9 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @return
 	 */
 	List<OrganizationMember> getMemberByPartmentIds(List<String> ids,String orgId);
+
+    List<OrganizationMember> expOrgMember(String orgId);
+
+	Integer impOrgUser(String orgId, MultipartFile file);
+
 }

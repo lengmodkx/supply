@@ -96,5 +96,4 @@ public interface OrganizationMapper extends BaseMapper<Organization> {
 	Boolean updatOorganization(@Param("orgId")String orgId, @Param("ownerId")String ownerId, @Param("memberId")String memberId);
 
 
-
 }

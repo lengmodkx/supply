@@ -29,10 +29,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.netty.handler.codec.compression.FastLzFrameEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.misc.Hash;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +103,7 @@ public class OrganizationMemberApi {
     /**
      * 外部成员
      */
-    private static final int EXTERNAL=1;
+    private static final int EXTERNAL = 1;
 
     /**
      * 内部成员
@@ -131,11 +133,11 @@ public class OrganizationMemberApi {
             organizationMember.setCreateTime(System.currentTimeMillis());
             organizationMember.setUpdateTime(System.currentTimeMillis());
             UserEntity byId = userService.findById(memberId);
-            if (byId!=null) {
+            if (byId != null) {
                 organizationMember.setUserName(byId.getUserName());
                 organizationMember.setMemberEmail(byId.getEmail());
-                if (byId.getBirthday()!=null) {
-                    organizationMember.setBirthday(byId.getBirthday()+"");
+                if (byId.getBirthday() != null) {
+                    organizationMember.setBirthday(byId.getBirthday() + "");
                 }
                 organizationMember.setPhone(byId.getAccountName());
                 organizationMember.setJob(byId.getJob());
@@ -162,13 +164,13 @@ public class OrganizationMemberApi {
 
     @PostMapping("/addMember1")
     public JSONObject addMember1(@RequestParam(value = "orgId", required = false) String orgId,
-                                @RequestParam(value = "parmentId", required = false) String parmentId,
-                                @RequestParam(value = "memberId") String memberId) {
+                                 @RequestParam(value = "parmentId", required = false) String parmentId,
+                                 @RequestParam(value = "memberId") String memberId) {
         JSONObject jsonObject = new JSONObject();
         try {
             if (StringUtils.isNotEmpty(orgId)) {
                 UserEntity byId = userService.findById(memberId);
-                organizationMemberService.saveOrganizationMember2(orgId,byId);
+                organizationMemberService.saveOrganizationMember2(orgId, byId);
                 jsonObject.put("result", 1);
                 jsonObject.put("msg", "添加成功");
             } else {
@@ -271,25 +273,25 @@ public class OrganizationMemberApi {
     @GetMapping("/{phone}/searchOrgUser")
     public JSONObject searchMembers(@PathVariable String phone,
                                     @RequestParam(value = "orgId") String orgId,
-                                    @RequestParam(value = "projectId",required = false) String projectId) {
+                                    @RequestParam(value = "projectId", required = false) String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<UserEntity> users = userService.getUserByOrgId(phone, orgId);
             if (!users.isEmpty()) {
                 List<OrganizationMember> memberList = new ArrayList<>();
                 for (UserEntity u : users) {
-                    OrganizationMember organizationMember=organizationMemberService.findOrgMembersByUserId(u.getUserId(),orgId);
+                    OrganizationMember organizationMember = organizationMemberService.findOrgMembersByUserId(u.getUserId(), orgId);
                     if (StringUtils.isNotEmpty(projectId)) {
                         int memberIsExist = projectMemberService.findMemberIsExist(projectId, u.userId);
-                        if (memberIsExist==0) {
+                        if (memberIsExist == 0) {
                             u.setExistId(0);
-                        }else{
+                        } else {
                             u.setExistId(1);
                         }
                     }
                     organizationMember.setUserEntity(u);
                     Partment partment = partmentService.findPartmentByPartmentId(organizationMember.getPartmentId());
-                    if (partment!=null) {
+                    if (partment != null) {
                         organizationMember.setDeptName(partment.getPartmentName());
                     }
                     memberList.add(organizationMember);
@@ -316,9 +318,10 @@ public class OrganizationMemberApi {
      */
     @DeleteMapping
     public Result removeOrgUser(@RequestParam(value = "orgId", required = false) String orgId,
-                                @RequestParam(value = "userId") String userId) {
-        organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userId));
-        roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", userId));
+                                @RequestParam(value = "userId") List<String> userId) {
+
+        organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).in("member_id", userId));
+        roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id", orgId).in("u_id", userId));
 
         return Result.success();
     }
@@ -347,6 +350,7 @@ public class OrganizationMemberApi {
 
     /**
      * 获取企业所有成员
+     *
      * @param orgId 企业id
      * @returnp
      */
@@ -361,7 +365,7 @@ public class OrganizationMemberApi {
                 jsonObject.put("msg", "还未添加员工");
             } else {
                 jsonObject.put("result", 1);
-                jsonObject.put("msg",memberList.size());
+                jsonObject.put("msg", memberList.size());
                 jsonObject.put("data", memberList);
             }
             return jsonObject;
@@ -431,7 +435,6 @@ public class OrganizationMemberApi {
     }
 
 
-
     //停用/启用企业成员
     @PutMapping("/{orgId}/lock")
     public Result lockUser(@PathVariable String orgId,
@@ -452,12 +455,12 @@ public class OrganizationMemberApi {
      * @create: 15:14 2020/5/18  todo
      */
     @GetMapping("/getOrganizationMemberByUrl")
-    public JSONObject getOrganizationMemberByUrl(@RequestParam(value = "orgId",required = false) String orgId,
-                                                 @RequestParam(value = "projectId",required = false) String projectId) {
+    public JSONObject getOrganizationMemberByUrl(@RequestParam(value = "orgId", required = false) String orgId,
+                                                 @RequestParam(value = "projectId", required = false) String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
-            jsonObject.put("data", invitationLinkService.getOrganizationMemberByUrl(orgId,projectId));
+            jsonObject.put("data", invitationLinkService.getOrganizationMemberByUrl(orgId, projectId));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -466,28 +469,28 @@ public class OrganizationMemberApi {
 
 
     /**
+     * @param keyword 关键字
+     * @return 用户列表
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
-     * @param keyword   关键字
-     * @return 用户列表
      * @Description: 根据关键字模糊搜索用户判断是否在项目
      * @create: 15:41 2020/5/26
      */
     @GetMapping("/getProjectMemberByKeyword")
-    public JSONObject getProjectMemberByKeyword(String keyword,@NotNull(message = "项目id不能为空!")String projectId) {
+    public JSONObject getProjectMemberByKeyword(String keyword, @NotNull(message = "项目id不能为空!") String projectId) {
         JSONObject jsonObject = new JSONObject();
 
         try {
             List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().lambda().like(UserEntity::getAccountName, keyword));
-            Optional.ofNullable(list).ifPresent(s->s.stream().forEach(r->{
-                if(projectMemberService.findMemberIsExist(projectId, r.getUserId())!=0){
+            Optional.ofNullable(list).ifPresent(s -> s.stream().forEach(r -> {
+                if (projectMemberService.findMemberIsExist(projectId, r.getUserId()) != 0) {
                     r.setExistId(1);
-                }else {
+                } else {
                     r.setExistId(0);
                 }
             }));
-            jsonObject.put("result",1);
-            jsonObject.put("data",list);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", list);
             return jsonObject;
         } catch (Exception e) {
             e.printStackTrace();
@@ -497,17 +500,18 @@ public class OrganizationMemberApi {
 
     /**
      * 成员和部门功能接口
+     *
      * @param orgId
      * @param flag  1全部成员 0外部成员
      * @return
      */
     @GetMapping("/{orgId}/getOrgPartment")
     public JSONObject getOrgPartment(@PathVariable(value = "orgId") String orgId,
-                                     @RequestParam(value = "flag",defaultValue = "0") Integer flag){
+                                     @RequestParam(value = "flag", defaultValue = "0") Integer flag) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",new JSONObject().fluentPut("members",organizationMemberService.getMembersAndPartment(orgId,flag)).fluentPut("partment",organizationMemberService.getOrgPartment(orgId)));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", new JSONObject().fluentPut("members", organizationMemberService.getMembersAndPartment(orgId, flag)).fluentPut("partment", organizationMemberService.getOrgPartment(orgId)));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -516,20 +520,21 @@ public class OrganizationMemberApi {
 
     /**
      * 根据部门成员分类
+     *
      * @param partmentId
      * @param memberLebel 成员身份 1:成员 2:拥有者 3:管理员
-     * @param flag 是否是企业内员工 1全部成员 0外部成员
+     * @param flag        是否是企业内员工 1全部成员 0外部成员
      * @return
      */
     @GetMapping("/getOrgPartmentByMemberLebel")
-    public JSONObject getOrgPartmentByMemberLebel(@RequestParam(value = "partmentId",required = false) String partmentId,
-                                                  @RequestParam(value ="memberLabel" ,required = false)String memberLebel,
-                                                  @RequestParam(value = "flag",defaultValue = "1") String flag,
-                                                  @RequestParam(value = "orgId") String orgId){
+    public JSONObject getOrgPartmentByMemberLebel(@RequestParam(value = "partmentId", required = false) String partmentId,
+                                                  @RequestParam(value = "memberLabel", required = false) String memberLebel,
+                                                  @RequestParam(value = "flag", defaultValue = "1") String flag,
+                                                  @RequestParam(value = "orgId") String orgId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",organizationMemberService.getOrgPartmentByMemberLebel(partmentId,memberLebel,flag,orgId));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", organizationMemberService.getOrgPartmentByMemberLebel(partmentId, memberLebel, flag, orgId));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -538,18 +543,19 @@ public class OrganizationMemberApi {
 
     /**
      * 检查被邀请人电话号是否注册过账号
-     * @param phone 电话号列联表
+     *
+     * @param phone       电话号列联表
      * @param memberEmail 邮箱列表
      * @return
      */
     @GetMapping("/checkMemberIsRegister/{orgId}")
     public JSONObject checkMemberIsRegister(@PathVariable(value = "orgId") String orgId,
-                                            @RequestParam(value = "phone",required = false) String phone,
-                                            @RequestParam(value = "memberEmail",required = false)String memberEmail){
+                                            @RequestParam(value = "phone", required = false) String phone,
+                                            @RequestParam(value = "memberEmail", required = false) String memberEmail) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",userService.checkMemberIsRegister(phone,memberEmail,orgId));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", userService.checkMemberIsRegister(phone, memberEmail, orgId));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -558,43 +564,61 @@ public class OrganizationMemberApi {
 
     /**
      * 根据电话号/邮箱邀请企业成员
+     *
      * @param orgId
-     * @param phone 电话号列联表
+     * @param phone       电话号列联表
      * @param memberEmail 邮箱列表
      * @return
      */
     @GetMapping("/inviteOrgMemberByPhone/{orgId}")
     public JSONObject inviteOrgMemberByPhone(@PathVariable(value = "orgId") String orgId,
-                                             @RequestParam(value = "phone",required = false) List<String> phone,
-                                             @RequestParam(value = "memberEmail",required = false)List<String>memberEmail){
+                                             @RequestParam(value = "phone", required = false) List<String> phone,
+                                             @RequestParam(value = "memberEmail", required = false) List<String> memberEmail) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",organizationMemberService.inviteOrgMemberByPhone(orgId,phone,memberEmail));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", organizationMemberService.inviteOrgMemberByPhone(orgId, phone, memberEmail));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
         }
     }
 
+    /**
+     * 导出企业成员信息
+     *
+     * @param response
+     * @param orgId
+     */
     @GetMapping("/expOrgMember/{orgId}")
-    public void expOrgMember(HttpServletResponse response,@PathVariable(value = "orgId") String orgId){
-        List<OrganizationMember> memberList = organizationMemberService.list(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
-        Optional.ofNullable(memberList).ifPresent(members->{
-            members.stream().forEach(member->{
-                if (!member.getPartmentId().equals(Constants.ZERO)) {
-                    Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", member.getPartmentId()));
-                    member.setDeptName(partment.getPartmentName());
-                    RoleUser one = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", member.getMemberId()));
-                    if (one!=null) {
-                        Role role_id = roleService.getOne(new QueryWrapper<Role>().eq("role_id", one.getRoleId()));
-                        member.setMemberLabel(role_id.getRoleName());
-                    }
+    public void expOrgMember(HttpServletResponse response, @PathVariable(value = "orgId") String orgId) {
 
-                }
-            });
-        });
-        ExcelUtils.exportExcel(memberList,null,"企业成员",OrganizationMember.class,"企业成员信息表.xlsx",response);
+        List<OrganizationMember> memberList = organizationMemberService.expOrgMember(orgId);
+        ExcelUtils.exportExcel(memberList, null, "企业成员", OrganizationMember.class, "企业成员信息表.xlsx", response);
     }
 
+    /**
+     * 导入企业成员
+     * @param orgId
+     * @param file
+     * @return
+     */
+    @PostMapping("/impUser/{orgId}")
+    public JSONObject impOrgUser(@PathVariable(value = "orgId") String orgId, MultipartFile file){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Integer result=organizationMemberService.impOrgUser(orgId,file);
+            jsonObject.put("result",1);
+            jsonObject.put("data",result);
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+
+    }
+
+
 }
+
+

@@ -9,11 +9,15 @@ import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -62,6 +66,7 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
         partmentMember.setUpdateTime(System.currentTimeMillis());
         return partmentMemberMapper.insert(partmentMember) > 0;
     }
+
 
     /**
      * 部门中是否已经存在了该成员
@@ -120,6 +125,76 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
     @Override
     public PartmentMember getpartmentMemberByOrgId(String orgId, String memberId) {
         return partmentMemberMapper.getpartmentMemberByOrgId(orgId,memberId);
+    }
+
+    @Override
+    public Integer addDeptMember(String partmentId, String orgId, List<String> memberId) {
+        memberId.stream().forEach(r->{
+            PartmentMember partmentMember = new PartmentMember();
+            partmentMember.setPartmentId(partmentId);
+            partmentMember.setMemberId(r);
+            //新修改 添加部门成员时将用户信息存进去
+            PartmentMember partmentMember1 = partmentMemberMapper.selectOne(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
+            if (partmentMember1!=null) {
+                partmentMember.setUpdateTime(System.currentTimeMillis());
+                partmentMemberMapper.update(partmentMember,new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
+            }else {
+                partmentMember.setCreateTime(System.currentTimeMillis());
+                partmentMember.setUpdateTime(System.currentTimeMillis());
+                partmentMemberMapper.insert(partmentMember);
+            }
+            OrganizationMember member = new OrganizationMember();
+
+            member.setPartmentId(partmentId);
+            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",r));
+        });
+        return 1;
+    }
+
+    @Override
+    public void savePartmentMember(String partmentId, String memberId) {
+        PartmentMember partmentMember = new PartmentMember();
+        PartmentMember partmentMember1 = new PartmentMember();
+
+        partmentMember.setPartmentId(partmentId);
+        partmentMember.setMemberId(ShiroAuthenticationManager.getUserId());
+        partmentMember.setIsMaster(true);
+        partmentMember.setMemberLabel(2);
+        partmentMember.setCreateTime(System.currentTimeMillis());
+        partmentMember.setUpdateTime(System.currentTimeMillis());
+        partmentMember.setMemberType("拥有者");
+
+        if (StringUtils.isNotEmpty(memberId)) {
+            partmentMember.setIsMaster(false);
+
+            partmentMember1.setPartmentId(partmentId);
+            partmentMember1.setMemberId(memberId);
+            partmentMember1.setIsMaster(true);
+            partmentMember1.setMemberLabel(3);
+            partmentMember1.setCreateTime(System.currentTimeMillis());
+            partmentMember1.setUpdateTime(System.currentTimeMillis());
+            partmentMember1.setMemberType("管理员");
+            partmentMemberMapper.insert(partmentMember1);
+        }
+        partmentMemberMapper.insert(partmentMember);
+    }
+
+    @Override
+    public void updatePartMentMaster(String partmentId, String memberId) {
+        Integer integer = partmentMemberMapper.selectCount(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", memberId));
+        if (integer==0) {
+            PartmentMember partmentMember = new PartmentMember();
+            partmentMember.setPartmentId(partmentId);
+            partmentMember.setMemberId(memberId);
+            partmentMember.setIsMaster(true);
+            partmentMember.setMemberLabel(3);
+            partmentMember.setCreateTime(System.currentTimeMillis());
+            partmentMember.setUpdateTime(System.currentTimeMillis());
+            partmentMember.setMemberType("管理员");
+            partmentMemberMapper.insert(partmentMember);
+        }else{
+            partmentMemberMapper.updatePartMentMaster(partmentId,memberId);
+        }
     }
 
 
