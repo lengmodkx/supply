@@ -32,7 +32,8 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         String[] path = new String[]{"/index/**","/aliyun/**","/message/code","/login","/register","/captcha","/forget",
                 "/code","/logout","/bind/phone","/bind/wechat","/notbind/wechat", "/reset_password",
                 "/change_password", "/users/**","/organizations/my_org","/news/count","/oss/callback",
-                "/wechatcode","/invite/**","/wechattoken","/files/**/upload","/files/**/model","/files/**/name","/files/deletefile","/logs/exportLogByExcel","/organization/members/expOrgMember"};
+                "/wechatcode","/invite/**","/wechattoken","/files/**/upload","/files/**/model","/files/**/name",
+                "/files/deletefile","/logs/exportLogByExcel","/organization/members/expOrgMember","/organization/members/impUser/**"};
         registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns(path);
         registry.addInterceptor(recycleParamCheck).addPathPatterns("/recycle_bin/move_task_rb","/recycle_bin/move_file_rb","/recycle_bin/move_share_rb","/recycle_bin/move_schedule_rb","/recycle_bin/move_tag_rb");
         super.addInterceptors(registry);

@@ -616,8 +616,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     @Override
     public Integer impOrgUser(String orgId, MultipartFile file) {
         List<OrganizationMember> organizationMembers = ExcelUtils.importData(file, 1, OrganizationMember.class);
+        Integer result=0;
         if (CollectionUtils.isNotEmpty(organizationMembers)) {
-            organizationMembers.stream().forEach(o->{
+            for (OrganizationMember o : organizationMembers) {
                 //判断成员是否在企业中
                 Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", o.getMemberId()));
                 if (integer==0) {
@@ -626,10 +627,11 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     o.setCreateTime(System.currentTimeMillis());
                     o.setUpdateTime(System.currentTimeMillis());
                     organizationMemberMapper.insert(o);
+                    result++;
                 }
-            });
+            }
         }
-        return 1;
+        return result;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.log;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -32,9 +33,27 @@ public class LogExportRecord extends Model<LogExportRecord> {
   private String commitMemberId;
 
   /**
+   * 申请人名字
+   */
+  @TableField(exist = false)
+  private String commitName;
+  /**
+   * 申请人头像
+   */
+  @TableField(exist = false)
+  private String commitImg;
+
+
+  /**
    * 导出人
    */
   private String exportMemberId;
+
+  /**
+   * 导出人名字
+   */
+  @TableField(exist = false)
+  private String exportName;
 
   /**
    * 筛选条件_开始时间

@@ -41,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -607,9 +609,12 @@ public class OrganizationMemberApi {
     public JSONObject impOrgUser(@PathVariable(value = "orgId") String orgId, MultipartFile file){
         JSONObject jsonObject = new JSONObject();
         try {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
+            LocalDateTime localDateTime=LocalDateTime.now();
+            String format = df.format(localDateTime);
             Integer result=organizationMemberService.impOrgUser(orgId,file);
             jsonObject.put("result",1);
-            jsonObject.put("data",result);
+            jsonObject.put("data","于"+format+"上传成功"+result+"位成员");
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

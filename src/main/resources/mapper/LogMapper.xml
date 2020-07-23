@@ -145,7 +145,7 @@
         <if test="endTime!=null and endTime!=''">
             AND l.create_time &lt;= #{endTime}
         </if>
-        <if test="memberId != null">
+        <if test="memberId != null and memberId!=''">
             and l.member_id = #{memberId}
         </if>
         where l.project_id in(

@@ -187,13 +187,14 @@ public class LogApi extends BaseController {
     /**
      * 导出用户日志数据到导出表
      */
-    @GetMapping("/expUser/{memberId}")
-    public JSONObject expUser(@PathVariable(value = "memberId",required = false) String memberId,
+    @GetMapping("/expUser/{orgId}")
+    public JSONObject expUser(@PathVariable(value = "orgId") String orgId,
+                              @RequestParam(value = "memberId",required = false) String memberId,
                               @RequestParam(value = "startTime", required = false) Long startTime,
                               @RequestParam(value = "endTime", required = false) Long endTime) {
         JSONObject jsonObject = new JSONObject();
         try {
-            logExportRecordService.saveInfo(memberId,startTime,endTime);
+            logExportRecordService.saveInfo(memberId,startTime,endTime,orgId);
             jsonObject.put("result",1);
             jsonObject.put("data","导入成功");
             return jsonObject;
@@ -233,6 +234,7 @@ public class LogApi extends BaseController {
         if (CollectionUtils.isNotEmpty(logs)) {
             ExcelUtils.exportExcel(logs,null,"日志信息",Log.class,"成员日志信息表.xlsx",response);
         }
+
 
     }
 
