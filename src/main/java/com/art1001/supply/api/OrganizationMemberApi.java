@@ -590,8 +590,8 @@ public class OrganizationMemberApi {
      * @param response
      * @param orgId
      */
-    @GetMapping("/expOrgMember/{orgId}")
-    public void expOrgMember(HttpServletResponse response, @PathVariable(value = "orgId") String orgId) {
+    @GetMapping("/expOrgMember")
+    public void expOrgMember(HttpServletResponse response, @RequestParam(value = "orgId") String orgId) {
 
         List<OrganizationMember> memberList = organizationMemberService.expOrgMember(orgId);
         ExcelUtils.exportExcel(memberList, null, "企业成员", OrganizationMember.class, "企业成员信息表.xlsx", response);

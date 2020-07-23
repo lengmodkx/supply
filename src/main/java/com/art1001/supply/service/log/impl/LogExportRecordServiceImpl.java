@@ -5,6 +5,7 @@ import com.art1001.supply.mapper.log.LogExportRecordMapper;
 import com.art1001.supply.service.log.LogExportRecordService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,8 +33,9 @@ public class LogExportRecordServiceImpl extends ServiceImpl<LogExportRecordMappe
         LogExportRecord logExportRecord = new LogExportRecord();
         logExportRecord.setCommitTime(System.currentTimeMillis());
         logExportRecord.setCommitMemberId(ShiroAuthenticationManager.getUserId());
-
-        logExportRecord.setExportMemberId(memberId);
+        if (StringUtils.isNotEmpty(memberId)) {
+            logExportRecord.setExportMemberId(memberId);
+        }
         logExportRecord.setStatus(1);
         if (startTime != null) {
             logExportRecord.setConditionStart(startTime);

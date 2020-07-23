@@ -20,7 +20,7 @@ excludePathPatterns: /login,/register,/users/**,/projects/**
                     ,/roles/**,/role_user/**,/captcha,/code,/forget,/wechatcode
                     ,/wechattoken,/getUserInfo/{userId},/updateUserInfo,/bind/phone
                     ,/is_bind_phone,/qianyi,/bind/wechat,/notbind/wechat,/reset_password
-                    ,/change_password,/adminlogin,/webSocketServer/**,/organizations/my_org,/news/count
+                    ,/change_password,/adminlogin,/webSocketServer/**,/organizations/my_org,/news/count,/logs/exportLogByExcel,/organization/members/expOrgMember
 
 #企业权限拦截器需要拦截的action请求路径
 orgPathPatterns: /projects/**

@@ -171,7 +171,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
      */
     @Override
     public List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime) {
-        List<String> projectIds = organizationService.getProject(orgId).stream().map(Project::getProjectId).collect(Collectors.toList());
+        List<String> projectIds = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId)).stream().map(Project::getProjectId).collect(Collectors.toList());
         List<Log> logs = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(projectIds)) {
             logs = logMapper.selectLogByCondition(projectIds, memberId, startTime, endTime);

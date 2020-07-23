@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.annotation.Id;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -187,7 +188,7 @@ public class LogApi extends BaseController {
      * 导出用户日志数据到导出表
      */
     @GetMapping("/expUser/{memberId}")
-    public JSONObject expUser(@PathVariable(value = "memberId") String memberId,
+    public JSONObject expUser(@PathVariable(value = "memberId",required = false) String memberId,
                               @RequestParam(value = "startTime", required = false) Long startTime,
                               @RequestParam(value = "endTime", required = false) Long endTime) {
         JSONObject jsonObject = new JSONObject();
@@ -223,14 +224,33 @@ public class LogApi extends BaseController {
      * @param id
      * @param response
      */
-    @GetMapping("/exportLogByExcel/{orgId}")
-    public void exportLogByExcel(@PathVariable(value = "orgId")String orgId,
+    @GetMapping("/exportLogByExcel")
+    public void exportLogByExcel(@RequestParam(value = "orgId")String orgId,
                                  @RequestParam(value = "id") String id,
                                  HttpServletResponse response){
         List<Log> logs=logService.exportLogByExcel(orgId,id);
 
         if (CollectionUtils.isNotEmpty(logs)) {
             ExcelUtils.exportExcel(logs,null,"日志信息",Log.class,"成员日志信息表.xlsx",response);
+        }
+
+    }
+
+    /**
+     * 删除导出信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/deleteLogInfo/{id}")
+    public JSONObject deleteLogInfo(@PathVariable(value = "id") String id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            logExportRecordService.removeById(id);
+            jsonObject.put("result",1);
+            jsonObject.put("data","删除成功");
+            return  jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
         }
 
     }
