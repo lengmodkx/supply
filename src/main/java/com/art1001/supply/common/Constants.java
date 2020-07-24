@@ -59,6 +59,15 @@ public class Constants {
     public static final String ONE ="1";
     public static final String TWO ="2";
     public static final String THREE ="3";
+    public static final String FOUR ="4";
+    public static final String FIVE ="5";
+
+    public static final Integer B_ZERO =0;
+    public static final Integer B_ONE =1;
+    public static final Integer B_TWO =2;
+    public static final Integer B_THREE =3;
+    public static final Integer B_FOUR =4;
+    public static final Integer B_FIVE =5;
 
     //模块小写英文
     public static final String TASK_EN = "task";

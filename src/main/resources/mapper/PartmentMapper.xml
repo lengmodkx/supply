@@ -227,4 +227,15 @@
         partment_order
     </select>
 
+
+    <select id="searchDeptByKeyWord" resultType="com.art1001.supply.entity.partment.Partment">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM
+		prm_partment
+		WHERE
+		organization_id=#{orgId} and
+		partment_name like <![CDATA[ CONCAT('%',#{keyWord},'%') ]]>
+	</select>
+
 </mapper>

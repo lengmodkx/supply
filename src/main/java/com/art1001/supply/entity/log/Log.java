@@ -1,5 +1,6 @@
 package com.art1001.supply.entity.log;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.task.Task;
@@ -66,20 +67,30 @@ public class Log extends Model<Log> {
 	/**
 	 * 项目名
 	 */
+	@Excel(name = "项目名")
 	@TableField(exist = false)
 	private String projectName;
 
 	/**
 	 * 用户id
 	 */
+	@Excel(name = "用户id")
 	private String memberId;
 
 
 	/**
 	 * 用户名
 	 */
+	@Excel(name = "用户名")
 	@TableField(exist = false)
 	private String memberName;
+
+	/**
+	 * 电话号
+	 */
+	@Excel(name = "电话号")
+	@TableField(exist = false)
+	private String memberPhone;
 
 
 	/**
@@ -91,6 +102,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 内容
 	 */
+	@Excel(name = "内容")
 	@NotNull(message = "发送内容不能为空")
 	private String content;
 
@@ -99,15 +111,17 @@ public class Log extends Model<Log> {
 	 */
 	private Integer logType;
 
-//	/**
-//	 * 类型 1:任务 2:文件 3:日程 4:分享
-//	 */
-//	private Integer logFlag;
+
 	/**
 	 * 创建时间
 	 */
+
 	@TableField(fill = FieldFill.INSERT)
 	private Long createTime;
+
+	@Excel(name = "创建时间")
+	@TableField(exist = false)
+	private String outPutTime;
 
 	/**
 	 * 时间字符串
@@ -123,6 +137,7 @@ public class Log extends Model<Log> {
 	/**
 	 * 任务列表
 	 */
+	@TableField(exist = false)
 	private List<Task> tasks;
 
 	@Override

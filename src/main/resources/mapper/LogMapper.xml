@@ -21,6 +21,7 @@
 		l.member_id,
 		u.user_name as member_name,
 		u.image as member_img,
+		u.account_name as memberPhone,
 		l.content,
 		l.log_type,
 		l.create_time
@@ -135,12 +136,6 @@
         select
         <include refid="Base_Column_List"/>
         from prm_log l join tb_user u on l.member_id=u.user_id
-        <!--<if test="startTime != null">-->
-           <!--and  l.create_time <![CDATA[ >= ]]> #{startTime}-->
-        <!--</if>-->
-        <!--<if test="endTime != null and startTime != null">-->
-           <!--and l.create_time <![CDATA[ <= ]]> #{startTime}-->
-        <!--</if>-->
 
         <if test="startTime!=null and startTime!=''">
             AND l.create_time &gt;= #{startTime}
@@ -150,12 +145,29 @@
         <if test="endTime!=null and endTime!=''">
             AND l.create_time &lt;= #{endTime}
         </if>
-        <if test="memberId != null">
-           and l.member_id=#{memberId}
+        <if test="memberId != null and memberId!=''">
+            and l.member_id = #{memberId}
         </if>
         where l.project_id in(
         <foreach collection="projectIds" item="projectId" separator=",">
             #{projectId}
         </foreach>)
+    </select>
+
+    <select id="getMyLog" resultType="com.art1001.supply.entity.log.Log">
+        SELECT
+            u.user_id as memberId,
+            u.user_name as memberName,
+            u.account_name as memberPhone,
+            l.content as content,
+            from_unixtime(l.create_time/1000) as outPutTime,
+            p.project_name as projectName
+        FROM
+        	prm_log l
+        	JOIN tb_user u
+        	join prm_project p
+        	ON l.member_id = u.user_id and IF(IFNULL(l.project_id,NULL),l.project_id=p.project_id,NULL)
+        WHERE
+        	l.member_id =#{userId}
     </select>
 </mapper>

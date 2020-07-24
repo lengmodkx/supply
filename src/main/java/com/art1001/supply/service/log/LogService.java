@@ -58,4 +58,8 @@ public interface LogService extends IService<Log> {
 	List<Log> getMyDynamic(String userId);
 
     List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime);
+
+	List<Log> getMyLog();
+
+	List<Log> exportLogByExcel(String orgId, String id);
 }

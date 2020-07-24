@@ -71,4 +71,6 @@ public interface PartmentMapper extends BaseMapper<Partment> {
     Partment getSimpleDeptInfo(@Param("memberId")String memberId,@Param("orgId")String orgId);
 
     List<Partment> findOrgParentByOrgId(@Param("orgId")String orgId);
+
+    List<Partment> searchDeptByKeyWord(@Param("keyWord") String keyWord,@Param("orgId") String orgId);
 }

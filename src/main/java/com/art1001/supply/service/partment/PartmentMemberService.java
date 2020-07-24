@@ -44,7 +44,7 @@ public interface PartmentMemberService extends IService<PartmentMember> {
      * @param partmentId 部门id
      * @return 成员信息
      */
-    PartmentMember getMemberByPartmentId(String partmentId);
+    List<PartmentMember> getMemberByPartmentId(String partmentId);
 
     /**
      * 获取部门的部门id，部门名称及是否负责人信息
@@ -70,4 +70,11 @@ public interface PartmentMemberService extends IService<PartmentMember> {
      * @return
      */
     PartmentMember getpartmentMemberByOrgId(String orgId, String memberId);
+
+    Integer addDeptMember(String partmentId, String orgId, List<String> memberId);
+
+
+    void savePartmentMember(String partmentId, String memberId);
+
+    void updatePartMentMaster(String partmentId, String memberId);
 }

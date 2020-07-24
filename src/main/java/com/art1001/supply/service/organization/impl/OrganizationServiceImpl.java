@@ -236,6 +236,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		return  (int) v;
 	}
 
+
 	@Override
 	public void personalProject(String userId) {
 		//构造出 查询当前用户默认企业的企业id 的表达式

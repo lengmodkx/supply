@@ -16,6 +16,8 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.DateUtil;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.RegexUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
@@ -43,6 +45,10 @@ import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -142,6 +148,7 @@ public class UserApi {
         userEntity.setCreatorName(accountName);
         userEntity.setAccountName(accountName);
         userEntity.setUserName(userName);
+        userEntity.setTelephone(accountName);
         userEntity.setJob(job);
         userEntity.setCreateTime(new Date(System.currentTimeMillis()));
         // 加密用户输入的密码，得到密码和加密盐，保存到数据库
@@ -175,11 +182,11 @@ public class UserApi {
      * @return
      */
     @PostMapping("/register/projectMember")
-        public Result registerAndProjectMember(@RequestParam String captcha,
+    public Result registerAndProjectMember(@RequestParam String captcha,
                                            @RequestParam String accountName,
                                            @RequestParam String password,
                                            @RequestParam String userName,
-                                           @RequestParam(value = "job",required = false) String job,
+                                           @RequestParam(value = "job", required = false) String job,
                                            @RequestParam String projectId,
                                            HttpServletRequest request) {
         if (!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))) {
@@ -210,12 +217,12 @@ public class UserApi {
      */
     @PostMapping("/register/orgMember")
     public Result registerAndOrgMember(@RequestParam String captcha,
-                                           @RequestParam String accountName,
-                                           @RequestParam String password,
-                                           @RequestParam String userName,
-                                           @RequestParam(value = "job",required = false) String job,
-                                           @RequestParam String orgId,
-                                           HttpServletRequest request) {
+                                       @RequestParam String accountName,
+                                       @RequestParam String password,
+                                       @RequestParam String userName,
+                                       @RequestParam(value = "job", required = false) String job,
+                                       @RequestParam String orgId,
+                                       HttpServletRequest request) {
         if (!captcha.equalsIgnoreCase(String.valueOf(request.getSession().getAttribute("captcha")))) {
             return Result.fail(CodeMsg.CAPTCHA_ERROR);
         }
@@ -470,6 +477,19 @@ public class UserApi {
         return Result.success(userInfo);
     }
 
+    @GetMapping("/notBindPhone")
+    public JSONObject notBindPhone() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("result",1);
+            jsonObject.put("data",userService.notBindPhone());
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
+
     @GetMapping("/is_bind_phone")
     public Object isBindPhone() {
         JSONObject jsonObject = new JSONObject();
@@ -522,9 +542,14 @@ public class UserApi {
         return Result.success();
     }
 
+    /**
+     * 解绑微信
+     *
+     * @param useId
+     * @return
+     */
     @PostMapping("/notbind/wechat")
     public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId) {
-
         log.info("bind weChat [{}]", useId);
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(useId);
@@ -597,6 +622,23 @@ public class UserApi {
     public Result checkAccountNameIsExist(@NotNull(message = "用户名不能为空") String accountName) {
         log.info("Check user accountName is exist. [{}]", accountName);
         return Result.success(userService.checkUserIsExistByAccountName(accountName));
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
+    @GetMapping("/getMyUserInfo")
+    public JSONObject getMyUserInfo() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("result", 1);
+            jsonObject.put("data", userService.findById(ShiroAuthenticationManager.getUserId()));
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
     }
 
 

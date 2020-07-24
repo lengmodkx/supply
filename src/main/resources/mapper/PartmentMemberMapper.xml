@@ -19,6 +19,18 @@
         </association>
     </resultMap>
 
+    <!--修改部门负责人-->
+    <update id="updatePartMentMaster">
+        update prm_partment_member
+        <set>
+           is_master=1
+        </set>
+        where partment_id=#{partmentId}
+        <if test="memberId != null">
+           and member_id=#{memberId}
+        </if>
+    </update>
+
     <!-- 获取部门的某个成员信息 -->
     <select id="selectPartmentMemberInfo" resultMap="BaseResultMap">
         SELECT
@@ -50,14 +62,26 @@
 
     <select id="getPartmentByOrgId" resultType="com.art1001.supply.entity.partment.PartmentMember">
         SELECT
-        p.partment_name as partmentName,
-        p.parent_id as parentId,
-        p.partment_id as partmentId
+        	*
         FROM
-        prm_partment p
-        WHERE
-        p.organization_id =#{orgId}
-        GROUP BY p.partment_id
+        	(
+        	SELECT
+        		p.partment_name AS partmentName,
+        		p.parent_id AS parentId,
+        		p.partment_id AS partmentId,
+        		p.partment_logo AS partmentLogo,
+        		pm.member_id AS memberId,
+        		pm.is_master as isMaster
+        	FROM
+        		prm_partment p
+        		JOIN prm_partment_member pm ON p.partment_id = pm.partment_id
+        	WHERE
+        		p.organization_id = "597176ae648841b688e2c7abe3aecdec"
+        	ORDER BY
+        		pm.is_master DESC
+        	) a
+        GROUP BY
+        	a.partmentId
     </select>
 
     <select id="getpartmentMemberByOrgId" resultType="com.art1001.supply.entity.partment.PartmentMember">

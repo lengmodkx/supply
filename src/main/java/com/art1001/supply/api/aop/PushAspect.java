@@ -76,61 +76,62 @@ public class PushAspect extends BaseController {
     private final static String PROJECT_ID = "projectId";
     private final static String NAME = "name";
     private final static String SEPARATOR = ",";
-    private final static String MSG_ID="msgId";
-    private final static String PUBLICTYPE="publicType";
+    private final static String MSG_ID = "msgId";
+    private final static String PUBLICTYPE = "publicType";
 
     /**
      * 推送的切点
      */
     @Pointcut("@annotation(com.art1001.supply.annotation.Push)")
-    public void push(){}
+    public void push() {
+    }
 
     /**
      * 所有需要推送数据的添加方法
+     *
      * @param object 方法返回值
      */
     @AfterReturning(returning = "object", pointcut = "push()")
-    public void pushAfter(JoinPoint joinPoint,JSONObject object){
+    public void pushAfter(JoinPoint joinPoint, JSONObject object) {
         //先写入操作日志
-        Push push = ((MethodSignature)joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
+        Push push = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(Push.class);
         //只需要推送，不需要日志
-        if(push.type()==0){
-            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
+        if (push.type() == 0) {
+            noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get("data"));
             //既需要推送也需要日志
-        } else if (push.type()==1){
-            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
-            this.saveLog(object,push);
+        } else if (push.type() == 1) {
+            noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get("data"));
+            this.saveLog(object, push);
             //需要往不同的频道推送不同的数据
-        } else if(push.type() == 2){
-            Map<String,Object> data = object.getObject("data", HashMap.class);
+        } else if (push.type() == 2) {
+            Map<String, Object> data = object.getObject("data", HashMap.class);
             data.keySet().forEach(key -> {
-                noticeService.pushMsg(key,push.value().name(),data.get(key));
+                noticeService.pushMsg(key, push.value().name(), data.get(key));
             });
-            this.saveLog(object,push);
+            this.saveLog(object, push);
             //即需要推送到项目频道也要推送到指定用户频道
-        } else if(push.type() == 3){
-            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get("data"));
+        } else if (push.type() == 3) {
+            noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get("data"));
             Log log = this.saveLog(object, push);
-            if(Constants.TASK.equals(object.getString(PUBLICTYPE))){
+            if (Constants.TASK.equals(object.getString(PUBLICTYPE))) {
                 String[] ids = taskService.getTaskJoinAndExecutorId(object.getString("id"));
-                if(ids != null && ids.length > 0){
-                    userNewsService.saveUserNews(ids,object.getString("id"),object.getString("publicType"),log.getContent(), null);
+                if (ids != null && ids.length > 0) {
+                    userNewsService.saveUserNews(ids, object.getString("id"), object.getString("publicType"), log.getContent(), null);
                 }
             }
-            if(Constants.PROJECT.equals(object.getString(PUBLICTYPE))){
+            if (Constants.PROJECT.equals(object.getString(PUBLICTYPE))) {
                 List<String> ids = projectMemberService.getProjectAllMemberId(object.getString("id"));
-                if(!CollectionUtils.isEmpty(ids)){
+                if (!CollectionUtils.isEmpty(ids)) {
                     String[] arrIds = new String[ids.size()];
                     noticeService.toUsers(ids.toArray(arrIds), push.value().name(), object.get("data"));
                 }
 
             }
-        } else if(push.type() == 4){
-            noticeService.pushMsg(object.getString("msgId"),push.value().name(),object.get(push));
-        }
-        else{//只需要日志
-            if(object.containsKey(ID)){
-                this.saveLog(object,push);
+        } else if (push.type() == 4) {
+            noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get(push));
+        } else {//只需要日志
+            if (object.containsKey(ID)) {
+                this.saveLog(object, push);
             }
         }
         //去除无用的返回参数
@@ -144,27 +145,35 @@ public class PushAspect extends BaseController {
 
     /**
      * 保存操作日志
+     *
      * @param object 返回值信息
      */
-    private Log saveLog(JSONObject object,Push push){
+    private Log saveLog(JSONObject object, Push push) {
         Log systemLog = new Log();
         systemLog.setPublicId(object.getString(ID));
         systemLog.setProjectId(object.getString(MSG_ID));
         systemLog.setCreateTime(System.currentTimeMillis());
-        String name = object.getString(NAME) != null ? object.getString(NAME):"";
-        if(Constants.TASK.equals(object.getString(PUBLICTYPE))){
+        String name = object.getString(NAME) != null ? object.getString(NAME) : "";
+        if (Constants.TASK.equals(object.getString(PUBLICTYPE))) {
             systemLog.setLogFlag(1);
-        }else if(Constants.FILE.equals(object.getString(PUBLICTYPE))){
+        } else if (Constants.FILE.equals(object.getString(PUBLICTYPE))) {
             systemLog.setLogFlag(2);
-        }
-        else if(Constants.SHARE.equals(object.getString(PUBLICTYPE))){
+        } else if (Constants.SHARE.equals(object.getString(PUBLICTYPE))) {
             systemLog.setLogFlag(3);
-        }
-        else if(Constants.SCHEDULE.equals(object.getString(PUBLICTYPE))){
+        } else if (Constants.SCHEDULE.equals(object.getString(PUBLICTYPE))) {
             systemLog.setLogFlag(4);
         }
-        UserInfo userInfo = (UserInfo) redisUtil.getObj(Constants.USER_INFO+ShiroAuthenticationManager.getUserId());
-        systemLog.setContent(userInfo.getUserName() + " " + push.value().getName()+" "+ name);
+
+
+        UserInfo userInfo = (UserInfo) redisUtil.getObj(Constants.USER_INFO + ":" + ShiroAuthenticationManager.getUserId());
+
+        //redis取不到值从数据库查询当前用户信息
+        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
+        if (userInfo != null) {
+            systemLog.setContent(userInfo.getUserName() + " " + push.value().getName() + " " + name);
+        } else {
+            systemLog.setContent(userEntity.getUserName() + " " + push.value().getName() + " " + name);
+        }
         systemLog.setMemberId(ShiroAuthenticationManager.getUserId());
         logService.save(systemLog);
         return systemLog;

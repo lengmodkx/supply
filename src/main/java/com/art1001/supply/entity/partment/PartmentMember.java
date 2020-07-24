@@ -40,6 +40,12 @@ private static final long serialVersionUID=1L;
     private String partmentName;
 
     /**
+     * 部门logo
+     */
+    @TableField(exist = false)
+    private String partmentLogo;
+
+    /**
      * 用户id
      */
     private String memberId;
@@ -80,6 +86,9 @@ private static final long serialVersionUID=1L;
 
     @TableField(value = "member_type")
     private String memberType;
+
+    @TableField(exist = false)
+    private OrganizationMember organizationMember;
 
     @TableField(exist = false)
     private List<OrganizationMember> organizationMembers;

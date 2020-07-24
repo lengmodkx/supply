@@ -22,14 +22,14 @@
 	</resultMap>
     
 	<sql id="Base_Column_List">
-						news_id,
+				news_id,
 				news_name,
 				news_content,
 				news_public_id,
 				news_handle,
-				news_from_user,
-				news_to_user,
-				news_remind,
+				news_from_user as newsFromUserId,
+				news_to_user as newsToUserId,
+				news_remind as newsRemind,
 				is_mention,
 				news_type,
 				news_count,
@@ -253,5 +253,25 @@
 			</foreach>
 		)
 	</delete>
-	
+
+	<select id="userNewsByCondition" resultType="com.art1001.supply.entity.user.UserNews">
+		select <include refid="Base_Column_List"/>
+		from prm_user_news
+		<where>
+			news_to_user = #{userId}
+			<if test="keyword !=null">
+			   and news_name like <![CDATA[ CONCAT('%',#{keyword},'%') ]]> or news_content like <![CDATA[ CONCAT('%',#{keyword},'%') ]]>
+			</if>
+			<if test="startTime!=null and startTime!=''">
+				AND create_time &gt;= #{startTime}
+			</if>
+
+			<!-- 查询条件：创建结束时间 -->
+			<if test="endTime!=null and endTime!=''">
+				AND create_time &lt;= #{endTime}
+			</if>
+		</where>
+		order by update_time desc
+	</select>
+
 </mapper>

@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.organization.OrganizationMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.Organization">
-		<result column="organization_id" property="organizationId" jdbcType="VARCHAR" />
-		<result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
-		<result column="organization_imgae" property="organizationImage" jdbcType="VARCHAR" />
-		<result column="organization_des" property="organizationDes" jdbcType="VARCHAR" />
-		<result column="organization_intro" property="organizationIntro" jdbcType="VARCHAR" />
-		<result column="is_public" property="isPublic" jdbcType="INTEGER" />
-		<result column="organization_member" property="organizationMember" jdbcType="VARCHAR" />
-		<result column="create_time" property="createTime" jdbcType="BIGINT" />
-		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
-		<result column="contact" property="contact" jdbcType="VARCHAR" />
-		<result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
-	</resultMap>
 
-	<resultMap id="joinOrgInfo" type="com.art1001.supply.entity.organization.Organization">
-		<id column="organization_id" property="organizationId" jdbcType="VARCHAR" />
-		<result column="organization_name" property="organizationName" jdbcType="VARCHAR" />
-		<collection property="joinProjects" ofType="com.art1001.supply.entity.project.Project">
-			<id column="project_id" property="projectId"/>
-			<result column="project_name" property="projectName"/>
-		</collection>
- 	</resultMap>
-    
-	<sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.Organization">
+        <result column="organization_id" property="organizationId" jdbcType="VARCHAR"/>
+        <result column="organization_name" property="organizationName" jdbcType="VARCHAR"/>
+        <result column="organization_imgae" property="organizationImage" jdbcType="VARCHAR"/>
+        <result column="organization_des" property="organizationDes" jdbcType="VARCHAR"/>
+        <result column="organization_intro" property="organizationIntro" jdbcType="VARCHAR"/>
+        <result column="is_public" property="isPublic" jdbcType="INTEGER"/>
+        <result column="organization_member" property="organizationMember" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="contact" property="contact" jdbcType="VARCHAR"/>
+        <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="joinOrgInfo" type="com.art1001.supply.entity.organization.Organization">
+        <id column="organization_id" property="organizationId" jdbcType="VARCHAR"/>
+        <result column="organization_name" property="organizationName" jdbcType="VARCHAR"/>
+        <collection property="joinProjects" ofType="com.art1001.supply.entity.project.Project">
+            <id column="project_id" property="projectId"/>
+            <result column="project_name" property="projectName"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 				organization_id,
 				organization_name,
-				organization_imgae,
+				organization_image,
 				organization_des,
 				organization_intro,
 				is_public,
@@ -39,175 +39,174 @@
 				contact_phone
 	</sql>
 
-	<sql id="whereStatement">
-		<where>
-			1 = 1
-			<if test="condition !=null">
-			</if>
-		</where>
-	</sql>
-	
-	<select id="findOrganizationPagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-		
-		select * from prm_organization
-		<include refid="whereStatement" />
-		
-		<if test="orderBy == 0">
-			order by organization_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by organization_id asc
-		</if>
-		
-	</select>
-	
-	<select id="findOrganizationAllList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.organization.Organization">
-		SELECT
-		<include refid="Base_Column_List" />
-		from prm_organization
-		<if test="orderBy == 0">
-			order by organization_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by organization_id asc
-		</if>
-	</select>
-	
-	<select id="findOrganizationByOrganizationId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
 
-		select
-		<include refid="Base_Column_List" />
-		from prm_organization c where organization_id = #{organizationId}
+    <select id="findOrganizationPagerList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.base.Pager">
 
-	</select>
-	
-	<delete id="deleteOrganizationByOrganizationId" parameterType="java.lang.String">
+        select * from prm_organization
+        <include refid="whereStatement"/>
+
+        <if test="orderBy == 0">
+            order by organization_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by organization_id asc
+        </if>
+
+    </select>
+
+    <select id="findOrganizationAllList" resultMap="BaseResultMap"
+            parameterType="com.art1001.supply.entity.organization.Organization">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_organization
+        <if test="orderBy == 0">
+            order by organization_id desc
+        </if>
+        <if test="orderBy == 1">
+            order by organization_id asc
+        </if>
+    </select>
+
+    <select id="findOrganizationByOrganizationId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+        select
+        <include refid="Base_Column_List"/>
+        from prm_organization c where organization_id = #{organizationId}
+
+    </select>
+
+    <delete id="deleteOrganizationByOrganizationId" parameterType="java.lang.String">
 		delete from
 		prm_organization where organization_id = #{organizationId}
 	</delete>
-	
-	<insert id="saveOrganization" parameterType="com.art1001.supply.entity.organization.Organization">
-		insert into prm_organization
-		<trim prefix="(" suffix=")" suffixOverrides=",">
 
-			<if test="organizationId != null and organizationId != ''">
-			organization_id,
-			</if>
-			<if test="organizationName != null and organizationName != ''">
-			organization_name,
-			</if>
-			<if test="organizationImage != null and organizationImage != ''">
-			organization_image,
-			</if>
-			<if test="organizationDes != null and organizationDes != ''">
-			organization_des,
-			</if>
-			<if test="organizationIntro != null and organizationIntro != ''">
-				organization_intro,
-			</if>
-			<if test="isPublic != null ">
-			is_public,
-			</if>
-			<if test="organizationMember != null and organizationMember != ''">
-			organization_member,
-			</if>
-			<if test="createTime != null ">
-			create_time,
-			</if>
-			<if test="updateTime != null ">
-			update_time,
-			</if>
-			<if test="contact != null and contact != ''">
-				contact,
-			</if>
-			<if test="contactPhone != null and contactPhone != ''">
-				contact_phone,
-			</if>
-		</trim>
+    <insert id="saveOrganization" parameterType="com.art1001.supply.entity.organization.Organization">
+        insert into prm_organization
+        <trim prefix="(" suffix=")" suffixOverrides=",">
 
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="organizationId != null and organizationId != ''">
+                organization_id,
+            </if>
+            <if test="organizationName != null and organizationName != ''">
+                organization_name,
+            </if>
+            <if test="organizationImage != null and organizationImage != ''">
+                organization_image,
+            </if>
+            <if test="organizationDes != null and organizationDes != ''">
+                organization_des,
+            </if>
+            <if test="organizationIntro != null and organizationIntro != ''">
+                organization_intro,
+            </if>
+            <if test="isPublic != null ">
+                is_public,
+            </if>
+            <if test="organizationMember != null and organizationMember != ''">
+                organization_member,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="contact != null and contact != ''">
+                contact,
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                contact_phone,
+            </if>
+        </trim>
 
-			<if test="organizationId != null and organizationId != ''">
-				#{organizationId},
-			</if>
-			<if test="organizationName != null and organizationName != ''">
-				#{organizationName},
-			</if>
-			<if test="organizationImage != null and organizationImage != ''">
-				#{organizationImage},
-			</if>
-			<if test="organizationDes != null and organizationDes != ''">
-				#{organizationDes},
-			</if>
-			<if test="isPublic != null ">
-				#{isPublic},
-			</if>
-			<if test="organizationMember != null and organizationMember != ''">
-				#{organizationMember},
-			</if>
-			<if test="createTime != null ">
-				#{createTime},
-			</if>
-			<if test="updateTime != null ">
-				#{updateTime},
-			</if>
-			<if test="contact != null and contact != ''">
-				#{contact},
-			</if>
-			<if test="contactPhone != null and contactPhone != ''">
-				#{contactPhone},
-			</if>
-		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
 
-	</insert>
-	
-	<update id="updateOrganization" parameterType="com.art1001.supply.entity.organization.Organization">
+            <if test="organizationId != null and organizationId != ''">
+                #{organizationId},
+            </if>
+            <if test="organizationName != null and organizationName != ''">
+                #{organizationName},
+            </if>
+            <if test="organizationImage != null and organizationImage != ''">
+                #{organizationImage},
+            </if>
+            <if test="organizationDes != null and organizationDes != ''">
+                #{organizationDes},
+            </if>
+            <if test="isPublic != null ">
+                #{isPublic},
+            </if>
+            <if test="organizationMember != null and organizationMember != ''">
+                #{organizationMember},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="contact != null and contact != ''">
+                #{contact},
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                #{contactPhone},
+            </if>
+        </trim>
 
-		update prm_organization
-		<set>
-			<if test="organizationId != null and organizationId != ''">
-				organization_id = #{organizationId},
-			</if>
-			<if test="organizationName != null and organizationName != ''">
-				organization_name = #{organizationName},
-			</if>
-			<if test="organizationImage != null and organizationImage != ''">
-				organization_image = #{organizationImage},
-			</if>
-			<if test="organizationDes != null and organizationDes != ''">
-				organization_des = #{organizationDes},
-			</if>
-			<if test="organizationIntro != null and organizationIntro != ''">
-				organization_intro = #{organizationIntro},
-			</if>
-			<if test="isPublic != null ">
-				is_public = #{isPublic},
-			</if>
-			<if test="organizationMember != null and organizationMember != ''">
-				organization_member = #{organizationMember},
-			</if>
-			<if test="createTime != null ">
-				create_time = #{createTime},
-			</if>
-			<if test="updateTime != null ">
-				update_time = #{updateTime},
-			</if>
-			<if test="contact != null and contact != ''">
-				contact = #{contact},
-			</if>
-			<if test="contactPhone != null and contactPhone != ''">
-				contact_phone = #{contactPhone},
-			</if>
-		</set>
+    </insert>
 
-		WHERE organization_id = #{organizationId}
+    <update id="updateOrganization" parameterType="com.art1001.supply.entity.organization.Organization">
 
-	</update>
+        update prm_organization
+        <set>
+            <if test="organizationId != null and organizationId != ''">
+                organization_id = #{organizationId},
+            </if>
+            <if test="organizationName != null and organizationName != ''">
+                organization_name = #{organizationName},
+            </if>
+            <if test="organizationImage != null and organizationImage != ''">
+                organization_image = #{organizationImage},
+            </if>
+            <if test="organizationDes != null and organizationDes != ''">
+                organization_des = #{organizationDes},
+            </if>
+            <if test="organizationIntro != null and organizationIntro != ''">
+                organization_intro = #{organizationIntro},
+            </if>
+            <if test="isPublic != null ">
+                is_public = #{isPublic},
+            </if>
+            <if test="organizationMember != null and organizationMember != ''">
+                organization_member = #{organizationMember},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="contact != null and contact != ''">
+                contact = #{contact},
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                contact_phone = #{contactPhone},
+            </if>
+        </set>
+        WHERE organization_id = #{organizationId}
 
-	<!-- 查询出 参与的所有企业 以及 项目 -->
-	<select id="selectJoinOrgProject" resultMap="joinOrgInfo">
+    </update>
+
+    <!-- 查询出 参与的所有企业 以及 项目 -->
+    <select id="selectJoinOrgProject" resultMap="joinOrgInfo">
 		SELECT
 			org.organization_id,organization_name,p.project_id,p.project_name
 		FROM
@@ -218,52 +217,54 @@
 			orgm.member_id = #{id}
 	</select>
 
-	<!-- 获取和我相关的企业 -->
+    <!-- 获取和我相关的企业 -->
     <select id="getMyOrg" resultType="com.art1001.supply.entity.organization.Organization">
-		SELECT
-			o.organization_id,
-			organization_name,
-			o.organization_des
-		FROM
-			prm_organization o
-			LEFT JOIN prm_organization_member om ON o.organization_id = om.organization_id
-		WHERE
-			om.member_id = #{userId}
-		<if test="flag != null and flag == 1">
-			AND organization_lable = 1
-		</if>
-		<if test="flag != null and flag == 2">
-			AND organization_lable = 0
-		</if>
-	</select>
+        SELECT
+        o.organization_id,
+        organization_name,
+        o.organization_des,
+        om.organization_lable as organizationLabel
+        FROM
+        prm_organization o
+        LEFT JOIN prm_organization_member om ON o.organization_id = om.organization_id
+        WHERE
+        om.member_id = #{userId}
+        <if test="flag != null and flag == 1">
+            AND organization_lable = 1
+        </if>
+        <if test="flag != null and flag == 2">
+            AND organization_lable = 0
+        </if>
+    </select>
 
-	<!-- 获取企业下的项目信息 -->
+    <!-- 获取企业下的项目信息 -->
     <select id="selectProject" resultType="com.art1001.supply.entity.project.Project">
-		select p.project_id,
-		   p.project_name,
-		   p.project_cover,
-		   p.project_des,
-		   pm.collect as collect,
-		   p.project_del,
-		   p.project_status,
-		   pm.member_label as member_label,
-		   pm.default_group as group_id,
-		   p.func,
-		   p.create_time as createTime,
-		   u.user_name as memberName
-		from prm_project p
-		join prm_project_member pm
-		join tb_user u
-		on p.project_id = pm.project_id
-		and u.user_id=p.member_id
-		where pm.member_id = #{userId} and p.organization_id = #{orgId}
-		and p.project_del=0
-		<!-- and p.project_del = 0 -->
-		order by pm.create_time asc
-	</select>
+        select p.project_id,
+        p.project_name,
+        p.project_cover,
+        p.project_des,
+        pm.collect as collect,
+        p.project_del,
+        p.project_status,
+        pm.member_label as member_label,
+        pm.default_group as group_id,
+        p.func,
+        p.create_time as createTime,
+        u.user_name as memberName
+        from prm_project p
+        join prm_project_member pm
+        join tb_user u
+        on p.project_id = pm.project_id
+        and u.user_id=p.member_id
+        where pm.member_id = #{userId} and p.organization_id = #{orgId}
+        and p.project_del=0
+        <!-- and p.project_del = 0 -->
+        order by pm.create_time asc
+    </select>
 
-	<!-- 修改企业拥有者 -->
-	<update id="updatOorganization">
+
+    <!-- 修改企业拥有者 -->
+    <update id="updatOorganization">
 		update prm_organization
 		set organization_member = #{memberId}
 		WHERE organization_id = #{orgId} and organization_member = #{ownerId}
