@@ -421,7 +421,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      */
     @Override
     public List<PartmentMember> getOrgPartment(String orgId) {
-        //当前登陆人时否在企业
+        //当前登陆人是否是企业创建人
         Integer integer = organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", orgId).eq("organization_member", ShiroAuthenticationManager.getUserId()));
         List<PartmentMember> orgParentByOrgId = Lists.newArrayList();
         List<OrganizationMember> organizationMembers = Lists.newArrayList();
@@ -447,9 +447,25 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     }
 
 
-//    public List<PartmentMember>getOrgPartment1(String orgId){
-//
-//    }
+/*    public List<PartmentMember>getOrgPartment1(String orgId){
+        Integer integer = organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", orgId).eq("organization_member", ShiroAuthenticationManager.getUserId()));
+
+        Organization org = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", orgId));
+
+        if (integer!=0) {
+           return Optional.of(
+                  partmentService.list(new QueryWrapper<Partment>().eq("organization_id", org.getOrganizationId()))
+                          .stream().map(Partment::getPartmentId).collect(Collectors.toList()))
+                  .flatMap(partmentIds->{
+                      List<PartmentMember> partmentMembers = partmentMemberService.list(new QueryWrapper<PartmentMember>()
+                              .in("partment_id", partmentIds));
+                      return Optional.of(partmentMembers);
+                  };
+
+        }
+
+       return null;
+    }*/
 
     @Override
     public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag, String orgId) {

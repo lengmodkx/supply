@@ -126,25 +126,29 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
 
     @Override
     public Integer addDeptMember(String partmentId, String orgId, List<String> memberId) {
-        memberId.stream().forEach(r->{
-            PartmentMember partmentMember = new PartmentMember();
-            partmentMember.setPartmentId(partmentId);
-            partmentMember.setMemberId(r);
-            //新修改 添加部门成员时将用户信息存进去
-            PartmentMember partmentMember1 = partmentMemberMapper.selectOne(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
-            if (partmentMember1!=null) {
-                partmentMember.setUpdateTime(System.currentTimeMillis());
-                partmentMemberMapper.update(partmentMember,new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
-            }else {
-                partmentMember.setCreateTime(System.currentTimeMillis());
-                partmentMember.setUpdateTime(System.currentTimeMillis());
-                partmentMemberMapper.insert(partmentMember);
-            }
-            OrganizationMember member = new OrganizationMember();
 
-            member.setPartmentId(partmentId);
-            organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",r));
-        });
+        List<OrganizationMember> list = organizationMemberService.list(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).in("member_id", memberId));
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.stream().forEach(r->{
+                PartmentMember partmentMember = new PartmentMember();
+                partmentMember.setPartmentId(partmentId);
+                partmentMember.setMemberId(r.getMemberId());
+
+                PartmentMember partmentMember1 = partmentMemberMapper.selectOne(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
+                if (partmentMember1!=null) {
+                    partmentMember.setUpdateTime(System.currentTimeMillis());
+                    partmentMemberMapper.update(partmentMember,new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
+                }else {
+                    partmentMember.setCreateTime(System.currentTimeMillis());
+                    partmentMember.setUpdateTime(System.currentTimeMillis());
+                    partmentMemberMapper.insert(partmentMember);
+                }
+                OrganizationMember member = new OrganizationMember();
+
+                member.setPartmentId(partmentId);
+                organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",r));
+            });
+        }
         return 1;
     }
 
