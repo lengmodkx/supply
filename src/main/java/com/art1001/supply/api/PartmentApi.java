@@ -45,7 +45,7 @@ public class PartmentApi {
      * @return 结果
      */
     @Push(value = PushType.P1, type = 1)
-        @PostMapping("/{orgId}")
+    @PostMapping("/{orgId}")
     public JSONObject addPartment(@PathVariable(value = "orgId") String orgId,
                                   @RequestParam(value = "partmentName") String partmentName,
                                   @RequestParam(value = "parentId", required = false) String parentId,

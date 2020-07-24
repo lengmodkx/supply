@@ -417,7 +417,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * 获取企业下部门成员信息
      *
      * @param orgId
-     * @return
+     * @return todo 待优化
      */
     @Override
     public List<PartmentMember> getOrgPartment(String orgId) {
@@ -445,6 +445,11 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         return orgParentByOrgId;
     }
+
+
+//    public List<PartmentMember>getOrgPartment1(String orgId){
+//
+//    }
 
     @Override
     public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag, String orgId) {
@@ -580,16 +585,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         saveOrganizationMemberInfo(orgId, userEntity);
     }
 
-    /**
-     * 根据部门成员id查询企业成员
-     *
-     * @param ids
-     * @return
-     */
-    @Override
-    public List<OrganizationMember> getMemberByPartmentIds(List<String> ids, String orgId) {
-        return organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().in("member_id", ids).eq("organization_id", orgId));
-    }
+
 
     @Override
     public List<OrganizationMember> expOrgMember(String orgId) {

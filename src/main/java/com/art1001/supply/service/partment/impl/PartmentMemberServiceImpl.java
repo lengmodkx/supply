@@ -85,26 +85,23 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
      * @return 成员信息
      */
     @Override
-    public PartmentMember getMemberByPartmentId(String partmentId) {
-        PartmentMember partmentMember = new PartmentMember();
-        partmentMember.setPartmentId(partmentId);
-        Partment part = partmentService.findPartmentByPartmentId(partmentId);
-        partmentMember.setPartmentName(part.getPartmentName());
+    public List<PartmentMember> getMemberByPartmentId(String partmentId) {
+
         List<PartmentMember> partmentMembers = partmentMemberMapper.selectList(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId));
-        List<String>ids= Lists.newArrayList();
+
+        Partment partment = partmentService.findPartmentByPartmentId(partmentId);
+
         if (CollectionUtils.isNotEmpty(partmentMembers)) {
-            ids=partmentMembers.stream().map(PartmentMember::getMemberId).collect(Collectors.toList());
+            partmentMembers.stream().forEach(p->{
+                OrganizationMember one = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("organization_id", partment.getOrganizationId()).eq("member_id", p.getMemberId()));
+                one.setUserEntity(userService.findById(p.getMemberId()));
+                p.setOrganizationMember(one);
+                p.setPartmentName(partment.getPartmentName());
+            });
         }
 
-        List<OrganizationMember>organizationMembers=organizationMemberService.getMemberByPartmentIds(ids,part.getOrganizationId());
-        Optional.ofNullable(organizationMembers).ifPresent(orgs->{
-            orgs.stream().forEach(org->{
-                org.setUserEntity(userService.findById(org.getMemberId()));
-                org.setDeptName(part.getPartmentName());
-            });
-        });
-        partmentMember.setOrganizationMembers(organizationMembers);
-        return partmentMember;
+        return partmentMembers;
+
     }
 
     @Override

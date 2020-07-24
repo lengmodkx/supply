@@ -88,6 +88,9 @@ private static final long serialVersionUID=1L;
     private String memberType;
 
     @TableField(exist = false)
+    private OrganizationMember organizationMember;
+
+    @TableField(exist = false)
     private List<OrganizationMember> organizationMembers;
 
 }
