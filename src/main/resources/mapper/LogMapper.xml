@@ -12,6 +12,9 @@
         <result column="content" property="content" jdbcType="VARCHAR"/>
         <result column="log_type" property="logType" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="log_flag" property="logFlag" jdbcType="TINYINT"/>
+        <result column="mentions" property="mentions" jdbcType="VARCHAR"/>
+        <result column="log_is_withdraw" property="logIsWithDraw" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -24,7 +27,10 @@
 		u.account_name as memberPhone,
 		l.content,
 		l.log_type,
-		l.create_time
+		l.create_time,
+		l.log_flag,
+		l.mentions,
+		l.log_is_withdraw
 	</sql>
 
     <select id="findLogAllList" resultMap="BaseResultMap"
@@ -136,7 +142,6 @@
         select
         <include refid="Base_Column_List"/>
         from prm_log l join tb_user u on l.member_id=u.user_id
-
         <if test="startTime!=null and startTime!=''">
             AND l.create_time &gt;= #{startTime}
         </if>
@@ -148,10 +153,11 @@
         <if test="memberId != null and memberId!=''">
             and l.member_id = #{memberId}
         </if>
-        where l.project_id in(
+        where  l.project_id in(
         <foreach collection="projectIds" item="projectId" separator=",">
             #{projectId}
         </foreach>)
+        and l.log_type=0
     </select>
 
     <select id="getMyLog" resultType="com.art1001.supply.entity.log.Log">

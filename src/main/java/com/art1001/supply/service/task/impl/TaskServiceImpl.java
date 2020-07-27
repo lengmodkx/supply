@@ -1834,6 +1834,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
          if (Constants.CREATED.equals(type)) {
              tasks= taskMapper.selectCreatedAndOrder(isDone, ShiroAuthenticationManager.getUserId(),order);
         }
+         Optional.ofNullable(tasks).ifPresent(t->t.stream().forEach(r->{
+             if (!r.getParentId().equals(Constants.ZERO)) {
+                 r.setParentTask(taskService.getById(r.getParentId()));
+             }
+         }));
         return tasks;
     }
 

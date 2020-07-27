@@ -153,6 +153,7 @@ public class PushAspect extends BaseController {
         systemLog.setPublicId(object.getString(ID));
         systemLog.setProjectId(object.getString(MSG_ID));
         systemLog.setCreateTime(System.currentTimeMillis());
+        systemLog.setLogType(0);
         String name = object.getString(NAME) != null ? object.getString(NAME) : "";
         if (Constants.TASK.equals(object.getString(PUBLICTYPE))) {
             systemLog.setLogFlag(1);
@@ -173,6 +174,13 @@ public class PushAspect extends BaseController {
             systemLog.setContent(userInfo.getUserName() + " " + push.value().getName() + " " + name);
         } else {
             systemLog.setContent(userEntity.getUserName() + " " + push.value().getName() + " " + name);
+        }
+        if (push.value().getName().equals(Constants.GROUP_CHAT_INFO)) {
+            systemLog.setLogType(1);
+            systemLog.setLogIsWithDraw(0);
+        }
+        if(push.value().getName().equals(Constants.GROUP_CHAT_RETURN)){
+            systemLog.setLogIsWithDraw(1);
         }
         systemLog.setMemberId(ShiroAuthenticationManager.getUserId());
         logService.save(systemLog);
