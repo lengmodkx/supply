@@ -447,25 +447,24 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     }
 
 
-/*    public List<PartmentMember>getOrgPartment1(String orgId){
+    //楼上方法改进版 -- 优化过的代码 -- 改变数据返回格式 -- 看起来更舒服
+    public List<PartmentMember>getOrgPartment1(String orgId){
         Integer integer = organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", orgId).eq("organization_member", ShiroAuthenticationManager.getUserId()));
 
         Organization org = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", orgId));
 
         if (integer!=0) {
-           return Optional.of(
+            return Optional.of(
                   partmentService.list(new QueryWrapper<Partment>().eq("organization_id", org.getOrganizationId()))
                           .stream().map(Partment::getPartmentId).collect(Collectors.toList()))
-                  .flatMap(partmentIds->{
+                  .map(partmentIds->{
                       List<PartmentMember> partmentMembers = partmentMemberService.list(new QueryWrapper<PartmentMember>()
                               .in("partment_id", partmentIds));
-                      return Optional.of(partmentMembers);
-                  };
-
+                      return partmentMembers;
+                  }).orElseGet(null);
         }
-
-       return null;
-    }*/
+        return null;
+    }
 
     @Override
     public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag, String orgId) {
