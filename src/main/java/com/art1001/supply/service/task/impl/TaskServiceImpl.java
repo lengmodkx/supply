@@ -1826,7 +1826,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         List<Task> tasks=Lists.newArrayList();
         if (Constants.EXECUTE.equals(type)) {
              tasks = taskMapper.selectExecuteAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
-            return tasks;
         }
         if (Constants.JOIN.equals(type)) {
             tasks = taskMapper.selectJoinAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);

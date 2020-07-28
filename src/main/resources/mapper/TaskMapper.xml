@@ -1272,7 +1272,8 @@
         p.project_id AS projectId,
         p.project_name as projectName,
         u.image as executorImg,
-        t.task_group_id as groupId
+        t.task_group_id as groupId,
+        t.parent_id as parentId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON t.project_id = p.project_id
@@ -1306,7 +1307,8 @@
         p.project_id AS projectId,
         p.project_name as projectName,
         u.image as executorImg,
-        t.task_group_id as groupId
+        t.task_group_id as groupId,
+        t.parent_id as parentId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON
@@ -1337,11 +1339,12 @@
         t.task_name as taskName,
         t.start_time as startTime,
         t.end_time as endTime,
-        t.`level` as level,
+        t.level as level,
         p.project_id AS projectId,
         p.project_name as projectName,
         u.image as executorImg,
-        t.task_group_id as groupId
+        t.task_group_id as groupId,
+        t.parent_id as parentId
         FROM
         prm_task AS t
         LEFT JOIN prm_project AS p ON
