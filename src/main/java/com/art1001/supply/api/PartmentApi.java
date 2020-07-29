@@ -252,4 +252,5 @@ public class PartmentApi {
             throw new AjaxException(e);
         }
     }
+
 }
