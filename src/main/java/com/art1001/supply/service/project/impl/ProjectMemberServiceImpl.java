@@ -150,6 +150,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private RoleService roleService;
 
+    @Resource
+    private OrganizationService organizationService;
+
     private static final String EXTERNALMEMBER="外部成员";
 
     @Override
@@ -633,6 +636,12 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         LambdaQueryWrapper<Project> getProjectListQW = new QueryWrapper<Project>()
                 .lambda().in(Project::getProjectId, projectIdList).eq(Project::getOrganizationId, orgId);
 
-        return projectService.list(getProjectListQW);
+        List<Project> list = projectService.list(getProjectListQW);
+        Optional.ofNullable(list).ifPresent(projects->{
+            projects.stream().forEach(r->{
+                r.setProjectSchedule(organizationService.automaticUpdateProjectSchedule(r));
+            });
+        });
+        return list;
     }
 }

@@ -40,6 +40,12 @@ public class UserInfo extends Model<UserInfo> {
      */
     @TableField(exist = false)
     private String orgId;
+
+    /**
+     * 默认企业名
+     */
+    @TableField(exist = false)
+    private String orgName;
     /**
      * 用户头像
      */

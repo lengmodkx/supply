@@ -11,6 +11,7 @@ import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
@@ -21,6 +22,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.user.UserMapper;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -88,6 +90,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     private ProjectService projectService;
 
     @Resource
+    private OrganizationService organizationService;
+
+    @Resource
     FileMapper fileMapper;
 
     @Resource
@@ -115,6 +120,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         UserInfo info = userMapper.findInfo(accountName);
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
         info.setOrgId(orgByUserId);
+        if (StringUtils.isNotEmpty(orgByUserId)) {
+            Organization byId = organizationService.getById(orgByUserId);
+            info.setOrgName(byId.getOrganizationName());
+        }
         return info;
     }
 

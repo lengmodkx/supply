@@ -408,6 +408,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             setParams(orgMembers);
+
         }
         return orgMembers;
     }
@@ -541,15 +542,22 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * @return
      */
     @Override
-    public List<String> inviteOrgMemberByPhone(String orgId, List<String> phone, List<String> memberEmail) {
+    public List<String> inviteOrgMemberByPhone(String orgId, List<String> phone, List<String> memberEmail,Integer param) {
         List<String> results = new ArrayList<>();
+
         if (CollectionUtils.isNotEmpty(phone)) {
             for (String s : phone) {
-                String result;
+                String result = "";
                 UserEntity userEntity = userService.selectUserByPhone(s);
                 Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()).eq("partment_id", "0"));
                 if (integer == 0) {
-                    result = saveOrganizationMemberInfo(orgId, userEntity);
+                    OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
+                    organizationMember.setMemberLabel("外部成员");
+                    if (param == 0) {
+                        organizationMember.setMemberLabel("成员");
+                    }
+                    saveOrgRoleUser(orgId, userEntity,organizationMember.getMemberLabel());
+                    result="添加成功";
                 } else {
                     result = "该成员已在企业中";
                 }
@@ -562,7 +570,13 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                 UserEntity userEntity = userService.selectUserByEmail(s);
                 Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()).eq("partment_id", "0"));
                 if (integer == 0) {
-                    result = saveOrganizationMemberInfo(orgId, userEntity);
+                    OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
+                    organizationMember.setMemberLabel("外部成员");
+                    if (param == 0) {
+                        organizationMember.setMemberLabel("成员");
+                    }
+                    result="添加成功";
+                    saveOrgRoleUser(orgId, userEntity,organizationMember.getMemberLabel());
                 } else {
                     result = "该成员已在企业中";
                 }
@@ -597,7 +611,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
-        saveOrganizationMemberInfo(orgId, userEntity);
+                this.save(saveOrganizationMemberInfo(orgId, userEntity));
     }
 
 
@@ -651,7 +665,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * @param orgId
      * @param userEntity
      */
-    private String saveOrganizationMemberInfo(String orgId, UserEntity userEntity) {
+    private OrganizationMember saveOrganizationMemberInfo(String orgId, UserEntity userEntity) {
         OrganizationMember organizationMember = new OrganizationMember();
         organizationMember.setMemberEmail(userEntity.getEmail());
         organizationMember.setCreateTime(System.currentTimeMillis());
@@ -672,10 +686,13 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         organizationMember.setMemberLock(1);
         organizationMember.setOther(1);
-        organizationMember.setMemberLabel("外部成员");
+
         organizationMember.setUserDefault(false);
         organizationMember.setPartmentId("0");
-        this.save(organizationMember);
+        return organizationMember;
+    }
+
+    private void saveOrgRoleUser(String orgId, UserEntity userEntity,String memberLabel) {
         RoleUser roleUser = new RoleUser();
         roleUser.setOrgId(orgId);
         roleUser.setUId(userEntity.getUserId());
@@ -683,7 +700,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         Role one = roleService.getOne(new QueryWrapper<Role>().eq("organization_id", orgId).eq("role_name", "外部成员"));
         roleUser.setRoleId(one.getRoleId());
         roleUserService.save(roleUser);
-        return "邀请成功";
     }
 
     /**

@@ -67,6 +67,11 @@ public class UserVO {
      */
     private String groupId;
 
+    /**
+     * 签名
+     */
+    private String signature;
+
     private List<Partment>partments;
 
 }

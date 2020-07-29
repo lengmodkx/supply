@@ -575,11 +575,13 @@ public class OrganizationMemberApi {
     @GetMapping("/inviteOrgMemberByPhone/{orgId}")
     public JSONObject inviteOrgMemberByPhone(@PathVariable(value = "orgId") String orgId,
                                              @RequestParam(value = "phone", required = false) List<String> phone,
-                                             @RequestParam(value = "memberEmail", required = false) List<String> memberEmail) {
+                                             @RequestParam(value = "memberEmail", required = false) List<String> memberEmail,
+                                             @RequestParam(value = "param")Integer param
+    ) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
-            jsonObject.put("data", organizationMemberService.inviteOrgMemberByPhone(orgId, phone, memberEmail));
+            jsonObject.put("data", organizationMemberService.inviteOrgMemberByPhone(orgId, phone, memberEmail,param));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

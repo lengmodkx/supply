@@ -405,7 +405,8 @@ public class UserApi {
                                      @RequestParam(value = "telephone", required = false) String telephone,
                                      @RequestParam(value = "birthday", required = false) String birthday,
                                      @RequestParam(value = "address", required = false) String address,
-                                     @RequestParam(value = "email", required = false) String email
+                                     @RequestParam(value = "email", required = false) String email,
+                                     @RequestParam(value = "signature",required = false)String signature
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -438,6 +439,9 @@ public class UserApi {
             }
             if (StringUtils.isNotEmpty(email)) {
                 userEntity.setEmail(email);
+            }
+            if (StringUtils.isNotEmpty(signature)) {
+                userEntity.setSignature(signature);
             }
 
             userEntity.setUpdateTime(new Date());

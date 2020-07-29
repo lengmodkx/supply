@@ -172,7 +172,7 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 * @param memberEmail
 	 * @return
 	 */
-    List<String> inviteOrgMemberByPhone(String orgId, List<String> phone,List<String>memberEmail);
+    List<String> inviteOrgMemberByPhone(String orgId, List<String> phone,List<String>memberEmail,Integer param);
 
 	/**
 	 * 根据部门id获取部门成员
