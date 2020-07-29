@@ -394,17 +394,17 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public List<OrganizationMember> getMembersAndPartment(String orgId, Integer flag) {
-        List<OrganizationMember> orgMembers = Lists.newArrayList();
+        List<OrganizationMember> orgMembers=Lists.newArrayList();
         if (Constants.B_ZERO.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
-        } else if (Constants.B_ONE.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id", 0));
-        } else if (Constants.B_TWO.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0));
-        } else if (Constants.B_THREE.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()));
-        } else {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0));
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+        }else if(Constants.B_ONE.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id",0));
+        }else if(Constants.B_TWO.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0));
+        }else if(Constants.B_THREE.equals(flag)){
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()));
+        }else{
+            orgMembers=organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other",0));
         }
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             setParams(orgMembers);
@@ -449,20 +449,20 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
 
     //楼上方法改进版 -- 优化过的代码 -- 改变数据返回格式 -- 看起来更舒服
-    public List<PartmentMember> getOrgPartment1(String orgId) {
+    public List<PartmentMember>getOrgPartment1(String orgId){
         Integer integer = organizationMapper.selectCount(new QueryWrapper<Organization>().eq("organization_id", orgId).eq("organization_member", ShiroAuthenticationManager.getUserId()));
 
         Organization org = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", orgId));
 
-        if (integer != 0) {
+        if (integer!=0) {
             return Optional.of(
-                    partmentService.list(new QueryWrapper<Partment>().eq("organization_id", org.getOrganizationId()))
-                            .stream().map(Partment::getPartmentId).collect(Collectors.toList()))
-                    .map(partmentIds -> {
-                        List<PartmentMember> partmentMembers = partmentMemberService.list(new QueryWrapper<PartmentMember>()
-                                .in("partment_id", partmentIds));
-                        return partmentMembers;
-                    }).orElseGet(null);
+                  partmentService.list(new QueryWrapper<Partment>().eq("organization_id", org.getOrganizationId()))
+                          .stream().map(Partment::getPartmentId).collect(Collectors.toList()))
+                  .map(partmentIds->{
+                      List<PartmentMember> partmentMembers = partmentMemberService.list(new QueryWrapper<PartmentMember>()
+                              .in("partment_id", partmentIds));
+                      return partmentMembers;
+                  }).orElseGet(null);
         }
         return null;
     }
@@ -501,12 +501,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
             orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
             Optional.ofNullable(orgs).ifPresent(os -> {
                 if (StringUtils.isNotEmpty(memberLebel)) {
-                    if (Constants.ONE.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
-                    else if (Constants.TWO.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
-                    else if (Constants.THREE.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
+                    if (Constants.ONE.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
+                    else if (Constants.TWO.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
+                    else if (Constants.THREE.equals(memberLebel)) os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
                 }
             });
         }
@@ -545,7 +542,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * @return
      */
     @Override
-    public List<String> inviteOrgMemberByPhone(String orgId, List<String> phone, List<String> memberEmail, Integer param) {
+    public List<String> inviteOrgMemberByPhone(String orgId, List<String> phone, List<String> memberEmail,Integer param) {
         List<String> results = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(phone)) {
@@ -559,8 +556,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     if (param == 0) {
                         organizationMember.setMemberLabel("成员");
                     }
-                    saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
-                    result = "添加成功";
+                    saveOrgRoleUser(orgId, userEntity,organizationMember.getMemberLabel());
+                    result="添加成功";
                 } else {
                     result = "该成员已在企业中";
                 }
@@ -578,8 +575,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     if (param == 0) {
                         organizationMember.setMemberLabel("成员");
                     }
-                    result = "添加成功";
-                    saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
+                    result="添加成功";
+                    saveOrgRoleUser(orgId, userEntity,organizationMember.getMemberLabel());
                 } else {
                     result = "该成员已在企业中";
                 }
@@ -614,22 +611,23 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
-        this.save(saveOrganizationMemberInfo(orgId, userEntity));
+                this.save(saveOrganizationMemberInfo(orgId, userEntity));
     }
+
 
 
     @Override
     public List<OrganizationMember> expOrgMember(String orgId) {
         List<OrganizationMember> memberList = organizationMemberService.list(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
-        Optional.ofNullable(memberList).ifPresent(members -> {
-            members.stream().forEach(member -> {
+        Optional.ofNullable(memberList).ifPresent(members->{
+            members.stream().forEach(member->{
                 if (!member.getPartmentId().equals(Constants.ZERO)) {
                     Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", member.getPartmentId()));
-                    if (partment != null) {
+                    if (partment!=null) {
                         member.setDeptName(partment.getPartmentName());
                     }
                     RoleUser one = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", member.getMemberId()));
-                    if (one != null) {
+                    if (one!=null) {
                         Role role_id = roleService.getOne(new QueryWrapper<Role>().eq("role_id", one.getRoleId()));
                         member.setMemberLabel(role_id.getRoleName());
                     }
@@ -643,12 +641,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     @Override
     public Integer impOrgUser(String orgId, MultipartFile file) {
         List<OrganizationMember> organizationMembers = ExcelUtils.importData(file, 1, OrganizationMember.class);
-        Integer result = 0;
+        Integer result=0;
         if (CollectionUtils.isNotEmpty(organizationMembers)) {
             for (OrganizationMember o : organizationMembers) {
                 //判断成员是否在企业中
                 Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", o.getMemberId()));
-                if (integer == 0) {
+                if (integer==0) {
                     o.setOrganizationId(orgId);
                     o.setOrganizationLable(0);
                     o.setCreateTime(System.currentTimeMillis());
@@ -694,7 +692,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         return organizationMember;
     }
 
-    private void saveOrgRoleUser(String orgId, UserEntity userEntity, String memberLabel) {
+    private void saveOrgRoleUser(String orgId, UserEntity userEntity,String memberLabel) {
         RoleUser roleUser = new RoleUser();
         roleUser.setOrgId(orgId);
         roleUser.setUId(userEntity.getUserId());
@@ -712,7 +710,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             for (OrganizationMember r : orgMembers) {
                 UserEntity byId = userService.findById(r.getMemberId());
-                if (byId != null) {
+                if (byId!=null) {
                     r.setJob(byId.getJob());
                     r.setImage(byId.getImage());
                     r.setMemberEmail(byId.getEmail());
@@ -736,12 +734,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     }
                 }
                 PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(r.getPartmentId(), r.getMemberId());
-                if (StringUtils.isNotEmpty(r.getPartmentId())) {
-//                    PartmentMember partmentMember = partmentMemberService.getOne(new QueryWrapper<PartmentMember>().eq("partment_id", r.getPartmentId()).eq("member_id", r.getMemberId()));
-//                    Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", r.getPartmentId()));
-                    if (partmentMember!=null) {
-                        r.setDeptName(partmentMember.getPartmentName());
-                    }
+                if (partmentMember != null) {
+                    r.setDeptName(partmentMember.getPartmentName());
                     if (partmentMember.getIsMaster()) {
                         partmentName = partmentMember.getPartmentName();
                     }
