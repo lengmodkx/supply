@@ -571,6 +571,7 @@ public class OrganizationMemberApi {
      * @param orgId
      * @param phone       电话号列联表
      * @param memberEmail 邮箱列表
+     * @param  param  1外部成员 0成员
      * @return
      */
     @GetMapping("/inviteOrgMemberByPhone/{orgId}")

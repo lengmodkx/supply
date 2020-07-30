@@ -558,13 +558,14 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
             for (String s : phone) {
                 String result = "";
                 UserEntity userEntity = userService.selectUserByPhone(s);
-                Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()).eq("partment_id", "0"));
+                Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()));
                 if (integer == 0) {
                     OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
                     organizationMember.setMemberLabel("外部成员");
                     if (param == 0) {
                         organizationMember.setMemberLabel("成员");
                     }
+                    this.save(organizationMember);
                     saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
                     result = "添加成功";
                 } else {
@@ -584,8 +585,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     if (param == 0) {
                         organizationMember.setMemberLabel("成员");
                     }
-                    result = "添加成功";
+                    this.save(organizationMember);
                     saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
+                    result = "添加成功";
                 } else {
                     result = "该成员已在企业中";
                 }
