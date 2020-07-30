@@ -272,7 +272,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         organizationMember.setJob(user.getJob());
         organizationMember.setMemberEmail(user.getEmail());
         organizationMember.setUserName(user.getUserName());
-
+        organizationMember.setMemberLabel("拥有者");
         //todo 添加其他信息
         organizationMemberMapper.insert(organizationMember);
 

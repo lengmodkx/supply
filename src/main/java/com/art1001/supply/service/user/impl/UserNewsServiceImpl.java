@@ -16,6 +16,8 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -262,7 +264,9 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	}
 
 	@Override
-	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime) {
-		return userNewsMapper.userNewsByCondition(keyword,startTime,endTime,ShiroAuthenticationManager.getUserId());
+	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<UserNews> userNews = userNewsMapper.userNewsByCondition(keyword, startTime, endTime);
+		return userNews;
 	}
 }
