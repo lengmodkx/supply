@@ -139,6 +139,11 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private String email;
 
+	/**
+	 * 签名
+	 */
+	private String signature;
+
 	/***
 	 * 用户vip类型
 	 * 0.普通会员

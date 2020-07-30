@@ -28,7 +28,7 @@ public class DepartmentDataAssembler {
             tree.setId(partment.getPartmentId());
             tree.setName(partment.getPartmentName());
             tree.setOrgId(partment.getOrganizationId());
-
+            tree.setIcon(partment.getPartmentLogo());
             treeList.add(tree);
         }
         return treeList;

@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.io.Reader;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -140,6 +141,16 @@ public class Log extends Model<Log> {
 	@TableField(exist = false)
 	private List<Task> tasks;
 
+
+	/**
+	 *文件ids，现在用不到
+	 */
+	private Reader fileIds;
+
+	/**
+	 * 是否为撤回的消息 0正常 1撤回
+	 */
+	private Integer logIsWithDraw;
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

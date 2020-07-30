@@ -1821,19 +1821,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * @return 任务集合
      */
     @Override
-    public List<Task> findMeAndOrder(Integer isDone, String type,String order,Integer pageSize,Integer pageNum) {
+    public List<Task> findMeAndOrder(Integer isDone, String type, String order, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Task> tasks=Lists.newArrayList();
+        List<Task> tasks = Lists.newArrayList();
         if (Constants.EXECUTE.equals(type)) {
-             tasks = taskMapper.selectExecuteAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
-            return tasks;
+            tasks = taskMapper.selectExecuteAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
         }
         if (Constants.JOIN.equals(type)) {
             tasks = taskMapper.selectJoinAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
         }
-         if (Constants.CREATED.equals(type)) {
-             tasks= taskMapper.selectCreatedAndOrder(isDone, ShiroAuthenticationManager.getUserId(),order);
+        if (Constants.CREATED.equals(type)) {
+            tasks = taskMapper.selectCreatedAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
         }
+        Optional.ofNullable(tasks).ifPresent(t -> t.stream().forEach(r -> {
+            if (!r.getParentId().equals(Constants.ZERO)) {
+                r.setParentTask(taskService.getById(r.getParentId()));
+            }
+        }));
         return tasks;
     }
 
@@ -1845,7 +1849,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * @return 项目集合
      */
     @Override
-    public List<Project> findExecuteOrderProject(Integer isDone,Integer pageNum,Integer pageSize) {
+    public List<Project> findExecuteOrderProject(Integer isDone, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         return taskMapper.selectExecuteOrderProject(isDone, ShiroAuthenticationManager.getUserId());
     }
@@ -2197,7 +2201,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public List<Task> findTaskIsOk(String projectId) {
-        return taskMapper.selectList(new QueryWrapper<Task>().eq("project_id",projectId).eq("task_status",1));
+        return taskMapper.selectList(new QueryWrapper<Task>().eq("project_id", projectId).eq("task_status", 1));
     }
 
 

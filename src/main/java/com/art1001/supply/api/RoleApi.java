@@ -6,10 +6,13 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.OrganizationMemberService;
+import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +22,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 角色api
@@ -44,6 +48,12 @@ public class RoleApi {
 
     @Resource
     private OrganizationMemberService organizationMemberService;
+
+    @Resource
+    private ResourceService resourceService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     private static final String ROLENAME = "拥有者";
 
@@ -204,29 +214,24 @@ public class RoleApi {
         JSONObject object = new JSONObject();
         try {
             RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
-            Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
-            if (!ROLENAME.equals(role.getRoleName())) {
-                if (roleUser == null) {
-                    RoleUser roleUser1 = new RoleUser();
-                    roleUser1.setUId(userId);
-                    roleUser1.setOrgId(orgId);
-                    roleUser1.setRoleId(roleId);
-                    roleUser1.setTCreateTime(LocalDateTime.now());
-                    roleUserService.save(roleUser1);
-                }else{
-                    roleUser.setUId(userId);
-                    roleUser.setOrgId(orgId);
-                    roleUser.setRoleId(roleId);
-                    roleUserService.updateById(roleUser);
-                }
-                object.put("result",1);
-                object.put("msg","更新成功");
 
-            } else {
-                object.put("result", 0);
-                object.put("msg", "企业拥有着只能有一个");
-            }
-        } catch (Exception e) {
+            roleUser.setUId(userId);
+            roleUser.setOrgId(orgId);
+            roleUser.setRoleId(roleId);
+            roleUserService.updateById(roleUser);
+            Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
+            OrganizationMember orgm=new OrganizationMember();
+            orgm.setMemberLabel(role.getRoleName());
+            organizationMemberService.update(orgm,new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",userId));
+
+            List<String> memberResourceKey = resourceService.getMemberResourceKey(userId, orgId);
+            redisUtil.remove("orgms:" + userId);
+            redisUtil.lset("orgms:"+userId, memberResourceKey);
+            object.put("result", 1);
+            object.put("msg", "更新成功");
+
+        } catch (
+                Exception e) {
             throw new AjaxException(e);
         }
         return object;

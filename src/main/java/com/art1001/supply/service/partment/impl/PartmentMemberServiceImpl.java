@@ -134,10 +134,10 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
                 partmentMember.setPartmentId(partmentId);
                 partmentMember.setMemberId(r.getMemberId());
 
-                PartmentMember partmentMember1 = partmentMemberMapper.selectOne(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
-                if (partmentMember1!=null) {
+                Integer integer = partmentMemberMapper.selectCount(new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r.getMemberId()));
+                if (integer>0) {
                     partmentMember.setUpdateTime(System.currentTimeMillis());
-                    partmentMemberMapper.update(partmentMember,new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r));
+                    partmentMemberMapper.update(partmentMember,new QueryWrapper<PartmentMember>().eq("partment_id", partmentId).eq("member_id", r.getMemberId()));
                 }else {
                     partmentMember.setCreateTime(System.currentTimeMillis());
                     partmentMember.setUpdateTime(System.currentTimeMillis());
@@ -146,7 +146,7 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
                 OrganizationMember member = new OrganizationMember();
 
                 member.setPartmentId(partmentId);
-                organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",r));
+                organizationMemberService.update(member,new UpdateWrapper<OrganizationMember>().eq("organization_id",orgId).eq("member_id",r.getMemberId()));
             });
         }
         return 1;
