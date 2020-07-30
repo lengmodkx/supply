@@ -221,9 +221,10 @@
     <select id="getMyOrg" resultType="com.art1001.supply.entity.organization.Organization">
         SELECT
         o.organization_id,
-        organization_name,
+        o.organization_name,
         o.organization_des,
-        om.organization_lable as organizationLabel
+        om.organization_lable as organizationLabel,
+        o.organization_image
         FROM
         prm_organization o
         LEFT JOIN prm_organization_member om ON o.organization_id = om.organization_id
