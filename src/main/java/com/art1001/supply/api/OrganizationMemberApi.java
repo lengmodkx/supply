@@ -509,11 +509,12 @@ public class OrganizationMemberApi {
      */
     @GetMapping("/{orgId}/getOrgPartment")
     public JSONObject getOrgPartment(@PathVariable(value = "orgId") String orgId,
-                                     @RequestParam(value = "flag", defaultValue = "0") Integer flag) {
+                                     @RequestParam(value = "flag", defaultValue = "0") Integer flag,
+                                     @RequestParam(value = "memberLabel",required = false) Integer memberLabel) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
-            jsonObject.put("data", new JSONObject().fluentPut("members", organizationMemberService.getMembersAndPartment(orgId, flag)).fluentPut("partment", organizationMemberService.getOrgPartment(orgId)));
+            jsonObject.put("data", new JSONObject().fluentPut("members", organizationMemberService.getMembersAndPartment(orgId, flag,memberLabel)).fluentPut("partment", organizationMemberService.getOrgPartment(orgId)));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

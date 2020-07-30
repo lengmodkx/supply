@@ -230,8 +230,7 @@ public class RoleApi {
             object.put("result", 1);
             object.put("msg", "更新成功");
 
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             throw new AjaxException(e);
         }
         return object;

@@ -151,7 +151,7 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	 */
     int findOrgMemberIsExist(String orgId, String memberId);
 
-	List<OrganizationMember> getMembersAndPartment(String orgId,Integer flag);
+	List<OrganizationMember> getMembersAndPartment(String orgId,Integer flag,Integer memberLabel);
 
 	List<PartmentMember> getOrgPartment(String orgId);
 

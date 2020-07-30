@@ -161,21 +161,6 @@ public class OrganizationApi {
 
             }
             List<Project> projects = organizationService.getProject(orgId);
-            String userId = ShiroAuthenticationManager.getUserId();
-            //todo 暂时不用
-//            List<String> memberResourceKey= Lists.newArrayList();
-//
-//            //默认企业可能为空
-//
-//            String orgByUserId = organizationMemberService.findOrgByUserId(userId);
-//            if (StringUtils.isNotEmpty(orgByUserId)) {
-//                memberResourceKey = resourceService.getMemberResourceKey(userId, orgByUserId);
-//            }
-//            else{
-//                memberResourceKey = resourceService.getMemberResourceKey(userId, orgId);
-//            }
-//            redisUtil.remove("orgms:" + userId);
-//            redisUtil.lset("orgms:"+userId, memberResourceKey);
             jsonObject.put("data", projects);
             jsonObject.put("result", 1);
         } catch (Exception e){
