@@ -1,10 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.AutomationRule;
-import com.art1001.supply.annotation.Log;
-import com.art1001.supply.annotation.Push;
-import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.annotation.*;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
@@ -176,11 +173,13 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
+//    @ProjectAuth(value = "#taskId")
     @Push(value = PushType.A2, type = 1)
     @DeleteMapping("/{taskId}")
     public Result deleteTask(@PathVariable(value = "taskId") String taskId) {
         try {
             taskService.removeById(taskId);
+            System.out.println("taskId = " + taskId);
             return Result.success();
         } catch (Exception e) {
             throw new AjaxException("系统异常,删除失败", e);

@@ -10,6 +10,8 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -22,7 +24,10 @@ import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.file.MemberDownloadService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
+import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
+import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
@@ -30,6 +35,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.DateUtils;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -131,6 +137,15 @@ public class FileApi extends BaseController {
     @Resource
     private MemberDownloadService memberDownloadService;
 
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private ProRoleService proRoleService;
+
+    @Resource
+    private ProRoleUserService proRoleUserService;
     /**
      * 加载项目下文件列表数据
      * @param fileId 文件id
@@ -161,6 +176,17 @@ public class FileApi extends BaseController {
                                         @RequestParam(defaultValue = "1") Integer current,
                                         @RequestParam(defaultValue = "99999") Integer size) {
         try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            String projectId = redisUtil.get("userId:" + userId);
+            ProRoleUser proRoleUser = proRoleUserService.findProRoleUser(projectId, userId);
+
+            ProRole role = proRoleService.getById(proRoleUser.getRoleId());
+            if(!"administrator".equals(role.getRoleKey())&&!"admin".equals(role.getRoleKey())){
+                File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
+                if(file.getCatalog()==1&&file.getFilePrivacy()==1){
+                    return Result.fail("无权访问,请联系管理员");
+                }
+            }
             List<File> fileList = fileService.queryFileList(fileId,current,size);
             return Result.success(fileList);
         } catch (Exception e){
