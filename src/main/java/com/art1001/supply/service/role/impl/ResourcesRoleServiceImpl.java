@@ -158,7 +158,7 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
             }
             if(userDefaultOrgId.equals(orgId)){
                 //移除掉旧的用户项目权限
-                redisUtil.remove("orgms:" + userId);
+                redisUtil.remove("perms:" + userId);
 
                 Role role = new Role();
                 role.setRoleId(roleId);
@@ -167,7 +167,7 @@ public class ResourcesRoleServiceImpl extends ServiceImpl<ResourcesRoleMapper, R
                 );
 
                 //获取到新的权限并且set到redis中
-                redisUtil.lset("orgms:" + userId, resourceKeyByRIds);
+                redisUtil.lset("perms:" + userId, resourceKeyByRIds);
 
             }
         }
