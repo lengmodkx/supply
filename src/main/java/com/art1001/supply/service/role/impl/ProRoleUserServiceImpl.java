@@ -7,8 +7,10 @@ import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleUserMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
+import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,6 +48,12 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     @Resource
     private ProRoleUserMapper proRoleUserMapper;
 
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private ProResourcesService proResourcesService;
+
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
         ProRoleUser proRoleUser = new ProRoleUser();
@@ -55,6 +63,11 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         ProRole proRole = proRoleService.getById(roleId);
         ProjectMember projectMember = new ProjectMember();
         projectMember.setRoleKey(proRole.getRoleKey());
+
+        List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+        redisUtil.remove("perms:" + userId);
+        redisUtil.lset("perms:" + userId, keyList);
+
         projectMemberService.update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id", projectId).eq("member_id", userId));
     }
 

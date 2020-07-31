@@ -142,7 +142,7 @@ public class UserApi {
         }
         UserEntity entity = userService.findByName(accountName);
         if (entity != null) {
-            return Result.fail("用户已存在");
+            return Result.fail("您已注册过，请直接登录");
         }
         //设置创建者姓名
         UserEntity userEntity = new UserEntity();

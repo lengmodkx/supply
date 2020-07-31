@@ -57,6 +57,7 @@ public class ProResourcesRoleApi extends BaseController {
         }
 
         proResourcesRoleService.distributionRoleResource(Integer.valueOf(roleId), resources);
+
         jsonObject.put("result",1);
         return jsonObject;
     }
