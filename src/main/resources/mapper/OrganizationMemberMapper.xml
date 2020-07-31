@@ -314,8 +314,4 @@
 		set organization_lable = 1, member_label="拥有者"
 		WHERE organization_id = #{orgId} and member_id = #{memberId}
 	</update>
-
-
-
-
 </mapper>

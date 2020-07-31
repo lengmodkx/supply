@@ -355,6 +355,39 @@ public class ProjectApi extends BaseController {
         JSONObject object = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
+            List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+            redisUtil.remove("perms:" + userId);
+            redisUtil.lset("perms:" + userId, keyList);
+            redisUtil.set("userId:" + userId, projectId);
+            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
+            //查询项目默认分组
+            Relation relation = new Relation();
+            relation.setParentId(groupId);
+            relation.setLable(1);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()
+                    .eq("project_Id", projectId).eq("member_id", userId));
+            object.put("roleKey", projectMember.getRoleKey());
+            object.put("userId", userId);
+            object.put("result", 1);
+            object.put("menus", taskMenu);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AjaxException(e);
+        }
+        return object;
+    }
+
+    /**
+     * 用于自动化流程显示列表
+     * @param projectId
+     * @return
+     */
+    @GetMapping("/{projectId}/taskIndex2")
+    public JSONObject taskIndex2(@PathVariable("projectId") String projectId){
+               JSONObject object = new JSONObject();
+        try {
+            String userId = ShiroAuthenticationManager.getUserId();
             List<MenuVo>menuVos=projectService.taskIndex(projectId,userId);
 
             ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()

@@ -300,18 +300,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         try {
             //企业拥有者改为成员
             Boolean updateOwner = organizationMemberMapper.updateOwner(orgId, ownerId);
+
             //成员改为拥有者
             Boolean updateMember = organizationMemberMapper.updateMember(orgId, memberId);
             //修改企业表的企业拥有者
             Boolean updatOorganization = organizationMapper.updatOorganization(orgId, ownerId, memberId);
 
-			/*//新修改 当用户移交企业权限后，企业用户表的memberlabel更改为成员
-			OrganizationMember memberInfo = new OrganizationMember();
-			memberInfo.setMemberLabel("成员");
-			//生成sql
-			organizationMemberService.update(memberInfo,new QueryWrapper<OrganizationMember>()
-					.eq("member_id",memberId).eq("organization_id",orgId));
-*/
             //将userRole表权限互换
             Boolean updateRoleTransfer = roleUserService.updateRoleTransfer(orgId, ownerId, memberId);
             if (updateOwner && updateMember && updatOorganization && updateRoleTransfer) {

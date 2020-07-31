@@ -156,7 +156,7 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		if(!organizationService.checkOrgIsExist(orgId)){
 			throw new ServiceException("该企业已经不存在!");
 		}
-		return organizationGroupMapper.selectOrgGroups(orgId,ShiroAuthenticationManager.getUserId());
+		return organizationGroupMapper.selectOrgGroups(orgId);
 	}
 
 	/**

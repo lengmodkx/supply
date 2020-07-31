@@ -116,7 +116,7 @@ public class OrganizationGroupApi {
      * @param orgId 企业id
      * @return 群组信息
      */
-    @GetMapping("{orgId}")
+    @GetMapping("/{orgId}")
     public JSONObject getOrgGroups(@PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
         try {

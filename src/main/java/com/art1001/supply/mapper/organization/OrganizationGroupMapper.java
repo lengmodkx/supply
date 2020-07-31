@@ -62,10 +62,9 @@ public interface OrganizationGroupMapper extends BaseMapper<OrganizationGroup> {
 	/**
 	 * 根据企业id 获取企业下的所有群组信息
 	 * @param orgId orgId 企业id
-	 * @param userId 当前用户id
 	 * @return 企业群组信息
 	 */
-    List<OrganizationGroup> selectOrgGroups(@Param("orgId") String orgId, @Param("userId") String userId);
+    List<OrganizationGroup> selectOrgGroups(@Param("orgId") String orgId);
 
 	/**
 	 * 获取某个群组的拥有者信息

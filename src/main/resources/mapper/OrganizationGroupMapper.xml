@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.organization.OrganizationGroupMapper">
-	
+
 	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.organization.OrganizationGroup">
 		<result column="group_id" property="groupId" jdbcType="VARCHAR" />
 		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
@@ -10,7 +10,7 @@
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
 	</resultMap>
-    
+
 	<sql id="Base_Column_List">
 						group_id,
 				group_name,
@@ -28,22 +28,22 @@
 			</if>
 		</where>
 	</sql>
-	
+
 	<select id="findOrganizationGroupPagerList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.base.Pager">
-		
+
 		select * from prm_organization_group
 		<include refid="whereStatement" />
-		
+
 		<if test="orderBy == 0">
 			order by group_id desc
 		</if>
 		<if test="orderBy == 1">
 			order by group_id asc
 		</if>
-		
+
 	</select>
-	
+
 	<select id="findOrganizationGroupAllList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
 		SELECT
@@ -56,7 +56,7 @@
 			order by group_id asc
 		</if>
 	</select>
-	
+
 	<select id="findOrganizationGroupByGroupId" resultMap="BaseResultMap" parameterType="java.lang.String">
 
 		select
@@ -73,13 +73,8 @@
 			og.organization_id
 		FROM
 			prm_organization_group AS og
-			LEFT JOIN prm_organization_group_member AS gm ON gm.group_id = og.group_id
-			LEFT JOIN prm_organization AS org ON org.organization_id = og.organization_id
 		WHERE
-			gm.member_id = #{userId}
-			AND org.organization_id = #{orgId}
-		ORDER BY
-			gm.create_time DESC
+			og.organization_id = #{orgId}
 	</select>
 
 	<!-- 获取某个群组的拥有者信息 -->
@@ -99,7 +94,7 @@
 		delete from
 		prm_organization_group where group_id = #{groupId}
 	</delete>
-	
+
 	<insert id="saveOrganizationGroup" parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
 
 		insert into prm_organization_group
@@ -154,7 +149,7 @@
 		</trim>
 
 	</insert>
-	
+
 	<update id="updateOrganizationGroup" parameterType="com.art1001.supply.entity.organization.OrganizationGroup">
 
 		update prm_organization_group
@@ -185,5 +180,5 @@
 		WHERE group_id = #{groupId}
 
 	</update>
-	
+
 </mapper>
