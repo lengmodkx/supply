@@ -13,8 +13,10 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.notice.NoticeService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileUtils;
+import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("oss")
@@ -38,16 +42,30 @@ public class OssApi {
     @Resource
     private NoticeService noticeService;
 
-    @ProjectAuth("FileApi:uploadFile")
+    @Resource
+    private RedisUtil redisUtil;
+//    @ProjectAuth("FileApi:uploadFile")
     @GetMapping("checkperm")
     public Result checkperm(){
+        String userId = ShiroAuthenticationManager.getUserId();
+        List<String> permsList =redisUtil.getList(String.class,"perms:"+userId);
+        boolean notPermission = !permsList.contains("FileApi:uploadFile");
+        if(notPermission){
+            return Result.fail("没有权限执行此操作，请联系管理管授权");
+        }
         return Result.success();
     }
 
 
-    @ProjectAuth("FileApi:batchDownLoad")
+    //@ProjectAuth("FileApi:batchDownLoad")
     @GetMapping("checkdownload")
     public Result checkdownload(){
+        String userId = ShiroAuthenticationManager.getUserId();
+        List<String> permsList =redisUtil.getList(String.class,"perms:"+userId);
+        boolean notPermission = !permsList.contains("FileApi:batchDownLoad");
+        if(notPermission){
+            return Result.fail("没有权限执行此操作，请联系管理管授权");
+        }
         return Result.success();
     }
     /**
