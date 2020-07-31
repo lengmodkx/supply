@@ -119,7 +119,6 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
         this.refreshRedisResourceKey(byId.getRoleId(), byId.getOrgId());
     }
 
-
     private void refreshRedisResourceKey(Integer roleId, String orgId){
         List<String> userIdList = proRoleUserService.getRoleUserIdListByRoleId(roleId);
         for (String userId : userIdList) {
