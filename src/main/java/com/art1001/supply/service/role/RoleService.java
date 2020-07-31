@@ -133,4 +133,6 @@ public interface RoleService extends IService<Role> {
      * @return 角色id
      */
     Integer getOrgRoleIdByName(String orgId, String roleName);
+
+    Role checkRole(String orgId, String memberId);
 }

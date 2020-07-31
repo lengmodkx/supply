@@ -416,7 +416,7 @@ public class OrganizationMemberApi {
             if (update) {
                 return Result.success();
             } else {
-                return Result.fail("更新失败");
+                return Result.fail("移交失败，移交对象不能是外部成员");
             }
         } catch (Exception e) {
             e.printStackTrace();

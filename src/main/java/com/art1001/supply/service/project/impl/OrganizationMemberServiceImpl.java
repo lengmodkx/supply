@@ -298,18 +298,21 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     public Boolean transferOwner(String orgId, String ownerId, String memberId) {
 
         try {
-            //企业拥有者改为成员
-            Boolean updateOwner = organizationMemberMapper.updateOwner(orgId, ownerId);
 
-            //成员改为拥有者
-            Boolean updateMember = organizationMemberMapper.updateMember(orgId, memberId);
-            //修改企业表的企业拥有者
-            Boolean updatOorganization = organizationMapper.updatOorganization(orgId, ownerId, memberId);
+            Role role=roleService.checkRole(orgId,memberId);
+            if (!role.getRoleName().equals(Constants.EXTERNAL)) {
+                //企业拥有者改为成员
+                Boolean updateOwner = organizationMemberMapper.updateOwner(orgId, ownerId);
+                //成员改为拥有者
+                Boolean updateMember = organizationMemberMapper.updateMember(orgId, memberId);
+                //修改企业表的企业拥有者
+                Boolean updatOorganization = organizationMapper.updatOorganization(orgId, ownerId, memberId);
 
-            //将userRole表权限互换
-            Boolean updateRoleTransfer = roleUserService.updateRoleTransfer(orgId, ownerId, memberId);
-            if (updateOwner && updateMember && updatOorganization && updateRoleTransfer) {
-                return true;
+                //将userRole表权限互换
+                Boolean updateRoleTransfer = roleUserService.updateRoleTransfer(orgId, ownerId, memberId);
+                if (updateOwner && updateMember && updatOorganization && updateRoleTransfer) {
+                    return true;
+                }
             }
 
         } catch (Exception e) {
