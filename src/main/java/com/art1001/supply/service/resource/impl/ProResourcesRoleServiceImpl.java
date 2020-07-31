@@ -100,7 +100,6 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
         //构造出查询该角色在角色资源表中存不存在的查询表达式
         LambdaQueryWrapper<ProResourcesRole> resourceRoleCountQw = new QueryWrapper<ProResourcesRole>().lambda()
                 .eq(ProResourcesRole::getRId, roleId);
-
         if (proResourcesRoleMapper.selectCount(resourceRoleCountQw) > 0){
             //构造出更新角色权限的表达式
             LambdaUpdateWrapper<ProResourcesRole> updateRoleResourceUw = new UpdateWrapper<ProResourcesRole>().lambda()
@@ -116,10 +115,6 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
             resourcesRole.setTCreateTime(LocalDateTime.now());
             proResourcesRoleMapper.insert(resourcesRole);
         }
-
-//        String userId = ShiroAuthenticationManager.getUserId();
-//        redisUtil.remove("perms:"+userId);
-
         ProRole byId = proRoleService.getById(roleId);
         this.refreshRedisResourceKey(byId.getRoleId(), byId.getOrgId());
     }
@@ -127,10 +122,8 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
 
     private void refreshRedisResourceKey(Integer roleId, String orgId){
         List<String> userIdList = proRoleUserService.getRoleUserIdListByRoleId(roleId);
-
         for (String userId : userIdList) {
             String userDefaultOrgId = organizationMemberService.findOrgByUserId(userId);
-
             //如果用户没有默认企业用户id，则不进行操作
             if(StringUtils.isEmpty(userDefaultOrgId)){
                 continue;
@@ -142,7 +135,6 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
                 List<String> resourceKeyByRIds = proResourcesService.getResourceKeyByRIds(
                         proResourcesRoleService.getResourceIdsByRoleId(roleId)
                 );
-
                 //获取到新的权限并且set到redis中
                 redisUtil.lset("perms:" + userId, resourceKeyByRIds);
 
