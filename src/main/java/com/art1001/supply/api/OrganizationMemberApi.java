@@ -524,7 +524,7 @@ public class OrganizationMemberApi {
      * 成员和部门功能接口
      *
      * @param orgId
-     * @param flag  1全部成员 0外部成员
+     * @param flag
      * @return
      */
     @GetMapping("/{orgId}/getOrgPartment")

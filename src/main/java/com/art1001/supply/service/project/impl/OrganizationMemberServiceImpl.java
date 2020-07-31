@@ -393,14 +393,21 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     public List<OrganizationMember> getMembersAndPartment(String orgId, Integer flag, Integer memberLabel) {
         List<OrganizationMember> orgMembers = Lists.newArrayList();
         if (Constants.B_ZERO.equals(flag)) {
+            //企业成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).orderByDesc("organization_lable"));
         } else if (Constants.B_ONE.equals(flag)) {
+            //未分配部门的成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id", 0).orderByDesc("organization_lable"));
         } else if (Constants.B_TWO.equals(flag)) {
+            //账号停用的成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0).orderByDesc("organization_lable"));
         } else if (Constants.B_THREE.equals(flag)) {
+            //新加入的成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()).orderByDesc("organization_lable"));
-        } else {
+        } else if(Constants.B_FIVE.equals(flag)){
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_label", "外部成员").orderByDesc("organization_lable"));
+        }
+        else {
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0).orderByDesc("organization_lable"));
         }
         if (CollectionUtils.isNotEmpty(orgMembers)) {
